@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat|Nunito+Sans:400,600');
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Nunito+Sans:600,800');
 
 %clearfix {
   *zoom: 1;
@@ -20,18 +20,8 @@ h1, h2, h3, h4, h5, h6 {
 
 body{
   font-family: 'Nunito Sans';
+  background:url('bg.jpg');
 }
-
-// Navbar =====================================================================
-.navbar {
-  font-weight:600;
-}
-
-
-.label {
-  font-size: 80%;
-  font-weight: 400;
-  }
 
 .text-left-not-xs, .text-left-not-sm, .text-left-not-md, .text-left-not-lg {
     text-align: left;

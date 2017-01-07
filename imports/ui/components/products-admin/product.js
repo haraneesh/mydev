@@ -65,7 +65,7 @@ export default class Product extends React.Component {
             if (error) {
               Bert.alert(error.reason, 'danger')
             } else {
-              Bert.alert('Product removed!', 'success')
+              Bert.alert('Product removed!', 'info')
             }
           })
         }
@@ -90,7 +90,7 @@ export default class Product extends React.Component {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert(confirmation, 'success');
+          Bert.alert(confirmation, 'info');
           }
       });
     }
@@ -158,7 +158,7 @@ export default class Product extends React.Component {
 
           <Col sm={ 2 }>
             <Button
-              bsStyle="danger"
+              bsStyle="primary"
               name = { this.props.product._id }
               onClick={ this.handleRemoveProduct }>
               Remove

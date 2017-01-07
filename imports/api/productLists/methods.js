@@ -60,6 +60,18 @@ export const removeProductList = new ValidatedMethod({
   },
 })
 
+export const updateProductListWithOrderId = new ValidatedMethod({
+  name: 'productLists.updateProductListWithOrderId',
+  validate: new SimpleSchema({
+    orderId: { type: String },
+    productListId: { type: String },
+  }).validator(),
+  run({ orderId, productListId }) {
+      ProductLists.update( { _id:productListId }, { $addToSet:{ order_ids:orderId } })
+  },
+})
+
+
 rateLimit({
   methods: [
     upsertProductList,

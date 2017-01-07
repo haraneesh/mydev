@@ -6,7 +6,6 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { Meteor } from 'meteor/meteor';
 import App from '../../ui/layouts/App.js';
 import Documents from '../../ui/pages/Documents.js';
-import Veggies from '../../ui/pages/Veggies.js';
 /*Documents*/
 import NewDocument from '../../ui/pages/NewDocument.js';
 import EditDocument from '../../ui/containers/EditDocument';
@@ -15,9 +14,6 @@ import ViewDocument from '../../ui/containers/ViewDocument';
 import { MyOrders } from '../../ui/pages/orders/MyOrders'
 import ViewOrderDetails  from '../../ui/containers/orders/ViewOrderDetails'
 import Order from '../../../imports/ui/pages/orders/Order'
-/*products*/
-import { ProductsAdmin } from '../../ui/pages/products-admin'
-import { Cart } from '../../ui/pages/cart'
 /*productLists*/
 import { ProductLists } from '../../ui/pages/productLists/ProductLists'
 import ViewProductListDetails from '../../ui/containers/productLists/ViewProductListDetails' 
@@ -28,6 +24,9 @@ import NotFound from '../../ui/pages/NotFound.js';
 import RecoverPassword from '../../ui/pages/RecoverPassword.js';
 import ResetPassword from '../../ui/pages/ResetPassword.js';
 import Signup from '../../ui/pages/Signup.js';
+/*admin*/
+import { ProductsAdmin } from '../../ui/pages/products-admin'
+import { AllOrders } from '../../ui/pages/admin/AllOrders'
 
 const authenticate = (nextState, replace) => {
   if (!Meteor.loggingIn() && !Meteor.userId()) {
@@ -55,13 +54,15 @@ Meteor.startup(() => {
         <Route name="viewOrderDetails" path="/order/:_id" component={ ViewOrderDetails } onEnter={ authenticate } />
         <Route name="order" path="/order" component={ Order } onEnter={ authenticate } />
 
-        /* ProductLists */
-        <Route name="viewProductListDetails" path="/productLists/:_id" component={ ViewProductListDetails } onEnter={ authenticate } />
-        <Route name="productLists" path="/productLists" component={ ProductLists } onEnter={ authenticate } />
-
         /* Product */
         <Route name="products-admin" path="/admin/products" component={ ProductsAdmin } onEnter={ authenticate } />
-        <Route name="cart" path="/cart" component={ Cart } onEnter={ authenticate } />
+
+        /* Admin */
+         /* ProductLists */
+        <Route name="viewProductListDetails" path="/productLists/:_id" component={ ViewProductListDetails } onEnter={ authenticate } />
+        <Route name="productLists" path="/productLists" component={ ProductLists } onEnter={ authenticate } />
+        /* Orders */
+        <Route name="allOrders" path="/allorders" component= { AllOrders } onEnter = { authenticate } />
 
         /* Access */
         <Route name="login" path="/login" component={ Login } />

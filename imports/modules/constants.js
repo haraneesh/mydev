@@ -42,9 +42,15 @@ const ProductListStatus = {
     Future: { name: "Future", display_value: "Future", label: "warning" },
 }
 
+const Roles = {
+    admin:{ name: "admin", display_value: "Admin" },
+}
+
+
 export default constants = {
   ProductType,
   OrderStatus,
   ProductListStatus,
   Sort,
+  Roles
 }

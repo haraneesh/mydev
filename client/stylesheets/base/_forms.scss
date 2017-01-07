@@ -1,15 +1,16 @@
-form label.error {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 0px;
-  font-weight: normal;
-  color: lighten( red, 20% );
-}
-
 .form-control{
   margin-bottom:3px;
 }
 
 .rdtPicker {
     top: -270px;
+}
+
+.page-header{
+   border-bottom: 0px none;
+}
+
+.publishSection{
+  height: 14em;
+  padding-left: 2em;
 }

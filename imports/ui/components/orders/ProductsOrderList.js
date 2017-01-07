@@ -1,7 +1,8 @@
 import React from 'react'
-import { ListGroup, Alert, Row, Col, Panel, Button, ListGroupItem } from 'react-bootstrap'
+import { ListGroup, Alert, Row, Col, Panel, Button, ListGroupItem, ControlLabel, FormControl } from 'react-bootstrap'
 import  Product from './Product'
 import { upsertOrder } from '../../../api/orders/methods'
+import { updateProductListWithOrderId } from '../../../api/productLists/methods'
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings'
 import { Meteor } from 'meteor/meteor'
@@ -20,6 +21,22 @@ const OrderFooter = ({ total_bill_amount, onButtonClick }) =>(
               Place Order
             </Button>
           </div>
+      </Row>
+  </ListGroupItem>
+)
+
+const OrderComment = () =>(
+  <ListGroupItem>
+      <Row>
+          <Col sm = { 3 }>
+            <h4 className = "product-name">
+            <strong> Comments </strong>
+            </h4> 
+          </Col>
+          <Col sm = { 9 }>  
+            <FormControl name = "comments"  componentClass="textarea" 
+            placeholder="Is there anything that you would like to tell us about this order?"/>
+          </Col>
       </Row>
   </ListGroupItem>
 )
@@ -78,18 +95,30 @@ export default class ProductsOrderList extends React.Component{
               },
           order_status: constants.OrderStatus.Pending.name,
           total_bill_amount: this.state.total_bill_amount,
+          comments: document.querySelector('[name="comments"]').value,
        }
-
-       upsertOrder.call({order, productId:this.props.productId}, (error, response)=>{
-           debugger;
+  
+       upsertOrder.call(order, (error, response)=>{
            const confirmation = 'Your Order has been placed'
            if (error) {
              Bert.alert(error.reason, 'danger')
            } else {
-             Bert.alert(confirmation, 'success')
+             //Bert.alert(confirmation, 'success')
+             this.updateProductListWithOrderId(response.insertedId, this.props.productListId)
            }
-       })
+       }) 
     }
+
+   updateProductListWithOrderId(orderId, productListId){
+      updateProductListWithOrderId.call( { orderId, productListId } ,(error, response)=>{
+            const confirmation = 'Your Order has been placed'
+            if (error) {
+              Bert.alert(error.reason, 'danger')
+            } else {
+              Bert.alert(confirmation, 'success')
+            }
+        })
+  }
 
   render(){
       return (
@@ -99,6 +128,7 @@ export default class ProductsOrderList extends React.Component{
                     {this.props.products.map((product) => (
                       <Product updateProductQuantity = { this.updateProductQuantity } product = { product } />
                     ))}
+                    <OrderComment />
                     <OrderFooter total_bill_amount = { this.state.total_bill_amount } onButtonClick = { this.handleOrderSubmit }/>
               </ListGroup>
           </Col>

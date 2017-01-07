@@ -1,9 +1,10 @@
 import React from 'react'
-import { Row, Col, Label, ListGroup, ListGroupItem, Pager, Panel, PanelGroup, Button } from 'react-bootstrap'
+import { Row, Col, Label, ListGroup, ListGroupItem, Pager, Panel, PanelGroup } from 'react-bootstrap'
+import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap'
 import { accountSettings, dateSettings } from '../../../modules/settings'
-import { getDisplayDates2, getDateStatusLabel, getDateDisplayStatus } from '../../../modules/helpers'
+import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers'
 import { removeProductList } from '../../../api/productLists/methods'
-
+import { Bert } from 'meteor/themeteorchef:bert';
 import { browserHistory } from 'react-router'
 
 function FieldGroup({ label, value }) {
@@ -44,61 +45,71 @@ class ViewProductListDetails extends React.Component{
   constructor (props, context){
      super(props, context)
 
-     this.handleDelete = this.handleDelete.bind(this)
+     this.handleRemove = this.handleRemove.bind(this)
      this.state = { productList: this.props.productList  }
   }
 
-  handleDelete (event){
-    let order = this.state.order
-    order.order_status = constants.OrderStatus.Cancelled.name
-    upsertOrder.call(order, (error, response)=>{
-        const confirmation = 'This Order has been cancelled.'
+
+  handleRemove (_id) {
+    if (confirm('Are you sure about deleting this Product List? This is permanent!')) {
+      removeProductList.call({ _id }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger')
+          Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert(confirmation, 'success')
-          browserHistory.push('/')
+          Bert.alert('Product List deleted!', 'success');
+          browserHistory.push('/productLists');
         }
-    })
+      });
+    }
+  }
+
+  displayDeleteProductListButton(productListStatus, productListId)
+  {
+     if (productListStatus == constants.ProductListStatus.Future.name){
+       return ( <ButtonToolbar className="pull-right">
+                    <ButtonGroup bsSize="small">
+                      <Button onClick={ () => this.handleRemove(productListId) } className="btn-danger">Delete</Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+              )
+     }
+     return
+  }
+
+  goBack(e){
+    e.preventDefault()
+    browserHistory.goBack()
   }
 
   render () {
     const productList = this.props.productList
-    const productListStatus = getDateDisplayStatus( productList.activeactiveStartDateTime,  productList.activeEndDateTime )
+    const productListStatus = getProductListStatus( productList.activeStartDateTime,  productList.activeEndDateTime )
     return (
       <div className = "ViewProductListDetails ">
-        <div className = "page-header">
-          <Row>
-            <Col xs = { 12 }>
-                <h3> 
-                     { getDisplayDates2( productList.activeactiveStartDateTime,  productList.activeEndDateTime ) }
-                </h3>
-            </Col>
-          </Row>
+        <div className = "page-header clearfix">
+            <h3 className = "pull-left"> 
+                  { getDisplayDateTitle( productList.activeStartDateTime,  productList.activeEndDateTime ) }
+            </h3>
+              { this.displayDeleteProductListButton( productListStatus, productList._id ) }
           </div>
-          <Row>
-            <Col xs = { 12 }>
-              <Label bsStyle = { getDateStatusLabel( productList.activeactiveStartDateTime,  productList.activeEndDateTime ) }>
-                 { productListStatus }
-              </Label>
-            </Col>
-
-          </Row>
-        <div className = "productListDetails panel-body">
-          <Row>
+          <Panel>
+            <Row>
               <Col xs = { 12 }>
-                <ViewProductListProducts products = { productList.products } />
+                <Label bsStyle = { constants.ProductListStatus[productListStatus].label }>
+                  { constants.ProductListStatus[productListStatus].display_value }
+                </Label>
               </Col>
-          </Row>
-        </div>
+            </Row>
+          <div className = "productListDetails panel-body">
+            <Row>
+                <Col xs = { 12 }>
+                  <ViewProductListProducts products = { productList.products } />
+                </Col>
+            </Row>
+          </div>
+        </Panel>
         <Pager>
-          <Pager.Item previous href={ '/'}>&larr; View All Product Lists</Pager.Item>
-          { (constants.ProductListStatus.Future == productListStatus) && (
-                  <Button onClick = { () => {
-                  if(confirm('Are you sure about deleting this product list ?'))
-                    { this.handleDelete () } } } className = "pull-right">Delete Product List</Button>
-             )
-          }
+          <Pager.Item previous onClick = {this.goBack}>&larr; Back</Pager.Item>
         </Pager>
       </div>
     )

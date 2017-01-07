@@ -1,17 +1,18 @@
 import React from 'react'
 import { ListGroup, ListGroupItem, Alert, Accordion, Panel, Row,  Col, Glyphicon, Label } from 'react-bootstrap'
-import  { getDisplayDates2, getDateStatusLabel, getDateDisplayStatus } from '../../../modules/helpers'
+import  { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers'
 
 const DisplayProductLists = ({ productLists }) =>(
     productLists.length > 0 ? <ListGroup className = "productsList-list">{
     productLists.map(({ _id, activeStartDateTime, activeEndDateTime }) =>{ 
-      
+      debugger;
+      const productListStatus = getProductListStatus( activeStartDateTime,  activeEndDateTime )
       return (
         <ListGroupItem key={ _id } href={`/productLists/${_id}`}>
           <ProductListTitleRow
-               dateRangeToDisplay = { getDisplayDates2(activeStartDateTime, activeEndDateTime) }     
-               statusToDisplay = { getDateDisplayStatus(activeStartDateTime, activeEndDateTime) }      
-               labelStyle = { getDateStatusLabel(activeStartDateTime, activeEndDateTime ) }     
+               dateRangeToDisplay = { getDisplayDateTitle(activeStartDateTime, activeEndDateTime) }     
+               statusToDisplay = { constants.ProductListStatus[productListStatus].display_value }      
+               labelStyle = { constants.ProductListStatus[productListStatus].label }     
           />
         </ListGroupItem>
       ) 

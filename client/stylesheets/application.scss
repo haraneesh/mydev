@@ -1,11 +1,13 @@
-@import "theme/variables";
-@import "theme/bootswatch";
+@import "bootstrap/bootstrap";
 
 @import "base/extends";
 @import "base/animations";
 @import "base/forms";
+@import "base/fixed-data-table";
 
 @import "product/product";
+
+@import "productAdmin/productAdmin";
 
 @import "order/order";
 
@@ -14,4 +16,3 @@
 @import "module/Signup";
 
 @import "state/Navbar";
-

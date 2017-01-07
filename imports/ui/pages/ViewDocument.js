@@ -24,7 +24,7 @@ const ViewDocument = ({ doc }) => (
       <ButtonToolbar className="pull-right">
         <ButtonGroup bsSize="small">
           <Button href={`/documents/${doc._id}/edit`}>Edit</Button>
-          <Button onClick={ () => handleRemove(doc._id) } className="text-danger">Delete</Button>
+          <Button onClick={ () => handleRemove(doc._id) } className="text-primary">Delete</Button>
         </ButtonGroup>
       </ButtonToolbar>
     </div>
