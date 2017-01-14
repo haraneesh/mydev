@@ -4,8 +4,7 @@ import  { getDisplayDateTitle, getProductListStatus } from '../../../modules/hel
 
 const DisplayProductLists = ({ productLists }) =>(
     productLists.length > 0 ? <ListGroup className = "productsList-list">{
-    productLists.map(({ _id, activeStartDateTime, activeEndDateTime }) =>{ 
-      debugger;
+    productLists.map(({ _id, activeStartDateTime, activeEndDateTime }) =>{
       const productListStatus = getProductListStatus( activeStartDateTime,  activeEndDateTime )
       return (
         <ListGroupItem key={ _id } href={`/productLists/${_id}`}>

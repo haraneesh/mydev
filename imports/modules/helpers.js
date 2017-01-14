@@ -18,10 +18,11 @@ export function getDisplayDate(dateObject){
 
 export function getProductListStatus(activeStartDateTime, activeEndDateTime){
     const today = moment().tz(dateSettings.timeZone)
-    let productList_status =   today.isAfter(activeEndDateTime)? constants.ProductListStatus.Expired.name : null
-
-    productList_status =   today.isBefore(activeStartDateTime) ?
-            constants.ProductListStatus.Future.name : constants.ProductListStatus.Active_Now.name
+    let productList_status =   today.isAfter(activeEndDateTime)? 
+            constants.ProductListStatus.Expired.name 
+            :  today.isBefore(activeStartDateTime) ?
+                constants.ProductListStatus.Future.name 
+                    : constants.ProductListStatus.Active_Now.name
 
       return productList_status
 }

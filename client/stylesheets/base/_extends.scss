@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat|Nunito+Sans:600,800');
+@import url('https://fonts.googleapis.com/css?family=Pacifico|Kreon|Nunito+Sans:400,600,800|Hind+Vadodara');
 
 %clearfix {
   *zoom: 1;
@@ -15,12 +15,22 @@
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat';
+  font-family: 'Kreon';
+}
+
+.nav{
+  font-family: 'Kreon';
+  letter-spacing:1px;
+  font-size:$font-size-large;
 }
 
 body{
-  font-family: 'Nunito Sans';
+  font-family: 'Hind Vadodara';
   background:url('bg.jpg');
+}
+
+b, strong {
+    letter-spacing:1px;
 }
 
 .text-left-not-xs, .text-left-not-sm, .text-left-not-md, .text-left-not-lg {

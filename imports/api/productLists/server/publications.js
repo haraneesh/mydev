@@ -13,9 +13,13 @@ Meteor.publish('productList.view', (_id) => {
 })
 
 
-Meteor.publish('productOrderList.view', (str) => {
- // const ttoday = new Date(str)
- check(str, Number) 
- 
- return ProductLists.find()
+Meteor.publish('productOrderList.view', function (dateValue){
+  check(dateValue, Date)
+  return ProductLists.find(
+        {  $and: [
+              { activeStartDateTime: { $lte: dateValue }  },
+              { activeEndDateTime: { $gte: dateValue }  },
+              ]
+        },
+      )
 })

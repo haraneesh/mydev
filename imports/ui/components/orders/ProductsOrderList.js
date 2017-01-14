@@ -134,7 +134,7 @@ export default class ProductsOrderList extends React.Component{
           </Col>
       </Row>
       :
-      <Alert bsStyle="info">No products yet.</Alert>
+      <Alert bsStyle="info">We do not have any products for you to order today. Please check back tomorrow.</Alert>
     )
   }
 }

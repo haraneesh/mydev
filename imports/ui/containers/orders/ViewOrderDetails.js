@@ -5,9 +5,11 @@ import ViewOrderDetails from '../../components/orders/ViewOrderDetails'
 import Loading from '../../components/Loading'
 
 const composer = ({ params }, onData) => {
-  const subscription = Meteor.subscribe('orders.view', params._id, {onReady:()=>{
-    const order = Orders.findOne();
-    onData(null, { order });
-  }})
+  debugger;
+  const subscription = Meteor.subscribe('orders.view', params._id)
+   if (subscription.ready()) {
+      const order = Orders.findOne();
+      onData(null, { order });
+    }
 }
 export default composeWithTracker(composer, Loading)(ViewOrderDetails);

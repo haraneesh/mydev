@@ -34,11 +34,17 @@
 
 .navbar {
   border: none;
-  @include box-shadow(0 1px 2px rgba(0,0,0,.3));
+  //@include box-shadow(0 1px 2px rgba(0,0,0,.3));
 
   &-brand {
     font-size: 24px;
   }
+
+
+.navbar-brand > img {
+    position: relative;
+    top: -15px;
+}
 
   &-inverse {
     .navbar-form {
@@ -195,7 +201,7 @@ input,
 // Navs =======================================================================
 .sandstone {
   line-height: 22px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .nav {
