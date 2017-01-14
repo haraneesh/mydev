@@ -39,14 +39,14 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, onRowClickCallBack }) =
         <Column
             header = { <Cell>Status</Cell> }
             cell = { <OrderStatusCell data={dataList} col="status" /> }
-            flexGrow = { 1 }
+            flexGrow = { 2 }
             width = { 50 }
         />
         <Column
             header = {<Cell>Name</Cell>}
             cell = { <TextCell data={dataList} col="name" /> }
             width = { 100 }
-            flexGrow = { 4 }
+            flexGrow = { 3 }
         />
         <Column
             header = { <Cell>Mobile Number</Cell> }
