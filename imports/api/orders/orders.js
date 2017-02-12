@@ -70,10 +70,12 @@ Orders.schema = new SimpleSchema({
         "customer_details.name": { type: String, label: 'The customer name.'},
         "customer_details.email": { type: String, label: 'The customer email address.'},
         "customer_details.mobilePhone": { type: Number, label: 'The customer name.'},
+        "customer_details.deliveryAddress": { type: String, label: 'The customer\'s delivery address.'},
   order_status: { type: String, label: 'Status of the order.' },
   comments: { type: String, label: 'Comments added by the user to this order.', optional: true },
   total_bill_amount: { type:Number, label: 'The total bill amount.', min: 1 },
   // Whenever the "_id" field is updated, automatically store
+  productOrderListId: { type: String, label: 'The Id of the product list from which the order was made.'},
   invoice_Id: {
     type: String,
     optional: true,

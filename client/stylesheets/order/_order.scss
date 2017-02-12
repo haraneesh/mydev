@@ -3,3 +3,37 @@
     border-bottom: 1px solid;
     border-color: $gray-lighter;
 }
+
+.order-image{
+    height:5em;
+}
+
+// Product ordering tabs
+
+.nav > li.vegetables_bk > a {
+    background-image: url('/app/order-tabs.png');
+    background-size: 14em;
+    background-repeat: no-repeat;
+    background-position: 33px 0px;
+    padding-top:3em;
+}
+
+.nav > li.groceries_bk > a {
+    background-image: url('/app/order-tabs.png');
+    background-size: 14em;
+    background-repeat: no-repeat;
+    background-position: -55px 0px;
+    padding-top:3em;
+}
+
+.nav > li.batters_bk > a {
+    background-image: url('/app/order-tabs.png');
+    background-size: 14em;
+    background-repeat: no-repeat;
+    background-position: -150px 0px;
+    padding-top:3em;
+}
+
+#productTabs > div.tab-content {
+    padding-top:1.5em;
+}

@@ -16,7 +16,7 @@ export default class RecoverPassword extends React.Component {
       <div className="RecoverPassword">
         <Row>
           <Col xs={ 12 } sm={ 6 } md={ 4 }>
-            <h3 className="page-header">Recover Password</h3>
+            <h3 className="page-header">Update Password</h3>
             <Alert bsStyle="info">
               Enter your email address below to receive a link to reset your password.
             </Alert>
@@ -33,7 +33,7 @@ export default class RecoverPassword extends React.Component {
                   placeholder="Email Address"
                 />
               </FormGroup>
-              <Button type="submit" bsStyle="success">Recover Password</Button>
+              <Button type="submit" bsStyle="success">Send Me</Button>
             </form>
           </Col>
         </Row>

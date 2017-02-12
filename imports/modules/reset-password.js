@@ -3,7 +3,6 @@
 import { browserHistory } from 'react-router';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
-import './validation.js';
 
 let component;
 let token;
@@ -21,7 +20,7 @@ const handleReset = () => {
 };
 
 const validate = () => {
-  $(component.resetPassword).validate({
+  $(component.resetPasswordForm).validate({
     rules: {
       newPassword: {
         required: true,

@@ -38,3 +38,4 @@ mdg:validated-method
 dburles:factory
 autoupdate
 osv:mongo-counter
+email

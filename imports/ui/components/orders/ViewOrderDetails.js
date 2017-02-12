@@ -17,19 +17,23 @@ const ViewOrderProducts = ({ products }) => (
         </Row>
       </Panel>
      {
-      products.map((product) =>(
-        <Panel key = { product._id }>
-          <Row>
-            <Col xs = { 4 }>
-                    {  product.name + " " + product.unitOfSale } <br />
-                      <small> { product.description } </small>
-            </Col>
-            <Col xs = { 4 }>  { product.quantity + " x "  + formatMoney(product.unitprice,accountSettings) } </Col>
-            <Col xs = { 4 }>  { formatMoney(product.unitprice * product.quantity, accountSettings) } </Col>
-          </Row>
-        </Panel>
-        )
-      )
+      products.map((product) =>{
+        if (product.quantity > 0)
+        {
+          return (
+            <Panel key = { product._id }>
+              <Row>
+                <Col xs = { 4 }>
+                        {  product.name + " " + product.unitOfSale } <br />
+                          <small> { product.description } </small>
+                </Col>
+                <Col xs = { 4 }>  { product.quantity + " x "  + formatMoney(product.unitprice,accountSettings) } </Col>
+                <Col xs = { 4 }>  { formatMoney(product.unitprice * product.quantity, accountSettings) } </Col>
+              </Row>
+            </Panel>
+          )
+        }
+      })
     }
   </PanelGroup>
 )
@@ -39,7 +43,6 @@ class ViewOrderDetails extends React.Component{
   constructor (props, context){
      super(props, context)
 
-     this.handleCancel = this.handleCancel.bind(this)
      this.goBack = this.goBack.bind(this)
      this.state = { order: this.props.order  }
   }
@@ -47,36 +50,6 @@ class ViewOrderDetails extends React.Component{
   goBack(e){
     e.preventDefault() 
     browserHistory.goBack()
-  }
-
-  handleCancel (e){
-    e.preventDefault()
-    if (confirm('Are you sure about cancelling this Order? This is permanent!')) {
-        let order = this.state.order
-        order.order_status = constants.OrderStatus.Cancelled.name
-        upsertOrder.call(order, (error, response)=>{
-            const confirmation = 'This Order has been cancelled.'
-            if (error) {
-              Bert.alert(error.reason, 'danger')
-            } else {
-              Bert.alert(confirmation, 'success')
-              browserHistory.push('/')
-            }
-        })
-    }
-  }
-
-  displayCancelOrderButton(orderStatus)
-  {
-     if (orderStatus == constants.OrderStatus.Pending.name){
-       return ( <ButtonToolbar className="pull-right">
-                    <ButtonGroup bsSize="small">
-                      <Button onClick={ this.handleCancel } className="btn-primary">Cancel Order</Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
-              )
-     }
-     return 
   }
 
   render () {
@@ -87,7 +60,6 @@ class ViewOrderDetails extends React.Component{
           <Row>
             <Col xs = { 12 }>
                 <h3 className = "pull-left"> { moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format) } </h3>
-                { this.displayCancelOrderButton( order.order_status ) }
             </Col>
           </Row>
         </div>

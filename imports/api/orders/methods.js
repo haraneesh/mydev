@@ -24,6 +24,17 @@ export const removeOrder = new ValidatedMethod({
   },
 })
 
+export const updateMyOrderStatus = new ValidatedMethod({
+  name: 'orders.updateMyOrderStatus',
+  validate: new SimpleSchema ({
+    orderId:{ type: String },
+    updateToStatus: { type:String }
+  }).validator(),
+  run({orderId, updateToStatus}) {
+    return Orders.update ({ _id: orderId}, { $set: { order_status: updateToStatus }})
+  },
+})
+
 export const updateOrderStatus = new ValidatedMethod({
   name: 'orders.updateOrderStatus',
   validate: new SimpleSchema ({
@@ -39,8 +50,22 @@ export const updateOrderStatus = new ValidatedMethod({
   },
 })
 
+export const getOrders = new ValidatedMethod({
+  name: 'orders.getOrders',
+  validate: new SimpleSchema ({
+    orderIds:{ type: [String] }
+  }).validator(),
+  run({orderIds}){
+    if (Roles.userIsInRole(this.userId, ['admin'])) {
+       return Orders.find({_id: { $in: orderIds }}).fetch()
+    }
+  },
+})
+
 rateLimit({
   methods: [
+    getOrders,
+    updateMyOrderStatus,
     upsertOrder,
     removeOrder,
     updateOrderStatus,

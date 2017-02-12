@@ -38,12 +38,13 @@ const AdminSection = () => {
   }
 }
 
+//  <LinkContainer to="/documents">
+//     <NavItem eventKey={ 2 } href="/documents">Documents</NavItem>
+//  </LinkContainer>
+
 const AuthenticatedNavigation = () => (
   <div>
     <Nav>
-      <LinkContainer to="/documents">
-        <NavItem eventKey={ 2 } href="/documents">Documents</NavItem>
-      </LinkContainer>
       <IndexLinkContainer to="/">
           <NavItem eventKey={ 4 } href="/"> <Glyphicon glyph="th-list" /> My Orders</NavItem>
       </IndexLinkContainer>
@@ -57,6 +58,13 @@ const AuthenticatedNavigation = () => (
     <Nav pullRight>
       <NavDropdown eventKey={ 7 } title={ userName() } id="basic-nav-dropdown">
         <MenuItem eventKey={ 7.1 } onClick={ handleLogout }>Logout</MenuItem>
+        <MenuItem divider />
+        <LinkContainer to="/recover-password">
+          <MenuItem eventKey={ 7.2 } href="//recover-password">Change Password</MenuItem>
+        </LinkContainer>
+         <LinkContainer to="signup">
+          <MenuItem eventKey={ 7.3 } href="/signup">Update My Profile</MenuItem>
+        </LinkContainer>
       </NavDropdown>
     </Nav>
   </div>

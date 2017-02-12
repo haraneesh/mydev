@@ -1,14 +1,16 @@
 import React from 'react'
-import { ListGroup, Alert, Row, Col, Panel, Button, ListGroupItem, ControlLabel, FormControl } from 'react-bootstrap'
+import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap'
+import { ButtonGroup, ListGroupItem, ControlLabel, FormControl, Tabs, Tab } from 'react-bootstrap'
 import  Product from './Product'
-import { upsertOrder } from '../../../api/orders/methods'
+import { upsertOrder, updateMyOrderStatus } from '../../../api/orders/methods'
 import { updateProductListWithOrderId } from '../../../api/productLists/methods'
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings'
 import { Meteor } from 'meteor/meteor'
 import constants from '../../../modules/constants'
+import { browserHistory } from 'react-router'
 
-const OrderFooter = ({ total_bill_amount, onButtonClick }) =>(
+const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) =>(
   <ListGroupItem>
       <Row>
           <div className="col-xs-7 col-sm-10">
@@ -18,14 +20,14 @@ const OrderFooter = ({ total_bill_amount, onButtonClick }) =>(
           </div>
           <div className="col-xs-5 col-sm-2">
             <Button className="btn btn-success btn-block" disabled = { total_bill_amount <= 0 } onClick = { onButtonClick }>
-              Place Order
+              { submitButtonName }
             </Button>
           </div>
       </Row>
   </ListGroupItem>
 )
 
-const OrderComment = () =>(
+const OrderComment = ({comments}) =>(
   <ListGroupItem>
       <Row>
           <Col sm = { 3 }>
@@ -35,7 +37,9 @@ const OrderComment = () =>(
           </Col>
           <Col sm = { 9 }>  
             <FormControl name = "comments"  componentClass="textarea" 
-            placeholder="Is there anything that you would like to tell us about this order?"/>
+              placeholder = "Is there anything that you would like to tell us about this order?"
+              defaultValue = { comments }
+            />
           </Col>
       </Row>
   </ListGroupItem>
@@ -45,18 +49,22 @@ export default class ProductsOrderList extends React.Component{
    constructor (props, context){
       super(props, context)
 
-      let productArray = this.props.products.reduce(function(map, obj) {
+      let productArray = props.products.reduce(function(map, obj) {
         map[obj._id] = obj;
         return map;
         }, {});
+  
+      const total_bill_amount = (props.total_bill_amount)? props.total_bill_amount : 0  
 
       this.state = {
             products: productArray,
-            total_bill_amount: 0,
+            total_bill_amount: total_bill_amount,
       }
 
       this.updateProductQuantity = this.updateProductQuantity.bind(this)
       this.handleOrderSubmit = this.handleOrderSubmit.bind(this)
+      this.handleCancel = this.handleCancel.bind(this)
+      this.displayProductsAndSubmit = this.displayProductsAndSubmit.bind(this)
    }
 
   updateProductQuantity(event){
@@ -87,12 +95,15 @@ export default class ProductsOrderList extends React.Component{
        let loggedInUser = Meteor.user()
        let order = {
           products:products,
+          productOrderListId:this.props.productListId,
           customer_details:{
                 _id: loggedInUser._id ,
                 name: loggedInUser.profile.name.first + " " + loggedInUser.profile.name.last,
                 email: loggedInUser.emails[0].address,
                 mobilePhone: parseFloat ( loggedInUser.profile.whMobilePhone ),
+                deliveryAddress: loggedInUser.profile.deliveryAddress,
               },
+          _id:this.props.orderId,
           order_status: constants.OrderStatus.Pending.name,
           total_bill_amount: this.state.total_bill_amount,
           comments: document.querySelector('[name="comments"]').value,
@@ -103,8 +114,14 @@ export default class ProductsOrderList extends React.Component{
            if (error) {
              Bert.alert(error.reason, 'danger')
            } else {
-             //Bert.alert(confirmation, 'success')
-             this.updateProductListWithOrderId(response.insertedId, this.props.productListId)
+              const isNewOrder = (response.insertedId)
+              if (isNewOrder){
+                  this.updateProductListWithOrderId(response.insertedId, this.props.productListId)
+              }
+              else{
+                  Bert.alert(confirmation, 'success')
+                  browserHistory.goBack()
+              }
            }
        }) 
     }
@@ -113,33 +130,136 @@ export default class ProductsOrderList extends React.Component{
       updateProductListWithOrderId.call( { orderId, productListId } ,(error, response)=>{
             const confirmation = 'Your Order has been placed'
             if (error) {
-              Bert.alert(error.reason, 'danger')
+                Bert.alert(error.reason, 'danger')
             } else {
-              Bert.alert(confirmation, 'success')
+                Bert.alert(confirmation, 'success')
+                browserHistory.goBack()
             }
         })
   }
 
-  render(){
-      return (
-        this.props.products.length > 0 ? <Row>
+  handleCancel (e){
+    e.preventDefault()
+    if (confirm('Are you sure about cancelling this Order? This is permanent!')) {
+        const order = {
+          orderId: this.props.orderId ,
+          updateToStatus: constants.OrderStatus.Cancelled.name
+        }
+
+        updateMyOrderStatus.call(order, (error, response)=>{
+            const confirmation = 'This Order has been cancelled.'
+            if (error) {
+              Bert.alert(error.reason, 'danger')
+            } else {
+              Bert.alert(confirmation, 'success')
+              browserHistory.goBack()
+            }
+        })
+    }
+  }
+
+ displayCancelOrderButton(orderStatus)
+ {
+     if (orderStatus == constants.OrderStatus.Pending.name){
+       return ( <ButtonToolbar className="pull-right">
+                    <ButtonGroup bsSize="small">
+                      <Button onClick={ this.handleCancel }>Cancel Order</Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+              )
+     } 
+  }
+
+displayProductsByType(products){
+
+   //Grouping product categories by tabs
+   let productGroceries = []
+   let productVegetables = []
+   let productBatters = []
+
+   products.map((product) => {
+    switch(product.type) {
+      case constants.ProductType[0]: //Vegetables
+          productVegetables.push(
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+          )
+          break;
+      case constants.ProductType[1]: //Groceries
+          productGroceries.push(
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+          )
+          break;
+      case constants.ProductType[2]: //Batters
+          productBatters.push(
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+          )
+          break;
+      default:
+          break;
+        }
+   })
+
+  return(
+    <Tabs defaultActiveKey={1} id="productTabs" bsStyle="pills">
+    <Tab eventKey={1} title="Vegetables" tabClassName="vegetables_bk">
+          { productVegetables }
+    </Tab>
+    <Tab eventKey={2} title="Groceries" tabClassName="groceries_bk">
+         { productGroceries }
+    </Tab>
+    <Tab eventKey={3} title="Batters" tabClassName="batters_bk">
+         { productBatters }
+
+    </Tab>
+  </Tabs>
+  )
+}
+
+ displayProductsAndSubmit(submitButtonName){
+   //Grouping product categories by tabs
+   return(
+     this.props.products.length > 0 ? <Row>
           <Col xs = { 12 }>
                 <ListGroup className="products-list">
-                    {this.props.products.map((product) => (
-                      <Product updateProductQuantity = { this.updateProductQuantity } product = { product } />
-                    ))}
-                    <OrderComment />
-                    <OrderFooter total_bill_amount = { this.state.total_bill_amount } onButtonClick = { this.handleOrderSubmit }/>
+                    { this.displayProductsByType ( this.props.products) }
+                    <OrderComment comments = { this.props.comments } />
+                    <OrderFooter total_bill_amount = { this.state.total_bill_amount } 
+                        onButtonClick = { this.handleOrderSubmit }
+                        submitButtonName = { submitButtonName }
+                     />
               </ListGroup>
           </Col>
       </Row>
       :
       <Alert bsStyle="info">We do not have any products for you to order today. Please check back tomorrow.</Alert>
-    )
+   )
+ }
+
+  render(){
+      const formHeading = (this.props.order_status)? "Update your Order" : " Place your Order" 
+      const submitButtonName = (this.props.order_status)? "Update Order" : " Place Order" 
+      return (
+        <div className = "EditOrderDetails ">
+          <Row>
+            <Col xs = { 12 }>
+                <h3 className = "page-header"> { formHeading }
+                  { this.displayCancelOrderButton( this.props.order_status ) }
+                </h3>
+                <Panel>
+                  { this.displayProductsAndSubmit(submitButtonName) }
+                </Panel>
+            </Col>
+          </Row>
+        </div>
+      )
   }
 }
 
 ProductsOrderList.propTypes = {
   products: React.PropTypes.array.isRequired,
   productListId: React.PropTypes.string.isRequired,
+  orderId : React.PropTypes.string,
+  order_status: React.PropTypes.string,
+  comments: React.PropTypes.string,
+  total_bill_amount: React.PropTypes.number
 }

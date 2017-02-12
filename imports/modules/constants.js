@@ -3,7 +3,7 @@ const Sort = {
    DESCENDING: -1,
 }
 
-const ProductType = ["Vegetables","Groceries"]
+const ProductType = ["Vegetables","Groceries","Batter"]
 
 /*
 Pending — customer started the checkout process, but did not complete it.

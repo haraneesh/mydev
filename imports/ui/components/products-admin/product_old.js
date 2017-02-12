@@ -91,7 +91,6 @@ const handleUpdateProductType = (productId, event) =>{
         _id: productId,
         update:{type}
     }, (error) =>{
-      debugger;
       if (error) {
         Bert.alert(error.reason, 'danger')
       } else {
@@ -157,7 +156,6 @@ function handleRemoveProduct (productId, event) {
   }
 
   updateProductChange(event){
-    debugger;
     const field = event.target.name;
     let product = this.state.product;
     product[field] = event.target.value;
@@ -165,7 +163,6 @@ function handleRemoveProduct (productId, event) {
   }
 
   handleProductUpsert (productId, event) {
-      debugger;
       const confirmation = 'Product updated!'
       const upsert = {
         _id: productId,

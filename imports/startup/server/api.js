@@ -15,3 +15,5 @@ import '../../api/orders/server/publications.js'
 
 import '../../api/cart/methods.js'
 import '../../api/cart/server/publications.js'
+
+import '../../api/users/methods.js'

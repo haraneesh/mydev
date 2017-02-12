@@ -1,6 +1,6 @@
-import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
-import Orders from '../../orders/orders';
+import { Meteor } from 'meteor/meteor'
+import { check } from 'meteor/check'
+import Orders from '../../orders/orders'
 
 Meteor.publish('orders.list', function () {
    if (Roles.userIsInRole(this.userId, ['admin'])) {
@@ -31,10 +31,24 @@ Meteor.publish('orders.mylist', function (){
     return Orders.find({'customer_details._id':this.userId})
 }) 
 
-Meteor.publish('orders.view', function (id){
+Meteor.publish('orders.orderDetails', function (id){
   check(id, String)
    if (Roles.userIsInRole(this.userId, ['admin'])) {
       return Orders.find(id)
+      /*return Orders.aggregate([
+        {
+            $lookup:
+              {
+                  from: "ProductLists",
+                  localField: "productOrderListId",
+                  foreignField: "_id",
+                  as: "productsFromList"
+              }
+        },
+        {
+            $match: { "_id": id }
+        }
+      ])*/
    }
    else
    {

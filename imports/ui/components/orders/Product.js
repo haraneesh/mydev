@@ -7,9 +7,9 @@ import { formatMoney } from 'accounting-js'
 import { accountSettings } from '../../../modules/settings'
 import QuantitySelector from './QuantitySelector'
 
-const FieldGroup = ({ productId, sku, name, image, description, unit, unitprice, vendor, onChange }) => (
+const FieldGroup = ({ productId, sku, name, image, description, unit, unitprice, vendor, onChange, quantitySelected }) => (
     <Row>
-      <Col sm = { 2 }><Image  src={"/veggies/" + name + '.jpg'} responsive /> </Col>
+      <Col sm = { 2 }><Image  src={"/veggies/" + name + '.jpg'} className = "order-image" responsive /> </Col>
       <Col sm = { 5 }>
         <h4 className = "product-name"><strong>{name + " " + unit}</strong></h4>
         <h4><small>{description}</small></h4>
@@ -18,7 +18,7 @@ const FieldGroup = ({ productId, sku, name, image, description, unit, unitprice,
         <h4>{formatMoney(unitprice,accountSettings)} <span className = "text-muted">x</span></h4>
       </Col>
       <Col sm = { 2 }>
-        <QuantitySelector onChange = { onChange } controlName = { productId }/>
+        <QuantitySelector onChange = { onChange } controlName = { productId } quantitySelected = { quantitySelected } />
       </Col>
   </Row>
 )
@@ -35,6 +35,7 @@ const Product = ({ updateProductQuantity, product }) => (
                 unitprice = { product.unitprice }
                 vendor = { product.vendor_details }
                 onChange = { updateProductQuantity }
+                quantitySelected = { product.quantity }
           />
       </ListGroupItem>
   )

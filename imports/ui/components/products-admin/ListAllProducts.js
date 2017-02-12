@@ -37,7 +37,6 @@ class ListAllProducts extends React.Component {
       }
 
       upsertProductList.call(params, (error, response) => {
-          debugger;
           if (error) {
             Bert.alert(error.reason, 'danger')
           } else {
@@ -75,7 +74,7 @@ class ListAllProducts extends React.Component {
  PublishSection() {
    return (
      <ListGroupItem className = 'publishSection'>
-       <h4> Publish Product List for Users to order </h4>
+       <h3> Publish Product List for Users to order </h3>
        <HelpBlock bStyle = "info">Select dates during which this product list will be available for the users to order</HelpBlock>
        <Col xs = { 6 }>
          <ControlLabel> Active start date </ControlLabel>

@@ -12,7 +12,8 @@ import EditDocument from '../../ui/containers/EditDocument';
 import ViewDocument from '../../ui/containers/ViewDocument';
 /*order*/
 import { MyOrders } from '../../ui/pages/orders/MyOrders'
-import ViewOrderDetails  from '../../ui/containers/orders/ViewOrderDetails'
+//import ViewOrderDetails  from '../../ui/containers/orders/ViewOrderDetails'
+import EditOrderDetails  from '../../ui/containers/orders/EditOrder'
 import Order from '../../../imports/ui/pages/orders/Order'
 /*productLists*/
 import { ProductLists } from '../../ui/pages/productLists/ProductLists'
@@ -51,7 +52,7 @@ Meteor.startup(() => {
         <Route name="viewDocument" path="/documents/:_id" component={ ViewDocument } onEnter={ authenticate } />
 
         /* Order */
-        <Route name="viewOrderDetails" path="/order/:_id" component={ ViewOrderDetails } onEnter={ authenticate } />
+        <Route name="EditOrderDetails" path="/order/:_id" component={ EditOrderDetails } onEnter={ authenticate } />
         <Route name="order" path="/order" component={ Order } onEnter={ authenticate } />
 
         /* Product */

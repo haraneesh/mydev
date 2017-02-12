@@ -7,25 +7,68 @@ import { accountSettings, dateSettings } from '../settings'
 import moment from 'moment';
 import 'moment-timezone';
 
-export const DateCell = ({rowIndex, data, col, ...props}) => (
+export class DataListStore {
+  constructor(/*List*/ rowDataList){
+    this.size = rowDataList.length;
+    this._cache = [];
+
+    for (var index = 0; index < this.size; index++) {
+        this._cache[index] = rowDataList[index];
+    }
+  }
+
+  getObjectAt(/*number*/ index) /*?object*/ {
+    if (index < 0 || index > this.size){
+      return undefined;
+    }
+    return this._cache[index];
+  }
+
+  /**
+  * Populates the entire cache with data.
+  * Use with Caution! Behaves slowly for large sizes
+  * ex. 100,000 rows
+  */
+  getAll() {
+    if (this._cache.length < this.size) {
+      for (var i = 0; i < this.size; i++) {
+        this.getObjectAt(i);
+      }
+    }
+    return this._cache.slice();
+  }
+
+  getSize() {
+    return this.size;
+  }
+
+  setObjectAt(/*number*/ index, /*?object*/ obj) {
+    if (index < 0 || index > this.size){
+      return;
+    }
+    this._cache[index] = obj;
+  }
+}
+
+export const DateCell = ({rowIndex, data, columnKey, ...props}) => (
   <Cell {...props}>
-    {moment(data[rowIndex][col]).tz(dateSettings.timeZone).format(dateSettings.format)}
+    {moment(data.getObjectAt(rowIndex)[columnKey]).tz(dateSettings.timeZone).format(dateSettings.format)}
   </Cell>
 )
 
-export const RowSelectedCell = ({rowIndex, data, col, onChecked, ...props}) => {
-    const isChecked = data[rowIndex][col] 
+export const RowSelectedCell = ({rowIndex, data, columnKey, onChecked, ...props}) => {
+    const isChecked = data.getObjectAt(rowIndex)[columnKey] 
     return (
-       <Cell {...props} > <Checkbox onClick = { (e) => {  e.stopPropagation(); onChecked(e, rowIndex); } } 
-            value = { isChecked }  /> </Cell> 
+       <Cell {...props} > <Checkbox onClick = { (e) => { onChecked(e, rowIndex); e.stopPropagation(); } } 
+            checked = { isChecked }  /> </Cell> 
 
        /* <Cell {...props} > <input type = "checkbox" onClick = { (e) => { onChecked(e, rowIndex); e.stopPropagation();} } 
         /> </Cell> */
   )
 }
 
-export const OrderStatusCell = ({rowIndex, data, col, ...props}) => {
-    const order_status = data[rowIndex][col] 
+export const OrderStatusCell = ({rowIndex, data, columnKey, ...props}) => {
+    const order_status = data.getObjectAt(rowIndex)[columnKey] 
     const labelStyle = constants.OrderStatus[order_status].label
     const statusToDisplay = constants.OrderStatus[order_status].display_value
    return (
@@ -33,32 +76,75 @@ export const OrderStatusCell = ({rowIndex, data, col, ...props}) => {
   )
 }
 
-export const ImageCell = ({rowIndex, data, col, ...props}) => (
+export const ImageCell = ({rowIndex, data, columnKey, ...props}) => (
   <LoadImage
-    src={ data[rowIndex][col] }
+    src={ data.getObjectAt(rowIndex)[columnKey] }
   />
 )
 
-export const LinkCell = ({rowIndex, data, col, callBack, ...props}) => {
+export const LinkCell = ({rowIndex, data, columnKey, callBack, ...props}) => {
   if (callBack){
       return(
         <Cell {...props}>
-          <a onClick = { (e) => { e.stopPropagation(); callBack (e, rowIndex); } } >{data[rowIndex][col]}</a>
+          <a onClick = { (e) => { e.stopPropagation(); callBack (e, rowIndex); } } >{data.getObjectAt(rowIndex)[columnKey]}</a>
         </Cell>
       )
   } else {
-      return TextCell ({rowIndex, data, col, ...props})
+      return TextCell ({rowIndex, data, columnKey, ...props})
   }
 }
 
-export const TextCell = ({rowIndex, data, col, ...props}) => (
+export const TextCell = ({rowIndex, data, columnKey, ...props}) => (
   <Cell {...props}>
-    {data[rowIndex][col]}
+    {data.getObjectAt(rowIndex)[columnKey]}
   </Cell>
 )
 
-export const AmountCell = ({rowIndex, data, col, ...props}) =>(
+export const AmountCell = ({rowIndex, data, columnKey, ...props}) =>(
   <Cell {...props}>
-    {formatMoney(data[rowIndex][col], accountSettings)}
+    {formatMoney(data.getObjectAt(rowIndex)[columnKey], accountSettings)}
   </Cell>
 )
+
+// Sortable header columns
+
+export const SortTypes = {
+  ASC: 'ASC',
+  DESC: 'DESC',
+};
+
+function reverseSortDirection(sortDir) {
+  return sortDir === SortTypes.DESC ? SortTypes.ASC : SortTypes.DESC;
+}
+
+export class SortHeaderCell extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this._onSortChange = this._onSortChange.bind(this);
+  }
+
+  render() {
+    var {sortDir, children, ...props} = this.props;
+    return (
+      <Cell {...props}>
+        <a onClick={this._onSortChange}>
+          {children} {sortDir ? (sortDir === SortTypes.DESC ? '↓' : '↑') : ''}
+        </a>
+      </Cell>
+    );
+  }
+
+  _onSortChange(e) {
+    e.preventDefault();
+
+    if (this.props.onSortChange) {
+      this.props.onSortChange(
+        this.props.columnKey,
+        this.props.sortDir ?
+          reverseSortDirection(this.props.sortDir) :
+          SortTypes.DESC
+      );
+    }
+  }
+}

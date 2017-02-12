@@ -8,45 +8,21 @@ $bootstrap-sass-asset-helper: false !default;
 //
 //## Gray and brand colors for use across Bootstrap.
 
-/*$gray-base:              #000 !default;
-//$gray-darker:            #3E3F3A !default;
-$gray-darker:            #3A3630 !default;
-//$gray-dark:              #8E8C84 !default;
-$gray-dark:              #5a3f35 !default;
-$gray:                   #98978B !default;
-$gray-light:             #DFD7CA !default;
-$gray-lighter:           #F8F5F0 !default;*/
-
-
-//$gray-darker:            #3E3F3A !default;
-$gray-darker:            #413c35 !default;
-$gray-base:              darken($gray-darker, 10%) !default;
-//$gray-dark:              #8E8C84 !default;
+$gray-dark:              #6F5F5C !default; //#5D5552 #6F5F5C
+$gray-darker:            darken($gray-dark, 10%)  !default;
+$gray-base:              darken($gray-darker, 15%) !default;
 $gray-dark:              lighten($gray-base, 15%) !default;
-$gray:                   lighten($gray-base, 30%) !default;
+$gray:                   lighten($gray-base, 40%) !default;
 $gray-light:             lighten($gray-base, 55%) !default;
 $gray-lighter:           lighten($gray-base, 70%) !default;
 
 
-
-/*$brand-primary:       #4b3229 !default; 
-$brand-success:         #8AB063 !default;
-$brand-info:            #FAD00A !default; #61B28E
-$brand-warning:         #F47C3C !default;
-$brand-danger:          #df4656 !default; */
-
-/*
-$brand-primary:         #413c35 !default; 
-$brand-success:         #487902 !default;
-$brand-info:            #659362 !default; 
-$brand-warning:         #E86F14 !default;
-$brand-danger:          #BB0024 !default; */
-
-$brand-primary:         #413c35 !default; 
-$brand-success:         #487902 !default;
-$brand-info:            #71A865 !default; 
-$brand-warning:         #FE6E3A !default;
-$brand-danger:          #B8023B !default;
+$brand-primary:         #388E3C !default; // #FF6D00
+$brand-success:         #388E3C !default;
+$brand-info:            #FF6D00 !default;  //#92B955
+$brand-warning:         #EBBB1E !default;
+$brand-danger:          #EA3128 !default;
+$brand-default:         #6F5F5C !default;
 
 
 
@@ -60,24 +36,24 @@ $body-bg:               #fff !default;
 $text-color:            $gray-dark !default;
 
 //** Global textual link color.
-$link-color:            $brand-primary !default;
+$link-color:            $gray-dark !default;
 //** Link hover color set via `darken()` function.
-$link-hover-color:      darken($link-color, 15%) !default;
+$link-hover-color:      $brand-info !default;
 //** Link hover decoration.
-$link-hover-decoration: underline !default;
-
+//$link-hover-decoration: underline !default;
+$link-hover-decoration: none !default;
 
 //== Typography
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$font-family-sans-serif:  "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
 $font-family-serif:        "Times New Roman", Times, serif !default;
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;
 
-$font-size-base:          14px !default;
+$font-size-base:          15px !default;
 $font-size-large:         ceil(($font-size-base * 1.05)) !default; // ~15px
 $font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
 
@@ -89,7 +65,7 @@ $font-size-h5:            $font-size-base !default;
 $font-size-h6:            ceil(($font-size-base * 0.85)) !default; // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        1.428571429 !default; // 20/14
+$line-height-base:        1.6 !default; // 20/14 1.428571429
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-computed:    floor(($font-size-base * $line-height-base)) !default; // ~20px
 
@@ -120,7 +96,7 @@ $icon-font-svg-id:        "glyphicons_halflingsregular" !default;
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
-$padding-base-vertical:     6px !default;
+/* $padding-base-vertical:     6px !default;
 $padding-base-horizontal:   12px !default;
 
 $padding-large-vertical:    10px !default;
@@ -132,6 +108,27 @@ $padding-small-horizontal:  10px !default;
 $padding-xs-vertical:       1px !default;
 $padding-xs-horizontal:     5px !default;
 
+$line-height-large:         1.3333333 !default; 
+$line-height-small:         1.5 !default;
+
+$border-radius-base:        4px !default;
+$border-radius-large:       6px !default;
+$border-radius-small:       3px !default;
+$padding-base-vertical:     6px !default;
+$padding-base-horizontal:   12px !default; */
+
+$padding-base-vertical:     8px !default;
+$padding-base-horizontal:   12px !default;
+
+$padding-large-vertical:    13px !default;
+$padding-large-horizontal:  16px !default;
+
+$padding-small-vertical:    7px !default;
+$padding-small-horizontal:  10px !default;
+
+$padding-xs-vertical:       2px !default;
+$padding-xs-horizontal:     5px !default;
+
 $line-height-large:         1.3333333 !default; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5 !default;
 
@@ -139,10 +136,11 @@ $border-radius-base:        4px !default;
 $border-radius-large:       6px !default;
 $border-radius-small:       3px !default;
 
+
 //** Global color for active items (e.g., navs or dropdowns).
 $component-active-color:    #fff !default;
 //** Global background color for active items (e.g., navs or dropdowns).
-$component-active-bg:       $brand-primary !default;
+$component-active-bg:       $brand-success !default;
 
 //** Width of the `border` for generating carets that indicate dropdowns.
 $caret-width-base:          4px !default;
@@ -179,9 +177,13 @@ $table-border-color:            #dCdAcA !default; //#E4DFDB
 
 $btn-font-weight:                normal !default;
 
-$btn-default-color:              #333 !default;
-$btn-default-bg:                 #fff !default;
-$btn-default-border:             #CCAE90 !default;
+/*$btn-default-color:              #fff !default;
+$btn-default-bg:                 $gray-dark !default;
+$btn-default-border:             darken($gray-dark, 5%) !default;*/
+
+$btn-default-color:              #fff !default;
+$btn-default-bg:                 $brand-default !default;
+$btn-default-border:             darken($btn-default-bg, 5%) !default;
 
 $btn-primary-color:              #fff !default;
 $btn-primary-bg:                 $brand-primary !default;
@@ -191,7 +193,7 @@ $btn-success-color:              #fff !default;
 $btn-success-bg:                 $brand-success !default;
 $btn-success-border:             darken($btn-success-bg, 5%) !default;
 
-$btn-info-color:                 #fff !default;
+$btn-info-color:                 #fff  !default;
 $btn-info-bg:                    $brand-info !default;
 $btn-info-border:                darken($btn-info-bg, 5%) !default;
 
@@ -392,7 +394,7 @@ $container-lg:                 $container-large-desktop !default;
 //##
 
 // Basics of a navbar
-$navbar-height:                    50px !default;
+$navbar-height:                    60px !default;
 $navbar-margin-bottom:             $line-height-computed !default;
 $navbar-border-radius:             $border-radius-base !default;
 $navbar-padding-horizontal:        floor(($grid-gutter-width / 2)) !default;
@@ -405,9 +407,9 @@ $navbar-default-border:            darken($navbar-default-bg, 6.5%) !default;
 
 // Navbar links
 $navbar-default-link-color:                $gray-dark !default;
-$navbar-default-link-hover-color:          $brand-info !default;
+$navbar-default-link-hover-color:          $brand-success !default;
 $navbar-default-link-hover-bg:             transparent !default;
-$navbar-default-link-active-color:         $brand-info !default;
+$navbar-default-link-active-color:         $brand-success !default;
 $navbar-default-link-active-bg:            transparent !default; //lighten($navbar-default-color, 50%) !default;
 $navbar-default-link-disabled-color:       $gray-lighter !default;
 $navbar-default-link-disabled-bg:          transparent !default;
@@ -492,10 +494,10 @@ $pagination-hover-border:              #E4DFDB !default;
 
 $pagination-active-color:              #fff !default;
 $pagination-active-bg:                 $brand-primary !default;
-$pagination-active-border:             $brand-primary !default;
+$pagination-active-border:             $gray-light !default;
 
 $pagination-disabled-color:            $gray-light !default;
-$pagination-disabled-bg:               #fff !default;
+$pagination-disabled-bg:               $gray-lighter !default;
 $pagination-disabled-border:           #E4DFDB !default;
 
 
@@ -531,21 +533,21 @@ $jumbotron-heading-font-size:    ceil(($font-size-base * 4.5)) !default;
 //
 //## Define colors for form feedback states and, by default, alerts.
 
-$state-success-text:             #3c763d !default;
-$state-success-bg:               #dff0d8 !default;
-$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-success-bg:             $brand-success !default;
+$state-success-text:           #fff !default;
+$state-success-border:         darken(adjust-hue($state-success-bg, -10), 5%) !default;
 
-$state-info-text:                #31708f !default;
-$state-info-bg:                  #d9edf7 !default;
-$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
+$state-info-bg:                $brand-info !default;
+$state-info-text:              #fff !default;
+$state-info-border:            darken(adjust-hue($state-info-bg, -10), 7%) !default;
 
-$state-warning-text:             #8a6d3b !default;
-$state-warning-bg:               #fcf8e3 !default;
-$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) !default;
+$state-warning-bg:             $brand-warning !default;
+$state-warning-text:           #fff !default;
+$state-warning-border:         darken(adjust-hue($state-warning-bg, -10), 5%) !default;
 
-$state-danger-text:              #a94442 !default;
-$state-danger-bg:                #f2dede !default;
-$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+$state-danger-bg:              $brand-danger !default;
+$state-danger-text:            #fff !default;
+$state-danger-border:          darken(adjust-hue($state-danger-bg, -10), 5%) !default;
 
 
 //== Tooltips
@@ -557,7 +559,7 @@ $tooltip-max-width:           200px !default;
 //** Tooltip text color
 $tooltip-color:               #fff !default;
 //** Tooltip background color
-$tooltip-bg:                  #000 !default;
+$tooltip-bg:                  $gray-base !default;
 $tooltip-opacity:             .9 !default;
 
 //** Tooltip arrow width
@@ -729,9 +731,9 @@ $list-group-disabled-bg:         $gray-lighter !default;
 $list-group-disabled-text-color: $list-group-disabled-color !default;
 
 //$list-group-link-color:         #555 !default;
-$list-group-link-color:         $brand-primary !default;
+$list-group-link-color:         $gray-darker !default;
 $list-group-link-hover-color:   $list-group-link-color !default;
-$list-group-link-heading-color: #333 !default;
+$list-group-link-heading-color: $gray-darker !default;
 
 
 //== Panels

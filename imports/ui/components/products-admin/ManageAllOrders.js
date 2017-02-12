@@ -1,14 +1,15 @@
 import React from 'react'
-import { ListGroup, Row, Col, SplitButton, MenuItem } from 'react-bootstrap'
+import { ListGroup, Row, Col, SplitButton, MenuItem, Button } from 'react-bootstrap'
 //import  Griddle from 'griddle-react'
 import {Table, Column, Cell} from 'fixed-data-table-2'
-import { LinkCell, ImageCell, TextCell, DateCell, AmountCell, OrderStatusCell, RowSelectedCell } from '../../../modules/ui/ShopTableCells'
+import { DataListStore, SortTypes, SortHeaderCell, LinkCell, ImageCell } from '../../../modules/ui/ShopTableCells'
+import { AmountCell, OrderStatusCell, RowSelectedCell, TextCell, DateCell } from '../../../modules/ui/ShopTableCells'
 import Dimensions from 'react-dimensions'
 import { browserHistory } from 'react-router'
 import constants from '../../../modules/constants'
 import { Bert } from 'meteor/themeteorchef:bert'
-import { updateOrderStatus } from '../../../api/orders/methods'
-
+import { updateOrderStatus, getOrders } from '../../../api/orders/methods'
+import GenerateOrderBills from './GenerateOrderBills'
 
 const UpdateStatusButtons = ({title, statuses, onSelectCallBack}) => {
     let rows = []
@@ -22,72 +23,182 @@ const UpdateStatusButtons = ({title, statuses, onSelectCallBack}) => {
     )
   }
 
-const OrderTable = ({ dataList, dynamicWidth, onChecked, onRowClickCallBack }) =>(
+const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack }) =>(
     <Table
         rowHeight = { 50 }
         headerHeight = { 50 }
-        rowsCount = { dataList.length }
+        rowsCount = { dataList.getSize() }
         width = { dynamicWidth }
         onRowClick = { onRowClickCallBack }
         height = { 500 }>
         <Column
-            header = { <Cell>Selected</Cell> }
-            cell = { <RowSelectedCell data={dataList} onChecked={onChecked} col="selected" /> }
+            columnKey="selected"
+            //header = { <Cell>Selected</Cell> }
+            header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.selected}>
+                Selected
+                </SortHeaderCell>
+            }
+            cell = { <RowSelectedCell data={dataList} onChecked={onChecked} /> }
             flexGrow = { 1 }
             width = { 50 }
         />
         <Column
-            header = { <Cell>Status</Cell> }
-            cell = { <OrderStatusCell data={dataList} col="status" /> }
+            columnKey="status"
+            cell = { <OrderStatusCell data={dataList} /> }
             flexGrow = { 2 }
             width = { 50 }
+            //header = { <Cell>Status</Cell> }
+            header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.status}>
+                Status
+                </SortHeaderCell>
+            }
         />
         <Column
-            header = {<Cell>Name</Cell>}
-            cell = { <TextCell data={dataList} col="name" /> }
+            columnKey="name"
+            header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.name}>
+                Name
+                </SortHeaderCell>
+            }
+            cell = { <TextCell data={dataList}  /> }
             width = { 100 }
             flexGrow = { 3 }
         />
         <Column
-            header = { <Cell>Mobile Number</Cell> }
-            cell = { <TextCell data={dataList} col="whMobileNum" /> }
+            columnKey="whMobileNum"
+             header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.whMobileNum}>
+                Mobile Number
+                </SortHeaderCell>
+            }
+            cell = { <TextCell data={dataList}  /> }
             width = { 100 }
             flexGrow = { 2 }
         />
         <Column
-            header = { <Cell>Order Date</Cell> }
-            cell = { <DateCell data={dataList} col="date" /> }
+            columnKey="date"
+            header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.date}>
+                Order Date
+                </SortHeaderCell>
+            }
+            cell = { <DateCell data={dataList}  /> }
             width = { 100 }
             flexGrow = { 3 }
         />
         <Column
-            header = { <Cell>Bill Amount</Cell> }
-            cell = { <AmountCell data={dataList} col="amount" /> }
+            columnKey="amount"
+            header={
+                <SortHeaderCell
+                onSortChange={onSortChangeCallBack}
+                sortDir={colSortDirs.amount}>
+                Bill Amount
+                </SortHeaderCell>
+            }
+            cell = { <AmountCell data={dataList} /> }
             width = { 100 }
             flexGrow = { 2 }
         />
     </Table>
 )
 
-class ManageAllOrders extends React.Component{
+class DataListWrapper {
+  constructor(indexMap, data) {
+    this._indexMap = indexMap;
+    this._data = data;
+  }
 
+  getSize() {
+    return this._indexMap.length;
+  }
+
+  getObjectAt(index) {
+    return this._data.getObjectAt(
+      this._indexMap[index],
+    );
+  }
+}
+
+
+class ManageAllOrders extends React.Component{
     constructor(props){
         super(props)
-        
-        let displayOrderList = this.getDisplayOrderList(this.props.orders)
+
+        this._dataList =  this.getTableDataList(this.props.orders)
+
+        this._defaultSortIndexes = [];
+        var size = this._dataList.getSize();
+        for (var index = 0; index < size; index++) {
+            this._defaultSortIndexes.push(index);
+        }
+
         this.state = {
-            displayOrderList
+            sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList),
+            colSortDirs: {},
         }
 
         this.handleRowClick = this.handleRowClick.bind(this)
         this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this)
         this.handleStatusUpdate = this.handleStatusUpdate.bind(this)
+        this._onSortChange = this._onSortChange.bind(this);
+        this.handleGenerateBills = this.handleGenerateBills.bind(this);
+
     }
 
-   getDisplayOrderList (orders){
-       let displayOrderList = []
+    _onSortChange(columnKey, sortDir) {
+        let sortIndexes = this._defaultSortIndexes.slice()
+        sortIndexes.sort((indexA, indexB) => {
+            let valueA, valueB
+            if (columnKey === "selected"){
+                const orderIdA = this._dataList.getObjectAt(indexA)["id"]
+                const orderIdB = this._dataList.getObjectAt(indexB)["id"]
+                valueA = this.selectedOrderIds.has(orderIdA)
+                valueB = this.selectedOrderIds.has(orderIdB)
+            }else
+            {
+                valueA = this._dataList.getObjectAt(indexA)[columnKey]
+                valueB = this._dataList.getObjectAt(indexB)[columnKey]
+            }
+            let sortVal = 0;
+            if (valueA > valueB) {
+                sortVal = 1;
+            }
+            if (valueA < valueB) {
+                sortVal = -1;
+            }
+            if (sortVal !== 0 && sortDir === SortTypes.ASC) {
+                sortVal = sortVal * -1;
+            }
+
+            return sortVal;
+        });
+
+        this._defaultSortIndexes = sortIndexes.slice()
+
+        this.setState({
+            sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList) ,
+            colSortDirs: {
+                [columnKey]: sortDir,
+            },
+        });
+    }  
+
+   getTableDataList (orders){
+       let orderList = []
         orders.map(({ _id,  order_status, createdAt, total_bill_amount, customer_details  }) => {
-            displayOrderList.push(
+            orderList.push(
                 { 
                     id:_id, 
                     status:order_status, 
@@ -99,7 +210,7 @@ class ManageAllOrders extends React.Component{
                 }
             )
         })
-        return displayOrderList
+        return new DataListStore (orderList)
    }
 
    componentWillMount() {
@@ -107,33 +218,56 @@ class ManageAllOrders extends React.Component{
         this.selectedOrderIds = new Set()
     }
 
+   handleGenerateBills(){
+       const orderIds = [...this.selectedOrderIds]
+        getOrders.call( { orderIds } ,(error, orders)=>{
+            const confirmation = 'pdf document containing the Bills has been generated successfully!'
+            if (error) {
+                Bert.alert(error.reason, 'danger')
+            } else {
+                let genOrderBills = new GenerateOrderBills();
+                genOrderBills.PrintOrderBills(orders)
+                Bert.alert(confirmation, 'success')
+            }
+        })   
+   }
+
+   handleRowClick(e, rowIndex){
+       e.preventDefault()
+       //browserHistory.push("/order/" + this.state.sortedDataList[rowIndex].id)
+       browserHistory.push("/order/" + this.state.sortedDataList.getObjectAt(rowIndex)["id"])
+   } 
+
    handleCheckBoxClick(e, rowIndex){
-        const orderId = this.state.displayOrderList[rowIndex].id
+        const orderId = this.state.sortedDataList.getObjectAt(rowIndex)["id"]
+        //const orderId = this._dataList.getObjectAt(rowIndex)["id"]
         if (this.selectedOrderIds.has(orderId)) {
             this.selectedOrderIds.delete(orderId)
         } else {
             this.selectedOrderIds.add(orderId)
         }
 
-        /* let displayOrderList = this.state.displayOrderList
-        displayOrderList[rowIndex].selected = !displayOrderList[rowIndex].selected
+        let sortedDataList = _.clone(this.state.sortedDataList)
+        sortedDataList.getObjectAt(rowIndex)["selected"] = !sortedDataList.getObjectAt(rowIndex)["selected"]
+        //this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
+        this.setState({
+            sortedDataList: sortedDataList,
+        });
+
+      /*  let sortedDataList = this.state.sortedDataList
+        sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected
 
         this.setState(
-            displayOrderList
+            {sortedDataList}
         )*/
    }
 
    componentWillReceiveProps(nextProps){
      if (nextProps.orders != this.props.orders){
 
-        let displayOrderList = this.getDisplayOrderList(nextProps.orders)   
-        this.setState ({displayOrderList})
+        let sortedDataList = this.getsortedDataList(nextProps.orders)   
+        this.setState ({sortedDataList})
      }
-   }
-
-   handleRowClick(e, rowIndex){
-       e.preventDefault()
-       browserHistory.push("/order/" + this.state.displayOrderList[rowIndex].id)
    }
 
    handleStatusUpdate(eventKey){
@@ -160,12 +294,22 @@ class ManageAllOrders extends React.Component{
     render(){
         return (
                 <Row>
-                    <UpdateStatusButtons title = {"Update Status"} statuses = {constants.OrderStatus} onSelectCallBack= {this.handleStatusUpdate}/>
+                    <Col xs = { 12 }>
+                        <UpdateStatusButtons title = {"Update Status"} 
+                        statuses = {constants.OrderStatus} onSelectCallBack= {this.handleStatusUpdate}/>
+                        <Button
+                        bsStyle="default"
+                        onClick={ this.handleGenerateBills }>
+                        Generate Bills
+                        </Button>
+                    </Col>
                     <OrderTable  
-                        dataList = {this.state.displayOrderList} 
+                        dataList = { this.state.sortedDataList } 
                         dynamicWidth = { this.props.containerWidth }  
-                        onRowClickCallBack = { this.handleRowClick } 
-                        onChecked = { this.handleCheckBoxClick }
+                        onRowClickCallBack = { this.handleRowClick }  
+                        onChecked = { this.handleCheckBoxClick } 
+                        colSortDirs = { this.state.colSortDirs }  
+                        onSortChangeCallBack = { this._onSortChange }
                     />
                  </Row>
         )
