@@ -20,21 +20,23 @@ export const upsertProductList = new ValidatedMethod({
 
     const startDate = params.activeStartDateTime
     const endDate = params.activeEndDateTime
+    const productListsId = params._id
 
-    const overlappingProductList = ProductLists.findOne(
-        {  $or: [
-              { activeStartDateTime: { $gte: startDate ,  $lte: endDate }  },
-              { activeEndDateTime: { $gte: startDate ,  $lte: endDate }  },
-              ]
-        },
-      )
+    if (!productListsId){
+      const overlappingProductList = ProductLists.findOne(
+          {  $or: [
+                { activeStartDateTime: { $gte: startDate ,  $lte: endDate }  },
+                { activeEndDateTime: { $gte: startDate ,  $lte: endDate }  },
+                ]
+          },
+        )
 
-    if (overlappingProductList){
-      throw new Meteor.Error(417, " Another Product List is active during this period. Product List was not created." )
+      if (overlappingProductList){
+        throw new Meteor.Error(417, " Another Product List is active during this period. Product List was not created." )
+      }
     }
 
     const OrderableProducts = Products.find({availableToOrder: true}).fetch()
-    const productListsId = params._id
 
     const productList = {
       activeStartDateTime: params.activeStartDateTime,

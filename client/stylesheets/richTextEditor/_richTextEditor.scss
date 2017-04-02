@@ -1,0 +1,9 @@
+div.richTextEditor{
+    font-family: inherit;
+    font-size:$font-size-base;
+}
+
+div.DraftEditor-editorContainer p, 
+  div.DraftEditor-editorContainer li{
+    margin-bottom: 4rem;
+}

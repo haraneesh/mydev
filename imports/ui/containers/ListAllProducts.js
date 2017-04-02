@@ -8,7 +8,7 @@ const composer = (params, onData) => {
   const subscription = Meteor.subscribe('products.list')
   if (subscription.ready()) {
     const products = Products.find().fetch()
-    onData(null, { products })
+    onData(null, { products, productListId:params.productListId })
   }
 }
 

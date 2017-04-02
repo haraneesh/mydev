@@ -21,11 +21,11 @@ Veggies.deny({
 Veggies.schema = new SimpleSchema({
   name: {
     type: String,
-    label: 'The title of the document.',
+    label: 'The title of the recipe.',
   },
   description: {
     type: String,
-    label: 'The body of the document.',
+    label: 'The body of the recipe.',
   },
 });
 

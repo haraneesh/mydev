@@ -7,3 +7,7 @@ BrowserPolicy.content.allowOriginForAll("fonts.googleapis.com");
 BrowserPolicy.content.allowOriginForAll("fonts.gstatic.com");
 //BrowserPolicy.content.allowOriginForAll("allfont.net");
 
+// Flickr url support
+BrowserPolicy.content.allowOriginForAll("c1.staticflickr.com");
+
+

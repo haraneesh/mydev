@@ -38,10 +38,6 @@ const AdminSection = () => {
   }
 }
 
-//  <LinkContainer to="/documents">
-//     <NavItem eventKey={ 2 } href="/documents">Documents</NavItem>
-//  </LinkContainer>
-
 const AuthenticatedNavigation = () => (
   <div>
     <Nav>
@@ -51,13 +47,14 @@ const AuthenticatedNavigation = () => (
       <LinkContainer to="/order">
         <NavItem eventKey={ 5 } href="/order"> <Glyphicon glyph="plus" /> Place my Order</NavItem>
       </LinkContainer>
-
+      <LinkContainer to="/recipes">
+        <NavItem eventKey={ 2 } href="/recipes">Recipes</NavItem>
+      </LinkContainer>
       <AdminSection />
-
     </Nav>
     <Nav pullRight>
       <NavDropdown eventKey={ 7 } title={ userName() } id="basic-nav-dropdown">
-        <MenuItem eventKey={ 7.1 } onClick={ handleLogout }>Logout</MenuItem>
+        <MenuItem eventKey={ 7.1 } id="app-logout" onClick={ handleLogout }>Logout</MenuItem>
         <MenuItem divider />
         <LinkContainer to="/recover-password">
           <MenuItem eventKey={ 7.2 } href="//recover-password">Change Password</MenuItem>

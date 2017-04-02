@@ -3,7 +3,24 @@ const Sort = {
    DESCENDING: -1,
 }
 
+const ControlStates ={
+        edit: " EDIT ",
+        view: " VIEW "
+}
+
+//This for organizing tabs in the order screen
 const ProductType = ["Vegetables","Groceries","Batter"]
+
+//This is for reporting purposes
+const ProductCategory = [
+        "Vegetable - country",
+        "Vegetable - hill",
+        "Vegetable - essential",
+        "Vegetable - greens",
+        "Provisions - processed",
+        "Provisions - whole",
+        "Fruit"
+        ]
 
 /*
 Pending — customer started the checkout process, but did not complete it.
@@ -49,8 +66,10 @@ const Roles = {
 
 export default constants = {
   ProductType,
+  ProductCategory,
   OrderStatus,
   ProductListStatus,
   Sort,
-  Roles
+  Roles,
+  ControlStates
 }

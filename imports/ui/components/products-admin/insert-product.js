@@ -46,7 +46,7 @@ export const InsertProduct = () => (
           name="productName"
         />
     </Col>
-    <Col xs = { 2 } > <Button  onClick = { handleInsertProduct } bsStyle = "success"> Add Product </Button> </Col>
+    <Col xs = { 2 } > <Button  onClick = { handleInsertProduct } bsStyle = "primary"> Add Product </Button> </Col>
   </Row>
   </FormGroup>
 )

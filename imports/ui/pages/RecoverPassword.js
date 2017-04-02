@@ -33,7 +33,7 @@ export default class RecoverPassword extends React.Component {
                   placeholder="Email Address"
                 />
               </FormGroup>
-              <Button type="submit" bsStyle="success">Send Me</Button>
+              <Button type="submit" bsStyle="primary">Send Me</Button>
             </form>
           </Col>
         </Row>

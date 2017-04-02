@@ -101,7 +101,7 @@ export default class Signup extends React.Component {
                   />      
                 </FormGroup>)
               }
-              <Button type="submit" bsStyle="success">{ title }</Button>
+              <Button type="submit" bsStyle="primary">{ title }</Button>
             </form>
             { !loggedInUser && (<p>Already have an account? <Link to="/login">Log In</Link>.</p>) }
           </Col>

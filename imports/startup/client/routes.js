@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, Redirect, IndexRoute, browserHistory } from 'react-router';
 import { Meteor } from 'meteor/meteor';
 import App from '../../ui/layouts/App.js';
-import Documents from '../../ui/pages/Documents.js';
-/*Documents*/
-import NewDocument from '../../ui/pages/NewDocument.js';
-import EditDocument from '../../ui/containers/EditDocument';
-import ViewDocument from '../../ui/containers/ViewDocument';
+import Recipes from '../../ui/pages/recipes/Recipes';
+/*Recipes*/
+import NewRecipe from '../../ui/pages/recipes/NewRecipe';
+import EditRecipe from '../../ui/containers/recipes/EditRecipe';
+import ViewRecipe from '../../ui/containers/recipes/ViewRecipe';
 /*order*/
 import { MyOrders } from '../../ui/pages/orders/MyOrders'
 //import ViewOrderDetails  from '../../ui/containers/orders/ViewOrderDetails'
@@ -21,7 +21,7 @@ import ViewProductListDetails from '../../ui/containers/productLists/ViewProduct
 /*miscellaneous*/
 import Index from '../../ui/pages/Index.js';
 import Login from '../../ui/pages/Login.js';
-import NotFound from '../../ui/pages/NotFound.js';
+//import NotFound from '../../ui/pages/NotFound.js';
 import RecoverPassword from '../../ui/pages/RecoverPassword.js';
 import ResetPassword from '../../ui/pages/ResetPassword.js';
 import Signup from '../../ui/pages/Signup.js';
@@ -46,10 +46,10 @@ Meteor.startup(() => {
         <IndexRoute name="myOrders" component={ MyOrders } onEnter={ authenticate } />
 
         /* Documents */
-        <Route name="documents" path="/documents" component={ Documents } onEnter={ authenticate } />
-        <Route name="newDocument" path="/documents/new" component={ NewDocument } onEnter={ authenticate } />
-        <Route name="editDocument" path="/documents/:_id/edit" component={ EditDocument } onEnter={ authenticate } />
-        <Route name="viewDocument" path="/documents/:_id" component={ ViewDocument } onEnter={ authenticate } />
+        <Route name="recipes" path="/recipes" component={ Recipes } onEnter={ authenticate } />
+        <Route name="newRecipe" path="/recipes/new" component={ NewRecipe } onEnter={ authenticate } />
+        <Route name="editRecipe" path="/recipes/:_id/edit" component={ EditRecipe } onEnter={ authenticate } />
+        <Route name="viewRecipe" path="/recipes/:_id" component={ ViewRecipe } onEnter={ authenticate } />
 
         /* Order */
         <Route name="EditOrderDetails" path="/order/:_id" component={ EditOrderDetails } onEnter={ authenticate } />
@@ -60,8 +60,10 @@ Meteor.startup(() => {
 
         /* Admin */
          /* ProductLists */
+        <Route name="products-admin" path="/productLists/:_id/edit" component={ ProductsAdmin } onEnter={ authenticate } />
         <Route name="viewProductListDetails" path="/productLists/:_id" component={ ViewProductListDetails } onEnter={ authenticate } />
         <Route name="productLists" path="/productLists" component={ ProductLists } onEnter={ authenticate } />
+        
         /* Orders */
         <Route name="allOrders" path="/allorders" component= { AllOrders } onEnter = { authenticate } />
 
@@ -70,7 +72,10 @@ Meteor.startup(() => {
         <Route name="recover-password" path="/recover-password" component={ RecoverPassword } />
         <Route name="reset-password" path="/reset-password/:token" component={ ResetPassword } />
         <Route name="signup" path="/signup" component={ Signup } />
-        <Route path="*" component={ NotFound } />
+
+        /* Page not found */
+        <Redirect from='*' to='/' />
+
       </Route>
     </Router>,
     document.getElementById('react-root')

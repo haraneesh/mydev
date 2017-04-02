@@ -27,6 +27,7 @@ export let ProductSchemaDefObject = {
   description: { type: String, label: 'The description of the product.', optional:true},
   image_path: { type: String, label: 'The image path of the product.', },
   type: { type:String, label: 'The type of the product.', },
+  category: { type:String, label: 'The category of the product.', optional:true },
   availableToOrder: {type:Boolean, label: 'Is product availableToOrder?', optional:true },
   vendor_details:{ type: Object},
   "vendor_details.id" : {  type:Number, decimal:true, label: 'The vendor details of the product.',  },

@@ -107,6 +107,14 @@ export default class Product extends React.Component {
                onChange = {this.handleProductUpsert} >
                Is Available To Order
              </Checkbox>
+
+             <FieldGroup controlType = "text"
+               controlLabel = "Image URL"
+               controlName =  "image_path"
+               updateValue = { this.handleProductUpsert }
+               defaultValue = { this.props.product.image_path }
+               help />
+
           </Col>
 
          <Col sm = { 6 }>
@@ -153,12 +161,19 @@ export default class Product extends React.Component {
                 defaultValue = { this.props.product.type }
                 children = { constants.ProductType }
                 help />
+
+                <FieldGroup controlType = "select"
+                controlLabel = "Category"
+                controlName = "category"
+                updateValue = { this.handleProductUpsert }
+                defaultValue = { this.props.product.category }
+                children = { constants.ProductCategory }
+                help />
             </Form>
           </Col>
 
           <Col sm={ 2 }>
             <Button
-              bsStyle="primary"
               name = { this.props.product._id }
               onClick={ this.handleRemoveProduct }>
               Remove

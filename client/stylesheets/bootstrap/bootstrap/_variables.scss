@@ -11,18 +11,23 @@ $bootstrap-sass-asset-helper: false !default;
 $gray-dark:              #6F5F5C !default; //#5D5552 #6F5F5C
 $gray-darker:            darken($gray-dark, 10%)  !default;
 $gray-base:              darken($gray-darker, 15%) !default;
+
+$gray-base:              #1c1c1c !default; // #151515 !default;
+$gray-darker:            lighten($gray-base, 5%) !default;
 $gray-dark:              lighten($gray-base, 15%) !default;
 $gray:                   lighten($gray-base, 40%) !default;
 $gray-light:             lighten($gray-base, 55%) !default;
 $gray-lighter:           lighten($gray-base, 70%) !default;
 
-
-$brand-primary:         #388E3C !default; // #FF6D00
-$brand-success:         #388E3C !default;
-$brand-info:            #FF6D00 !default;  //#92B955
-$brand-warning:         #EBBB1E !default;
-$brand-danger:          #EA3128 !default;
-$brand-default:         #6F5F5C !default;
+// http://colllor.com/388e3c
+ 
+$brand-primary:         #388E3C !default; // Primary #7bbb5e #0e7d13 #406D04 #5A8D02 #4CAF50
+$brand-default:         #1c1c1c  !default; // Secondary #6F5F5C #3E1F0C
+$brand-success:         #388E3C  !default; // #8BC058 #65A832 #506d2f
+$brand-info:            #A26B61 !default; //#92B955
+$brand-warning:         #FF6D00 !default; //#EBBB1E 
+$brand-danger:          #9C070A !default; //#EA3128
+$brand-logo-yellow:     #FFC63B !default;
 
 
 
@@ -33,12 +38,12 @@ $brand-default:         #6F5F5C !default;
 //** Background color for `<body>`.
 $body-bg:               #fff !default;
 //** Global text color on `<body>`.
-$text-color:            $gray-dark !default;
+$text-color:            $gray-darker !default;
 
 //** Global textual link color.
 $link-color:            $gray-dark !default;
 //** Link hover color set via `darken()` function.
-$link-hover-color:      $brand-info !default;
+$link-hover-color:      $brand-primary !default;
 //** Link hover decoration.
 //$link-hover-decoration: underline !default;
 $link-hover-decoration: none !default;
@@ -53,7 +58,7 @@ $font-family-serif:        "Times New Roman", Times, serif !default;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;
 
-$font-size-base:          15px !default;
+$font-size-base:          16px !default;
 $font-size-large:         ceil(($font-size-base * 1.05)) !default; // ~15px
 $font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
 
@@ -140,7 +145,7 @@ $border-radius-small:       3px !default;
 //** Global color for active items (e.g., navs or dropdowns).
 $component-active-color:    #fff !default;
 //** Global background color for active items (e.g., navs or dropdowns).
-$component-active-bg:       $brand-success !default;
+$component-active-bg:       $brand-primary !default;
 
 //** Width of the `border` for generating carets that indicate dropdowns.
 $caret-width-base:          4px !default;
@@ -177,13 +182,13 @@ $table-border-color:            #dCdAcA !default; //#E4DFDB
 
 $btn-font-weight:                normal !default;
 
-/*$btn-default-color:              #fff !default;
-$btn-default-bg:                 $gray-dark !default;
-$btn-default-border:             darken($gray-dark, 5%) !default;*/
-
 $btn-default-color:              #fff !default;
 $btn-default-bg:                 $brand-default !default;
 $btn-default-border:             darken($btn-default-bg, 5%) !default;
+
+/*$btn-default-color:              $brand-primary !default;
+$btn-default-bg:                 #fff !default;
+$btn-default-border:             darken($btn-default-color, 5%) !default;*/
 
 $btn-primary-color:              #fff !default;
 $btn-primary-bg:                 $brand-primary !default;
@@ -240,7 +245,7 @@ $input-border-radius-small:      $border-radius-small !default;
 $input-border-focus:             $brand-info !default;
 
 //** Placeholder text color
-$input-color-placeholder:        $gray !default;
+$input-color-placeholder:        $gray-lighter !default;
 
 //** Default `.form-control` height
 $input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
@@ -394,22 +399,22 @@ $container-lg:                 $container-large-desktop !default;
 //##
 
 // Basics of a navbar
-$navbar-height:                    60px !default;
+$navbar-height:                    75px !default;
 $navbar-margin-bottom:             $line-height-computed !default;
-$navbar-border-radius:             $border-radius-base !default;
+$navbar-border-radius:             0px !default;
 $navbar-padding-horizontal:        floor(($grid-gutter-width / 2)) !default;
 $navbar-padding-vertical:          (($navbar-height - $line-height-computed) / 2) !default;
 $navbar-collapse-max-height:       340px !default;
 
 $navbar-default-color:             $gray-light !default;
 $navbar-default-bg:                #fff !default; //#FCFAEA
-$navbar-default-border:            darken($navbar-default-bg, 6.5%) !default;
+$navbar-default-border:            transparent !default; //darken($navbar-default-bg, 6.5%) !default;
 
 // Navbar links
 $navbar-default-link-color:                $gray-dark !default;
-$navbar-default-link-hover-color:          $brand-success !default;
+$navbar-default-link-hover-color:          $brand-primary !default;
 $navbar-default-link-hover-bg:             transparent !default;
-$navbar-default-link-active-color:         $brand-success !default;
+$navbar-default-link-active-color:         $brand-primary !default;
 $navbar-default-link-active-bg:            transparent !default; //lighten($navbar-default-color, 50%) !default;
 $navbar-default-link-disabled-color:       $gray-lighter !default;
 $navbar-default-link-disabled-bg:          transparent !default;
@@ -420,9 +425,9 @@ $navbar-default-brand-hover-color:         darken($navbar-default-brand-color, 1
 $navbar-default-brand-hover-bg:            transparent !default;
 
 // Navbar toggle
-$navbar-default-toggle-hover-bg:           #E4DFDB !default;
-$navbar-default-toggle-icon-bar-bg:        #888 !default;
-$navbar-default-toggle-border-color:       #E4DFDB !default;
+$navbar-default-toggle-hover-bg:           transparent !default;
+$navbar-default-toggle-icon-bar-bg:        $gray-dark !default;
+$navbar-default-toggle-border-color:       transparent !default;
 
 
 //=== Inverted navbar

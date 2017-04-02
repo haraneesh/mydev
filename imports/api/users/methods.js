@@ -31,7 +31,7 @@ export const updateUser = new ValidatedMethod({
 });
 
 /*export const removeDocument = new ValidatedMethod({
-  name: 'documents.remove',
+  name: 'recipes.remove',
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),

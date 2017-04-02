@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col, Label, ListGroup, ListGroupItem, Pager, Panel, PanelGroup } from 'react-bootstrap'
-import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap'
+import { ButtonToolbar, Button } from 'react-bootstrap'
 import { accountSettings, dateSettings } from '../../../modules/settings'
 import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers'
 import { removeProductList } from '../../../api/productLists/methods'
@@ -46,6 +46,8 @@ class ViewProductListDetails extends React.Component{
      super(props, context)
 
      this.handleRemove = this.handleRemove.bind(this)
+     this.handleEdit = this.handleEdit.bind(this)
+     
      this.state = { productList: this.props.productList  }
   }
 
@@ -63,13 +65,16 @@ class ViewProductListDetails extends React.Component{
     }
   }
 
+ handleEdit(_id){
+    browserHistory.push(`/productLists/${_id}/edit`);
+ }
+
   displayDeleteProductListButton(productListStatus, productListId)
   {
-     if (productListStatus == constants.ProductListStatus.Future.name){
+     if (productListStatus != constants.ProductListStatus.Expired.name){
        return ( <ButtonToolbar className="pull-right">
-                    <ButtonGroup bsSize="small">
-                      <Button onClick={ () => this.handleRemove(productListId) } className="btn-danger">Delete</Button>
-                    </ButtonGroup>
+                      <Button bsSize="small" onClick={ () => this.handleEdit(productListId) } className="btn-primary">Edit</Button>
+                      <Button bsSize="small" onClick={ () => this.handleRemove(productListId) } className="btn">Delete</Button>
                   </ButtonToolbar>
               )
      }

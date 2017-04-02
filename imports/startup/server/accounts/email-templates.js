@@ -1,7 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 
 const name = 'Suvai';
-const email = '<hi@homefred.co>';
+const email = '<hi@nammasuvai.com>';
 const from = `${name} ${email}`;
 const emailTemplates = Accounts.emailTemplates;
 
@@ -10,7 +10,7 @@ emailTemplates.from = from;
 
 emailTemplates.resetPassword = {
   subject() {
-    return `[${name}] Reset Your Password`;
+    return `From ${name} | Reset Your Password`;
   },
   text(user, url) {
     const userEmail = user.emails[0].address;

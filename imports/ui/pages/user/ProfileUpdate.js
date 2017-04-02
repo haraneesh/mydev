@@ -82,7 +82,7 @@ export default class ProfileUpdate extends React.Component {
                   placeholder="Password"
                 />
               </FormGroup>
-              <Button type="submit" bsStyle="success">Sign Up</Button>
+              <Button type="submit" bsStyle="primary">Sign Up</Button>
             </form>
             <p>Already have an account? <Link to="/login">Log In</Link>.</p>
           </Col>

@@ -10,8 +10,8 @@ export const upsertVeggie = new ValidatedMethod({
     title: { type: String, optional: true },
     body: { type: String, optional: true },
   }).validator(),
-  run(document) {
-    return Veggies.upsert({ _id: document._id }, { $set: document });
+  run(recipe) {
+    return Veggies.upsert({ _id: recipe._id }, { $set: recipe });
   },
 });
 

@@ -44,7 +44,7 @@ export default class Login extends React.Component {
                   placeholder="Password"
                 />
               </FormGroup>
-              <Button type="submit" bsStyle="success">Login</Button>
+              <Button type="submit" bsStyle="primary">Login</Button>
             </form>
           </Col>
         </Row>

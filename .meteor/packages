@@ -39,3 +39,5 @@ dburles:factory
 autoupdate
 osv:mongo-counter
 email
+reywood:publish-composite
+edgee:slingshot

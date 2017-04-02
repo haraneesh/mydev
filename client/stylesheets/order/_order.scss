@@ -10,11 +10,22 @@
 
 // Product ordering tabs
 
+.nav-pills > li.vegetables_bk > a {
+    padding: 10px 4px;
+}
+.nav-pills > li.groceries_bk > a {
+    padding: 10px 10px;
+}
+
+.nav > li.vegetables_bk, .nav > li.groceries_bk, .nav > li.batters_bk{
+    width:6em;
+}
+
 .nav > li.vegetables_bk > a {
     background-image: url('/app/order-tabs.png');
     background-size: 14em;
     background-repeat: no-repeat;
-    background-position: 33px 0px;
+    background-position: 20px 0px;
     padding-top:3em;
 }
 
@@ -22,7 +33,7 @@
     background-image: url('/app/order-tabs.png');
     background-size: 14em;
     background-repeat: no-repeat;
-    background-position: -55px 0px;
+    background-position: -60px 0px;
     padding-top:3em;
 }
 

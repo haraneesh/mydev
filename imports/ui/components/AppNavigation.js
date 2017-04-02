@@ -12,7 +12,7 @@ const AppNavigation = ({ hasUser }) => {
       <Navbar.Header>
         <Navbar.Brand>
           <a href="#">
-           <img src="../logo.png" 
+           <img src="/logo.png" 
               alt="Suvai" />
           </a>
         </Navbar.Brand>

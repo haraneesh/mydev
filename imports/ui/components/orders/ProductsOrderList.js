@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap'
-import { ButtonGroup, ListGroupItem, ControlLabel, FormControl, Tabs, Tab } from 'react-bootstrap'
+import { ListGroupItem, ControlLabel, FormControl, Tabs, Tab } from 'react-bootstrap'
 import  Product from './Product'
 import { upsertOrder, updateMyOrderStatus } from '../../../api/orders/methods'
 import { updateProductListWithOrderId } from '../../../api/productLists/methods'
@@ -13,16 +13,18 @@ import { browserHistory } from 'react-router'
 const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) =>(
   <ListGroupItem>
       <Row>
-          <div className="col-xs-7 col-sm-10">
+          <Col sm = { 9 }>
             <h4 className="text-right-not-xs">Total <strong>{
                 formatMoney(total_bill_amount, accountSettings)
               }</strong></h4>
-          </div>
-          <div className="col-xs-5 col-sm-2">
-            <Button className="btn btn-success btn-block" disabled = { total_bill_amount <= 0 } onClick = { onButtonClick }>
-              { submitButtonName }
-            </Button>
-          </div>
+          </Col>
+          <Col sm = { 3 }>
+           <div className="text-right-not-xs">
+              <Button bsStyle="success" disabled = { total_bill_amount <= 0 } onClick = { onButtonClick }>
+                { submitButtonName }
+              </Button>
+            </div>
+          </Col>
       </Row>
   </ListGroupItem>
 )
@@ -162,10 +164,8 @@ export default class ProductsOrderList extends React.Component{
  {
      if (orderStatus == constants.OrderStatus.Pending.name){
        return ( <ButtonToolbar className="pull-right">
-                    <ButtonGroup bsSize="small">
-                      <Button onClick={ this.handleCancel }>Cancel Order</Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
+                    <Button bsSize="small" onClick={ this.handleCancel }>Cancel Order</Button>
+                 </ButtonToolbar>
               )
      } 
   }
@@ -218,7 +218,8 @@ displayProductsByType(products){
  displayProductsAndSubmit(submitButtonName){
    //Grouping product categories by tabs
    return(
-     this.props.products.length > 0 ? <Row>
+     this.props.products.length > 0 ? <Panel>
+        <Row>
           <Col xs = { 12 }>
                 <ListGroup className="products-list">
                     { this.displayProductsByType ( this.props.products) }
@@ -229,7 +230,8 @@ displayProductsByType(products){
                      />
               </ListGroup>
           </Col>
-      </Row>
+        </Row>
+      </Panel>
       :
       <Alert bsStyle="info">We do not have any products for you to order today. Please check back tomorrow.</Alert>
    )
@@ -245,9 +247,7 @@ displayProductsByType(products){
                 <h3 className = "page-header"> { formHeading }
                   { this.displayCancelOrderButton( this.props.order_status ) }
                 </h3>
-                <Panel>
                   { this.displayProductsAndSubmit(submitButtonName) }
-                </Panel>
             </Col>
           </Row>
         </div>

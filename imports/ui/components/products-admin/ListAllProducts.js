@@ -1,5 +1,5 @@
 import React from 'react'
-import { ListGroup, Alert, Button, Col, ListGroupItem, Form, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap'
+import { ListGroup, Alert, Button, Col, Row, ListGroupItem, Form, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap'
 import { Bert } from 'meteor/themeteorchef:bert'
 import Datetime from 'react-datetime'
 import Product from './product'
@@ -18,6 +18,8 @@ class ListAllProducts extends React.Component {
       activeEndDate: null,
       showEndDateError: false,
     }
+   
+    this.productListId = this.props.productListId
 
     this.publishProductList = this.publishProductList.bind(this)
     this.checkValidStartDate = this.checkValidStartDate.bind(this)
@@ -33,14 +35,15 @@ class ListAllProducts extends React.Component {
       const params = {
         activeStartDateTime: new Date (this.state.activeStartDate),
         activeEndDateTime: new Date (this.state.activeEndDate),
-        _id: null,
+        _id: this.productListId,
       }
 
       upsertProductList.call(params, (error, response) => {
           if (error) {
             Bert.alert(error.reason, 'danger')
           } else {
-            Bert.alert('ProductList has been created! ', 'success')
+            const successMsg = (params._id)? "ProductList has been updated!":"ProductList has been created!"
+            Bert.alert( successMsg, 'success')
           }
         })
   }
@@ -76,22 +79,28 @@ class ListAllProducts extends React.Component {
      <ListGroupItem className = 'publishSection'>
        <h3> Publish Product List for Users to order </h3>
        <HelpBlock bStyle = "info">Select dates during which this product list will be available for the users to order</HelpBlock>
-       <Col xs = { 6 }>
-         <ControlLabel> Active start date </ControlLabel>
-       </Col>
-       <Col xs = { 6 }>
-         <Datetime closeOnSelect={ true } isValidDate={ this.checkIsValidDate } onChange={ this.checkValidStartDate } />
-       </Col>
-       <Col xs = { 6 }>
-         <ControlLabel> Active end date </ControlLabel>
-       </Col>
-       <Col xs = { 6 }>
-         <Datetime closeOnSelect = { true } isValidDate={ this.checkIsValidDate } onChange={ this.checkValidEndDate } />
-         {this.state.showEndDateError && <Alert bsStyle="danger"> End date and time should be greater than start date. </Alert>}
-       </Col>
-       <Col xs = { 12 }>
-         <Button bsStyle = "success" onClick = { this.publishProductList }> Publish Product List </Button>
-       </Col>
+       <Row>
+          <Col xs = { 6 }>
+            <ControlLabel> Active start date </ControlLabel>
+          </Col>
+          <Col xs = { 6 }>
+            <Datetime closeOnSelect={ true } isValidDate={ this.checkIsValidDate } onChange={ this.checkValidStartDate } />
+          </Col>
+       </Row>
+       <Row>
+          <Col xs = { 6 }>
+            <ControlLabel> Active end date </ControlLabel>
+          </Col>
+          <Col xs = { 6 }>
+            <Datetime closeOnSelect = { true } isValidDate={ this.checkIsValidDate } onChange={ this.checkValidEndDate } />
+            {this.state.showEndDateError && <Alert bsStyle="danger"> End date and time should be greater than start date. </Alert>}
+          </Col>
+       </Row>
+       <Row>
+          <Col xs = { 12 }>
+            <Button bsStyle = "primary" onClick = { this.publishProductList }> Publish Product List </Button>
+          </Col>
+       </Row>
      </ListGroupItem>
    )
  }
@@ -114,6 +123,7 @@ class ListAllProducts extends React.Component {
 
 ListAllProducts.propTypes = {
   products: React.PropTypes.array.isRequired,
+  productListId: React.PropTypes.string
 }
 
 export default ListAllProducts

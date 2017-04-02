@@ -5,7 +5,7 @@ import { accountSettings, dateSettings } from '../../../modules/settings'
 import { renderToStaticMarkup } from 'react-dom/server'
 import moment from 'moment'
 import 'moment-timezone'
-import jspdf from '../../../libs/jspdf.debug'
+import jspdf from '../../../libs/jspdf.min'
 
 class GenerateOrderBills{
     constructor(pageX = 20, pageY = 60, rowHeight = 30, titleFontSize = 18, bodyFontSize = 14)

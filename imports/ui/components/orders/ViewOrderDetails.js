@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Label, Glyphicon, ListGroupItem, Pager, Panel, PanelGroup, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap'
+import { Row, Col, Label, Glyphicon, ListGroupItem, Pager, Panel, PanelGroup, Button, ButtonToolbar } from 'react-bootstrap'
 import { formatMoney } from 'accounting-js'
 import { accountSettings, dateSettings } from '../../../modules/settings'
 import { upsertOrder } from '../../../api/orders/methods'
@@ -96,6 +96,7 @@ class ViewOrderDetails extends React.Component{
     )
   }
 }
+
 ViewOrderDetails.propTypes = {
   order: React.PropTypes.object.isRequired,
 }

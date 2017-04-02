@@ -1367,7 +1367,7 @@ function addHandle( attrs, handler, test ) {
  * @param {String} name
  */
 function boolHandler( elem, name ) {
-	// XML does not need to be checked as this will not be assigned for XML documents
+	// XML does not need to be checked as this will not be assigned for XML recipes
 	var val = elem.getAttributeNode( name );
 	return val && val.specified ?
 		val.value :
@@ -1381,7 +1381,7 @@ function boolHandler( elem, name ) {
  * @param {String} name
  */
 function interpolationHandler( elem, name ) {
-	// XML does not need to be checked as this will not be assigned for XML documents
+	// XML does not need to be checked as this will not be assigned for XML recipes
 	return elem.getAttribute( name, name.toLowerCase() === "type" ? 1 : 2 );
 }
 
@@ -1393,7 +1393,7 @@ function interpolationHandler( elem, name ) {
 function valueHandler( elem ) {
 	// Ignore the value *property* on inputs by using defaultValue
 	// Fallback to Sizzle.attr by returning undefined where appropriate
-	// XML does not need to be checked as this will not be assigned for XML documents
+	// XML does not need to be checked as this will not be assigned for XML recipes
 	if ( elem.nodeName.toLowerCase() === "input" ) {
 		return elem.defaultValue;
 	}
@@ -1805,7 +1805,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			hasDuplicate = true;
 			return 0;
 
-		// Parentless nodes are either documents or disconnected
+		// Parentless nodes are either recipes or disconnected
 		} else if ( !aup || !bup ) {
 			return a === doc ? -1 :
 				b === doc ? 1 :

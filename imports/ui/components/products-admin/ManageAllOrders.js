@@ -17,7 +17,7 @@ const UpdateStatusButtons = ({title, statuses, onSelectCallBack}) => {
             rows.push(<MenuItem eventKey = {value.name} onSelect = {onSelectCallBack} >  {"to " + value.display_value} </MenuItem>)
         })
     return( 
-        <SplitButton title = {title} key = "split-button-status-change" id = {`split-button-basic-status`}>
+        <SplitButton bsSize="small" title = {title} key = "split-button-status-change" id = {`split-button-basic-status`}>
             { rows }
         </SplitButton>
     )
@@ -221,7 +221,7 @@ class ManageAllOrders extends React.Component{
    handleGenerateBills(){
        const orderIds = [...this.selectedOrderIds]
         getOrders.call( { orderIds } ,(error, orders)=>{
-            const confirmation = 'pdf document containing the Bills has been generated successfully!'
+            const confirmation = 'pdf recipe containing the Bills has been generated successfully!'
             if (error) {
                 Bert.alert(error.reason, 'danger')
             } else {
@@ -299,6 +299,7 @@ class ManageAllOrders extends React.Component{
                         statuses = {constants.OrderStatus} onSelectCallBack= {this.handleStatusUpdate}/>
                         <Button
                         bsStyle="default"
+                        bsSize="small"
                         onClick={ this.handleGenerateBills }>
                         Generate Bills
                         </Button>
