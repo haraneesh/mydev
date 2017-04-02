@@ -10,7 +10,18 @@ export const upsertOrder = new ValidatedMethod({
   run(order) {
     const orderId = order._id
     delete order._id
-    return Orders.upsert({ _id: orderId }, { $set: order })
+    const loggedInUserId = this.userId
+    let query
+    if (Roles.userIsInRole(loggedInUserId, ['admin']) || !(orderId) ){
+      query = { _id: orderId }
+    }
+    else {
+      query = { and:[
+          { _id: orderId },
+          { "customer_details._id" :loggedInUserId }
+      ]}
+    }
+    return Orders.upsert( query, { $set: order })
   },
 })
 

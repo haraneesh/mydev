@@ -2,48 +2,38 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Factory } from 'meteor/dburles:factory';
 
-const Recipes = new Mongo.Collection('Recipes');
-export default Recipes;
+Invitations = new Meteor.Collection( 'Invitations' );
+export default Invitations;
 
-Recipes.allow({
+Invitations.allow({
   insert: () => false,
   update: () => false,
-  remove: () => false,
+  remove: () => false
 });
 
-Recipes.deny({
+Invitations.deny({
   insert: () => true,
   update: () => true,
-  remove: () => true,
+  remove: () => true
 });
 
-Recipes.schema = new SimpleSchema({
-  title: {
+let InvitationsSchema = new SimpleSchema({
+  sentUserId:{
     type: String,
-    label: 'The title of the recipe.',
+    label: "User id of the user who sent the invitation"
   },
-  ingredients:{ 
-    type:[String],
-    label: 'The list of ingredients in the recipe.', 
-  },
-  commentIds:{ 
-    type:[String],
-    label: 'The list of comments attached to the recipe.', 
-    optional: true
-  },
-  description: {
-    type: Object,
-    label: 'The recipe goes here.',
-    blackbox: true
-  },
-  imageUrl:{
+  email: {
     type: String,
-    label: "The url of the image of the recipe",
-    optional:true
+    label: "Email to send invitation to.",
+    regEx: SimpleSchema.RegEx.Email
   },
-  owner: {
+  token: {
     type: String,
-    label: 'The person who created the post'
+    label: "Invitation token."
+  },
+  role: {
+    type: String,
+    label: "Role to apply to the user."
   },
   createdAt: { type: Date,
     autoValue: function() {
@@ -68,12 +58,16 @@ Recipes.schema = new SimpleSchema({
     },
     denyInsert:true,
     optional: true
+  },
+  invitation_status:{
+    type:String,
+    label: "Status of the Invitation"
+  },
+  receivedUserId:{
+    type:String,
+    label: "User id of the user who accepted or received the invitation",
+    optional:true
   }
 });
 
-Recipes.attachSchema(Recipes.schema);
-
-Factory.define('recipe', Recipes, {
-  title: () => 'Factory Title',
-  recipe: () => 'Factory Body',
-});
+Invitations.attachSchema( InvitationsSchema );

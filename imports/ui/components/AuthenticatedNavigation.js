@@ -54,13 +54,17 @@ const AuthenticatedNavigation = () => (
     </Nav>
     <Nav pullRight>
       <NavDropdown eventKey={ 7 } title={ userName() } id="basic-nav-dropdown">
-        <MenuItem eventKey={ 7.1 } id="app-logout" onClick={ handleLogout }>Logout</MenuItem>
+        <LinkContainer to="/invitations">
+          <MenuItem eventKey={ 7.1 } id="invitation" href="/invitations">Refer</MenuItem>
+        </LinkContainer>
+        <MenuItem divider />
+         <MenuItem eventKey={ 7.2 } id="app-logout" onClick={ handleLogout }>Logout</MenuItem>
         <MenuItem divider />
         <LinkContainer to="/recover-password">
-          <MenuItem eventKey={ 7.2 } href="//recover-password">Change Password</MenuItem>
+          <MenuItem eventKey={ 7.3 } href="//recover-password">Change Password</MenuItem>
         </LinkContainer>
          <LinkContainer to="signup">
-          <MenuItem eventKey={ 7.3 } href="/signup">Update My Profile</MenuItem>
+          <MenuItem eventKey={ 7.4 } href="/signup">Update My Profile</MenuItem>
         </LinkContainer>
       </NavDropdown>
     </Nav>

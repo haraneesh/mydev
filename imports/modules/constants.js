@@ -63,6 +63,10 @@ const Roles = {
     admin:{ name: "admin", display_value: "Admin" },
 }
 
+const InvitationStatus = {
+    Sent:{ name: "Sent", display_value: "Sent", label: "default" },
+    Accepted: { name: "Accepted", display_value: "Accepted", label: "success"}
+}
 
 export default constants = {
   ProductType,
@@ -71,5 +75,6 @@ export default constants = {
   ProductListStatus,
   Sort,
   Roles,
-  ControlStates
+  ControlStates,
+  InvitationStatus
 }

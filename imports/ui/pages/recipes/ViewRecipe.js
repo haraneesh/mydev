@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonToolbar, Button, Panel, Row, ControlLabel } from 'react-bootstrap';
+import { ButtonToolbar, Button, Panel, Row, ControlLabel, Image } from 'react-bootstrap';
 import { Editor, convertFromRaw, EditorState} from 'draft-js'
 import { browserHistory } from 'react-router';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -24,6 +24,8 @@ const ViewRecipe = ({ recipe }) => {
   const contentState = convertFromRaw(recipe.description) 
   const editorState = EditorState.createWithContent(contentState)
 
+  const recipeImage = (recipe.imageUrl)? {backgroundImage: "url('" + recipe.imageUrl + "')"} : ""
+
   return (
     <div className="ViewRecipe">
       <div className="page-header clearfix">
@@ -34,7 +36,8 @@ const ViewRecipe = ({ recipe }) => {
             <Button bsSize="small" onClick={ () => handleRemove(recipe._id) }>Delete</Button>
           
         </ButtonToolbar>
-      </div>
+       </div>
+      <div className ="view-recipe-image" style = { recipeImage } />
       <Panel>
           <h4>Ingredients</h4>
           <ol>

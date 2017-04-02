@@ -20,7 +20,7 @@ const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) =>(
           </Col>
           <Col sm = { 3 }>
            <div className="text-right-not-xs">
-              <Button bsStyle="success" disabled = { total_bill_amount <= 0 } onClick = { onButtonClick }>
+              <Button bsStyle="primary" disabled = { total_bill_amount <= 0 } onClick = { onButtonClick }>
                 { submitButtonName }
               </Button>
             </div>
@@ -54,7 +54,7 @@ export default class ProductsOrderList extends React.Component{
       let productArray = props.products.reduce(function(map, obj) {
         map[obj._id] = obj;
         return map;
-        }, {});
+       }, {});
   
       const total_bill_amount = (props.total_bill_amount)? props.total_bill_amount : 0  
 

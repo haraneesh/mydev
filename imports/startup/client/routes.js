@@ -5,8 +5,11 @@ import { render } from 'react-dom';
 import { Router, Route, Redirect, IndexRoute, browserHistory } from 'react-router';
 import { Meteor } from 'meteor/meteor';
 import App from '../../ui/layouts/App.js';
-import Recipes from '../../ui/pages/recipes/Recipes';
+/* Invitations */
+import Invitations from '../../ui/pages/invitations/Invitations';
+import NewInvitation from '../../ui/pages/invitations/NewInvitation';
 /*Recipes*/
+import Recipes from '../../ui/pages/recipes/Recipes';
 import NewRecipe from '../../ui/pages/recipes/NewRecipe';
 import EditRecipe from '../../ui/containers/recipes/EditRecipe';
 import ViewRecipe from '../../ui/containers/recipes/ViewRecipe';
@@ -45,12 +48,16 @@ Meteor.startup(() => {
         /*<IndexRoute name="index" component={ Index } onEnter={ authenticate } />*/
         <IndexRoute name="myOrders" component={ MyOrders } onEnter={ authenticate } />
 
-        /* Documents */
+        /* Recipes */
         <Route name="recipes" path="/recipes" component={ Recipes } onEnter={ authenticate } />
         <Route name="newRecipe" path="/recipes/new" component={ NewRecipe } onEnter={ authenticate } />
         <Route name="editRecipe" path="/recipes/:_id/edit" component={ EditRecipe } onEnter={ authenticate } />
         <Route name="viewRecipe" path="/recipes/:_id" component={ ViewRecipe } onEnter={ authenticate } />
 
+        /* Invitations */
+        <Route name="invitations" path="/invitations" component={ Invitations } onEnter={ authenticate } />
+        <Route name="newInvitation" path="/invitations/new" component={ NewInvitation } onEnter={ authenticate } />
+         
         /* Order */
         <Route name="EditOrderDetails" path="/order/:_id" component={ EditOrderDetails } onEnter={ authenticate } />
         <Route name="order" path="/order" component={ Order } onEnter={ authenticate } />

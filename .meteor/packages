@@ -41,3 +41,4 @@ osv:mongo-counter
 email
 reywood:publish-composite
 edgee:slingshot
+meteorhacks:ssr

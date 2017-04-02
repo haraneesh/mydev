@@ -8,6 +8,7 @@ import { upsertRecipe } from '../../../api/recipes/methods'
 import IngredientSelector from './IngredientSelector'
 import { Bert } from 'meteor/themeteorchef:bert'
 import { browserHistory } from 'react-router'
+import ImageUploader from '../common/ImageUploader'
 
 export default class RecipeEditor extends React.Component {
   constructor (props, context){
@@ -25,9 +26,13 @@ export default class RecipeEditor extends React.Component {
         value: (recipe) ? editorValue : RichTextEditor.createEmptyValue()
       }
 
+      this._url = ""
+
       this.ingredientListOnChange = this.ingredientListOnChange.bind(this)
       this.saveOrUpdateRecipe = this.saveOrUpdateRecipe.bind(this)
       this.onRichTextEditorChange = this.onRichTextEditorChange.bind(this)
+      this.updateImageUrl = this.updateImageUrl.bind(this) 
+      this.cancelSaveRecipe = this.cancelSaveRecipe.bind(this)
   }
 
   componentDidMount() {
@@ -43,6 +48,15 @@ export default class RecipeEditor extends React.Component {
     this.setState({value})
   }
 
+  updateImageUrl(url){
+    //this.setState({url})
+    this._url = url
+  }
+
+  cancelSaveRecipe(){
+      browserHistory.push(`/recipes/${this.props.recipe._id}`);
+  }
+
   saveOrUpdateRecipe(){
       this._currentUser = Meteor.user()
 
@@ -55,7 +69,8 @@ export default class RecipeEditor extends React.Component {
          description: convertToRaw(contentState),
          ingredients: this.objectToValueArray(this._ingredientList),
          owner: this._currentUser._id,
-         _id: this.props.recipe ? this.props.recipe._id: ""
+         _id: this.props.recipe ? this.props.recipe._id: "",
+         imageUrl: this._url
       }
 
       upsertRecipe.call(recipe, (error, msg) => {
@@ -120,6 +135,10 @@ export default class RecipeEditor extends React.Component {
         />
       </FormGroup>
       <FormGroup>
+        <h4>Add Photos</h4>
+        <ImageUploader recipe= { recipe } updateImageUrl = { this.updateImageUrl }/>
+      </FormGroup>
+      <FormGroup>
           <h4>Ingredients</h4>
           <IngredientSelector 
             controlName = "IngredientSelector" 
@@ -137,6 +156,7 @@ export default class RecipeEditor extends React.Component {
             className = "richTextEditor"
          />
       </FormGroup>
+      <Button type="submit" onClick={this.cancelSaveRecipe}>Cancel </Button>
       <Button type="submit" bsStyle="primary" onClick={this.saveOrUpdateRecipe}>
         { recipe && recipe._id ? 'Save Changes' : 'Share Recipe' }
       </Button>

@@ -1,6 +1,9 @@
 import '../../api/recipes/methods.js';
 import '../../api/recipes/server/publications.js';
 
+import '../../api/invitations/methods.js';
+import '../../api/invitations/server/publications.js';
+
 import '../../api/veggies/methods.js';
 import '../../api/veggies/server/publications.js';
 

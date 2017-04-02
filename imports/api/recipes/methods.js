@@ -10,7 +10,8 @@ export const upsertRecipe = new ValidatedMethod({
     title: { type: String, optional: true },
     description: { type: Object, optional: true, blackbox: true },
     ingredients:{ type:[String], optional: true },
-    owner:{ type:String, optional: true}
+    owner:{ type:String, optional: true},
+    imageUrl:{ type:String, optional: true}
   }).validator(),
   run(recipe) {
     //Check if recipe creator is the one who is updating
