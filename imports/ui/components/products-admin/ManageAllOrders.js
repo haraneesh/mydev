@@ -8,8 +8,10 @@ import Dimensions from 'react-dimensions'
 import { browserHistory } from 'react-router'
 import constants from '../../../modules/constants'
 import { Bert } from 'meteor/themeteorchef:bert'
-import { updateOrderStatus, getOrders } from '../../../api/orders/methods'
-import GenerateOrderBills from './GenerateOrderBills'
+import { updateOrderStatus, getOrders, getProductQuantityForOrderAwaitingFullFillment } from '../../../api/orders/methods'
+import GenerateOrderBills from '../../../reports/client/GenerateOrderBills'
+import GenerateOPL from '../../../reports/client/GenerateOPL'
+import PropTypes from 'prop-types'
 
 const UpdateStatusButtons = ({title, statuses, onSelectCallBack}) => {
     let rows = []
@@ -154,7 +156,7 @@ class ManageAllOrders extends React.Component{
         this.handleStatusUpdate = this.handleStatusUpdate.bind(this)
         this._onSortChange = this._onSortChange.bind(this);
         this.handleGenerateBills = this.handleGenerateBills.bind(this);
-
+        this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
     }
 
     _onSortChange(columnKey, sortDir) {
@@ -217,6 +219,17 @@ class ManageAllOrders extends React.Component{
         /* Create a new property to save checked boxes */  
         this.selectedOrderIds = new Set()
     }
+
+   handleGenerateOPL(){
+        getProductQuantityForOrderAwaitingFullFillment.call({},(error,aggr)=>{
+            if (error) {
+                Bert.alert(error.reason, 'danger')
+            } else {
+                let generateOPL = new GenerateOPL();
+                generateOPL.PrintOPL(aggr)     
+            }
+        })
+   }
 
    handleGenerateBills(){
        const orderIds = [...this.selectedOrderIds]
@@ -298,10 +311,16 @@ class ManageAllOrders extends React.Component{
                         <UpdateStatusButtons title = {"Update Status"} 
                         statuses = {constants.OrderStatus} onSelectCallBack= {this.handleStatusUpdate}/>
                         <Button
-                        bsStyle="default"
-                        bsSize="small"
-                        onClick={ this.handleGenerateBills }>
-                        Generate Bills
+                            bsStyle="default"
+                            bsSize="small"
+                            onClick={ this.handleGenerateBills }>
+                            Generate Bills
+                        </Button>
+                        <Button
+                            bsStyle="default"
+                            bsSize="small"
+                            onClick={ this.handleGenerateOPL }>
+                            Generate OPL
                         </Button>
                     </Col>
                     <OrderTable  
@@ -318,8 +337,8 @@ class ManageAllOrders extends React.Component{
 }
 
 ManageAllOrders.propTypes = {
-    orders: React.PropTypes.array,
-    containerWidth: React.PropTypes.number.isRequired,   
+    orders: PropTypes.array,
+    containerWidth: PropTypes.number.isRequired,   
 }
 
 export default Dimensions()(ManageAllOrders)

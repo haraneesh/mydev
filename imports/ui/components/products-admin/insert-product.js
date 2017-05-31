@@ -22,7 +22,9 @@ const handleInsertProduct = (event) => {
    }
 
     insertProduct.call({
-      sku, name, unitprice, unitOfSale, description, image_path, type, availableToOrder, vendor_details
+      sku, name, unitOfSale, unitprice,
+      description, image_path, type, availableToOrder, 
+      vendor_details
     }, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger')

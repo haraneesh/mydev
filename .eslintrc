@@ -1,0 +1,20 @@
+{
+    "extends": "airbnb",
+    "plugins": [
+        "react",
+        "jsx-a11y",
+        "import"
+    ],
+    "parser": "babel-eslint", // now for the support of allowImportExportEverywhere,
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true,
+        "meteor": true
+    },
+    "rules": {
+        "no-underscore-dangle": 0,
+        "react/no-danger": "off",
+        "func-names": 0,
+    },
+}

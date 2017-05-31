@@ -1,5 +1,6 @@
 import React from 'react';
 import { Panel, Row, Col, Glyphicon, FormControl, FormGroup, Button, ControlLabel  } from 'react-bootstrap';
+import PropTypes from 'prop-types'
 
 const IngredientRow = ({ingredient, controlName, valueChange, removeValue}) => (
     <Row>
@@ -105,7 +106,7 @@ export default class IngredientSelector extends React.Component{
 }
 
 IngredientSelector.propTypes = {
-  ingredients: React.PropTypes.array,
-  onChange: React.PropTypes.func,
-  controlName: React.PropTypes.string.isRequired,
+  ingredients: PropTypes.array,
+  onChange: PropTypes.func,
+  controlName: PropTypes.string.isRequired,
 };

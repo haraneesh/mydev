@@ -3,6 +3,7 @@
 import { browserHistory } from 'react-router';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { getLoggedInUserDisplayUserName } from './helpers'; 
 import './validation.js';
 
 let component;
@@ -16,7 +17,8 @@ const login = () => {
     if (error) {
       Bert.alert(error.reason, 'warning');
     } else {
-      Bert.alert('Logged in!', 'success');
+      const user = Meteor.user()
+      Bert.alert('Welcome ' + getLoggedInUserDisplayUserName(), 'success');
 
       const { location } = component.props;
       if (location.state && location.state.nextPathname) {

@@ -5,14 +5,9 @@ import { Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Badge } from 'react-boo
 import { Meteor } from 'meteor/meteor'
 import { Roles } from 'meteor/alanning:roles'
 import constants from '../../modules/constants'
+import { getLoggedInUserDisplayUserName } from '../../modules/helpers'
 
 const handleLogout = () => Meteor.logout(() => browserHistory.push('/login'));
-
-const userName = () => {
-  const user = Meteor.user();
-  const name = user && user.profile ? user.profile.name : '';
-  return user ? `${name.first} ${name.last}` : '';
-};
 
 const AdminSection = () => {
   const user = Meteor.user()
@@ -29,6 +24,13 @@ const AdminSection = () => {
             <MenuItem divider />
             <LinkContainer to="/allorders">
             <MenuItem eventKey={ 6.2 }>Manage Orders</MenuItem>
+            </LinkContainer>
+            <LinkContainer to="/recipes">
+              <MenuItem eventKey={ 2 }>Recipes</MenuItem>
+            </LinkContainer>
+             <MenuItem divider />
+            <LinkContainer to="/updateProfile">
+              <MenuItem eventKey={ 6.3 }>Create / Update User</MenuItem>
             </LinkContainer>
         </NavDropdown>
     )
@@ -47,24 +49,22 @@ const AuthenticatedNavigation = () => (
       <LinkContainer to="/order">
         <NavItem eventKey={ 5 } href="/order"> <Glyphicon glyph="plus" /> Place my Order</NavItem>
       </LinkContainer>
-      <LinkContainer to="/recipes">
-        <NavItem eventKey={ 2 } href="/recipes">Recipes</NavItem>
-      </LinkContainer>
+     
       <AdminSection />
     </Nav>
     <Nav pullRight>
-      <NavDropdown eventKey={ 7 } title={ userName() } id="basic-nav-dropdown">
+      <NavDropdown eventKey={ 7 } title={ getLoggedInUserDisplayUserName() } id="basic-nav-dropdown">
         <LinkContainer to="/invitations">
-          <MenuItem eventKey={ 7.1 } id="invitation" href="/invitations">Refer</MenuItem>
+          <MenuItem eventKey={ 7.1 } id="invitation" href="/invitations">Invite</MenuItem>
         </LinkContainer>
         <MenuItem divider />
          <MenuItem eventKey={ 7.2 } id="app-logout" onClick={ handleLogout }>Logout</MenuItem>
         <MenuItem divider />
         <LinkContainer to="/recover-password">
-          <MenuItem eventKey={ 7.3 } href="//recover-password">Change Password</MenuItem>
+          <MenuItem eventKey={ 7.3 } href="/recover-password">Change Password</MenuItem>
         </LinkContainer>
-         <LinkContainer to="signup">
-          <MenuItem eventKey={ 7.4 } href="/signup">Update My Profile</MenuItem>
+         <LinkContainer to="/update">
+          <MenuItem eventKey={ 7.4 } href="/update">Update My Profile</MenuItem>
         </LinkContainer>
       </NavDropdown>
     </Nav>

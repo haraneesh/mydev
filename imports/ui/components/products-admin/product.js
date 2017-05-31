@@ -2,7 +2,9 @@ import React from 'react'
 import { Row, Col, ListGroupItem, Form, FormControl, Button, ControlLabel, Thumbnail, Alert, Checkbox } from 'react-bootstrap'
 import { Bert } from 'meteor/themeteorchef:bert'
 import { updateProductName, upsertProduct, updateProductUnitPrice, updateProductDescription, UpdateProductSKU, updateProductType, removeProduct } from '../../../api/products/methods.js'
-import '../../../modules/validation';
+import '../../../modules/validation'
+import ImageUploader from '../common/ImageUploader'
+import PropTypes from 'prop-types'
 
 function FieldGroup({ controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, children ,...props }) {
 /*return (
@@ -44,7 +46,8 @@ export default class Product extends React.Component {
 
       this.handleProductUpsert = this.handleProductUpsert.bind(this)
       this.handleRemoveProduct = this.handleRemoveProduct.bind(this)
-      }
+      this.updateImageUrl = this.updateImageUrl.bind(this)
+    }
 
     //Life cycle function which will check if the props are updated
     componentWillReceiveProps(nextProps){
@@ -82,6 +85,13 @@ export default class Product extends React.Component {
       }
     }
 
+    updateImageUrl(url){
+      let product = this.state.product;
+      product["image_path"] = url
+      this.setState({product:product})
+      this.updateDatabase();
+    }
+
     updateDatabase (){
       const confirmation = 'Product updated!'
       const upsert = Object.assign({},this.state.product)
@@ -100,14 +110,19 @@ export default class Product extends React.Component {
       <ListGroupItem key={ this.props.product._id }>
         <Row>
           <Col sm={ 4 }>
-             <Thumbnail src={ this.props.product.image_path } />
-
+             { /* <Thumbnail src={ this.props.product.image_path } /> */ }
+             <ImageUploader imageType = "Product" 
+                  imageUrl= { this.props.product.image_path } 
+                  updateImageUrl = { this.updateImageUrl } 
+                  imageNameOnServer = { this.props.product._id }
+              />
              <Checkbox  name = "availableToOrder"
                checked = { this.state.product.availableToOrder? true : false }
                onChange = {this.handleProductUpsert} >
                Is Available To Order
              </Checkbox>
 
+             
              <FieldGroup controlType = "text"
                controlLabel = "Image URL"
                controlName =  "image_path"
@@ -169,6 +184,14 @@ export default class Product extends React.Component {
                 defaultValue = { this.props.product.category }
                 children = { constants.ProductCategory }
                 help />
+
+               <FieldGroup controlType = "text"
+                controlLabel = "Units For Selection"
+                controlName = "unitsForSelection"
+                updateValue = { this.handleProductUpsert }
+                defaultValue = { this.props.product.unitsForSelection }
+                help />
+
             </Form>
           </Col>
 
@@ -186,6 +209,6 @@ export default class Product extends React.Component {
 }
 
 Product.propTypes = {
-  prodId: React.PropTypes.string.isRequired,
-  product: React.PropTypes.object.isRequired,
+  prodId: PropTypes.string.isRequired,
+  product: PropTypes.object.isRequired,
 }

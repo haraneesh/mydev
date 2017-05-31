@@ -3,6 +3,7 @@ import { Navbar } from 'react-bootstrap';
 import { Link } from 'react-router';
 import PublicNavigation from './PublicNavigation.js';
 import AuthenticatedNavigation from './AuthenticatedNavigation.js';
+import PropTypes from 'prop-types'
 
 const renderNavigation = hasUser => (hasUser ? <AuthenticatedNavigation /> : <PublicNavigation />);
 
@@ -11,7 +12,7 @@ const AppNavigation = ({ hasUser }) => {
     <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
-          <a href="#">
+          <a href="/">
            <img src="/logo.png" 
               alt="Suvai" />
           </a>
@@ -26,7 +27,7 @@ const AppNavigation = ({ hasUser }) => {
 }
 
 AppNavigation.propTypes = {
-  hasUser: React.PropTypes.object,
+  hasUser: PropTypes.object,
 };
 
 export default AppNavigation;

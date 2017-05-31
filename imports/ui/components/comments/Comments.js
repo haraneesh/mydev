@@ -7,6 +7,7 @@ import { upsertComment } from '../../../api/comments/methods'
 import CommentView from './CommentView'
 import CommentWrite from './CommentWrite'
 import { Bert } from 'meteor/themeteorchef:bert'
+import PropTypes from 'prop-types'
 
 export default class Comments extends React.Component {
   constructor (props, context){
@@ -73,7 +74,7 @@ export default class Comments extends React.Component {
 }
 
 Comments.propTypes = {
-  postId: React.PropTypes.string,
-  comments:React.PropTypes.array,
-  commentUsers: React.PropTypes.array
+  postId: PropTypes.string,
+  comments: PropTypes.array,
+  commentUsers: PropTypes.array
 };

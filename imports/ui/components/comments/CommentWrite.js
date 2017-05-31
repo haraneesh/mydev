@@ -3,6 +3,7 @@ import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 import { upsertComment } from '../../../api/comments/methods'
 import { Bert } from 'meteor/themeteorchef:bert'
 import constants from '../../../modules/constants'
+import PropTypes from 'prop-types'
 
 const saveComment = (postId, commentId,commentAddBoxName, onSave) => {
   const user = Meteor.user()
@@ -48,9 +49,9 @@ const CommentWrite = ({ postId, expandedComment, onSave }) => {
 }
 
 CommentWrite.propTypes={
-  postId: React.PropTypes.string.isRequired,
-  expandedComment:React.PropTypes.string,
-  onSave:React.PropTypes.func
+  postId: PropTypes.string.isRequired,
+  expandedComment: PropTypes.string,
+  onSave: PropTypes.func
 }
 
 export default CommentWrite

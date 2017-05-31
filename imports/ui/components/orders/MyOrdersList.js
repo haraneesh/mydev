@@ -2,8 +2,9 @@ import React from 'react'
 import { ListGroup, ListGroupItem, Alert, Accordion, Panel, Row,  Col, Glyphicon, Label } from 'react-bootstrap'
 import { formatMoney } from 'accounting-js'
 import { accountSettings, dateSettings } from '../../../modules/settings'
-import moment from 'moment';
-import 'moment-timezone';
+import moment from 'moment'
+import 'moment-timezone'
+import PropTypes from 'prop-types'
 
 const MyOrderList = ({ orders }) =>(
     orders.length > 0 ? <ListGroup className = "orders-list">{
@@ -32,6 +33,6 @@ export const OrderTitleRow = ( { statusToDisplay, labelStyle, invoice_Id, orderD
   )
 
 MyOrderList.propTypes = {
-  orders: React.PropTypes.array,
+  orders: PropTypes.array,
 };
 export default MyOrderList;

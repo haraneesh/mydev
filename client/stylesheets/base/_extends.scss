@@ -24,6 +24,10 @@ h1, h2, h3{
   margin-bottom:0px;
 }
 
+hr {
+    border-top: 2px dashed $brand-default;
+}
+
 .nav > li > a:hover, .nav > li > a:focus {
     background-color: transparent; 
 }
@@ -71,6 +75,7 @@ body{
     letter-spacing: 0.1rem
 }
 
+div:focus,
 .btn:active,
 .btn:focus,
 .btn.active {

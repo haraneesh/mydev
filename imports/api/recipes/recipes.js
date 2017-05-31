@@ -22,54 +22,75 @@ Recipes.schema = new SimpleSchema({
     type: String,
     label: 'The title of the recipe.',
   },
-  ingredients:{ 
-    type:[String],
-    label: 'The list of ingredients in the recipe.', 
+  ingredients: {
+    type: [String],
+    label: 'The list of ingredients in the recipe.',
+    optional: true,
   },
-  commentIds:{ 
-    type:[String],
-    label: 'The list of comments attached to the recipe.', 
-    optional: true
+  commentIds: {
+    type: [String],
+    label: 'The list of comments attached to the recipe.',
+    optional: true,
   },
   description: {
     type: Object,
     label: 'The recipe goes here.',
-    blackbox: true
+    blackbox: true,
+    optional: true,
   },
-  imageUrl:{
+  imageUrl: {
     type: String,
-    label: "The url of the image of the recipe",
-    optional:true
+    label: 'The url of the image of the recipe',
+    optional: true,
+  },
+  thumbnailUrl: {
+    type: String,
+    label: 'The url of the thumbnail image of the recipe',
+    optional: true,
+  },
+  mediaId: {
+    type: String,
+    label: 'Saves Id of the image/media',
+    optional: true,
   },
   owner: {
     type: String,
-    label: 'The person who created the post'
+    label: 'The person who created the post',
+    optional: true,
   },
-  createdAt: { type: Date,
-    autoValue: function() {
+  createdAt: {
+    type: Date,
+    autoValue() {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
-      } else {
-        this.unset();  // Prevent user from supplying their own value
+        return { $setOnInsert: new Date() };
       }
+      this.unset(); // Prevent user from supplying their own value
     },
-    optional: true
+    optional: true,
   },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   updatedAt: {
     type: Date,
-    autoValue: function() {
+    autoValue() {
       if (this.isUpdate) {
         return new Date();
       }
     },
-    denyInsert:true,
-    optional: true
-  }
+    denyInsert: true,
+    optional: true,
+  },
+  publishStatus: {
+    type: String,
+    label: 'Publish Status',
+  },
 });
+
+if (Meteor.isServer) {
+  Recipes._ensureIndex({ owner: 1 });
+}
 
 Recipes.attachSchema(Recipes.schema);
 

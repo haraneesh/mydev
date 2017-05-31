@@ -1,25 +1,23 @@
-import '../../api/recipes/methods.js';
-import '../../api/recipes/server/publications.js';
+import '../../api/recipes/methods';
+import '../../api/recipes/server/publications';
 
-import '../../api/invitations/methods.js';
-import '../../api/invitations/server/publications.js';
+import '../../api/invitations/methods';
+import '../../api/invitations/server/publications';
 
-import '../../api/veggies/methods.js';
-import '../../api/veggies/server/publications.js';
+import '../../api/products/methods';
+import '../../api/products/server/publications';
 
-import '../../api/products/methods.js'
-import '../../api/products/server/publications.js'
+import '../../api/productLists/methods';
+import '../../api/productLists/server/publications';
 
-import '../../api/productLists/methods.js'
-import '../../api/productLists/server/publications.js'
+import '../../api/orders/methods';
+import '../../api/orders/server/publications';
 
-import '../../api/orders/methods.js'
-import '../../api/orders/server/publications.js'
+import '../../api/comments/methods';
+import '../../api/comments/server/publications';
 
-import '../../api/comments/methods.js'
-import '../../api/comments/server/publications.js'
+import '../../api/users/methods';
+import '../../api/users/users';
 
-import '../../api/cart/methods.js'
-import '../../api/cart/server/publications.js'
-
-import '../../api/users/methods.js'
+import '../../api/media/methods';
+import '../../api/media/media';

@@ -1,7 +1,7 @@
 {
-  "name": "application-name",
+  "name": "NammaSuvai",
   "version": "1.0.0",
-  "description": "Application description.",
+  "description": "Namma Suvai",
   "scripts": {
     "start": "meteor --settings settings-development.json",
     "test": "meteor test --driver-package practicalmeteor:mocha --port 5000",
@@ -11,6 +11,7 @@
     "production": "meteor deploy production.meteor.com --settings settings-production.json"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "chimp": "^0.41.2",
     "eslint": "^3.8.1",
     "eslint-config-airbnb": "^12.0.0",
@@ -73,7 +74,9 @@
     "griddle-react": "^0.7.1",
     "jquery": "^2.2.4",
     "jquery-validation": "^1.15.1",
+    "meteor-node-stubs": "^0.2.6",
     "moment": "^2.17.0",
+    "moment-timezone": "^0.5.13",
     "react": "^15.4.1",
     "react-addons-pure-render-mixin": "^15.4.1",
     "react-addons-shallow-compare": "^15.4.1",

@@ -22,12 +22,14 @@ import Order from '../../../imports/ui/pages/orders/Order'
 import { ProductLists } from '../../ui/pages/productLists/ProductLists'
 import ViewProductListDetails from '../../ui/containers/productLists/ViewProductListDetails' 
 /*miscellaneous*/
-import Index from '../../ui/pages/Index.js';
-import Login from '../../ui/pages/Login.js';
+import Index from '../../ui/pages/Index';
+import Login from '../../ui/pages/Login';
+import ProfileUpdate from '../../ui/pages/users/ProfileUpdate'
 //import NotFound from '../../ui/pages/NotFound.js';
 import RecoverPassword from '../../ui/pages/RecoverPassword.js';
 import ResetPassword from '../../ui/pages/ResetPassword.js';
 import Signup from '../../ui/pages/Signup.js';
+import About from '../../ui/pages/common/About.js';
 /*admin*/
 import { ProductsAdmin } from '../../ui/pages/products-admin'
 import { AllOrders } from '../../ui/pages/admin/AllOrders'
@@ -35,7 +37,7 @@ import { AllOrders } from '../../ui/pages/admin/AllOrders'
 const authenticate = (nextState, replace) => {
   if (!Meteor.loggingIn() && !Meteor.userId()) {
     replace({
-      pathname: '/login',
+      pathname: '/about',
       state: { nextPathname: nextState.location.pathname },
     });
   }
@@ -57,6 +59,7 @@ Meteor.startup(() => {
         /* Invitations */
         <Route name="invitations" path="/invitations" component={ Invitations } onEnter={ authenticate } />
         <Route name="newInvitation" path="/invitations/new" component={ NewInvitation } onEnter={ authenticate } />
+        <Route name="acceptInvitation" path="/invitations/:token" component={ Signup } />
          
         /* Order */
         <Route name="EditOrderDetails" path="/order/:_id" component={ EditOrderDetails } onEnter={ authenticate } />
@@ -78,8 +81,12 @@ Meteor.startup(() => {
         <Route name="login" path="/login" component={ Login } />
         <Route name="recover-password" path="/recover-password" component={ RecoverPassword } />
         <Route name="reset-password" path="/reset-password/:token" component={ ResetPassword } />
-        <Route name="signup" path="/signup" component={ Signup } />
+        <Route name="update-profile" path="/update" component={ Signup }  />
+        <Route name="about" path="/about" component={ About }  />
 
+        /* Update Other User's Profile */
+        <Route  name="updateProfile" path="/updateProfile" component={ ProfileUpdate } />
+        
         /* Page not found */
         <Redirect from='*' to='/' />
 

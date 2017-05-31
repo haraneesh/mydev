@@ -6,9 +6,11 @@ import { upsertOrder, updateMyOrderStatus } from '../../../api/orders/methods'
 import { updateProductListWithOrderId } from '../../../api/productLists/methods'
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings'
+import { isLoggedInUserAdmin } from '../../../modules/helpers'
 import { Meteor } from 'meteor/meteor'
 import constants from '../../../modules/constants'
 import { browserHistory } from 'react-router'
+import PropTypes from 'prop-types'
 
 const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) =>(
   <ListGroupItem>
@@ -50,7 +52,6 @@ const OrderComment = ({comments}) =>(
 export default class ProductsOrderList extends React.Component{
    constructor (props, context){
       super(props, context)
-
       let productArray = props.products.reduce(function(map, obj) {
         map[obj._id] = obj;
         return map;
@@ -71,8 +72,10 @@ export default class ProductsOrderList extends React.Component{
 
   updateProductQuantity(event){
       const productId = event.target.name
+      const quantity = event.target.value
       let products_copy = this.state.products
-      products_copy[productId].quantity = parseFloat(event.target.value)
+      
+      products_copy[productId].quantity = parseFloat((quantity)? quantity: 0)
 
       let total_bill_amount = 0
       for (let key in products_copy) {
@@ -97,20 +100,20 @@ export default class ProductsOrderList extends React.Component{
        let loggedInUser = Meteor.user()
        let order = {
           products:products,
-          productOrderListId:this.props.productListId,
-          customer_details:{
+          /*productOrderListId:this.props.productListId,
+            customer_details:{
                 _id: loggedInUser._id ,
                 name: loggedInUser.profile.name.first + " " + loggedInUser.profile.name.last,
                 email: loggedInUser.emails[0].address,
                 mobilePhone: parseFloat ( loggedInUser.profile.whMobilePhone ),
                 deliveryAddress: loggedInUser.profile.deliveryAddress,
-              },
+              },*/
           _id:this.props.orderId,
           order_status: constants.OrderStatus.Pending.name,
-          total_bill_amount: this.state.total_bill_amount,
+          //total_bill_amount: this.state.total_bill_amount,
           comments: document.querySelector('[name="comments"]').value,
        }
-  
+    
        upsertOrder.call(order, (error, response)=>{
            const confirmation = 'Your Order has been placed'
            if (error) {
@@ -177,21 +180,23 @@ displayProductsByType(products){
    let productVegetables = []
    let productBatters = []
 
+   const isAdmin = isLoggedInUserAdmin()
+   
    products.map((product) => {
     switch(product.type) {
       case constants.ProductType[0]: //Vegetables
           productVegetables.push(
-            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product } isAdmin = {isAdmin}/>
           )
           break;
       case constants.ProductType[1]: //Groceries
           productGroceries.push(
-            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product } isAdmin = {isAdmin}/>
           )
           break;
       case constants.ProductType[2]: //Batters
           productBatters.push(
-            <Product updateProductQuantity = { this.updateProductQuantity } product = { product }/>
+            <Product updateProductQuantity = { this.updateProductQuantity } product = { product } isAdmin = {isAdmin}/>
           )
           break;
       default:
@@ -256,10 +261,10 @@ displayProductsByType(products){
 }
 
 ProductsOrderList.propTypes = {
-  products: React.PropTypes.array.isRequired,
-  productListId: React.PropTypes.string.isRequired,
-  orderId : React.PropTypes.string,
-  order_status: React.PropTypes.string,
-  comments: React.PropTypes.string,
-  total_bill_amount: React.PropTypes.number
+  products: PropTypes.array.isRequired,
+  productListId: PropTypes.string.isRequired,
+  orderId : PropTypes.string,
+  order_status: PropTypes.string,
+  comments: PropTypes.string,
+  total_bill_amount: PropTypes.number
 }

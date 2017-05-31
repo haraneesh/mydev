@@ -30,3 +30,18 @@ export function getProductListStatus(activeStartDateTime, activeEndDateTime){
 export function getFormattedMoney(money){
     return formatMoney(money, accountSettings) 
 }
+
+export function getLoggedInUserDisplayUserName(){
+  const user = Meteor.user();
+  const name = user && user.profile ? user.profile.name : '';
+  return user ? `${name.first} ${name.last}` : '';
+}
+
+export function isLoggedInUserAdmin(){
+  var loggedInUser = Meteor.user()
+  if (loggedInUser && Roles.userIsInRole(loggedInUser, constants.Roles.admin.name))
+  {
+      return true
+  }
+  return false
+}

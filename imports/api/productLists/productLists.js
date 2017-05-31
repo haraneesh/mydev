@@ -67,6 +67,10 @@ ProductLists.schema = new SimpleSchema({
   order_ids:{ type:[String],optional:true },
 })
 
+if ( Meteor.isServer ) {
+  ProductLists._ensureIndex( { activeStartDateTime:1, activeEndDateTime:1 })
+}
+
 ProductLists.attachSchema(ProductLists.schema)
 
 Factory.define('productsList', ProductLists, {

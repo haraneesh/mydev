@@ -1,5 +1,5 @@
-import faker from 'faker'
-import { Mongo } from 'meteor/mongo'
+import faker from "faker"
+import { Mongo } from "meteor/mongo"
 import { SimpleSchema } from 'meteor/aldeed:simple-schema'
 import { Factory } from 'meteor/dburles:factory'
 import { ProductSchemaDefObject } from '../../api/products/products'
@@ -11,22 +11,22 @@ export default Orders;
 Orders.allow({
   insert: () => false,
   update: () => false,
-  remove: () => false,
+  remove: () => false
 })
 
 Orders.deny({
   insert: () => true,
   update: () => true,
-  remove: () => true,
+  remove: () => true
 })
 
+
 let productsSchemaDefObject = _.clone(ProductSchemaDefObject)
-productsSchemaDefObject.quantity = {type: Number, label:'The quantity of a particular product that was ordered', defaultValue: 0}
+productsSchemaDefObject.quantity = {type: Number, decimal:true, label:'The quantity of a particular product that was ordered', defaultValue: 0}
 
 const ProductSchema = new SimpleSchema(productsSchemaDefObject)
 
 Orders.schema = new SimpleSchema({
-  _id:{ type: String, label: 'The default _id of the order', optional:true},
   createdAt: { type: Date,
     autoValue: function() {
       if (this.isInsert) {
@@ -73,7 +73,7 @@ Orders.schema = new SimpleSchema({
         "customer_details.deliveryAddress": { type: String, label: 'The customer\'s delivery address.'},
   order_status: { type: String, label: 'Status of the order.' },
   comments: { type: String, label: 'Comments added by the user to this order.', optional: true },
-  total_bill_amount: { type:Number, label: 'The total bill amount.', min: 1 },
+  total_bill_amount: { type:Number, decimal:true, label: 'The total bill amount.', min: 1 },
   // Whenever the "_id" field is updated, automatically store
   productOrderListId: { type: String, label: 'The Id of the product list from which the order was made.'},
   invoice_Id: {
@@ -90,6 +90,11 @@ Orders.schema = new SimpleSchema({
    }
  }
 })
+
+if ( Meteor.isServer ) {
+  Orders._ensureIndex( { order_status:1, 'customer_details._id':1 })
+  Orders._ensureIndex( {  "products.name":1, "products.unitOfSale":1 } )
+}
 
 Orders.attachSchema(Orders.schema)
 

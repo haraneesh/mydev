@@ -5,9 +5,9 @@ import Invitations from '../invitations';
 Meteor.publish('invitations.view', (invitationId) => {
   check(invitationId, String);
   return Invitations.find(
-        {and: [
+        {$and: [
               { _Id:invitationId },
-              {sentUserId: this.userId },
+              { sentUserId: this.userId },
             ]
         });
 });

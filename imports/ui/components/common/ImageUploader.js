@@ -1,97 +1,122 @@
 import React from 'react';
-import { Button, FormGroup, ControlLabel, FormControl, Panel, Image } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert'
-import constants from '../../../modules/constants'
+import PropTypes from 'prop-types';
+import { Bert } from 'meteor/themeteorchef:bert';
+import { Button, FormControl } from 'react-bootstrap';
+import constants from '../../../modules/constants';
+import { removeRecipePhoto, updateRecipePhoto } from '../../../api/recipes/methods';
+import Media from '../../../api/media/media';
 
 export default class ImageUploader extends React.Component {
-  constructor (props, context){
-      super(props, context)
-      const url = props.recipe && props.recipe.imageUrl
-      this.state = {
-          state:(url)? "complete":"upload",
-          url:url,
-          uploadMSG:""
-      }
-      this.props.updateImageUrl(url)
-      this._updateState = this._updateState.bind(this)
-  }
-
-  _updateState(state, url, displayMessage){ 
-    this.setState ({
-        url:url,
-        state:state,
-        uploadMSG:displayMessage
-    })
-    
-    this.props.updateImageUrl(url)
-  }
-
-  _uploadFileToAmazon ( file, recipeId ) {
-        debugger;
-        const uploader = new Slingshot.Upload( "uploadToAmazonS3",{ recipeId:recipeId });
-        this._updateState("uploading", "", `Uploading ${file.name}...`)
-        uploader.send( file, ( error, url ) => {
-            if ( error ) {
-                Bert.alert( error.message, "danger" );
-            } else {
-                this._updateState("complete", url, "")
-            }
-        });
+  constructor(props, context) {
+    super(props, context);
+    const url = props.imageUrl;
+    this.state = {
+      state: url ? 'complete' : 'upload',
+      url,
+      uploadMSG: '',
     };
 
-    _getFileFromInput( event ) {
-        return event.target.files[0];
-    }
-        //document.getElementById("upload-message").innerHTML = message
+    this._updateState = this._updateState.bind(this);
+    this._changePhoto = this._changePhoto.bind(this);
+  }
 
-    _fileUpload(event, recipeId){
-        //alert('here')
-        let file = this._getFileFromInput( event );
-        this._uploadFileToAmazon( file, recipeId );
-    }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.imageUrl !== this.props.imageUrl) {
+      this.setState({
+        state: (nextProps.imageUrl) ? 'complete' : 'upload',
+        url: nextProps.imageUrl,
+      });
 
-  render(){
-      _state = this.state
-      _prop = this.props
-       const recipeImage = (_state.url)? {backgroundImage: "url('" + _state.url + "')"} : ""
-
-      switch(_state.state){
-          case "complete":
-            //return( <Image src= { _state.url } responsive /> )
-            return ( 
-                    <div className ="view-recipe-image" style = { recipeImage } >
-                        <Button bsSize="small">Change Photo</Button>
-                    </div>
-                )
-            break;
-          case "uploading":
-            return ( 
-                     <div id = "image-section">  
-                        <label className="alert alert-info btn-file"> 
-                        <span id="upload-message">{ _state.uploadMSG }</span>
-                        </label>
-                     </div> 
-                    )
-            break;
-          default:
-            return(
-                    <div id = "image-section">  
-                        <form id="upload" className="upload-area">
-                            <label className="alert alert-info btn-file"> 
-                            <span id="upload-message">"Drag here or click here to upload recipe image"</span>
-                            <FormControl type="file" onChange = {(event)=> this._fileUpload (event, _prop.recipe._id)}/>   
-                            </label>
-                        </form>
-                    </div>
-                 )
-            break;  
+      if (nextProps.imageUrl) {
+        this.props.updateImageUrl(nextProps.imageUrl);
       }
-   }
+    }
+  }
+
+  _updateState(state, url, displayMessage) {
+    this.setState({
+      url,
+      state,
+      uploadMSG: displayMessage,
+    });
+  }
+
+  _fileUpload(event) {
+    const fsFile = new FS.File(event.target.files[0]);
+    fsFile.owner = Meteor.userId();
+    fsFile.postType = constants.PostTypes.Recipe.name;
+    fsFile.recipeId = this.props.id;
+
+    Media.insert(fsFile, (err, fileObj) => {
+      if (err) {
+        Bert.alert(err.message, 'danger');
+      } else {
+        // Inserted record in to Media. But wait for the upload to complete
+      }
+    });
+  }
+
+  _changePhoto(event, id) {
+    event.preventDefault();
+    if (confirm('Are you sure, you want to delete this image and add a new one? Deletion is permanent.')) {
+      removeRecipePhoto.call({ recipeId: id }, (error, msg) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        }
+      });
+    }
+  }
+
+  render() {
+    _state = this.state;
+    _prop = this.props;
+    const recipeImage = _state.url ? { backgroundImage: `url('${_state.url}')` } : '';
+
+    switch (_state.state) {
+      case 'complete':
+        return (
+          <div className="view-recipe-image" style={recipeImage}>
+            <Button
+              bsSize="small"
+              onClick={event =>
+                this._changePhoto(event, _prop.id)}
+            >
+              Change Photo
+            </Button>
+          </div>
+        );
+
+      case 'uploading':
+        return (
+          <div id="image-section">
+            <label className="alert alert-info btn-file">
+              <span id="upload-message">{_state.uploadMSG}</span>
+            </label>
+          </div>
+        );
+
+      default:
+        return (
+          <div id="image-section">
+            <div id="upload" className="upload-area">
+              <label className="alert alert-info btn-file">
+                <span id="upload-message">
+                  "Click to upload a recipe image or drop it here"
+                </span>
+                <FormControl
+                  type="file"
+                  onChange={event => this._fileUpload(event)}
+                />
+              </label>
+            </div>
+          </div>
+        );
+    }
+  }
 }
 
-ImageUploader.propTypes={
-    recipe: React.PropTypes.object.isRequired,
-    updateImageUrl: React.PropTypes.func.isRequired
-}
-
-
+ImageUploader.propTypes = {
+  updateImageUrl: PropTypes.func.isRequired,
+  imageUrl: PropTypes.string,
+  id: PropTypes.string.isRequired,
+};

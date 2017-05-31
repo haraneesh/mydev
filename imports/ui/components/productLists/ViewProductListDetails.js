@@ -6,6 +6,7 @@ import { getDisplayDateTitle, getProductListStatus } from '../../../modules/help
 import { removeProductList } from '../../../api/productLists/methods'
 import { Bert } from 'meteor/themeteorchef:bert';
 import { browserHistory } from 'react-router'
+import PropTypes from 'prop-types'
 
 function FieldGroup({ label, value }) {
     return(
@@ -122,7 +123,7 @@ class ViewProductListDetails extends React.Component{
 }
 
 ViewProductListDetails.propTypes = {
-  productList: React.PropTypes.object.isRequired,
+  productList: PropTypes.object.isRequired,
 };
 
 export default ViewProductListDetails

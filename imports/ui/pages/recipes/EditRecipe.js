@@ -1,5 +1,6 @@
 import React from 'react';
 import RecipeEditor from '../../components/recipes/RecipeEditor';
+import PropTypes from 'prop-types'
 
 const EditRecipe = ({ recipe }) => (
   <div className="EditRecipe">
@@ -9,7 +10,7 @@ const EditRecipe = ({ recipe }) => (
 );
 
 EditRecipe.propTypes = {
-  recipe: React.PropTypes.object,
+  recipe: PropTypes.object,
 };
 
 export default EditRecipe;

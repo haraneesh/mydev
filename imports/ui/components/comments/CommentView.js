@@ -3,6 +3,7 @@ import { Form, Row, Col, FormGroup, ControlLabel, FormControl, Button,Glyphicon,
 import CommentWrite from './CommentWrite'
 import constants from '../../../modules/constants'
 import { removeComment } from '../../../api/comments/methods'
+import PropTypes from 'prop-types'
 
 export default class CommentView extends React.Component {
   constructor (props, context){
@@ -97,7 +98,7 @@ export default class CommentView extends React.Component {
 }
 
 CommentView.propTypes = {
-  expandedComment: React.PropTypes.object.isRequired,
-  currentUser: React.PropTypes.string
-  //onEditChange: React.PropTypes.func.isRequired,
+  expandedComment: PropTypes.object.isRequired,
+  currentUser: PropTypes.string
+  //onEditChange: PropTypes.func.isRequired,
 };

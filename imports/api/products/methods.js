@@ -5,7 +5,7 @@ import rateLimit from '../../modules/rate-limit.js'
 
 export const insertProduct = new ValidatedMethod({
   name: 'products.insert',
-/*  validate: new SimpleSchema({
+  /*validate: new SimpleSchema({
     sku: {  type: String },
     name: { type: String },
     unitprice: { type: Number, decimal: true },
@@ -57,6 +57,22 @@ export const updateProductUnitPrice = new ValidatedMethod({
   },
 })
 
+export const updateUnitForSelection = new ValidatedMethod({
+  name: 'products.unitsForSelection.update',
+  validate: new SimpleSchema({
+    _id: { type: String },
+    'update.unitsForSelection': { type: String, optional: true },
+  }).validator(),
+  run({ _id, update }) {
+    
+    if (Meteor.isServer){
+      if (update.unitsForSelection.split(',').every(_IsNumber)){
+        Products.update(_id, { $set: update })
+      }
+    }
+  },
+})
+
 export const updateProductDescription = new ValidatedMethod({
   name: 'products.description.update',
   validate: new SimpleSchema({
@@ -90,13 +106,25 @@ export const updateProductImagePath = new ValidatedMethod({
   },
 })
 
+function _IsNumber(value){
+  return !isNaN(value)
+}
+
 export const upsertProduct = new ValidatedMethod({
   name: 'product.upsert',
   validate: Products.schema.validator(),
   run(product) {
     const id = product._id
     delete product._id
-    return Products.upsert({ _id: id }, { $set: product })
+    const unitsForSelection = product.unitsForSelection
+    product.unitsForSelection = (unitsForSelection)? unitsForSelection.replace(/\s+/g, '') : "0,1,2,3,4,5,6,7,8,9,10"
+    if (Meteor.isServer){
+      if ((product.unitsForSelection.split(',').every(_IsNumber))){
+         return Products.upsert({ _id: id }, { $set: product })
+        } else {
+          throw new Meteor.Error(403, "Units for Selection should be numbers")
+        }
+    }
   },
 })
 

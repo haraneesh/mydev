@@ -8,10 +8,13 @@ export default class Signup extends React.Component {
   componentWillMount() {
     this.loggedInUser = Meteor.user()
 
+    /*
     if (!(this.loggedInUser || (this.loggedInUser === null ))){
-       browserHistory.push('/');//page is connecting to the backend
+       browserHistory.push('/');
        return;
-    }
+    } */
+
+    this.signUpToken = this.props.params.token
   } 
   componentDidMount() {
     handleSignup({ component: this });

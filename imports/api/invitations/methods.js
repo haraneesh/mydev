@@ -14,7 +14,7 @@ export const sendInvitation = new ValidatedMethod({
   }).validator(),
   run(invitation) {
 
-      invitation.sentUserId = this.userId
+      invitation.sentUserId = Meteor.userId()
       invitation.token = Random.hexString( 16 )
       invitation.role = "member"
       invitation.receivedUserId = ""
@@ -26,7 +26,7 @@ export const sendInvitation = new ValidatedMethod({
              query = { _id: invitation._id }
              break;
           default:
-             query = { and:[
+             query = { $and:[
                { _id: invitation._id },
                { sentUserId :loggedInUserId }
              ]}   
@@ -34,9 +34,9 @@ export const sendInvitation = new ValidatedMethod({
       }*/
      
       if (Meteor.isServer) {
-         let user = Meteor.users.findOne( this.userId );
-        let fromName = user.profile.name;
-        let email = _prepareEmail( invitation.token, name, fromName );
+        let user = Meteor.users.findOne( this.userId );
+        let fromName = user.profile.name.first + " " + user.profile.name.last ;
+        let email = _prepareEmail( invitation.token, invitation.name, fromName );
         _sendInvitation( invitation.email, email, fromName );
       }
       return Invitations.insert(invitation);
@@ -44,7 +44,6 @@ export const sendInvitation = new ValidatedMethod({
 });
 
 let _prepareEmail = ( token, name, fromName ) => {
-  debugger;
   let domain = Meteor.settings.private.domain;
   let url    = `http://${ domain }/invitations/${ token }`;
 
@@ -59,26 +58,84 @@ let _sendInvitation = ( email, content, fromName ) => {
   Email.send({
     to: email,
     from: `Suvai ${ Meteor.settings.private.fromInvitationEmail }`,
-    subject: `${fromName.first} ${fromName.last} has Invited you to Suvai Community`,
+    subject: `${fromName} has Invited you to Suvai Community`,
     html: content
   });
 }
+
+let _createUser = ( user ) => {
+  var userId = Accounts.createUser( user );
+
+  if ( userId ) {
+    return userId;
+  }
+};
+
+let _getInvitation = ( token ) => {
+  let invitation = Invitations.findOne( {
+      $and: [
+            { token: token } , // token
+            { invitation_status: constants.InvitationStatus.Sent.name }, //constants.InvitationStatus.Sent.name
+           ]
+      }
+    );
+
+  if ( invitation ) {
+    return invitation;
+  }
+};
+
+let _updateInvitation = ( token, userId ) => {
+   Invitations.update({ "token" : token }, { $set: { 
+          invitation_status : constants.InvitationStatus.Accepted.name,
+          receivedUserId: userId   
+        } 
+      })  
+}
+
+export const acceptInvitation = new ValidatedMethod({
+  name: 'invitations.accept',
+  validate: new SimpleSchema({
+    token: { type: String },
+    user: { type: Object, blackbox:true }
+  }).validator(),
+  run(options) {    
+    if (Meteor.isServer) {
+      const invitation = _getInvitation(options.token)
+      if (invitation){
+        const userId = _createUser (options.user)
+         if (userId){
+           _updateInvitation (options.token, userId)
+         }
+      }
+      else {
+        throw new Meteor.Error(403, "Sign up token has expired or is invalid.")
+      }
+    }
+  }
+});
+
 
 export const removeInvitation = new ValidatedMethod({
   name: 'invitations.remove',
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ invitationId }) {
+  run({ _id }) {
       let query
       switch (true){
           case Roles.userIsInRole(this.userId, ['admin']): 
-                query = { _id:invitationId } 
+                query = { $and: [
+                            {_id:_id },
+                            { invitation_status : constants.InvitationStatus.Sent.name }
+                          ]
+                        } 
                 break;      
           default:
-                query = { and: [
-                            { _id:invitationId },
-                            { sentUserId: this.userId },
+                query = { $and: [
+                            { _id:_id },
+                            { sentUserId: Meteor.userId() },
+                            { invitation_status : constants.InvitationStatus.Sent.name }
                           ]
                         }
                 break;      
@@ -91,6 +148,7 @@ rateLimit({
   methods: [
     sendInvitation,
     removeInvitation,
+    acceptInvitation
   ],
   limit: 5,
   timeRange: 1000,

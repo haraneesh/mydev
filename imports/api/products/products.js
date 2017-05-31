@@ -24,6 +24,11 @@ export let ProductSchemaDefObject = {
   name: { type: String, label: 'The name of the product.', },
   unitOfSale: { type: String, label: 'The unit of sale of the product.' },
   unitprice: { type: Number, decimal: true, label: 'The unit price of the product.', },
+  unitsForSelection: { type: String, 
+    label: 'Units for selection.', 
+    defaultValue: "0,1,2,3,4,5,6,7,8,9,10",
+    optional: true
+  },
   description: { type: String, label: 'The description of the product.', optional:true},
   image_path: { type: String, label: 'The image path of the product.', },
   type: { type:String, label: 'The type of the product.', },
@@ -36,6 +41,10 @@ export let ProductSchemaDefObject = {
 }
 
 Products.schema = new SimpleSchema(ProductSchemaDefObject)
+
+if ( Meteor.isServer ) {
+  Products._ensureIndex( { availableToOrder:1 })
+}
 
 Products.attachSchema(Products.schema)
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ListGroup, ListGroupItem, Alert } from 'react-bootstrap';
+import PropTypes from 'prop-types'
 
 const RecipesList = ({ recipes }) =>(
   recipes.length > 0 ? <ListGroup className="RecipesList">
@@ -11,7 +12,7 @@ const RecipesList = ({ recipes }) =>(
 );
 
 RecipesList.propTypes = {
-  recipes: React.PropTypes.array,
+  recipes: PropTypes.array,
 };
 
 export default RecipesList;

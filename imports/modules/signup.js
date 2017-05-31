@@ -4,25 +4,26 @@ import { browserHistory } from 'react-router';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { updateUser } from '../api/users/methods';
+import { acceptInvitation } from '../api/invitations/methods';
 import './validation.js';
 
 let component;
 
 const getUserData = () => {
  const password = (document.querySelector('[name="password"]'))?document.querySelector('[name="password"]').value:""
-  return ({
-  username: document.querySelector('input[name="whMobilePhone"]').value,
-  email: document.querySelector('[name="emailAddress"]').value,
-  password: password,
-  profile: {
-    name: {
-      first: document.querySelector('[name="firstName"]').value,
-      last: document.querySelector('[name="lastName"]').value,
+  return ({  
+    username: document.querySelector('input[name="whMobilePhone"]').value,
+    email: document.querySelector('[name="emailAddress"]').value,
+    password: Accounts._hashPassword( password ),
+    profile: {
+      name: {
+        first: document.querySelector('[name="firstName"]').value,
+        last: document.querySelector('[name="lastName"]').value,
+      },
+      whMobilePhone:document.querySelector('input[name="whMobilePhone"]').value,
+      deliveryAddress:document.querySelector('[name="deliveryAddress"]').value,
     },
-    whMobilePhone:document.querySelector('input[name="whMobilePhone"]').value,
-    deliveryAddress:document.querySelector('[name="deliveryAddress"]').value,
-  },
-});
+  });
 }
 
 const signup = () => {
@@ -37,7 +38,11 @@ const signup = () => {
       }
     })
   }else{
-    Accounts.createUser(user, (error) => {
+    const options = {
+      user:user,
+      token:component.signUpToken
+    }
+    acceptInvitation.call(options, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {

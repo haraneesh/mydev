@@ -1,49 +1,145 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import Recipes from './recipes';
+import Media from '../media/media';
 import rateLimit from '../../modules/rate-limit.js';
+import constants from '../../modules/constants';
 
-export const upsertRecipe = new ValidatedMethod({
-  name: 'recipes.upsert',
+const _upsertRecipe = (recipe) => {
+  recipe.owner = Meteor.userId();
+  if (Roles.userIsInRole(recipe.owner, ['admin']) || !recipe._id) {
+    return Recipes.upsert({ _id: recipe._id }, { $set: recipe });
+  }
+
+  return Recipes.upsert(
+    {
+      $and: [{ owner: recipe.owner }, { _id: recipe._id }],
+    },
+    { $set: recipe }
+  );
+};
+
+export const upsertRecipeDraft = new ValidatedMethod({
+  name: 'recipes.upsertDraft',
   validate: new SimpleSchema({
     _id: { type: String, optional: true },
-    title: { type: String, optional: true },
+    title: { type: String },
     description: { type: Object, optional: true, blackbox: true },
-    ingredients:{ type:[String], optional: true },
-    owner:{ type:String, optional: true},
-    imageUrl:{ type:String, optional: true}
+    ingredients: { type: [String], optional: true },
+    imageUrl: { type: String, optional: true },
   }).validator(),
   run(recipe) {
-    //Check if recipe creator is the one who is updating
-    if ( Roles.userIsInRole(this.userId, ['admin']) || (recipe._id === "")) {
-      return Recipes.upsert({ _id: recipe._id }, { $set: recipe });
-    }
-    else{
-      return Recipes.upsert(
-        {  $and: [
-              { owner: this.userId },
-              {  _id: recipe._id },
-            ]
-        }, 
-        { $set: recipe });
-    }
+    // Check if recipe creator is the one who is updating
+    recipe.publishStatus = constants.PublishStatus.Draft.name;
+    return _upsertRecipe(recipe);
+  },
+});
+
+const recipePublishSchema = new SimpleSchema({
+  _id: { type: String },
+  title: { type: String },
+  description: {
+    type: Object,
+    blackbox: true,
+    custom() {
+      const { convertFromRaw } = require('draft-js');
+      if (!convertFromRaw(this.value).hasText()) {
+        return 'emptyRecipeDescription';
+      }
+      return;
+    },
+  },
+  ingredients: { type: [String], minCount: 1 },
+  imageUrl: { type: String, optional: true },
+});
+
+recipePublishSchema.messages({
+  'minCount ingredients': 'You must specify at least [minCount] ingredient',
+  emptyRecipeDescription: "To publish the recipe, recipe's description is mandatory. To save recipe and edit it later, click on save recipe instead.",
+});
+
+export const upsertRecipePublish = new ValidatedMethod({
+  name: 'recipes.upsertPublish',
+  validate: recipePublishSchema.validator(),
+  run(recipe) {
+    // Check if recipe creator is the one who is updating
+    recipe.publishStatus = constants.PublishStatus.Published.name;
+    return _upsertRecipe(recipe);
   },
 });
 
 export const removeRecipe = new ValidatedMethod({
   name: 'recipes.remove',
   validate: new SimpleSchema({
-    _id: { type: String },
+    recipeId: { type: String },
   }).validator(),
-  run({ _id }) {
-    Recipes.remove(_id);
+  run({ recipeId }) {
+    const recipe = Recipes.findOne({ _id: recipeId });
+    Media.remove({ _id: recipe.mediaId });
+    Recipes.remove({
+      $and: [{ owner: Meteor.userId() }, { _id: recipe._id }],
+    });
+  },
+});
+
+export const updateRecipePhoto = (mediaId, recipeId) => {
+  const recipe = Recipes.findOne({ _id: recipeId });
+  const media = Media.findOne({ _id: mediaId });
+  const fsObj = new FS.File(media);
+  recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name });
+  recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name });
+  recipe.mediaId = mediaId;
+  Recipes.upsert({ _id: recipe._id }, { $set: recipe });
+};
+
+export const updateRecipePhoto1 = new ValidatedMethod({
+  name: 'recipes.updateRecipePhoto',
+  validate: new SimpleSchema({
+    recipeId: { type: String },
+    mediaId: { type: String },
+  }).validator(),
+  run({ mediaId, recipeId }) {
+    const recipe = Recipes.findOne({ _id: recipeId });
+
+    if (Meteor.isServer) {
+      const media = Media.findOne({ _id: mediaId });
+      const fsObj = new FS.File(media);
+      //  media.on('stored', Meteor.bindEnvironment((fileObj, storename) => {
+      //  if (storename === constants.MediaStores.Originals.name) {
+      recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name });
+      recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name }); // brokenIsFine: true
+      recipe.mediaId = mediaId;
+      _upsertRecipe(recipe);
+      // }
+      // }));
+    }
+  },
+});
+
+export const removeRecipePhoto = new ValidatedMethod({
+  name: 'recipes.removeRecipePhoto',
+  validate: new SimpleSchema({
+    recipeId: { type: String },
+  }).validator(),
+  run({ recipeId }) {
+    const recipe = Recipes.findOne({ _id: recipeId });
+    if (Meteor.isServer) {
+      Media.findOne({ _id: recipe.mediaId }).remove();
+    }
+    recipe.thumbnailUrl = null;
+    recipe.imageUrl = null;
+    recipe.mediaId = null;
+    _upsertRecipe(recipe);
+    // this._awsRemoveFile(recipe);
   },
 });
 
 rateLimit({
   methods: [
-    upsertRecipe,
+    upsertRecipeDraft,
+    upsertRecipePublish,
     removeRecipe,
+    removeRecipePhoto,
   ],
   limit: 5,
   timeRange: 1000,

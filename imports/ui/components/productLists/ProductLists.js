@@ -1,6 +1,7 @@
 import React from 'react'
 import { ListGroup, ListGroupItem, Alert, Accordion, Panel, Row,  Col, Glyphicon, Label } from 'react-bootstrap'
 import  { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers'
+import PropTypes from 'prop-types'
 
 const DisplayProductLists = ({ productLists }) =>(
     productLists.length > 0 ? <ListGroup className = "productsList-list">{
@@ -29,6 +30,6 @@ export const ProductListTitleRow = ( { dateRangeToDisplay, labelStyle, statusToD
   )
 
 DisplayProductLists.propTypes = {
-  productLists: React.PropTypes.array,
+  productLists: PropTypes.array,
 };
 export default DisplayProductLists;

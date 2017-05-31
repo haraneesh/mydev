@@ -1,26 +1,26 @@
 const Sort = {
-   ASCENDING: 1,
-   DESCENDING: -1,
-}
+  ASCENDING: 1,
+  DESCENDING: -1,
+};
 
-const ControlStates ={
-        edit: " EDIT ",
-        view: " VIEW "
-}
+const ControlStates = {
+  edit: ' EDIT ',
+  view: ' VIEW ',
+};
 
-//This for organizing tabs in the order screen
-const ProductType = ["Vegetables","Groceries","Batter"]
+// This for organizing tabs in the order screen
+const ProductType = ['Vegetables', 'Groceries', 'Batter'];
 
-//This is for reporting purposes
+// This is for reporting purposes
 const ProductCategory = [
-        "Vegetable - country",
-        "Vegetable - hill",
-        "Vegetable - essential",
-        "Vegetable - greens",
-        "Provisions - processed",
-        "Provisions - whole",
-        "Fruit"
-        ]
+  'Vegetable - country',
+  'Vegetable - hill',
+  'Vegetable - essential',
+  'Vegetable - greens',
+  'Provisions - processed',
+  'Provisions - whole',
+  'Fruit',
+];
 
 /*
 Pending — customer started the checkout process, but did not complete it.
@@ -44,31 +44,80 @@ Verification Required — order on hold while some aspect (e.g. tax-exempt docum
         needs to be manually confirmed. Orders with this status must be updated manually. Capturing funds or other order actions will not automatically update the status of an order marked Verification Required.
  */
 const OrderStatus = {
-    Pending:{ name: "Pending", display_value: "Pending", label: "warning" },
-    Awaiting_Payment: { name: "Awaiting_Payment", display_value: "Awaiting Payment", label: "warning" },
-    Awaiting_Fulfillment: { name: "Awaiting_Fulfillment", display_value: "Awaiting Fulfillment", label: "info" },
-    Awaiting_Shipment: { name: "Awaiting_Shipment", display_value: "Awaiting Shipment", label: "info" },
-    Completed: { name: "Completed", display_value: "Completed", label: "success" },
-    Cancelled: { name: "Cancelled", display_value: "Cancelled", label: "default" },
-    Shipped: { name: "Shipped", display_value: "Shipped", label: "info" },
-}
+  Pending: { name: 'Pending', display_value: 'Pending', label: 'warning' },
+  Awaiting_Payment: {
+    name: 'Awaiting_Payment',
+    display_value: 'Awaiting Payment',
+    label: 'warning',
+  },
+  Awaiting_Fulfillment: {
+    name: 'Awaiting_Fulfillment',
+    display_value: 'Awaiting Fulfillment',
+    label: 'info',
+  },
+  Awaiting_Shipment: {
+    name: 'Awaiting_Shipment',
+    display_value: 'Awaiting Shipment',
+    label: 'info',
+  },
+  Completed: {
+    name: 'Completed',
+    display_value: 'Completed',
+    label: 'success',
+  },
+  Cancelled: {
+    name: 'Cancelled',
+    display_value: 'Cancelled',
+    label: 'default',
+  },
+  Shipped: { name: 'Shipped', display_value: 'Shipped', label: 'info' },
+};
 
 const ProductListStatus = {
-    Expired:{ name: "Expired", display_value: "Expired", label: "default" },
-    Active_Now: { name: "Active_Now", display_value: "Active Now", label: "success"},
-    Future: { name: "Future", display_value: "Future", label: "warning" },
-}
+  Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
+  Active_Now: {
+    name: 'Active_Now',
+    display_value: 'Active Now',
+    label: 'success',
+  },
+  Future: { name: 'Future', display_value: 'Future', label: 'warning' },
+};
 
 const Roles = {
-    admin:{ name: "admin", display_value: "Admin" },
-}
+  admin: { name: 'admin', display_value: 'Admin' },
+};
 
 const InvitationStatus = {
-    Sent:{ name: "Sent", display_value: "Sent", label: "default" },
-    Accepted: { name: "Accepted", display_value: "Accepted", label: "success"}
-}
+  Sent: { name: 'Sent', display_value: 'Sent', label: 'default' },
+  Accepted: { name: 'Accepted', display_value: 'Accepted', label: 'success' },
+};
 
-export default constants = {
+const PublishStatus = {
+  Draft: { name: 'DRAFT', display_value: 'Draft' },
+  Published: { name: 'PUBLISHED', display_value: 'Published' },
+};
+
+const PostTypes = {
+  Recipe: { name: 'RECIPE', display_value: 'Recipe' },
+  Product: { name: 'PRODUCT', display_value: 'Product' },
+};
+
+const MediaStores = {
+  Thumbnails: {
+    name: 'Thumbnail',
+    display_value: 'Thumbnail',
+    width: '256',
+    height: '256',
+  },
+  Originals: {
+    name: 'Original',
+    display_value: 'Original',
+    width: '1024',
+    height: '1024',
+  },
+};
+
+export default (constants = {
   ProductType,
   ProductCategory,
   OrderStatus,
@@ -76,5 +125,8 @@ export default constants = {
   Sort,
   Roles,
   ControlStates,
-  InvitationStatus
-}
+  InvitationStatus,
+  PublishStatus,
+  MediaStores,
+  PostTypes,
+});

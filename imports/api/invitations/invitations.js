@@ -70,4 +70,9 @@ let InvitationsSchema = new SimpleSchema({
   }
 });
 
+if ( Meteor.isServer ) {
+  Invitations._ensureIndex( { _Id:1, invitation_status:1, sentUserId:1 })
+  Invitations._ensureIndex( { token:1,  invitation_status:1 })
+}
+
 Invitations.attachSchema( InvitationsSchema );

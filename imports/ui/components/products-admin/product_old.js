@@ -2,8 +2,8 @@ import React from 'react'
 import { Row, Col, ListGroupItem, Form, FormControl, Button, ControlLabel, Thumbnail } from 'react-bootstrap'
 import { Bert } from 'meteor/themeteorchef:bert'
 import { updateProductName,upsertProduct, updateProductUnitPrice, updateProductDescription, UpdateProductSKU, updateProductType, removeProduct } from '../../../api/products/methods.js'
-import '../../../modules/validation';
-
+import '../../../modules/validation'
+import PropTypes from 'prop-types'
 
 //export const Product = ({ product }) => (
 export class Product_Old extends React.Component{
@@ -286,6 +286,6 @@ render(){
 }
 
 Product.propTypes = {
-  key: React.PropTypes.string,
-  product: React.PropTypes.object
+  key: PropTypes.string,
+  product: PropTypes.object
 }

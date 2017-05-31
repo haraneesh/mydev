@@ -24,7 +24,6 @@ const composer = ({ params }, onData) => {
   const subscription = Meteor.subscribe('orders.orderDetails', params._id)
    if (subscription.ready()) {
       const order = Orders.findOne()
-
       const subscriptionToProductList = Meteor.subscribe('productList.view',order.productOrderListId)
 
         if ( subscriptionToProductList.ready()){

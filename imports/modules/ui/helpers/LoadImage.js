@@ -1,29 +1,27 @@
-var React = require('react');
+import React from 'react'
+import PropTypes from 'prop-types'
 
 var PendingPool = {};
 var ReadyPool = {};
 
-var LoadImage = React.createClass({
-  propTypes: {
-    src: React.PropTypes.string.isRequired,
-  },
+class LoadImage extends React.Component{
 
   getInitialState() {
     return {
       ready: false,
     };
-  },
+  }
 
   componentWillMount() {
     this._load(this.props.src);
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.src !== this.props.src) {
       this.setState({src: null});
       this._load(nextProps.src);
     }
-  },
+  }
 
   render() {
     var style = this.state.src ?
@@ -31,7 +29,7 @@ var LoadImage = React.createClass({
       undefined;
 
     return <div className="LoadImage" style={style} />;
-  },
+  }
 
   _load(/*string*/ src) {
     if (ReadyPool[src]) {
@@ -56,7 +54,7 @@ var LoadImage = React.createClass({
       src = undefined;
     };
     img.src = src;
-  },
+  }
 
   _onLoad(/*string*/ src) {
     ReadyPool[src] = true;
@@ -65,7 +63,11 @@ var LoadImage = React.createClass({
         src: src,
       });
     }
-  },
-});
+  }
+}
+
+LoadImage.propTypes = {
+  src: PropTypes.string.isRequired,
+}
 
 export default LoadImage

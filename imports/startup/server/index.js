@@ -3,4 +3,5 @@ import './browser-policy';
 import './fixtures';
 import './api';
 import './mail-url';
-import './slingshot';
+// import "./slingshot";
+import './accounts-config';

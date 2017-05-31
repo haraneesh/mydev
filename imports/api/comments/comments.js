@@ -5,6 +5,10 @@ import { Factory } from 'meteor/dburles:factory';
 const Comments = new Mongo.Collection('Comments');
 export default Comments;
 
+if ( Meteor.isServer ) {
+  Comments._ensureIndex( { postId:1 } );
+}
+
 Comments.allow({
   insert: () => false,
   update: () => false,

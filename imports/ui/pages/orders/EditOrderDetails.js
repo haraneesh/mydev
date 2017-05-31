@@ -3,6 +3,7 @@ import { Row, Col, Pager } from 'react-bootstrap'
 import ViewOrderDetailsC from '../../components/orders/ViewOrderDetails'
 import ProductsOrderList from '../../components/orders/ProductsOrderList'
 import constants from '../../../modules/constants'
+import PropTypes from 'prop-types'
 
 const EditOrderDetails = ({ order }) =>{
   if (order.order_status === constants.OrderStatus.Pending.name )
@@ -25,7 +26,7 @@ const EditOrderDetails = ({ order }) =>{
 }
 
 EditOrderDetails.propTypes = {
-  order: React.PropTypes.object.isRequired,
+  order: PropTypes.object.isRequired,
 };
 
 export default EditOrderDetails;

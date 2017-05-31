@@ -6,7 +6,6 @@ describe('Log In', function () {
     server.execute(function () {
       const { Meteor } = require('meteor/meteor');
       const user = Meteor.users.findOne({ 'username': '9998888888' });
-      debugger;
       if (user) {
         Meteor.users.remove(user._id);
       }
@@ -16,7 +15,7 @@ describe('Log In', function () {
   it('should allow us to login @watch', function () {
     server.execute(function () {
       const { Accounts } = require('meteor/accounts-base');
-      debugger;
+      
       Accounts.createUser({
         username:'9998888888',
         email: 'carl.winslow@abc.com',

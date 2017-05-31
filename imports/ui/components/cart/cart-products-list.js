@@ -1,6 +1,7 @@
 import React from 'react'
 import { ListGroup, Alert } from 'react-bootstrap'
 import { CartProduct } from './cart-product.js'
+import PropTypes from 'prop-types'
 
 export const CartProductsList = ({ cartProducts }) => (
   cartProducts.length > 0 ? <ListGroup className="products-list">
@@ -12,5 +13,5 @@ export const CartProductsList = ({ cartProducts }) => (
 )
 
 CartProductsList.propTypes = {
-  cartProducts: React.PropTypes.array,
+  cartProducts: PropTypes.array,
 }

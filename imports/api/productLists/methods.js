@@ -3,17 +3,18 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method'
 import ProductLists from './productLists'
 import Products  from '../../api/products/products'
 import rateLimit from '../../modules/rate-limit'
+import constants from '../../modules/constants'
 
 
 export const upsertProductList = new ValidatedMethod({
   name: 'productLists.upsert',
   validate: new SimpleSchema({
-    _id:{ type: String, optional:true},
+    _id:{ type: String, optional:true },
     activeStartDateTime: { type: Date },
     activeEndDateTime: { type: Date },
   }).validator(),
   run(params) {
-    if (!Roles.userIsInRole(this.userId, ['admin'])) {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
       throw new Meteor.Error(403, "Access denied")
     }
@@ -22,13 +23,15 @@ export const upsertProductList = new ValidatedMethod({
     const endDate = params.activeEndDateTime
     const productListsId = params._id
 
+    /*$or: [
+                { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
+                { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
+                { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
+                ]
+    */
     if (!productListsId){
       const overlappingProductList = ProductLists.findOne(
-          {  $or: [
-                { activeStartDateTime: { $gte: startDate ,  $lte: endDate }  },
-                { activeEndDateTime: { $gte: startDate ,  $lte: endDate }  },
-                ]
-          },
+          {  $and:  [ {activeStartDateTime:{ $lte: endDate}} , { activeEndDateTime:{ $gte: startDate }} ] }
         )
 
       if (overlappingProductList){
@@ -43,6 +46,7 @@ export const upsertProductList = new ValidatedMethod({
       activeEndDateTime: params.activeEndDateTime,
       products:OrderableProducts,
     }
+    
     return ProductLists.upsert({ _id: productListsId }, { $set: productList })
   },
 })

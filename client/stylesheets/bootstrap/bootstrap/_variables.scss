@@ -21,9 +21,9 @@ $gray-lighter:           lighten($gray-base, 70%) !default;
 
 // http://colllor.com/388e3c
  
-$brand-primary:         #39B424 !default; // Primary #7bbb5e #0e7d13 #406D04 #5A8D02 #4CAF50
+$brand-primary:         green !default; // Primary #7bbb5e #0e7d13 #406D04 #5A8D02 #4CAF50 #388E3C 
 $brand-default:         #522E23  !default; // Secondary #6F5F5C #3E1F0C
-$brand-success:         #388E3C  !default; // #8BC058 #65A832 #506d2f
+$brand-success:         green  !default; // #39B424 #8BC058 #65A832 #506d2f
 $brand-info:            #976A4B !default; //#92B955
 $brand-warning:         #FF6D00 !default; //#EBBB1E 
 $brand-danger:          #9C070A !default; //#EA3128
@@ -165,15 +165,15 @@ $table-condensed-cell-padding:  5px !default;
 //** Default background color used for all tables.
 $table-bg:                      transparent !default;
 //** Background color used for `.table-striped`.
-$table-bg-accent:               lighten($gray-lighter,10%) !default;
+$table-bg-accent:               #FCF9F4; //lighten($gray-lighter,10%) !default;
 //** Background color used for `.table-hover`.
 //$table-bg-hover:                #f5f5f5 !default;
-$table-bg-hover:                $gray-lighter !default;
+$table-bg-hover:                #FCF9F4; // $gray-lighter !default;
 
 $table-bg-active:               $table-bg-hover !default;
 
 //** Border color for table and cell borders.
-$table-border-color:            #dCdAcA !default; //#E4DFDB
+$table-border-color:            #E4DFDB !default; // #dCdAcA
 
 
 //== Buttons
