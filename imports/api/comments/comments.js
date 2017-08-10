@@ -1,12 +1,14 @@
+/* eslint-disable consistent-return */
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Factory } from 'meteor/dburles:factory';
+import SimpleSchema from 'simpl-schema';
+import constants from '../../modules/constants';
 
 const Comments = new Mongo.Collection('Comments');
 export default Comments;
 
-if ( Meteor.isServer ) {
-  Comments._ensureIndex( { postId:1 } );
+if (Meteor.isServer) {
+  Comments._ensureIndex({ postId: 1 });
 }
 
 Comments.allow({
@@ -21,14 +23,19 @@ Comments.deny({
   remove: () => true,
 });
 
-Comments.schema = new SimpleSchema({  
-  postType:{
-    type:String,
-    label: 'The type of post to which this comment is attached to.', 
+const allowedValues = _.reduce(constants.CommentTypes, (arr, commentType) => { 
+    arr.push(commentType.name);
+    return arr;
+   }, []);
+
+Comments.schema = new SimpleSchema({
+  postType: {
+    type: String,
+    label: 'The type of post to which this comment is attached to.',
   },
-  postId:{ 
-    type:String,
-    label: 'The ID of the post to which this comment is attached.', 
+  postId: {
+    type: String,
+    label: 'The ID of the post to which this comment is attached.',
   },
   description: {
     type: String,
@@ -36,37 +43,36 @@ Comments.schema = new SimpleSchema({
   },
   owner: {
     type: String,
-    label: 'The person who created the post.'
+    label: 'The person who created the post.',
   },
-  createdAt: { type: Date,
-    autoValue: function() {
+  status: {
+    type: String,
+    label: 'The status of the comment.',
+    allowedValues,
+  },
+  createdAt: {
+    type: Date,
+    autoValue() {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
-      } else {
-        this.unset();  // Prevent user from supplying their own value
+        return { $setOnInsert: new Date() };
       }
+      this.unset();  // Prevent user from supplying their own value
     },
-    optional: true
+    optional: true,
   },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   updatedAt: {
     type: Date,
-    autoValue: function() {
-      if (this.isUpdate) {
+    autoValue() {
+      if (this.isUpdate || this.isInsert) {
         return new Date();
       }
     },
-    denyInsert:true,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 Comments.attachSchema(Comments.schema);
-
-Factory.define('comment', Comments, {
-  title: () => 'Factory Title',
-  desription: () => 'Factory Body',
-});

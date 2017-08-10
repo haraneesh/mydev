@@ -1,8 +1,7 @@
-import { Meteor } from 'meteor/meteor';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import rateLimit from '../../modules/rate-limit';
-import Media from './media';
+import Media from './Media';
 
 export const getMediaFiles = new ValidatedMethod({
   name: 'media.getMediaFiles',

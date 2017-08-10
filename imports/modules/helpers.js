@@ -1,47 +1,48 @@
-import constants from './constants'
-import { accountSettings, dateSettings } from './settings'
+import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
-import 'moment-timezone';
-import { formatMoney } from 'accounting-js'
+//import 'moment-timezone';
+import { formatMoney } from 'accounting-js';
+import constants from './constants';
+import { accountSettings, dateSettings } from './settings';
 
-export function getDisplayDateTitle(startDateObj, EndDateObj){
 
-    return  getDisplayDate(startDateObj)
-             + " - " +
-            getDisplayDate(EndDateObj)
-
+export function getDisplayDate(dateObject) {
+  //return moment(dateObject).tz(dateSettings.timeZone).format(dateSettings.format);
+  return moment(dateObject).local().format(dateSettings.format);
 }
 
-export function getDisplayDate(dateObject){
-    return moment(dateObject).tz(dateSettings.timeZone).format(dateSettings.format)
+export function getDisplayDateTitle(startDateObj, EndDateObj) {
+  return `${getDisplayDate(startDateObj)
+              } - ${
+            getDisplayDate(EndDateObj)}`;
 }
 
-export function getProductListStatus(activeStartDateTime, activeEndDateTime){
-    const today = moment().tz(dateSettings.timeZone)
-    let productList_status =   today.isAfter(activeEndDateTime)? 
-            constants.ProductListStatus.Expired.name 
-            :  today.isBefore(activeStartDateTime) ?
-                constants.ProductListStatus.Future.name 
-                    : constants.ProductListStatus.Active_Now.name
 
-      return productList_status
+export function getProductListStatus(activeStartDateTime, activeEndDateTime) {
+  const today = moment().local();
+  const productListStatus = today.isAfter(activeEndDateTime) ?
+            constants.ProductListStatus.Expired.name
+            : today.isBefore(activeStartDateTime) ?
+                constants.ProductListStatus.Future.name
+                    : constants.ProductListStatus.Active_Now.name;
+
+  return productListStatus;
 }
 
-export function getFormattedMoney(money){
-    return formatMoney(money, accountSettings) 
+export function getFormattedMoney(money) {
+  return formatMoney(money, accountSettings);
 }
 
-export function getLoggedInUserDisplayUserName(){
+export function getLoggedInUserDisplayUserName() {
   const user = Meteor.user();
   const name = user && user.profile ? user.profile.name : '';
   return user ? `${name.first} ${name.last}` : '';
 }
 
-export function isLoggedInUserAdmin(){
-  var loggedInUser = Meteor.user()
-  if (loggedInUser && Roles.userIsInRole(loggedInUser, constants.Roles.admin.name))
-  {
-      return true
+export function isLoggedInUserAdmin() {
+  const loggedInUser = Meteor.user();
+  if (loggedInUser && Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)) {
+    return true;
   }
-  return false
+  return false;
 }

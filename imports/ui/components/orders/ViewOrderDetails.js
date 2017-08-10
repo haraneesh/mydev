@@ -4,7 +4,6 @@ import { formatMoney } from 'accounting-js';
 import { accountSettings, dateSettings } from '../../../modules/settings';
 import moment from 'moment';
 import 'moment-timezone';
-import { browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
 const ViewOrderProducts = ({ products }) => (
@@ -58,7 +57,7 @@ class ViewOrderDetails extends React.Component {
 
   goBack(e) {
     e.preventDefault();
-    browserHistory.goBack();
+    this.props.history.goBack();
   }
 
   render() {
@@ -122,6 +121,7 @@ class ViewOrderDetails extends React.Component {
 
 ViewOrderDetails.propTypes = {
   order: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default ViewOrderDetails;

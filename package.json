@@ -1,24 +1,50 @@
 {
   "name": "NammaSuvai",
-  "version": "1.0.0",
   "description": "Namma Suvai",
+  "private": true,
   "scripts": {
     "start": "meteor --settings settings-development.json",
-    "test": "meteor test --driver-package practicalmeteor:mocha --port 5000",
-    "chimp-watch": "chimp --ddp=http://localhost:3000 --watch --mocha --path=tests",
-    "chimp-test": "chimp --ddp=http://localhost:3000 --mocha --path=tests",
-    "staging": "meteor deploy staging.meteor.com --settings settings-development.json",
-    "production": "meteor deploy production.meteor.com --settings settings-production.json"
+    "test": "jest"
+  },
+  "dependencies": {
+    "@cleverbeagle/seeder": "^1.1.3",
+    "accounting-js": "^1.1.1",
+    "babel-runtime": "^6.20.0",
+    "bcrypt": "^1.0.2",
+    "commonmark": "^0.27.0",
+    "fixed-data-table-2": "^0.7.8",
+    "jquery": "^2.2.4",
+    "jquery-validation": "^1.16.0",
+    "meteor-node-stubs": "~0.2.4",
+    "moment": "^2.17.0",
+    "moment-timezone": "^0.5.13",
+    "prop-types": "^15.5.10",
+    "react": "^15.5.4",
+    "react-addons-pure-render-mixin": "^15.5.2",
+    "react-bootstrap": "^0.31.0",
+    "react-bootstrap-counter": "^1.0.1",
+    "react-datetime": "^2.8.10",
+    "react-dimensions": "^1.3.0",
+    "react-document-title": "^2.0.3",
+    "react-dom": "^15.5.4",
+    "react-komposer": "^1.13.1",
+    "react-loadable": "^4.0.3",
+    "react-router-dom": "^4.1.1",
+    "react-rte": "^0.11.0",
+    "simpl-schema": "^0.3.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "chimp": "^0.41.2",
-    "eslint": "^3.8.1",
-    "eslint-config-airbnb": "^12.0.0",
-    "eslint-plugin-import": "^1.16.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "babel-jest": "^20.0.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "enzyme": "^2.8.2",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-meteor": "^4.0.1",
-    "eslint-plugin-react": "^6.4.1"
+    "eslint-plugin-react": "^7.0.1",
+    "jest": "^20.0.3"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -31,16 +57,14 @@
       "react"
     ],
     "extends": [
-      "airbnb/base",
-      "plugin:meteor/guide",
+      "airbnb",
+      "plugin:meteor/recommended",
       "plugin:react/recommended"
     ],
     "env": {
       "browser": true
     },
     "globals": {
-      "server": false,
-      "browser": false,
       "expect": false
     },
     "rules": {
@@ -59,37 +83,10 @@
           ]
         }
       ],
-      "class-methods-use-this": 0
+      "class-methods-use-this": 0,
+      "react/jsx-filename-extension": 0,
+      "react/forbid-prop-types": 0,
+      "allowImportExportEverywhere": 0
     }
-  },
-  "dependencies": {
-    "accounting-js": "^1.1.1",
-    "aws-sdk": "^2.32.0",
-    "babel-runtime": "^6.18.0",
-    "bcrypt": "^0.8.7",
-    "bootstrap": "^3.3.7",
-    "faker": "^3.1.0",
-    "fixed-data-table": "^0.6.3",
-    "fixed-data-table-2": "^0.7.8",
-    "griddle-react": "^0.7.1",
-    "jquery": "^2.2.4",
-    "jquery-validation": "^1.15.1",
-    "meteor-node-stubs": "^0.2.6",
-    "moment": "^2.17.0",
-    "moment-timezone": "^0.5.13",
-    "react": "^15.4.1",
-    "react-addons-pure-render-mixin": "^15.4.1",
-    "react-addons-shallow-compare": "^15.4.1",
-    "react-bootstrap": "^0.30.7",
-    "react-bootstrap-counter": "^1.0.1",
-    "react-dates": "^4.1.2",
-    "react-datetime": "^2.7.5",
-    "react-dimensions": "^1.3.0",
-    "react-dom": "^15.4.1",
-    "react-komposer": "^1.13.1",
-    "react-router": "^3.0.0",
-    "react-router-bootstrap": "^0.23.1",
-    "react-rte": "^0.11.0",
-    "react-toastr": "^2.8.2"
   }
 }

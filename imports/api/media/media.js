@@ -1,5 +1,6 @@
+import { Meteor } from 'meteor/meteor';
 import constants from '../../modules/constants';
-import { updateRecipePhoto } from '../recipes/methods';
+import { updateRecipePhoto } from '../Recipes/methods';
 /*
 let mediaStoreLarge = new FS.Store.S3("mediaLarge", {
   accessKeyId: Meteor.settings.private.AWSAccessKeyId,

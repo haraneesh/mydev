@@ -1,15 +1,16 @@
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { check } from 'meteor/check';
-import Invitations from '../invitations';
+import Invitations from '../Invitations';
 
 Meteor.publish('invitations.view', (invitationId) => {
   check(invitationId, String);
   return Invitations.find(
-        {$and: [
-              { _Id:invitationId },
+    { $and: [
+              { _Id: invitationId },
               { sentUserId: this.userId },
-            ]
-        });
+        ],
+    });
 });
 
 Meteor.publish('invitations.list', function () {
@@ -17,10 +18,10 @@ Meteor.publish('invitations.list', function () {
    if (Roles.userIsInRole(loggedInUserId,['admin'])) {
      return Invitations.find()
    }
-   else {
+   
        return Invitations.find({sentUserId:loggedInUserId})
-   }
-})
+   
+});
 
 Meteor.publish('invitations.list.status', function(invitationStatuses){
    check(invitationStatuses,[String])
@@ -29,8 +30,7 @@ Meteor.publish('invitations.list.status', function(invitationStatuses){
         {  invitation_status:{ $in: invitationStatuses }},
       )
    }
-   else
-   {
+   
      return Invitations.find(
          {  $and: [
               { invitation_status:{ $in: orderStatuses }},
@@ -38,5 +38,5 @@ Meteor.publish('invitations.list.status', function(invitationStatuses){
             ]
         },
       )
-   }
-})
+   
+});

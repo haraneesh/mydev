@@ -1,78 +1,76 @@
-import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Factory } from 'meteor/dburles:factory';
+/* eslint-disable consistent-return */
+import { Meteor } from 'meteor/meteor';
+import SimpleSchema from 'simpl-schema';
 
-Invitations = new Meteor.Collection( 'Invitations' );
+const Invitations = new Meteor.Collection('Invitations');
 export default Invitations;
 
 Invitations.allow({
   insert: () => false,
   update: () => false,
-  remove: () => false
+  remove: () => false,
 });
 
 Invitations.deny({
   insert: () => true,
   update: () => true,
-  remove: () => true
+  remove: () => true,
 });
 
-let InvitationsSchema = new SimpleSchema({
-  sentUserId:{
+const InvitationsSchema = new SimpleSchema({
+  sentUserId: {
     type: String,
-    label: "User id of the user who sent the invitation"
+    label: 'User id of the user who sent the invitation',
   },
   email: {
     type: String,
-    label: "Email to send invitation to.",
-    regEx: SimpleSchema.RegEx.Email
+    label: 'Email to send invitation to.',
+    regEx: SimpleSchema.RegEx.Email,
   },
   token: {
     type: String,
-    label: "Invitation token."
+    label: 'Invitation token.',
   },
   role: {
     type: String,
-    label: "Role to apply to the user."
+    label: 'Role to apply to the user.',
   },
   createdAt: { type: Date,
-    autoValue: function() {
+    autoValue() {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
-      } else {
-        this.unset();  // Prevent user from supplying their own value
+        return { $setOnInsert: new Date() };
       }
+      this.unset();  // Prevent user from supplying their own value
     },
-    optional: true
+    optional: true,
   },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   updatedAt: {
     type: Date,
-    autoValue: function() {
-      if (this.isUpdate) {
+    autoValue() {
+      if (this.isUpdate || this.isInsert) {
         return new Date();
       }
     },
-    denyInsert:true,
-    optional: true
+    optional: true,
   },
-  invitation_status:{
-    type:String,
-    label: "Status of the Invitation"
+  invitation_status: {
+    type: String,
+    label: 'Status of the Invitation',
   },
-  receivedUserId:{
-    type:String,
-    label: "User id of the user who accepted or received the invitation",
-    optional:true
-  }
+  receivedUserId: {
+    type: String,
+    label: 'User id of the user who accepted or received the invitation',
+    optional: true,
+  },
 });
 
-if ( Meteor.isServer ) {
-  Invitations._ensureIndex( { _Id:1, invitation_status:1, sentUserId:1 })
-  Invitations._ensureIndex( { token:1,  invitation_status:1 })
+if (Meteor.isServer) {
+  Invitations._ensureIndex({ _Id: 1, invitation_status: 1, sentUserId: 1 });
+  Invitations._ensureIndex({ token: 1, invitation_status: 1 });
 }
 
-Invitations.attachSchema( InvitationsSchema );
+Invitations.attachSchema(InvitationsSchema);

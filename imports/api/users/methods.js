@@ -1,9 +1,47 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+//import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
+import editProfile from './edit-profile';
+//import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
+
+export const editUserProfile = new ValidatedMethod({
+  name: 'users.editUserProfile',
+  validate: new SimpleSchema({
+      emailAddress: String,
+      password: {type : Object, optional:true , blackbox:true},
+      profile: Object,
+      "profile.name": Object,
+      "profile.name.first": String,
+      "profile.name.last":String,
+      "profile.whMobilePhone": String,
+      "profile.deliveryAddress": String
+  }).validator(),
+  run(profile) {
+    return editProfile({ userId: this.userId, profile })
+    .then(response => response)
+    .catch((exception) => {
+      throw new Meteor.Error('500', exception);
+    });
+  }
+})
+
+const createZohoContact = usr => ({
+  contact_name: usr.username,
+  billing_address: {
+    street: usr.profile.deliveryAddress,
+  },
+  contact_persons: [{
+    first_name: usr.profile.name.first,
+    last_name: usr.profile.name.last,
+    email: usr.email,
+    mobile: usr.profile.whMobilePhone,
+    is_primary_contact: true,
+  }],
+});
 
 export const findUser = new ValidatedMethod({
   name: 'users.find',
@@ -13,10 +51,12 @@ export const findUser = new ValidatedMethod({
   run(user) {
     if (
       Meteor.isServer &&
-      Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
+      Roles.userIsInRole(this.userId, constants.Roles.admin.name)
     ) {
       const u = Meteor.users.findOne({ username: user.mobileNumber });
-      u.isAdmin = Roles.userIsInRole(u._id, constants.Roles.admin.name);
+      if (u) {
+        u.isAdmin = Roles.userIsInRole(u._id, constants.Roles.admin.name);
+      }
       return u;
     }
     new Meteor.Error(403, 'Access Denied');
@@ -28,6 +68,8 @@ export const createUser = new ValidatedMethod({
   validate: new SimpleSchema({
     username: { type: String },
     email: { type: String },
+    profile: { type: Object },
+    'profile.name': { type: Object },
     'profile.name.last': { type: String },
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
@@ -38,7 +80,7 @@ export const createUser = new ValidatedMethod({
   run(user) {
     if (
       Meteor.isServer &&
-      Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
+      Roles.userIsInRole(this.userId, constants.Roles.admin.name)
     ) {
       const cuser = {
         username: user.username,
@@ -63,6 +105,9 @@ export const createUser = new ValidatedMethod({
         }
         return Meteor.users.findOne({ username: cuser.username });
       }
+      else {
+        throw new Meteor.Error('500', 'A user with this username already exists.'); 
+      }
     }
   },
 });
@@ -73,15 +118,17 @@ export const adminUpdateUser = new ValidatedMethod({
     _id: { type: String },
     username: { type: String, optional: true },
     email: { type: String, optional: true },
-    'profile.name.last': { type: String, optional: true },
-    'profile.name.first': { type: String, optional: true },
-    'profile.whMobilePhone': { type: String, optional: true },
-    'profile.deliveryAddress': { type: String, optional: true },
+    profile: { type: Object },
+    'profile.name': { type: Object },
+    'profile.name.last': { type: String },
+    'profile.name.first': { type: String },
+    'profile.whMobilePhone': { type: String },
+    'profile.deliveryAddress': { type: String },
     isAdmin: { type: Boolean },
     password: { type: Object, optional: true, blackbox: true },
   }).validator(),
   run(usr) {
-    let user = usr;
+    const user = usr;
     if (
       Meteor.isServer &&
       Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
@@ -131,19 +178,31 @@ export const updateUser = new ValidatedMethod({
     // password: { type: String, optional:true }
   }).validator(),
   run(usr) {
-    let user = usr;
+    const user = usr;
     if (user.email) {
-      let email = [];
+      const email = [];
       email.push({ address: user.email, verified: 'false' });
       delete user.email;
       user.emails = email;
+    }
+    if (Meteor.isServer) {
+      /*}
+      const authtoken = Meteor.settings.private.zoho_authtoken;
+      const organizationId = Meteor.settings.private.zoho_organization_id;
+
+      const zh = new ZohoInventory(authtoken, organizationId);
+      zh.getRecords('contacts');
+      zh.getRecords('items');
+      zh.getRecords('bills');
+      zh.getRecords('users'); */
+      // console.log(zh.getContacts('contacts'));
     }
     return Meteor.users.update({ _id: Meteor.userId() }, { $set: user });
   },
 });
 
 rateLimit({
-  methods: [updateUser, adminUpdateUser, findUser, createUser],
+  methods: [updateUser, adminUpdateUser, findUser, createUser, editUserProfile],
   limit: 5,
   timeRange: 1000,
 });

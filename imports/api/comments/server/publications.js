@@ -1,26 +1,25 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import Comments from '../comments';
+import Comments from '../Comments';
 
 Meteor.publish('comments.list', () => Comments.find());
 
 Meteor.publish('comments.view', (postId) => {
   check(postId, String);
-  return Comments.find({postId:postId});
+  return Comments.find({ postId });
 });
 
 
-Meteor.publishComposite('comments.viewExpanded', function(postId) {
+Meteor.publishComposite('comments.viewExpanded', (postId) => {
   check(postId, String);
-  const userId = this.userId;
   return {
     find() {
-      return Comments.find({postId:postId});
+      return Comments.find({ postId });
     },
     children: [{
       find(comment) {
-        return Meteor.users.find({ _id: comment.owner }, {fields: {'_id': 1, 'profile.name': 1}});
-      }
-    }]
+        return Meteor.users.find({ _id: comment.owner }, { fields: { _id: 1, 'profile.name': 1 } });
+      },
+    }],
   };
 });

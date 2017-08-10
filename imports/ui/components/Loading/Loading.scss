@@ -1,0 +1,16 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.Loader {
+  height: 2px;
+  overflow: hidden;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 5%, rgba(255, 109, 0, 1) 35%, rgba(255, 109, 0, 0.7) 65%, rgba(255, 255, 255, 0.5));
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  animation: moverLeft 2s ease infinite;
+}
+
+@-webkit-keyframes moverLeft {
+    from { width: 0px;}
+    to { width: 100%;}
+} 

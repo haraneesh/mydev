@@ -1,0 +1,13 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.special-heart{
+    -webkit-font-smoothing: antialiased;
+    -webkit-transform: rotateZ(15deg);
+    -moz-transform: rotateZ(15deg);
+    -ms-transform: rotateZ(15deg);
+    -o-transform: rotateZ(15deg);
+    transform: rotateZ(15deg);
+    top:-4px !important;
+    left:-4px !important;
+    color: $brand-warning;
+}

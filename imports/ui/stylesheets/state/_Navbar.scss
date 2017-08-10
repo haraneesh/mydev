@@ -1,0 +1,17 @@
+.navbar-default .navbar-nav > li > a.active,
+.navbar-default .navbar-nav > li > a.active:focus,
+.navbar-default .navbar-nav > li > a.active:hover {
+  color: #555;
+  background-color: #e7e7e7;
+}
+
+b.notification{
+  background: $brand-primary;
+    border-radius: 100%;
+    color: $body-bg;
+    font-size: $font-size-small;
+    padding: 3px 5px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}

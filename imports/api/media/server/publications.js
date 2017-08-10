@@ -1,5 +1,6 @@
 import { check } from 'meteor/check';
-import Media from '../media';
+import { Meteor } from 'meteor/meteor';
+import Media from '../Media';
 
 Meteor.publish('media.list', () => Media.find());
 

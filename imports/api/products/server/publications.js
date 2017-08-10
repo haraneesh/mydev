@@ -1,4 +1,4 @@
-import { Meteor } from 'meteor/meteor'
-import Products  from '../products'
+import { Meteor } from 'meteor/meteor';
+import Products from '../Products';
 
-Meteor.publish('products.list', () => Products.find())
+Meteor.publish('products.list', () => Products.find());

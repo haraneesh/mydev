@@ -1,7 +1,8 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import Comments from './comments';
-import rateLimit from '../../modules/rate-limit.js';
+import Comments from './Comments';
+import rateLimit from '../../modules/rate-limit';
+import constants from '../../modules/constants';
 
 export const upsertComment = new ValidatedMethod({
   name: 'comments.upsert',
@@ -9,10 +10,12 @@ export const upsertComment = new ValidatedMethod({
     _id: { type: String, optional: true },
     postType: { type: String, optional: true },
     description: { type: String, optional: true },
-    postId:{ type: String, optional: true },
-    owner:{ type: String, optional: true }
+    postId: { type: String, optional: true },
+    owner: { type: String, optional: true },
   }).validator(),
-  run(comment) {
+  run(commentt) {
+    const comment = commentt;
+    comment.status = constants.CommentTypes.Approved.name;
     return Comments.upsert({ _id: comment._id }, { $set: comment });
   },
 });

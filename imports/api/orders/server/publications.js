@@ -1,14 +1,16 @@
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { check } from 'meteor/check';
-import Orders from '../../orders/orders';
+import Orders from '../Orders';
 
-Meteor.publish('orders.list', function () {
+Meteor.publish('orders.list', function ordersList() {
   if (Roles.userIsInRole(this.userId, ['admin'])) {
     return Orders.find();
   }
+  return [];
 });
 
-Meteor.publish('orders.list.status', function (orderStatuses) {
+Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);
   if (Roles.userIsInRole(this.userId, ['admin'])) {
     return Orders.find({ order_status: { $in: orderStatuses } });
@@ -21,11 +23,11 @@ Meteor.publish('orders.list.status', function (orderStatuses) {
   });
 });
 
-Meteor.publish('orders.mylist', function () {
+Meteor.publish('orders.mylist', function ordersMylist() {
   return Orders.find({ 'customer_details._id': this.userId });
 });
 
-Meteor.publish('orders.orderDetails', function (id) {
+Meteor.publish('orders.orderDetails', function orderDetails(id) {
   check(id, String);
   if (Roles.userIsInRole(this.userId, ['admin'])) {
     return Orders.find(id);

@@ -1,0 +1,32 @@
+.about-body{
+    //background:#fff;
+    min-height: 25rem;
+}
+
+.about-body p{
+    line-height: 1.7;
+}
+
+.splash-banner{
+    position: absolute;
+    right: 0px;
+    top: 2.5rem;
+    z-index: -1;
+}
+
+.member-section{
+    margin-top:3rem;
+}
+
+.about_to_lt{
+    position: absolute; top: 0px; left: 0px; z-index:-1;  display:none;
+}
+.about_to_rt{
+    position: absolute; top: 0px; right: 0px; z-index:-1; display:none;
+}
+.about_bo_lt{
+    position: absolute; bottom: 0px; left: 0px; z-index:-1; display:none;
+} 
+.about_bo_rt{
+    position: absolute; bottom: 0px; right: 0px; z-index:-1; display:none;
+}

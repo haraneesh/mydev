@@ -1,98 +1,95 @@
-import { formatMoney } from 'accounting-js'
-import { accountSettings, dateSettings, dateSettingsWithTime } from '../../modules/settings'
-import { renderToStaticMarkup } from 'react-dom/server'
-import moment from 'moment'
-import 'moment-timezone'
-import SuvaiA4Report from './template/SuvaiA4Report'
+import React from 'react';
+import { formatMoney } from 'accounting-js';
+import { accountSettings, dateSettings } from '../../modules/settings';
+import ReactDOMServer from 'react-dom/server';
+import moment from 'moment';
+import 'moment-timezone';
 
-export default class GenerateOrderBills {
-    constructor(){
-        this.suvaiA4Report = new SuvaiA4Report()
-    }
+const _getHeader = () => '<!DOCTYPE html> <html><title>Invoices | Suvai</title> <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <head></head><body>';
+const _getFooter = () => '</body></html>';
 
-    PrintOrderBills(ordersToPrint /* selected list of orders */){
-        let totalOrders = ordersToPrint.length
-          _.each(ordersToPrint, function(order, key){
-              this._readyOrderToPrint(ordersToPrint[key])
-              /*let notLastOrder = totalOrders > (key + 1) 
-              if (notLastOrder) {
-                    this.suvaiA4Report.addPage()
-                }*/
-            },this)
-
-            this.suvaiA4Report.generateReport()
-    }
-
-    _readyOrderToPrint(order){
-       //this.pdf.setFontSize(this.titleFontSize)
-       //this._printTextRow(this.pageX, this.pageY, this.rowHeight,"Suvai",this.pdf )
-       this.suvaiA4Report.printTitle("Suvai")
-       //this.pdf.setFontSize(this.bodyFontSize)
-       //this._printTextRow(this.pageX + 45, this.pageY, 30," - Affordably, Healthy Organic Foods ",this.pdf )
-       //this.pageY = this._printTextRow(this.pageX + 400, this.pageY, this.rowHeight, 
-       //              moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format),this.pdf )
-       this.suvaiA4Report.printText( moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format), 400)              
-       this.suvaiA4Report.addNewSectionRow()
-       this.suvaiA4Report.printText(order.customer_details.name)
-       
-       if (order.customer_details.deliveryAddress){   
-              this.suvaiA4Report.addNewRow()
-              this.suvaiA4Report.printText(order.customer_details.deliveryAddress)
-       }
-       this._writeOrderProductDetails(order)
-
-       if (order.comments){
-              this.suvaiA4Report.printText(order.comments)
-       }
-    } 
-
-   _writeOrderProductDetails (order) {
-        const products = order.products
-        let headers = [{
-            "name":"column1",
-            "prompt":"Name",
-            "width":"350",
-            "align":"left",
-            "padding":1
-            }, {
-            "name":"column2",
-            "prompt":"Qty / Price",
-            "width":"200",
-            "align":"left",
-            "padding":4
-            }, {
-            "name":"column3",
-            "prompt":"Total",
-            "width":"180",
-            "align":"left",
-            "padding":4
-            }
-        ];
-
-        let rows = []
-            
-        rows = products.reduce((rows, product) =>{
-                    if (product.quantity > 0)
-                    {
-                        rows.push(
-                            {
-                                "column1":product.name + " " + product.unitOfSale,
-                                "column2":product.quantity + " x "  + formatMoney(product.unitprice,accountSettings),
-                                "column3": formatMoney(product.unitprice * product.quantity, accountSettings)
-                            }
-                        )
+const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
+  <div className="container">
+    <div className="row">
+      <div className="invoice-title">
+        <div className="col-xs-4">
+          <h2>Suvai</h2>
+        </div>
+        <div className="col-xs-8">
+          <h3 className="pull-right">
+            {moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format)}
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-xs-12">
+        <address>
+          <strong>Billed To:</strong><br />
+          {order.customer_details.name}<br />
+          {order.customer_details.deliveryAddress}
+        </address>
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-md-12">
+        <div className="panel panel-default">
+          <div className="panel-heading">
+            <h3 className="panel-title"><strong>Order summary</strong></h3>
+          </div>
+          <div className="panel-body">
+            <div className="table-responsive">
+              <table className="table table-condensed">
+                <thead>
+                  <tr>
+                    <td><strong>Item</strong></td>
+                    <td className="text-center"><strong>Qty / Price</strong></td>
+                    <td className="text-right"><strong>Total</strong></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                      order.products.map((product, index) => {
+                        if (product.quantity > 0) {
+                          return (
+                            <tr key={`gob-${index}`}>
+                              <td>{`${product.name} ${product.unitOfSale}`}</td>
+                              <td className="text-center">{`${product.quantity} x ${product.unitprice}`}</td>
+                              <td className="text-right">{formatMoney(product.unitprice * product.quantity, accountSettings)}</td>
+                            </tr>
+                          );
+                        }
+                      })
                     }
-                    return rows
-            }, []
-        )
+                  <tr>
+                    <td className="no-line" />
+                    <td className="no-line text-center"><strong>Total</strong></td>
+                    <td className="no-line text-right" colSpan="2">{formatMoney(order.total_bill_amount, accountSettings)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="row">
+              <div className="col-xs-12">
+                {order.comments}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    );
 
-        rows.push({
-            "column1":"",
-            "column2":"Sub Total",
-            "column3": formatMoney(order.total_bill_amount, accountSettings)
-        })
+const generateOrderBills = (ordersToPrint /* selected list of orders */) => {
+  let htmlReport = _getHeader();
+  _.each(ordersToPrint, (order, key) => {
+    htmlReport += _readyOrderToPrint(ordersToPrint[key]);
+  }, this, htmlReport);
+  htmlReport += _getFooter();
+    // this.suvaiA4Report.printHTMLReport(htmlReport);
+  const reportWindow = window.open('', 'ReportWindow');
+  reportWindow.document.write(htmlReport);
+};
 
-        this.suvaiA4Report.addNewRow()
-        this.suvaiA4Report.printTable(rows, headers)
-    }
-}
+export default generateOrderBills;

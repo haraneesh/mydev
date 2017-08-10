@@ -1,7 +1,5 @@
-import './accounts/email-templates';
-import './browser-policy';
-import './fixtures';
+import './accounts';
 import './api';
-import './mail-url';
-// import "./slingshot";
-import './accounts-config';
+import './fixtures';
+import './email';
+import './browserPolicy';

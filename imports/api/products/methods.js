@@ -1,11 +1,11 @@
-import Products from './products'
-import { SimpleSchema } from 'meteor/aldeed:simple-schema'
-import { ValidatedMethod } from 'meteor/mdg:validated-method'
-import rateLimit from '../../modules/rate-limit.js'
+import SimpleSchema from 'simpl-schema';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import rateLimit from '../../modules/rate-limit.js';
+import Products from './Products';
 
 export const insertProduct = new ValidatedMethod({
   name: 'products.insert',
-  /*validate: new SimpleSchema({
+  /* validate: new SimpleSchema({
     sku: {  type: String },
     name: { type: String },
     unitprice: { type: Number, decimal: true },
@@ -17,11 +17,11 @@ export const insertProduct = new ValidatedMethod({
     "vendor_details.slug" : { type:String  },
     "vendor_details.name" : { type:String  },
   }).validator(),*/
-  validate: Products.schema.validator(),
+  validate: Products.schema.omit('createdAt', 'updatedAt').validator(),
   run(product) {
-    Products.insert(product)
+    Products.insert(product);
   },
-})
+});
 
 export const updateProductName = new ValidatedMethod({
   name: 'products.name.update',
@@ -30,9 +30,9 @@ export const updateProductName = new ValidatedMethod({
     'update.name': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
 export const updateProductSKU = new ValidatedMethod({
   name: 'products.sku.update',
@@ -41,21 +41,21 @@ export const updateProductSKU = new ValidatedMethod({
     'update.sku': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
 
 export const updateProductUnitPrice = new ValidatedMethod({
   name: 'products.unitprice.update',
   validate: new SimpleSchema({
     _id: { type: String },
-    'update.unitprice': { type: Number, decimal: true, optional: true },
+    'update.unitprice': { type: Number, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
 export const updateUnitForSelection = new ValidatedMethod({
   name: 'products.unitsForSelection.update',
@@ -64,14 +64,13 @@ export const updateUnitForSelection = new ValidatedMethod({
     'update.unitsForSelection': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    
-    if (Meteor.isServer){
-      if (update.unitsForSelection.split(',').every(_IsNumber)){
-        Products.update(_id, { $set: update })
+    if (Meteor.isServer) {
+      if (update.unitsForSelection.split(',').every(_IsNumber)) {
+        Products.update(_id, { $set: update });
       }
     }
   },
-})
+});
 
 export const updateProductDescription = new ValidatedMethod({
   name: 'products.description.update',
@@ -80,9 +79,9 @@ export const updateProductDescription = new ValidatedMethod({
     'update.description': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
 export const updateProductType = new ValidatedMethod({
   name: 'products.type.update',
@@ -91,9 +90,9 @@ export const updateProductType = new ValidatedMethod({
     'update.type': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
 export const updateProductImagePath = new ValidatedMethod({
   name: 'products.image_path.update',
@@ -102,31 +101,30 @@ export const updateProductImagePath = new ValidatedMethod({
     'update.image_path': { type: String, optional: true },
   }).validator(),
   run({ _id, update }) {
-    Products.update(_id, { $set: update })
+    Products.update(_id, { $set: update });
   },
-})
+});
 
-function _IsNumber(value){
-  return !isNaN(value)
+function _IsNumber(value) {
+  return !isNaN(value);
 }
 
 export const upsertProduct = new ValidatedMethod({
   name: 'product.upsert',
   validate: Products.schema.validator(),
   run(product) {
-    const id = product._id
-    delete product._id
-    const unitsForSelection = product.unitsForSelection
-    product.unitsForSelection = (unitsForSelection)? unitsForSelection.replace(/\s+/g, '') : "0,1,2,3,4,5,6,7,8,9,10"
-    if (Meteor.isServer){
-      if ((product.unitsForSelection.split(',').every(_IsNumber))){
-         return Products.upsert({ _id: id }, { $set: product })
-        } else {
-          throw new Meteor.Error(403, "Units for Selection should be numbers")
-        }
+    const id = product._id;
+    delete product._id;
+    const unitsForSelection = product.unitsForSelection;
+    product.unitsForSelection = (unitsForSelection) ? unitsForSelection.replace(/\s+/g, '') : '0,1,2,3,4,5,6,7,8,9,10';
+    if (Meteor.isServer) {
+      if ((product.unitsForSelection.split(',').every(_IsNumber))) {
+        return Products.upsert({ _id: id }, { $set: product });
+      }
+      throw new Meteor.Error(403, 'Units for Selection should be numbers');
     }
   },
-})
+});
 
 export const removeProduct = new ValidatedMethod({
   name: 'products.remove',
@@ -134,9 +132,9 @@ export const removeProduct = new ValidatedMethod({
     _id: { type: String },
   }).validator(),
   run({ _id }) {
-    Products.remove(_id)
+    Products.remove(_id);
   },
-})
+});
 
 rateLimit({
   methods: [
@@ -151,4 +149,4 @@ rateLimit({
   ],
   limit: 5,
   timeRange: 1000,
-})
+});

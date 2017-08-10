@@ -1,15 +1,15 @@
-import { Meteor } from 'meteor/meteor'
-import { composeWithTracker } from 'react-komposer'
-import ProductLists from '../../../api/productLists/productLists'
-import ViewProductListDetails from '../../components/productLists/ViewProductListDetails'
-import Loading from '../../components/Loading'
+import { Meteor } from 'meteor/meteor';
+import { composeWithTracker } from 'react-komposer';
+import ProductLists from '../../../api/ProductLists/ProductLists';
+import ViewProductListDetails from '../../components/ProductLists/ViewProductListDetails';
+import Loading from '../../components/Loading/Loading';
 
-const composer = ({ params }, onData) => {
-  const subscription = Meteor.subscribe('productList.view', params._id);
- 
+const composer = ({ match, history }, onData) => {
+  const subscription = Meteor.subscribe('productList.view', match.params._id);
+
   if (subscription.ready()) {
     const productList = ProductLists.findOne();
-    onData(null, { productList });
+    onData(null, { productList, history });
   }
 };
 

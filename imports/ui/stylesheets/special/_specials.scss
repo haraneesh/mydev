@@ -1,0 +1,29 @@
+.specialCard-Yellow{
+    padding:1rem;
+    background: #f9b546; /* Old browsers */
+    background: -moz-radial-gradient(center, ellipse cover, #f9b546 36%, #fac760 99%); /* FF3.6-15 */
+    background: -webkit-radial-gradient(center, ellipse cover, #f9b546 36%,#fac760 99%); /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center, #f9b546 36%,#fac760 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9b546', endColorstr='#fac760',GradientType=1 );
+}
+
+.card div.DraftEditor-editorContainer{
+    min-height:0px;
+}
+
+.special-head{
+    padding:15px 0px;
+}
+.view-specials-image{
+  height: 30rem;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card.panel{
+    margin-bottom:0px;
+}
+
+.ListSpecials .panel-default{
+    border:0px none;
+}

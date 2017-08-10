@@ -1,0 +1,131 @@
+
+.navbar-collapse{
+    z-index:999;
+}
+
+.sec-menu-bar {
+    background-color:$navbar-default-bg;
+}
+
+//Convert hamburger to cross icon
+.icon-bar {
+    display: block;
+    width: 22px;
+    transition: all 0.4s;
+    background-color: $navbar-default-toggle-icon-bar-bg;
+    width: 22px;
+    height: 2px;
+  }
+
+ .icon-bar + .icon-bar {
+    margin-top: 4px;
+  }
+
+  .top-bar.visible {
+    transform: rotate(45deg);
+    transform-origin: 10% 10%;
+  }
+
+  .middle-bar.visible {
+    opacity: 0;
+  }
+
+  .bottom-bar.visible {
+    transform: rotate(-45deg);
+    transform-origin: 10% 90%;
+  }
+
+.top-bar  {  transform: rotate(0); };
+.middle-bar {  opacity: 1; };
+.bottom-bar {  transform: rotate(0); };
+
+.navbar-header{
+  width:100%;
+}
+
+.menu-expand-button{
+  float:right;
+  margin-top: 17px;
+}
+
+.menu-panel{
+    @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+    border:0 none;
+}
+
+.menu > div {
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+    width:100%;
+    top: $navbar-height;
+    right: 0px;
+}
+
+.greetings{
+  display:none;
+}
+
+.menu-header{
+  width: 100%;
+  margin-bottom: 12px;
+  color: $navbar-default-link-color;
+  text-transform: uppercase;
+  font-size: 77%;
+  letter-spacing: 3px;
+}
+
+.sec-menu-bar{
+  padding-left: 0px;
+  margin-bottom:1rem;
+  margin-top:2rem;
+}
+
+.sec-menu-bar, .menu ul{
+  list-style:none;
+}
+
+.menu ul{
+  padding-left: 0px;
+  margin-bottom:2.5em;
+
+}
+
+.menu ul li{
+  margin-bottom: 5px;
+}
+
+.menu li a {
+    padding-top:    10px;
+    padding-bottom: 10px;
+    line-height: $line-height-computed;
+    outline: none;
+    outline-width: 0;
+  }
+
+.menu > div.right {
+    background:$navbar-default-bg; 
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: opacity 900ms, visibility 900ms;
+    transition: opacity 900ms, visibility 900ms;
+}
+
+.menu > div.visible.right {
+    visibility: visible;
+    opacity: 1;
+}
+
+.menu .divider{
+    height: 1px;
+    margin: 11.5px 0;
+    overflow: hidden;
+    background-color: #efefef;
+}
+
+.navbar-default .navbar-nav > li > a.active, 
+.navbar-default .navbar-nav > li > a.active:focus, 
+.navbar-default .navbar-nav > li > a.active:hover {
+    color: $navbar-default-link-active-color !important;
+    background-color: transparent !important;
+}

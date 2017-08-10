@@ -22,4 +22,3 @@ users.forEach(({ username, email, password, profile, roles }) => {
     Roles.addUsersToRoles(userId, roles);
   }
 });
-

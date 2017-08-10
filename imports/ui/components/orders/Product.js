@@ -10,11 +10,11 @@ import PropTypes from 'prop-types'
 //<Col sm = { 2 }><Image  src={ image } className = "order-image" responsive /> </Col>
 const FieldGroup = ({ productId, sku, name, image, description, unit, unitprice, vendor, onChange, quantitySelected, unitsForSelection, isAdmin }) => (
     <Row>
-      <Col sm = { 5 }>
+      <Col sm = { 6 }>
         <h4 className = "product-name"><strong>{name + " " + unit}</strong></h4>
         <h4><small>{description}</small></h4>
       </Col>
-      <Col sm = { 4 } className = "text-right-not-xs">
+      <Col sm = { 3 } className = "text-right-not-xs">
         <h4>{formatMoney(unitprice,accountSettings)} <span className = "text-muted">x</span></h4>
       </Col>
       <Col sm = { 3 }>

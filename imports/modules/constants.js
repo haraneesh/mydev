@@ -31,6 +31,7 @@ Awaiting Fulfillment — customer has completed the checkout process and payment
 Awaiting Shipment — order has been pulled and packaged, and is awaiting collection from a shipping provider
 Awaiting Pickup — order has been pulled, and is awaiting customer pickup from a seller-specified location
 Partially Shipped — only some items in the order have been shipped, due to some products being pre-order only or other reasons
+Partially Completed — only some items in the order have been invioiced and shipped, due to some products being pre-order only or other reasons
 Completed — order has been shipped/picked up, and receipt is confirmed;
         client has paid for their digital product and their file(s) are available for download
 Shipped — order has been shipped, but receipt has not been confirmed; seller has used the Ship Items action.
@@ -55,15 +56,10 @@ const OrderStatus = {
     display_value: 'Awaiting Fulfillment',
     label: 'info',
   },
-  Awaiting_Shipment: {
-    name: 'Awaiting_Shipment',
-    display_value: 'Awaiting Shipment',
-    label: 'info',
-  },
   Completed: {
     name: 'Completed',
     display_value: 'Completed',
-    label: 'success',
+    label: 'primary',
   },
   Cancelled: {
     name: 'Cancelled',
@@ -71,13 +67,14 @@ const OrderStatus = {
     label: 'default',
   },
   Shipped: { name: 'Shipped', display_value: 'Shipped', label: 'info' },
+  Partially_Completed: { name: 'Partially_Completed', display_value: 'Partially Completed', label: 'info' },
 };
 
 const ProductListStatus = {
   Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
   Active_Now: {
     name: 'Active_Now',
-    display_value: 'Active Now',
+    display_value: 'Active',
     label: 'success',
   },
   Future: { name: 'Future', display_value: 'Future', label: 'warning' },
@@ -93,13 +90,20 @@ const InvitationStatus = {
 };
 
 const PublishStatus = {
-  Draft: { name: 'DRAFT', display_value: 'Draft' },
-  Published: { name: 'PUBLISHED', display_value: 'Published' },
+  Draft: { name: 'Draft', display_value: 'Draft' },
+  Published: { name: 'Published', display_value: 'Published' },
 };
 
 const PostTypes = {
-  Recipe: { name: 'RECIPE', display_value: 'Recipe' },
-  Product: { name: 'PRODUCT', display_value: 'Product' },
+  Recipe: { name: 'Recipe', display_value: 'Recipe' },
+  Product: { name: 'Product', display_value: 'Product' },
+};
+
+const SpecialThemes = ['None', 'Yellow', 'Red', 'Green', 'Orange'];
+
+const CommentTypes = {
+  Approved: { name: 'Approved', display_value: 'Approved' },
+  New: { name: 'New', display_value: 'New' },
 };
 
 const MediaStores = {
@@ -117,6 +121,29 @@ const MediaStores = {
   },
 };
 
+    // The toolbarConfig object allows you to specify custom buttons, reorder buttons and to add custom css classes.
+    // Supported inline styles: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Inline-Styles.md
+    // Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
+const RichEditorToolbarConfig = {
+      // Optionally specify the groups to display (displayed in the order listed).
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN',*/ 'HISTORY_BUTTONS'],
+  INLINE_STYLE_BUTTONS: [
+        { label: 'Bold', style: 'BOLD', className: 'custom-css-class' },
+        { label: 'Italic', style: 'ITALIC' },
+        { label: 'Underline', style: 'UNDERLINE' },
+  ],
+  BLOCK_TYPE_DROPDOWN: [
+        { label: 'Normal', style: 'unstyled' },
+        { label: 'Heading Large', style: 'header-one' },
+        { label: 'Heading Medium', style: 'header-two' },
+        { label: 'Heading Small', style: 'header-three' },
+  ],
+  BLOCK_TYPE_BUTTONS: [
+        { label: 'List', style: 'unordered-list-item' },
+        { label: 'Numbered List', style: 'ordered-list-item' },
+  ],
+};
+
 export default (constants = {
   ProductType,
   ProductCategory,
@@ -129,4 +156,7 @@ export default (constants = {
   PublishStatus,
   MediaStores,
   PostTypes,
+  SpecialThemes,
+  CommentTypes,
+  RichEditorToolbarConfig,
 });

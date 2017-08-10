@@ -1,6 +1,7 @@
+/* eslint-disable consistent-return */
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Factory } from 'meteor/dburles:factory';
+import SimpleSchema from 'simpl-schema';
 
 const Recipes = new Mongo.Collection('Recipes');
 export default Recipes;
@@ -23,14 +24,20 @@ Recipes.schema = new SimpleSchema({
     label: 'The title of the recipe.',
   },
   ingredients: {
-    type: [String],
+    type: Array,
     label: 'The list of ingredients in the recipe.',
     optional: true,
   },
+  'ingredients.$': {
+    type: String,
+  },
   commentIds: {
-    type: [String],
+    type: Array,
     label: 'The list of comments attached to the recipe.',
     optional: true,
+  },
+  'commentsIds.$': {
+    type: String,
   },
   description: {
     type: Object,
@@ -70,16 +77,24 @@ Recipes.schema = new SimpleSchema({
     },
     optional: true,
   },
+  viewCount: {
+    type: Number,
+    autoValue() {
+      if (this.isInsert) {
+        return 0;
+      }
+    },
+    optional: true,
+  },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   updatedAt: {
     type: Date,
     autoValue() {
-      if (this.isUpdate) {
+      if (this.isUpdate || this.isInsert) {
         return new Date();
       }
     },
-    denyInsert: true,
     optional: true,
   },
   publishStatus: {
@@ -93,8 +108,3 @@ if (Meteor.isServer) {
 }
 
 Recipes.attachSchema(Recipes.schema);
-
-Factory.define('recipe', Recipes, {
-  title: () => 'Factory Title',
-  recipe: () => 'Factory Body',
-});

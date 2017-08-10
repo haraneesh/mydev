@@ -1,7 +1,7 @@
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import Recipes from './recipes';
-import Media from '../media/media';
+import Recipes from './Recipes';
+import Media from '../Media/Media';
 import rateLimit from '../../modules/rate-limit.js';
 import constants from '../../modules/constants';
 
@@ -15,7 +15,7 @@ const _upsertRecipe = (recipe) => {
     {
       $and: [{ owner: recipe.owner }, { _id: recipe._id }],
     },
-    { $set: recipe }
+    { $set: recipe },
   );
 };
 
@@ -25,7 +25,8 @@ export const upsertRecipeDraft = new ValidatedMethod({
     _id: { type: String, optional: true },
     title: { type: String },
     description: { type: Object, optional: true, blackbox: true },
-    ingredients: { type: [String], optional: true },
+    ingredients: { type: Array, optional: true },
+    'ingredients.$':{ type: String },
     imageUrl: { type: String, optional: true },
   }).validator(),
   run(recipe) {
@@ -46,16 +47,18 @@ const recipePublishSchema = new SimpleSchema({
       if (!convertFromRaw(this.value).hasText()) {
         return 'emptyRecipeDescription';
       }
-      return;
     },
   },
-  ingredients: { type: [String], minCount: 1 },
+  ingredients: { type: Array, minCount: 1 },
+  'ingredients.$': { type: String },
   imageUrl: { type: String, optional: true },
 });
 
-recipePublishSchema.messages({
-  'minCount ingredients': 'You must specify at least [minCount] ingredient',
-  emptyRecipeDescription: "To publish the recipe, recipe's description is mandatory. To save recipe and edit it later, click on save recipe instead.",
+recipePublishSchema.messageBox.messages({
+  en: {
+    'minCount ingredients': 'You must specify at least [minCount] ingredient',
+    emptyRecipeDescription: "To publish the recipe, recipe's description is mandatory. To save recipe and edit it later, click on save recipe instead.",
+  },
 });
 
 export const upsertRecipePublish = new ValidatedMethod({
