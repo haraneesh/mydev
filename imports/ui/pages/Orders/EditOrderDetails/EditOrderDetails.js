@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ViewOrderDetailsC from '../../../components/Orders/ViewOrderDetails';
+import ViewOrderDetails from '../../../components/Orders/ViewOrderDetails';
+import ViewInvoicedOrderDetails from '../../../components/Orders/ViewInvoicedOrderDetails';
 import ProductsOrderList from '../../../components/Orders/ProductsOrderList';
 import constants from '../../../../modules/constants';
 
@@ -18,8 +19,13 @@ const EditOrderDetails = ({ order, history }) => {
       />
     );
   }
+
+  if (order.invoices) {
+    return (<ViewInvoicedOrderDetails order={order} history={history} />);
+  }
+
   return (
-    <ViewOrderDetailsC order={order} history={history} />
+    <ViewOrderDetails order={order} history={history} />
   );
 };
 

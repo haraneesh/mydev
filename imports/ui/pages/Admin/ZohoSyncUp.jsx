@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Panel } from 'react-bootstrap';
-import { syncBulkOrdersWithZoho, updateOrdersFromZoho } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
+import { syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
 import { bulkSyncProductsZoho } from '../../../api/ZohoSyncUps/zohoProductsMethods';
 import { bulkSyncUsersZoho } from '../../../api/ZohoSyncUps/zohoContactsMethods';
 import ZohoSync from '../../components/ZohoSync/ZohoSync';
@@ -36,9 +36,9 @@ const ZohoSyncUp = () => (
 
           <ZohoSync
             orderSequence={4}
-            syncFunction={updateOrdersFromZoho}
-            syncName="< Get Order Completions"
-            syncDescription="Get details of Awaiting Fulfillment and Partial orders"
+            syncFunction={getOrdersAndInvoicesFromZoho} // {getOrdersFromZoho}
+            syncName="< Get Invoices "
+            syncDescription="Get invoice details of orders from Zoho"
           />
 
         </Col>

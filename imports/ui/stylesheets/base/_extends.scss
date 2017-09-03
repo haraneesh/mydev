@@ -39,11 +39,15 @@
   }
 }
 
-h1, h2, h3{
+h1, h2, h3, .h1, .h2, .h3{
   font-family:'Montserrat';
   //text-shadow: 0px 1px 0px rgba(255,255,255,0.6);
   margin-top:0px;
   margin-bottom:0px;
+}
+
+h4, .h4 {
+  letter-spacing:0.25px;     
 }
 
 hr {
@@ -91,6 +95,7 @@ body{
   background:url('/bg.jpg');
   font-size:$font-size-base;
   font-family:"Muli";
+  text-rendering: optimizeLegibility;
 }
 
 .btn{

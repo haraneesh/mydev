@@ -10,7 +10,7 @@ const Vision = () => (
         <div className="panel-body">
           <div className="PageHeader">
             <div className="PageHeader-container">
-              <h3>We are trying to make Living Healthy Effortless</h3>
+              <h3>To Effortlessly Healthy Living</h3>
             </div>
           </div>
           <div className="Content">
@@ -20,10 +20,9 @@ const Vision = () => (
                   Healthy food is a must for healthy life.</p>
                 <p>
                   At the grocery store when we
-                   pick something up do we know whether the food is of high quality?
+                   pick something up, can we trust that food to be of high quality?
 
-                  The way in which food is grown and is distributed today is
-                   complicated. There are too players in the supply chain. It is
+                  Today, it is complicated, the way in which food is grown and is distributed. It goes through too many hands in the supply chain. It is
                    impossible to trust and make good healthy choices for our families.
                   </p>
                 <p><em>We want to change that.</em></p>
@@ -66,9 +65,9 @@ const Vision = () => (
             <section className="text-center page-section">
               <h3>1. Revive Organic Farming</h3>
               <p>We start at the source. Farming healthy food sustainably is paramount. </p>
-              <p>Use of chemicals, pesticides and preservatives is a very new practice which is impacting our wellbeing. It has crept in to our ways slowly. We have failed to notice it until recently. </p>
+              <p>Use of chemicals, pesticides and preservatives is a very new practice which is impacting our Well Being. It has crept into our ways slowly. We have failed to notice it until recently. </p>
               <p>Farming is an age old problem. Our ancestors have perfected it severals years back and have practiced them for hundred of centuries. We only have to look a few decades back to learn of these sustainable practices.</p> 
-              <p>All the produce here that is available is truely organic because it is either grown organically by us in our farms or comes from partnering farmer friends whom we have carefully vetted.</p>
+              <p>All the produce here that is available is truly organic because it is either grown organically by us in our farms or comes from partnering farmer friends whom we have carefully vetted.</p>
               <p><img src="/vision/field.jpg" alt="Farmer" className="img-responsive" /></p>
             </section>
             <section className="text-center page-section">
@@ -79,7 +78,7 @@ const Vision = () => (
             </section>
             <section className="text-center page-section">
               <h3>3. Promote Balanced Diet</h3>
-              <p>To maintaing good health and to feel our best, Eating a healthy, balanced diet is necessary. Keeping track of the diet and ensuring that we feed our families with food containing appropriate proportions of macro and micro nutrients is very hard. We are trying that easy by rotating the food available in the week and by introducing seasonal food.</p>
+              <p>To maintain good health and to feel our best, Eating a healthy, balanced diet is necessary. Keeping track of the diet and ensuring that we feed our families with food containing appropriate proportions of macro and micro nutrients is very hard. We are trying that easy by rotating the food available in the week and by introducing seasonal food.</p>
               <p>We are proud that all the produce is devoid of pesticides, preservative and artificial coloring and any chemical agents that are harmful.</p>
               <p><img src="/vision/balanced-diet.jpg" alt="Variety" className="img-responsive" /></p>
             </section>

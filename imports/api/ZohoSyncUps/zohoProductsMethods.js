@@ -3,22 +3,22 @@ import { Roles } from 'meteor/alanning:roles';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import constants from '../../modules/constants';
-import zh from './ZohoInventory';
+import zh from './ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
 
 // zoho refers to them as items
 const _createZohoItem = product => ({
   // group_id: _getZohoGroupId(product.type),
-  group_name: product.type,
-  unit: product.unitOfSale,
-  item_type: 'inventory',
-  product_type: 'goods',
-  description: product.description || '',
   name: product.name, // mandatory
+  description: product.description || '',
   rate: product.unitprice,
   // reorder_level: 5,
-  sku: product.sku
+  sku: product.sku,
+  // group_name: product.type,
+  unit: product.unitOfSale,
+  product_type: 'goods',
+  item_type: 'inventory',
 });
 
 const syncProductWithZoho = (prd, successResp, errorResp) => {

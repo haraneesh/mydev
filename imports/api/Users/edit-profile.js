@@ -17,6 +17,7 @@ const updateUser = (userId, { emailAddress, profile }) => {
     Meteor.users.update(userId, {
       $set: {
         'emails.0.address': emailAddress,
+        updatedAt: new Date(),
         profile,
       },
     });

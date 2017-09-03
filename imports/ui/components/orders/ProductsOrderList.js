@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatMoney } from 'accounting-js';
+import PropTypes from 'prop-types';
 import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
 import { ListGroupItem, FormControl, Tabs, Tab } from 'react-bootstrap';
 import Product from './Product';
@@ -7,7 +8,6 @@ import { upsertOrder, updateMyOrderStatus } from '../../../api/Orders/methods';
 import { accountSettings } from '../../../modules/settings';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
-import PropTypes from 'prop-types';
 
 const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) => (
   <ListGroupItem>

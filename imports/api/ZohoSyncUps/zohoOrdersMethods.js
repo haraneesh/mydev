@@ -6,9 +6,10 @@ import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import Orders from '../Orders/Orders';
 import constants from '../../modules/constants';
-import zh from './ZohoInventory';
+import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
+import { processInvoicesFromZoho } from './zohoInvoicesMethods';
 
 
 // TODO May have to be a seperate table
@@ -20,16 +21,15 @@ const _productTypeToZohoGroupIdMap = {
 
 const _getZohoGroupId = type => _productTypeToZohoGroupIdMap[type];
 
+// Sales Order - draft, open, invoiced, partially_invoiced, void and overdue
 
-// SalesOrder status - sent, draft, overdue, paid, void, unpaid, partially_paid and viewed
-// Sales order status - draft, confirmed, SalesOrderd, closed, void, on hold
 const _orderStatusToZohoSalesOrderStatus = {
-  Pending: { zh_status: 'confirmed' },
+  Pending: { zh_status: 'draft' },
   Awaiting_Payment: { zh_status: 'open' },
   Awaiting_Fulfillment: { zh_status: 'open' },
-  Completed: { zh_status: 'fulfilled' },
+  Completed: { zh_status: 'invoiced' },
   Cancelled: { zh_status: 'void' },
-  Shipped: { zh_status: 'fulfilled' },
+  Shipped: { zh_status: 'invoiced' },
 };
 
 const _getZohoSalesOrderStatus = status => _orderStatusToZohoSalesOrderStatus[status].zh_status;
@@ -52,9 +52,9 @@ const _getZohoItemIdFromProductId = productId =>
 
 const _createZohoSalesOrder = (order) => {
   const zhSalesOrder = {
-    date: _getZhDisplayDate(order.createdAt), // "2013-11-17"
-    status: _getZohoSalesOrderStatus(order.order_status), // possible values -
     customer_id: _getZohoUserIdFromUserId(order.customer_details._id), // mandatory
+    date: _getZhDisplayDate(order.createdAt), // "2013-11-17"
+    // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -
     notes: order.comments || '',
   };
 
@@ -75,7 +75,7 @@ const _createZohoSalesOrder = (order) => {
 };
 
 
-const _syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
+const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
   const zhSalesOrder = _createZohoSalesOrder(order);
   const r = (order.zh_salesorder_id) ?
@@ -85,6 +85,7 @@ const _syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   if (r.code === 0 /* Success */) {
     Orders.update({ _id: order._id }, { $set: {
       zh_salesorder_id: r.salesorder.salesorder_id,
+      zh_salesorder_number: r.salesorder.salesorder_number,
       order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
     } });
     successResp.push(retResponse(r));
@@ -99,7 +100,7 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
   run() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
-      throw new Meteor.Error(401, 'Access denied');
+      throw new Meteor.Error(403, 'Access denied');
     }
     const nowDate = new Date();
     const successResp = [];
@@ -110,110 +111,74 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
       orders.forEach((ord) => {
-        _syncOrdersWithZoho(ord, successResp, errorResp);
+        syncOrdersWithZoho(ord, successResp, errorResp);
       });
     }
     return updateSyncAndReturn('orders', successResp, errorResp, nowDate, syncUpConstants.ordersToZoho);
   },
 });
 
-const _areAllItemsInvoiced = (zhSalesOrder) => {
-  const lineItems = zhSalesOrder.line_items;
-  return lineItems.reduce((startValue, item) => startValue && item.is_invoiced, true);
-};
-
-/*
-Status of Invoices
-Status	Description
-Draft	Invoices when created will be in Draft status before being sent to the customer.
-Due	Invoices once sent to the customer with a due date for payment, will be shown as Sent.
-Overdue	Once the due date for payment is exceeded, it will be shown as Overdue.
-Partially Paid	When the payment is made for a part of the items in the invoice, it will be shown as Partially Paid.
-Paid	Once the payment is made by your customer for the invoice raised, it will be shown as Paid.
-*/
-
-const _areAllInvoicedItemsPaid = (zhSalesOrder) => {
-  const invoices = zhSalesOrder.invoices;
-  return invoices.reduce((startValue, invoice) => startValue && (invoice.status === 'paid'), true);
-};
-
-/*
-Status of a Sales Order
-A Sales Order status indicates the stage of progress and the current condition of the order. Lets take a look at what each status indicates.
-
-Draft - This indicates that a SO has been created successfully, but is yet to be sent to the customer.
-Confirmed - This indicates that the SO created has been sent to the customer.
-Closed - The SO becomes Closed when you either raise an Invoice or when a Shipment is fulfilled (or both, depending on what you’ve chosen in the Sales Order Preferences.)
-Void - The SO status becomes Void, when you decide to freeze/nullify the SO and make it void.
-On Hold - The status is set as On Hold, when there’s an unbilled backordered PO raised for the Sales Order. Once the PO has been billed, the SO will revert back to its previous status.
-*/
-
-const _syncOrderFromZoho = (awaitOrd, successResp, errorResp) => {
+// Zoho status = Allowed Values: draft, open, invoiced, partially_invoiced, void and overdue.
+// Zoho order_status = draft, open, closed, void
+const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
+  // const r = zh.getRecordsByParams('invoices', { reference_number: order.zh_salesorder_number });
   const r = zh.getRecordById('salesorders', order.zh_salesorder_id);
+  let getInvoices = false;
   if (r.code === 0 /* Success */) {
-    // From invoices update status
-    const zhSalesOrder = r.salesorder;
-    if (zhSalesOrder.status !== 'draft') {
-      let orderStatus;
+    // console.log(r);
+    const orderQuery = {
+      zh_salesorder_status: r.salesorder.status,
+      zh_salesorder_order_status: r.salesorder.order_status,
+    };
 
-      const areAllItemsInvoiced = _areAllItemsInvoiced(zhSalesOrder);
-      const areAllInvoicedItemsPaid = _areAllInvoicedItemsPaid(zhSalesOrder);
-
-      switch (true) {
-        case (areAllItemsInvoiced && areAllInvoicedItemsPaid):
-          orderStatus = constants.OrderStatus.Completed.name;
-          break;
-        case (areAllItemsInvoiced && !areAllInvoicedItemsPaid):
-          orderStatus = constants.OrderStatus.Awaiting_Payment.name;
-          break;
-        case (!areAllItemsInvoiced && areAllInvoicedItemsPaid):
-          orderStatus = constants.OrderStatus.Partially_Completed.name;
-          break;
-        case (zhSalesOrder.status === 'void'):
-          orderStatus = constants.OrderStatus.Cancelled.name;
-          break;
-        default:
-          orderStatus = constants.OrderStatus.Awaiting_Fulfillment.name;
-          break;
-      }
-      Orders.update({ _id: order._id }, { $set: { order_status: orderStatus } });
+    if (r.salesorder.status === 'void') {
+      orderQuery.order_status = constants.OrderStatus.Cancelled.name;
+    } else {
+      getInvoices = true;
     }
 
+    Orders.update({ _id: order._id }, { $set: orderQuery });
     successResp.push(retResponse(r));
   } else {
     errorResp.push(retResponse(r));
   }
+  return getInvoices;
 };
 
-export const updateOrdersFromZoho = new ValidatedMethod({
-  name: 'orders.updateOrdersFromZoho',
+export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
+  name: 'orders.getOrdersAndInvoicesFromZoho',
   validate() {},
   run() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
-      throw new Meteor.Error(401, 'Access denied');
+      throw new Meteor.Error(403, 'Access denied');
     }
     const nowDate = new Date();
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
-      const query = { $or: [
-               { order_status: constants.OrderStatus.Awaiting_Fulfillment.name },
-               { order_status: constants.OrderStatus.Partially_Completed.name },
+      const query = { $and: [
+               { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
+               { order_status: { $ne: constants.OrderStatus.Completed.name } },
+               { order_status: { $ne: constants.OrderStatus.Pending.name } },
       ] };
+
       const orders = Orders.find(query).fetch();
       orders.forEach((ord) => {
-        _syncOrderFromZoho(ord, successResp, errorResp);
+        const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+        if (getInvoices) {
+          processInvoicesFromZoho(ord, successResp, errorResp);
+        }
       });
     }
-    return updateSyncAndReturn('orders', successResp, errorResp, nowDate, syncUpConstants.ordersFromZoho);
+    return updateSyncAndReturn('invoices', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
   },
 });
 
 
 rateLimit({
-  methods: [updateOrdersFromZoho, syncBulkOrdersWithZoho],
+  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho],
   limit: 5,
   timeRange: 1000,
 });

@@ -106,6 +106,13 @@ const CommentTypes = {
   New: { name: 'New', display_value: 'New' },
 };
 
+const InfiniteScroll = {
+  DefaultLimit: 20,
+  LimitIncrement: 20,
+  DefaultLimitOrders: 500,
+  LimitIncrementOrders: 500,
+};
+
 const MediaStores = {
   Thumbnails: {
     name: 'Thumbnail',
@@ -159,4 +166,5 @@ export default (constants = {
   SpecialThemes,
   CommentTypes,
   RichEditorToolbarConfig,
+  InfiniteScroll,
 });

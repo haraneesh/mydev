@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import Recipes from '../Recipes';
+import constants from '../../../modules/constants';
 
-const DEFAULT_LIMIT = 10;
 
 Meteor.publish('recipes.list1', () => Recipes.find());
 
@@ -14,14 +14,17 @@ Meteor.publish('foo', (options) => {
       sort: { bar: 1 },
       limit,
     }),
-  ];
+  ];x
 });*/
 
+// https://forums.meteor.com/t/infinite-scroll-in-meteor-react/36958/2
+
 Meteor.publish('recipes.list', (options) => {
-  check(options, { limit: Number });
-  const { limit = DEFAULT_LIMIT } = options;
+  //check(options, { limit: Number, sort: Match.ObjectIncluding({ createdAt: Number }) });
+  check(options, { limit: Number, sort: { createdAt: Number } });
+  const { limit = constants.InfiniteScroll.DefaultLimit, sort } = options;
   return [Recipes.find({}, {
-    sort: { createdAt: 1 },
+    sort,
     limit,
   })];
 });

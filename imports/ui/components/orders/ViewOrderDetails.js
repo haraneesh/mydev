@@ -1,10 +1,11 @@
 import React from 'react';
 import { Row, Col, Label, Pager, Panel, PanelGroup } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
-import { accountSettings, dateSettings } from '../../../modules/settings';
 import moment from 'moment';
 import 'moment-timezone';
 import PropTypes from 'prop-types';
+import { accountSettings, dateSettings } from '../../../modules/settings';
+import constants from '../../../modules/constants';
 
 const ViewOrderProducts = ({ products }) => (
   <PanelGroup className="order-details-products">
@@ -12,7 +13,7 @@ const ViewOrderProducts = ({ products }) => (
       <Row>
         <Col xs={4}> <strong> Name </strong></Col>
         <Col xs={4}> <strong> Qty / Price </strong></Col>
-        <Col xs={4}> <strong> Total </strong></Col>
+        <Col xs={4}> <strong> Amount </strong></Col>
       </Row>
     </Panel>
     {products.map((product) => {
@@ -35,7 +36,7 @@ const ViewOrderProducts = ({ products }) => (
                 {' '}
                 {formatMoney(
                   product.unitprice * product.quantity,
-                  accountSettings
+                  accountSettings,
                 )}
                 {' '}
               </Col>

@@ -1,15 +1,15 @@
 @import '../../../stylesheets/bootstrap/bootstrap/variables';
-@import url('https://fonts.googleapis.com/css?family=Merriweather');
+@import url('https://fonts.googleapis.com/css?family=Vollkorn');
 
 
 
 .Vision {
     font-size:  $font-size-large;
-    color:$gray-base;
     margin-top: 4em;
 
     .font-serif {
-        font-family: 'Merriweather';
+        font-family: 'Vollkorn';
+        font-size:  $font-size-h4;
     }
 
     h1, h2, h3{
@@ -52,6 +52,6 @@
     }
 
     .mission-text{
-        margin:0 2rem;
+        margin:0 3rem;
     }
 }

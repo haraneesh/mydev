@@ -25,6 +25,8 @@ import '../../api/ProductLists/server/publications';
 import '../../api/Orders/methods';
 import '../../api/Orders/server/publications';
 
+import '../../api/Invoices/methods';
+
 import '../../api/Specials/methods';
 import '../../api/Specials/server/publications';
 
@@ -37,5 +39,7 @@ import '../../api/Media/Media';
 import '../../api/ZohoSyncUps/zohoContactsMethods';
 import '../../api/ZohoSyncUps/zohoProductsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';
+import '../../api/ZohoSyncUps/zohoInvoicesMethods';
+
 
 import '../../api/UpdateScripts/UpdateScript';

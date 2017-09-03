@@ -4,7 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
 import { ProductSchemaDefObject } from '../Products/Products';
-
+import { InvoiceSchemaDefObj } from '../Invoices/Invoices';
 
 const Orders = new Mongo.Collection('Orders');
 export default Orders;
@@ -65,6 +65,8 @@ Orders.schema = new SimpleSchema({
       "product_details.vendor_details.id" : {  type:Number, decimal:true, label: 'The vendor details of the product.',  },
       "product_details.vendor_details.slug" : { type:String, label: 'The vendor slug of the product.',   },
       "product_details.vendor_details.name" : { type:String, label: 'The vendor name of the product.',   },*/
+  invoices: { type:Array, optional:true },
+  'invoices.$': InvoiceSchemaDefObj,
   customer_details: { type: Object },
   'customer_details._id': { type: String, label: 'The customer id.', optional: true },
   'customer_details.name': { type: String, label: 'The customer name.' },
@@ -89,6 +91,9 @@ Orders.schema = new SimpleSchema({
     },
   },
   zh_salesorder_id: { type: String, label: 'Corresponding Zoho Sales Order Id', optional: true },
+  zh_salesorder_number: { type: String, label: 'Corresponding Zoho Sales Order Number', optional: true },
+  zh_salesorder_status: { type: String, label: 'Corresponding Zoho Sales Order Status', optional: true },
+  zh_salesorder_order_status: { type: String, label: 'Corresponding Zoho Sales Order Order_Status', optional: true },
 });
 
 if (Meteor.isServer) {

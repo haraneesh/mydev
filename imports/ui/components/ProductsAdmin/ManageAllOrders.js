@@ -157,31 +157,41 @@ class ManageAllOrders extends React.Component {
 
     this.state = {
       sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList),
-      colSortDirs: {},
+      colSortDirs: this.props.colSortDirs || {},
     };
 
     this.handleRowClick = this.handleRowClick.bind(this);
     this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this);
     this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
-    this._onSortChange = this._onSortChange.bind(this);
+    this.onSortChange = this.onSortChange.bind(this);
+    this.groupSelectedRowsInUI = this.groupSelectedRowsInUI.bind(this);
     this.handleGenerateBills = this.handleGenerateBills.bind(this);
     this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
   }
 
-  _onSortChange(columnKey, sortDir) {
+  componentWillMount() {
+    this.resetSelectedOrderIds();
+  }
+
+  onSortChange(columnKey, sortDir) {
+    if (columnKey === 'selected') {
+      this.groupSelectedRowsInUI(columnKey, sortDir);
+    } else {
+      this.props.changeSortOptions(columnKey, sortDir);
+    }
+  }
+
+  groupSelectedRowsInUI(columnKey, sortDir) {
     const sortIndexes = this._defaultSortIndexes.slice();
     sortIndexes.sort((indexA, indexB) => {
       let valueA,
         valueB;
-      if (columnKey === 'selected') {
-        const orderIdA = this._dataList.getObjectAt(indexA).id;
-        const orderIdB = this._dataList.getObjectAt(indexB).id;
-        valueA = this.selectedOrderIds.has(orderIdA);
-        valueB = this.selectedOrderIds.has(orderIdB);
-      } else {
-        valueA = this._dataList.getObjectAt(indexA)[columnKey];
-        valueB = this._dataList.getObjectAt(indexB)[columnKey];
-      }
+
+      const orderIdA = this._dataList.getObjectAt(indexA).id;
+      const orderIdB = this._dataList.getObjectAt(indexB).id;
+      valueA = this.selectedOrderIds.has(orderIdA);
+      valueB = this.selectedOrderIds.has(orderIdB);
+
       let sortVal = 0;
       if (valueA > valueB) {
         sortVal = 1;
@@ -209,9 +219,6 @@ class ManageAllOrders extends React.Component {
   getTableDataList(orders) {
     const orderList = [];
     orders.map(({ _id, order_status, createdAt, total_bill_amount, customer_details }) => {
-      if (!customer_details){
-        debugger;
-      }
       orderList.push(
         {
           id: _id,
@@ -227,14 +234,11 @@ class ManageAllOrders extends React.Component {
     return new DataListStore(orderList);
   }
 
-  resetSelectedOrderIds(){
+  resetSelectedOrderIds() {
      /* Create a new property to save checked boxes */
     this.selectedOrderIds = new Set();
   }
 
-  componentWillMount() {
-    this.resetSelectedOrderIds();
-  }
 
   handleGenerateOPL() {
     getProductQuantityForOrderAwaitingFullFillment.call({}, (error, aggr) => {
@@ -301,9 +305,12 @@ class ManageAllOrders extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.orders != this.props.orders) {
+    if (nextProps.orders !== this.props.orders) {
       const sortedDataList = this.getsortedDataList(nextProps.orders);
-      this.setState({ sortedDataList });
+      this.setState({
+        sortedDataList,
+        colSortDirs: nextProps.colSortDirs || {},
+      });
     }
   }
 
@@ -314,7 +321,7 @@ class ManageAllOrders extends React.Component {
     } else {
       const orderIds = [...this.selectedOrderIds];
       const updateToStatus = constants.OrderStatus[eventKey].name;
-      updateOrderStatus.call({ orderIds, updateToStatus }, (error, response) => {
+      updateOrderStatus.call({ orderIds, updateToStatus }, (error) => {
         const confirmation = `Status of selected order(s) have been updated to ${
                     constants.OrderStatus[eventKey].display_value
                     } successfully!`;
@@ -344,14 +351,14 @@ class ManageAllOrders extends React.Component {
               bsSize="small"
               onClick={this.handleGenerateBills}
             >
-                        Generate Bills
-                        </Button>
+            Generate Bills
+            </Button>
             <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPL}
             >
-                        Generate OPL
+            Generate OPL
           </Button>
           </ButtonToolbar>
         </Row>
@@ -363,7 +370,7 @@ class ManageAllOrders extends React.Component {
             onRowClickCallBack={this.handleRowClick}
             onChecked={this.handleCheckBoxClick}
             colSortDirs={this.state.colSortDirs}
-            onSortChangeCallBack={this._onSortChange}
+            onSortChangeCallBack={this.onSortChange}
           />
         </Row>
       </div>
@@ -373,9 +380,11 @@ class ManageAllOrders extends React.Component {
 
 ManageAllOrders.propTypes = {
   orders: PropTypes.array,
+  colSortDirs: PropTypes.object,
   containerWidth: PropTypes.number.isRequired,
   containerHeight: PropTypes.number.isRequired,
   history: PropTypes.object.isRequired,
+  changeSortOptions: PropTypes.func.isRequired,
 };
 
 export default Dimensions()(ManageAllOrders);

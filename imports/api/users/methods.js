@@ -93,6 +93,7 @@ export const createUser = new ValidatedMethod({
           },
           whMobilePhone: user.profile.whMobilePhone,
           deliveryAddress: user.profile.deliveryAddress,
+          updatedAt: new Date(),
         },
       };
 
@@ -153,6 +154,7 @@ export const adminUpdateUser = new ValidatedMethod({
           delete user.username;
         }
 
+        user.updatedAt = new Date();
         const u = Meteor.users.update({ _id: cuser._id }, { $set: user });
 
         if (u && user.isAdmin) {

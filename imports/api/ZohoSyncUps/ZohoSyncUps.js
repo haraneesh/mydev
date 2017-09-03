@@ -52,7 +52,7 @@ ZohoSyncUps.schema = new SimpleSchema({
   syncEntity: {
     type: String,
     label: 'The collection that was synced.',
-    allowedValues: ['products', 'users', 'orders-to-zoho', 'orders-from-zoho'],
+    allowedValues: ['products', 'users', 'orders-to-zoho', 'orders-from-zoho', 'invoices-from-zoho'],
   },
 });
 
@@ -61,6 +61,7 @@ export const syncUpConstants = {
   users: 'users',
   ordersToZoho: 'orders-to-zoho',
   ordersFromZoho: 'orders-from-zoho',
+  invoicesFromZoho: 'invoices-from-zoho',
 };
 
 ZohoSyncUps.attachSchema(ZohoSyncUps.schema);

@@ -1,18 +1,32 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import Orders from '../Orders';
+import constants from '../../../modules/constants';
 
-Meteor.publish('orders.list', function ordersList() {
-  if (Roles.userIsInRole(this.userId, ['admin'])) {
-    return Orders.find();
+Meteor.publish('orders.list', function ordersList(options) {
+  check(options, { limit: Number,
+    sort: {
+      createdAt: Match.Maybe(Number),
+      'customer_details.mobilePhone': Match.Maybe(Number),
+      'customer_details.name': Match.Maybe(Number),
+      order_status: Match.Maybe(Number),
+      total_bill_amount: Match.Maybe(Number),
+    },
+  });
+  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort } = options;
+    return [Orders.find({}, {
+      sort,
+      limit,
+    })];
   }
   return [];
 });
 
 Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);
-  if (Roles.userIsInRole(this.userId, ['admin'])) {
+  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
     return Orders.find({ order_status: { $in: orderStatuses } });
   }
   return Orders.find({
@@ -29,7 +43,7 @@ Meteor.publish('orders.mylist', function ordersMylist() {
 
 Meteor.publish('orders.orderDetails', function orderDetails(id) {
   check(id, String);
-  if (Roles.userIsInRole(this.userId, ['admin'])) {
+  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
     return Orders.find(id);
     /* return Orders.aggregate([
         {
