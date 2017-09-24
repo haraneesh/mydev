@@ -86,6 +86,7 @@ export const createUser = new ValidatedMethod({
         username: user.username,
         email: user.email,
         password: user.password,
+        updatedAt: new Date(),
         profile: {
           name: {
             first: user.profile.name.first,
@@ -93,7 +94,6 @@ export const createUser = new ValidatedMethod({
           },
           whMobilePhone: user.profile.whMobilePhone,
           deliveryAddress: user.profile.deliveryAddress,
-          updatedAt: new Date(),
         },
       };
 

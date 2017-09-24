@@ -136,7 +136,7 @@ export default class ProductsOrderList extends React.Component {
   }
 
   displayCancelOrderButton(orderStatus) {
-    if (orderStatus == constants.OrderStatus.Pending.name) {
+    if (orderStatus === constants.OrderStatus.Pending.name) {
       return (<ButtonToolbar className="pull-right">
         <Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>
       </ButtonToolbar>
@@ -152,7 +152,7 @@ export default class ProductsOrderList extends React.Component {
 
     const isAdmin = isLoggedInUserAdmin();
 
-    products.map((product, index) => {
+    _.map(products, (product, index) => {
       switch (product.type) {
         case constants.ProductType[0]: // Vegetables
           productVegetables.push(
@@ -197,7 +197,7 @@ export default class ProductsOrderList extends React.Component {
        <Row>
          <Col xs={12}>
            <ListGroup className="products-list">
-             { this.displayProductsByType(this.props.products) }
+             { this.displayProductsByType(this.state.products) }
              <OrderComment comments={this.props.comments} />
              <OrderFooter
                total_bill_amount={this.state.total_bill_amount}

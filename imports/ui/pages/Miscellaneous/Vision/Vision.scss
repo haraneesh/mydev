@@ -1,20 +1,14 @@
 @import '../../../stylesheets/bootstrap/bootstrap/variables';
-@import url('https://fonts.googleapis.com/css?family=Vollkorn');
+@import url('https://fonts.googleapis.com/css?family=Buenard');
 
 
 
 .Vision {
     font-size:  $font-size-large;
     margin-top: 4em;
-
-    .font-serif {
-        font-family: 'Vollkorn';
-        font-size:  $font-size-h4;
-    }
+    font-family: 'Buenard';
 
     h1, h2, h3{
-        font-weight: 600;
-        margin:4em 0 3rem 0;
         text-transform:uppercase;
         letter-spacing: 1.4px;
         line-height: $headings-line-height;
@@ -26,8 +20,11 @@
 
     @media (min-width: 768px){
     .panel-body {
-            padding: 0 1.5em 1.5em 1.5em;
+        padding: 0 1.5em 1.5em 1.5em;
         }
+     h1, h2, h3{
+        margin:4em 0 3rem 0;
+     }
     }
 
      @media (min-width: 992px){
@@ -44,7 +41,6 @@
 
     .mission-bar{
         font-family: 'Montserrat';
-        font-weight: 600;
         margin:4em 0 0 0;
         text-transform:uppercase;
         font-size: $font-size-h5;
@@ -52,6 +48,6 @@
     }
 
     .mission-text{
-        margin:0 3rem;
+        min-height: 8em;
     }
 }

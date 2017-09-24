@@ -20,7 +20,7 @@ export const EasyNavNarrowScreen = () => (
 );
 
 export const EasyNavWideScreen = () => (
-  <Nav className="hidden-xs hidden-sm" >
+  <Nav className="hidden-xs hidden-sm wide-menu-bar" >
     <li>
       <NavLink to="/order"><Glyphicon glyph="pencil" /> Place Order</NavLink>
     </li>
@@ -29,6 +29,9 @@ export const EasyNavWideScreen = () => (
     </li>
     <li>
       <NavLink exact to="/"><Glyphicon glyph="list" /> My Orders</NavLink>
+    </li>
+    <li>
+      <NavLink exact to="/vision">Vision </NavLink>
     </li>
   </Nav>
 );

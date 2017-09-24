@@ -7,7 +7,7 @@ import constants from '../../modules/constants.js';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 
-const _calculateOrderTotal = function (order, productListId) {
+const calculateOrderTotal = function (order, productListId) {
   // Get Product List for cost
   // Get Order for list of items
   // calculate Total and return
@@ -30,6 +30,28 @@ const _calculateOrderTotal = function (order, productListId) {
 };
 
 
+const removePreviousOrderedQuantity = (existingOrder) => {
+  const productListId = existingOrder.productOrderListId;
+
+  // clear previous order counts
+
+  existingOrder.products.forEach((product) => {
+    ProductLists.update(
+        { _id: productListId, 'products._id': product._id },
+        { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } });
+  });
+};
+
+const addNewOrderedQuantity = (order) => {
+  const productListId = order.productOrderListId;
+  // update new order count
+  order.products.forEach((product) => {
+    ProductLists.update(
+        { _id: productListId, 'products._id': product._id },
+        { $inc: { 'products.$.totQuantityOrdered': product.quantity } });
+  });
+};
+
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
   validate: new SimpleSchema({
@@ -41,18 +63,20 @@ export const upsertOrder = new ValidatedMethod({
   }).validator(),
   run(order) {
       // if (Meteor.isServer) {
-    if (order._id) {
+    const isUpdate = !!order._id;
+    if (isUpdate) {
             // delete order.customer_details
             // delete order.productOrderListId
-      const currentOrder = Orders.findOne(order._id);
+      const existingOrder = Orders.findOne(order._id);
       const loggedInUserId = Meteor.userId();
-      if (loggedInUserId === currentOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
-        order.customer_details = currentOrder.customer_details;
-        order.productOrderListId = currentOrder.productOrderListId;
-        order.total_bill_amount = _calculateOrderTotal(order, currentOrder.productOrderListId);
+      if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
+        order.customer_details = existingOrder.customer_details;
+        order.productOrderListId = existingOrder.productOrderListId;
+        order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId);
       } else {
         throw new Meteor.Error(401, 'Access denied');
       }
+      removePreviousOrderedQuantity(existingOrder);
     } else {
       const loggedInUser = Meteor.users.findOne(Meteor.userId());
       const today = new Date();
@@ -62,9 +86,9 @@ export const upsertOrder = new ValidatedMethod({
                       { activeEndDateTime: { $gte: today } },
         ],
         },
-              );
+      );
       order.productOrderListId = productListActiveToday._id;
-      order.total_bill_amount = _calculateOrderTotal(order, order.productOrderListId);
+      order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId);
       order.customer_details = {
         _id: loggedInUser._id,
         name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
@@ -75,9 +99,10 @@ export const upsertOrder = new ValidatedMethod({
     }
     // }
     const response = Orders.upsert({ _id: order._id }, { $set: order });
-
+    addNewOrderedQuantity(order);
     if (response.insertedId) {
-      ProductLists.update({ _id: order.productOrderListId }, { $addToSet: { order_ids: response.insertedId } });
+      ProductLists.update({ _id: order.productOrderListId },
+        { $addToSet: { order_ids: response.insertedId } });
     }
     return response;
   },
@@ -89,6 +114,8 @@ export const removeOrder = new ValidatedMethod({
     _id: { type: String },
   }).validator(),
   run({ _id }) {
+    const order = Orders.findOne(_id);
+    removePreviousOrderedQuantity(order);
     Orders.remove(_id);
   },
 });
@@ -100,7 +127,15 @@ export const updateMyOrderStatus = new ValidatedMethod({
     updateToStatus: { type: String },
   }).validator(),
   run({ orderId, updateToStatus }) {
-    return Orders.update({ _id: orderId }, { $set: { order_status: updateToStatus } });
+    const order = Orders.findOne({ _id: orderId, 'customer_details._id': this.userId });
+    if (order) {
+      if (updateToStatus === constants.OrderStatus.Cancelled.name) {
+        removePreviousOrderedQuantity(order);
+      }
+      return Orders.update({ _id: orderId }, { $set: { order_status: updateToStatus } });
+    }
+    // user not authorized. do not publish secrets
+    throw new Meteor.Error(401, 'Access denied');
   },
 });
 
@@ -116,7 +151,30 @@ export const updateOrderStatus = new ValidatedMethod({
       // user not authorized. do not publish secrets
       throw new Meteor.Error(401, 'Access denied');
     }
-    return Orders.update({ _id: { $in: orderIds } }, { $set: { order_status: updateToStatus } }, { multi: true });
+    const orders = Orders.find({ _id: { $in: orderIds } }).fetch();
+
+    orders.forEach((order) => {
+      if (updateToStatus !== order.order_status) {
+        switch (true) {
+          // current status is cancelled now we are changing to a live status
+          case (order.order_status === constants.OrderStatus.Cancelled.name):
+            addNewOrderedQuantity(order);
+            break;
+          // new status is cancelled
+          case (updateToStatus === constants.OrderStatus.Cancelled.name):
+            removePreviousOrderedQuantity(order);
+            break;
+          default:
+            break;
+        }
+      }
+    });
+
+    return Orders.update(
+      { _id: { $in: orderIds } },
+       { $set: { order_status: updateToStatus } },
+        { multi: true },
+      );
   },
 });
 

@@ -10,27 +10,28 @@ const Vision = () => (
         <div className="panel-body">
           <div className="PageHeader">
             <div className="PageHeader-container">
-              <h3>To Effortlessly Healthy Living</h3>
+              <h3>We are Making Living Healthy a little more easy</h3>
             </div>
           </div>
           <div className="Content">
             <section className="text-center page-section">
               <div className="Introduction font-serif">
                 <p>
-                  Healthy food is a must for healthy life.</p>
+                  Healthful food is a must for a healthy life.
+                </p>
                 <p>
                   At the grocery store when we
                    pick something up, can we trust that food to be of high quality?
 
-                  Today, it is complicated, the way in which food is grown and is distributed. It goes through too many hands in the supply chain. It is
+                  Today, the way in which food is grown and is distributed, is complicated. It goes through many different
+                  hands in the supply chain and the entire process is opaque. It is
                    impossible to trust and make good healthy choices for our families.
                   </p>
                 <p><em>We want to change that.</em></p>
-                <p>
-                  Change is not easy, changing the the entire system is difficult. 
-                  But together, we can change this for us few. 
-                  Together we can make it easy and effortless for our families to consume healthy food 
-                  that nourishes and replenishes us. 
+                <p> We want to make the process transparent and
+                  convenient to consume tasty and nutritious food that nourishes and replenishes us.
+                  Change is not easy, changing the the entire system is next to impossible.
+                  But together, we can change this for us few.
                 </p>
               </div>
             </section>
@@ -39,53 +40,87 @@ const Vision = () => (
                 <Col xs={6} sm={3}>
                   1.
                   <div className="mission-text">
-                  Revive Organic Farming
+                  Support Organic & Sustainable Farming
                   </div>
                 </Col>
                 <Col xs={6} sm={3}>
                    2.
                   <div className="mission-text">
-                  Avoid Middle Men
+                  Get Fresh, Direct From Farm
                   </div>
                 </Col>
                 <Col xs={6} sm={3}>
                    3.
                   <div className="mission-text">
-                  Promote Balanced Diet
+                  Promote Variety & Tasty Food
                   </div>
                 </Col>
                 <Col xs={6} sm={3}>
                    4.
                   <div className="mission-text">
-                  Cook Tasty Meals
+                  Learn from Each Other
                   </div>
                 </Col>
               </Row>
             </section>
             <section className="text-center page-section">
-              <h3>1. Revive Organic Farming</h3>
-              <p>We start at the source. Farming healthy food sustainably is paramount. </p>
-              <p>Use of chemicals, pesticides and preservatives is a very new practice which is impacting our Well Being. It has crept into our ways slowly. We have failed to notice it until recently. </p>
-              <p>Farming is an age old problem. Our ancestors have perfected it severals years back and have practiced them for hundred of centuries. We only have to look a few decades back to learn of these sustainable practices.</p> 
-              <p>All the produce here that is available is truly organic because it is either grown organically by us in our farms or comes from partnering farmer friends whom we have carefully vetted.</p>
+              <h3>1. Support Organic and Sustainable Farming</h3>
+              <p>We start at the source. Farming healthful food sustainably is paramount.</p>
+              <p>The unfettered use of synthetic fertilizers, chemical pesticides and artificial
+                preservatives is a relatively new development in our history.
+                But, as we learn more about the side-effects and after-effects of these substances,
+                we realise that for what we gain in short term, we lose more in the long term.</p>
+              <p>Traditional farming practices are sustainable as they have been practiced and improved upon,
+                over hundreds of years.</p>
+              <p>All of our produce comes from our farms or from growers we have carefully vetted.
+                We work with farmers who follow sustainable and natural farming practices.
+                We look to our past to relearn traditional practices that are suitable to our unique
+                environment. Rather than shunning modern advances altogether,
+                our farmer community learns and adapts them to achieve our sustainability goals.</p>
+
+              <p>We are proud to say that all the produce have zero pesticides,
+                preservative and artificial coloring and any chemical agents that are harmful.</p>
+
               <p><img src="/vision/field.jpg" alt="Farmer" className="img-responsive" /></p>
             </section>
             <section className="text-center page-section">
-              <h3>2. Avoid Middle Men </h3>
-              <p>To get most from our food we have to eat it fresh. Shortening the supply chain is only way to maintain genuine freshness.</p>
-              <p>We are pioneering several approaches, that deliver fresher, high-quality food from the farm directly to you, avoiding long and wasteful detours at costly grocery stores.</p>
-              <p>Since there are NO preservatives, if the food is not fresh you can tell.</p>
+              <h3>2. Get Fresh, Direct From Farm </h3>
+              <p>To get most from our food we have to eat it fresh.</p>
+
+              <p>Modern supermarkets demand shelf life, uniformity, and ease of handling, over freshness, nutrition and taste.
+                Produce is picked before it is ripe so that it can withstand passing through the hands of many middlemen.
+                It is often colored, is treated and artificially preserved to give the appearance of freshness.</p>
+
+              <p>We do not do any of this and yet keep our food fresh. The only way to do this is by shortening the supply chain
+                and get then produce directly from the farmer. We are pioneering several approaches, that deliver fresher, high-quality food from
+                the farm directly to you, avoiding long and wasteful detours at costly grocery stores.</p>
+
+              <p>At Suvai, our produce reaches you on the same day of the harvest. When you bite in to it, you will know the difference.</p>
+
             </section>
             <section className="text-center page-section">
-              <h3>3. Promote Balanced Diet</h3>
-              <p>To maintain good health and to feel our best, Eating a healthy, balanced diet is necessary. Keeping track of the diet and ensuring that we feed our families with food containing appropriate proportions of macro and micro nutrients is very hard. We are trying that easy by rotating the food available in the week and by introducing seasonal food.</p>
-              <p>We are proud that all the produce is devoid of pesticides, preservative and artificial coloring and any chemical agents that are harmful.</p>
+              <h3>3. Promote Eating a Variety of Tasty Food </h3>
+              <p>To maintain good health and to feel our best, eating a tasty and healthy balanced diet is necessary. </p>
+              <p>Ensuring that we feed our families healthful food that has the necessary proportions of macro
+                and micro nutrients and to prepare them delicious to taste is very hard.</p>
+              <p>We are making it easy by sharing delicious recipes, cooking tips and by giving you a choice
+                to select from a variety of seasonal and wholesome produce. </p>
+
               <p><img src="/vision/balanced-diet.jpg" alt="Variety" className="img-responsive" /></p>
             </section>
             <section className="text-center page-section">
-              <h3>4. Cook Tasty Meals</h3>
-              <p>Unless the food is tasty, our kids will not eat.</p>
-              <p>We are trying to make it very easy to prepare dishes that not only have fresh and healthy ingredients but are tasty too. We are building a source of carefully curated and trusted recipes, sharing cooking tips and believe in the power of community to recommend & share the ones that they really like, to help others in journey to adopt and savor healthy food.</p>
+              <h3>4. Learn from each other, Namma Suvai community</h3>
+
+              <p> We started as a community of friends who were in search of ways to feed our families healthful food.
+                Every action from there on including products on offer was a suggestion, an idea or recommendations from the community.</p>
+
+              <p> We have grown since and today, ours is a community of Young parents, Senior citizens, Working professionals, Home Makers, Farmers, Experts,
+                Nutrionists, Chefs, thinkers and doers who are bound by the simple idea of living a healthy life through sustainable practices.</p>
+
+              <p> We realize that without the passionate community, we would not be here today. So we are fully
+                committed to continue building a strong and vibrant community on which each of us can lean on for tips,
+                suggestions, recommendations and inspiration. </p>
+
             </section>
           </div>
         </div>

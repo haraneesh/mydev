@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import ProductLists from './ProductLists';
@@ -5,6 +6,17 @@ import Products from '../../api/Products/Products';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 
+const updateWithTotQuantityOrdered = (products, currentProductHash) => {
+  const newOrderableProducts = [];
+  products.forEach((product) => {
+    const key = product._id;
+    const prod = product;
+    prod.totQuantityOrdered = (currentProductHash && currentProductHash[key] && currentProductHash[key].totQuantityOrdered) ?
+           currentProductHash[key].totQuantityOrdered : 0;
+    newOrderableProducts.push(prod);
+  });
+  return newOrderableProducts;
+};
 
 export const upsertProductList = new ValidatedMethod({
   name: 'productLists.upsert',
@@ -14,14 +26,16 @@ export const upsertProductList = new ValidatedMethod({
     activeEndDateTime: { type: Date },
   }).validator(),
   run(params) {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    if (Meteor.isServer) {
+      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
-      throw new Meteor.Error(401, 'Access denied');
-    }
+        throw new Meteor.Error(401, 'Access denied');
+      }
 
-    const startDate = params.activeStartDateTime;
-    const endDate = params.activeEndDateTime;
-    const productListsId = params._id;
+      const startDate = params.activeStartDateTime;
+      const endDate = params.activeEndDateTime;
+      const productListsId = params._id;
+      let orderableProducts = Products.find({ availableToOrder: true }).fetch();
 
     /* $or: [
                 { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
@@ -29,24 +43,32 @@ export const upsertProductList = new ValidatedMethod({
                 { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
                 ]
     */
-    if (!productListsId) {
-      const overlappingProductList = ProductLists.findOne(
+      if (!productListsId) {
+        const overlappingProductList = ProductLists.findOne(
           { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },
         );
-      if (overlappingProductList) {
-        throw new Meteor.Error(417, ' Another Product List is active during this period. Product List was not created.');
+        if (overlappingProductList) {
+          throw new Meteor.Error(417, ' Another Product List is active during this period. Product List was not created.');
+        }
+        orderableProducts = updateWithTotQuantityOrdered(orderableProducts);
+      } else {
+        const currentProductList = ProductLists.findOne({ _id: productListsId });
+        const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
+          map[obj._id] = obj;
+          return map;
+        }, {});
+
+        orderableProducts = updateWithTotQuantityOrdered(orderableProducts, currentProductHashMap);
       }
+
+      const productList = {
+        activeStartDateTime: params.activeStartDateTime,
+        activeEndDateTime: params.activeEndDateTime,
+        products: orderableProducts,
+      };
+
+      return ProductLists.upsert({ _id: productListsId }, { $set: productList });
     }
-
-    const OrderableProducts = Products.find({ availableToOrder: true }).fetch();
-
-    const productList = {
-      activeStartDateTime: params.activeStartDateTime,
-      activeEndDateTime: params.activeEndDateTime,
-      products: OrderableProducts,
-    };
-
-    return ProductLists.upsert({ _id: productListsId }, { $set: productList });
   },
 });
 

@@ -117,7 +117,7 @@ const App = props => (
           <Public routeName="Reset Password" path="/reset-password/:token" component={ResetPassword} />
           <Public routeName="Terms" path="/pages/terms" component={Terms} />
           <Public routeName="Privacy" path="/pages/privacy" component={Privacy} />
-          <Authenticated exact routeName="Vision" path="/pages/vision" component={dVision} {...props} />
+          <Public exact routeName="Vision" path="/vision" component={dVision} {...props} />
           {/* Page not found */}
           <Redirect from="*" to="/" />
         </Switch>

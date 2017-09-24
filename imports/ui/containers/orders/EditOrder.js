@@ -16,7 +16,8 @@ function getOrderWithProductListProductsAdded(order, productList) {
   newOrder.products = productList.products.slice();
   newOrder.products.forEach((prd) => {
     const product = prd;
-    product.quantity = (Object.prototype.hasOwnProperty.call(orderProductArray, product._id)) ? orderProductArray[product._id].quantity : 0;
+    product.quantity = (orderProductArray[product._id] && orderProductArray[product._id].quantity) ? orderProductArray[product._id].quantity : 0;
+    product.previousOrdQty = product.quantity;
   });
   return newOrder;
 }

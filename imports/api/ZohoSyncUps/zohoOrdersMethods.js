@@ -122,11 +122,10 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
 // Zoho order_status = draft, open, closed, void
 const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
-  // const r = zh.getRecordsByParams('invoices', { reference_number: order.zh_salesorder_number });
-  const r = zh.getRecordById('salesorders', order.zh_salesorder_id);
   let getInvoices = false;
+
+  const r = zh.getRecordById('salesorders', order.zh_salesorder_id);
   if (r.code === 0 /* Success */) {
-    // console.log(r);
     const orderQuery = {
       zh_salesorder_status: r.salesorder.status,
       zh_salesorder_order_status: r.salesorder.order_status,
@@ -163,12 +162,13 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
                { order_status: { $ne: constants.OrderStatus.Completed.name } },
                { order_status: { $ne: constants.OrderStatus.Pending.name } },
       ] };
-
-      const orders = Orders.find(query).fetch();
+      const orders = Orders.find(query).fetch(); 
       orders.forEach((ord) => {
-        const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
-        if (getInvoices) {
-          processInvoicesFromZoho(ord, successResp, errorResp);
+        if (ord.zh_salesorder_id) {
+          const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+          if (getInvoices && ord.zh_salesorder_number) {
+            processInvoicesFromZoho(ord, successResp, errorResp);
+          }
         }
       });
     }

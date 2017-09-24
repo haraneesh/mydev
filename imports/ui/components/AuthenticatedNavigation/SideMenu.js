@@ -24,12 +24,12 @@ const SideMenu = props => (
               <li>
                 <NavLink to="/profile">My Profile</NavLink>
               </li>
+              <li className="visible-sm visible-xs" >
+                <NavLink to="/vision">Our Vision</NavLink>
+              </li>
             </ul>
             { <AdminNav {...props} /> }
             <ul>
-              <li>
-                <NavLink to="/about">About Us</NavLink>
-              </li>
               <li>
                 <Button id="app-logout" onClick={handleLogout}>Logout</Button>
               </li>

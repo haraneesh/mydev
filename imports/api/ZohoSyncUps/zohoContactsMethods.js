@@ -37,7 +37,7 @@ const createZohoBooksContact = usr => ({
     state: 'TN',
   },
   shipping_address: {
-    address: 'Street Address goes here',
+    address: usr.profile.deliveryAddress,
     city: 'chennai',
     state: 'TN',
   },

@@ -20,8 +20,13 @@ ProductLists.deny({
   remove: () => true,
 });
 
-// let ProductSchema = _.clone(ProductSchemaDefObject)
-const ProductSchema = new SimpleSchema(ProductSchemaDefObject);
+
+const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
+productsSchemaDefObject.totQuantityOrdered = { type: Number,
+  label: 'The total quantity of this product that was ordered',
+};
+
+const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 
 ProductLists.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the Product List', optional: true },
@@ -49,7 +54,8 @@ ProductLists.schema = new SimpleSchema({
     },
     optional: true,
   },
-  products: [ProductSchema],
+  products: { type: Array },
+  'products.$': ProductSchema.omit('createdAt', 'updatedAt'),
   // products: { type: [ProductSchema] },
     /*  "product_details._id": { type: String, label: 'The product id'},
       "product_details.sku": {  type: String, label: 'The SKU of the product.', },

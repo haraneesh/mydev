@@ -34,6 +34,7 @@ export const ProductSchemaDefObject = {
   type: { type: String, label: 'The type of the product.' },
   category: { type: String, label: 'The category of the product.', optional: true },
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
+  maxUnitsAvailableToOrder: { type: Number, min: 0, defaultValue: 0, label: 'Max Units Available to order', optional: true },
   displayAsSpecial: { type: Boolean, label: 'Is this a special product?', optional: true },
   vendor_details: { type: Object },
   'vendor_details.id': { type: Number, label: 'The vendor details of the product.' },
@@ -60,7 +61,11 @@ export const ProductSchemaDefObject = {
   zh_item_id: { type: String, label: 'Then item_id of the corresponding item saved in Zoho', optional: true },
 };
 
-Products.schema = new SimpleSchema(ProductSchemaDefObject);
+Products.schema = new SimpleSchema(ProductSchemaDefObject, {
+  clean: {
+    autoConvert: true,
+  },
+});
 
 if (Meteor.isServer) {
   Products._ensureIndex({ availableToOrder: 1 });

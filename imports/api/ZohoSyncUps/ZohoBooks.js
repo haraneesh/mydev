@@ -8,25 +8,30 @@ const _callType = {
 
 };
 
-const _setAPICall = () => ({
+const setAPICall = () => ({
   authtoken: Meteor.settings.private.zoho_authtoken,
   organization_id: Meteor.settings.private.zoho_organization_id,
 });
 
-const _callAPI = (requestType, endpoint, params) => {
+const callAPI = (requestType, endpoint, params) => {
   const args = {};
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
-  args.params = _setAPICall();
+  args.params = setAPICall();
   // if ((requestType === _callType.POST || requestType === _callType.PUT) && params) {
   if (params) {
-    args.params.JSONString = JSON.stringify(params);
-      // _data = params;
-      // args.content = { JSONString: JSON.stringify(params) };
+    args.params = Object.assign({}, args.params, params);
+
+    //console.log(args.params);
   }
 
-  const _callUrl = `${apiBaseUrl}/${endpoint}`;
+  const callUrl = `${apiBaseUrl}/${endpoint}`;
+  // console.log(callUrl);
   try {
-    const result = HTTP.call(requestType, _callUrl, args);
+    const result = HTTP.call(requestType, callUrl, args);
+    // console.log('--------------------------------------');
+    // console.log(result.data);
+    // console.log('--------------------------------------');
+    // console.log(args.params);
     return result.data;
   } catch (e) {
     // Got a network error, timeout, or HTTP error in the 400 or 500 range.
@@ -53,33 +58,33 @@ const _callAPI = (requestType, endpoint, params) => {
 const createRecord = (module, params) => {
     // check
   const endpoint = module;
-  return _callAPI(_callType.POST, endpoint, params);
+  return callAPI(_callType.POST, endpoint, params);
 };
 
 const updateRecord = (module, id, params) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.PUT, endpoint, params);
+  return callAPI(_callType.PUT, endpoint, params);
 };
 
 const getRecords = (module) => {
   const endpoint = module;
-  return _callAPI(_callType.GET, endpoint);
+  return callAPI(_callType.GET, endpoint);
 };
 
 const getRecordsByParams = (module, params) => {
   const endpoint = module;
-  return _callAPI(_callType.GET, endpoint, params);
+  return callAPI(_callType.GET, endpoint, params);
 };
 
 const getRecordById = (module, id) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.GET, endpoint);
+  return callAPI(_callType.GET, endpoint);
 };
 
 
 const deleteRecord = (module, id) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.DELETE, endpoint);
+  return callAPI(_callType.DELETE, endpoint);
 };
 
 

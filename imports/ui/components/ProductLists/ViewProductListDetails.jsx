@@ -34,6 +34,8 @@ const ViewProductListProducts = ({ products }) => (
           <FieldGroup label="Unit Price" value={product.unitprice} />
           <FieldGroup label="Description" value={product.description} />
           <FieldGroup label="Type" value={product.type} />
+          <FieldGroup label="Max Orderable Units" value={product.maxUnitsAvailableToOrder} />
+          <FieldGroup label="Total Units Ordered" value={product.totQuantityOrdered} />
         </Col>
         ),
       )

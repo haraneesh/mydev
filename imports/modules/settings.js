@@ -3,7 +3,7 @@ const accountSettings = {
 };
 
 const dateSettings = {
-  format: 'dddd, MMMM Do YYYY',
+  format: 'dddd, D MMM YYYY',
   timeZone: 'Asia/Kolkata',
 };
 

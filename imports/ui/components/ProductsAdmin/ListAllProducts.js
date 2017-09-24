@@ -46,9 +46,9 @@ class ListAllProducts extends React.Component {
       _id: this.productListId,
     };
 
-    upsertProductList.call(params, (error, response) => {
+    upsertProductList.call(params, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        Bert.alert(error.reason || error.message, 'danger');
       } else {
         const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
         Bert.alert(successMsg, 'success');

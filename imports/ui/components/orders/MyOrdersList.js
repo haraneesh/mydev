@@ -21,14 +21,37 @@ const getInvoiceTotals = (invoices) => {
   });
 };
 
-const OrderTitleRow = ({ statusToDisplay, labelStyle, invoice_Id, orderDate, orderAmount, invoiceTotals }) => (
-  <Row>
-    <Col xs={6}> <Label bsStyle={labelStyle}> { statusToDisplay } </Label> </Col>
-    {!invoiceTotals && (<Col xs={6}> <span className="text-muted">Amount: </span> <strong> { orderAmount } </strong> </Col>)}
-    {invoiceTotals && (<Col xs={6}> <span className="text-muted">Total: </span> { formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings) } </Col>)}
-    <Col xs={6}> { orderDate } </Col>
-    {invoiceTotals && (<Col xs={6}> <span className="text-muted">Pending: </span> <strong> { formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) } </strong> </Col>)}
-  </Row>
+const OrderTitleRow = ({
+  statusToDisplay,
+  labelStyle,
+  invoice_Id,
+  orderDate,
+  orderAmount,
+  invoiceTotals }) => (
+    <Row>
+      <Col xs={6} md={3}> <Label bsStyle={labelStyle}> { statusToDisplay } </Label> </Col>
+      <Col xs={6} md={3}> { orderDate } </Col>
+      {!invoiceTotals && (
+      <Col xs={12} md={3}>
+        <span className="text-muted">Amount: </span>
+        <strong> { orderAmount } </strong>
+      </Col>
+    )}
+
+    {invoiceTotals && (
+      <Col xs={6} md={3}>
+        <span className="text-muted">Amount: </span>
+        <strong> { formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings) } </strong>
+      </Col>
+    )}
+
+    {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 && (
+      <Col xs={6} md={3}>
+        <span className="text-muted">Pending: </span>
+        <strong> { formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) } </strong>
+      </Col>
+    )}
+    </Row>
   );
 
 

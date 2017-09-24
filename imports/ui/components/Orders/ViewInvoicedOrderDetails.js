@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Label, Pager, Panel, PanelGroup } from 'react-bootstrap';
+import { Row, Col, Label, Pager, Panel } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import moment from 'moment';
 import 'moment-timezone';

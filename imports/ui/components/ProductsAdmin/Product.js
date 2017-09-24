@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { updateProductName, upsertProduct, updateProductUnitPrice, updateProductDescription, UpdateProductSKU, updateProductType, removeProduct } from '../../../api/Products/methods.js';
+import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
+import constants from '../../../modules/constants';
 
 export const ProductTableHeader = () => (
   <ListGroupItem>
@@ -10,8 +11,9 @@ export const ProductTableHeader = () => (
       <Col xs={1}>&nbsp;</Col>
       <Col xs={2}>Product Name</Col>
       <Col xs={2}>Unit Price</Col>
-      <Col xs={2}>Unit Of Sale</Col>
-      <Col xs={3}>Units For Selection</Col>
+      <Col xs={1}>Unit Of Sale</Col>
+      <Col xs={2}>Max Units Available</Col>
+      <Col xs={2}>Units For Selection</Col>
       <Col xs={1}>Can be ordered?</Col>
       <Col xs={1} />
     </Row>
@@ -129,135 +131,20 @@ export default class Product extends React.Component {
   updateDatabase() {
     const confirmation = 'Product updated!';
     const upsert = Object.assign({}, this.state.product);
-    upsert.unitprice = parseFloat(this.state.product.unitprice);
+    upsert.unitprice = parseFloat(upsert.unitprice);
+    upsert.maxUnitsAvailableToOrder = parseFloat(upsert.maxUnitsAvailableToOrder);
     upsertProduct.call(upsert, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        const errReason = (error.reason) ? error.reason : error.message;
+        Bert.alert(errReason, 'danger');
       } else {
         Bert.alert(confirmation, 'info');
       }
     });
   }
 
-  /*
-   <tr>
-           <td>
-             {this.props.productIndex + 1}
-           </td>
-           <td>
-             <FieldGroup
-               controlType="text"
-               controlLabel="Name"
-               controlName="name"
-               updateValue={this.handleProductUpsert}
-               defaultValue={this.props.product.name}
-               help
-             />
-           </td>
-
-           <td>
-             <FieldGroup
-               controlType="number"
-               controlLabel="Unit Price"
-               controlName="unitprice"
-               updateValue={this.handleProductUpsert}
-               defaultValue={this.props.product.unitprice}
-               help
-             />
-           </td>
-           <td>
-             <FieldGroup
-               controlType="text"
-               controlLabel="Unit Of Sale"
-               controlName="unitOfSale"
-               updateValue={this.handleProductUpsert}
-               defaultValue={this.props.product.unitOfSale}
-               help
-             />
-           </td>
-           <td>
-             <FieldGroup
-               controlType="text"
-               controlLabel="Units For Selection"
-               controlName="unitsForSelection"
-               updateValue={this.handleProductUpsert}
-               defaultValue={this.props.product.unitsForSelection}
-               help
-             />
-           </td>
-           <td>
-             <Checkbox
-               name="availableToOrder"
-               checked={this.state.product.availableToOrder}
-               onChange={this.handleProductUpsert}
-             >
-                Is Available To Order
-             </Checkbox>
-           </td>
-         </tr>
-
-         <tr>
-           <table>
-             <tbody>
-               <td />
-               <td>
-                 <FieldGroup
-                   controlType="textarea"
-                   controlLabel="Description"
-                   controlName="description"
-                   updateValue={this.handleProductUpsert}
-                   defaultValue={this.props.product.description}
-                   help
-                 />
-               </td>
-
-               <td>
-                 <FieldGroup
-                   controlType="select"
-                   controlLabel="Type"
-                   controlName="type"
-                   updateValue={this.handleProductUpsert}
-                   defaultValue={this.props.product.type}
-                   children={constants.ProductType}
-                   help
-                 />
-               </td>
-
-               <td>
-                 <FieldGroup
-                   controlType="select"
-                   controlLabel="Category"
-                   controlName="category"
-                   updateValue={this.handleProductUpsert}
-                   defaultValue={this.props.product.category}
-                   children={constants.ProductCategory}
-                   help
-                 />
-               </td>
-               <td>
-                 <FieldGroup
-                   controlType="text"
-                   controlLabel="SKU"
-                   controlName="sku"
-                   updateValue={this.handleProductUpsert}
-                   defaultValue={this.props.product.sku}
-                   help
-                 />
-               </td>
-               <td>
-                 <Button
-                   name={this.props.product._id}
-                   onClick={this.handleRemoveProduct}
-                 >Remove
-           </Button>
-               </td>
-             </tbody>
-           </table>
-         </tr>
-
-  */
-
   render() {
+    const product = this.props.product;
     return (
       <ListGroupItem>
         <Row>
@@ -268,7 +155,7 @@ export default class Product extends React.Component {
               controlLabel="Name"
               controlName="name"
               updateValue={this.handleProductUpsert}
-              defaultValue={this.props.product.name}
+              defaultValue={product.name}
               help
             />
           </Col>
@@ -278,27 +165,38 @@ export default class Product extends React.Component {
               controlLabel="Unit Price"
               controlName="unitprice"
               updateValue={this.handleProductUpsert}
-              defaultValue={this.props.product.unitprice}
+              defaultValue={product.unitprice}
+              help
+            />
+          </Col>
+          <Col xs={1}>
+            <FieldGroup
+              controlType="text"
+              controlLabel="Unit Of Sale"
+              controlName="unitOfSale"
+              updateValue={this.handleProductUpsert}
+              defaultValue={product.unitOfSale}
+              help
+            />
+          </Col>
+          <Col xs={2}>
+            <FieldGroup
+              controlType="number"
+              controlLabel="Max Units Available"
+              controlName="maxUnitsAvailableToOrder"
+              updateValue={this.handleProductUpsert}
+              defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
+                  product.maxUnitsAvailableToOrder : ''}
               help
             />
           </Col>
           <Col xs={2}>
             <FieldGroup
               controlType="text"
-              controlLabel="Unit Of Sale"
-              controlName="unitOfSale"
-              updateValue={this.handleProductUpsert}
-              defaultValue={this.props.product.unitOfSale}
-              help
-            />
-          </Col>
-          <Col xs={3}>
-            <FieldGroup
-              controlType="text"
               controlLabel="Units For Selection"
               controlName="unitsForSelection"
               updateValue={this.handleProductUpsert}
-              defaultValue={this.props.product.unitsForSelection}
+              defaultValue={product.unitsForSelection}
               help
             />
           </Col>
@@ -340,7 +238,7 @@ export default class Product extends React.Component {
                 controlName="type"
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
-                defaultValue={this.props.product.type}
+                defaultValue={product.type}
                 children={constants.ProductType}
                 help
               />
@@ -365,20 +263,21 @@ export default class Product extends React.Component {
                 controlName="sku"
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
-                defaultValue={this.props.product.sku}
+                defaultValue={product.sku}
                 help
               />
             </Col>
           </Row>
           <Row>
-            <Col xs={7}>
+            <Col xs={1} />
+            <Col xs={6}>
               <FieldGroup
                 controlType="textarea"
                 controlLabel="Description"
                 controlName="description"
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
-                defaultValue={this.props.product.description}
+                defaultValue={product.description}
                 help
               />
             </Col>
@@ -389,7 +288,7 @@ export default class Product extends React.Component {
                 controlName="image_path"
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
-                defaultValue={this.props.product.image_path}
+                defaultValue={product.image_path}
                 help
               />
             </Col>
@@ -397,7 +296,7 @@ export default class Product extends React.Component {
               <ControlLabel>&nbsp;</ControlLabel><br />
               <Button
                 bsSize="small"
-                name={this.props.product._id}
+                name={product._id}
                 onClick={this.handleRemoveProduct}
               >
                 Remove

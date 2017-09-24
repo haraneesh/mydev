@@ -8,27 +8,22 @@ $bootstrap-sass-asset-helper: false !default;
 //
 //## Gray and brand colors for use across Bootstrap.
 
-$gray-dark:              #6F5F5C !default; //#5D5552 #6F5F5C
-$gray-darker:            darken($gray-dark, 10%)  !default;
-$gray-base:              darken($gray-darker, 15%) !default;
-
-$gray-base:              #1c1c1c !default; // #151515 !default;
+$gray-base:              #493934 !default; // #151515 !default;
 $gray-darker:            darken($gray-base, 5%) !default;
 $gray-dark:              darken($gray-base, 15%) !default;
-$gray:                   lighten($gray-base, 40%) !default;
-$gray-light:             lighten($gray-base, 55%) !default;
-$gray-lighter:           lighten($gray-base, 70%) !default;
+$gray:                   lighten($gray-base, 35%) !default;
+$gray-light:             lighten($gray-base, 45%) !default;
+$gray-lighter:           lighten($gray-base, 55%) !default;
 
-// http://colllor.com/388e3c
  
-$brand-primary:         #38B324 !default; //  Primary #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C 
+$brand-primary:         #38B324 !default; //  Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C 
 $brand-default:         #522E23 !default; // Secondary #6F5F5C #3E1F0C
-$brand-success:         #5EA000 !default; // #39B424 #8BC058 #65A832 #506d2f
+$brand-success:         #38B324 !default; // #39B424 #8BC058 #65A832 #506d2f
 $brand-info:            #976A4B !default; //#92B955
 $brand-warning:         #FF6D00 !default; //#EBBB1E 
 $brand-danger:          #9C070A !default; //#EA3128
-$brand-logo-yellow:     #FFC63B !default;
-
+$brand-logo-yellow:     #FDC123 !default; //#FFC63B
+$brand-primary-btn:     #00A500 !default;
 
 
 //== Scaffolding
@@ -59,7 +54,7 @@ $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !def
 $font-family-base:        $font-family-sans-serif !default;
 
 $font-size-base:          16px !default;
-$font-size-large:         ceil(($font-size-base * 1.05)) !default; // ~15px
+$font-size-large:         ceil(($font-size-base * 1.37)) !default; // ~22px
 $font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
 
 $font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~36px
@@ -139,7 +134,7 @@ $line-height-small:         1.5 !default;
 
 $border-radius-base:        0.2em !default;
 $border-radius-large:       0.3em !default;
-$border-radius-small:       0.1em !default;
+$border-radius-small:       0.2em !default;
 
 
 //** Global color for active items (e.g., navs or dropdowns).
@@ -191,11 +186,11 @@ $btn-default-bg:                 #fff !default;
 $btn-default-border:             darken($btn-default-color, 5%) !default;*/
 
 $btn-primary-color:              #fff !default;
-$btn-primary-bg:                 $brand-primary !default;
+$btn-primary-bg:                 $brand-primary-btn !default; //$brand-primary
 $btn-primary-border:             darken($btn-primary-bg, 5%) !default;
 
 $btn-success-color:              #fff !default;
-$btn-success-bg:                 $brand-success !default;
+$btn-success-bg:                 $brand-primary-btn !default;  //$brand-success
 $btn-success-border:             darken($btn-success-bg, 5%) !default;
 
 $btn-info-color:                 #fff  !default;
@@ -753,7 +748,7 @@ $panel-border-radius:         $border-radius-base !default;
 
 //** Border color for elements within panels
 $panel-inner-border:          #E4DFDB !default;
-$panel-footer-bg:             #f1f1cf !default;
+$panel-footer-bg:             #f1f1cf !default; //#f1f1cf
 
 $panel-default-text:          $gray-dark !default;
 $panel-default-border:        #E4DFDB !default;

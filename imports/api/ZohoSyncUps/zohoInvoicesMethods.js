@@ -73,43 +73,69 @@ const getInvoices = (orderId, zhInvoices) => {
 
 const deriveOrderStatusFromInvoices = (zhInvoices) => {
   const invoices = zhInvoices;
-  return invoices.reduce((value, invoice) => {
+  const statuses = {
+    overdue: 0,
+    due: 0,
+    sent: 0,
+    paid: 0,
+    void: 0,
+    draft: 0,
+  };
+
+  invoices.forEach((invoice) => {
     switch (true) {
-      case (invoice.status === 'overdue' || value === 'overdue'):
-        return 'overdue';
-      case (invoice.status === 'due' || value === 'due'):
-        return 'due';
-      case (invoice.status === 'partially_paid' || value === 'partially_paid'):
-        return 'due';
-      case (invoice.status === 'sent' || value === 'sent'):
-        return 'sent';
-      case (invoice.status === 'paid' || value === 'paid'):
-        return 'paid';
-      case (invoice.status === 'void' || value === 'void'):
-        return 'void';
+      case (invoice.status === 'overdue'):
+        // return 'overdue';
+        statuses.overdue += 1;
+        break;
+      case (invoice.status === 'due'):
+        statuses.due += 1;
+        break;
+      case (invoice.status === 'partially_paid'):
+        statuses.due += 1;
+        break;
+      case (invoice.status === 'sent'):
+        statuses.sent += 1;
+        break;
+      case (invoice.status === 'paid'):
+        statuses.paid += 1;
+        break;
+      case (invoice.status === 'void'):
+        statuses.void += 1;
+        break;
       default:
-        return 'draft';
+        statuses.draft += 1;
+        break;
     }
-  },
-  'draft');
+  });
+
+  switch (true) {
+    case (statuses.overdue > 0):
+      return 'overdue';
+    case (statuses.due > 0):
+      return 'due';
+    case (statuses.sent > 0):
+      return 'sent';
+    case (statuses.paid > 0):
+      return 'paid';
+    case (statuses.void > 0):
+      return 'void';
+    default:
+      return 'draft';
+  }
 };
 
 export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
-  const r = zh.getRecordsByParams('invoices', { reference_number: order.zh_salesorder_number });
-  // const r = zh.getRecordsByParams('salesorders', order.zh_salesorder_id);
+  // const r = zh.getRecordsByParams('invoices', { reference_number: order.zh_salesorder_number });
+  const r = zh.getRecordsByParams('invoices', { reference_number_contains: order.zh_salesorder_number });
 
   if (r.code === 0 /* Success */) {
-    // From invoices update status
-    // console.log(r);
     const zhInvoices = r.invoices;
 
     let orderStatus;
 
-      // const areAllItemsInvoiced = areAllItemsInvoiced(zhInvoices);
     const derivedOrderStatusFromInvoices = deriveOrderStatusFromInvoices(zhInvoices);
-
-    // console.log('status:' + derivedOrderStatusFromInvoices);
 
     switch (derivedOrderStatusFromInvoices) {
       case ('overdue'):
@@ -171,9 +197,11 @@ export const getAndProcessInvoicesFromZoho = new ValidatedMethod({
                { order_status: { $ne: constants.OrderStatus.Completed.name } },
                { order_status: { $ne: constants.OrderStatus.Pending.name } },
       ] };
-      const orders = Orders.find(query).fetch();
+      const orders = Orders.find(query).fetch();        
       orders.forEach((ord) => {
-        processInvoicesFromZoho(ord, successResp, errorResp);
+        if (ord.zh_salesorder_number) {
+          processInvoicesFromZoho(ord, successResp, errorResp);
+        }
       });
     }
     return updateSyncAndReturn('invoices', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);

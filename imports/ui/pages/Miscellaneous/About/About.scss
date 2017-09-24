@@ -1,0 +1,37 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+
+/*
+.aboutHtml {
+    background: url(/about/about.jpg) no-repeat center center fixed;
+    background-size: auto auto;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+*/
+
+.about-body{
+
+    .page-header{
+        color: $headings-color;
+        margin-top:1em;
+    }
+
+    .about-page {
+        margin-top:2em;
+        padding: 1em 1.5em;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    @media (min-width: $screen-sm-min) {
+        .about-page {
+            padding: 1em 3em;
+        }
+    }
+
+    .visionLink{
+        color:$navbar-default-link-hover-color;
+    }
+
+}

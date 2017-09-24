@@ -7,7 +7,7 @@ import ZohoSync from '../../components/ZohoSync/ZohoSync';
 
 const ZohoSyncUp = () => (
   <div>
-    <h3 className="page-header">Inventory Sync Up</h3>
+    <h3 className="page-header">Sync With Zoho Books</h3>
     <Panel>
       <Row>
         <Col xs={12}>
