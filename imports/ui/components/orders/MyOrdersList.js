@@ -9,6 +9,8 @@ import { getDisplayDate } from '../../../modules/helpers';
 // import moment from 'moment';
 // import 'moment-timezone';
 
+import './MyOrdersList.scss';
+
 const getInvoiceTotals = (invoices) => {
   if (!invoices) return;
 
@@ -29,24 +31,24 @@ const OrderTitleRow = ({
   orderAmount,
   invoiceTotals }) => (
     <Row>
-      <Col xs={6} md={3}> <Label bsStyle={labelStyle}> { statusToDisplay } </Label> </Col>
-      <Col xs={6} md={3}> { orderDate } </Col>
+      <Col xs={6} md={3} className="addSpace"> <Label bsStyle={labelStyle}> { statusToDisplay } </Label> </Col>
+      <Col xs={6} md={3} className="addSpace"> { orderDate } </Col>
       {!invoiceTotals && (
-      <Col xs={12} md={3}>
+      <Col xs={12} md={3} className="addSpace">
         <span className="text-muted">Amount: </span>
         <strong> { orderAmount } </strong>
       </Col>
     )}
 
     {invoiceTotals && (
-      <Col xs={6} md={3}>
+      <Col xs={6} md={3} className="addSpace">
         <span className="text-muted">Amount: </span>
         <strong> { formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings) } </strong>
       </Col>
     )}
 
     {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 && (
-      <Col xs={6} md={3}>
+      <Col xs={6} md={3} className="addSpace">
         <span className="text-muted">Pending: </span>
         <strong> { formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) } </strong>
       </Col>

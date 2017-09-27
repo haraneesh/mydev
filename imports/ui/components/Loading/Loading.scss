@@ -1,7 +1,7 @@
 @import '../../stylesheets/bootstrap/bootstrap/variables';
 
 .Loader {
-  height: 2px;
+  height: 3px;
   overflow: hidden;
   background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 5%, rgba(255, 109, 0, 1) 35%, rgba(255, 109, 0, 0.7) 65%, rgba(255, 255, 255, 0.5));
   position: fixed;

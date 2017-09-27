@@ -86,17 +86,17 @@ class ViewInvoice extends React.Component {
           </Col>
         </Row>
         <Row>
-          <div className="panel-footer">
+          {invoice.balance > 0 && <div className="panel-footer">
             <Row>
               <Col xs={4} />
               <Col xs={4}> <strong> Pending </strong> </Col>
               <Col xs={4}>
-                {invoice.balance > 0 && <strong>
+                <strong>
                   { formatMoney(invoice.balance, accountSettings) }
-                </strong> }
+                </strong>
               </Col>
             </Row>
-          </div>
+          </div>}
         </Row>
       </div>
     ) :

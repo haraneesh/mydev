@@ -17,11 +17,19 @@ const callAPI = (requestType, endpoint, params) => {
   const args = {};
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
   args.params = setAPICall();
-  // if ((requestType === _callType.POST || requestType === _callType.PUT) && params) {
-  if (params) {
-    args.params = Object.assign({}, args.params, params);
 
-    //console.log(args.params);
+  if (params) {
+    switch (true) {
+      case (requestType === _callType.POST):
+        args.params.JSONString = JSON.stringify(params);
+        break;
+      case (requestType === _callType.PUT):
+        args.params.JSONString = JSON.stringify(params);
+        break;
+      default: // get
+        args.params = Object.assign({}, args.params, params);
+        break;
+    }
   }
 
   const callUrl = `${apiBaseUrl}/${endpoint}`;
