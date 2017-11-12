@@ -1,18 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Meteor } from 'meteor/meteor';
 import { Route, Redirect } from 'react-router-dom';
-import DocumentTitle from 'react-document-title';
 
-const NotAuthenticated = ({ routeName, loggingIn, authenticated, component, ...rest }) => (
+const NotAuthenticated = ({ layout: Layout, authenticated, component, ...rest }) => (
   <Route
     {...rest}
     render={props => (
       !authenticated ?
-      (<DocumentTitle title={`${routeName} | ${Meteor.settings.public.App_Name}`}>{
-      (React.createElement(component, { ...props, loggingIn, authenticated, ...rest }))
-      }
-      </DocumentTitle>) :
+      (<Layout {...props} authenticated {...rest} > {(React.createElement(component, { ...props, authenticated, ...rest }))} </Layout>)
+      :
       (<Redirect to="/" />)
     )}
   />
@@ -23,6 +19,7 @@ NotAuthenticated.propTypes = {
   loggingIn: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   component: PropTypes.func.isRequired,
+  layout: PropTypes.node.isRequired,
 };
 
 export default NotAuthenticated;

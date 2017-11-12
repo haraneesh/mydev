@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 
 const _callType = {
@@ -36,17 +37,20 @@ const callAPI = (requestType, endpoint, params) => {
   // console.log(callUrl);
   try {
     const result = HTTP.call(requestType, callUrl, args);
-    // console.log('--------------------------------------');
-    // console.log(result.data);
-    // console.log('--------------------------------------');
-    // console.log(args.params);
+    if (Meteor.isDevelopment) {
+      console.log('--------------------------------------');
+      console.log(result.data);
+      console.log('--------------------------------------');
+      console.log(args.params);
+    }
     return result.data;
   } catch (e) {
     // Got a network error, timeout, or HTTP error in the 400 or 500 range.
-    // console.log('--------------------------------------');
-    // console.error(e);
-    // console.log('--------------------------------------');
-
+    if (Meteor.isDevelopment) {
+      console.log('--------------------------------------');
+      console.error(e);
+      console.log('--------------------------------------');
+    }
     const argMsg = (args.params.JSONString) ? args.params.JSONString : ' ';
     if (e.response) {
        // return e.response.data;
@@ -88,7 +92,6 @@ const getRecordById = (module, id) => {
   const endpoint = `${module}/${id}`;
   return callAPI(_callType.GET, endpoint);
 };
-
 
 const deleteRecord = (module, id) => {
   const endpoint = `${module}/${id}`;

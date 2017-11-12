@@ -1,14 +1,18 @@
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
-//import 'moment-timezone';
+// import 'moment-timezone';
 import { formatMoney } from 'accounting-js';
 import constants from './constants';
 import { accountSettings, dateSettings } from './settings';
 
 
 export function getDisplayDate(dateObject) {
-  //return moment(dateObject).tz(dateSettings.timeZone).format(dateSettings.format);
+  // return moment(dateObject).tz(dateSettings.timeZone).format(dateSettings.format);
   return moment(dateObject).local().format(dateSettings.format);
+}
+
+export function getDisplayShortDate(dateObject) {
+  return moment(dateObject).local().format(dateSettings.shortFormat);
 }
 
 export function getDisplayDateTitle(startDateObj, EndDateObj) {

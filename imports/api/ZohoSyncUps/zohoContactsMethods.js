@@ -32,7 +32,7 @@ const createZohoBooksContact = usr => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
   gst_treatment: 'consumer',
   billing_address: {
-    address: 'Street address',
+    address: usr.profile.deliveryAddress,
     city: 'chennai',
     state: 'TN',
   },

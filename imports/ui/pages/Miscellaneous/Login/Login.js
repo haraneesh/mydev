@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -42,7 +41,6 @@ class Login extends React.Component {
   }
 
   handleSubmit() {
-    const { history } = this.props;
     const username = { username: this.mobilePhone.value };
     const password = this.password.value;
 
@@ -54,7 +52,6 @@ class Login extends React.Component {
         this.setState({
           loggedIn: true,
         });
-        // history.push('/order');
       }
     });
   }
@@ -88,7 +85,7 @@ class Login extends React.Component {
                 placeholder="Password"
               />
             </FormGroup>
-            <Button type="submit" bsStyle="primary">Log In</Button>
+            <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
             {/* <AccountPageFooter>
               <p>{'Don\'t have an account?'} <Link to="/signup">Sign Up</Link>.</p>
             </AccountPageFooter> */}
@@ -108,9 +105,5 @@ class Login extends React.Component {
     </div>);
   }
 }
-
-Login.propTypes = {
-  history: PropTypes.object.isRequired,
-};
 
 export default Login;

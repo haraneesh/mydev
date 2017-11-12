@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, Button, ButtonToolbar } from 'react-bootstrap';
+import { FormGroup, FormControl, Button, ButtonToolbar, Row, Col } from 'react-bootstrap';
 import RichTextEditor, { EditorValue } from 'react-rte';
 import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
 import { upsertRecipeDraft, upsertRecipePublish, removeRecipe } from '../../../api/Recipes/methods';
@@ -23,6 +23,8 @@ export default class RecipeEditor extends React.Component {
     this.cancelSaveRecipe = this.cancelSaveRecipe.bind(this);
     this.addNewRecipe = this.addNewRecipe.bind(this);
     this.deleteRecipe = this.deleteRecipe.bind(this);
+
+    this.levelValues = ['Easy', 'Medium', 'Advanced'];
   }
 
   _initialize(recipe) {
@@ -90,21 +92,6 @@ export default class RecipeEditor extends React.Component {
     }
   }
 
-  saveOrUpdateRecipe(event, publishStatus) {
-    const editorState = this.state.value.getEditorState();
-    const contentState = editorState.getCurrentContent();
-    const recipe = {
-      title: document.querySelector('[name="title"]').value.trim(),
-      // description: document.querySelector('[name="body"]').value.trim(),
-      description: convertToRaw(contentState),
-      ingredients: this.objectToValueArray(this._ingredientList),
-      _id: this.props.recipe ? this.props.recipe._id : '',
-      imageUrl: this._url,
-    };
-
-    this.updateRecipe(recipe, publishStatus);
-  }
-
   updateRecipe(recipe, publishStatus, silentUpdate = false) {
     const upsertRecipe = (publishStatus === constants.PublishStatus.Published.name) ? upsertRecipePublish : upsertRecipeDraft;
     upsertRecipe.call(recipe, (error, msg) => {
@@ -137,7 +124,7 @@ export default class RecipeEditor extends React.Component {
     // Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
     const toolbarConfig = {
       // Optionally specify the groups to display (displayed in the order listed).
-      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN',*/ 'HISTORY_BUTTONS'],
+      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', */ 'HISTORY_BUTTONS'],
       INLINE_STYLE_BUTTONS: [
         { label: 'Bold', style: 'BOLD', className: 'custom-css-class' },
         { label: 'Italic', style: 'ITALIC' },
@@ -155,6 +142,26 @@ export default class RecipeEditor extends React.Component {
       ],
     };
     return toolbarConfig;
+  }
+
+
+  saveOrUpdateRecipe(event, publishStatus) {
+    const editorState = this.state.value.getEditorState();
+    const contentState = editorState.getCurrentContent();
+    const recipe = {
+      title: document.querySelector('[name="title"]').value.trim(),
+      // description: document.querySelector('[name="body"]').value.trim(),
+      description: convertToRaw(contentState),
+      ingredients: this.objectToValueArray(this._ingredientList),
+      _id: this.props.recipe ? this.props.recipe._id : '',
+      imageUrl: this._url,
+      cookingTimeInMins: parseFloat(document.querySelector('[name="cookingTimeInMins"]').value.trim()),
+      serves: parseFloat(document.querySelector('[name="serves"]').value.trim()),
+      typeOfFood: document.querySelector('[name="typeOfFood"]').value.trim(),
+      cookingLevel: document.querySelector('[name="cookingLevel"]').value.trim(),
+    };
+
+    this.updateRecipe(recipe, publishStatus);
   }
 
   render() {
@@ -188,6 +195,54 @@ export default class RecipeEditor extends React.Component {
             onChange={this.ingredientListOnChange}
           />
         </FormGroup>
+        <Row>
+          <Col xs={4} sm={3}>
+            <h4>Serves how many?</h4>
+            <FormControl
+              type="text"
+              name="serves"
+              defaultValue={recipe && recipe.serves}
+              placeholder="4"
+            />
+          </Col>
+          <Col xs={4} sm={3}>
+            <h4>Cooking Time in Mins</h4>
+            <FormControl
+              type="text"
+              name="cookingTimeInMins"
+              defaultValue={recipe && recipe.cookingTimeInMins}
+              placeholder="1"
+            />
+          </Col>
+          <Col xs={4} sm={3}>
+            <h4>Cooking Level</h4>
+            <FormControl
+              name="cookingLevel"
+              // onChange={onChange}
+              componentClass="select"
+              defaultValue={recipe && recipe.level}
+            >
+              { constants.DifficultyLevels.map(selectValue => (
+                <option value={selectValue} key={`option-${selectValue}`} > { selectValue } </option>
+                ))
+              }
+            </FormControl>
+          </Col>
+          <Col xs={4} sm={3}>
+            <h4>Food Type</h4>
+            <FormControl
+              name="typeOfFood"
+              // onChange={onChange}
+              componentClass="select"
+              defaultValue={recipe && recipe.level}
+            >
+              { constants.FoodTypes.map(selectValue => (
+                <option value={selectValue} key={`option-${selectValue}`} > { selectValue } </option>
+                ))
+              }
+            </FormControl>
+          </Col>
+        </Row>
         <FormGroup>
           <h4>Preparation</h4>
           <RichTextEditor

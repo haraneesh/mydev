@@ -12,7 +12,7 @@ const QuantitySelector = ({
   if (isAdmin) {
     return (
       <FormControl
-        type="type"
+        type="text"
         name={controlName}
         defaultValue={quantitySelected}
         onChange={onChange}

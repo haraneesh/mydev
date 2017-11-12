@@ -70,7 +70,9 @@ export default class ImageUploader extends React.Component {
   render() {
     _state = this.state;
     _prop = this.props;
-    const recipeImage = _state.url ? { backgroundImage: `url('${_state.url}')` } : '';
+    const recipeImage = _state.url ? {
+      backgroundImage: `url('${_state.url}')`,
+    } : '';
 
     switch (_state.state) {
       case 'complete':

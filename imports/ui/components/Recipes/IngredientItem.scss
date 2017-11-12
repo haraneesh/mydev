@@ -1,0 +1,13 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.ingredient-item{
+    button {
+        margin-top: $padding-large-vertical;
+    }
+}
+
+.ingMeasures{
+    .row{
+        margin-right:-10px;
+    }
+}

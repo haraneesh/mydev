@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Row, Col, Button } from 'react-bootstrap';
 import RecipeCollection from '../../../api/Recipes/Recipes';
 import RecipesList from '../../components/Recipes/RecipesList';
 import Loading from '../../components/Loading/Loading';
 import { getScrollPercent } from '../../../modules/infiniteScroll';
 import constants from '../../../modules/constants';
+import { isLoggedInUserAdmin } from '../../../modules/helpers';
 
 // import RecipesList from '../../containers/Recipes/RecipesList.js';
 
@@ -18,6 +19,7 @@ class Recipes extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleScroll = this.handleScroll.bind(this);
+    this.firstCall = true;
   }
 
   componentDidMount() {
@@ -26,9 +28,16 @@ class Recipes extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     const { loading, count } = nextProps;
-    if (loading || count === 0) {
+    if (loading) {
       return false;
     }
+
+    if (this.firstCall) {
+      this.firstCall = false;
+      // whatever be the count show first view
+      return true;
+    }
+
     return count > 0;
   }
 
@@ -39,23 +48,25 @@ class Recipes extends React.Component {
   handleScroll(e) {
     if (e) e.preventDefault();
     if (getScrollPercent() > 50) {
-      limit.set(limit.get() + constants.InfiniteScroll.LimitIncrement );
+      limit.set(limit.get() + constants.InfiniteScroll.LimitIncrement);
     }
   }
 
   render() {
     const { loading, count, recipes, history } = this.props;
+    const isAdmin = isLoggedInUserAdmin();
+
     return (!loading ? (
       <div className="Recipes">
         <Row>
           <Col xs={12}>
             <div className="page-header clearfix">
               <h3 className="pull-left">Recipes</h3>
-              <Button
+              { isAdmin && <Button
                 bsStyle="primary"
                 className="pull-right"
                 href="/recipes/new"
-              >New Recipe</Button>
+              >New Recipe</Button> }
             </div>
             <RecipesList recipes={recipes} count={count} history={history} />
           </Col>
@@ -72,22 +83,25 @@ Recipes.propTypes = {
   count: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
-  const subscriptionsReady = [
+export default withTracker(() => {
+  const subscription =
     Meteor.subscribe('recipes.list', {
       sort: { createdAt: constants.Sort.DESCENDING },
       limit: limit.get(),
     },
-  )].every(subscription => subscription.ready());
+  );
 
-  const cursor = RecipeCollection.find({}, {
+  const recipesC = RecipeCollection.find({}, {
     sort: { createdAt: 1 },
     limit: limit.get(),
   });
 
+  const recipes = recipesC.fetch();
+  const count = recipesC.count();
+
   return {
-    loading: !subscriptionsReady,
-    recipes: cursor && cursor.fetch(),
-    count: cursor && cursor.count(),
+    loading: !subscription.ready(),
+    recipes,
+    count,
   };
-}, Recipes);
+})(Recipes);

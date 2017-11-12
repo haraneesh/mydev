@@ -21,14 +21,7 @@ const _upsertRecipe = (recipe) => {
 
 export const upsertRecipeDraft = new ValidatedMethod({
   name: 'recipes.upsertDraft',
-  validate: new SimpleSchema({
-    _id: { type: String, optional: true },
-    title: { type: String },
-    description: { type: Object, optional: true, blackbox: true },
-    ingredients: { type: Array, optional: true },
-    'ingredients.$':{ type: String },
-    imageUrl: { type: String, optional: true },
-  }).validator(),
+  validate: Recipes.schema.omit('publishStatus').validator(),
   run(recipe) {
     // Check if recipe creator is the one who is updating
     recipe.publishStatus = constants.PublishStatus.Draft.name;
@@ -50,8 +43,34 @@ const recipePublishSchema = new SimpleSchema({
     },
   },
   ingredients: { type: Array, minCount: 1 },
-  'ingredients.$': { type: String },
-  imageUrl: { type: String, optional: true },
+  'ingredients.$': { type: Object, blackbox: true },
+  imageUrl: { type: String },
+  commentIds: {
+    type: Array,
+    label: 'The list of comments attached to the recipe.',
+    optional: true,
+  },
+  'commentsIds.$': {
+    type: String,
+  },
+  serves: {
+    type: Number,
+    label: 'Serves how many people',
+  },
+  cookingTimeInMins: {
+    type: Number,
+    label: 'Time to cook this recipe',
+  },
+  typeOfFood: {
+    type: String,
+    label: 'The type of Food',
+    allowedValues: constants.FoodTypes,
+  },
+  cookingLevel: {
+    type: String,
+    label: 'Cooking Level',
+    allowedValues: constants.DifficultyLevels,
+  },
 });
 
 recipePublishSchema.messageBox.messages({
@@ -89,8 +108,8 @@ export const updateRecipePhoto = (mediaId, recipeId) => {
   const recipe = Recipes.findOne({ _id: recipeId });
   const media = Media.findOne({ _id: mediaId });
   const fsObj = new FS.File(media);
-  recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name });
-  recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name });
+  recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name, brokenIsFine: true });
+  recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name, brokenIsFine: true });
   recipe.mediaId = mediaId;
   Recipes.upsert({ _id: recipe._id }, { $set: recipe });
 };
@@ -109,8 +128,8 @@ export const updateRecipePhoto1 = new ValidatedMethod({
       const fsObj = new FS.File(media);
       //  media.on('stored', Meteor.bindEnvironment((fileObj, storename) => {
       //  if (storename === constants.MediaStores.Originals.name) {
-      recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name });
-      recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name }); // brokenIsFine: true
+      recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name, brokenIsFine: true });
+      recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name, brokenIsFine: true }); // brokenIsFine: true
       recipe.mediaId = mediaId;
       _upsertRecipe(recipe);
       // }

@@ -8,8 +8,11 @@ const ControlStates = {
   view: ' VIEW ',
 };
 
+const DifficultyLevels = ['Easy', 'Moderate', 'Hard'];
+const FoodTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Salad'];
+
 // This for organizing tabs in the order screen
-const ProductType = ['Vegetables', 'Groceries', 'Batter'];
+const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 
 // This is for reporting purposes
 const ProductCategory = [
@@ -20,6 +23,7 @@ const ProductCategory = [
   'Provisions - processed',
   'Provisions - whole',
   'Fruit',
+  'Hygiene',
 ];
 
 /*
@@ -45,7 +49,11 @@ Verification Required — order on hold while some aspect (e.g. tax-exempt docum
         needs to be manually confirmed. Orders with this status must be updated manually. Capturing funds or other order actions will not automatically update the status of an order marked Verification Required.
  */
 const OrderStatus = {
-  Pending: { name: 'Pending', display_value: 'Pending', label: 'warning' },
+  Pending: {
+    name: 'Pending',
+    display_value: 'Pending',
+    label: 'logo-yellow',
+  },
   Awaiting_Payment: {
     name: 'Awaiting_Payment',
     display_value: 'Awaiting Payment',
@@ -66,8 +74,16 @@ const OrderStatus = {
     display_value: 'Cancelled',
     label: 'default',
   },
-  Shipped: { name: 'Shipped', display_value: 'Shipped', label: 'info' },
-  Partially_Completed: { name: 'Partially_Completed', display_value: 'Partially Completed', label: 'info' },
+  Shipped: {
+    name: 'Shipped',
+    display_value: 'Shipped',
+    label: 'info',
+  },
+  Partially_Completed: {
+    name: 'Partially_Completed',
+    display_value: 'Partially Completed',
+    label: 'info',
+  },
 };
 
 const ProductListStatus = {
@@ -133,7 +149,7 @@ const MediaStores = {
     // Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
 const RichEditorToolbarConfig = {
       // Optionally specify the groups to display (displayed in the order listed).
-  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN',*/ 'HISTORY_BUTTONS'],
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', */ 'HISTORY_BUTTONS'],
   INLINE_STYLE_BUTTONS: [
         { label: 'Bold', style: 'BOLD', className: 'custom-css-class' },
         { label: 'Italic', style: 'ITALIC' },
@@ -167,4 +183,6 @@ export default (constants = {
   CommentTypes,
   RichEditorToolbarConfig,
   InfiniteScroll,
+  DifficultyLevels,
+  FoodTypes,
 });

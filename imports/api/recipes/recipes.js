@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import constants from '../../modules/constants';
 
 const Recipes = new Mongo.Collection('Recipes');
 export default Recipes;
@@ -18,18 +19,23 @@ Recipes.deny({
   remove: () => true,
 });
 
+
 Recipes.schema = new SimpleSchema({
+  _id: { type: String, label: 'The default _id of the recipe', optional: true },
   title: {
     type: String,
     label: 'The title of the recipe.',
   },
   ingredients: {
     type: Array,
-    label: 'The list of ingredients in the recipe.',
+    label: 'The list of ingredients attached to the recipe.',
     optional: true,
   },
   'ingredients.$': {
-    type: String,
+    type: Object,
+    label: 'An ingredient',
+    optional: true,
+    blackbox: true,
   },
   commentIds: {
     type: Array,
@@ -45,6 +51,14 @@ Recipes.schema = new SimpleSchema({
     blackbox: true,
     optional: true,
   },
+  serves: {
+    type: Number,
+    label: 'Serves how many people',
+  },
+  cookingTimeInMins: {
+    type: Number,
+    label: 'Time to cook this recipe',
+  },
   imageUrl: {
     type: String,
     label: 'The url of the image of the recipe',
@@ -54,6 +68,16 @@ Recipes.schema = new SimpleSchema({
     type: String,
     label: 'The url of the thumbnail image of the recipe',
     optional: true,
+  },
+  typeOfFood: {
+    type: String,
+    label: 'The type of Food',
+    allowedValues: constants.FoodTypes,
+  },
+  cookingLevel: {
+    type: String,
+    label: 'Cooking Level',
+    allowedValues: constants.DifficultyLevels,
   },
   mediaId: {
     type: String,

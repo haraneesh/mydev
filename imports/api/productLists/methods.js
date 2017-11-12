@@ -35,8 +35,7 @@ export const upsertProductList = new ValidatedMethod({
       const startDate = params.activeStartDateTime;
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
-      let orderableProducts = Products.find({ availableToOrder: true }).fetch();
-
+      let orderableProducts = Products.find({ availableToOrder: true }, { sort: { type: 1, name: 1 } }).fetch();
     /* $or: [
                 { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
                 { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
@@ -101,7 +100,7 @@ export const updateProductListWithOrderId = new ValidatedMethod({
   run({ orderId, productListId }) {
       ProductLists.update( { _id:productListId }, { $addToSet:{ order_ids:orderId } })
   },
-})*/
+}) */
 
 
 rateLimit({

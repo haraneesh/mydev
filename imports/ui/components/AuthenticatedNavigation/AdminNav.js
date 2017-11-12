@@ -5,7 +5,7 @@ import constants from '../../../modules/constants';
 
 const AdminNav = (props) => {
   // const user = Meteor.user();
-  if (props.roles.includes(constants.Roles.admin.name)) {
+  if (props.isAdmin) {
     return (
       <div>
         <div className="menu-header"> Admin </div>
@@ -41,5 +41,5 @@ const AdminNav = (props) => {
 export default AdminNav;
 
 AdminNav.propTypes = {
-  roles: PropTypes.array.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };

@@ -107,7 +107,6 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
     const errorResp = [];
     if (Meteor.isServer) {
       const query = { order_status: constants.OrderStatus.Pending.name };
-
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
       orders.forEach((ord) => {
@@ -162,7 +161,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
                { order_status: { $ne: constants.OrderStatus.Completed.name } },
                { order_status: { $ne: constants.OrderStatus.Pending.name } },
       ] };
-      const orders = Orders.find(query).fetch(); 
+      const orders = Orders.find(query).fetch();
       orders.forEach((ord) => {
         if (ord.zh_salesorder_id) {
           const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);

@@ -4,6 +4,7 @@ const accountSettings = {
 
 const dateSettings = {
   format: 'dddd, D MMM YYYY',
+  shortFormat: 'dddd, D MMM',
   timeZone: 'Asia/Kolkata',
 };
 

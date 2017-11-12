@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, Button, Panel } from 'react-bootstrap';
+import { ButtonToolbar, Button, Panel, Row, Col } from 'react-bootstrap';
 import { Editor, convertFromRaw, EditorState } from 'draft-js';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
 import { removeRecipe } from '../../../api/Recipes/methods';
 import Comments from '../../containers/Comments/GetComments';
+import { ShowNutritionSummary, ShowEffortSummary } from '../../components/Recipes/recipeHelpers';
+
 import { insertToUserAndPosts } from '../../../api/UserAndPosts/methods';
+
+import './ViewRecipe.scss';
 
 export default class ViewRecipe extends React.Component {
   componentDidMount() {
@@ -25,7 +29,7 @@ export default class ViewRecipe extends React.Component {
         }
       });
       // success of failure - don't bother the user
-    }*/
+    } */
   }
 
   handleRemove(_id) {
@@ -57,18 +61,37 @@ export default class ViewRecipe extends React.Component {
               {isOwner && <Button bsSize="small" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
             </ButtonToolbar>
           </div>
-          {recipe.imageUrl && <div className="view-recipe-image" style={{ backgroundImage: `url('${recipe.imageUrl}')` }} />}
           <Panel>
+            {recipe.imageUrl && <div className="view-recipe-image" style={{ backgroundImage: `url('${recipe.imageUrl}')` }} />}
+          </Panel>
+          <Panel>
+            <Row className="text-center">
+              { ShowEffortSummary(recipe) }
+            </Row>
+          </Panel>
+          <Panel className="ingredientsView">
             <h4>Ingredients</h4>
-            <ol>
-              {recipe.ingredients.map((ingredient, index) => (<li key={`ingredient-${index}`}> {ingredient} </li>))}
-            </ol>
+            <Col xs={12}>
+              <ol>
+                {recipe.ingredients.map((ing, index) => (<li key={`ingredient-${index}`}>
+                  <strong> { `${ing.selectedWeight.Amount} ${ing.selectedWeight.Msre_Desc}` } </strong>
+                  { `${ing.Long_Desc}` }
+                </li>
+                 ))}
+              </ol>
+            </Col>
           </Panel>
           <Panel>
             <h4>Preparation</h4>
             <div className="panel-body">
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>
+          </Panel>
+          <Panel>
+            <h4> Nutrition </h4>
+            <Row className="text-center">
+              { ShowNutritionSummary(recipe) }
+            </Row>
           </Panel>
           <Panel>
             <h4>Responses</h4>

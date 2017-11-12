@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem, Alert, Row, Col, Label } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings';
-import { getDisplayDate } from '../../../modules/helpers';
+import { getDisplayShortDate } from '../../../modules/helpers';
 // import moment from 'moment';
 // import 'moment-timezone';
 
@@ -40,14 +40,14 @@ const OrderTitleRow = ({
       </Col>
     )}
 
-    {invoiceTotals && (
+      {invoiceTotals && (
       <Col xs={6} md={3} className="addSpace">
         <span className="text-muted">Amount: </span>
         <strong> { formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings) } </strong>
       </Col>
     )}
 
-    {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 && (
+      {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 && (
       <Col xs={6} md={3} className="addSpace">
         <span className="text-muted">Pending: </span>
         <strong> { formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) } </strong>
@@ -62,7 +62,7 @@ const MyOrderList = ({ orders }) => (
       orders.map(({ _id, invoice_Id, order_status, createdAt, total_bill_amount, invoices }, index) => (
         <ListGroupItem key={_id} href={`/order/${_id}`}>
           <OrderTitleRow
-            orderDate={getDisplayDate(createdAt)}
+            orderDate={getDisplayShortDate(createdAt)}
             orderAmount={formatMoney(total_bill_amount, accountSettings)}
             invoice_Id={invoice_Id}
             statusToDisplay={constants.OrderStatus[order_status].display_value}

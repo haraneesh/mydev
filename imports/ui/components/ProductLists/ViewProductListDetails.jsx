@@ -1,7 +1,6 @@
 import React from 'react';
-import { Row, Col, Label, ListGroup, ListGroupItem, Pager, Panel, PanelGroup } from 'react-bootstrap';
+import { Row, Col, Label, Pager, Panel } from 'react-bootstrap';
 import { ButtonToolbar, Button } from 'react-bootstrap';
-import { accountSettings, dateSettings } from '../../../modules/settings';
 import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers';
 import { removeProductList } from '../../../api/ProductLists/methods';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -80,7 +79,6 @@ class ViewProductListDetails extends React.Component {
       </ButtonToolbar>
       );
     }
-    
   }
 
   goBack(e) {

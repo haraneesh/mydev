@@ -1,6 +1,6 @@
 {
   "name": "NammaSuvai",
-  "version":"1.5.0",
+  "version": "2.0.0",
   "description": "Namma Suvai",
   "private": true,
   "scripts": {
@@ -21,7 +21,8 @@
     "moment-timezone": "^0.5.13",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
-    "react-addons-pure-render-mixin": "^15.5.2",
+    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-autosuggest": "^9.3.2",
     "react-bootstrap": "^0.31.0",
     "react-bootstrap-counter": "^1.0.1",
     "react-datetime": "^2.8.10",

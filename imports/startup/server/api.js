@@ -11,6 +11,8 @@ import '../../api/Utility/server/methods';
 import '../../api/Recipes/methods';
 import '../../api/Recipes/server/publications';
 
+import '../../api/Ingredients/methods';
+
 import '../../api/UserAndPosts/methods';
 
 import '../../api/Invitations/methods';

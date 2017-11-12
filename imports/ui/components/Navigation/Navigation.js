@@ -26,7 +26,7 @@ const Navigation = props => (
       { !!props.authenticated && <SideMenu {...props} /> }
     </Navbar.Header>
 
-    { !!props.authenticated && <EasyNavNarrowScreen /> }
+    { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen /> }
 
   </Navbar>
 );
@@ -37,6 +37,7 @@ Navigation.defaultProps = {
 
 Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default Navigation;

@@ -131,8 +131,8 @@ $padding-xs-horizontal:     5px !default;
 $line-height-large:         1.3333333 !default; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5 !default;
 
-$border-radius-base:        0.2em !default;
-$border-radius-large:       0.3em !default;
+$border-radius-base:        0.3em !default;
+$border-radius-large:       0.4em !default;
 $border-radius-small:       0.2em !default;
 
 
@@ -222,7 +222,7 @@ $input-bg:                       #fff !default;
 $input-bg-disabled:              $gray-lighter !default;
 
 //** Text color for `<input>`s
-$input-color:                    $gray !default;
+$input-color:                    $gray-dark !default;
 //** `<input>` border color
 $input-border:                   $gray-light !default;
 
