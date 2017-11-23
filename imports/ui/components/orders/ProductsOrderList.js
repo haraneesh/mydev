@@ -188,7 +188,7 @@ export default class ProductsOrderList extends React.Component {
       switch (product.type) {
         case constants.ProductType[0]: // Vegetables
           productVegetables.push(
-            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} showQuantitySelector />,
           );
           break;
         case constants.ProductType[1]: // Groceries

@@ -30,9 +30,9 @@ const SideMenu = props => (
               <li>
                 <NavLink to="/invitations">Invite Friends</NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink to="/recover-password">Change Password</NavLink>
-              </li>
+              </li> */}
               <li>
                 <NavLink to="/profile">My Profile</NavLink>
               </li>

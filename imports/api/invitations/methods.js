@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import Invitations from './Invitations';
+import InvitationTemplate from './invitation_template';
 
 export const sendInvitation = new ValidatedMethod({
   name: 'invitations.send',
@@ -30,25 +31,26 @@ export const sendInvitation = new ValidatedMethod({
                { sentUserId :loggedInUserId }
              ]}
              break;
-      }*/
+      } */
 
     if (Meteor.isServer) {
-        const user = Meteor.users.findOne(this.userId);
-        const fromName = `${user.profile.name.first  } ${  user.profile.name.last}`;
-        const email = _prepareEmail(invitation.token, invitation.name, fromName);
-        _sendInvitation(invitation.email, email, fromName);
-      }
+      const user = Meteor.users.findOne(this.userId);
+      const fromName = `${user.profile.name.first} ${user.profile.name.last}`;
+      const email = prepareEmail(invitation.token, invitation.name, fromName);
+      _sendInvitation(invitation.email, email, fromName);
+    }
     return Invitations.insert(invitation);
   },
 });
 
-let _prepareEmail = (token, name, fromName) => {
+let prepareEmail = (token, name, fromName) => {
   const domain = Meteor.settings.private.domain;
   const url = `http://${domain}/invitations/${token}`;
 
-  SSR.compileTemplate('invitation', Assets.getText('email/templates/invitation.html'));
-  const html = SSR.render('invitation', { url, nameOfInvited: name, nameOfInvitee: fromName });
+  // SSR.compileTemplate('invitation', Assets.getText('email/templates/invitation.html'));
+  // const html = SSR.render('invitation', { url, nameOfInvited: name, nameOfInvitee: fromName });
 
+  const html = InvitationTemplate({ url, nameOfInvited: name, nameOfInvitee: fromName });
   return html;
 };
 
@@ -63,7 +65,7 @@ let _sendInvitation = (email, content, fromName) => {
 };
 
 const _createUser = (user) => {
-  let userId = Accounts.createUser(user);
+  const userId = Accounts.createUser(user);
 
   if (userId) {
     return userId;
@@ -75,7 +77,7 @@ const _getInvitation = (token) => {
     $and: [
             { token }, // token
             { invitation_status: constants.InvitationStatus.Sent.name }, //constants.InvitationStatus.Sent.name
-      ],
+    ],
   },
     );
 
@@ -85,11 +87,11 @@ const _getInvitation = (token) => {
 };
 
 const _updateInvitation = (token, userId) => {
-  Invitations.update({ token: token }, { $set: {
-     invitation_status: constants.InvitationStatus.Accepted.name,
-     receivedUserId: userId,
-   },
-   });
+  Invitations.update({ token }, { $set: {
+    invitation_status: constants.InvitationStatus.Accepted.name,
+    receivedUserId: userId,
+  },
+  });
 };
 
 export const acceptInvitation = new ValidatedMethod({
@@ -104,9 +106,9 @@ export const acceptInvitation = new ValidatedMethod({
       if (invitation) {
         const userId = _createUser(options.user);
         if (userId) {
-           _updateInvitation(options.token, userId);
-         }
-      }      else {
+          _updateInvitation(options.token, userId);
+        }
+      } else {
         throw new Meteor.Error(403, 'Sign up token has expired or is invalid.');
       }
     }
@@ -122,22 +124,22 @@ export const removeInvitation = new ValidatedMethod({
   run({ _id }) {
     let query;
     switch (true) {
-        case Roles.userIsInRole(this.userId, ['admin']):
-          query = { $and: [
+      case Roles.userIsInRole(this.userId, ['admin']):
+        query = { $and: [
                             { _id },
                             { invitation_status: constants.InvitationStatus.Sent.name },
-                ],
-                };
-          break;
-        default:
-          query = { $and: [
+        ],
+        };
+        break;
+      default:
+        query = { $and: [
                             { _id },
                             { sentUserId: Meteor.userId() },
                             { invitation_status: constants.InvitationStatus.Sent.name },
-                ],
-                };
-          break;
-      }
+        ],
+        };
+        break;
+    }
     Invitations.remove(query, { justOne: true });
   },
 });

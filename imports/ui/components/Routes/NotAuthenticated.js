@@ -2,12 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 
+/*
 const NotAuthenticated = ({ layout: Layout, authenticated, component, ...rest }) => (
   <Route
     {...rest}
     render={props => (
       !authenticated ?
       (<Layout {...props} authenticated {...rest} > {(React.createElement(component, { ...props, authenticated, ...rest }))} </Layout>)
+      :
+      (<Redirect to="/" />)
+    )}
+  />
+); */
+
+const NotAuthenticated = ({ layout: Layout, authenticated, component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => (
+      !authenticated ?
+      (<Layout {...props} authenticated={false} {...rest} >
+        <Component {...props} authenticated={false} {...rest} />
+      </Layout>)
       :
       (<Redirect to="/" />)
     )}

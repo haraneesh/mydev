@@ -2,8 +2,8 @@ import React from 'react';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { acceptInvitation } from '../../../../api/Invitations/methods';
 import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
 import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
@@ -30,9 +30,26 @@ class Signup extends React.Component {
           required: true,
           email: true,
         },
-        password: {
+        whMobilePhone: {
           required: true,
+          indiaMobilePhone: true,
+        },
+        deliveryAddress: {
+          required: true,
+        },
+        password: {
+          required() {
+            // Only required if password field has a value.
+            return component.confirmPassword.value.length > 0;
+          },
           minlength: 6,
+        },
+        confirmPassword: {
+          required() {
+            return (component.password.value.length > 0);
+          },
+          minlength: 6,
+          equalTo: '#password',
         },
       },
       messages: {
@@ -47,8 +64,19 @@ class Signup extends React.Component {
           email: 'Is this email address correct?',
         },
         password: {
-          required: 'Need a password here.',
-          minlength: 'Please use at least six characters.',
+          required: 'Enter a new password, please.',
+          minlength: 'Use at least six characters, please.',
+        },
+        confirmPassword: {
+          required: 'Repeat your new password, please.',
+          equalTo: 'The password and confirm password are not matching, please try again.',
+        },
+        whMobilePhone: {
+          required: 'Need your mobile number.',
+          indiaMobilePhone: 'Is this a valid India mobile number?',
+        },
+        deliveryAddress: {
+          required: 'Need your delivery address.',
         },
       },
       submitHandler() { component.handleSubmit(); },
@@ -57,8 +85,10 @@ class Signup extends React.Component {
 
   handleSubmit() {
     const { history } = this.props;
+    const { match } = this.props;
 
-    Accounts.createUser({
+    const user = {
+      username: this.whMobilePhone.value,
       email: this.emailAddress.value,
       password: this.password.value,
       profile: {
@@ -66,13 +96,17 @@ class Signup extends React.Component {
           first: this.firstName.value,
           last: this.lastName.value,
         },
+        whMobilePhone: this.whMobilePhone.value,
+        deliveryAddress: this.deliveryAddress.value,
       },
-    }, (error) => {
+    };
+
+    acceptInvitation.call({ user, token: match.params.token }, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        Bert.alert('Welcome!', 'success');
-        history.push('/documents');
+        Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
+        history.push('/');
       }
     });
   }
@@ -82,17 +116,17 @@ class Signup extends React.Component {
       <Row>
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Sign Up</h3>
-          <Row>
+          { /*<Row>
             <Col xs={12}>
               <OAuthLoginButtons
                 services={['facebook']}
                 emailMessage={{
-                  offset: 97,
-                  text: 'Sign Up with an Email Address',
+                  offset: 0,
+                  text: '- OR -',
                 }}
               />
             </Col>
-          </Row>
+          </Row> */ }
           <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
             <Row>
               <Col xs={6}>
@@ -127,15 +161,46 @@ class Signup extends React.Component {
                 className="form-control"
               />
             </FormGroup>
+
             <FormGroup>
-              <ControlLabel>Password</ControlLabel>
+              <ControlLabel>Mobile Number</ControlLabel>
               <input
+                type="text"
+                ref={whMobilePhone => (this.whMobilePhone = whMobilePhone)}
+                name="whMobilePhone"
+                placeholder="10 digit number example, 8787989897"
+                className="form-control"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Delivery Address</ControlLabel>
+              <textarea
+                ref={deliveryAddress => (this.deliveryAddress = deliveryAddress)}
+                name="deliveryAddress"
+                placeholder="Complete address to deliver at, including Landmark, Pincode."
+                rows="6"
+                className="form-control"
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Password</ControlLabel> 
+              <input
+                id="password"
                 type="password"
                 name="password"
                 ref={password => (this.password = password)}
                 className="form-control"
-              />
+              /> 
               <InputHint>Use at least six characters.</InputHint>
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Confirm Password</ControlLabel>
+              <input
+                type="password"
+                name="confirmPassword"
+                ref={confirmPassword => (this.confirmPassword = confirmPassword)}
+                className="form-control"
+              />
             </FormGroup>
             <Button type="submit" bsStyle="success">Sign Up</Button>
             <AccountPageFooter>
@@ -150,6 +215,7 @@ class Signup extends React.Component {
 
 Signup.propTypes = {
   history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 export default Signup;

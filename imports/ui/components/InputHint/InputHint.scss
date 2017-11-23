@@ -3,7 +3,8 @@
 .InputHint {
   display: block;
   margin-top: 8px;
-  font-style: italic;
-  color: $gray-light;
+  color: $gray-base;
   font-size: 13px;
+  letter-spacing: 0.25px;
+  font-weight: bold;
 }
