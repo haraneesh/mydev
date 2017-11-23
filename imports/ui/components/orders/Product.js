@@ -41,6 +41,7 @@ const FieldGroup = ({
   totQuantityOrdered,
   previousOrdQty,
   isAdmin,
+  showQuantitySelector,
 }) => (
   <Row>
     <Col sm={6}>
@@ -51,10 +52,14 @@ const FieldGroup = ({
       /> }
       <h4><small>{description}</small></h4>
     </Col>
-    <Col sm={3} className="text-right-not-xs">
+
+    { showQuantitySelector &&
+    (<Col sm={3} className="text-right-not-xs">
       <h4>{formatMoney(unitprice, accountSettings)} <span className="text-muted">x</span></h4>
-    </Col>
-    <Col sm={3}>
+    </Col>) }
+
+    {showQuantitySelector &&
+    (<Col sm={3}>
       <QuantitySelector
         onChange={onChange}
         controlName={productId}
@@ -63,11 +68,11 @@ const FieldGroup = ({
         isAdmin={isAdmin}
         maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
       />
-    </Col>
+    </Col>)}
   </Row>
 );
 
-const Product = ({ updateProductQuantity, product, isAdmin }) => (
+const Product = ({ updateProductQuantity, product, isAdmin, showQuantitySelector }) => (
   <ListGroupItem key={product._id}>
     <FieldGroup
       productId={product._id}
@@ -85,14 +90,20 @@ const Product = ({ updateProductQuantity, product, isAdmin }) => (
       totQuantityOrdered={product.totQuantityOrdered}
       previousOrdQty={(product.previousOrdQty) ? product.previousOrdQty : 0}
       isAdmin={isAdmin}
+      showQuantitySelector={showQuantitySelector}
     />
   </ListGroupItem>
   );
+
+Product.defaultProps = {
+  showQuantitySelector: true,
+};
 
 Product.propTypes = {
   updateProductQuantity: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  showQuantitySelector: PropTypes.bool,
 };
 
 export default Product;

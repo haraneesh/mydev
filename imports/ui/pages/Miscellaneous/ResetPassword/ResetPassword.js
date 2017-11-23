@@ -33,7 +33,7 @@ class ResetPassword extends React.Component {
         },
         repeatNewPassword: {
           required: 'Repeat your new password, please.',
-          equalTo: 'Hmm, your passwords don\'t match. Try again?',
+          equalTo: 'The password and confirm password are not matching, please try again.',
         },
       },
       submitHandler() { component.handleSubmit(); },
@@ -48,7 +48,7 @@ class ResetPassword extends React.Component {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        history.push('/documents');
+        history.push('/order');
       }
     });
   }

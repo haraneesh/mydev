@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 
 const Public = (args) => {
-  const { layout: Layout, component, ...rest } = args;
+  const { layout: Layout, component: Component, ...rest } = args;
   return (
     <Route
       {...rest}
       render={props => (
-        <Layout {...props} {...rest} > {(React.createElement(component, { ...props, ...rest }))} </Layout>)
+        <Layout {...props} {...rest} >
+          <Component {...props} {...rest} />
+        </Layout>)
       }
     />
   );
