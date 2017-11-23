@@ -244,8 +244,8 @@ export default class ProductsOrderList extends React.Component {
 
   displayProductsAndSubmit(submitButtonName) {
    // Grouping product categories by tabs
-    const iPhone5sWidth = 320;
-    const isMobile = window.innerWidth <= iPhone5sWidth;
+    const nexusWidth = 420;
+    const isMobile = window.innerWidth <= nexusWidth;
     return (
      this.props.products.length > 0 ? <Panel>
        <Row>

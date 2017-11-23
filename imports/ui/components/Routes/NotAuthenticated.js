@@ -7,7 +7,7 @@ const NotAuthenticated = ({ layout: Layout, authenticated, component, ...rest })
     {...rest}
     render={props => (
       !authenticated ?
-      (<Layout {...props} authenticated {...rest} > {(React.createElement(component, { ...props, authenticated, ...rest }))} </Layout>)
+      (<Layout {...props} authenticated={false} {...rest} > {(React.createElement(component, { ...props, authenticated, ...rest }))} </Layout>)
       :
       (<Redirect to="/" />)
     )}
