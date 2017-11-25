@@ -19,6 +19,15 @@ Recipes.deny({
   remove: () => true,
 });
 
+function isMandatoryIfStatusIsPublished() {
+  const value = this.value;
+  const publishStatus = this.field('publishStatus').value;
+  const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
+
+  if (shouldBeRequired && !(value)) {
+    return SimpleSchema.ErrorTypes.REQUIRED;
+  }
+}
 
 Recipes.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the recipe', optional: true },
@@ -30,12 +39,22 @@ Recipes.schema = new SimpleSchema({
     type: Array,
     label: 'The list of ingredients attached to the recipe.',
     optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   'ingredients.$': {
     type: Object,
     label: 'An ingredient',
     optional: true,
     blackbox: true,
+    custom(){
+      const value = this.value;
+      const publishStatus = this.field('publishStatus').value;
+      const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
+
+      if (shouldBeRequired && (!value || !value.selectedWeight)) {
+         return SimpleSchema.ErrorTypes.REQUIRED;
+      }
+    },
   },
   commentIds: {
     type: Array,
@@ -50,14 +69,19 @@ Recipes.schema = new SimpleSchema({
     label: 'The recipe goes here.',
     blackbox: true,
     optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   serves: {
     type: Number,
     label: 'Serves how many people',
+    optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   cookingTimeInMins: {
     type: Number,
     label: 'Time to cook this recipe',
+    optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   imageUrl: {
     type: String,
@@ -73,11 +97,15 @@ Recipes.schema = new SimpleSchema({
     type: String,
     label: 'The type of Food',
     allowedValues: constants.FoodTypes,
+    optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   cookingLevel: {
     type: String,
     label: 'Cooking Level',
     allowedValues: constants.DifficultyLevels,
+    optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   mediaId: {
     type: String,
@@ -88,6 +116,7 @@ Recipes.schema = new SimpleSchema({
     type: String,
     label: 'The person who created the post',
     optional: true,
+    custom: isMandatoryIfStatusIsPublished,
   },
   createdAt: {
     type: Date,

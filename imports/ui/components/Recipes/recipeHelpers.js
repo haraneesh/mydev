@@ -152,7 +152,7 @@ export const getRecipeNutrientValues = (ingredients) => {
 };
 
 const innerRowStyle = {
-  marginLeft: '-5px',
+  marginLeft: '-10px',
   magrinRight: '0px',
 };
 
@@ -213,7 +213,7 @@ export const ShowEffortSummary = ({ cookingLevel, cookingTimeInMins, serves, typ
 
     { DisplayEffortSummaryCell('cutlery', typeOfFood, 3) }
     { DisplayEffortSummaryCell('time', `${cookingTimeInMins} Mins`, 3) }
-    { DisplayEffortSummaryCell('user', `${serves} serves`, 3) }
+    { DisplayEffortSummaryCell('user', `${serves} Pers`, 3) }
     { DisplayEffortSummaryCell('education', cookingLevel, 3) }
 
   </Row>

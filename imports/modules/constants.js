@@ -9,7 +9,7 @@ const ControlStates = {
 };
 
 const DifficultyLevels = ['Easy', 'Moderate', 'Hard'];
-const FoodTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Salad'];
+const FoodTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Salad', 'Dip'];
 
 // This for organizing tabs in the order screen
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];

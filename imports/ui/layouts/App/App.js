@@ -59,7 +59,7 @@ import './App.scss';
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-        <Switch>
+      <Switch>
           <Authenticated exact routeName="My Orders" layout={MainLayout} path="/" component={MyOrders} {...props} />
           {/*
           <Authenticated routeName="Documents" exact path="/documents" component={Documents} {...props} />
@@ -76,7 +76,7 @@ const App = props => (
           <Authenticated exact routeName="View All Recipes" layout={MainLayout} path="/recipes" component={dRecipes} {...props} />
           <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
           <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
-          <Authenticated routeName="View Recipe" path="/recipes/:_id" component={dViewRecipe} {...props} />
+          <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
 
           {/* Invitations */}
           <Authenticated exact routeName="My Invitations" layout={MainLayout} path="/invitations" component={dInvitations} {...props} />

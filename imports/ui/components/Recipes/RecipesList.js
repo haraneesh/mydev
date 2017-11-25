@@ -28,15 +28,15 @@ const RecipesList = ({ recipes }) => (
                     <a href={`/recipes/${recipe._id}`}>{ recipe.title }</a>
                   </h3>
                 </Row>
-                <Row className="text-center">
+                <div className="text-center">
                   <div> { ShowNutritionSummary(recipe) } </div>
-                </Row>
-                <Row className="text-center">
+                </div>
+                <div className="text-center">
                   <div>
                     { ShowEffortSummary(recipe) }
                   </div>
-                </Row>
-                <Col xs={12} className="text-center">
+                </div>
+                <Col xs={12} className="text-right btn-view-recipe">
                   <Button bsStyle="primary" href={`/recipes/${recipe._id}`} bsSize="small"> View Recipe </Button>
                 </Col>
               </Col>

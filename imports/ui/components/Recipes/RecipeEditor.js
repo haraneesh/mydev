@@ -23,8 +23,6 @@ export default class RecipeEditor extends React.Component {
     this.cancelSaveRecipe = this.cancelSaveRecipe.bind(this);
     this.addNewRecipe = this.addNewRecipe.bind(this);
     this.deleteRecipe = this.deleteRecipe.bind(this);
-
-    this.levelValues = ['Easy', 'Medium', 'Advanced'];
   }
 
   _initialize(recipe) {
@@ -96,7 +94,7 @@ export default class RecipeEditor extends React.Component {
     const upsertRecipe = (publishStatus === constants.PublishStatus.Published.name) ? upsertRecipePublish : upsertRecipeDraft;
     upsertRecipe.call(recipe, (error, msg) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        Bert.alert(error.message, 'danger');
       } else if (!silentUpdate) {
         const insertedId = msg.insertedId;
         const message = 'Changes to Recipe have been Saved!';
