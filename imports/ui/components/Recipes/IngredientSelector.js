@@ -25,6 +25,7 @@ export default class IngredientSelector extends React.Component {
     this.handleAddIngredient = this.handleAddIngredient.bind(this);
     this.handleMinusIngredient = this.handleMinusIngredient.bind(this);
     this.handleWeightChange = this.handleWeightChange.bind(this);
+    this.handleDisplayNameChange = this.handleDisplayNameChange.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +64,12 @@ export default class IngredientSelector extends React.Component {
     this.updateRecipeIngredientList(ingredientList);
   }
 
+  handleDisplayNameChange(ingredientId, displayName) {
+    const ingredientList = this.state.ingredients.ingredientList;
+    ingredientList[ingredientId].displayName = displayName;
+    this.updateRecipeIngredientList(ingredientList);
+  }
+
   render() {
     const controlName = this.props.controlName;
     const { ingredients } = this.state;
@@ -78,6 +85,7 @@ export default class IngredientSelector extends React.Component {
                   key={index}
                   removeIngredient={this.handleMinusIngredient}
                   onWeightChange={this.handleWeightChange}
+                  onDisplayNameChange={this.handleDisplayNameChange}
                 />), this)
         }
       </Panel>

@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import Recipes from './Recipes';
 import Media from '../Media/Media';
@@ -57,14 +58,21 @@ const recipePublishSchema = new SimpleSchema({
     type: Number,
     label: 'Serves how many people',
   },
+  prepTimeInMins: {
+    type: Number,
+    label: 'Time to prepare this recipe',
+  },
   cookingTimeInMins: {
     type: Number,
     label: 'Time to cook this recipe',
   },
   typeOfFood: {
-    type: String,
+    type: Array,
     label: 'The type of Food',
-    allowedValues: constants.FoodTypes,
+  },
+  'typeOfFood.$': {
+    type: String,
+    allowedValues: constants.FoodTypes.names,
   },
   cookingLevel: {
     type: String,
@@ -156,12 +164,36 @@ export const removeRecipePhoto = new ValidatedMethod({
   },
 });
 
+Meteor.methods({
+  'recipes.countByCategory': function countByCategory() {
+    try {
+      if (Meteor.isServer) {
+        return Recipes.aggregate([{
+          $unwind: '$typeOfFood',
+        },
+        {
+          $group: { _id: {
+            typeOfFood: '$typeOfFood',
+          },
+            count: { $sum: 1 },
+          },
+        },
+        ]);
+      }
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
+  },
+});
+
+
 rateLimit({
   methods: [
     upsertRecipeDraft,
     upsertRecipePublish,
     removeRecipe,
     removeRecipePhoto,
+    'recipes.countByCategory',
   ],
   limit: 5,
   timeRange: 1000,

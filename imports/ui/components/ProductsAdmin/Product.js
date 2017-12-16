@@ -12,7 +12,8 @@ export const ProductTableHeader = () => (
       <Col xs={2}>Product Name</Col>
       <Col xs={2}>Unit Price</Col>
       <Col xs={1}>Unit Of Sale</Col>
-      <Col xs={2}>Max Units Available</Col>
+      <Col xs={1}>Max Units Available</Col>
+      <Col xs={1}>Display Order</Col>
       <Col xs={2}>Units For Selection</Col>
       <Col xs={1}>Can be ordered?</Col>
       <Col xs={1} />
@@ -43,7 +44,7 @@ function FieldGroup({ controlType, controlLabel, controlName, updateValue, defau
 
     </FormGroup>
   );
-    }*/
+    } */
   return (
     <FormGroup>
       {displayControlName && <ControlLabel>{controlLabel}</ControlLabel>}
@@ -133,6 +134,7 @@ export default class Product extends React.Component {
     const upsert = Object.assign({}, this.state.product);
     upsert.unitprice = parseFloat(upsert.unitprice);
     upsert.maxUnitsAvailableToOrder = parseFloat(upsert.maxUnitsAvailableToOrder);
+    upsert.displayOrder = parseFloat(upsert.displayOrder);
     upsertProduct.call(upsert, (error) => {
       if (error) {
         const errReason = (error.reason) ? error.reason : error.message;
@@ -179,7 +181,7 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={2}>
+          <Col xs={1}>
             <FieldGroup
               controlType="number"
               controlLabel="Max Units Available"
@@ -187,6 +189,17 @@ export default class Product extends React.Component {
               updateValue={this.handleProductUpsert}
               defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
                   product.maxUnitsAvailableToOrder : ''}
+              help
+            />
+          </Col>
+          <Col xs={1}>
+            <FieldGroup
+              controlType="number"
+              controlLabel="Display Order"
+              controlName="displayOrder"
+              updateValue={this.handleProductUpsert}
+              defaultValue={(product.displayOrder) ?
+                  product.displayOrder : ''}
               help
             />
           </Col>
@@ -206,7 +219,7 @@ export default class Product extends React.Component {
               checked={this.state.product.availableToOrder}
               onChange={this.handleProductUpsert}
             >
-              {/* Is Available To Order*/}
+              {/* Is Available To Order */}
             </Checkbox>
           </Col>
           <Col xs={1} >

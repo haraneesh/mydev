@@ -46,13 +46,13 @@ Recipes.schema = new SimpleSchema({
     label: 'An ingredient',
     optional: true,
     blackbox: true,
-    custom(){
+    custom() {
       const value = this.value;
       const publishStatus = this.field('publishStatus').value;
       const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
 
       if (shouldBeRequired && (!value || !value.selectedWeight)) {
-         return SimpleSchema.ErrorTypes.REQUIRED;
+        return SimpleSchema.ErrorTypes.REQUIRED;
       }
     },
   },
@@ -77,6 +77,12 @@ Recipes.schema = new SimpleSchema({
     optional: true,
     custom: isMandatoryIfStatusIsPublished,
   },
+  prepTimeInMins: {
+    type: Number,
+    label: 'Time to prepare this recipe',
+    optional: true,
+    custom: isMandatoryIfStatusIsPublished,
+  },
   cookingTimeInMins: {
     type: Number,
     label: 'Time to cook this recipe',
@@ -94,11 +100,14 @@ Recipes.schema = new SimpleSchema({
     optional: true,
   },
   typeOfFood: {
-    type: String,
+    type: Array,
     label: 'The type of Food',
-    allowedValues: constants.FoodTypes,
     optional: true,
     custom: isMandatoryIfStatusIsPublished,
+  },
+  'typeOfFood.$': {
+    type: String,
+    allowedValues: constants.FoodTypes.names,
   },
   cookingLevel: {
     type: String,

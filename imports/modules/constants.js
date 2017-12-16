@@ -9,7 +9,17 @@ const ControlStates = {
 };
 
 const DifficultyLevels = ['Easy', 'Moderate', 'Hard'];
-const FoodTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Salad', 'Dip'];
+const FoodTypes = {
+  breakfast: { name: 'breakfast', displayName: 'BreakFast' },
+  curry: { name: 'curry', displayName: 'Curry' },
+  grain: { name: 'grain', displayName: 'Good Grain' },
+  side: { name: 'side', displayName: 'Sides' },
+  snack: { name: 'snack', displayName: 'Snacks' },
+  chutney: { name: 'chutney', displayName: 'Chutney' },
+};
+
+FoodTypes.names = Object.keys(FoodTypes).map(cat => FoodTypes[cat].name);
+FoodTypes.displayNames = Object.keys(FoodTypes).map(cat => FoodTypes[cat].displayName);
 
 // This for organizing tabs in the order screen
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];

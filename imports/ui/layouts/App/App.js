@@ -42,6 +42,7 @@ dProductLists,
 dViewProductListDetails,
 dInvitations,
 dNewInvitation,
+dRecipesHome,
 dRecipes,
 dNewRecipe,
 dEditRecipe,
@@ -73,7 +74,8 @@ const App = props => (
           <AdminAuthenticated exact routeName="Update Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
 
           {/* Recipes */}
-          <Authenticated exact routeName="View All Recipes" layout={MainLayout} path="/recipes" component={dRecipes} {...props} />
+          <Authenticated exact routeName="Recipes Home" layout={MainLayout} path="/recipes" component={dRecipesHome} {...props} />
+          <Authenticated exact routeName="View Recipes By Category" layout={MainLayout} path="/recipes/foodtype/:category" component={dRecipes} {...props} />
           <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
           <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
           <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />

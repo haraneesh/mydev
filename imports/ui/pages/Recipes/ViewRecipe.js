@@ -74,8 +74,9 @@ export default class ViewRecipe extends React.Component {
             <Col xs={12}>
               <ol>
                 {recipe.ingredients.map((ing, index) => (<li key={`ingredient-${index}`}>
-                  <strong> { `${ing.selectedWeight.Amount} ${ing.selectedWeight.Msre_Desc}` } </strong>
-                  { `${ing.Long_Desc}` }
+                  {
+                    (ing.displayName) ? ing.displayName : `${ing.selectedWeight.Amount} ${ing.selectedWeight.Msre_Desc} ${ing.Long_Desc}`
+                   }
                 </li>
                  ))}
               </ol>
@@ -87,12 +88,14 @@ export default class ViewRecipe extends React.Component {
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>
           </Panel>
+          {/*
           <Panel>
             <h4> Nutrition </h4>
             <Row className="text-center">
               { ShowNutritionSummary(recipe) }
             </Row>
           </Panel>
+          */}
           <Panel>
             <h4>Responses</h4>
             <Comments postId={recipe._id} />

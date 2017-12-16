@@ -16,6 +16,7 @@ export default class IngredientItem extends React.Component {
     }
     
     this.state = {
+      displayName: (ingredient.displayName)? ingredient.displayName : ingredient.Long_Desc,
       weights: ingredient.Weights,
       selectedWeight: (ingredient.selectedWeight) ? ingredient.selectedWeight : this.defaultSelectedWeight,
     };
@@ -33,6 +34,18 @@ export default class IngredientItem extends React.Component {
     this.setState ({
       selectedWeight: weight ? weight : this.defaultSelectedWeight, 
     })
+  }
+
+  displayNameChanged = () => {
+    const {ingredient} = this.props;
+    const {onDisplayNameChange} = this.props;
+    const displayName = this.displayName.value
+
+    this.setState ({
+      displayName, 
+    });
+
+    onDisplayNameChange(ingredient._id, displayName.trim()) 
   }
 
   onAmtChange = () => {
@@ -114,6 +127,16 @@ export default class IngredientItem extends React.Component {
               { ingredient.Long_Desc }
             </h4>
         </Row>
+          <Row>
+            <ControlLabel>Display Name</ControlLabel>
+            <input
+              className="form-control input-sm"
+              name={`"displayName-${ingredient._id}"`}
+              value={this.state.displayName}
+              onChange={this.displayNameChanged}
+              ref={displayName => (this.displayName = displayName)}
+            />
+        </Row>
       </Col>
       <Col xs={12}>
         <Col sm={4}>
@@ -141,4 +164,5 @@ IngredientItem.propTypes = {
   ingredient: PropTypes.string.isRequired,
   removeIngredient: PropTypes.func.isRequired,
   onWeightChange: PropTypes.func.isRequired,
+  onDisplayNameChange: PropTypes.func.isRequired,
 };

@@ -1,0 +1,38 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.RecipesHome {
+    .rowCategory {
+        height:10em;
+    }
+
+    .catName{
+        padding:27% 0;
+    }
+
+    @media (max-width: $screen-xs-max) {
+        .catName{
+            padding:0.5em 0;
+        }
+    }
+
+
+    .catName0{
+        //background-color: #d1eb53; //$brand-primary;
+        color:$brand-primary;
+    }
+
+    .catName1{
+        //background-color: #76ab3e; //$brand-info;
+        color:$brand-primary;
+    }
+
+    .catName2{
+        //background-color: #90b741;  //#808000;
+        color:$brand-primary;
+    }
+
+    .catName3{
+        //background-color: #3d5038; //#eb7400;
+        color:$brand-primary;
+    }
+}

@@ -21,9 +21,11 @@ Meteor.publish('foo', (options) => {
 
 Meteor.publish('recipes.list', (options) => {
   // check(options, { limit: Number, sort: Match.ObjectIncluding({ createdAt: Number }) });
-  check(options, { limit: Number, sort: { createdAt: Number } });
-  const { limit = constants.InfiniteScroll.DefaultLimit, sort } = options;
-  return Recipes.find({}, {
+  check(options, { limit: Number, typeOfFood: String, sort: { createdAt: Number } });
+  const { limit = constants.InfiniteScroll.DefaultLimit, typeOfFood, sort } = options;
+  return Recipes.find({
+    typeOfFood,
+  }, {
     sort,
     limit,
   });

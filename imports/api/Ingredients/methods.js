@@ -17,6 +17,7 @@ const filterGroup = [
   1200,
   1600,
   2000,
+  90000,
 ];
 
 Meteor.methods({
@@ -26,7 +27,7 @@ Meteor.methods({
     });
     try {
       // has to be \" double quotes
-      const srchString = `\"${searchParams.searchString.split(' ').join('\" \"') }\"`;
+      const srchString = `\"${searchParams.searchString.split(' ').join('\" \"')}\"`;
       const retVal = Ingredients.find(
         {
           $text: { $search: srchString },
@@ -73,6 +74,7 @@ Meteor.methods({
         sort: 'r',
       });
       const ingList = [];
+      /*
       const filterGroup = [
         'Cereal Grains and Pasta',
         'Dairy and Egg Products',
@@ -82,7 +84,7 @@ Meteor.methods({
         'Nut and Seed Products',
         'Spices and Herbs',
         'Vegetables and Vegetable Products',
-      ];
+      ]; */
 
       if (!results.data || !results.data.list) {
         return [];

@@ -7,7 +7,7 @@ import './RecipeList.scss';
 
 
 const ShowThumbnail = url => ({ backgroundImage: `url(${url})`,
-  height: '250px',
+  height: '200px',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
 });
@@ -28,15 +28,17 @@ const RecipesList = ({ recipes }) => (
                     <a href={`/recipes/${recipe._id}`}>{ recipe.title }</a>
                   </h3>
                 </Row>
+                {/*
                 <div className="text-center">
                   <div> { ShowNutritionSummary(recipe) } </div>
                 </div>
+                */}
                 <div className="text-center">
                   <div>
                     { ShowEffortSummary(recipe) }
                   </div>
                 </div>
-                <Col xs={12} className="text-right btn-view-recipe">
+                <Col xs={12} className="text-center btn-view-recipe">
                   <Button bsStyle="primary" href={`/recipes/${recipe._id}`} bsSize="small"> View Recipe </Button>
                 </Col>
               </Col>

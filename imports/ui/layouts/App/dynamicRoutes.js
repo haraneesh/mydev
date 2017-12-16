@@ -45,6 +45,9 @@ export const dNewInvitation = SuvaiLoadable({
 });
 
 /* Recipes*/
+export const dRecipesHome = SuvaiLoadable({
+  loader: () => import('../../pages/Recipes/RecipesHome'),
+});
 // import Recipes from '../pages/recipes/Recipes';
 export const dRecipes = SuvaiLoadable({
   loader: () => import('../../pages/Recipes/Recipes'),

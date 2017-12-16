@@ -11,6 +11,19 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import ImageUploader from '../Common/ImageUploader';
 import constants from '../../../modules/constants';
 
+const retSelectedValueArr = (options) => {
+  const typeOfFood = [];
+
+  for (let index = 0; index < options.length; index++) {
+    const option = options[index];
+    if (option.selected) {
+      typeOfFood.push(option.value);
+    }
+  }
+
+  return typeOfFood;
+};
+
 export default class RecipeEditor extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -153,9 +166,10 @@ export default class RecipeEditor extends React.Component {
       ingredients: this.objectToValueArray(this._ingredientList),
       _id: this.props.recipe ? this.props.recipe._id : '',
       imageUrl: this._url,
+      prepTimeInMins: parseFloat(document.querySelector('[name="prepTimeInMins"]').value.trim()),
       cookingTimeInMins: parseFloat(document.querySelector('[name="cookingTimeInMins"]').value.trim()),
       serves: parseFloat(document.querySelector('[name="serves"]').value.trim()),
-      typeOfFood: document.querySelector('[name="typeOfFood"]').value.trim(),
+      typeOfFood: retSelectedValueArr(document.querySelector('[name="typeOfFood"]').children),
       cookingLevel: document.querySelector('[name="cookingLevel"]').value.trim(),
     };
 
@@ -194,7 +208,7 @@ export default class RecipeEditor extends React.Component {
           />
         </FormGroup>
         <Row>
-          <Col xs={4} sm={3}>
+          <Col xs={6} sm={3}>
             <h4>Serves how many?</h4>
             <FormControl
               type="text"
@@ -203,7 +217,16 @@ export default class RecipeEditor extends React.Component {
               placeholder="4"
             />
           </Col>
-          <Col xs={4} sm={3}>
+          <Col xs={6} sm={3}>
+            <h4>Prep Time in Mins</h4>
+            <FormControl
+              type="text"
+              name="prepTimeInMins"
+              defaultValue={recipe && recipe.prepTimeInMins}
+              placeholder="0"
+            />
+          </Col>
+          <Col xs={6} sm={3}>
             <h4>Cooking Time in Mins</h4>
             <FormControl
               type="text"
@@ -212,7 +235,7 @@ export default class RecipeEditor extends React.Component {
               placeholder="1"
             />
           </Col>
-          <Col xs={4} sm={3}>
+          <Col xs={6} sm={3}>
             <h4>Cooking Level</h4>
             <FormControl
               name="cookingLevel"
@@ -226,15 +249,19 @@ export default class RecipeEditor extends React.Component {
               }
             </FormControl>
           </Col>
-          <Col xs={4} sm={3}>
+        </Row>
+        <Row>
+          <Col xs={12}>
             <h4>Food Type</h4>
             <FormControl
+              style={{height:'170px'}}
               name="typeOfFood"
               // onChange={onChange}
               componentClass="select"
-              defaultValue={recipe && recipe.level}
+              defaultValue={recipe && recipe.typeOfFood}
+              multiple
             >
-              { constants.FoodTypes.map(selectValue => (
+              { constants.FoodTypes.names.map(selectValue => (
                 <option value={selectValue} key={`option-${selectValue}`} > { selectValue } </option>
                 ))
               }

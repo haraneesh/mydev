@@ -83,19 +83,22 @@ Recipes.propTypes = {
   count: PropTypes.number.isRequired,
 };
 
-export default withTracker(() => {
+export default withTracker(({ match }) => {
   const subscription =
     Meteor.subscribe('recipes.list', {
       sort: { createdAt: constants.Sort.DESCENDING },
+      typeOfFood: match.params.category,
       limit: limit.get(),
     },
   );
 
+  /*
   const recipesC = RecipeCollection.find({}, {
-    sort: { createdAt: 1 },
+    sort: { createdAt: constants.Sort.ASCENDING },
     limit: limit.get(),
-  });
+  }); */
 
+  const recipesC = RecipeCollection.find({});
   const recipes = recipesC.fetch();
   const count = recipesC.count();
 

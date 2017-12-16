@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, FormGroup, ControlLabel, FormControl, Button, Glyphicon, Dropdown, MenuItem } from 'react-bootstrap';
+import { Row, Col, FormGroup, Dropdown, MenuItem } from 'react-bootstrap';
 import CommentWrite from './CommentWrite';
 import constants from '../../../modules/constants';
 import { removeComment } from '../../../api/Comments/methods';

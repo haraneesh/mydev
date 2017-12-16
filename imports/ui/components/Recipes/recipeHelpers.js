@@ -151,19 +151,14 @@ export const getRecipeNutrientValues = (ingredients) => {
   return retValue;
 };
 
-const innerRowStyle = {
-  marginLeft: '-10px',
-  magrinRight: '0px',
-};
-
 const displayNutSummaryCell = (label, value, unit, width) => (
   <Col xs={width}>
-    <Row className="text-muted" style={innerRowStyle}>
+    <Row className="text-muted">
       <small>
         {label}
       </small>
     </Row>
-    <Row style={innerRowStyle}>
+    <Row>
       {`${Math.round(value * 100) / 100} ${unit}`}
     </Row>
   </Col>
@@ -198,23 +193,24 @@ const ShowRecipeTags = (typeOfFood, width) => (
 
 const DisplayEffortSummaryCell = (iconName, value, width) => (
   <Col xs={width}>
-    <Row className="text-muted" style={innerRowStyle}>
+    <Row className="text-muted">
       <Glyphicon glyph={iconName} />
     </Row>
-    <Row style={innerRowStyle}>
+    <Row>
       {value}
     </Row>
   </Col>
 );
 
-export const ShowEffortSummary = ({ cookingLevel, cookingTimeInMins, serves, typeOfFood }) => (
-  <Row className="effortRow" style={innerRowStyle}>
+export const ShowEffortSummary = ({ cookingLevel, prepTimeInMins, cookingTimeInMins, serves }) => (
+  <div className="effortRow">
     { /* ShowRecipeTags(typeOfFood, 3) */ }
 
-    { DisplayEffortSummaryCell('cutlery', typeOfFood, 3) }
-    { DisplayEffortSummaryCell('time', `${cookingTimeInMins} Mins`, 3) }
+    { /* DisplayEffortSummaryCell('cutlery', typeOfFood, 3) */ }
+    { DisplayEffortSummaryCell('time', `${prepTimeInMins} Mins`, 3) }
+    { DisplayEffortSummaryCell('fire', `${cookingTimeInMins} Mins`, 3) }
     { DisplayEffortSummaryCell('user', `${serves} Pers`, 3) }
     { DisplayEffortSummaryCell('education', cookingLevel, 3) }
 
-  </Row>
+  </div>
 );
