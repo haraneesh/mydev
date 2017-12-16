@@ -1,6 +1,10 @@
 @import '../../stylesheets/bootstrap/bootstrap/variables';
 
 .RecipesHome {
+    h4{
+        color:$gray-base;
+    }    
+
     .rowCategory {
         height:10em;
     }

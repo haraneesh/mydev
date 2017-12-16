@@ -61,9 +61,9 @@ export default class ViewRecipe extends React.Component {
               {isOwner && <Button bsSize="small" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
             </ButtonToolbar>
           </div>
-          <Panel>
-            {recipe.imageUrl && <div className="view-recipe-image" style={{ backgroundImage: `url('${recipe.imageUrl}')` }} />}
-          </Panel>
+          
+          {recipe.imageUrl && <Panel> <div className="view-recipe-image" style={{ backgroundImage: `url('${recipe.imageUrl}')` }} /> </Panel>}
+          
           <Panel>
             <Row className="text-center">
               { ShowEffortSummary(recipe) }

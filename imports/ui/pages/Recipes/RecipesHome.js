@@ -18,8 +18,7 @@ const catImageSection = (name, classname) => (
 const catNameSection = (name, displayName, recipeCount, index) => (
   <Col xs={12} sm={4} className="text-center">
     <div className={`catName catName${index}`}>
-      <div><Glyphicon glyph="leaf" /></div>
-      <div>{displayName.toUpperCase()}</div>
+      <h4>{displayName.toUpperCase()}</h4>
       <div><small>{`${(recipeCount) || 0} recipes`}</small></div>
     </div>
   </Col>
