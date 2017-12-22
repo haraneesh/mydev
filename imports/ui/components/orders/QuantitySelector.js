@@ -14,7 +14,7 @@ const QuantitySelector = ({
       <FormControl
         type="text"
         name={controlName}
-        defaultValue={quantitySelected}
+        value={quantitySelected}
         onChange={onChange}
       />
     );

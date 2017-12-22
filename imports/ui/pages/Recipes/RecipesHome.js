@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Panel, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Glyphicon, Image } from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
 import Loading from '../../components/Loading/Loading';
 import constants from '../../../modules/constants';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';

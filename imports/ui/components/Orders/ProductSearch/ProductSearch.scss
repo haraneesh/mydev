@@ -1,0 +1,17 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+
+.productOrderSearch{
+
+    .panel-heading, .panel-body, .list-group-item{
+        border: 0px none transparent;
+    }
+
+    .panel-body{
+        padding:0px;
+    }
+
+    .productSearchInp{
+        max-width: $screen-sm-min;
+        margin:0 auto;
+    }
+}

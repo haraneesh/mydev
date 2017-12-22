@@ -2,7 +2,7 @@
 // add measures to ingredients
 import { Mongo } from 'meteor/mongo';
 import Ingredients from '../Ingredients/Ingredients';
-import Products from '../Products/Products';
+// import Products from '../Products/Products';
 
 const IngWeights = new Mongo.Collection('IngWeights');
 
@@ -25,4 +25,4 @@ if (IngWeights.findOne()) {
 }
 
 // update products to have displayOrder
-Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
+// Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });

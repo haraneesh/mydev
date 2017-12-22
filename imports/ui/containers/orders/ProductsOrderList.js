@@ -1,15 +1,11 @@
 import { composeWithTracker } from 'react-komposer';
 import { Meteor } from 'meteor/meteor';
-// import Products from '../../../api/products/products'
 import ProductLists from '../../../api/ProductLists/ProductLists';
 import ProductsOrderList from '../../components/Orders/ProductsOrderList';
 import { Loading } from '../../components/Loading/Loading';
-
+// import ProductsOrderMain from '../../components/Orders/ProductsOrderMain/ProductsOrderMain';
 
 const composer = ({ dateValue, history }, onData) => {
-  // const subscription = Meteor.subscribe('products.list')
-  // const dateValue = Date.now()
-  // const dateValue = new Date("1/11/2017")
   const subscription = Meteor.subscribe('productOrderList.view', dateValue);
 
   if (subscription.ready()) {
