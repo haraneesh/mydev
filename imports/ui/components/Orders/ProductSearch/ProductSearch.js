@@ -30,7 +30,7 @@ class ProductSearch extends React.Component {
   informProductUnavailability() {
     return (<Col xs={12}>
       <p>
-        OOps! We are not able to find what you are looking for. You could try a different spelling or browse for it in the lists below.
+        Oops! We are not able to find what you are looking for. You could try a different spelling or browse for it in the lists below.
     </p> </Col>);
   }
 
