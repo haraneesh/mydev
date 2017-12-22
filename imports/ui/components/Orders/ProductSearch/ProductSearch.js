@@ -42,7 +42,7 @@ class ProductSearch extends React.Component {
 
   render() {
     const { searchString } = this.state;
-    const searchResults = (searchString !== '' && searchString.length > 3) ?
+    const searchResults = (searchString !== '' && searchString.length > 2) ?
         (this.props.getProductsMatchingSearch(searchString, 8)) : '';
 
     return (
