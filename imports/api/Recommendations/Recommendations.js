@@ -27,8 +27,10 @@ const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 export const RecommendationsSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
   customerId: { type: String, label: 'The user for whom this recommendation' },
-  prevOrderProducts: { type: Array },
-  'products.$': ProductSchema.omit('createdAt', 'updatedAt'),
+  prevOrderedProducts: { type: Array },
+  'prevOrderedProducts.$': ProductSchema.omit('createdAt', 'updatedAt'),
+  recommendedProducts: { type: Array },
+  'recommendedProducts.$': ProductSchema.omit('createdAt', 'updatedAt'),
   createdAt: {
     type: Date,
     label: 'The date this user recommendation was created.',
@@ -54,7 +56,7 @@ Recommendations.schema = new SimpleSchema(RecommendationsSchemaDefObject, {
 });
 
 if (Meteor.isServer) {
-  Recommendations._ensureIndex({ userId: 1 });
+  Recommendations._ensureIndex({ customerId: 1 }, { unique: true });
 }
 
 Recommendations.attachSchema(Recommendations.schema);

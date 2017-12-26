@@ -14,7 +14,7 @@ import constants from '../../../modules/constants';
 
 import './ProductOrderList.scss';
 
-const DisplayCategoryHeader = ({ clName, title, onclick, isOpen}) => (
+const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} className={`productCat_${clName}`} />
     <Col xs={8} className="prodCatTitle"> <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p> </Col>
@@ -104,18 +104,18 @@ export default class ProductsOrderList extends React.Component {
     const quantity = event.target.value;
     const productsCopy = this.state.products;
 
-    productsCopy[productId].quantity = parseFloat((quantity) || 0);
+      productsCopy[productId].quantity = parseFloat((quantity) || 0);
 
-    let total_bill_amount = 0;
-    for (const key in productsCopy) {
-      const quantity = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
-      total_bill_amount += quantity * productsCopy[key].unitprice;
-    }
+      let total_bill_amount = 0;
+      for (const key in productsCopy) {
+        const quantity = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
+        total_bill_amount += quantity * productsCopy[key].unitprice;
+      }
 
-    this.setState({
-      products: Object.assign({}, productsCopy),
-      total_bill_amount,
-    });
+      this.setState({
+        products: Object.assign({}, productsCopy),
+        total_bill_amount,
+      });
   }
 
   handleOrderSubmit() {
@@ -285,18 +285,18 @@ export default class ProductsOrderList extends React.Component {
          />
          <Col xs={12}>
            <ListGroup className="products-list">
-             
+
              { this.displayProductsByType(this.state.products, isMobile) }
              <Row>
-             <OrderComment comments={this.props.comments} />
-             <OrderFooter
-               total_bill_amount={this.state.total_bill_amount}
-               onButtonClick={this.handleOrderSubmit}
-               submitButtonName={submitButtonName}
-             />
+               <OrderComment comments={this.props.comments} />
+               <OrderFooter
+                 total_bill_amount={this.state.total_bill_amount}
+                 onButtonClick={this.handleOrderSubmit}
+                 submitButtonName={submitButtonName}
+               />
              </Row>
            </ListGroup>
-          </Col>
+         </Col>
        </Row>
      </Panel>
       :

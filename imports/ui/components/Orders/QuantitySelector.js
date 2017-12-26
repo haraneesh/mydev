@@ -2,6 +2,7 @@ import React from 'react';
 import { FormControl } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
+
 const QuantitySelector = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   onChange,
@@ -12,7 +13,7 @@ const QuantitySelector = ({
   if (isAdmin) {
     return (
       <FormControl
-        type="text"
+        type="number"
         name={controlName}
         value={quantitySelected}
         onChange={onChange}
