@@ -6,6 +6,8 @@ import Media from '../Media/Media';
 import rateLimit from '../../modules/rate-limit.js';
 import constants from '../../modules/constants';
 
+SimpleSchema.debug = true;
+
 const _upsertRecipe = (recipe) => {
   recipe.owner = Meteor.userId();
   if (Roles.userIsInRole(recipe.owner, ['admin']) || !recipe._id) {

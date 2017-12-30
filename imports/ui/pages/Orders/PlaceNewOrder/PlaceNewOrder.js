@@ -1,30 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import OrderMain from '../../../components/Orders/OrderMain/OrderMain';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
-import DocumentsCollection from '../../../../api/Documents/Documents';
+import { Panel, Row, Col } from 'react-bootstrap';
+import { withTracker } from 'meteor/react-meteor-data';
+import OrderMain from '../../../components/Orders/OrderMain/OrderMain';
+import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
+import ProductsCollection from '../../../../api/Products/Products';
 import Loading from '../../../components/Loading/Loading';
 
-const PlaceNewOrder = ({ loading, prevOrderDetails, match, history }) => (!loading ? (
-  <div className="Documents">
-    <div className="page-header clearfix">
-      <h4 className="pull-left">Welcome</h4>
-    </div>
+const PlaceNewOrder = ({ loading, name, recommendations, products, history }) => (!loading ? (
+  <div className="OrderHomePage">
+      <h3 className="page-header">
+        { ( false ) ? 'Update Your Order' : ' Place Your Order' }
+      </h3>
+    <Panel>
+      <Row>
+        <Col xs={12}>
+          <h4 className="text-center"> Welcome {name} </h4>
+          <OrderMain recommendations = {recommendations} productsForOrder={products}/>
+        </Col>
+      </Row>
+    </Panel>
   </div>
 ) : <Loading />);
 
 PlaceNewOrder.propTypes = {
   loading: PropTypes.bool.isRequired,
-  prevOrderDetails: PropTypes.arrayOf(PropTypes.object).isRequired,
-  match: PropTypes.object.isRequired,
+  recommendations: PropTypes.arrayOf(PropTypes.object).isRequired,
+  name: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(() => {
-  const subscription = Meteor.subscribe('SuggestedOrderDetailsCollection');
+export default withTracker((args) => {
+  const recSubscription = Meteor.subscribe('recommendations.view');
+
+  const prdSubscription = Meteor.subscribe('productOrderList.view', args.date);
+
+  const recommendations = RecommendationsCollection.find().fetch();
+  const products = ProductsCollection.find().fetch();
+
   return {
-    loading: !subscription.ready(),
-    prevOrderDetails: ProductRecommendationsCollection.find().fetch(),
+    loading: !recSubscription.ready() || !prdSubscription.ready(),
+    recommendations,
+    products,
+    name: args.name,
+    history: args.history,
+    orderId: args.match.id,
   };
-}, PlaceNewOrder);
+})(PlaceNewOrder);

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { composeWithTracker } from 'react-komposer';
-import constants from '../../../modules/constants'
+import constants from '../../../modules/constants';
 import CommentsObj from '../../../api/Comments/Comments';
 import Comments from '../../components/Comments/Comments';
 import Loading from '../../components/Loading/Loading';

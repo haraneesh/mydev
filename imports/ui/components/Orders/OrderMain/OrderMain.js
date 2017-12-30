@@ -1,5 +1,5 @@
 import React from 'react';
-import { Panel, Col, Glyphicon } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import './OrderMain.scss';
@@ -9,18 +9,16 @@ class OrderMain extends React.Component {
     super(props);
   }
 
+  render() {
     return (
-        <div className="OrderMain">
-            <Row>
-            <Col xs={12}>
-                <h3 className="page-header"> { formHeading }
-              { this.displayCancelOrderButton(this.props.order_status) }
-             </h3>
-             { this.displayProductsAndSubmit(submitButtonName) }
-            </Col>
-            </Row>
-        </div>
+      <div className="OrderMain">
+              <h4> Your Previous Order </h4>
+              <h4> Recommended Products </h4>
+              <h4> Specials</h4>
+
+      </div>
     );
+  }
 }
 
 OrderMain.propTypes = {

@@ -51,7 +51,7 @@ export default class RecipeEditor extends React.Component {
       publishStatus: (recipe) ? recipe.publishStatus : constants.PublishStatus.Draft.name,
     };
 
-    this._url = '';
+    this._url = (recipe && recipe.imageUrl) ? recipe.imageUrl : '';
   }
 
   componentDidMount() {
@@ -254,7 +254,7 @@ export default class RecipeEditor extends React.Component {
           <Col xs={12}>
             <h4>Food Type</h4>
             <FormControl
-              style={{height:'170px'}}
+              style={{ height: '170px' }}
               name="typeOfFood"
               // onChange={onChange}
               componentClass="select"
@@ -269,7 +269,7 @@ export default class RecipeEditor extends React.Component {
           </Col>
         </Row>
         <FormGroup>
-          <h4>Preparation</h4>
+          <h4>Instructions</h4>
           <RichTextEditor
             value={this.state.value}
             onChange={this.onRichTextEditorChange}

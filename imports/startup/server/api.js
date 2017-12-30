@@ -27,6 +27,9 @@ import '../../api/ProductLists/server/publications';
 import '../../api/Orders/methods';
 import '../../api/Orders/server/publications';
 
+import '../../api/Recommendations/methods';
+import '../../api/Recommendations/server/publications';
+
 import '../../api/Invoices/methods';
 
 import '../../api/Specials/methods';

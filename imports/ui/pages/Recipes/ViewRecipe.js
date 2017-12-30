@@ -5,7 +5,7 @@ import { Editor, convertFromRaw, EditorState } from 'draft-js';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
 import { removeRecipe } from '../../../api/Recipes/methods';
-import Comments from '../../containers/Comments/GetComments';
+import Comments from '../../containers/Comments/getComments';
 import { ShowNutritionSummary, ShowEffortSummary } from '../../components/Recipes/recipeHelpers';
 
 import { insertToUserAndPosts } from '../../../api/UserAndPosts/methods';
@@ -83,7 +83,7 @@ export default class ViewRecipe extends React.Component {
             </Col>
           </Panel>
           <Panel>
-            <h4>Preparation</h4>
+            <h4>Instructions</h4>
             <div className="panel-body">
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>

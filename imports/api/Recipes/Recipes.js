@@ -52,7 +52,7 @@ Recipes.schema = new SimpleSchema({
       const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
 
       if (shouldBeRequired && (!value || !value.selectedWeight)) {
-        return SimpleSchema.ErrorTypes.REQUIRED;
+        return 'errrrrrrrr'; // SimpleSchema.ErrorTypes.REQUIRED
       }
     },
   },
@@ -162,6 +162,12 @@ Recipes.schema = new SimpleSchema({
   publishStatus: {
     type: String,
     label: 'Publish Status',
+  },
+});
+
+Recipes.schema.messageBox.messages({
+  en: {
+    errrrrrrrr: 'For {{value.displayName}} - Amount has to be greater than 0 ',
   },
 });
 

@@ -26,7 +26,7 @@ const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 
 export const RecommendationsSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
-  customerId: { type: String, label: 'The user for whom this recommendation' },
+  customerId: { type: String, label: 'The _id field of the user for whom this recommendation is created' },
   prevOrderedProducts: { type: Array },
   'prevOrderedProducts.$': ProductSchema.omit('createdAt', 'updatedAt'),
   recommendedProducts: { type: Array },

@@ -27,7 +27,7 @@ import Profile from '../../pages/Miscellaneous/Profile/Profile';
 import About from '../../pages/Miscellaneous/About/About';
 
 /* order */
-import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
+ import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
 //import PlaceNewOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
 import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 import EditOrderDetails from '../../containers/Orders/EditOrder';
@@ -35,6 +35,7 @@ import EditOrderDetails from '../../containers/Orders/EditOrder';
 /* layout */
 import { OrderLayout, MainLayout } from '../Layouts';
 
+import Analytics from 'analytics-node';
 
 /* Dynamic Components */
 import
@@ -57,6 +58,8 @@ dZohoSyncUp }
 from './dynamicRoutes';
 
 import './App.scss';
+
+const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
 const App = props => (
   <Router>
@@ -150,7 +153,9 @@ export default createContainer(() => {
     loggingIn,
     authenticated: !loggingIn && !!userId,
     name: name || emailAddress,
+    date: new Date(),
     roles: !loading && Roles.getRolesForUser(userId),
     loggedInUserId: userId,
+    analytics,
   };
 }, App);
