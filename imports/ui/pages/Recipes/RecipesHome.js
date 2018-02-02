@@ -78,9 +78,11 @@ export default class RecipesHome extends React.Component {
           </Col>
         </Row>
         {
-          foodTypeNames.map((name, index) => (
-             recipeHomeCategoryRow(name, foodTypes[name].displayName, recipeCounts[name], index)
-            ),
+          foodTypeNames.map((name, index) => {
+            if (name === 'snack' || name === 'diabetic') {
+              return (recipeHomeCategoryRow(name, foodTypes[name].displayName, recipeCounts[name], index));
+            }
+          },
           )
         }
       </div>

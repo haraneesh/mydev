@@ -104,18 +104,18 @@ export default class ProductsOrderList extends React.Component {
     const quantity = event.target.value;
     const productsCopy = this.state.products;
 
-      productsCopy[productId].quantity = parseFloat((quantity) || 0);
+    productsCopy[productId].quantity = parseFloat((quantity) || 0);
 
-      let total_bill_amount = 0;
-      for (const key in productsCopy) {
-        const quantity = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
-        total_bill_amount += quantity * productsCopy[key].unitprice;
-      }
+    let total_bill_amount = 0;
+    for (const key in productsCopy) {
+      const quantity = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
+      total_bill_amount += quantity * productsCopy[key].unitprice;
+    }
 
-      this.setState({
-        products: Object.assign({}, productsCopy),
-        total_bill_amount,
-      });
+    this.setState({
+      products: Object.assign({}, productsCopy),
+      total_bill_amount,
+    });
   }
 
   handleOrderSubmit() {
@@ -193,7 +193,12 @@ export default class ProductsOrderList extends React.Component {
     _.map(products, (product, index) => {
       if (product.name.toLowerCase().indexOf(lowerSearchString) > -1) {
         searchResults.push(
-          <Product key={`srch-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} showQuantitySelector />,
+          <Product
+            key={`srch-${index}`}
+            updateProductQuantity={this.updateProductQuantity}
+            product={product}
+            isAdmin={isAdmin}
+          />,
           );
       }
     });

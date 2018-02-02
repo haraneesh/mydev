@@ -16,6 +16,8 @@ const FoodTypes = {
   side: { name: 'side', displayName: 'Sides' },
   snack: { name: 'snack', displayName: 'Snacks' },
   chutney: { name: 'chutney', displayName: 'Chutney' },
+  diabetic: { name: 'diabetic', displayName: 'Diabetic Friendly' },
+  pregnancy: { name: 'pregnancy', displayName: 'Healthy Pregnancy' },
 };
 
 FoodTypes.names = Object.keys(FoodTypes).map(cat => FoodTypes[cat].name);
