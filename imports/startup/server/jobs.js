@@ -1,7 +1,8 @@
 import Agenda from 'Agenda';
 import { prepareUserRecommendations } from '../../modules/server/prepareUserRecommendations';
 
-const agenda = new Agenda({ db: { address: process.env.MONGO_URL } });
+const mongoUrl = process.env.MONGO_URL;
+const agenda = new Agenda({ db: { address: mongoUrl } });
 
 agenda.define('prepareUserRecommendations', (job, done) => {
   // call from module

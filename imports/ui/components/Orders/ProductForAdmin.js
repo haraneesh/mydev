@@ -94,8 +94,8 @@ class ProductForAdmin extends React.Component {
 
         <Col sm={3} className="text-right-not-xs">
           <h4>{formatMoney(unitprice, accountSettings)}
-            <span className="text-muted">x</span>
-            {` ${this.state.quantitySelected}`}
+            <span className="text-muted">{` ${'x'} `}</span>
+            {this.state.quantitySelected}
           </h4>
         </Col>
       </Row>
