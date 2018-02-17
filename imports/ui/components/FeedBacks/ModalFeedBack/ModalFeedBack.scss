@@ -1,0 +1,30 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+
+.modalFeedBack{
+    top: 2em !important;
+
+    .ratingsModal{
+        font-size:xx-large;
+    }
+    .modal-content{
+        box-shadow: none !important;
+        border-color: $modal-content-border-color;
+    }
+
+    textarea {
+        min-height: 8em;
+    }
+
+    .glyphicon{
+        margin: 3px;    
+    }
+
+    .glyphicon-star{
+        color:$brand-warning;
+    }
+
+    .ratingNum{
+       top: -3px;
+       position: relative;
+    }
+}

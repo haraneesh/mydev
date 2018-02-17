@@ -1,0 +1,12 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.ViewOrderDetails{
+    .panel-default {
+        border: 0px none;
+        border-bottom: 1px solid;
+        border-color: $gray-lighter;
+    }
+    .panel-group .panel{
+        border-radius: 0px;
+    }
+}

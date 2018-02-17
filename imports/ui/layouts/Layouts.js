@@ -5,7 +5,7 @@ import DocumentTitle from 'react-document-title';
 import Navigation from '../components/Navigation/Navigation';
 
 const trackPageViews = (analytics, userId, pageName) => {
-  if (Meteor.isProduction && analytics) {
+  if (Meteor.isProduction && analytics && userId) {
     analytics.page({
       type: 'page',
       userId,

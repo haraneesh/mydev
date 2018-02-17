@@ -125,7 +125,13 @@ const PublishStatus = {
 const PostTypes = {
   Recipe: { name: 'Recipe', display_value: 'Recipe' },
   Product: { name: 'Product', display_value: 'Product' },
+  Order: { name: 'Order', display_value: 'Order' },
 };
+
+PostTypes.allowedValues = _.reduce(PostTypes, (arr, postType) => {
+  arr.push(postType.name);
+  return arr;
+}, []);
 
 const SpecialThemes = ['None', 'Yellow', 'Red', 'Green', 'Orange'];
 

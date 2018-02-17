@@ -22,7 +22,7 @@ function getOrderWithProductListProductsAdded(order, productList) {
   return newOrder;
 }
 
-const composer = ({ match }, onData) => {
+const composer = ({match, history, loggedInUserId }, onData) => {
   const subscription = Meteor.subscribe('orders.orderDetails', match.params._id);
   if (subscription.ready()) {
     const order = Orders.findOne();
@@ -31,7 +31,7 @@ const composer = ({ match }, onData) => {
     if (subscriptionToProductList.ready()) {
       const productList = ProductLists.findOne();
       const orderP = getOrderWithProductListProductsAdded(order, productList);
-      onData(null, { order: orderP });
+      onData(null, { order: orderP, loggedInUserId, history });
     }
   }
 };

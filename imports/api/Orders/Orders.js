@@ -90,6 +90,7 @@ Orders.schema = new SimpleSchema({
       this.unset();  // Prevent user from supplying their own value
     },
   },
+  receivedFeedBack: { type:Boolean, label: 'Received customer feedback on the Order', optional:true},
   zh_salesorder_id: { type: String, label: 'Corresponding Zoho Sales Order Id', optional: true },
   zh_salesorder_number: { type: String, label: 'Corresponding Zoho Sales Order Number', optional: true },
   zh_salesorder_status: { type: String, label: 'Corresponding Zoho Sales Order Status', optional: true },

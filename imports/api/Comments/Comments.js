@@ -1,15 +1,11 @@
 /* eslint-disable consistent-return */
-import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
 
 const Comments = new Mongo.Collection('Comments');
 export default Comments;
-
-if (Meteor.isServer) {
-  Comments._ensureIndex({ postId: 1 });
-}
 
 Comments.allow({
   insert: () => false,
@@ -23,15 +19,20 @@ Comments.deny({
   remove: () => true,
 });
 
-const allowedValues = _.reduce(constants.CommentTypes, (arr, commentType) => { 
-    arr.push(commentType.name);
-    return arr;
-   }, []);
+if (Meteor.isServer) {
+  Comments._ensureIndex({ postId: 1, postType: 1 });
+}
+
+const allowedValues = _.reduce(constants.CommentTypes, (arr, commentType) => {
+  arr.push(commentType.name);
+  return arr;
+}, []);
 
 Comments.schema = new SimpleSchema({
   postType: {
     type: String,
     label: 'The type of post to which this comment is attached to.',
+    allowedValues: constants.PostTypes.allowedValues,
   },
   postId: {
     type: String,

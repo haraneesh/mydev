@@ -60,7 +60,11 @@ const _syncUsersWithZoho = (usr, successResp, errorResp) => {
     Meteor.users.update({ _id: user._id }, { $set: { zh_contact_id: r.contact.contact_id } });
     successResp.push(retResponse(r));
   } else {
-    errorResp.push(retResponse(r));
+     const res = {
+      code: r.code,
+      message: `${r.message}: user Id = ${user._id}`,
+    };
+    errorResp.push(retResponse(res));
   }
 };
 

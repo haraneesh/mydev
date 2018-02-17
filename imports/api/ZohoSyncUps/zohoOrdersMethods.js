@@ -90,7 +90,11 @@ const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
     } });
     successResp.push(retResponse(r));
   } else {
-    errorResp.push(retResponse(r));
+    const res = {
+      code: r.code,
+      message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id}`,
+    };
+    errorResp.push(retResponse(res));
   }
 };
 
@@ -139,7 +143,11 @@ const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
     Orders.update({ _id: order._id }, { $set: orderQuery });
     successResp.push(retResponse(r));
   } else {
-    errorResp.push(retResponse(r));
+    const res = {
+      code: r.code,
+      message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id}`,
+    };
+    errorResp.push(retResponse(res));
   }
   return getInvoices;
 };

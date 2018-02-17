@@ -1,8 +1,8 @@
 // upgrade to 2.0.0 - to support recipes
 // add measures to ingredients
 import { Mongo } from 'meteor/mongo';
-import Ingredients from '../Ingredients/Ingredients';
-// import Products from '../Products/Products';
+//import Ingredients from '../Ingredients/Ingredients';
+import Products from '../Products/Products';
 
 const IngWeights = new Mongo.Collection('IngWeights');
 
@@ -26,3 +26,8 @@ if (IngWeights.findOne()) {
 
 // update products to have displayOrder
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
+Products.update( { _id: "wafHsp5bztCZPFqfW" },{ $set : {"zh_item_id" : "702207000005722588"} });
+Products.update( { _id: "PPrkeLbQNp2XXr2gp" },{ $set : {"zh_item_id" : "702207000006663301"} });
+Products.update( { _id: "X6hXmnjZLcYskSRwi" },{ $set : {"zh_item_id" : "702207000007989005"} });
+Products.update( { _id: "x9AnG9zNXosQLFuc9" },{ $set : {"zh_item_id" : "702207000007992005"} });
+Products.update( { _id: "HKpzgEHxP2huBJnyw" },{ $set : {"zh_item_id" : "702207000007988005"} });

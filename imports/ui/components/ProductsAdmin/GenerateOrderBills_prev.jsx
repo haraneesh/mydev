@@ -148,7 +148,7 @@ _writeOrderSummaryDetails (rowsDetails) {
         "padding":1
         }, {
         "name":"column2",
-        "prompt":"Qty / Price",
+        "prompt":"Qty x Price",
         "width":"200",
         "align":"left",
         "padding":4

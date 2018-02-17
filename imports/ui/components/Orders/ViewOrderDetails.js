@@ -7,12 +7,14 @@ import PropTypes from 'prop-types';
 import { accountSettings, dateSettings } from '../../../modules/settings';
 import constants from '../../../modules/constants';
 
+import './ViewOrderDetails.scss';
+
 const ViewOrderProducts = ({ products }) => (
-  <PanelGroup className="order-details-products">
+  <PanelGroup className="order-details-products row">
     <Panel>
       <Row>
         <Col xs={4}> <strong> Name </strong></Col>
-        <Col xs={4}> <strong> Qty / Price </strong></Col>
+        <Col xs={4}> <strong> Qty x Price </strong></Col>
         <Col xs={4}> <strong> Amount </strong></Col>
       </Row>
     </Panel>
@@ -88,22 +90,18 @@ class ViewOrderDetails extends React.Component {
           </Row>
           <div className="orderDetails panel-body">
             <Row>
-              <Col xs={12}>
-                <ViewOrderProducts products={order.products} />
-              </Col>
+              <ViewOrderProducts products={order.products} />
             </Row>
             <Row>
-              <Col xs={4}> <p> Comments </p></Col>
-              <Col xs={8}> {order.comments} </Col>
+              <Col xs={12}> <strong> Comments </strong></Col>
+              <Col xs={12}> {order.comments} </Col>
             </Row>
           </div>
           <div className="panel-footer">
             <Row>
-              <Col xs={8} className="text-right"> <strong>Total:</strong> </Col>
-              <Col xs={4}>
-                {' '}
-                <strong>
-                  {' '}
+              <Col xs={12} className="text-right">
+                <strong>Total:
+               {'  '}
                   {formatMoney(order.total_bill_amount, accountSettings)}
                   {' '}
                 </strong>

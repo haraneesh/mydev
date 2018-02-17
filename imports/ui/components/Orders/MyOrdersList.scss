@@ -1,3 +1,13 @@
-.orders-list .addSpace{
-    padding: 5px 0px 5px 10px;
+.orders-list .addSpace {
+    padding: 5px 0px 5px 0px;
+}
+
+.orders-list .list-group-item {
+    margin-bottom: 10px;
+}
+
+.orders-list .alignVertCenter {
+    display: flex;
+    align-items: center;
+    min-height: 6.5em;
 }

@@ -43,7 +43,7 @@ const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
                 <thead>
                   <tr>
                     <td><strong>Item</strong></td>
-                    <td className="text-center"><strong>Qty / Price</strong></td>
+                    <td className="text-center"><strong>Qty x Price</strong></td>
                     <td className="text-right"><strong>Total</strong></td>
                   </tr>
                 </thead>

@@ -38,10 +38,10 @@ const callAPI = (requestType, endpoint, params) => {
   try {
     const result = HTTP.call(requestType, callUrl, args);
     if (Meteor.isDevelopment) {
-      console.log('--------------------------------------');
-      console.log(result.data);
-      console.log('--------------------------------------');
-      console.log(args.params);
+      // console.log('--------------------------------------');
+      // console.log(result.data);
+      // console.log('--------------------------------------');
+      // console.log(args.params);
     }
     return result.data;
   } catch (e) {

@@ -46,7 +46,7 @@ const createInvoiceObject = (orderId, zhInvoice) => {
       },
     );
 
-  });*/
+  }); */
 
   // reference to Order against which this incoice was created
   invoice.totalInvoicedAmount = zhInvoice.total;
@@ -166,7 +166,11 @@ export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
 
     successResp.push(retResponse(r));
   } else {
-    errorResp.push(retResponse(r));
+    const res = {
+      code: r.code,
+      message: `${r.message} : zoho salesOrder number=${order.zh_salesorder_number}`,
+    };
+    errorResp.push(retResponse(res));
   }
 };
 
@@ -197,7 +201,7 @@ export const getAndProcessInvoicesFromZoho = new ValidatedMethod({
                { order_status: { $ne: constants.OrderStatus.Completed.name } },
                { order_status: { $ne: constants.OrderStatus.Pending.name } },
       ] };
-      const orders = Orders.find(query).fetch();        
+      const orders = Orders.find(query).fetch();
       orders.forEach((ord) => {
         if (ord.zh_salesorder_number) {
           processInvoicesFromZoho(ord, successResp, errorResp);

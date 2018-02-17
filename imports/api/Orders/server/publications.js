@@ -58,7 +58,7 @@ Meteor.publish('orders.orderDetails', function orderDetails(id) {
         {
             $match: { "_id": id }
         }
-      ])*/
+      ]) */
   }
   return Orders.find({
     $and: [{ _id: id }, { 'customer_details._id': this.userId }],

@@ -11,6 +11,11 @@ export function getDisplayDate(dateObject) {
   return moment(dateObject).local().format(dateSettings.format);
 }
 
+export function getNumDaysBetween (d1, d2) {
+    var diff = Math.abs(d1.getTime() - d2.getTime());
+    return diff / (1000 * 60 * 60 * 24);
+  };
+
 export function getDisplayShortDate(dateObject) {
   return moment(dateObject).local().format(dateSettings.shortFormat);
 }

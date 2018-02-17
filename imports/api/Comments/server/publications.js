@@ -4,17 +4,16 @@ import Comments from '../Comments';
 
 Meteor.publish('comments.list', () => Comments.find());
 
-Meteor.publish('comments.view', (postId) => {
-  check(postId, String);
-  return Comments.find({ postId });
+Meteor.publish('comments.view', (postDetails) => {
+  check(postDetails, { postId: String, postType: String });
+  return Comments.find({ postId: postDetails.postId, postType: postDetails.postType });
 });
 
-
-Meteor.publishComposite('comments.viewExpanded', (postId) => {
-  check(postId, String);
+Meteor.publishComposite('comments.viewExpanded', (options) => {
+  check(options, { postId: String, postType: String });
   return {
     find() {
-      return Comments.find({ postId });
+      return Comments.find({ postId: options.postId, postType: options.postType });
     },
     children: [{
       find(comment) {

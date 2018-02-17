@@ -17,8 +17,7 @@ const _createZohoItem = product => ({
   sku: product.sku,
   // group_name: product.type,
   unit: product.unitOfSale,
-  product_type: 'goods',
-  item_type: 'inventory',
+  product_type: 'goods'
 });
 
 const syncProductWithZoho = (prd, successResp, errorResp) => {
@@ -32,7 +31,11 @@ const syncProductWithZoho = (prd, successResp, errorResp) => {
     Products.update({ _id: product._id }, { $set: product });
     successResp.push(retResponse(r));
   } else {
-    errorResp.push(retResponse(r));
+     const res = {
+      code: r.code,
+      message: `${r.message}: product Id = ${product._id}`,
+    };
+    errorResp.push(retResponse(res));
   }
 };
 
@@ -49,7 +52,7 @@ export const bulkSyncProductsZoho = new ValidatedMethod({
     const errorResp = [];
     if (Meteor.isServer) {
       const syncDT = ZohoSyncUps.findOne({ syncEntity: syncUpConstants.products }).syncDateTime;
-      const query = { $or: [
+      let query = { $or: [
                { zh_item_id: { $exists: false } },
                { updatedAt: { $gte: syncDT } },
       ] };

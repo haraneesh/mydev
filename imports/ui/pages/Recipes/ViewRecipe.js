@@ -47,7 +47,8 @@ export default class ViewRecipe extends React.Component {
 
   render() {
     const recipe = this.props.recipe;
-    const isOwner = (recipe.owner === this.props.loggedInUserId);
+    const loggedUserId = this.props.loggedInUserId;
+    const isOwner = (recipe.owner === loggedUserId);
 
     if (recipe.publishStatus !== constants.PublishStatus.Draft.name) {
       const contentState = convertFromRaw(recipe.description);
@@ -98,7 +99,7 @@ export default class ViewRecipe extends React.Component {
           */}
           <Panel>
             <h4>Responses</h4>
-            <Comments postId={recipe._id} />
+            <Comments postId={recipe._id} postType={constants.PostTypes.Recipe.name} loggedUserId={loggedUserId} />
           </Panel>
         </div>
       );

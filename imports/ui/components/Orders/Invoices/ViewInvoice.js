@@ -12,7 +12,7 @@ const DisplayOrderProducts = ({ products, total }) => (
     <Panel>
       <Row>
         <Col xs={4}> <strong> Name </strong></Col>
-        <Col xs={4}> <strong> Qty / Price </strong></Col>
+        <Col xs={4}> <strong> Qty x Price </strong></Col>
         <Col xs={4}> <strong> Amount </strong></Col>
       </Row>
     </Panel>
@@ -47,9 +47,7 @@ const DisplayOrderProducts = ({ products, total }) => (
     })}
     <Panel>
       <Row>
-        <Col xs={4} />
-        <Col xs={4}> <strong> Total </strong></Col>
-        <Col xs={4}> <strong> {formatMoney(total, accountSettings)} </strong></Col>
+        <Col xs={12} className="text-right"> <strong> Total: {formatMoney(total, accountSettings)} </strong></Col>
       </Row>
     </Panel>
   </PanelGroup>
@@ -76,7 +74,7 @@ class ViewInvoice extends React.Component {
   render() {
     const invoice = this.state.invoice;
     return invoice.status ? (
-      <div className="orderDetails panel-body">
+      <div className="orderDetails">
         <Row>
           <Col xs={12}>
             <h4>
