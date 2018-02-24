@@ -55,7 +55,7 @@ const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
                         if (product.quantity > 0) {
                           return (
                             <tr key={`gob-${index}`}>
-                              <td>{`${product.name} ,${product.unitOfSale}`}</td>
+                              <td>{`${product.name}, ${product.unitOfSale}`}</td>
                               <td>{formatMoney(product.unitprice, accountSettings)}</td>
                               <td>{`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}</td>
                               <td>{formatMoney(product.unitprice * product.quantity, accountSettings)}</td>

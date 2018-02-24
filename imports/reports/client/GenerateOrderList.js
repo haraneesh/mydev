@@ -11,15 +11,14 @@ const _getFooter = () => '</body></html>';
 
 const groupProductsByType = (products) => {
    // Grouping product categories by tabs
-    const productsByCat = {};
+  const productsByCat = {};
 
-    _.map(products, (product, index) => {
+  _.map(products, (product, index) => {
+    if (!productsByCat[product.type]) {
+      productsByCat[product.type] = [];
+    }
 
-       if (!productsByCat[product.type]){
-         productsByCat[product.type] = [];
-       }
-
-       productsByCat[product.type].push(product);
+    productsByCat[product.type].push(product);
   });
   return productsByCat;
 };
@@ -55,15 +54,13 @@ const _readyProductsToPrint = (productsByCat, dateValue) => ReactDOMServer.rende
                   </tr>
                 </thead>
                 <tbody>
-                  { 
-                      _.map(productsByCat, (products, index) => {
-                        return (products.map((product, index) => (
-                            <tr key={`gob-${index}`}>
-                              <td>{`${product.name} ${product.unitOfSale}`}</td>
-                              <td className="text-right">{formatMoney(product.unitprice, accountSettings)}</td>
-                            </tr>
-                          )));   
-                      })
+                  {
+                      _.map(productsByCat, (products, index) => (products.map((product, index) => (
+                        <tr key={`gob-${index}`}>
+                          <td>{`${product.name}, ${product.unitOfSale}`}</td>
+                          <td className="text-right">{formatMoney(product.unitprice, accountSettings)}</td>
+                        </tr>
+                          ))))
                   }
                 </tbody>
               </table>
