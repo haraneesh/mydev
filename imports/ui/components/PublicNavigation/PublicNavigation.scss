@@ -1,0 +1,13 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
+.publicNavigation{
+    //@media (min-width: $screen-xs-max) {
+        padding-top:24px;
+        width: 220px !important;
+    
+    @media (max-width: $screen-xs-min) {
+        width: 100% !important;
+        padding-top:12px;
+        padding-bottom:12px;
+    }
+}

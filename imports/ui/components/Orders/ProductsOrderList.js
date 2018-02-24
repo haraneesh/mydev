@@ -1,16 +1,16 @@
 import React from 'react';
 import { formatMoney } from 'accounting-js';
 import PropTypes from 'prop-types';
-import { ListGroup, Alert, Badge, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
+import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
 import { ListGroupItem, FormControl, Tabs, Tab, PanelGroup, Glyphicon } from 'react-bootstrap';
 import $ from 'jquery';
 import Product from './Product';
-import ProductSearch from './ProductSearch/ProductSearch';
-import { upsertOrder, updateMyOrderStatus } from '../../../api/Orders/methods';
 import { accountSettings } from '../../../modules/settings';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
-
+import ProductSearch from './ProductSearch/ProductSearch';
+import GenerateOrderList from '../../../reports/client/GenerateOrderList';
+import { upsertOrder, updateMyOrderStatus } from '../../../api/Orders/methods';
 
 import './ProductOrderList.scss';
 
@@ -80,9 +80,12 @@ export default class ProductsOrderList extends React.Component {
       activePanel: this.noControlIsSelected,
     };
 
+    this.isAdmin = isLoggedInUserAdmin();
+
     this.updateProductQuantity = this.updateProductQuantity.bind(this);
     this.handleOrderSubmit = this.handleOrderSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handlePrintProductList = this.handlePrintProductList.bind(this);
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
     this.displayProductsAndSubmit = this.displayProductsAndSubmit.bind(this);
     this.getProductsMatchingSearch = this.getProductsMatchingSearch.bind(this);
@@ -153,7 +156,7 @@ export default class ProductsOrderList extends React.Component {
         updateToStatus: constants.OrderStatus.Cancelled.name,
       };
 
-      updateMyOrderStatus.call(order, (error, response) => {
+      updateMyOrderStatus.call(order, (error) => {
         const confirmation = 'This Order has been cancelled.';
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -165,13 +168,17 @@ export default class ProductsOrderList extends React.Component {
     }
   }
 
-  displayCancelOrderButton(orderStatus) {
-    if (orderStatus === constants.OrderStatus.Pending.name) {
-      return (<ButtonToolbar className="pull-right">
-        <Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>
+  displayToolBar(orderStatus) {
+    return (
+      <ButtonToolbar className="pull-right">
+        { (orderStatus === constants.OrderStatus.Pending.name) && (<Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>)}
+        { (this.isAdmin) && (<Button bsSize="small" onClick={this.handlePrintProductList}>Print Order List</Button>)}
       </ButtonToolbar>
-      );
-    }
+    );
+  }
+
+  handlePrintProductList() {
+    GenerateOrderList(this.props.products, this.props.dateValue);
   }
 
   handlePanelSelect(activePanel) {
@@ -187,7 +194,6 @@ export default class ProductsOrderList extends React.Component {
   getProductsMatchingSearch(searchString, numOfElements) {
     const { products } = this.state;
     const searchResults = [];
-    const isAdmin = isLoggedInUserAdmin();
     const lowerSearchString = searchString.toLowerCase();
 
     _.map(products, (product, index) => {
@@ -197,7 +203,7 @@ export default class ProductsOrderList extends React.Component {
             key={`srch-${index}`}
             updateProductQuantity={this.updateProductQuantity}
             product={product}
-            isAdmin={isAdmin}
+            isAdmin={this.isAdmin}
           />,
           );
       }
@@ -213,28 +219,26 @@ export default class ProductsOrderList extends React.Component {
     const productBatters = [];
     const productPersonalHygiene = [];
 
-    const isAdmin = isLoggedInUserAdmin();
-
     _.map(products, (product, index) => {
       switch (product.type) {
         case constants.ProductType[0]: // Vegetables
           productVegetables.push(
-            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
         case constants.ProductType[1]: // Groceries
           productGroceries.push(
-            <Product key={`grocery-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`grocery-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
         case constants.ProductType[2]: // Batters
           productBatters.push(
-            <Product key={`batter-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`batter-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
         case constants.ProductType[3]: // Personal Hygiene
           productPersonalHygiene.push(
-            <Product key={`pg-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`pg-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
         default:
@@ -317,7 +321,7 @@ export default class ProductsOrderList extends React.Component {
         <Row>
           <Col xs={12}>
             <h3 className="page-header"> { formHeading }
-              { this.displayCancelOrderButton(this.props.order_status) }
+              { this.displayToolBar(this.props.order_status) }
             </h3>
             { this.displayProductsAndSubmit(submitButtonName) }
           </Col>
@@ -333,5 +337,6 @@ ProductsOrderList.propTypes = {
   order_status: PropTypes.string,
   comments: PropTypes.string,
   total_bill_amount: PropTypes.number,
+  dateValue: PropTypes.object,
   history: PropTypes.object.isRequired,
 };

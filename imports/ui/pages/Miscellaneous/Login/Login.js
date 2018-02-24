@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
-// import AccountPageFooter from '../../components/AccountPageFooter/AccountPageFooter';
+import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
 import validate from '../../../../modules/validate';
 
@@ -86,8 +86,8 @@ class Login extends React.Component {
               />
             </FormGroup>
             <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
-            {/* <AccountPageFooter>
-              <p>{'Don\'t have an account?'} <Link to="/signup">Sign Up</Link>.</p>
+            {/*<AccountPageFooter>
+              <p>{'Would you like to join us?'} <Button byStyle="" href="/about">Join</Link></p>
             </AccountPageFooter> */}
           </form>
           {/* } <Row>

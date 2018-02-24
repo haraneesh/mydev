@@ -1,16 +1,21 @@
 import React from 'react';
-import { Nav } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { Nav, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+
+import './PublicNavigation.scss';
 
 const PublicNavigation = () => (
-  <Nav className="pull-right">
-    <li>
-      <NavLink to="/about">About Us</NavLink>
-    </li>
+  <div className="publicNavigation pull-right">
+    <Col xs={6} className="text-center">
+      <Link to="/about">About Us</Link>
+    </Col>
+    <Col xs={6} className="text-center">
+      <Link to="/vision">Our Vision</Link>
+    </Col>
     {/* } <li>
       <NavLink to="/login">Log In</NavLink>
     </li> */}
-  </Nav>
+  </div>
 );
 
 export default PublicNavigation;

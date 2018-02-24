@@ -5,14 +5,14 @@ import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem, Alert, Row, Col, Label, Glyphicon } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings';
-import { getDisplayShortDate,getNumDaysBetween } from '../../../modules/helpers';
+import { getDisplayShortDate, getNumDaysBetween } from '../../../modules/helpers';
 import ModalFeedBack from '../FeedBacks/ModalFeedBack/ModalFeedBack';
 import constants from '../../../modules/constants';
 
 import './MyOrdersList.scss';
 
 
-const feedBackPeriodInDays = 15;
+const feedBackPeriodInDays = 30;
 const getInvoiceTotals = (invoices) => {
   if (!invoices) return;
 
@@ -35,47 +35,50 @@ const OrderTitleRow = ({
   invoiceTotals }) => (
     <Row>
       <Col xs={11}>
-        <Row>
-          <Col xs={12} sm={3}>
-            <Label bsStyle={labelStyle}> { statusToDisplay } </Label>
-          </Col>
-          <Col xs={12} sm={9}>
-            <strong>
-              { orderDate }
-            </strong>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} >
-            <Row>
-              <Col xs={6}>
-                <span className="text-muted">Amount: </span>
-              </Col>
-              <Col xs={6}>
-                {(invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0) ? (
-                  <span className="text-muted">Pending: </span>
-                  ) : ''}
 
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6}>
-                { invoiceTotals ?
+        <Col xs={12} sm={6} md={3} className="remLeftRightPad addSpace">
+          <Label bsStyle={labelStyle}> { statusToDisplay } </Label>
+        </Col>
+        <Col xs={12} sm={6} md={3} className="remLeftRightPad addSpace">
+          <strong>
+            { orderDate }
+          </strong>
+        </Col>
+
+
+        <Col xs={12} md={6} className="addSpace">
+          <Col xs={6} className="remLeftRightPad">
+            <Col xs={12} sm={3} md={4} className="remLeftRightPad">
+              <span className="text-muted">Amount: </span>
+            </Col>
+            <Col xs={12} sm={9} md={8} className="remLeftRightPad">
+              { invoiceTotals ?
                     formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings) :
                     orderAmount
                 }
 
-              </Col>
-              <Col xs={6}>
-                {(invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0) ?
-                formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) : '' }
-              </Col>
-            </Row>
+            </Col>
           </Col>
-        </Row>
+
+          <Col xs={6} className="remLeftRightPad">
+            <Col xs={12} sm={3} md={4} className="remLeftRightPad">
+              {(invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0) ? (
+                <span className="text-muted">Pending: </span>
+                  ) : ''}
+
+            </Col>
+            <Col xs={12} sm={9} md={8} className="remLeftRightPad">
+              {(invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0) ?
+                formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings) : '' }
+            </Col>
+
+          </Col>
+
+        </Col>
+
       </Col>
 
-      <Col xs={1} className="alignVertCenter addSpace">
+      <Col xs={1} className="addSpace">
         <span className="text-muted">
           <Glyphicon glyph="menu-right" bsSize="large" />
         </span>
@@ -136,17 +139,17 @@ export default class MyOrderList extends React.Component {
     this.saveFeedBack(feedBack);
   }
 
-  saveFeedBack(feedBack, postId){
+  saveFeedBack(feedBack, postId) {
     const methodToCall = 'feedbacks.upsert';
     const fB = {
       postId: this.feedBackPostId,
       postType: constants.PostTypes.Order.name,
-      description:feedBack.description,
-      rating:feedBack.rating,
+      description: feedBack.description,
+      rating: feedBack.rating,
     };
 
     Meteor.call(methodToCall, fB, (error, feedBackId) => {
-      if (error){
+      if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
         Bert.alert('Thank you for your feedback', 'success');
@@ -154,33 +157,30 @@ export default class MyOrderList extends React.Component {
     });
   }
 
-  showFeedBack(orders){
+  showFeedBack(orders) {
+    if (orders.length < 1) {
+      return '';
+    }
 
-    if (orders.length < 0){
+    const latestOrder = orders[0];
+    if (latestOrder.order_status !== constants.OrderStatus.Completed.name) {
       return '';
     }
 
     let lastDate = null;
-    orders.find(function(order, index){
-      if (order.receivedFeedBack === true ){
+    orders.find((order, index) => {
+      if (order.receivedFeedBack === true) {
         lastDate = order.createdAt;
         return true;
       }
       return false;
     });
 
-    const latestOrder = orders[0];
 
-    if (!lastDate) {
-      return latestOrder._id;
-    }
-
-
-    if (latestOrder.order_status === constants.OrderStatus.Completed.name &&
-       latestOrder.receivedFeedBack === false && 
+    if (!lastDate || (latestOrder.receivedFeedBack === false &&
        (getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
-      ){
-          return latestOrder._id;
+      )) {
+      return latestOrder._id;
     }
     return '';
   }
@@ -190,31 +190,32 @@ export default class MyOrderList extends React.Component {
     this.feedBackPostId = this.showFeedBack(orders);
     const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
     return (
-      orders.length > 0 ?  
+      orders.length > 0 ?
       (<div>
-      
-      { showFeedBackForm && <ModalFeedBack 
-        onClose={this.receiveFeedBack} 
-        feedBackQuestion = {`How would you rate your experience, in the last ${feedBackPeriodInDays} days?`} /> 
+
+        { showFeedBackForm && <ModalFeedBack
+          onClose={this.receiveFeedBack}
+          feedBackQuestion={`How would you rate your experience, in the last ${feedBackPeriodInDays} days?`}
+        />
         }
 
-      {
+        {
       (<ListGroup className="orders-list">{
       orders.map(({ _id, invoice_Id, order_status, createdAt, total_bill_amount, invoices }, index) => (
-          <ListGroupItem key={_id} href={`/order/${_id}`}>
-            <OrderTitleRow
-              orderDate={getDisplayShortDate(createdAt)}
-              orderAmount={formatMoney(total_bill_amount, accountSettings)}
-              invoice_Id={invoice_Id}
-              statusToDisplay={constants.OrderStatus[order_status].display_value}
-              labelStyle={constants.OrderStatus[order_status].label}
-              invoiceTotals={getInvoiceTotals(invoices)}
-              key={`order-${index}`}
-              icon={constants.OrderStatus[order_status].icon}
-            />
-          </ListGroupItem>
+        <ListGroupItem key={_id} href={`/order/${_id}`}>
+          <OrderTitleRow
+            orderDate={getDisplayShortDate(createdAt)}
+            orderAmount={formatMoney(total_bill_amount, accountSettings)}
+            invoice_Id={invoice_Id}
+            statusToDisplay={constants.OrderStatus[order_status].display_value}
+            labelStyle={constants.OrderStatus[order_status].label}
+            invoiceTotals={getInvoiceTotals(invoices)}
+            key={`order-${index}`}
+            icon={constants.OrderStatus[order_status].icon}
+          />
+        </ListGroupItem>
         ))}
-      </ListGroup>)}</div>):
+      </ListGroup>)}</div>) :
       (<Alert bsStyle="info">You are yet to place an order.</Alert>)
     );
   }

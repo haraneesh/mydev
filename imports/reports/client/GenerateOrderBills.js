@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatMoney } from 'accounting-js';
 import { accountSettings, dateSettings } from '../../modules/settings';
+import { displayUnitOfSale } from '../../modules/helpers';
 import ReactDOMServer from 'react-dom/server';
 import moment from 'moment';
 import 'moment-timezone';
@@ -43,8 +44,9 @@ const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
                 <thead>
                   <tr>
                     <td><strong>Item</strong></td>
-                    <td className="text-center"><strong>Qty x Price</strong></td>
-                    <td className="text-right"><strong>Total</strong></td>
+                    <td><strong>Rate</strong></td>
+                    <td><strong>Qty</strong></td>
+                    <td><strong>Value</strong></td>
                   </tr>
                 </thead>
                 <tbody>
@@ -53,18 +55,22 @@ const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
                         if (product.quantity > 0) {
                           return (
                             <tr key={`gob-${index}`}>
-                              <td>{`${product.name} ${product.unitOfSale}`}</td>
-                              <td className="text-center">{`${product.quantity} x ${product.unitprice}`}</td>
-                              <td className="text-right">{formatMoney(product.unitprice * product.quantity, accountSettings)}</td>
+                              <td>{`${product.name} ,${product.unitOfSale}`}</td>
+                              <td>{formatMoney(product.unitprice, accountSettings)}</td>
+                              <td>{`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}</td>
+                              <td>{formatMoney(product.unitprice * product.quantity, accountSettings)}</td>
                             </tr>
                           );
                         }
                       })
                     }
                   <tr>
-                    <td className="no-line" />
-                    <td className="no-line text-center"><strong>Total</strong></td>
-                    <td className="no-line text-right" colSpan="2">{formatMoney(order.total_bill_amount, accountSettings)}</td>
+                    <td className="no-line text-right" colSpan="3">
+                      <strong>Amount:</strong>
+                    </td>
+                    <td className="no-line">
+                      <strong>{formatMoney(order.total_bill_amount, accountSettings)}</strong>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -78,7 +84,7 @@ const _readyOrderToPrint = order => ReactDOMServer.renderToStaticMarkup(
         </div>
       </div>
     </div>
-  </div>
+  </div>,
     );
 
 const generateOrderBills = (ordersToPrint /* selected list of orders */) => {

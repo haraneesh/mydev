@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { NavLink } from 'react-router-dom';
-import { Panel, Glyphicon, Row, Col, Button } from 'react-bootstrap';
+import { Panel, Row, Col, Button } from 'react-bootstrap';
 import AdminNav from './AdminNav';
 import Menu from './Menu';
 
@@ -25,7 +25,7 @@ const SideMenu = props => (
                 <NavLink exact to="/"> My Orders</NavLink>
               </li>
               <li>
-                <NavLink exact to="/vision">Vision </NavLink>
+                <NavLink exact to="/vision">Our Vision</NavLink>
               </li>
               <li>
                 <NavLink to="/invitations">Invite Friends</NavLink>

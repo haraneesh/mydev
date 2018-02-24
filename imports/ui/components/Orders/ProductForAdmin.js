@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 import { Row, Col } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings';
+import { extractNumber, extractString } from '../../../modules/helpers';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
+
 
 class ProductForAdmin extends React.Component {
   constructor(props, context) {
@@ -16,10 +18,19 @@ class ProductForAdmin extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.quantitySelected === this.props.quantitySelected) {
+      return;
+    }
+    this.setState({
+      quantitySelected: nextProps.quantitySelected,
+    });
+  }
+
   handleWeightChange() {
     const { productId, unit } = this.props;
     const weight = this.productWeight.value;
-    const quantitySelected = weight / this.roughScale(unit, 10);
+    const quantitySelected = weight / extractNumber(unit, 10);
 
     const e = {
       target: {
@@ -33,21 +44,6 @@ class ProductForAdmin extends React.Component {
     this.setState({
       quantitySelected,
     });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.quantitySelected === this.props.quantitySelected) {
-      return;
-    }
-    this.setState({
-      quantitySelected: nextProps.quantitySelected,
-    });
-  }
-
-  roughScale(x, base) {
-    const parsed = parseInt(x, base);
-    if (isNaN(parsed)) { return 0; }
-    return parsed;
   }
 
   render() {
@@ -85,10 +81,10 @@ class ProductForAdmin extends React.Component {
               name={productId}
               ref={productWeight => (this.productWeight = productWeight)}
               className="form-control"
-              value={this.roughScale(unit, 10) * this.state.quantitySelected}
+              value={extractNumber(unit) * this.state.quantitySelected}
               onChange={this.handleWeightChange}
             />
-            <span className="input-group-addon">{`${unit.replace(/[^a-zA-Z]/g, '')}`}</span>
+            <span className="input-group-addon">{`${extractString(unit)}`}</span>
           </div>
         </Col>
 

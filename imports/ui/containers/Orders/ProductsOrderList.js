@@ -12,7 +12,7 @@ const composer = ({ dateValue, history }, onData) => {
     const productList = ProductLists.findOne();
     const products = (productList) ? productList.products : [];
     const productListId = (productList) ? productList._id : '';
-    onData(null, { products, productListId, history });
+    onData(null, { dateValue, products, productListId, history });
   }
 };
 

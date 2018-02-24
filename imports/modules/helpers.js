@@ -11,10 +11,10 @@ export function getDisplayDate(dateObject) {
   return moment(dateObject).local().format(dateSettings.format);
 }
 
-export function getNumDaysBetween (d1, d2) {
-    var diff = Math.abs(d1.getTime() - d2.getTime());
-    return diff / (1000 * 60 * 60 * 24);
-  };
+export function getNumDaysBetween(d1, d2) {
+  const diff = Math.abs(d1.getTime() - d2.getTime());
+  return diff / (1000 * 60 * 60 * 24);
+}
 
 export function getDisplayShortDate(dateObject) {
   return moment(dateObject).local().format(dateSettings.shortFormat);
@@ -54,4 +54,46 @@ export function isLoggedInUserAdmin() {
     return true;
   }
   return false;
+}
+
+export const extractNumber = (x, base) => {
+  const parsed = parseInt(x, base);
+  if (isNaN(parsed)) { return 0; }
+  return parsed;
+};
+
+export const extractString = x => x.replace(/[^a-zA-Z]/g, '');
+
+export const padWhiteSpace = (pad, str, padLeft) => {
+  if (typeof str === 'undefined') { return pad; }
+  if (padLeft) {
+    return (pad + str).slice(-pad.length);
+  }
+  return (str + pad).substring(0, pad.length);
+};
+
+export function displayUnitOfSale(numOfUnits, unit) {
+  if (numOfUnits === '0') { return ''; }
+
+  const value = numOfUnits * extractNumber(unit);
+  const lowerCaseUnitValue = extractString(unit).toLowerCase();
+  let retValue = `${value} ${lowerCaseUnitValue}`;
+
+  switch (true) {
+    case (lowerCaseUnitValue === 'g' || lowerCaseUnitValue === 'gram' || lowerCaseUnitValue === 'grams'):
+      retValue = value >= 1000 ? `${value / 1000} Kg` : retValue;
+      break;
+    case (lowerCaseUnitValue === 'l' || lowerCaseUnitValue === 'litre' || lowerCaseUnitValue === 'litres' || lowerCaseUnitValue === 'liter' || lowerCaseUnitValue === 'liters'):
+      retValue = value >= 1000 ? `${value / 1000} Kl` : retValue;
+      break;
+    case (lowerCaseUnitValue === 'ml'):
+      retValue = value >= 1000 ? `${value / 1000} L` : retValue;
+      break;
+    case (lowerCaseUnitValue === 'mg'):
+      retValue = value >= 1000 ? `${value / 1000} G` : retValue;
+      break;
+    default:
+  }
+
+  return retValue;
 }

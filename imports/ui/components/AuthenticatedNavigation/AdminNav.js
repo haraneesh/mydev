@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
-import constants from '../../../modules/constants';
 
 const AdminNav = (props) => {
   // const user = Meteor.user();
