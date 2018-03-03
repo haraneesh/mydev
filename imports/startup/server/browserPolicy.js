@@ -8,6 +8,7 @@ BrowserPolicy.content.allowOriginForAll('fonts.gstatic.com');
 // AWS Bucket
 BrowserPolicy.content.allowOriginForAll('suvai-aws-bucket.s3.amazonaws.com');
 BrowserPolicy.content.allowOriginForAll('s3.amazonaws.com');
+BrowserPolicy.content.allowOriginForAll('storage.googleapis.com');
 // Analytics
 BrowserPolicy.content.allowOriginForAll('www.google-analytics.com');
 BrowserPolicy.content.allowOriginForAll('cdn.mxpnl.com');
