@@ -1,8 +1,29 @@
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Email } from 'meteor/email';
+import moment from 'moment';
+import 'moment-timezone';
 import Comments from './Comments';
+import Orders from '../Orders/Orders';
+import { dateSettings } from '../../modules/settings';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
+import OrderCommentTemplate from './order-comment-template';
+
+const notifyCommentOnOrder = (content, subject) => {
+  const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
+  const fromEmail = Meteor.settings.private.fromInvitationEmail;
+  if (Meteor.isDevelopment) {
+    console.log(`To Email: ${toEmail} From Email: ${fromEmail} Subject: ${subject} Content: ${content}`);
+  } else {
+    Email.send({
+      to: toEmail,
+      from: `Suvai Order Comments ${fromEmail}`,
+      subject,
+      html: content,
+    });
+  }
+};
 
 export const upsertComment = new ValidatedMethod({
   name: 'comments.upsert',
@@ -16,7 +37,27 @@ export const upsertComment = new ValidatedMethod({
   run(commentt) {
     const comment = commentt;
     comment.status = constants.CommentTypes.Approved.name;
-    return Comments.upsert({ _id: comment._id }, { $set: comment });
+    try {
+      const response = Comments.upsert({ _id: comment._id }, { $set: comment });
+      if (constants.PostTypes.Order.name === comment.postType && Meteor.isServer) {
+        const correspondingOrder = Orders.findOne({ _id: comment.postId });
+        const customer = Meteor.users.findOne({ _id: comment.owner });
+
+        this.unblock();
+        const name = `${customer.profile.name.last}, ${customer.profile.name.first}`;
+        const orderDate = moment(correspondingOrder.createdAt).tz(dateSettings.timeZone).format(dateSettings.shortFormat);
+        notifyCommentOnOrder(
+          OrderCommentTemplate(
+            orderDate,
+            name,
+            customer.profile.whMobilePhone,
+            comment.description),
+         `${orderDate}, ${name} commented on an order.`);
+      }
+      return response;
+    } catch (exception) {
+      throw new Meteor.Error('500', exception);
+    }
   },
 });
 

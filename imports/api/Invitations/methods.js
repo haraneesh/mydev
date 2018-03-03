@@ -2,6 +2,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
 import { Meteor } from 'meteor/meteor';
+import { Email } from 'meteor/email';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import Invitations from './Invitations';
@@ -37,7 +38,8 @@ export const sendInvitation = new ValidatedMethod({
       const user = Meteor.users.findOne(this.userId);
       const fromName = `${user.profile.name.first} ${user.profile.name.last}`;
       const email = prepareEmail(invitation.token, invitation.name, fromName);
-      _sendInvitation(invitation.email, email, fromName);
+      this.unblock();
+      sendEmail(invitation.email, email, `${fromName} has Invited you to Suvai Community`);
     }
     return Invitations.insert(invitation);
   },
@@ -54,12 +56,11 @@ let prepareEmail = (token, name, fromName) => {
   return html;
 };
 
-let _sendInvitation = (email, content, fromName) => {
-  fromEmailId = Meteor.settings.private.fromEmailId;
+let sendEmail = (email, content, subject) => {
   Email.send({
     to: email,
     from: `Suvai ${Meteor.settings.private.fromInvitationEmail}`,
-    subject: `${fromName} has Invited you to Suvai Community`,
+    subject,
     html: content,
   });
 };

@@ -13,9 +13,9 @@ const DisplayOrderProducts = ({ products, total }) => (
     <Panel>
       <Row>
         <Col xs={4}> <strong> Name </strong></Col>
-        <Col xs={2} className="text-right-xs"> <strong> Rate </strong></Col>
-        <Col xs={3} className="text-right-xs"> <strong> Qty </strong></Col>
-        <Col xs={3} className="text-right-xs"> <strong> Value </strong></Col>
+        <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col>
+        <Col xs={2} className="text-right-xs"> <strong> Qty </strong></Col>
+        <Col xs={3} className="text-right"> <strong> Value </strong></Col>
       </Row>
     </Panel>
     {products.map((product) => {
@@ -27,13 +27,13 @@ const DisplayOrderProducts = ({ products, total }) => (
                 {`${product.name}, ${product.unit}`}<br />
                 <small> {product.description} </small>
               </Col>
-              <Col xs={2} className="text-right-xs">
+              <Col xs={3} className="text-right-xs">
                 {`${formatMoney(product.rate, accountSettings)}`}
               </Col>
-              <Col xs={3} className="text-right-xs">
+              <Col xs={2} className="text-right-xs">
                 {`${displayUnitOfSale(product.quantity, product.unit)}`}
               </Col>
-              <Col xs={3} className="text-right-xs">
+              <Col xs={3} className="text-right">
                 {formatMoney(
                   product.rate * product.quantity,
                   accountSettings,
@@ -46,7 +46,7 @@ const DisplayOrderProducts = ({ products, total }) => (
     })}
     <Panel>
       <Row>
-        <Col xs={12} sm={10} className="text-right"> <strong> Amount:   {formatMoney(total, accountSettings)} </strong></Col>
+        <Col xs={12} className="text-right"> Amount:  <strong> {'  '} {formatMoney(total, accountSettings)} {'  '}</strong></Col>
       </Row>
     </Panel>
   </PanelGroup>

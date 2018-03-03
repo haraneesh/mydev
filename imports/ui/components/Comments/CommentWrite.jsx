@@ -15,11 +15,11 @@ const saveComment = (postId, postType, userId, commentId, commentAddBoxName, onS
 
   comment._id = commentId || '';
 
-  upsertComment.call(comment, (error, { insertedId }) => {
+  upsertComment.call(comment, (error, succ) => {
     if (error) {
       Bert.alert(error.reason, 'danger');
     } else {
-      const message = insertedId ? 'Added Comment' : 'Updated Comment';
+      const message = succ.insertedId ? 'Added Comment' : 'Updated Comment';
       Bert.alert(message, 'success');
       if (onSave) {
         onSave('Update');

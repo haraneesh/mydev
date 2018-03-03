@@ -70,10 +70,10 @@ export default class CommentView extends React.Component {
       return (
         <FormGroup controlId="commentsView">
           <Row>
-            <Col xs={6}>
+            <Col xs={10}>
               <small className="text-muted">{ expandedComment.displayName }</small>
             </Col>
-            <Col xs={6} className="text-right">
+            <Col xs={2} className="text-right">
               { creatorOfComment && addDeleteOptions }
             </Col>
           </Row>
