@@ -1,6 +1,6 @@
 {
   "name": "NammaSuvai",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Namma Suvai",
   "private": true,
   "scripts": {
@@ -36,6 +36,7 @@
     "react-rating": "^1.0.5",
     "react-router-dom": "^4.2.2",
     "react-rte": "^0.15.0",
+    "react-sticky": "^6.0.1",
     "simpl-schema": "^0.3.2"
   },
   "devDependencies": {

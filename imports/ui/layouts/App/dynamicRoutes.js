@@ -44,6 +44,24 @@ export const dNewInvitation = SuvaiLoadable({
   loader: () => import('../../pages/Invitations/NewInvitation'),
 });
 
+/* Suppliers */
+export const dSuppliers = SuvaiLoadable({
+  loader: () => import('../../pages/Suppliers/SuppliersHome/Suppliers'),
+});
+
+export const dNewSupplier = SuvaiLoadable({
+  loader: () => import('../../pages/Suppliers/NewSupplier/NewSupplier'),
+});
+
+export const dViewSupplier = SuvaiLoadable({
+  loader: () => import('../../pages/Suppliers/ViewSupplier/ViewSupplier'),
+});
+
+export const dEditSupplier = SuvaiLoadable({
+  loader: () => import('../../pages/Suppliers/EditSupplier/EditSupplier'),
+});
+
+
 /* Recipes*/
 export const dRecipesHome = SuvaiLoadable({
   loader: () => import('../../pages/Recipes/RecipesHome'),
@@ -73,6 +91,7 @@ export const dViewRecipe = SuvaiLoadable({
 export const dListSpecials = SuvaiLoadable({
   loader: () => import('../../containers/Specials/ListPublishedSpecials'),
 });
+
 
 // import EditAllSpecials from '../containers/specials/EditAllSpecials';
 export const dEditAllSpecials = SuvaiLoadable({

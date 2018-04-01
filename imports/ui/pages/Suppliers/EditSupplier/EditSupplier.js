@@ -1,0 +1,29 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { createContainer } from 'meteor/react-meteor-data';
+import { Meteor } from 'meteor/meteor';
+import Suppliers from '../../../../api/Suppliers/Suppliers';
+import SupplierEditor from '../../../components/SupplierEditor/SupplierEditor';
+import NotFound from '../../Miscellaneous/NotFound/NotFound';
+
+const EditSupplier = ({ supp, history }) => (supp ? (
+  <div className="EditSupplier">
+    <h3 className="page-header">{`Editing "${supp.name}"`}</h3>
+    <SupplierEditor supp={supp} history={history} />
+  </div>
+) : <NotFound />);
+
+EditSupplier.propTypes = {
+  supp: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+};
+
+export default createContainer(({ match }) => {
+  const supplierId = match.params._id;
+  const subscription = Meteor.subscribe('suppliers.view', supplierId);
+
+  return {
+    loading: !subscription.ready(),
+    supp: Suppliers.findOne(supplierId),
+  };
+}, EditSupplier);

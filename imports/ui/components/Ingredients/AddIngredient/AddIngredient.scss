@@ -1,7 +1,7 @@
-@import '../../stylesheets/bootstrap/bootstrap/variables';
-@import '../../stylesheets/bootstrap/bootstrap/mixins';
-@import '../../stylesheets/bootstrap/bootstrap/forms';
-@import '../../stylesheets/bootstrap/bootstrap/list-group';
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../stylesheets/bootstrap/bootstrap/mixins';
+@import '../../../stylesheets/bootstrap/bootstrap/forms';
+@import '../../../stylesheets/bootstrap/bootstrap/list-group';
 
 .react-autosuggest__input {
   @extend .form-control;

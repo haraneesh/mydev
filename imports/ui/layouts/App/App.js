@@ -27,8 +27,8 @@ import Profile from '../../pages/Miscellaneous/Profile/Profile';
 import About from '../../pages/Miscellaneous/About/About';
 
 /* order */
- import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
-//import PlaceNewOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
+// import PlaceNewOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
 import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 import EditOrderDetails from '../../containers/Orders/EditOrder';
 
@@ -49,6 +49,10 @@ dRecipes,
 dNewRecipe,
 dEditRecipe,
 dViewRecipe,
+dSuppliers,
+dNewSupplier,
+dViewSupplier,
+dEditSupplier,
 dListSpecials,
 dEditAllSpecials,
 dAllOrders,
@@ -83,6 +87,12 @@ const App = props => (
         <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
         <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
         <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
+
+        {/* Suppliers */}   
+        <Authenticated exact routeName="Suppliers" layout={MainLayout} path="/suppliers" component={dSuppliers} {...props} />
+        <Authenticated exact routeName="New Supplier" layout={MainLayout} path="/suppliers/new" component={dNewSupplier} {...props} />
+        <Authenticated exact routeName="View Supplier" layout={MainLayout} path="/suppliers/:_id" component={dViewSupplier} {...props} />
+        <Authenticated exact routeName="Edit Supplier" layout={MainLayout} path="/suppliers/:_id/edit" component={dEditSupplier} {...props} />
 
         {/* Invitations */}
         <Authenticated exact routeName="My Invitations" layout={MainLayout} path="/invitations" component={dInvitations} {...props} />

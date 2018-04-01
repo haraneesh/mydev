@@ -46,15 +46,6 @@ Recipes.schema = new SimpleSchema({
     label: 'An ingredient',
     optional: true,
     blackbox: true,
-    custom() {
-      const value = this.value;
-      const publishStatus = this.field('publishStatus').value;
-      const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
-
-      if (shouldBeRequired && (!value || !value.selectedWeight)) {
-        return 'errrrrrrrr'; // SimpleSchema.ErrorTypes.REQUIRED
-      }
-    },
   },
   commentIds: {
     type: Array,

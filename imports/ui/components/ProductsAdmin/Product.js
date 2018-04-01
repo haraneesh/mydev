@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
+import AttachIngredient from './AttachIngredient';
 import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
 import constants from '../../../modules/constants';
+import { retMultiSelectValueInArr } from '../../../modules/helpers';
 
 export const ProductTableHeader = () => (
   <ListGroupItem>
@@ -14,7 +16,7 @@ export const ProductTableHeader = () => (
       <Col xs={1}>Unit Of Sale</Col>
       <Col xs={1}>Max Units Available</Col>
       <Col xs={1}>Display Order</Col>
-      <Col xs={2}>Units For Selection</Col>
+      <Col xs={2}>Supplier</Col>
       <Col xs={1}>Can be ordered?</Col>
       <Col xs={1} />
     </Row>
@@ -36,15 +38,11 @@ export const ProductTableHeader = () => (
  </thead>
 */
 
-function FieldGroup({ controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, children, displayControlName = false, ...props }) {
-  /* return (
-    <FormGroup controlId={id}>
-      <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
-
-    </FormGroup>
-  );
-    } */
+function FieldGroup({ controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, choiceValues, displayControlName = false, ...props }) {
+  const values = choiceValues && choiceValues.slice();
+  if (values) {
+    values.unshift(constants.SELECT_EMPTY_VALUE);
+  }
   return (
     <FormGroup>
       {displayControlName && <ControlLabel>{controlLabel}</ControlLabel>}
@@ -53,10 +51,15 @@ function FieldGroup({ controlType, controlLabel, controlName, updateValue, defau
         name={controlName}
         defaultValue={defaultValue}
         onBlur={updateValue}
-        componentClass={children || controlType === 'textarea' ? controlType : 'input'}
+        componentClass={values || controlType === 'textarea' ? controlType : 'input'}
         {...props}
       >
-        {children && children.map((optionValue, index) => (<option value={optionValue} key={`prd-${index}`}> {optionValue}</option>))}
+        {values && values.map((optionValue, index) => (
+          <option value={optionValue._id ? optionValue._id : optionValue} key={`prd-${index}`}>
+            {optionValue.name ? optionValue.name : optionValue}
+          </option>
+          ))
+        }
       </FormControl>
     </FormGroup>
   );
@@ -69,10 +72,12 @@ export default class Product extends React.Component {
     this.state = {
       product: Object.assign({}, this.props.product),
       open: false,
+      supplierHash: this.retSupplierHash(this.props.suppliers),
     };
 
     this.handleProductUpsert = this.handleProductUpsert.bind(this);
     this.handleRemoveProduct = this.handleRemoveProduct.bind(this);
+    this.handleChangeInAssocIngredient = this.handleChangeInAssocIngredient.bind(this);
     this.updateImageUrl = this.updateImageUrl.bind(this);
   }
 
@@ -83,6 +88,13 @@ export default class Product extends React.Component {
         product: Object.assign({}, nextProps.product),
       });
     }
+  }
+
+  retSupplierHash(suppliers /* _id, name */) {
+    return suppliers.reduce((map, obj) => {
+      map[obj._id] = obj;
+      return map;
+    }, {});
   }
 
   handleRemoveProduct(event) {
@@ -102,8 +114,10 @@ export default class Product extends React.Component {
   }
 
   handleProductUpsert(event) {
+    const selectedValue = event.target.value.trim();
     const field = event.target.name;
-    const product = this.state.product;
+    const { product, supplierHash } = this.state;
+
     let valueToUpdate;
 
     switch (field) {
@@ -111,7 +125,16 @@ export default class Product extends React.Component {
         break;
       case 'displayAsSpecial': valueToUpdate = !product.displayAsSpecial;
         break;
-      default: valueToUpdate = event.target.value.trim();
+      case 'associatedFoodGroups':
+        valueToUpdate = retMultiSelectValueInArr(event.target.selectedOptions);
+        break;
+      case 'sourceSupplier':
+        valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? {
+          _id: selectedValue,
+          name: supplierHash[selectedValue].name,
+        } : null;
+        break;
+      default: valueToUpdate = selectedValue;
         break;
     }
 
@@ -125,6 +148,13 @@ export default class Product extends React.Component {
   updateImageUrl(url) {
     const product = this.state.product;
     product.image_path = url;
+    this.setState({ product });
+    this.updateDatabase();
+  }
+
+  handleChangeInAssocIngredient(ingredient) {
+    const product = this.state.product;
+    product.associatedIngredient = ingredient;
     this.setState({ product });
     this.updateDatabase();
   }
@@ -205,11 +235,12 @@ export default class Product extends React.Component {
           </Col>
           <Col xs={2}>
             <FieldGroup
-              controlType="text"
-              controlLabel="Units For Selection"
-              controlName="unitsForSelection"
+              controlType="select"
+              controlLabel="Supplier"
+              controlName="sourceSupplier"
               updateValue={this.handleProductUpsert}
-              defaultValue={product.unitsForSelection}
+              defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
+              choiceValues={this.props.suppliers}
               help
             />
           </Col>
@@ -252,7 +283,7 @@ export default class Product extends React.Component {
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
                 defaultValue={product.type}
-                children={constants.ProductType}
+                choiceValues={constants.ProductType}
                 help
               />
             </Col>
@@ -265,7 +296,7 @@ export default class Product extends React.Component {
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
                 defaultValue={this.props.product.category}
-                children={constants.ProductCategory}
+                choiceValues={constants.ProductCategory}
                 help
               />
             </Col>
@@ -283,7 +314,7 @@ export default class Product extends React.Component {
           </Row>
           <Row>
             <Col xs={1} />
-            <Col xs={6}>
+            <Col xs={7}>
               <FieldGroup
                 controlType="textarea"
                 controlLabel="Description"
@@ -294,7 +325,7 @@ export default class Product extends React.Component {
                 help
               />
             </Col>
-            <Col xs={3}>
+            <Col xs={4}>
               <FieldGroup
                 controlType="text"
                 controlLabel="Image URL"
@@ -305,14 +336,55 @@ export default class Product extends React.Component {
                 help
               />
             </Col>
+          </Row>
+          <Row>
+            <Col xs={1} />
+            <Col xs={6}>
+              <ControlLabel>Associated with Ingredient:
+                <strong>
+                  {product.associatedIngredient ? ` ${product.associatedIngredient.Long_Desc}` : ''}
+                </strong>
+              </ControlLabel>
+              <AttachIngredient
+                onChange={this.handleChangeInAssocIngredient}
+                ingredient={product.associatedIngredient}
+              />
+            </Col>
+            <Col xs={5}>
+              <FieldGroup
+                style={{ height: '170px' }}
+                controlType="select"
+                controlLabel="Food Group"
+                controlName="associatedFoodGroups"
+                displayControlName="true"
+                updateValue={this.handleProductUpsert}
+                defaultValue={product.associatedFoodGroups}
+                choiceValues={constants.FoodGroups.names}
+                multiple
+                help
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={1} />
+            <Col xs={5}>
+              <FieldGroup
+                controlType="text"
+                controlLabel="Units For Selection"
+                controlName="unitsForSelection"
+                displayControlName="true"
+                updateValue={this.handleProductUpsert}
+                defaultValue={product.unitsForSelection}
+                help
+              />
+            </Col>
             <Col xs={2}>
               <ControlLabel>&nbsp;</ControlLabel><br />
               <Button
                 bsSize="small"
                 name={product._id}
                 onClick={this.handleRemoveProduct}
-              >
-                Remove
+              > Delete Product
               </Button>
             </Col>
           </Row>
@@ -322,8 +394,13 @@ export default class Product extends React.Component {
   }
 }
 
+Product.defaultProps = {
+  suppliers: [],
+};
+
 Product.propTypes = {
   productIndex: PropTypes.number.isRequired,
   prodId: PropTypes.string.isRequired,
   product: PropTypes.object.isRequired,
+  suppliers: PropTypes.array.isRequired,
 };

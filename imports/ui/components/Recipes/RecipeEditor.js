@@ -10,19 +10,8 @@ import IngredientSelector from './IngredientSelector';
 import { Bert } from 'meteor/themeteorchef:bert';
 import ImageUploader from '../Common/ImageUploader';
 import constants from '../../../modules/constants';
+import { retMultiSelectValueaInArr } from '../../../modules/helpers';
 
-const retSelectedValueArr = (options) => {
-  const typeOfFood = [];
-
-  for (let index = 0; index < options.length; index++) {
-    const option = options[index];
-    if (option.selected) {
-      typeOfFood.push(option.value);
-    }
-  }
-
-  return typeOfFood;
-};
 
 export default class RecipeEditor extends React.Component {
   constructor(props, context) {
@@ -169,7 +158,7 @@ export default class RecipeEditor extends React.Component {
       prepTimeInMins: parseFloat(document.querySelector('[name="prepTimeInMins"]').value.trim()),
       cookingTimeInMins: parseFloat(document.querySelector('[name="cookingTimeInMins"]').value.trim()),
       serves: parseFloat(document.querySelector('[name="serves"]').value.trim()),
-      typeOfFood: retSelectedValueArr(document.querySelector('[name="typeOfFood"]').children),
+      typeOfFood: retMultiSelectValueaInArr(document.querySelector('[name="typeOfFood"]').children),
       cookingLevel: document.querySelector('[name="cookingLevel"]').value.trim(),
     };
 

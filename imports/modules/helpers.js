@@ -97,3 +97,16 @@ export function displayUnitOfSale(numOfUnits, unit) {
 
   return retValue;
 }
+
+export const retMultiSelectValueInArr = (options) => {
+  const result = [];
+
+  for (let index = 0; index < options.length; index += 1) {
+    const option = options[index];
+    if (option.value.trim() !== constants.SELECT_EMPTY_VALUE) {
+      result.push(option.value);
+    }
+  }
+
+  return result;
+};

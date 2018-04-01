@@ -18,6 +18,8 @@ Products.deny({
   remove: () => true,
 });
 
+const supplierSchema = new SimpleSchema({ _id: String, name: String });
+
 export const ProductSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
   sku: { type: String, label: 'The SKU of the product.' },
@@ -41,6 +43,27 @@ export const ProductSchemaDefObject = {
   'vendor_details.id': { type: Number, label: 'The vendor details of the product.' },
   'vendor_details.slug': { type: String, label: 'The vendor slug of the product.' },
   'vendor_details.name': { type: String, label: 'The vendor name of the product.' },
+  associatedIngredient: {
+    type: Object,
+    label: 'Associated Ingredient',
+    optional: true,
+    blackbox: true,
+  },
+  associatedFoodGroups: {
+    type: Array,
+    label: 'The list of food groups this product belongs to.',
+    optional: true,
+  },
+  'associatedFoodGroups.$': {
+    type: String,
+    label: 'A food group',
+    optional: true,
+  },
+  sourceSupplier: {
+    type: supplierSchema,
+    label: 'Supplier from whom this was sourced',
+    optional: true,
+  },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   createdAt: {

@@ -23,6 +23,19 @@ const FoodTypes = {
 FoodTypes.names = Object.keys(FoodTypes).map(cat => FoodTypes[cat].name);
 FoodTypes.displayNames = Object.keys(FoodTypes).map(cat => FoodTypes[cat].displayName);
 
+const FoodGroups = {
+  greens: { name: 'greens', displayName: 'Greens' },
+  root: { name: 'root', displayName: 'Root' },
+  gourds: { name: 'gourds', displayName: 'Gourds' },
+  beans: { name: 'beans', displayName: 'Beans' },
+  reds: { name: 'reds', displayName: 'Reds' },
+  digestive: { name: 'digestive', displayName: 'Digestive' },
+};
+
+FoodGroups.names = Object.keys(FoodGroups).map(cat => FoodGroups[cat].name);
+FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].displayName);
+
+
 // This for organizing tabs in the order screen
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 
@@ -185,7 +198,9 @@ const RichEditorToolbarConfig = {
   ],
 };
 
-export default (constants = {
+const SELECT_EMPTY_VALUE = '';
+
+const constants = {
   ProductType,
   ProductCategory,
   OrderStatus,
@@ -203,4 +218,8 @@ export default (constants = {
   InfiniteScroll,
   DifficultyLevels,
   FoodTypes,
-});
+  FoodGroups,
+  SELECT_EMPTY_VALUE,
+};
+
+export default constants;

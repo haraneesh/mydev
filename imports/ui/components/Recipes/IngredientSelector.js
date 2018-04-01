@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap';
-import AddIngredient from './AddIngredient';
+import AddIngredient from '../Ingredients/AddIngredient/AddIngredient';
 import IngredientItem from './IngredientItem';
 
 export default class IngredientSelector extends React.Component {

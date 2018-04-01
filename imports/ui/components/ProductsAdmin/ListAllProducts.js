@@ -108,13 +108,14 @@ class ListAllProducts extends React.Component {
   }
 
   render() {
+    const { suppliers } = this.props;
     return (
       this.props.products.length > 0 ?
         <ListGroup className="product-list">
           {<ProductTableHeader />}
 
           {this.props.products.map((product, index) => (
-            <Product prodId={product._id} product={product} productIndex={index} key={`product-${index}`} />
+            <Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />
           ))}
 
           <hr />
@@ -128,6 +129,7 @@ class ListAllProducts extends React.Component {
 
 ListAllProducts.propTypes = {
   products: PropTypes.array.isRequired,
+  suppliers: PropTypes.array.isRequired,
   productListId: PropTypes.string.isRequired,
 };
 

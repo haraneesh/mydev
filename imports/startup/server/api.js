@@ -21,6 +21,9 @@ import '../../api/Invitations/server/publications';
 import '../../api/Products/methods';
 import '../../api/Products/server/publications';
 
+import '../../api/Suppliers/methods';
+import '../../api/Suppliers/server/publications';
+
 import '../../api/ProductLists/methods';
 import '../../api/ProductLists/server/publications';
 
@@ -39,7 +42,7 @@ import '../../api/Comments/methods';
 import '../../api/Comments/server/publications';
 
 import '../../api/FeedBacks/methods';
-//import '../../api/FeedBacks/server/publications';
+// import '../../api/FeedBacks/server/publications';
 
 import '../../api/Media/methods';
 import '../../api/Media/Media';

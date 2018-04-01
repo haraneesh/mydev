@@ -202,7 +202,7 @@ class Signup extends React.Component {
                 className="form-control"
               />
             </FormGroup>
-            <Button type="submit" bsStyle="success">Sign Up</Button>
+            <Button type="submit" bsStyle="primary">Sign Up</Button>
             <AccountPageFooter>
               <p>Already have an account? <Link to="/login">Log In</Link>.</p>
             </AccountPageFooter>

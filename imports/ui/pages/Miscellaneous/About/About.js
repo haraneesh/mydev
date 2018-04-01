@@ -33,37 +33,72 @@ class About extends React.Component {
       <div>
         <Panel className="about-page">
           <Row className="about-section text-left">
-            <h3 className="page-header"> Living Healthy, Made Easy </h3>
             <Col xs={12}>
-              <p>Hello,</p>
-              <p>We are a community of parents who pride ourselves on feeding our family tasty, nutrient-rich, fresh organic
-                and non GMO food.</p>
-              <p> Here, we connect, source, sell and share information about healthful food
-                that nourishes and replenishes us. </p>
-              <p>Food that is sourced here comes from our farms or from farmers and farms we know personally.</p>
-            </Col>
-            <Col xs={12}>
-              <p>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link></p>
-            </Col>
-          </Row>
-          <Row className="text-left">
-            <Col xs={12}>
-              <p>
-                We are invite only, to join us please call us at <span className="text-warning">+91 739 745 9010</span> or ask a member to send you
+              <h3 className="page-header"> Living Healthy, Made Easy </h3>
+              <h4>Welcome to Namma Suvai</h4>
+              <Row>
+                <Col xs={12}>
+                  <p>
+                     We are a community of parents who are trying to revive healthy eating habits for our kids and family.
+                     To us Eating Healthy is,
+                  </p>
+                </Col>
+                <Col xs={12}>
+                  <h4> 1. Eating Organic </h4>
+
+                  <p>
+                      Our bodies are not capable of digesting synthetic chemicals or toxins.
+                  </p>
+                  <p>
+                      We source food from our farms or from farmers and farms we know
+                      personally. It has no chemical pesticides, artificial colouring agents and additives.
+                  </p>
+                </Col>
+                <Col xs={12}>
+                  <h4> 2. Eating Fresh</h4>
+
+                  <p>
+                      Some nutrients in fruits and vegetables start to decay right after picking.
+                      Eating fresh ensures that you get the full nutrition from food.
+                  </p>
+                  <p>
+                      We ensure that food reaches you within hours of picking.
+                  </p>
+                </Col>
+                <Col xs={12}>
+                  <h4> 3. Eating Right </h4>
+
+                  <p>
+                      We need several macro and micro nutrients in appropriate proportions for our well being.
+                      So, It is imperative to eat the right food in the right proportions that our bodies needs.
+                  </p>
+                  <p>
+                      We, as a community, share and recommend how much to eat and what to eat. To help you eat the right food in the right amounts.
+                  </p>
+                </Col>
+                <Col xs={12}>
+                  <p>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link></p>
+                </Col>
+                <Col xs={12}>
+                  <p>
+                We are invite only, to join us, call us at <span className="text-warning">+91 44 48569950</span> or ask a member to send you
                 an invite. We are always keen to welcome like minded members to learn from and share.
               </p>
-            </Col>
-          </Row>
-          { !this.props.authenticated &&
+                </Col>
+              </Row>
+              { !this.props.authenticated &&
           (<Row className="text-center member-section" >
             <Col xs={12}>
               <Button bsStyle="primary" href="/login"> Members &rarr; </Button>
             </Col>
           </Row>)
           }
+
+            </Col>
+          </Row>
         </Panel>
         <Row className="text-right" >
-          {/* <img alt="" className="splash-banner" src="about/about_banner.png" />*/}
+          {/* <img alt="" className="splash-banner" src="about/about_banner.png" /> */}
         </Row>
       </div>
     );

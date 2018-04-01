@@ -212,7 +212,7 @@ class Profile extends React.Component {
         />
         <InputHint>Use at least six characters.</InputHint>
       </FormGroup>
-      <Button type="submit" bsStyle="success">Save Profile</Button>
+      <Button type="submit" bsStyle="primary">Save Profile</Button>
     </div>) : <div />;
   }
 

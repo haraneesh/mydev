@@ -65,7 +65,7 @@ class RecoverPassword extends React.Component {
                 className="form-control"
               />
             </FormGroup>
-            <Button type="submit" bsStyle="success">Recover Password</Button>
+            <Button type="submit" bsStyle="primary">Recover Password</Button>
             <AccountPageFooter>
               <p>Remember your password? <Link to="/login">Log In</Link>.</p>
             </AccountPageFooter>

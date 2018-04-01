@@ -83,7 +83,7 @@ with your new password.
                 placeholder="Repeat New Password"
               />
             </FormGroup>
-            <Button type="submit" bsStyle="success">Reset Password &amp; Login</Button>
+            <Button type="submit" bsStyle="primary">Reset Password &amp; Login</Button>
           </form>
         </Col>
       </Row>
