@@ -310,7 +310,7 @@ export default class ProductsOrderList extends React.Component {
      </Panel>
       :
      <Alert bsStyle="info">
-        List of fresh items available to order is posted after 11 AM. Please check back at a later time.
+        Every day, List of fresh items available to order is posted after 11 AM. Please wait for the message in the group.
      </Alert>
     );
   }
