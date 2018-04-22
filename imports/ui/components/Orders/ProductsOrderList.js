@@ -309,7 +309,9 @@ export default class ProductsOrderList extends React.Component {
        </Row>
      </Panel>
       :
-     <Alert bsStyle="info">We do not have any products for you to order today. Please check back tomorrow.</Alert>
+     <Alert bsStyle="info">
+        List of fresh items available to order is posted after 11 AM. Please check back at a later time.
+     </Alert>
     );
   }
 

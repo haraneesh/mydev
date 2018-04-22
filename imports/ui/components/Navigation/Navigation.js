@@ -21,7 +21,7 @@ const Navigation = props => (
           />
         </Link>
       </Navbar.Brand>
-      { !props.authenticated && <PublicNavigation /> }
+      { !props.authenticated && <PublicNavigation {...props} /> }
       { !!props.authenticated && <EasyNavWideScreen /> }
       { !!props.authenticated && <SideMenu {...props} /> }
     </Navbar.Header>

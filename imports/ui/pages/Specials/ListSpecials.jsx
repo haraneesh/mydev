@@ -9,8 +9,7 @@ const renderCard = specials => (
     const editorState = EditorState.createWithContent(contentState);
 
     return (
-      <Panel className={`specialCard-${special.colorTheme}`} key={`specialCard-${index}`}>
-        <Panel className="card" >
+      <Panel className={`specialCard-${special.colorTheme} card`} key={`specialCard-${index}`}>
           <Row>
             <Col sm={6} > <div className="view-specials-image" style={{ backgroundImage: `url('${special.imageUrl}')` }} /> </Col>
             <Col sm={6} >
@@ -27,7 +26,6 @@ const renderCard = specials => (
               </Row>
             </Col>
           </Row>
-        </Panel>
       </Panel>
     );
   })

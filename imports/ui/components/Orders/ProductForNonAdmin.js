@@ -38,7 +38,7 @@ const ProductForNonAdmin = ({
   previousOrdQty,
 }) => (
   <Row>
-    <Col sm={6}>
+    <Col sm={5}>
       <h4 className="product-name"><strong>{name}</strong></h4>
       { (quantitySelected > 0) && <InformProductUnavailability
         maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -50,7 +50,7 @@ const ProductForNonAdmin = ({
       <h4><small>{description}</small></h4>
     </Col>
 
-    <Col sm={3}>
+    <Col sm={4}>
       <h4> {`${unit}, ${formatMoney(unitprice, accountSettings)}`} </h4>
     </Col>
 

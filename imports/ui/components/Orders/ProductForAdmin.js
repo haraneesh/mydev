@@ -60,7 +60,7 @@ class ProductForAdmin extends React.Component {
 
     return (
       <Row>
-        <Col sm={6}>
+        <Col sm={5}>
           <h4 className="product-name"><strong>{`${name} ${unit}`}</strong></h4>
           { (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -88,7 +88,7 @@ class ProductForAdmin extends React.Component {
           </div>
         </Col>
 
-        <Col sm={3} className="text-right-not-xs">
+        <Col sm={4} className="text-right-not-xs">
           <h4>{formatMoney(unitprice, accountSettings)}
             <span className="text-muted">{` ${'x'} `}</span>
             {this.state.quantitySelected}
