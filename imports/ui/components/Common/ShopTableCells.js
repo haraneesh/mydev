@@ -5,23 +5,24 @@ import moment from 'moment';
 import 'moment-timezone';
 import { formatMoney } from 'accounting-js';
 import LoadImage from './LoadImage';
+import constants from '../../../modules/constants';
 import { accountSettings, dateSettings } from '../../../modules/settings';
 
 export class DataListStore {
-  constructor(/* List*/ rowDataList) {
+  constructor(/* List */ rowDataList) {
     this.size = rowDataList.length;
     this._cache = [];
 
     /* for (let index = 0; index < this.size; index++) {
       this._cache[index] = rowDataList[index];
-    }*/
+    } */
 
     rowDataList.map((rowData) => {
       this._cache.push(rowData);
     });
   }
 
-  getObjectAt(/* number*/ index) /* ?object*/ {
+  getObjectAt(/* number */ index) /* ?object */ {
     if (index < 0 || index > this.size) {
       return undefined;
     }
@@ -46,7 +47,7 @@ export class DataListStore {
     return this.size;
   }
 
-  setObjectAt(/* number*/ index, /* ?object*/ obj) {
+  setObjectAt(/* number */ index, /* ?object */ obj) {
     if (index < 0 || index > this.size) {
       return;
     }

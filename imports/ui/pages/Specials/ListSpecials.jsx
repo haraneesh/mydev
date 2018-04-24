@@ -9,23 +9,23 @@ const renderCard = specials => (
     const editorState = EditorState.createWithContent(contentState);
 
     return (
-      <Panel className={`specialCard-${special.colorTheme} card`} key={`specialCard-${index}`}>
-          <Row>
-            <Col sm={6} > <div className="view-specials-image" style={{ backgroundImage: `url('${special.imageUrl}')` }} /> </Col>
-            <Col sm={6} >
-              <Row>
-                <Col sm={12}>
-                  <h3 className="special-head">{special.title}</h3>
-                  <div>
-                    <Editor editorState={editorState} readOnly />
-                  </div>
-                </Col>
-                <Col sm={12}>
-                  <Button bsStyle="primary" className="pull-left" href="/order"> &nbsp;Buy&nbsp; </Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+      <Panel className={`specialCard-${special.colorTheme}`} key={`specialCard-${index}`}>
+        <Row className="card">
+          <Col sm={6} > <div className="view-specials-image" style={{ backgroundImage: `url('${special.imageUrl}')` }} /> </Col>
+          <Col sm={6} >
+            <Row>
+              <Col sm={12}>
+                <h3 className="special-head">{special.title}</h3>
+                <div>
+                  <Editor editorState={editorState} readOnly />
+                </div>
+              </Col>
+              <Col sm={12}>
+                <Button bsStyle="primary" className="pull-left" href="/order"> &nbsp;Buy&nbsp; </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Panel>
     );
   })
