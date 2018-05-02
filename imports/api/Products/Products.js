@@ -79,7 +79,9 @@ export const ProductSchemaDefObject = {
     label: 'The date this product was last updated.',
     optional: true,
     autoValue() {
-      if (this.isInsert || this.isUpdate) return (new Date());
+      if (this.isInsert || this.isUpdate || this.isUpsert) {
+        return (new Date());
+      }
     },
   },
   zh_item_id: { type: String, label: 'Then item_id of the corresponding item saved in Zoho', optional: true },

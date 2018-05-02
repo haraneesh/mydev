@@ -44,7 +44,7 @@ export const RecommendationsSchemaDefObject = {
     label: 'The date this user recommendation was last updated.',
     optional: true,
     autoValue() {
-      if (this.isInsert || this.isUpdate) return (new Date());
+      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date());
     },
   },
 };

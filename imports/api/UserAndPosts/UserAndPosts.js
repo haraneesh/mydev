@@ -73,7 +73,7 @@ UserAndPosts.schema = new SimpleSchema({
   updatedAt: {
     type: Date,
     autoValue() {
-      if (this.isUpdate || this.isInsert) {
+      if (this.isInsert || this.isUpdate || this.isUpsert) {
         return new Date();
       }
     },

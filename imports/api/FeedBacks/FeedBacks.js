@@ -59,7 +59,7 @@ FeedBacks.schema = new SimpleSchema({
     type: String,
     label: 'The date this feedback was last updated.',
     autoValue() {
-      if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
+      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
     },
     optional:true,
   },

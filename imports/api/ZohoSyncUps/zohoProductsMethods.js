@@ -17,7 +17,8 @@ const _createZohoItem = product => ({
   sku: product.sku,
   // group_name: product.type,
   unit: product.unitOfSale,
-  product_type: 'goods'
+  product_type: 'goods',
+  item_type: 'inventory',
 });
 
 const syncProductWithZoho = (prd, successResp, errorResp) => {
@@ -31,7 +32,7 @@ const syncProductWithZoho = (prd, successResp, errorResp) => {
     Products.update({ _id: product._id }, { $set: product });
     successResp.push(retResponse(r));
   } else {
-     const res = {
+    const res = {
       code: r.code,
       message: `${r.message}: product Id = ${product._id}`,
     };
@@ -47,21 +48,20 @@ export const bulkSyncProductsZoho = new ValidatedMethod({
       // user not authorized. do not publish secrets
       throw new Meteor.Error(401, 'Access denied');
     }
-    const nowDate = new Date();
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
       const syncDT = ZohoSyncUps.findOne({ syncEntity: syncUpConstants.products }).syncDateTime;
-      let query = { $or: [
+      const query = { $or: [
                { zh_item_id: { $exists: false } },
                { updatedAt: { $gte: syncDT } },
       ] };
-
       const products = Products.find(query).fetch(); // change to get products updated after sync date
       products.forEach((prd) => {
         syncProductWithZoho(prd, successResp, errorResp);
       });
     }
+    const nowDate = new Date();
     return updateSyncAndReturn(syncUpConstants.products, successResp, errorResp, nowDate);
   },
 });

@@ -44,7 +44,7 @@ class About extends React.Component {
                   </p>
                 </Col>
                 <Col xs={12}>
-                  <h4> 1. Eating Organic </h4>
+                  <h4> 1. Eat Natural </h4>
 
                   <p>
                       Our bodies are not capable of digesting synthetic chemicals or toxins.
@@ -55,7 +55,7 @@ class About extends React.Component {
                   </p>
                 </Col>
                 <Col xs={12}>
-                  <h4> 2. Eating Fresh</h4>
+                  <h4> 2. Eat Fresh</h4>
 
                   <p>
                       Some nutrients in fruits and vegetables start to decay right after picking.
@@ -66,7 +66,7 @@ class About extends React.Component {
                   </p>
                 </Col>
                 <Col xs={12}>
-                  <h4> 3. Eating Right </h4>
+                  <h4> 3. Eat Right </h4>
 
                   <p>
                       We need several macro and micro nutrients in appropriate proportions for our well being.

@@ -33,7 +33,7 @@ Suppliers.schema = new SimpleSchema({
     type: String,
     label: 'The date this document was last updated.',
     autoValue() {
-      if (this.isInsert || this.isUpdate) return (new Date()).toISOString();
+      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
     },
   },
   name: {
