@@ -2,10 +2,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import { ProductSchemaDefObject } from '../Products/Products';
 
 const Recommendations = new Mongo.Collection('Recommendations');
-export default Recommendations;
 
 Recommendations.allow({
   insert: () => false,
@@ -19,24 +17,28 @@ Recommendations.deny({
   remove: () => true,
 });
 
-const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
-productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a particular product that was ordered', defaultValue: 0 };
 
-const ProductSchema = new SimpleSchema(productsSchemaDefObject);
+const PreviousOrderedProductsSchema = new SimpleSchema({
+  prevOrderedProducts: { type: Object, blackbox: true },
+  prevOrdersConsidered: { type: Array },
+  'prevOrdersConsidered.$': { type: String, label: 'Order Ids of the orders considered' },
+});
 
-export const RecommendationsSchemaDefObject = {
+Recommendations.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the product', optional: true },
-  customerId: { type: String, label: 'The _id field of the user for whom this recommendation is created' },
-  prevOrderedProducts: { type: Array },
-  'prevOrderedProducts.$': ProductSchema.omit('createdAt', 'updatedAt'),
-  recommendedProducts: { type: Array },
-  'recommendedProducts.$': ProductSchema.omit('createdAt', 'updatedAt'),
+  customerId: { type: String, label: 'The _id field of the user for whom this recommendation is created for' },
+  recPrevOrderedProducts: { type: PreviousOrderedProductsSchema },
   createdAt: {
     type: Date,
     label: 'The date this user recommendation was created.',
     optional: true,
     autoValue() {
-      if (this.isInsert) return (new Date());
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      }
+      this.unset();  // Prevent user from supplying their own value
     },
   },
   updatedAt: {
@@ -47,12 +49,6 @@ export const RecommendationsSchemaDefObject = {
       if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date());
     },
   },
-};
-
-Recommendations.schema = new SimpleSchema(RecommendationsSchemaDefObject, {
-  clean: {
-    autoConvert: true,
-  },
 });
 
 if (Meteor.isServer) {
@@ -60,4 +56,5 @@ if (Meteor.isServer) {
 }
 
 Recommendations.attachSchema(Recommendations.schema);
+export default Recommendations;
 

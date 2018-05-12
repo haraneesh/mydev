@@ -3,7 +3,7 @@ import { Roles } from 'meteor/alanning:roles';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import Orders from './Orders';
-import constants from '../../modules/constants.js';
+import constants from '../../modules/constants';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 
