@@ -22,7 +22,7 @@ function combineOrders(productListToMerge, combinedProductList = {}) {
   return newCombinedProductList;
 }
 
-agenda.define('Combine Last 3 Orders', async (job, done) => {
+agenda.define('Create Recommendation From Previous Orders', async (job, done) => {
   try {
     const jobLastRunAt = job.attrs.lastRunAt;
    // const oneDayInMilliSeconds = 24 * 60 * 60 * 1000 * 5;
@@ -41,7 +41,7 @@ agenda.define('Combine Last 3 Orders', async (job, done) => {
       { 'customer_details._id': order.customer_details._id },
       ] },
       { sort: { createdAt: -1 }, limit: 10 }).fetch();
-    
+
       let combinedProductList = {};
       const prevOrdersConsidered = [];
       last10Orders.forEach((ord) => {
@@ -59,7 +59,7 @@ agenda.define('Combine Last 3 Orders', async (job, done) => {
       // console.log(recommendation);
       Recommendations.upsert({ customerId: order.customer_details._id }, { $set: recommendation });
     });
- 
+
     done();
   } catch (error) {
    // Phusion passenger error logs will contain this error in production
