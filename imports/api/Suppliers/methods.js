@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Suppliers from './Suppliers';
 import rateLimit from '../../modules/rate-limit';
+import handleMethodException from '../../modules/handle-method-exception';
 
 Meteor.methods({
   'suppliers.insert': function suppliersInsert(supp) {
@@ -13,7 +14,7 @@ Meteor.methods({
     try {
       return Suppliers.insert({ owner: this.userId, ...supp });
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
   'suppliers.update': function suppliersUpdate(supp) {
@@ -28,7 +29,7 @@ Meteor.methods({
       Suppliers.update(suppumentId, { $set: supp });
       return suppumentId; // Return _id so we can redirect to suppument after update.
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
   'suppliers.remove': function suppliersRemove(suppumentId) {
@@ -37,7 +38,7 @@ Meteor.methods({
     try {
       return Suppliers.remove(suppumentId);
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
 });

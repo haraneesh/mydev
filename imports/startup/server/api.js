@@ -1,7 +1,7 @@
 import '../../api/Documents/methods';
 import '../../api/Documents/server/publications';
 
-import '../../api/OAuth/server/methods';
+import '../../api/OAuth/methods';
 
 import '../../api/Users/methods';
 import '../../api/Users/server/publications';
@@ -27,7 +27,7 @@ import '../../api/Suppliers/server/publications';
 import '../../api/ProductLists/methods';
 import '../../api/ProductLists/server/publications';
 
-import '../../api/Orders/jobs';
+//import '../../api/Orders/jobs';
 import '../../api/Orders/methods';
 import '../../api/Orders/server/publications';
 

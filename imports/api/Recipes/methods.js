@@ -5,6 +5,7 @@ import Recipes from './Recipes';
 import Media from '../Media/Media';
 import rateLimit from '../../modules/rate-limit.js';
 import constants from '../../modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
 
 const _upsertRecipe = (recipe) => {
   recipe.owner = Meteor.userId();
@@ -172,16 +173,17 @@ Meteor.methods({
           $unwind: '$typeOfFood',
         },
         {
-          $group: { _id: {
-            typeOfFood: '$typeOfFood',
-          },
+          $group: {
+            _id: {
+              typeOfFood: '$typeOfFood',
+            },
             count: { $sum: 1 },
           },
         },
         ]);
       }
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
 });

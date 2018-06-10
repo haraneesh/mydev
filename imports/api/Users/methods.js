@@ -1,4 +1,4 @@
-//import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
@@ -6,28 +6,29 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import editProfile from './edit-profile';
-//import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
+import handleMethodException from '../../modules/handle-method-exception';
+// import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 
 export const editUserProfile = new ValidatedMethod({
   name: 'users.editUserProfile',
   validate: new SimpleSchema({
-      emailAddress: String,
-      password: {type : Object, optional:true , blackbox:true},
-      profile: Object,
-      "profile.name": Object,
-      "profile.name.first": String,
-      "profile.name.last":String,
-      "profile.whMobilePhone": String,
-      "profile.deliveryAddress": String
+    emailAddress: String,
+    password: { type: Object, optional: true, blackbox: true },
+    profile: Object,
+    'profile.name': Object,
+    'profile.name.first': String,
+    'profile.name.last': String,
+    'profile.whMobilePhone': String,
+    'profile.deliveryAddress': String,
   }).validator(),
   run(profile) {
     return editProfile({ userId: this.userId, profile })
-    .then(response => response)
-    .catch((exception) => {
-      throw new Meteor.Error('500', exception);
-    });
-  }
-})
+      .then(response => response)
+      .catch((exception) => {
+        handleMethodException(exception);
+      });
+  },
+});
 
 const createZohoContact = usr => ({
   contact_name: usr.username,
@@ -106,9 +107,9 @@ export const createUser = new ValidatedMethod({
         }
         return Meteor.users.findOne({ username: cuser.username });
       }
-      else {
-        throw new Meteor.Error('500', 'A user with this username already exists.'); 
-      }
+
+      throw new Meteor.Error('500', 'A user with this username already exists.');
+
     }
   },
 });
@@ -188,7 +189,7 @@ export const updateUser = new ValidatedMethod({
       user.emails = email;
     }
     if (Meteor.isServer) {
-      /*}
+      /* }
       const authtoken = Meteor.settings.private.zoho_authtoken;
       const organizationId = Meteor.settings.private.zoho_organization_id;
 

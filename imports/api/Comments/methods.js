@@ -9,6 +9,7 @@ import { dateSettings } from '../../modules/settings';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import OrderCommentTemplate from './order-comment-template';
+import handleMethodException from '../../modules/handle-method-exception';
 
 const notifyCommentOnOrder = (content, subject) => {
   const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
@@ -52,11 +53,11 @@ export const upsertComment = new ValidatedMethod({
             name,
             customer.profile.whMobilePhone,
             comment.description),
-         `${orderDate}, ${name} commented on an order.`);
+          `${orderDate}, ${name} commented on an order.`);
       }
       return response;
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
 });

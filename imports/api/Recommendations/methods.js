@@ -13,7 +13,7 @@ Meteor.methods({
     try {
       return Recommendations.upsert({ customerId: this.userId });
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
 });

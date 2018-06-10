@@ -3,6 +3,7 @@ import { check } from 'meteor/check';
 import Ingredients from './Ingredients';
 import ApiUtils from './ApiUtils';
 import rateLimit from '../../modules/rate-limit';
+import handleMethodException from '../../modules/handle-method-exception';
 
 function escapeRegexCharacters(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -43,7 +44,7 @@ Meteor.methods({
         });
       return retVal.fetch();
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
   /* Parameters
@@ -96,7 +97,7 @@ Meteor.methods({
 
       return ingList;
     } catch (exception) {
-      throw new Meteor.Error('500', exception);
+      handleMethodException(exception);
     }
   },
 });
