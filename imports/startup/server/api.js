@@ -42,6 +42,8 @@ import '../../api/Specials/server/publications';
 import '../../api/Comments/methods';
 import '../../api/Comments/server/publications';
 
+import '../../api/Payments/methods';
+
 import '../../api/FeedBacks/methods';
 // import '../../api/FeedBacks/server/publications';
 

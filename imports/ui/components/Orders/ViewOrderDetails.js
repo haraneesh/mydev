@@ -30,7 +30,7 @@ const ViewOrderProducts = ({ products }) => (
                 <small> {product.description} </small>
               </Col>
               <Col xs={3} className="text-right-xs">
-                { formatMoney(product.unitprice, accountSettings)}
+                {formatMoney(product.unitprice, accountSettings)}
               </Col>
               <Col xs={2} className="text-right-xs">
                 {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
@@ -100,7 +100,7 @@ class ViewOrderDetails extends React.Component {
             <Row>
               <Col xs={12} className="text-right">
                 Amount:<strong>
-               {'  '}
+                  {'  '}
                   {formatMoney(order.total_bill_amount, accountSettings)}
                   {' '}
                 </strong>

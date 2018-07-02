@@ -7,7 +7,6 @@ const ZohoSyncUps = new Mongo.Collection('ZohoSyncUps');
 export default ZohoSyncUps;
 
 if (Meteor.isServer) {
-  // automatically delete after 3 days from creation
   ZohoSyncUps._ensureIndex({ syncEntity: 1 });
 }
 

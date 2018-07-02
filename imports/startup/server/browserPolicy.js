@@ -5,9 +5,10 @@ BrowserPolicy.content.allowOriginForAll('cdnjs.cloudflare.com');
 BrowserPolicy.content.allowOriginForAll('fonts.googleapis.com');
 BrowserPolicy.content.allowOriginForAll('fonts.gstatic.com');
 // BrowserPolicy.content.allowOriginForAll("allfont.net");
-// AWS Bucket
-BrowserPolicy.content.allowOriginForAll('suvai-aws-bucket.s3.amazonaws.com');
-BrowserPolicy.content.allowOriginForAll('s3.amazonaws.com');
+// Razor Pay
+BrowserPolicy.content.allowOriginForAll('checkout.razorpay.com');
+BrowserPolicy.content.allowOriginForAll('api.razorpay.com');
+// Google Storage
 BrowserPolicy.content.allowOriginForAll('storage.googleapis.com');
 // Analytics
 BrowserPolicy.content.allowOriginForAll('www.google-analytics.com');

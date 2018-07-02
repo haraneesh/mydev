@@ -38,28 +38,29 @@ import { OrderLayout, MainLayout } from '../Layouts';
 import Analytics from 'analytics-node';
 
 /* Dynamic Components */
-import
-{ dProductsAdmin,
-dProductLists,
-dViewProductListDetails,
-dInvitations,
-dNewInvitation,
-dRecipesHome,
-dRecipes,
-dNewRecipe,
-dEditRecipe,
-dViewRecipe,
-dSuppliers,
-dNewSupplier,
-dViewSupplier,
-dEditSupplier,
-dListSpecials,
-dEditAllSpecials,
-dAllOrders,
-dVision,
-dProfileUpdate,
-dZohoSyncUp }
-from './dynamicRoutes';
+import {
+  dProductsAdmin,
+  dProductLists,
+  dViewProductListDetails,
+  dInvitations,
+  dNewInvitation,
+  dRecipesHome,
+  dRecipes,
+  dNewRecipe,
+  dEditRecipe,
+  dViewRecipe,
+  dSuppliers,
+  dNewSupplier,
+  dViewSupplier,
+  dEditSupplier,
+  dListSpecials,
+  dEditAllSpecials,
+  dAllOrders,
+  dVision,
+  dProfileUpdate,
+  dZohoSyncUp
+}
+  from './dynamicRoutes';
 
 import './App.scss';
 
@@ -88,7 +89,7 @@ const App = props => (
         <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
         <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
 
-        {/* Suppliers */}   
+        {/* Suppliers */}
         <Authenticated exact routeName="Suppliers" layout={MainLayout} path="/suppliers" component={dSuppliers} {...props} />
         <Authenticated exact routeName="New Supplier" layout={MainLayout} path="/suppliers/new" component={dNewSupplier} {...props} />
         <Authenticated exact routeName="View Supplier" layout={MainLayout} path="/suppliers/:_id" component={dViewSupplier} {...props} />
@@ -166,6 +167,7 @@ export default createContainer(() => {
     date: new Date(),
     roles: !loading && Roles.getRolesForUser(userId),
     loggedInUserId: userId,
+    loggedInUser: user,
     analytics,
   };
 }, App);

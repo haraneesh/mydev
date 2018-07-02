@@ -67,6 +67,8 @@ Orders.schema = new SimpleSchema({
       "product_details.vendor_details.name" : { type:String, label: 'The vendor name of the product.',   }, */
   invoices: { type: Array, optional: true },
   'invoices.$': InvoiceSchemaDefObj,
+  paymentIds: { type:Array, optional:true, label: 'Array of the ids of the payments.' },
+  'paymentIds.$': String,
   customer_details: { type: Object },
   'customer_details._id': { type: String, label: 'The customer id.', optional: true },
   'customer_details.name': { type: String, label: 'The customer name.' },
