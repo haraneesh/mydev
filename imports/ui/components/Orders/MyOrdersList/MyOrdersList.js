@@ -25,6 +25,7 @@ const OrderTitleRow = ({
   icon,
   invoiceTotals,
   loggedInUser,
+  refreshPage,
 }) => (
   <Row>
     <Col xs={11}>
@@ -58,12 +59,6 @@ const OrderTitleRow = ({
             )}
           </Col>
           <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-            {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0
-              ? formatMoney(
-                  invoiceTotals.balanceInvoicedAmount,
-                  accountSettings,
-                )
-              : ''}
             {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 ? (
               <OrderPayButton
                 defaultMoneyToChargeInRupees={
@@ -71,6 +66,7 @@ const OrderTitleRow = ({
                 }
                 orderId={orderId}
                 loggedInUser={loggedInUser}
+                refreshPage={refreshPage}
               />
             ) : (
               <div />
@@ -88,66 +84,25 @@ const OrderTitleRow = ({
   </Row>
 );
 
-const OrderTitleRow1 = ({
-  statusToDisplay,
-  labelStyle,
-  invoice_Id,
-  orderDate,
-  orderAmount,
-  invoiceTotals,
-}) => (
-  <Row>
-    <Col xs={6} md={3} className="addSpace">
-      {' '}
-      <Label bsStyle={labelStyle}> {statusToDisplay} </Label>{' '}
-    </Col>
-    <Col xs={6} md={3} className="addSpace">
-      {' '}
-      {orderDate}{' '}
-    </Col>
-    {!invoiceTotals && (
-      <Col xs={12} md={3} className="addSpace">
-        <span className="text-muted">Amount: </span>
-        <strong> {orderAmount} </strong>
-      </Col>
-    )}
-
-    {invoiceTotals && (
-      <Col xs={6} md={3} className="addSpace">
-        <span className="text-muted">Amount: </span>
-        <strong>
-          {' '}
-          {formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)}{' '}
-        </strong>
-      </Col>
-    )}
-
-    {invoiceTotals &&
-      invoiceTotals.balanceInvoicedAmount > 0 && (
-        <Col xs={6} md={3} className="addSpace">
-          <span className="text-muted">Pending: </span>
-          <strong>
-            {' '}
-            {formatMoney(
-              invoiceTotals.balanceInvoicedAmount,
-              accountSettings,
-            )}{' '}
-          </strong>
-        </Col>
-      )}
-  </Row>
-);
-
 export default class MyOrderList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showFeedBackForm: true,
+      toggleRefreshVariable: true,
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
     this.saveFeedBack = this.saveFeedBack.bind(this);
     this.showFeedBack = this.showFeedBack.bind(this);
+    this.toggleRefreshVariable = this.toggleRefreshVariable.bind(this);
+  }
+
+  toggleRefreshVariable() {
+    const prevState = this.state.toggleRefreshVariable;
+    this.setState({
+      toggleRefreshVariable: !prevState,
+    });
   }
 
   receiveFeedBack(feedBack) {
@@ -248,6 +203,7 @@ export default class MyOrderList extends React.Component {
                     key={`order-${index}`}
                     icon={constants.OrderStatus[order_status].icon}
                     loggedInUser={loggedInUser}
+                    refreshPage={this.toggleRefreshVariable}
                   />
                 </ListGroupItem>
               ),

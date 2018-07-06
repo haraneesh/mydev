@@ -16,8 +16,14 @@ function getInvoiceTotals(invoices) {
   );
 }
 
+function adjustBalanceByTransactionCharges(amount) {
+  const paymentServiceChargePercentage = 0.2;
+  return amount * paymentServiceChargePercentage + amount;
+}
+
 const orderCommon = {
   getInvoiceTotals,
+  adjustBalanceByTransactionCharges,
 };
 
 export default orderCommon;

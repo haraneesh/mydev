@@ -53,7 +53,5 @@ import '../../api/Media/Media';
 import '../../api/ZohoSyncUps/zohoContactsMethods';
 import '../../api/ZohoSyncUps/zohoProductsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';
-import '../../api/ZohoSyncUps/zohoInvoicesMethods';
-
 
 import '../../api/UpdateScripts/UpdateScript';

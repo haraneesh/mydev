@@ -9,7 +9,7 @@ import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
-import { processInvoicesFromZoho } from './zohoInvoicesMethods';
+import { processInvoicesFromZoho } from './zohoInvoices';
 
 
 // TODO May have to be a seperate table

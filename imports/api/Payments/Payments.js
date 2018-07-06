@@ -27,10 +27,20 @@ Payments.schema = new SimpleSchema({
     type: String,
     label: 'Order Id against which this payment was processed',
   },
+  owner: {
+    type: String,
+    label: 'Customer Id against which this payment was processed',
+  },
   paymentApiResponseObject: {
     type: Object,
     label: 'payment JSON object returned by payment gateway',
     blackbox: true,
+  },
+  paymentZohoResponseObject: {
+    type: Object,
+    label: 'payment JSON object returned by zoho payment api',
+    blackbox: true,
+    optional: true,
   },
   createdAt: {
     type: Date,

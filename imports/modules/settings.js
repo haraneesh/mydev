@@ -5,6 +5,7 @@ const accountSettings = {
 const dateSettings = {
   format: 'dddd, D MMM YYYY',
   shortFormat: 'dddd, D MMM',
+  zhPayDateFormat: 'YYYY-MM-DD',
   timeZone: 'Asia/Kolkata',
 };
 
