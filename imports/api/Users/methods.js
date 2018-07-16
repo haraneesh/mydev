@@ -1,4 +1,5 @@
 // import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
@@ -79,10 +80,8 @@ export const createUser = new ValidatedMethod({
     password: { type: Object, blackbox: true },
   }).validator(),
   run(user) {
-    if (
-      Meteor.isServer &&
-      Roles.userIsInRole(this.userId, constants.Roles.admin.name)
-    ) {
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) 
+      {
       const cuser = {
         username: user.username,
         email: user.email,
@@ -95,6 +94,12 @@ export const createUser = new ValidatedMethod({
           },
           whMobilePhone: user.profile.whMobilePhone,
           deliveryAddress: user.profile.deliveryAddress,
+        },
+        wallet: {
+          unused_retainer_payments_InPaise: 0,
+          unused_credits_receivable_amount_InPaise: 0,
+          outstanding_receivable_amount_InPaise: 0,
+          lastZohoSync: new Date('1/1/2000'),
         },
       };
 

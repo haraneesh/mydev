@@ -12,18 +12,18 @@ class SupplierEditor extends React.Component {
     const component = this;
     validate(component.form, {
       rules: {
-        title: {
+        name: {
           required: true,
         },
-        body: {
+        description: {
           required: true,
         },
       },
       messages: {
-        title: {
+        name: {
           required: 'Need a title in here, Seuss.',
         },
-        body: {
+        description: {
           required: 'This thneeds a body, please.',
         },
       },

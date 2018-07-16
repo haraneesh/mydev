@@ -8,13 +8,11 @@
   "plugins": [
     "meteor",
     "react",
-    "prettier"
   ],
   "extends": [
     "airbnb",
     "plugin:meteor/recommended",
     "plugin:react/recommended",
-    "prettier"
   ],
   "env": {
     "browser": true
@@ -23,7 +21,6 @@
     "expect": false
   },
   "rules": {
-    "prettier/prettier": "error",
     "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,

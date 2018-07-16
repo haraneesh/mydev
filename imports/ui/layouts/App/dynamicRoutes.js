@@ -33,6 +33,11 @@ export const dViewProductListDetails = SuvaiLoadable({
   loader: () => import('../../containers/ProductLists/ViewProductListDetails'),
 });
 
+export const dMyWallet = SuvaiLoadable({
+  loader: () => import('../../pages/Wallet/MyWallet'),
+});
+
+
 /* Invitations */
 // import Invitations from '../pages/invitations/Invitations';
 export const dInvitations = SuvaiLoadable({

@@ -23,10 +23,6 @@ Payments.deny({
 });
 
 Payments.schema = new SimpleSchema({
-  orderId: {
-    type: String,
-    label: 'Order Id against which this payment was processed',
-  },
   owner: {
     type: String,
     label: 'Customer Id against which this payment was processed',
@@ -39,6 +35,12 @@ Payments.schema = new SimpleSchema({
   paymentZohoResponseObject: {
     type: Object,
     label: 'payment JSON object returned by zoho payment api',
+    blackbox: true,
+    optional: true,
+  },
+  contactZohoResponseObject: {
+    type: Object,
+    label: 'contact JSON object returned by zoho contact api',
     blackbox: true,
     optional: true,
   },

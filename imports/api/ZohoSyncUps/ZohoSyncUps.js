@@ -7,7 +7,7 @@ const ZohoSyncUps = new Mongo.Collection('ZohoSyncUps');
 export default ZohoSyncUps;
 
 if (Meteor.isServer) {
-  ZohoSyncUps._ensureIndex({ syncEntity: 1 });
+  ZohoSyncUps._ensureIndex({ syncEntity: 1, syncedForUser: 1 });
 }
 
 ZohoSyncUps.allow({
@@ -52,6 +52,10 @@ ZohoSyncUps.schema = new SimpleSchema({
     type: String,
     label: 'The collection that was synced.',
     allowedValues: ['products', 'users', 'orders-to-zoho', 'orders-from-zoho', 'invoices-from-zoho'],
+  },
+  syncedForUser: {
+    type: String,
+    label: 'The user for whom this was synced',
   },
 });
 

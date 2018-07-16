@@ -2,11 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Razorpay from 'razorpay';
 import Payments from './Payments';
-import Orders from '../Orders/Orders';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
-import { processInvoicesFromZoho } from '../ZohoSyncUps/zohoInvoices';
+import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
 import rateLimit from '../../modules/rate-limit';
-import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
 
 const rzp = new Razorpay({
@@ -14,7 +12,7 @@ const rzp = new Razorpay({
   key_secret: Meteor.settings.private.Razor.merchantKeySecret,
 });
 
-/* 
+/*
 Razor Pay Error Response
 {
   "error": {
@@ -24,7 +22,7 @@ Razor Pay Error Response
    }
 }
 
-Razor Pay 
+Razor Pay
 {
     "id": "pay_7IZD7aJ2kkmOjk",
     "entity": "payment",
@@ -60,83 +58,68 @@ Meteor.methods({
   'payment.insert': async function paymentInsert(inputParams) {
     check(inputParams, {
       razorpay_payment_id: String,
-      orderId: String,
+      amountChargedInPaise: Number,
     });
 
     try {
-      const order = Orders.findOne(inputParams.orderId);
-      const totBalanceInvoicedAmountInPaise =
-        orderCommon.getInvoiceTotals(order.invoices).balanceInvoicedAmount *
-        100;
-      console.log(orderCommon.getInvoiceTotals(order.invoices));
-      const paymentResponse = await rzp.payments.capture(
-        inputParams.razorpay_payment_id,
-        totBalanceInvoicedAmountInPaise,
-      );
-      if (Meteor.isDevelopment) {
-        console.log(paymentResponse);
+      if (Meteor.isServer) {
+        const paymentResponse = await rzp.payments.capture(
+          inputParams.razorpay_payment_id,
+          inputParams.amountChargedInPaise,
+        );
+
+        if (Meteor.isDevelopment) {
+          console.log(paymentResponse);
+        }
+
+        const paymentId = Payments.insert({
+          paymentApiResponseObject: paymentResponse,
+          owner: this.userId,
+        });
+
+        const paidUser = Meteor.users.find({ _id: this.userId }).fetch()[0];
+
+        const zhResponse = zohoPayments.createCustomerPayment({
+          zhCustomerId: paidUser.zh_contact_id,
+          paymentAmountInPaise: inputParams.amountChargedInPaise,
+          paymentMode: paymentResponse.method,
+          razorPaymentId: inputParams.razorpay_payment_id,
+          paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} ,${paymentResponse.description} `,
+          razorPayChargesInPaise: paymentResponse.fee,
+        });
+
+        if (Meteor.isDevelopment) {
+          console.log(zhResponse);
+        }
+
+        // Update Payment record history with the updated payment record
+        Payments.update(
+          { _id: paymentId },
+          { $set: { paymentZohoResponseObject: zhResponse } },
+        );
+
+        if (zhResponse.code !== 0) {
+          handleMethodException(zhResponse, zhResponse.code);
+        }
+
+
+        const zhContactResponse = updateUserWallet(paidUser);
+
+        if (Meteor.isDevelopment) {
+          console.log(zhContactResponse);
+        }
+
+        // Update Payment record with the latest contact information
+        Payments.update(
+          { _id: paymentId },
+          { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
+        );
+
+        if (zhContactResponse.zohoResponse.code !== 0) {
+          handleMethodException(zhContactResponse.zohoResponse, zhContactResponse.zohoResponse.code);
+        }
       }
-
-      const paymentId = Payments.insert({
-        orderId: order._id,
-        paymentApiResponseObject: paymentResponse,
-        owner: this.userId,
-      });
-
-      const paidUser = Meteor.users.find({ _id: this.userId }).fetch()[0];
-
-       const zhResponse = zohoPayments.createCustomerPayment({
-        zhCustomerId: paidUser.zh_contact_id,
-        paymentAmountInPaise: totBalanceInvoicedAmountInPaise,
-        invoices: order.invoices,
-        paymentMode: paymentResponse.method,
-        razorPaymentId: inputParams.razorpay_payment_id,
-        paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} ,${paymentResponse.description} `,
-        razorPayChargesInPaise: paymentResponse.fee,
-      });
-
-      if (Meteor.isDevelopment) {
-        console.log(zhResponse);
-      }
-
-      // Update Payment record for history
-      Payments.update(
-        { _id: paymentId },
-        { $set: { paymentZohoResponseObject: zhResponse } },
-      );
-
-      // Retrieve the sales order and update order
-      const error = [];
-      processInvoicesFromZoho(order, [], error);
-      if (error.length > 0) {
-        throw new Meteor.Error(error[0].code, error[0].message);
-      }
-
       return 'Success';
-    } catch (exception) {
-      handleMethodException(exception);
-    }
-  },
-  'payments.update': function paymentsUpdate(payment) {
-    check(payment, {
-      _id: String,
-      title: String,
-      body: String,
-    });
-
-    try {
-      const paymentId = payment._id;
-      Payments.update(paymentId, { $set: payment });
-      return paymentId; // Return _id so we can redirect to paymentument after update.
-    } catch (exception) {
-      handleMethodException(exception);
-    }
-  },
-  'payments.remove': function paymentsRemove(paymentId) {
-    check(paymentId, String);
-
-    try {
-      return Payments.remove(paymentId);
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -144,7 +127,7 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['payments.insert', 'payments.update', 'payments.remove'],
+  methods: ['payments.insert'],
   limit: 5,
   timeRange: 1000,
 });

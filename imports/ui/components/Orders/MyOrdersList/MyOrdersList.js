@@ -2,106 +2,38 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { ListGroup, ListGroupItem, Alert, Row, Col, Label, Glyphicon } from 'react-bootstrap';
-import { formatMoney } from 'accounting-js';
-import { accountSettings } from '../../../../modules/settings';
-import { getDisplayShortDate, getNumDaysBetween } from '../../../../modules/helpers';
+import { Bert } from 'meteor/themeteorchef:bert';
+import { ListGroup, ListGroupItem, Alert } from 'react-bootstrap';
 import ModalFeedBack from '../../FeedBacks/ModalFeedBack/ModalFeedBack';
+import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
-import orderCommon from '../../../../modules/both/orderCommon';
-import OrderPayButton from './OrderPayButton';
-
-import './MyOrdersList.scss';
+import OrderSummaryRow from './OrderSummaryRow';
+import AddToWallet from './AddToWallet';
 
 const feedBackPeriodInDays = 30;
-
-const OrderTitleRow = ({
-  orderId,
-  statusToDisplay,
-  labelStyle,
-  invoice_Id,
-  orderDate,
-  orderAmount,
-  icon,
-  invoiceTotals,
-  loggedInUser,
-  refreshPage,
-}) => (
-  <Row>
-    <Col xs={11}>
-      <Col xs={12} sm={6} md={3} className="remLeftRightPad addSpace">
-        <Label bsStyle={labelStyle}> {statusToDisplay} </Label>
-      </Col>
-      <Col xs={12} sm={6} md={3} className="remLeftRightPad addSpace">
-        <strong>{orderDate}</strong>
-      </Col>
-
-      <Col xs={12} md={6} className="addSpace">
-        <Col xs={6} className="remLeftRightPad">
-          <Col xs={12} sm={3} md={4} className="remLeftRightPad">
-            <span className="text-muted">Amount: </span>
-          </Col>
-          <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-            {invoiceTotals
-              ? formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)
-              : orderAmount}
-          </Col>
-        </Col>
-
-        <Col xs={6} className="remLeftRightPad">
-          <Col xs={12} sm={3} md={4} className="remLeftRightPad">
-            {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 ? (
-              <div>
-                <span className="text-muted">Pending: </span>
-              </div>
-            ) : (
-              ''
-            )}
-          </Col>
-          <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-            {invoiceTotals && invoiceTotals.balanceInvoicedAmount > 0 ? (
-              <OrderPayButton
-                defaultMoneyToChargeInRupees={
-                  invoiceTotals.balanceInvoicedAmount
-                }
-                orderId={orderId}
-                loggedInUser={loggedInUser}
-                refreshPage={refreshPage}
-              />
-            ) : (
-              <div />
-            )}
-          </Col>
-        </Col>
-      </Col>
-    </Col>
-
-    <Col xs={1} className="addSpace">
-      <span className="text-muted">
-        <Glyphicon glyph="menu-right" bsSize="large" />
-      </span>
-    </Col>
-  </Row>
-);
 
 export default class MyOrderList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showFeedBackForm: true,
-      toggleRefreshVariable: true,
+      wallet: this.props.loggedInUser.wallet,
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
     this.saveFeedBack = this.saveFeedBack.bind(this);
     this.showFeedBack = this.showFeedBack.bind(this);
-    this.toggleRefreshVariable = this.toggleRefreshVariable.bind(this);
   }
 
-  toggleRefreshVariable() {
-    const prevState = this.state.toggleRefreshVariable;
-    this.setState({
-      toggleRefreshVariable: !prevState,
+  componentDidMount() {
+    this.checkAndSyncUserWallet();
+  }
+
+  checkAndSyncUserWallet() {
+    Meteor.call('users.getUserWallet', {}, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      }
     });
   }
 
@@ -121,7 +53,7 @@ export default class MyOrderList extends React.Component {
       rating: feedBack.rating,
     };
 
-    Meteor.call(methodToCall, fB, error => {
+    Meteor.call(methodToCall, fB, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
@@ -150,8 +82,7 @@ export default class MyOrderList extends React.Component {
     });
 
     if (
-      !lastDate ||
-      (latestOrder.receivedFeedBack === false &&
+      !lastDate || (latestOrder.receivedFeedBack === false &&
         getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
     ) {
       return latestOrder._id;
@@ -160,59 +91,57 @@ export default class MyOrderList extends React.Component {
   }
 
   render() {
-    const { orders, loggedInUser } = this.props;
+    const { orders } = this.props;
     this.feedBackPostId = this.showFeedBack(orders);
     const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
-    return orders.length > 0 ? (
-      <div>
-        {showFeedBackForm && (
-          <ModalFeedBack
-            onClose={this.receiveFeedBack}
-            feedBackQuestion={`How would you rate your experience, in the last ${feedBackPeriodInDays} days?`}
-          />
-        )}
 
+    return (
+      <div>
+        <AddToWallet userWallet={this.state.wallet} />
         {
-          <ListGroup className="orders-list">
-            {orders.map(
-              (
-                {
+          orders.length > 0 ? (
+            <div>
+
+              {showFeedBackForm && (
+                <ModalFeedBack
+                  onClose={this.receiveFeedBack}
+                  feedBackQuestion={`How would you rate your experience, in the last ${feedBackPeriodInDays} days?`}
+                />
+              )}
+
+              <ListGroup className="orders-list">
+                {orders.map(
+                  (
+                    {
                   _id,
-                  invoice_Id,
-                  order_status,
-                  createdAt,
-                  total_bill_amount,
-                  invoices,
-                },
-                index,
-              ) => (
-                <ListGroupItem key={_id} href={`/order/${_id}`}>
-                  <OrderTitleRow
-                    orderId={_id}
-                    orderDate={getDisplayShortDate(createdAt)}
-                    orderAmount={formatMoney(
+                      invoice_Id,
+                      order_status,
+                      createdAt,
                       total_bill_amount,
-                      accountSettings,
-                    )}
-                    invoice_Id={invoice_Id}
-                    statusToDisplay={
-                      constants.OrderStatus[order_status].display_value
-                    }
-                    labelStyle={constants.OrderStatus[order_status].label}
-                    invoiceTotals={orderCommon.getInvoiceTotals(invoices)}
-                    key={`order-${index}`}
-                    icon={constants.OrderStatus[order_status].icon}
-                    loggedInUser={loggedInUser}
-                    refreshPage={this.toggleRefreshVariable}
-                  />
-                </ListGroupItem>
-              ),
-            )}
-          </ListGroup>
+                      invoices,
+                },
+                    index,
+                  ) => (
+                      <ListGroupItem key={_id} href={`/order/${_id}`}>
+                        <OrderSummaryRow
+                          orderDate={createdAt}
+                          orderAmount={total_bill_amount}
+                          order_status={order_status}
+                          invoices = {invoices}
+                          key={`order-${index}`}
+                          userWallet={this.state.wallet}
+                        />
+                      </ListGroupItem>
+                    ),
+                )}
+              </ListGroup>
+
+            </div>
+          ) : (
+              <Alert bsStyle="info">You are yet to place an order.</Alert>
+            )
         }
       </div>
-    ) : (
-      <Alert bsStyle="info">You are yet to place an order.</Alert>
     );
   }
 }

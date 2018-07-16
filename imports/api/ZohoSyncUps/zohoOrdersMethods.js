@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
 import moment from 'moment';
@@ -8,8 +9,9 @@ import Orders from '../Orders/Orders';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
-import { updateSyncAndReturn, retResponse } from './zohoCommon';
+import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn } from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
+import handleMethodException from '../../modules/handle-method-exception';
 
 
 // TODO May have to be a seperate table
@@ -45,7 +47,7 @@ const _getZhDisplayDate = (dateObject) => {
 
 const _getZohoUserIdFromUserId = userId =>
   // mongo collections have only meteor ids
-   Meteor.users.findOne({ _id: userId }, { zh_contact_id: 1 }).zh_contact_id || '';
+  Meteor.users.findOne({ _id: userId }, { zh_contact_id: 1 }).zh_contact_id || '';
 
 const _getZohoItemIdFromProductId = productId =>
   Products.findOne({ _id: productId }, { zh_item_id: 1 }).zh_item_id || '';
@@ -79,15 +81,17 @@ const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
   const zhSalesOrder = _createZohoSalesOrder(order);
   const r = (order.zh_salesorder_id) ?
-          zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
-          zh.createRecord('salesorders', zhSalesOrder);
+    zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
+    zh.createRecord('salesorders', zhSalesOrder);
 
   if (r.code === 0 /* Success */) {
-    Orders.update({ _id: order._id }, { $set: {
-      zh_salesorder_id: r.salesorder.salesorder_id,
-      zh_salesorder_number: r.salesorder.salesorder_number,
-      order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
-    } });
+    Orders.update({ _id: order._id }, {
+      $set: {
+        zh_salesorder_id: r.salesorder.salesorder_id,
+        zh_salesorder_number: r.salesorder.salesorder_number,
+        order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+      }
+    });
     successResp.push(retResponse(r));
   } else {
     const res = {
@@ -100,11 +104,11 @@ const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
 
 export const syncBulkOrdersWithZoho = new ValidatedMethod({
   name: 'orders.syncBulkOrdersWithZoho',
-  validate() {},
+  validate() { },
   run() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
-      throw new Meteor.Error(403, 'Access denied');
+      handleMethodException('Access denied', 403);
     }
     const nowDate = new Date();
     const successResp = [];
@@ -152,23 +156,51 @@ const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
   return getInvoices;
 };
 
+export const getUserOrdersAndInvoicesFromZoho = (userId) => {
+  const nowDate = new Date();
+  const successResp = [];
+  const errorResp = [];
+  if (Meteor.isServer) {
+    const query = {
+      $and: [
+        { 'customer_details._id': userId },
+        { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
+        { order_status: { $ne: constants.OrderStatus.Completed.name } },
+        { order_status: { $ne: constants.OrderStatus.Pending.name } },
+      ]
+    };
+    const orders = Orders.find(query).fetch();
+    orders.forEach((ord) => {
+      if (ord.zh_salesorder_id) {
+        const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+        if (getInvoices && ord.zh_salesorder_number) {
+          processInvoicesFromZoho(ord, successResp, errorResp);
+        }
+      }
+    });
+  }
+  return updateUserSyncAndReturn('invoices', userId, successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
+}
+
 export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
   name: 'orders.getOrdersAndInvoicesFromZoho',
-  validate() {},
+  validate() { },
   run() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
-      throw new Meteor.Error(403, 'Access denied');
+      handleMethodException('Access denied', 403);
     }
     const nowDate = new Date();
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
-      const query = { $and: [
-               { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
-               { order_status: { $ne: constants.OrderStatus.Completed.name } },
-               { order_status: { $ne: constants.OrderStatus.Pending.name } },
-      ] };
+      const query = {
+        $and: [
+          { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
+          { order_status: { $ne: constants.OrderStatus.Completed.name } },
+          { order_status: { $ne: constants.OrderStatus.Pending.name } },
+        ]
+      };
       const orders = Orders.find(query).fetch();
       orders.forEach((ord) => {
         if (ord.zh_salesorder_id) {

@@ -1,10 +1,6 @@
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Roles } from 'meteor/alanning:roles';
-import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
-import { syncUpConstants } from './ZohoSyncUps';
-import { updateSyncAndReturn, retResponse } from './zohoCommon';
+import { retResponse } from './zohoCommon';
 import Orders from '../Orders/Orders';
 
 const areAllItemsInvoiced = zhSalesOrder => {

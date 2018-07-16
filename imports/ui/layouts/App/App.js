@@ -58,7 +58,8 @@ import {
   dAllOrders,
   dVision,
   dProfileUpdate,
-  dZohoSyncUp
+  dZohoSyncUp,
+  dMyWallet,
 }
   from './dynamicRoutes';
 
@@ -70,7 +71,8 @@ const App = props => (
   <Router>
     {!props.loading ? <div className="App">
       <Switch>
-        <Authenticated exact routeName="My Orders" layout={MainLayout} path="/" component={MyOrders} {...props} />
+        <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
+        <Authenticated routeName="My Orders" layout={MainLayout} exact path="/myorders" component={MyOrders} {...props} />
         {/*
           <Authenticated routeName="Documents" exact path="/documents" component={Documents} {...props} />
           <Authenticated routeName="New document" exact path="/documents/new" component={NewDocument} {...props} />
@@ -107,6 +109,9 @@ const App = props => (
         {/* Order */}
         <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
         <Authenticated routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
+
+        {/* Accept Payment */}
+        <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
 
         {/* Product */}
         <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/admin/products" component={dProductsAdmin} {...props} />

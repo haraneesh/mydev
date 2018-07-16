@@ -18,8 +18,6 @@ class RazorPayButton extends React.Component {
   componentDidMount() {
     loadCheckOutRzr(() => {
       // Work to do after the library loads.
-      const defaultOptions = this.setDefaultOptions();
-      this.rzp1 = new Razorpay(defaultOptions);
       this.setState({ loadedCheckOutScript: true });
     });
   }
@@ -28,7 +26,7 @@ class RazorPayButton extends React.Component {
     const { paymentDetails } = this.props;
     return {
       key: Meteor.settings.public.Razor.merchantKey,
-      amount: paymentDetails.defaultMoneyToChargeInPaise,
+      amount: paymentDetails.moneyToChargeInPaise,
       name: Meteor.settings.public.App_Name,
       protocol: 'https',
       hostname: 'api.razorpay.com',
@@ -50,8 +48,10 @@ class RazorPayButton extends React.Component {
   }
 
   handleOnPayButtonClick(e) {
-    this.rzp1.open();
     e.preventDefault();
+    const defaultOptions = this.setDefaultOptions();
+    this.rzp1 = new Razorpay(defaultOptions);
+    this.rzp1.open();
   }
 
   handleTransactionSuccess(successMessage) {
@@ -74,9 +74,9 @@ class RazorPayButton extends React.Component {
 }
 
 RazorPayButton.defaultProps = {
-  buttonText: 'Pay',
+  buttonText: 'Add Money',
   paymentDetails: {
-    defaultMoneyToChargeInPaise: 0,
+    moneyToChargeInPaise: 0,
     description: '',
     prefill: {
       name: '',

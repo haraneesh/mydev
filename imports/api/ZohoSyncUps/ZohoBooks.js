@@ -34,15 +34,17 @@ const callAPI = (requestType, endpoint, params) => {
   }
 
   const callUrl = `${apiBaseUrl}/${endpoint}`;
-  // console.log(callUrl);
   try {
-    const result = HTTP.call(requestType, callUrl, args);
+
     if (Meteor.isDevelopment) {
+      // console.log(callUrl);
       // console.log('--------------------------------------');
       // console.log(result.data);
       // console.log('--------------------------------------');
       // console.log(args.params);
     }
+    
+    const result = HTTP.call(requestType, callUrl, args);
     return result.data;
   } catch (e) {
     // Got a network error, timeout, or HTTP error in the 400 or 500 range.

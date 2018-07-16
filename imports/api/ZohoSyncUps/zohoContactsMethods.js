@@ -1,10 +1,14 @@
+import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
+import moment from 'moment';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
+import { getUserOrdersAndInvoicesFromZoho } from './zohoOrdersMethods';
+import handleMethodException from '../../modules/handle-method-exception';
 
 const _createZohoInventoryContact = usr => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
@@ -54,13 +58,13 @@ const _syncUsersWithZoho = (usr, successResp, errorResp) => {
   const user = usr;
   const zhContact = createZohoBooksContact(user);
   const r = (user.zh_contact_id) ?
-          zh.updateRecord('contacts', user.zh_contact_id, zhContact) :
-          zh.createRecord('contacts', zhContact);
+    zh.updateRecord('contacts', user.zh_contact_id, zhContact) :
+    zh.createRecord('contacts', zhContact);
   if (r.code === 0 /* Success */) {
     Meteor.users.update({ _id: user._id }, { $set: { zh_contact_id: r.contact.contact_id } });
     successResp.push(retResponse(r));
   } else {
-     const res = {
+    const res = {
       code: r.code,
       message: `${r.message}: user Id = ${user._id}`,
     };
@@ -70,7 +74,7 @@ const _syncUsersWithZoho = (usr, successResp, errorResp) => {
 
 export const bulkSyncUsersZoho = new ValidatedMethod({
   name: 'users.bulkSyncUsersZoho',
-  validate() {},
+  validate() { },
   run() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
@@ -92,8 +96,74 @@ export const bulkSyncUsersZoho = new ValidatedMethod({
   },
 });
 
+export const updateUserWallet = (user) => {
+  const zhContactResponse = zh.getRecordById('contacts', user.zh_contact_id);
+
+  let newWallet;
+
+  if (zhContactResponse.code === 0) {
+    const contact = zhContactResponse.contact;
+    newWallet = {
+      unused_retainer_payments_InPaise: contact.unused_retainer_payments * 100,
+      unused_credits_receivable_amount_InPaise: contact.unused_credits_receivable_amount * 100,
+      outstanding_receivable_amount_InPaise: contact.outstanding_receivable_amount * 100,
+      lastZohoSync: new Date(),
+    };
+
+    Meteor.users.update({ _id: user._id }, {
+      $set: {
+        wallet: newWallet,
+      },
+    });
+  }
+  return {
+    zohoResponse: zhContactResponse,
+    wallet: newWallet,
+  };
+};
+
+export function retWalletAndSyncIfNecessary(userId) {
+  const user = Meteor.users.find(userId).fetch()[0];
+
+  if (Meteor.isServer) {
+    const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync) ?
+        user.wallet.lastZohoSync : new Date('1/1/2000');
+    const now = moment(new Date()); // todays date
+    const end = moment(lastWalletSyncDate);
+    const duration = moment.duration(now.diff(end));
+    const days = duration.asDays();
+
+    if (days > 1) {
+      const { zohoResponse } = updateUserWallet(user);
+
+      if (zohoResponse.code !== 0) {
+        handleMethodException(zohoResponse, zohoResponse.code);
+      }
+
+      const { error } = getUserOrdersAndInvoicesFromZoho(userId);
+
+      if (error.erroResp && error.erroResp.length > 0) {
+        handleMethodException(error.errorResp[0], error.errorResp[0].code);
+      }
+
+      return zohoResponse.wallet;
+    }
+  }
+
+  return user.wallet;
+}
+
+export const getUserWallet = new ValidatedMethod({
+  name: 'users.getUserWallet',
+  validate() { },
+  run() {
+    return retWalletAndSyncIfNecessary(this.userId);
+  },
+});
+
+
 rateLimit({
-  methods: [bulkSyncUsersZoho],
+  methods: [bulkSyncUsersZoho, getUserWallet],
   limit: 5,
   timeRange: 1000,
 });

@@ -1,7 +1,0 @@
-{
-    "useTabs": false,
-    "tabWidth": 2, 
-    "rcVerbose": true,
-    "singleQuote":true,
-    trailingComma: "all"
-}
