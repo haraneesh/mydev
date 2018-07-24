@@ -37,8 +37,8 @@ const callAPI = (requestType, endpoint, params) => {
   try {
 
     if (Meteor.isDevelopment) {
-      // console.log(callUrl);
-      // console.log('--------------------------------------');
+      console.log(callUrl);
+      console.log('--------------------------------------');
       // console.log(result.data);
       // console.log('--------------------------------------');
       // console.log(args.params);

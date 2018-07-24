@@ -7,10 +7,13 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
   TextCell, DateCell } from '../Common/ShopTableCells';
 import constants from '../../../modules/constants';
-import { updateOrderStatus, getOrders, getProductQuantityForOrderAwaitingFullFillment }
-      from '../../../api/Orders/methods';
+import { updateOrderStatus, getOrders,
+  getProductQuantityForOrderAwaitingFullFillment,
+  getProductQuantityForOrderAwaitingFullFillmentNEW }
+  from '../../../api/Orders/methods';
 import generateOrderBills from '../../../reports/client/GenerateOrderBills';
 import generateOPL from '../../../reports/client/GenerateOPL';
+import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
 
 const UpdateStatusButtons = ({ title, statuses, onSelectCallBack }) => {
   const rows = [];
@@ -167,6 +170,7 @@ class ManageAllOrders extends React.Component {
     this.groupSelectedRowsInUI = this.groupSelectedRowsInUI.bind(this);
     this.handleGenerateBills = this.handleGenerateBills.bind(this);
     this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
+    this.handleGenerateOPLNew = this.handleGenerateOPLNew.bind(this);
   }
 
   componentWillMount() {
@@ -250,6 +254,17 @@ class ManageAllOrders extends React.Component {
       }
     });
   }
+
+  handleGenerateOPLNew() {
+    getProductQuantityForOrderAwaitingFullFillmentNEW.call({}, (error, aggr) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        generateOPLByProductType(aggr);
+        Bert.alert(this.reportPopupAllowMsg, 'info');
+      }
+    });
+}
 
   handleGenerateBills() {
     const orderIds = [...this.selectedOrderIds];
@@ -360,6 +375,15 @@ class ManageAllOrders extends React.Component {
             >
             Generate OPL
           </Button>
+            <Button
+              bsStyle="default"
+              bsSize="small"
+              onClick={this.handleGenerateOPLNew}
+            >
+            Generate OPL New
+          </Button>
+
+
           </ButtonToolbar>
         </Row>
         <Row>

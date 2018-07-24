@@ -12,7 +12,11 @@ Meteor.publish('users.editProfile', function usersProfile() {
 });
 
 Meteor.publish('users.userWallet', function user() {
-  retWalletAndSyncIfNecessary(this.userId);
+  try {
+    retWalletAndSyncIfNecessary(this.userId);
+  } catch (error) {
+    console.log(error);
+  }
 
   return Meteor.users.find(this.userId, {
     fields: {

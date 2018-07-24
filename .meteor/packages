@@ -41,9 +41,9 @@ cfs:filesystem
 cfs:s3
 cfs:access-point
 cfs:graphicsmagick
-meteorhacks:aggregate
 http@1.4.1
 browser-policy@1.1.0
 perak:joins
 email@1.2.3
 underscore
+sakulstra:aggregate

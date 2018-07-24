@@ -191,6 +191,43 @@ export const getOrders = new ValidatedMethod({
   },
 });
 
+export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMethod({
+  name: 'order.getProductQuantityForOrdersAwaitingFullFillmentNEW',
+  validate: new SimpleSchema({}).validator(),
+  run() {
+    if (Meteor.isServer) {
+      if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        return Orders.aggregate([{
+          $match: { order_status: 'Awaiting_Fulfillment' },
+        },
+        {
+          $unwind: '$products',
+        },
+        {
+          $group: { _id: {
+            // orderId: '$_id',
+            productType: '$products.type',
+            productName: '$products.name',
+            productUnitOfSale: '$products.unitOfSale',
+            productQuantity: '$products.quantity',
+          },
+           // totalQuantity: { $sum: '$products.quantity' },
+            totalCount: { $sum: 1 },
+            customerName: { $first: '$customer_details.name' },
+          },
+        },
+        {
+          $sort: {
+            '_id.productType': 1,
+            '_id.productName': 1,
+          },
+        },
+        ]);
+      }
+    }
+  },
+});
+
 export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMethod({
   name: 'order.getProductQuantityForOrdersAwaitingFullFillment',
   validate: new SimpleSchema({}).validator(),
@@ -220,6 +257,7 @@ rateLimit({
   methods: [
     getOrders,
     getProductQuantityForOrderAwaitingFullFillment,
+    getProductQuantityForOrderAwaitingFullFillmentNEW,
     updateMyOrderStatus,
     upsertOrder,
     removeOrder,

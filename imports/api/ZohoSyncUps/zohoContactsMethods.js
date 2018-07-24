@@ -123,9 +123,15 @@ export const updateUserWallet = (user) => {
 };
 
 export function retWalletAndSyncIfNecessary(userId) {
-  const user = Meteor.users.find(userId).fetch()[0];
+  const user = Meteor.users.find(userId).fetch({}, {
+    fields: {
+      zh_contact_id: 1,
+      wallet: 1,
+    },
+  })[0];
 
-  if (Meteor.isServer) {
+  const userSyncedWithZoho = user && user.zh_contact_id;
+  if (Meteor.isServer && userSyncedWithZoho) {
     const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync) ?
         user.wallet.lastZohoSync : new Date('1/1/2000');
     const now = moment(new Date()); // todays date
