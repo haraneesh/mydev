@@ -1,10 +1,11 @@
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
 import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
-import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
+// import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
 import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 import validate from '../../../../modules/validate';
@@ -13,6 +14,9 @@ class Signup extends React.Component {
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      signUpRequestSent: false,
+    };
   }
 
   componentDidMount() {
@@ -101,22 +105,37 @@ class Signup extends React.Component {
       },
     };
 
-    acceptInvitation.call({ user, token: match.params.token }, (error) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
-        history.push('/');
-      }
-    });
+    if (match.params.token) {
+      acceptInvitation.call({ user, token: match.params.token }, (error) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
+          history.push('/');
+        }
+      });
+    } else {
+      Meteor.call('users.signUp', user, (error) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          Bert.alert('', 'success');
+          this.setState({
+            signUpRequestSent: true,
+          });
+        }
+      });
+    }
   }
 
   render() {
-    return (<div className="Signup">
+    const { signUpRequestSent } = this.state;
+
+    return (!signUpRequestSent ? (<div className="Signup">
       <Row>
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Sign Up</h3>
-          { /*<Row>
+          { /* <Row>
             <Col xs={12}>
               <OAuthLoginButtons
                 services={['facebook']}
@@ -183,14 +202,14 @@ class Signup extends React.Component {
               />
             </FormGroup>
             <FormGroup>
-              <ControlLabel>Password</ControlLabel> 
+              <ControlLabel>Password</ControlLabel>
               <input
                 id="password"
                 type="password"
                 name="password"
                 ref={password => (this.password = password)}
                 className="form-control"
-              /> 
+              />
               <InputHint>Use at least six characters.</InputHint>
             </FormGroup>
             <FormGroup>
@@ -209,7 +228,16 @@ class Signup extends React.Component {
           </form>
         </Col>
       </Row>
-    </div>);
+    </div>) : (
+      <div>
+        <h3>Thanks for your interest in Suvai!</h3>
+        <p>
+          Please give us a few days for our admins to review the
+          request and send an invite to join our community.
+        </p>
+      </div>
+    )
+    );
   }
 }
 

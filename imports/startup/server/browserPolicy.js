@@ -14,6 +14,7 @@ BrowserPolicy.content.allowOriginForAll('storage.googleapis.com');
 BrowserPolicy.content.allowOriginForAll('www.google-analytics.com');
 BrowserPolicy.content.allowOriginForAll('cdn.mxpnl.com');
 BrowserPolicy.content.allowOriginForAll('cdn.segment.com');
+BrowserPolicy.content.allowOriginForAll('api.segment.io');
 BrowserPolicy.content.allowOriginForAll('inventory.zoho.com');
 // Bootstrap for reports
 BrowserPolicy.content.allowOriginForAll('https://maxcdn.bootstrapcdn.com/');

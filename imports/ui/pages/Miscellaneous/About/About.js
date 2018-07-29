@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Panel, Col, Button } from 'react-bootstrap';
+import { Row, Panel, Col, Button, ButtonToolbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './About.scss';
@@ -77,19 +77,18 @@ class About extends React.Component {
                   </p>
                 </Col>
                 <Col xs={12}>
-                  <p>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link></p>
+                  <p>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link> or we can be reached at <span className="text-warning">+91 44 48569950</span>
+                  </p>
                 </Col>
                 <Col xs={12}>
-                  <p>
-                We are invite only, to join us, call us at <span className="text-warning">+91 44 48569950</span> or ask a member to send you
-                an invite. We are always keen to welcome like minded members to learn from and share.
-              </p>
+                  <p> We are always keen to welcome like minded members to learn from and share.</p>
                 </Col>
               </Row>
               { !this.props.authenticated &&
-          (<Row className="text-center member-section" >
+          (<Row className="text-center member-section">
             <Col xs={12}>
-              <Button bsStyle="primary" href="/login"> Members &rarr; </Button>
+                { /*<Button href="/signup">  Join </Button> */ }
+                <Button bsStyle="primary" href="/login"> Members &rarr; </Button>
             </Col>
           </Row>)
           }

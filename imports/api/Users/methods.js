@@ -1,5 +1,6 @@
 // import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
@@ -8,6 +9,7 @@ import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
+import UserSignUps from './UserSignUps';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 
 export const editUserProfile = new ValidatedMethod({
@@ -80,8 +82,7 @@ export const createUser = new ValidatedMethod({
     password: { type: Object, blackbox: true },
   }).validator(),
   run(user) {
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) 
-      {
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name))      {
       const cuser = {
         username: user.username,
         email: user.email,
@@ -114,7 +115,6 @@ export const createUser = new ValidatedMethod({
       }
 
       throw new Meteor.Error('500', 'A user with this username already exists.');
-
     }
   },
 });
@@ -209,8 +209,32 @@ export const updateUser = new ValidatedMethod({
   },
 });
 
+Meteor.methods({
+  'users.signUp': function userSelfSignUp(user) {
+    check(user, {
+      username: String,
+      email: String,
+      'profile.name.last': String,
+      'profile.name.first': String,
+      'profile.whMobilePhone': String,
+      'profile.deliveryAddress': String,
+    });
+   return UserSignUps.insert(user);
+  },
+  'users.sendVerificationEmail': function usersSendVerificationEmail() {
+    return Accounts.sendVerificationEmail(this.userId);
+  },
+});
+
 rateLimit({
-  methods: [updateUser, adminUpdateUser, findUser, createUser, editUserProfile],
+  methods: [
+    'users.sendVerificationEmail',
+    updateUser,
+    adminUpdateUser,
+    findUser,
+    createUser,
+    editUserProfile,
+  ],
   limit: 5,
   timeRange: 1000,
 });
