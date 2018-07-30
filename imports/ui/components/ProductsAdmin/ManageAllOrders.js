@@ -293,7 +293,8 @@ class ManageAllOrders extends React.Component {
       this.selectedOrderIds.add(orderId);
     }
 
-    const sortedDataList = _.clone(this.state.sortedDataList);
+    //const sortedDataList = _.clone(this.state.sortedDataList);
+    const sortedDataList = Object.create(this.state.sortedDataList);
     sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected;
         // this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
     this.setState({
