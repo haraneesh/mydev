@@ -31,9 +31,9 @@ const AddToWallet = ({ userWallet }) => (
         {(userWallet) ? (displayWalletSummary(calculateWalletBalanceInRs(userWallet))) : (<h4> -- </h4>)}
       </Col>
       <Col xs={12} sm={3} className="text-right">
-        { /* <Button bsStyle="primary" href="/mywallet">
+        <Button bsStyle="primary" href="/mywallet">
           Add Money
-        </Button> */ }
+        </Button>
       </Col>
     </Row>
   </Panel>

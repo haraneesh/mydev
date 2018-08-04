@@ -139,7 +139,7 @@ class AcceptPay extends React.Component {
             onSubmit={event => event.preventDefault()}
           >
             <FormGroup>
-              <Col xs={12} sm={8}>
+              <Col xs={12} sm={9} style={{ marginBottom: '1rem' }}>
                 <InputGroup>
                   <InputGroup.Addon>Rs.</InputGroup.Addon>
                   <FormControl
@@ -151,7 +151,7 @@ class AcceptPay extends React.Component {
                   />
                 </InputGroup>
               </Col>
-              <Col xs={12} sm={4}>
+              <Col xs={12} sm={3}>
                 <RazorPayButton
                   paymentDetails={{
                     moneyToChargeInPaise: this.state.amountToChargeInRs * 100,

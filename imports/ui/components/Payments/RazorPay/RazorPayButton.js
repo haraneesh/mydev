@@ -63,7 +63,7 @@ class RazorPayButton extends React.Component {
       <Button
         type="button"
         onClick={this.handleOnPayButtonClick}
-        bsStyle="success"
+        bsStyle="primary"
       >
         {this.props.buttonText}
       </Button>
