@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Panel, Row, Col } from 'react-bootstrap';
+import { Grid, Panel, Row, Col, Glyphicon } from 'react-bootstrap';
 
 import './ContactUs.scss';
 
@@ -10,7 +10,7 @@ const ContactUs = () => (
       <Row>
         <Col xs={12} sm={6}>
           <address>
-            <h4> Address </h4>
+            <h4>Address </h4>
               59 Kurinji Street, <br />
               Fathima Nagar, <br />
               Valasaravakkam, <br />
@@ -32,7 +32,7 @@ const ContactUs = () => (
             <a href="tel:+917397459010">+91 7397459010</a>
           </address>
           <address>
-            <h4>E-Mail </h4>
+            <h4>E-Mail</h4>
             <a href="mailto:#">community@nammasuvai.com</a>
           </address>
         </Col>

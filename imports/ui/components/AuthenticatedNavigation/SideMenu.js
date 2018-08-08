@@ -33,14 +33,11 @@ const SideMenu = props => (
               <li>
                 <NavLink to="/profile">My Profile</NavLink>
               </li>
-              <li className="visible-sm visible-xs" >
-                <NavLink to="/vision">Our Vision</NavLink>
-              </li>
             </ul>
             { <AdminNav {...props} /> }
             <ul>
               <li>
-                <NavLink exact to="/vision">Our Vision</NavLink>
+                <NavLink to="/vision">Our Vision</NavLink>
               </li>
               <li>
                 <NavLink to="/about">About Us</NavLink>
