@@ -14,14 +14,15 @@ const Footer = () => (
     <Grid>
       <Row>
         <Col sm={6} xs={12}>
-        <p className="text-left text-center-xs">&copy; {copyrightYear()} Organics | Healthy, Tasty and Organic</p>
-      </Col>
+          <p className="text-left text-center-xs">&copy; {copyrightYear()} Organics | Healthy, Tasty and Organic</p>
+        </Col>
         <Col sm={6} xs={12}>
-        <p className="text-right text-center-xs">
-          <Link to="/pages/terms">Terms of Service</Link>
-          <Link to="/pages/privacy">Privacy Policy</Link>
-        </p>
-      </Col>
+          <p className="text-right text-center-xs">
+            <Link to="/pages/terms">Terms of Service</Link>
+            <Link to="/pages/refund">Refund Policy</Link>
+            {/*<Link to="/pages/privacy">Privacy Policy</Link> */}
+          </p>
+        </Col>
       </Row>
     </Grid>
   </div>

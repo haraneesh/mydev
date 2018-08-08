@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Panel, Col, Button, ButtonToolbar } from 'react-bootstrap';
+import { Row, Panel, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import ContactUs from '../../../components/ContactUs/ContactUs';
 
 import './About.scss';
 
@@ -99,6 +100,7 @@ class About extends React.Component {
         <Row className="text-right" >
           {/* <img alt="" className="splash-banner" src="about/about_banner.png" /> */}
         </Row>
+        <ContactUs />
       </div>
     );
   }

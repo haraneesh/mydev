@@ -17,6 +17,7 @@ import Index from '../../pages/Miscellaneous/Index/Index';
 */
 import Footer from '../../components/Footer/Footer';
 import Terms from '../../pages/Miscellaneous/Terms/Terms';
+import Refund from '../../pages/Miscellaneous/Refund/Refund';
 import Privacy from '../../pages/Miscellaneous/Privacy/Privacy';
 import Signup from '../../pages/Miscellaneous/Signup/Signup';
 import Login from '../../pages/Miscellaneous/Login/Login';
@@ -138,6 +139,7 @@ const App = props => (
         <Public routeName="Reset Password" layout={MainLayout} path="/reset-password/:token" component={ResetPassword} />
         <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} />
         <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} />
+        <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} />
         <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
         {/* Page not found */}
         <Redirect from="*" to="/" />

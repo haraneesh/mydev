@@ -38,15 +38,24 @@ The trademarks, names, logos, video, photos, music and service marks (collective
 
 External links may be provided for your convenience, but they are beyond the control of the Website Owner and no representation is made as to their content. Use or reliance on any external links and the content thereon provided is at your own risk. When visiting external links you must refer to that external websites terms and conditions of use. No hypertext links shall be created from any website controlled by you or otherwise to this website without the express prior written permission of the Website Owner. Please contact us at info. if you would like to link to this website or would like to request a link to your website.
 
-9. Suvai Organics Refund Policy
+9. Refund and Returns
 
-Quality of our products is of the utmost importance to us. We do everything possible to ensure that you get high quality products. In the rare event that you find our products in poor quality, we will refunded them in full, including a refund of any standard delivery charges for sending the item to you and the cost incurred by you in returning the item to us.
+Quality of our products is of the utmost importance to us. We do everything possible to ensure that you get high quality products. In the rare event that you find our products in poor quality, we will refunded them in full subject to the following terms.
 
-12. Disclaimer of Liability
+#### Returns
+
+Our policy lasts 2 days for perishables (Fruits and Vegetables) and 7 days for all other items. If the return period has been exceeded, unfortunately we can’t offer you a refund or exchange.
+To be eligible for a return or exchange, please send us a photo or the item and the sales bill and we will get in touch with you to process the return or exchange.
+
+#### Refunds
+
+If you haven’t received a refund yet, first check your bank account again. Then contact your credit card company, it may take some time before your refund is officially posted. Next contact your bank. There is often some processing time before a refund is posted. If you’ve done all of this and you still have not received your refund yet, please contact us at    [community@nammasuvai.com].
+
+10. Disclaimer of Liability
 
 The Website Owner shall not be responsible for and disclaims all liability for any loss, liability, damage (whether direct, indirect or consequential), personal injury or expense of any nature whatsoever which may be suffered by you or any third party (including your company), as a result of or which may be attributable, directly or indirectly, to your access and use of the website, any information contained on the website, your or your company's personal information or material and information transmitted over our system. In particular, neither the Website Owner nor any third party or data or content provider shall be liable in any way to you or to any other person, firm or corporation whatsoever for any loss, liability, damage (whether direct or consequential), personal injury or expense of any nature whatsoever arising from any delays, inaccuracies, errors in, or omission of any share price information or the transmission thereof, or for any actions taken in reliance thereon or occasioned thereby or by reason of non-performance or interruption, or termination thereof.
 
-13. General
+11. General
 #### Entire Agreement
 These website terms and conditions constitute the sole record of the agreement between you and the Website Owner in relation to your use of the website. Neither you nor the Website Owner shall be bound by any express tacit or implied representation, warranty, promise or the like not recorded herein. Unless otherwise specifically stated these website terms and conditions supersede and replace all prior commitments, undertakings or representations, whether written or oral, between you and the Website Owner in respect of your use of the website.
 #### Alteration
@@ -60,6 +69,6 @@ The Website Owner shall be entitled to cede, assign and delegate all or any of i
 #### Severability
 All provisions of any relevant terms and conditions, policies and notices are, notwithstanding the manner in which they have been grouped together or linked grammatically, severable from each other. Any provision of any relevant terms and conditions, policies and notices, which is or becomes unenforceable in any jurisdiction, whether due to voidness, invalidity, illegality, unlawfulness or for any reason whatever, shall, in such jurisdiction only and only to the extent that it is so unenforceable, be treated as pro non scripto and the remaining provisions of any relevant terms and conditions, policies and notices shall remain in full force and effect.
 #### Applicable
-Any relevant terms and conditions, policies and notices shall be governed by and construed in accordance with the laws of Delhi without giving effect to any principles of conflict of law. You hereby consent to the exclusive jurisdiction of the courts of Delhi in respect of any disputes arising in connection with the website, or any relevant terms and conditions, policies and notices or any matter related to or in connection therewith.
+Any relevant terms and conditions, policies and notices shall be governed by and construed in accordance with the laws of Tamil Nadu without giving effect to any principles of conflict of law. You hereby consent to the exclusive jurisdiction of the courts of Delhi in respect of any disputes arising in connection with the website, or any relevant terms and conditions, policies and notices or any matter related to or in connection therewith.
 #### Comments or Questions
 If you have any questions, comments or concerns arising from the website or any other relevant terms and conditions, policies and notices contact us at hi@nammasuvai.com

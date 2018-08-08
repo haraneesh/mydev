@@ -5,6 +5,8 @@ BrowserPolicy.content.allowOriginForAll('cdnjs.cloudflare.com');
 BrowserPolicy.content.allowOriginForAll('fonts.googleapis.com');
 BrowserPolicy.content.allowOriginForAll('fonts.gstatic.com');
 // BrowserPolicy.content.allowOriginForAll("allfont.net");
+// Google Maps
+BrowserPolicy.content.allowOriginForAll('www.google.com');
 // Razor Pay
 BrowserPolicy.content.allowOriginForAll('checkout.razorpay.com');
 BrowserPolicy.content.allowOriginForAll('api.razorpay.com');
