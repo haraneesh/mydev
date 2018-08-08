@@ -71,4 +71,4 @@ All provisions of any relevant terms and conditions, policies and notices are, n
 #### Applicable
 Any relevant terms and conditions, policies and notices shall be governed by and construed in accordance with the laws of Tamil Nadu without giving effect to any principles of conflict of law. You hereby consent to the exclusive jurisdiction of the courts of Delhi in respect of any disputes arising in connection with the website, or any relevant terms and conditions, policies and notices or any matter related to or in connection therewith.
 #### Comments or Questions
-If you have any questions, comments or concerns arising from the website or any other relevant terms and conditions, policies and notices contact us at hi@nammasuvai.com
+If you have any questions, comments or concerns arising from the website or any other relevant terms and conditions, policies and notices contact us at hi@nammasuvai.com.

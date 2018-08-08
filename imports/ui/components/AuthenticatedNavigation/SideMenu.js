@@ -25,9 +25,6 @@ const SideMenu = props => (
                 <NavLink exact to="/"> My Orders</NavLink>
               </li>
               <li>
-                <NavLink exact to="/vision">Our Vision</NavLink>
-              </li>
-              <li>
                 <NavLink to="/invitations">Invite Friends</NavLink>
               </li>
               {/* <li>
@@ -42,6 +39,12 @@ const SideMenu = props => (
             </ul>
             { <AdminNav {...props} /> }
             <ul>
+              <li>
+                <NavLink exact to="/vision">Our Vision</NavLink>
+              </li>
+              <li>
+                <NavLink to="/about">About Us</NavLink>
+              </li>
               <li>
                 <Button id="app-logout" onClick={handleLogout}>Logout</Button>
               </li>

@@ -15,8 +15,11 @@ const ContactUs = () => (
               Fathima Nagar, <br />
               Valasaravakkam, <br />
               Tamil Nadu 600089 <br />
-            <a href="https://goo.gl/maps/GnWveu17Jb42" target="_blank">
-              <span>View on Maps</span></a>
+            <p>
+              <a href="https://goo.gl/maps/GnWveu17Jb42" target="_blank">
+                <span className="text-primary">View on Maps &rarr;</span>
+              </a>
+            </p>
           </address>
         </Col>
         <Col xs={12} sm={6}>

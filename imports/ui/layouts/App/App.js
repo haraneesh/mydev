@@ -137,9 +137,9 @@ const App = props => (
         <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />
         <Public routeName="Recover Password" layout={MainLayout} path="/recover-password" component={RecoverPassword} />
         <Public routeName="Reset Password" layout={MainLayout} path="/reset-password/:token" component={ResetPassword} />
-        <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} />
-        <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} />
-        <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} />
+        <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} {...props} />
+        <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} {...props} />
+        <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} {...props} />
         <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
         {/* Page not found */}
         <Redirect from="*" to="/" />

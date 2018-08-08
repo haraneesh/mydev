@@ -89,7 +89,7 @@ class About extends React.Component {
           (<Row className="text-center member-section">
             <Col xs={12}>
                 { /*<Button href="/signup">  Join </Button> */ }
-                <Button bsStyle="primary" href="/login"> Members &rarr; </Button>
+                <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button>
             </Col>
           </Row>)
           }
