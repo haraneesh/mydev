@@ -25,7 +25,7 @@ const ContactUs = () => (
             <a href="tel:+914448569950"> +91 44 48569950</a>
           </address>
           <address>
-            <h4>What's App </h4>
+            <h4>Whats App </h4>
             <a href="tel:+917397459010">+91 7397459010</a>
           </address>
           <address>
