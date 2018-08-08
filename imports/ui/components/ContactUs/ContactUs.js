@@ -5,12 +5,12 @@ import './ContactUs.scss';
 
 const ContactUs = () => (
   <Panel className="ContactUs">
-    <h3>Contact Us</h3>
+    <p><h3>Contact Us</h3></p>
     <Grid>
       <Row>
         <Col xs={12} sm={6}>
           <address>
-            <h4>Address </h4>
+            <strong>Address</strong> <br />
               59 Kurinji Street, <br />
               Fathima Nagar, <br />
               Valasaravakkam, <br />
@@ -24,15 +24,15 @@ const ContactUs = () => (
         </Col>
         <Col xs={12} sm={6}>
           <address>
-            <h4>Land Line </h4>
-            <a href="tel:+914448569950"> +91 44 48569950</a>
+            <strong>Land Line</strong> <br />
+            <a href="tel:+914448569950">+91 44 48569950</a>
           </address>
           <address>
-            <h4>Whats App </h4>
+            <strong>Whats App</strong> <br />
             <a href="tel:+917397459010">+91 7397459010</a>
           </address>
           <address>
-            <h4>E-Mail</h4>
+            <strong>E-Mail</strong> <br />
             <a href="mailto:#">community@nammasuvai.com</a>
           </address>
         </Col>
