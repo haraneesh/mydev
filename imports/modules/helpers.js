@@ -80,11 +80,27 @@ export function displayUnitOfSale(numOfUnits, unit) {
   let retValue = `${value} ${lowerCaseUnitValue}`;
 
   switch (true) {
+    case (lowerCaseUnitValue === 'kg'):
+      retValue = value < 1 ? `${value * 1000} g` : retValue;
+      break;
+    case (lowerCaseUnitValue === 'kl'):
+      retValue = value < 1 ? `${value * 1000} L` : retValue;
+      break;
     case (lowerCaseUnitValue === 'g' || lowerCaseUnitValue === 'gram' || lowerCaseUnitValue === 'grams'):
-      retValue = value >= 1000 ? `${value / 1000} Kg` : retValue;
+      // retValue = value >= 1000 ? `${value / 1000} Kg` : retValue;
+      if (value >= 1000) {
+        retValue = `${value / 1000} Kg`;
+      } else if (value < 0) {
+        retValue = `${value * 1000} mg`;
+      }
       break;
     case (lowerCaseUnitValue === 'l' || lowerCaseUnitValue === 'litre' || lowerCaseUnitValue === 'litres' || lowerCaseUnitValue === 'liter' || lowerCaseUnitValue === 'liters'):
-      retValue = value >= 1000 ? `${value / 1000} Kl` : retValue;
+      // retValue = value >= 1000 ? `${value / 1000} Kl` : retValue;
+      if (value >= 1000) {
+        retValue = `${value / 1000} Kl`;
+      } else if (value < 0) {
+        retValue = `${value * 1000} ml`;
+      }
       break;
     case (lowerCaseUnitValue === 'ml'):
       retValue = value >= 1000 ? `${value / 1000} L` : retValue;
