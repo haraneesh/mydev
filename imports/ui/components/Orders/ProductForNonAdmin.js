@@ -36,37 +36,43 @@ const ProductForNonAdmin = ({
   maxUnitsAvailableToOrder,
   totQuantityOrdered,
   previousOrdQty,
-}) => (
-  <Row>
-    <Col sm={5}>
-      <h4 className="product-name"><strong>{name}</strong></h4>
-      { (quantitySelected > 0) && <InformProductUnavailability
-        maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-        excessQtyOrdered={
+}) => {
+  const firstNonZeroOrderQty = 1;
+  const unitsForSelectionArray = unitsForSelection.split(',');
+  const lowestOrdQty = unitsForSelectionArray.length > 0 ? unitsForSelectionArray[firstNonZeroOrderQty] : 0;
+  const lowestOrdQtyPrice = unitprice * lowestOrdQty;
+  return (
+    <Row>
+      <Col sm={5}>
+        <h4 className="product-name"><strong>{name}</strong></h4>
+        { (quantitySelected > 0) && <InformProductUnavailability
+          maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+          excessQtyOrdered={
           calcExcessQtyOrdered(maxUnitsAvailableToOrder,
             totQuantityOrdered, previousOrdQty, quantitySelected)
           }
-      /> }
-      <h4><small>{description}</small></h4>
-    </Col>
+        /> }
+        <h4><small>{description}</small></h4>
+      </Col>
 
-    <Col sm={4}>
-      <h4> {`${unit}, ${formatMoney(unitprice, accountSettings)}`} </h4>
-    </Col>
+      <Col sm={4}>
+        <h4> {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`} </h4>
+      </Col>
 
-    <Col sm={3}>
-      <QuantitySelector
-        onChange={onChange}
-        unit={unit}
-        unitprice={unitprice}
-        controlName={productId}
-        quantitySelected={quantitySelected}
-        values={unitsForSelection.split(',')}
-        maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-      />
-    </Col>
-  </Row>
-);
+      <Col sm={3}>
+        <QuantitySelector
+          onChange={onChange}
+          unit={unit}
+          unitprice={unitprice}
+          controlName={productId}
+          quantitySelected={quantitySelected}
+          values={unitsForSelectionArray}
+          maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+        />
+      </Col>
+    </Row>
+  );
+};
 
 ProductForNonAdmin.defaultProps = {
   description: '',
