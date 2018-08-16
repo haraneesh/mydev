@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import 'moment-timezone';
 import moment from 'moment';
 import zh from './ZohoBooks';
@@ -17,6 +16,7 @@ function retZohoPaymentObject(
   paymentMode,
   razorPaymentId,
   paymentDescription,
+  zoho_fund_deposit_account_id,
   // razorPayChargesInPaise,
 ) {
   const zohoPaymentObj = {
@@ -26,7 +26,7 @@ function retZohoPaymentObject(
     date: todayFormattedForZoho(),
     reference_number: razorPaymentId,
     description: paymentDescription,
-    //bank_charges: razorPayChargesInPaise / 100,
+    account_id: zoho_fund_deposit_account_id,
   };
 
   return zohoPaymentObj;
@@ -45,7 +45,7 @@ function createCustomerPayment(args) {
     paymentMode,
     razorPaymentId,
     paymentDescription,
-    razorPayChargesInPaise,
+    zoho_fund_deposit_account_id,
   } = args;
 
   const zhPaymentObj = retZohoPaymentObject(
@@ -54,9 +54,8 @@ function createCustomerPayment(args) {
     paymentMode,
     razorPaymentId,
     paymentDescription,
-    razorPayChargesInPaise,
+    zoho_fund_deposit_account_id,
   );
-
   const response = zh.createRecord('customerpayments', zhPaymentObj);
 
   return response;

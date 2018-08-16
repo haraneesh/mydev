@@ -85,7 +85,7 @@ Meteor.methods({
           paymentMode: paymentResponse.method,
           razorPaymentId: inputParams.razorpay_payment_id,
           paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} ,${paymentResponse.description} `,
-          razorPayChargesInPaise: paymentResponse.fee,
+          zoho_fund_deposit_account_id: Meteor.settings.private.Razor.zoho_fund_deposit_account_id,
         });
 
         if (Meteor.isDevelopment) {
