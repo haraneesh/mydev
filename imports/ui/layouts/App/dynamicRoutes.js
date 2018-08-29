@@ -7,7 +7,7 @@ function SuvaiLoadable(opts) {
   }, opts));
 }
 
-/* admin*/
+/* admin */
 // import { ProductsAdmin } from '../pages/products-admin';
 export const dProductsAdmin = SuvaiLoadable({
   loader: () => import('../../pages/ProductsAdmin/ProductsAdmin'),
@@ -17,7 +17,7 @@ export const dZohoSyncUp = SuvaiLoadable({
   loader: () => import('../../pages/Admin/ZohoSyncUp'),
 });
 
-/* productLists*/
+/* productLists */
 // import { ProductLists } from '../pages/productLists/ProductLists';
 export const dProductLists = SuvaiLoadable({
   loader: () => import('../../pages/ProductLists/ProductLists'),
@@ -67,7 +67,7 @@ export const dEditSupplier = SuvaiLoadable({
 });
 
 
-/* Recipes*/
+/* Recipes */
 export const dRecipesHome = SuvaiLoadable({
   loader: () => import('../../pages/Recipes/RecipesHome'),
 });
@@ -103,12 +103,17 @@ export const dEditAllSpecials = SuvaiLoadable({
   loader: () => import('../../containers/Specials/EditAllSpecials'),
 });
 
-//import ProfileUpdate from 
+// import ProfileUpdate from
 export const dProfileUpdate = SuvaiLoadable({
   loader: () => import('../../pages/Users/ProfileUpdate'),
 });
 
-//import ProfileUpdate from 
+// import ProfileUpdate from
 export const dVision = SuvaiLoadable({
   loader: () => import('../../pages/Miscellaneous/Vision/Vision'),
+});
+
+// Reports
+export const dReportsHome = SuvaiLoadable({
+  loader: () => import('../../pages/Reports/ReportsHome/ReportsHome'),
 });

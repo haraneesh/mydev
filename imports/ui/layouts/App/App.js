@@ -61,6 +61,7 @@ import {
   dProfileUpdate,
   dZohoSyncUp,
   dMyWallet,
+  dReportsHome,
 }
   from './dynamicRoutes';
 
@@ -141,6 +142,9 @@ const App = props => (
         <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} {...props} />
         <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} {...props} />
         <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
+        { /* Admin Reports */ }
+        <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
+        
         {/* Page not found */}
         <Redirect from="*" to="/" />
       </Switch>

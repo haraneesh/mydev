@@ -19,6 +19,7 @@
     "fixed-data-table-2": "^0.7.8",
     "jquery": "^2.2.4",
     "jquery-validation": "^1.17.0",
+    "log4js": "^3.0.5",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.19.1",
     "moment-timezone": "^0.5.14",

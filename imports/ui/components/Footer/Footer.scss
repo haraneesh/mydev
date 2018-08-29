@@ -9,7 +9,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 6em !important;
+  margin-bottom: 5em !important;
 }
 
 .Footer {
@@ -31,8 +31,7 @@ body {
   p {
     color: $gray-darker;
     margin:0px;
-    padding: 1.2em;
-    padding-bottom:0px;    
+    padding: 1em 0em;    
     a {
       margin-right:15px;
       &:last-child{

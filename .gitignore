@@ -7,3 +7,5 @@ public/bg-new.jpg
 .meteor/.gitignore
 public/favicon-new.png
 public/logo-new.png
+imports/api/Reports/items.js
+imports/api/Reports/pos.js

@@ -1,3 +1,5 @@
+import moment from 'moment';
+import 'moment-timezone';
 import ZohoSyncUps from './ZohoSyncUps';
 
 export const retResponse = r => ({
@@ -45,4 +47,13 @@ export const updateUserSyncAndReturn =
       ],
     }, { $set: zohoSyncUp });
     return { success: successResp, error: errorResp };
-  }
+  };
+
+export const getZhDisplayDate = (dateObject) => {
+  // const dateObject = new Date(dateString)
+  const zhDateSettings = {
+    format: 'YYYY-MM-DD',
+    timeZone: 'Asia/Kolkata',
+  };
+  return moment(dateObject).tz(zhDateSettings.timeZone).format(zhDateSettings.format);
+};

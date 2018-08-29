@@ -50,6 +50,8 @@ import '../../api/FeedBacks/methods';
 import '../../api/Media/methods';
 import '../../api/Media/Media';
 
+import '../../api/Reports/methods';
+
 import '../../api/ZohoSyncUps/zohoContactsMethods';
 import '../../api/ZohoSyncUps/zohoProductsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';

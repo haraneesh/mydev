@@ -80,9 +80,9 @@ const updateRecord = (module, id, params) => {
   return callAPI(_callType.PUT, endpoint, params);
 };
 
-const getRecords = (module) => {
+const getRecords = (module, page = 1) => {
   const endpoint = module;
-  return callAPI(_callType.GET, endpoint);
+  return callAPI(_callType.GET, endpoint, {}, page);
 };
 
 const getRecordsByParams = (module, params) => {

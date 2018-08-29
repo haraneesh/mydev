@@ -1,15 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
-import moment from 'moment';
-import 'moment-timezone';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import Orders from '../Orders/Orders';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
-import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn } from './zohoCommon';
+import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate } from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
 import handleMethodException from '../../modules/handle-method-exception';
 
@@ -36,14 +34,6 @@ const _orderStatusToZohoSalesOrderStatus = {
 
 const _getZohoSalesOrderStatus = status => _orderStatusToZohoSalesOrderStatus[status].zh_status;
 
-const _getZhDisplayDate = (dateObject) => {
-  // const dateObject = new Date(dateString)
-  const zhDateSettings = {
-    format: 'YYYY-MM-DD',
-    timeZone: 'Asia/Kolkata',
-  };
-  return moment(dateObject).tz(zhDateSettings.timeZone).format(zhDateSettings.format);
-};
 
 const _getZohoUserIdFromUserId = userId =>
   // mongo collections have only meteor ids
@@ -55,7 +45,7 @@ const _getZohoItemIdFromProductId = productId =>
 const _createZohoSalesOrder = (order) => {
   const zhSalesOrder = {
     customer_id: _getZohoUserIdFromUserId(order.customer_details._id), // mandatory
-    date: _getZhDisplayDate(order.createdAt), // "2013-11-17"
+    date: getZhDisplayDate(order.createdAt), // "2013-11-17"
     // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -
     notes: order.comments || '',
   };

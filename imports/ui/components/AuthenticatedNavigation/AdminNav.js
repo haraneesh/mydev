@@ -21,11 +21,14 @@ const AdminNav = (props) => {
           <li>
             <NavLink to="/recipes">Manage Recipes</NavLink>
           </li>
-           <li>
+          <li>
             <NavLink to="/suppliers">Manage Suppliers</NavLink>
           </li>
           <li>
             <NavLink to="/specials/edit">Manage Specials</NavLink>
+          </li>
+          <li>
+            <NavLink to="/reports">View Reports</NavLink>
           </li>
           <li>
             <NavLink to="/updateProfile">Create / Update User</NavLink>
