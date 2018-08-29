@@ -60,7 +60,7 @@ Meteor.methods({
         awaitingFullFillmentProductsHash = addStockOnHand(awaitingFullFillmentProductsHash);
         awaitingFullFillmentProductsHash = addPOOrderedQty(awaitingFullFillmentProductsHash);
       }
-      writeFile(awaitingFullFillmentProductsHash);
+    //  writeFile(awaitingFullFillmentProductsHash);
 
       return awaitingFullFillmentProductsHash;
     } catch (exception) {
