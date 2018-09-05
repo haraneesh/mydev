@@ -14,16 +14,15 @@ const getPODetailsFromZoho = (p) => {
   return po;
 };
 
-const getPOsWithTodaysDeliveryDateFromZoho = () => {
-  const nowDate = new Date();
+const getOpenPOsFromZoho = () => {
   const successResp = [];
   const errorResp = [];
 
   let pos = [];
 
   if (Meteor.isServer) {
-    // const r = zh.getRecordsByParams('purchaseorders', {status:"billed"});
-    const r = zh.getRecordsByParams('purchaseorders', { delivery_date: getZhDisplayDate(nowDate) });
+    // const r = zh.getRecordsByParams('purchaseorders', {status:"billed", delivery_date: getZhDisplayDate(nowDate), });
+    const r = zh.getRecordsByParams('purchaseorders', { filter_by: 'Status.Open' });
     if (r.code === 0 /* Success */) {
       successResp.push(retResponse(r));
       pos = r.purchaseorders;
@@ -34,27 +33,54 @@ const getPOsWithTodaysDeliveryDateFromZoho = () => {
       };
       errorResp.push(retResponse(res));
     }
-    updateSyncAndReturn('purchaseOrders', successResp, errorResp, nowDate, syncUpConstants.purchaseOrdersFromZoho);
+    updateSyncAndReturn('purchaseOrders', successResp, errorResp, new Date(), syncUpConstants.purchaseOrdersFromZoho);
   }
   return pos;
 };
 
-const addPOOrderedQty = (pendingProductHash) => {
-  const pos = getPOsWithTodaysDeliveryDateFromZoho();
-  return pos.reduce((productHash, p) => {
-    const po = getPODetailsFromZoho(p);
+const addPOQuantities = (objToAdd, itemId, updateByCount, propertyToUpdate) => {
+  if (objToAdd[itemId].hasOwnProperty(propertyToUpdate)) {
+    objToAdd[itemId][propertyToUpdate] = objToAdd[itemId][propertyToUpdate] + updateByCount;
+  } else {
+    objToAdd[itemId][propertyToUpdate] = updateByCount;
+  }
+  return objToAdd;
+};
 
-    if (po.line_items) {
-      productHash = po.line_items.reduce((map, item) => {
-        if (map[item.item_id]) {
-          if (map[item.item_id].poOrderedQuantity) {
+const addPOOrderedQty = (pendingProductHash) => {
+  const pos = getOpenPOsFromZoho();
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+
+  return pos.reduce((productHash, p) => {
+    let propertyToUpdate = 'none';
+    switch (p.delivery_date) {
+      case getZhDisplayDate(today) :
+        propertyToUpdate = 'poOrderedQtyForToday';
+        break;
+      case getZhDisplayDate(tomorrow) :
+        propertyToUpdate = 'poOrderedQtyForTomorrow';
+        break;
+      default:
+        break;
+    }
+
+    if (propertyToUpdate !== 'none') {
+      const po = getPODetailsFromZoho(p);
+      if (po.line_items) {
+        productHash = po.line_items.reduce((map, item) => {
+          if (map[item.item_id]) {
+            map = addPOQuantities(map, item.item_id, item.quantity, propertyToUpdate);
+         /* if (map[item.item_id].poOrderedQuantity) {
             map[item.item_id].poOrderedQuantity = map[item.item_id].poOrderedQuantity + item.quantity;
           } else {
             map[item.item_id].poOrderedQuantity = item.quantity;
+          } */
           }
-        }
-        return map;
-      }, productHash);
+          return map;
+        }, productHash);
+      }
     }
     return productHash;
   }, pendingProductHash);

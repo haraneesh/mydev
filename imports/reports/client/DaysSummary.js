@@ -2,30 +2,56 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import moment from 'moment';
 import 'moment-timezone';
+import { Label } from 'react-bootstrap';
 import { dateSettingsWithTime } from '../../modules/settings';
 
 const getHeader = () => '<!DOCTYPE html> <html> <title>Days Summary | Suvai</title> <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <head></head><body>';
 const getFooter = () => '</body></html>';
 
+const calcBalanceAfterOrder = (orderedQuantity = 0, stockOnHand = 0, availableIncomingToday = 0, availableIncomingTomorrow = 0 ) => {
+  const returnValue = stockOnHand + availableIncomingToday + availableIncomingTomorrow - orderedQuantity ;
+  return (Math.round(returnValue * 100) / 100);
+  //return (returnValue);
+}
+
 const addRowHeaders = () => (
   <tr>
     <td className="text-center"><strong>Product Name</strong></td>
     <td className="text-center"><strong>Unit of Sale</strong></td>
-    <td className="text-right"><strong>Ordered Quantity</strong></td>
+    <td className="text-right"><strong>Customer Ordered</strong></td>
     <td className="text-right"><strong>Stock On Hand</strong></td>
-    <td className="text-right"><strong>PO Stock</strong></td>
+    <td className="text-right"><strong>Incoming Today</strong></td>
+    <td className="text-right"><strong>After Incoming Today</strong></td>
+    <td className="text-right"><strong>Incoming Tomorrow</strong></td>
+    <td className="text-right"><strong>After Incoming Tomorrow</strong></td>
   </tr>
 );
 
-const addRowDetails = rowsDetails => rowsDetails.map(rowDetail => (
-  <tr>
-    <td className="text-center">{rowDetail.name}</td>
-    <td className="text-center">{rowDetail.unitOfSale}</td>
-    <td className="text-right">{rowDetail.orderQuantity}</td>
-    <td className="text-right">{rowDetail.stockOnHand ? rowDetail.stockOnHand : 0}</td>
-    <td className="text-right">{rowDetail.poOrderedQuantity ? rowDetail.poOrderedQuantity : 0}</td>
-  </tr>
-));
+const withWarningLabel = (showWarning, value) => (
+  (showWarning) ? <Label bsStyle = "danger"> {value} </Label> : value
+)
+
+const addRowDetails = rowsDetails => rowsDetails.map( 
+  ({name, unitOfSale, orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow}) => {
+  
+  const balanceAfterToday = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday);
+  const balanceAfterTomorrow = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForTomorrow);
+  const warnToday = (balanceAfterToday < 0)? 'text-danger':'';
+  const warnTomorrow = (balanceAfterTomorrow< 0)? 'text-danger':'';
+
+  return (
+      <tr>
+        <td className="text-center">{name}</td>
+        <td className="text-center">{unitOfSale}</td>
+        <td className="text-right">{orderQuantity}</td>
+        <td className="text-right">{stockOnHand ? stockOnHand : 0}</td>
+        <td className="text-right">{poOrderedQtyForToday ? poOrderedQtyForToday : 0}</td>
+        <td className="text-right">{withWarningLabel(warnToday, balanceAfterToday)}</td>
+        <td className="text-right">{poOrderedQtyForTomorrow ? poOrderedQtyForTomorrow : 0}</td>
+        <td className="text-right">{withWarningLabel(warnTomorrow, balanceAfterTomorrow)}</td>
+      </tr>
+    )
+});
 
 const writeDaysSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToStaticMarkup(
   <div className="container">
