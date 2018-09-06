@@ -26,12 +26,6 @@ if (IngWeights.findOne()) {
   IngWeights._dropCollection();
 }
 
-Meteor.users.update({ wallet: { $exists: false } }, { $set: { wallet: {
-  unused_retainer_payments_InPaise: 0,
-  unused_credits_receivable_amount_InPaise: 0,
-  outstanding_receivable_amount_InPaise: 0,
-  lastZohoSync: new Date('1/1/2000') } } },
-{ multi: true });
 
 // update products to have displayOrder
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
@@ -41,4 +35,13 @@ Products.update( { _id: "X6hXmnjZLcYskSRwi" },{ $set : {"zh_item_id" : "70220700
 Products.update( { _id: "x9AnG9zNXosQLFuc9" },{ $set : {"zh_item_id" : "702207000007992005"} });
 Products.update( { _id: "HKpzgEHxP2huBJnyw" },{ $set : {"zh_item_id" : "702207000007988005"} }); */
 
-ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
+/*
+Meteor.users.update({ wallet: { $exists: false } }, { $set: { wallet: {
+  unused_retainer_payments_InPaise: 0,
+  unused_credits_receivable_amount_InPaise: 0,
+  outstanding_receivable_amount_InPaise: 0,
+  lastZohoSync: new Date('1/1/2000') } } },
+{ multi: true });
+*/
+
+// ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });

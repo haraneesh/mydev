@@ -8,7 +8,8 @@ import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 // import daysSummary from './daysSummary';
-import { configure, getLogger } from 'log4js';
+
+// import { configure, getLogger } from 'log4js';
 
 const getProductsFrmAwaitingFullOrders = () => {
   const awaitingFullFillMentOrders = Orders.find({ order_status: constants.OrderStatus.Awaiting_Fulfillment.name }).fetch();
@@ -35,6 +36,7 @@ const getProductsFrmAwaitingFullOrders = () => {
   return returnValue;
 };
 
+/*
 const writeFile = (pendingProductsHash) => {
   const logger = getLogger();
   configure({
@@ -44,6 +46,7 @@ const writeFile = (pendingProductsHash) => {
   logger.level = 'debug';
   logger.debug(pendingProductsHash);
 };
+*/
 
 Meteor.methods({
   'reports.generateDaysSummary': function generateDaySummary() {
