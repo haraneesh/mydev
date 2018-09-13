@@ -5,6 +5,8 @@ import { Meteor } from 'meteor/meteor';
 // import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
 import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
+import Orders from '../Orders/Orders';
+
 
 const IngWeights = new Mongo.Collection('IngWeights');
 
@@ -35,13 +37,17 @@ Products.update( { _id: "X6hXmnjZLcYskSRwi" },{ $set : {"zh_item_id" : "70220700
 Products.update( { _id: "x9AnG9zNXosQLFuc9" },{ $set : {"zh_item_id" : "702207000007992005"} });
 Products.update( { _id: "HKpzgEHxP2huBJnyw" },{ $set : {"zh_item_id" : "702207000007988005"} }); */
 
-/*
 Meteor.users.update({ wallet: { $exists: false } }, { $set: { wallet: {
   unused_retainer_payments_InPaise: 0,
   unused_credits_receivable_amount_InPaise: 0,
   outstanding_receivable_amount_InPaise: 0,
   lastZohoSync: new Date('1/1/2000') } } },
 { multi: true });
-*/
+
+Orders.update({ expectedDeliveryDate: { $exists: false } }, {
+  $set: {
+    expectedDeliveryDate: new Date(2017, 1, 1),
+  },
+}, { multi: true });
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });

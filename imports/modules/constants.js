@@ -111,6 +111,30 @@ const OrderStatus = {
   },
 };
 
+const DaysFromTodayForward = {
+  Today: {
+    name: 'Today',
+    display_value: 'Today',
+    increment: 0,
+  },
+  Tomorrow: {
+    name: 'Tomorrow',
+    display_value: 'Tomorrow',
+    increment: 1,
+  },
+  TodayPlus2: {
+    name: 'TodayPlus2',
+    display_value: 'Today + 2 days',
+    increment: 2,
+  },
+  TodayPlus3: {
+    name: 'TodayPlus3',
+    display_value: 'Today + 3 days',
+    increment: 3,
+  },
+};
+
+
 const ProductListStatus = {
   Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
   Active_Now: {
@@ -204,6 +228,7 @@ const constants = {
   ProductType,
   ProductCategory,
   OrderStatus,
+  DaysFromTodayForward,
   ProductListStatus,
   Sort,
   Roles,

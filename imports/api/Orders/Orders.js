@@ -50,6 +50,11 @@ Orders.schema = new SimpleSchema({
     },
     optional: true,
   },
+  expectedDeliveryDate: {
+    type: Date,
+    label: 'Expected Delivery Date of the Order',
+    optional: true,
+  },
   products: { type: Array },
   'products.$': ProductSchema.omit('createdAt', 'updatedAt'),
     /*  "product_details._id": { type: String, label: 'The product id'},

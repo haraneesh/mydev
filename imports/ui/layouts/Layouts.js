@@ -18,7 +18,7 @@ const trackPageViews = (analytics, userId, pageName) => {
 };
 
 export const OrderLayout = (props) => {
-  trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
+  //trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   return (
     <div>
       <Navigation showEasyNav={false} {...props} />
@@ -30,7 +30,7 @@ export const OrderLayout = (props) => {
 };
 
 export const MainLayout = (props) => {
-  trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
+  //trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   return (
     <div>
       <Navigation showEasyNav {...props} />

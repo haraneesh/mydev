@@ -8,11 +8,16 @@ import { dateSettingsWithTime } from '../../modules/settings';
 const getHeader = () => '<!DOCTYPE html> <html> <title>Days Summary | Suvai</title> <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <head></head><body>';
 const getFooter = () => '</body></html>';
 
-const calcBalanceAfterOrder = (orderedQuantity = 0, stockOnHand = 0, availableIncomingToday = 0, availableIncomingTomorrow = 0 ) => {
-  const returnValue = stockOnHand + availableIncomingToday + availableIncomingTomorrow - orderedQuantity ;
+const calcBalanceAfterOrder = (
+  orderedQuantity = 0,
+  stockOnHand = 0,
+  availableIncomingToday = 0,
+  availableIncomingTomorrow = 0,
+) => {
+  const returnValue = (stockOnHand + availableIncomingToday + availableIncomingTomorrow) - orderedQuantity;
   return (Math.round(returnValue * 100) / 100);
-  //return (returnValue);
-}
+  // return (returnValue);
+};
 
 const addRowHeaders = () => (
   <tr>
@@ -28,30 +33,29 @@ const addRowHeaders = () => (
 );
 
 const withWarningLabel = (showWarning, value) => (
-  (showWarning) ? <Label bsStyle = "danger"> {value} </Label> : value
-)
+  (showWarning) ? <Label bsStyle="danger"> {value} </Label> : value
+);
 
-const addRowDetails = rowsDetails => rowsDetails.map( 
-  ({name, unitOfSale, orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow}) => {
-  
-  const balanceAfterToday = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday);
-  const balanceAfterTomorrow = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForTomorrow);
-  const warnToday = (balanceAfterToday < 0)? 'text-danger':'';
-  const warnTomorrow = (balanceAfterTomorrow< 0)? 'text-danger':'';
+const addRowDetails = rowsDetails => rowsDetails.map(
+  ({ name, unitOfSale, orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow }) => {
+    const balanceAfterToday = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday);
+    const balanceAfterTomorrow = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow);
+    const warnToday = (balanceAfterToday < 0) ? 'text-danger' : '';
+    const warnTomorrow = (balanceAfterTomorrow < 0) ? 'text-danger' : '';
 
-  return (
+    return (
       <tr>
         <td className="text-center">{name}</td>
         <td className="text-center">{unitOfSale}</td>
         <td className="text-right">{orderQuantity}</td>
-        <td className="text-right">{stockOnHand ? stockOnHand : 0}</td>
-        <td className="text-right">{poOrderedQtyForToday ? poOrderedQtyForToday : 0}</td>
+        <td className="text-right">{stockOnHand || 0}</td>
+        <td className="text-right">{poOrderedQtyForToday || 0}</td>
         <td className="text-right">{withWarningLabel(warnToday, balanceAfterToday)}</td>
-        <td className="text-right">{poOrderedQtyForTomorrow ? poOrderedQtyForTomorrow : 0}</td>
+        <td className="text-right">{poOrderedQtyForTomorrow || 0}</td>
         <td className="text-right">{withWarningLabel(warnTomorrow, balanceAfterTomorrow)}</td>
       </tr>
-    )
-});
+    );
+  });
 
 const writeDaysSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToStaticMarkup(
   <div className="container">

@@ -1,3 +1,15 @@
+function getTomorrowDateOnServer() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow;
+}
+
+function getIncrementedDateOnServer(dateToIncrement, increment) {
+  const currentDate = dateToIncrement
+  currentDate.setDate(currentDate.getDate() + increment);
+  return currentDate;
+}
+
 function getInvoiceTotals(invoices) {
   if (!invoices) return;
 
@@ -18,12 +30,14 @@ function getInvoiceTotals(invoices) {
 
 function adjustBalanceByTransactionCharges(amount) {
   const paymentServiceChargePercentage = 0.2;
-  return amount * paymentServiceChargePercentage + amount;
+  return (amount * paymentServiceChargePercentage) + amount;
 }
 
 const orderCommon = {
   getInvoiceTotals,
   adjustBalanceByTransactionCharges,
+  getTomorrowDateOnServer,
+  getIncrementedDateOnServer,
 };
 
 export default orderCommon;

@@ -6,8 +6,10 @@ import Orders from './Orders';
 import constants from '../../modules/constants';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
+import orderCommon from '../../modules/both/orderCommon';
+import handleMethodException from '../../modules/handle-method-exception';
 
-const calculateOrderTotal = function (order, productListId) {
+const calculateOrderTotal = (order, productListId) => {
   // Get Product List for cost
   // Get Order for list of items
   // calculate Total and return
@@ -51,6 +53,10 @@ const addNewOrderedQuantity = (order) => {
         { $inc: { 'products.$.totQuantityOrdered': product.quantity } });
   });
 };
+
+const getDeliveryDate = () =>{
+  return orderCommon.getTomorrowDateOnServer();
+}
 
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
@@ -97,7 +103,9 @@ export const upsertOrder = new ValidatedMethod({
         deliveryAddress: loggedInUser.profile.deliveryAddress,
       };
     }
-    // }
+    
+    order.expectedDeliveryDate = getDeliveryDate();
+
     const response = Orders.upsert({ _id: order._id }, { $set: order });
     addNewOrderedQuantity(order);
     if (response.insertedId) {
@@ -120,6 +128,7 @@ export const removeOrder = new ValidatedMethod({
   },
 });
 
+
 export const updateMyOrderStatus = new ValidatedMethod({
   name: 'orders.updateMyOrderStatus',
   validate: new SimpleSchema({
@@ -138,6 +147,39 @@ export const updateMyOrderStatus = new ValidatedMethod({
     throw new Meteor.Error(401, 'Access denied');
   },
 });
+
+export const updateExpectedDeliveryDate = new ValidatedMethod({
+  name: 'orders.updateExpectedDeliveryDate',
+  validate: new SimpleSchema({
+    orderIds: { type: Array },
+    'orderIds.$': { type: String },
+    incrementDeliveryDateBy : { type: Number },
+  }).validator(),
+  run({ orderIds, incrementDeliveryDateBy  }) {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      handleMethodException('Access denied', 403);
+    }
+
+     const orders = Orders.find({ 
+        _id: { $in: orderIds }, 
+        order_status: constants.OrderStatus.Pending.name  
+      }, { _id:1 }).fetch();
+
+      if (orderIds.length !== orders.length) {
+        handleMethodException(`Please select only orders in ${constants.OrderStatus.Pending.name} status.`, 403);
+      }
+
+      const newExpectedDeliveryDate = orderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy );
+
+      return Orders.update(
+      { _id: { $in: orderIds } },
+       { $set: { expectedDeliveryDate: newExpectedDeliveryDate } },
+        { multi: true },
+      );
+
+  },
+});
+
 
 export const updateOrderStatus = new ValidatedMethod({
   name: 'orders.updateOrderStatus',
@@ -259,6 +301,7 @@ rateLimit({
     getProductQuantityForOrderAwaitingFullFillment,
     getProductQuantityForOrderAwaitingFullFillmentNEW,
     updateMyOrderStatus,
+    updateExpectedDeliveryDate,
     upsertOrder,
     removeOrder,
     updateOrderStatus,

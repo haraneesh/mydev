@@ -7,7 +7,7 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
   TextCell, DateCell } from '../Common/ShopTableCells';
 import constants from '../../../modules/constants';
-import { updateOrderStatus, getOrders,
+import { updateOrderStatus, getOrders, updateExpectedDeliveryDate,
   getProductQuantityForOrderAwaitingFullFillment,
   getProductQuantityForOrderAwaitingFullFillmentNEW }
   from '../../../api/Orders/methods';
@@ -102,7 +102,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.date}
         >
-                    Order Date
+                    Delivery Date
                 </SortHeaderCell>
             }
       cell={<DateCell data={dataList} />}
@@ -171,6 +171,7 @@ class ManageAllOrders extends React.Component {
     this.handleGenerateBills = this.handleGenerateBills.bind(this);
     this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
     this.handleGenerateOPLNew = this.handleGenerateOPLNew.bind(this);
+    this.handleDeliveryDateUpdate = this.handleDeliveryDateUpdate.bind(this);
   }
 
   componentWillMount() {
@@ -222,12 +223,12 @@ class ManageAllOrders extends React.Component {
 
   getTableDataList(orders) {
     const orderList = [];
-    orders.map(({ _id, order_status, createdAt, total_bill_amount, customer_details }) => {
+    orders.map(({ _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details }) => {
       orderList.push(
         {
           id: _id,
           status: order_status,
-          date: createdAt,
+          date: expectedDeliveryDate,
           amount: total_bill_amount,
           name: customer_details.name,
           whMobileNum: customer_details.mobilePhone,
@@ -330,6 +331,27 @@ class ManageAllOrders extends React.Component {
     }
   }
 
+  handleDeliveryDateUpdate(eventKey) {
+    if (this.selectedOrderIds.length <= 0) {
+      Bert.alert(`Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`,
+                'danger');
+    } else {
+      const orderIds = [...this.selectedOrderIds];
+      const incrementDeliveryDateBy = constants.DaysFromTodayForward[eventKey].increment;
+      updateExpectedDeliveryDate.call({ orderIds, incrementDeliveryDateBy }, (error) => {
+        const confirmation = `Delivery date of selected order(s) have been updated to ${
+                    constants.DaysFromTodayForward[eventKey].display_value
+                    } successfully!`;
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          this.resetSelectedOrderIds();
+          Bert.alert(confirmation, 'success');
+        }
+      });
+    }
+  }
+
   handleStatusUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
       Bert.alert(`Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`,
@@ -361,6 +383,11 @@ class ManageAllOrders extends React.Component {
               title={'Update Status'}
               statuses={constants.OrderStatus}
               onSelectCallBack={this.handleStatusUpdate}
+            />
+            <UpdateStatusButtons
+              title={'Change Delivery Date'}
+              statuses={constants.DaysFromTodayForward}
+              onSelectCallBack={this.handleDeliveryDateUpdate}
             />
             <Button
               bsStyle="default"

@@ -10,7 +10,7 @@ import { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate } from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
 import handleMethodException from '../../modules/handle-method-exception';
-
+import orderCommon from '../../modules/both/orderCommon';
 
 // TODO May have to be a seperate table
 const _productTypeToZohoGroupIdMap = {
@@ -80,7 +80,7 @@ const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
         zh_salesorder_id: r.salesorder.salesorder_id,
         zh_salesorder_number: r.salesorder.salesorder_number,
         order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
-      }
+      },
     });
     successResp.push(retResponse(r));
   } else {
@@ -101,10 +101,14 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
       handleMethodException('Access denied', 403);
     }
     const nowDate = new Date();
+    
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
-      const query = { order_status: constants.OrderStatus.Pending.name };
+      const query = {
+        order_status: constants.OrderStatus.Pending.name,
+        expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
+      };
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
       orders.forEach((ord) => {
@@ -157,7 +161,7 @@ export const getUserOrdersAndInvoicesFromZoho = (userId) => {
         { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
         { order_status: { $ne: constants.OrderStatus.Completed.name } },
         { order_status: { $ne: constants.OrderStatus.Pending.name } },
-      ]
+      ],
     };
     const orders = Orders.find(query).fetch();
     orders.forEach((ord) => {
@@ -170,7 +174,7 @@ export const getUserOrdersAndInvoicesFromZoho = (userId) => {
     });
   }
   return updateUserSyncAndReturn('invoices', userId, successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
-}
+};
 
 export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
   name: 'orders.getOrdersAndInvoicesFromZoho',
@@ -189,7 +193,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
           { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
           { order_status: { $ne: constants.OrderStatus.Completed.name } },
           { order_status: { $ne: constants.OrderStatus.Pending.name } },
-        ]
+        ],
       };
       const orders = Orders.find(query).fetch();
       orders.forEach((ord) => {
