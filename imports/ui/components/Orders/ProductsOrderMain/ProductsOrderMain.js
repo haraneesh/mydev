@@ -1,65 +1,18 @@
 import React from 'react';
-import { formatMoney } from 'accounting-js';
 import PropTypes from 'prop-types';
 import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
-import { ListGroupItem, FormControl, Tabs, Tab, PanelGroup, Glyphicon } from 'react-bootstrap';
+import { Tabs, Tab, PanelGroup } from 'react-bootstrap';
 import $ from 'jquery';
+import { Bert } from 'meteor/themeteorchef:bert';
 import Product from '../Product';
-import { upsertOrder, updateMyOrderStatus } from '../../../../api/Orders/methods';
-import { accountSettings } from '../../../../modules/settings';
 import { isLoggedInUserAdmin } from '../../../../modules/helpers';
-import ProductsAdd from '../ProductsAdd/ProductsAdd';
 import constants from '../../../../modules/constants';
+import ProductSearch from '../ProductSearch/ProductSearch';
+import GenerateOrderList from '../../../../reports/client/GenerateOrderList';
+import { upsertOrder, updateMyOrderStatus } from '../../../../api/Orders/methods';
+import { OrderFooter, DisplayCategoryHeader, OrderComment } from '../ProductsOrderCommon/ProductsOrderCommon';
 
 import './ProductsOrderMain.scss';
-
-const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
-  <Row onClick={onclick} className="productCatHead">
-    <Col xs={3} className={`productCat_${clName}`} />
-    <Col xs={8} className="prodCatTitle"> {title} </Col>
-    <Col xs={1} className="prodCatPlus"> <small> <Glyphicon glyph={isOpen ? 'minus' : 'plus'} /> </small> </Col>
-  </Row>
-);
-
-
-const OrderFooter = ({ total_bill_amount, onButtonClick, submitButtonName }) => (
-  <ListGroupItem>
-    <Row>
-      <Col sm={9}>
-        <h4 className="text-right-not-xs">Total <strong>{
-                formatMoney(total_bill_amount, accountSettings)
-              }</strong></h4>
-      </Col>
-      <Col sm={3}>
-        <div className="text-right-not-xs">
-          <Button bsStyle="primary" disabled={total_bill_amount <= 0} onClick={onButtonClick}>
-            { submitButtonName }
-          </Button>
-        </div>
-      </Col>
-    </Row>
-  </ListGroupItem>
-);
-
-const OrderComment = ({ comments }) => (
-  <ListGroupItem>
-    <Row>
-      <Col sm={3}>
-        <h4 className="product-name">
-          <strong> Comments </strong>
-        </h4>
-      </Col>
-      <Col sm={9}>
-        <FormControl
-          name="comments"
-          componentClass="textarea"
-          placeholder="Is there anything that you would like to tell us about this order?"
-          defaultValue={comments}
-        />
-      </Col>
-    </Row>
-  </ListGroupItem>
-);
 
 export default class ProductsOrderMain extends React.Component {
   constructor(props, context) {
@@ -69,23 +22,31 @@ export default class ProductsOrderMain extends React.Component {
       return map;
     }, {});
 
-    const total_bill_amount = (props.total_bill_amount) ? props.total_bill_amount : 0;
+    const totalBillAmount = (props.totalBillAmount) ? props.totalBillAmount : 0;
+
+    this.noControlIsSelected = '0';
 
     this.state = {
       products: productArray,
-      total_bill_amount,
-      activePanel: '0',
+      totalBillAmount,
+      activePanel: (props.recommendations.length > 0) ? '1' : '3',
+      recommendations: props.recommendations,
     };
+
+    this.isAdmin = isLoggedInUserAdmin();
 
     this.updateProductQuantity = this.updateProductQuantity.bind(this);
     this.handleOrderSubmit = this.handleOrderSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handlePrintProductList = this.handlePrintProductList.bind(this);
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
     this.displayProductsAndSubmit = this.displayProductsAndSubmit.bind(this);
+    this.getProductsMatchingSearch = this.getProductsMatchingSearch.bind(this);
+    this.wasProductOrderedPreviously = this.wasProductOrderedPreviously.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.activePanel !== '0' && prevState.activePanel !== this.state.activePanel) {
+    if (this.state.activePanel !== this.noControlIsSelected && prevState.activePanel !== this.state.activePanel) {
       const elem = $('#accordion .in')[0];
       if (elem && elem.offsetTop) {
         window.scrollTo(elem.offsetTop, 0);
@@ -93,25 +54,6 @@ export default class ProductsOrderMain extends React.Component {
       }
       // window.scrollTo(elem.offsetTop, 0);
     }
-  }
-
-  updateProductQuantity(event) {
-    const productId = event.target.name;
-    const quantity = event.target.value;
-    const productsCopy = this.state.products;
-
-    productsCopy[productId].quantity = parseFloat((quantity) || 0);
-
-    let total_bill_amount = 0;
-    for (const key in productsCopy) {
-      const quantity = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
-      total_bill_amount += quantity * productsCopy[key].unitprice;
-    }
-
-    this.setState({
-      products: Object.assign({}, productsCopy),
-      total_bill_amount,
-    });
   }
 
   handleOrderSubmit() {
@@ -126,7 +68,7 @@ export default class ProductsOrderMain extends React.Component {
       products,
       _id: this.props.orderId,
       order_status: constants.OrderStatus.Pending.name,
-          // total_bill_amount: this.state.total_bill_amount,
+          // totalBillAmount: this.state.totalBillAmount,
       comments: document.querySelector('[name="comments"]').value,
     };
 
@@ -149,7 +91,7 @@ export default class ProductsOrderMain extends React.Component {
         updateToStatus: constants.OrderStatus.Cancelled.name,
       };
 
-      updateMyOrderStatus.call(order, (error, response) => {
+      updateMyOrderStatus.call(order, (error) => {
         const confirmation = 'This Order has been cancelled.';
         if (error) {
           Bert.alert(error.reason, 'danger');
@@ -161,19 +103,80 @@ export default class ProductsOrderMain extends React.Component {
     }
   }
 
-  displayCancelOrderButton(orderStatus) {
-    if (orderStatus === constants.OrderStatus.Pending.name) {
-      return (<ButtonToolbar className="pull-right">
-        <Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>
+  displayToolBar(orderStatus) {
+    return (
+      <ButtonToolbar className="pull-right">
+        { (orderStatus === constants.OrderStatus.Pending.name) && (<Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>)}
+        { (this.isAdmin) && (<Button bsSize="small" onClick={this.handlePrintProductList}>Print Order List</Button>)}
       </ButtonToolbar>
-      );
-    }
+    );
+  }
+
+  handlePrintProductList() {
+    GenerateOrderList(this.props.products, this.props.dateValue);
   }
 
   handlePanelSelect(activePanel) {
     this.setState({
-      activePanel: (activePanel === this.state.activePanel) ? '0' : activePanel,
+      activePanel: (activePanel === this.state.activePanel) ? this.noControlIsSelected : activePanel,
     });
+
+    if (activePanel !== this.noControlIsSelected) {
+      this.productSearchCtrl.clear();
+    }
+  }
+
+  getProductsMatchingSearch(searchString, numOfElements) {
+    const { products } = this.state;
+    const searchResults = [];
+    const lowerSearchString = searchString.toLowerCase();
+
+    _.map(products, (product, index) => {
+      if (product.name.toLowerCase().indexOf(lowerSearchString) > -1) {
+        searchResults.push(
+          <Product
+            key={`srch-${index}`}
+            updateProductQuantity={this.updateProductQuantity}
+            product={product}
+            isAdmin={this.isAdmin}
+          />,
+          );
+      }
+    });
+
+    return searchResults.slice(0, numOfElements);
+  }
+
+
+  updateProductQuantity(event) {
+    const productId = event.target.name;
+    const quantity = event.target.value;
+    const productsCopy = this.state.products;
+
+    productsCopy[productId].quantity = parseFloat((quantity) || 0);
+
+    let totalBillAmount = 0;
+    // for (const key in productsCopy) {
+    Object.keys(productsCopy).forEach((key) => {
+      const qty = productsCopy[key].quantity ? productsCopy[key].quantity : 0;
+      totalBillAmount += qty * productsCopy[key].unitprice;
+    });
+
+    this.setState({
+      products: Object.assign({}, productsCopy),
+      totalBillAmount,
+    });
+  }
+
+
+  wasProductOrderedPreviously(productId) {
+    const { recommendations } = this.state;
+    if (!recommendations.length > 0) {
+      return false;
+    }
+
+    const prevOrderedProducts = recommendations[0].recPrevOrderedProducts.prevOrderedProducts;
+    return (!!prevOrderedProducts[productId]);
   }
 
   displayProductsByType(products, isMobile) {
@@ -182,29 +185,40 @@ export default class ProductsOrderMain extends React.Component {
     const productVegetables = [];
     const productBatters = [];
     const productPersonalHygiene = [];
-
-    const isAdmin = isLoggedInUserAdmin();
+    const productSpecials = [];
+    const productRecommended = [];
 
     _.map(products, (product, index) => {
-      switch (product.type) {
-        case constants.ProductType[0]: // Vegetables
+      if (this.wasProductOrderedPreviously(product._id)) {
+        productRecommended.push(
+          <Product key={`recommended-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+        );
+      }
+
+      switch (true) {
+        case (!!product.displayAsSpecial): // special
+          productSpecials.push(
+            <Product key={`special-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+          );
+          break;
+        case (constants.ProductType[0] === product.type): // Vegetables
           productVegetables.push(
-            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} showQuantitySelector />,
+            <Product key={`vegetable-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
-        case constants.ProductType[1]: // Groceries
+        case (constants.ProductType[1] === product.type): // Groceries
           productGroceries.push(
-            <Product key={`grocery-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`grocery-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
-        case constants.ProductType[2]: // Batters
+        case (constants.ProductType[2] === product.type): // Batters
           productBatters.push(
-            <Product key={`batter-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`batter-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
-        case constants.ProductType[3]: // Personal Hygiene
+        case (constants.ProductType[3] === product.type): // Personal Hygiene
           productPersonalHygiene.push(
-            <Product key={`pg-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={isAdmin} />,
+            <Product key={`pg-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
           );
           break;
         default:
@@ -213,48 +227,112 @@ export default class ProductsOrderMain extends React.Component {
     });
 
     return (
-      <ProductsAdd products={productGroceries} currentCategory="Groceries" nextCategory="Oil, Batter" />
+      <div className="productOrderList">
+        { isMobile && (<PanelGroup activeKey={this.state.activePanel} id="accordion" accordion>
+          {this.state.recommendations.length > 0 && (<Panel
+            header={(<DisplayCategoryHeader
+              clName="recommended_bk_ph"
+              title="My Favourites"
+              onclick={() => this.handlePanelSelect('1')}
+              isOpen={this.state.activePanel === '1'}
+            />)}
+            eventKey="1"
+          >
+            { productRecommended }
+          </Panel>)
+          }
+
+          {productSpecials.length > 0 && (<Panel
+            header={(<DisplayCategoryHeader
+              clName="specials_bk_ph"
+              title="Specials"
+              onclick={() => this.handlePanelSelect('2')}
+              isOpen={this.state.activePanel === '2'}
+            />)}
+            eventKey="2"
+          >
+              { productSpecials }</Panel>)
+          }
+
+          <Panel header={(<DisplayCategoryHeader clName="vegetables_bk_ph" title="Vegetables & Fruit" onclick={() => this.handlePanelSelect('3')} isOpen={this.state.activePanel === '3'} />)} eventKey="3">{ productVegetables }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="groceries_bk_ph" title="Groceries" onclick={() => this.handlePanelSelect('4')} isOpen={this.state.activePanel === '4'} />)} eventKey="4">{ productGroceries }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="prepared_bk_ph" title="Ready Mixes, Oil, Batter & Pickles" onclick={() => this.handlePanelSelect('5')} isOpen={this.state.activePanel === '5'} />)} eventKey="5">{ productBatters }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="pg_bk_ph" title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('6')} isOpen={this.state.activePanel === '6'} />)} eventKey="6">{ productPersonalHygiene }</Panel>
+        </PanelGroup>) }
+
+
+        { !isMobile && (<Tabs defaultActiveKey={3} id="productTabs" bsStyle="pills">
+          {this.state.recommendations.length > 0 && (<Tab eventKey={1} title="My Favourites" tabClassName="recommended_bk text-center">
+            { productRecommended }
+          </Tab>)
+          }
+          { productSpecials.length > 0 && (<Tab eventKey={2} title="Specials" tabClassName="specials_bk text-center">
+            { productSpecials }
+          </Tab>)
+          }
+          <Tab eventKey={3} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
+            { productVegetables }
+          </Tab>
+          <Tab eventKey={4} title="Groceries" tabClassName="groceries_bk text-center">
+            { productGroceries }
+          </Tab>
+          <Tab eventKey={5} title="Mixes, Oil, & Pickles" tabClassName="prepared_bk text-center">
+            { productBatters }
+          </Tab>
+          <Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
+            { productPersonalHygiene }
+          </Tab>
+        </Tabs>)}
+
+      </div>
+
     );
   }
 
   displayProductsAndSubmit(submitButtonName) {
    // Grouping product categories by tabs
-    const nexusWidth = 420;
-    const isMobile = window.innerWidth <= nexusWidth;
+    const ipadWidth = 768;
+    const isMobile = window.innerWidth <= ipadWidth;
     return (
      this.props.products.length > 0 ? <Panel>
        <Row>
+         <ProductSearch
+           getProductsMatchingSearch={this.getProductsMatchingSearch}
+           onFocus={() => this.handlePanelSelect(this.noControlIsSelected)}
+           ref={productSearchCtrl => (this.productSearchCtrl = productSearchCtrl)}
+         />
          <Col xs={12}>
            <ListGroup className="products-list">
+
              { this.displayProductsByType(this.state.products, isMobile) }
-             <OrderComment comments={this.props.comments} />
-             <OrderFooter
-               total_bill_amount={this.state.total_bill_amount}
-               onButtonClick={this.handleOrderSubmit}
-               submitButtonName={submitButtonName}
-             />
+             <Row>
+               <OrderComment comments={this.props.comments} />
+               <OrderFooter
+                 totalBillAmount={this.state.totalBillAmount}
+                 onButtonClick={this.handleOrderSubmit}
+                 submitButtonName={submitButtonName}
+               />
+             </Row>
            </ListGroup>
          </Col>
        </Row>
      </Panel>
       :
-     <Alert bsStyle="info">We do not have any products for you to order today. Please check back tomorrow.</Alert>
+     <Alert bsStyle="info">
+        Every day, List of fresh items available to order is posted after 11 AM. Please wait for the message in the group.
+     </Alert>
     );
   }
 
   render() {
-    return (<div>{this.displayProductsByType(this.state.products, true)}</div>);
-  }
-
-  render1() {
-    const formHeading = (this.props.order_status) ? 'Update Your Order' : ' Place Your Order';
-    const submitButtonName = (this.props.order_status) ? 'Update Order' : ' Place Order';
+    const formHeading = (this.props.orderStatus) ? 'Update Your Order' : ' Place Your Order';
+    const submitButtonName = (this.props.orderStatus) ? 'Update Order' : ' Place Order';
     return (
       <div className="EditOrderDetails ">
         <Row>
           <Col xs={12}>
             <h3 className="page-header"> { formHeading }
-              { this.displayCancelOrderButton(this.props.order_status) }
+              { this.displayToolBar(this.props.orderStatus) }
             </h3>
             { this.displayProductsAndSubmit(submitButtonName) }
           </Col>
@@ -264,11 +342,22 @@ export default class ProductsOrderMain extends React.Component {
   }
 }
 
+ProductsOrderMain.defaultProps = {
+  recommendations: [],
+  orderId: '',
+  orderStatus: '',
+  comments: '',
+  totalBillAmount: 0,
+  dateValue: new Date(),
+};
+
 ProductsOrderMain.propTypes = {
   products: PropTypes.array.isRequired,
+  recommendations: PropTypes.array,
   orderId: PropTypes.string,
-  order_status: PropTypes.string,
+  orderStatus: PropTypes.string,
   comments: PropTypes.string,
-  total_bill_amount: PropTypes.number,
+  totalBillAmount: PropTypes.number,
+  dateValue: PropTypes.object,
   history: PropTypes.object.isRequired,
 };

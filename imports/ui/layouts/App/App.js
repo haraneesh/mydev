@@ -28,8 +28,9 @@ import Profile from '../../pages/Miscellaneous/Profile/Profile';
 import About from '../../pages/Miscellaneous/About/About';
 
 /* order */
-import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
-// import PlaceNewOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+// import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
+import PlaceOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+
 import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 import EditOrderDetails from '../../containers/Orders/EditOrder';
 

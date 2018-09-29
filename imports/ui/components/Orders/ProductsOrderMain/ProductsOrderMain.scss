@@ -25,32 +25,47 @@
     margin-bottom:5px;
 }
 
-.nav > li.vegetables_bk > a, .nav > li.groceries_bk > a, .nav > li.prepared_bk > a, .nav > li.pg_bk > a {
+.nav > li.vegetables_bk > a, .nav > li.groceries_bk > a, 
+.nav > li.prepared_bk > a, .nav > li.pg_bk > a, .nav > li.specials_bk > a, 
+.nav > li.recommended_bk > a {
     padding: 0px;
     background-image: url('/app/order-tabs.png');
-    background-size: 4.5em;
+    background-size: 5em;
     background-repeat: no-repeat;
-    padding-top: 3.5em;
+    padding-top: 3.6em;
 }
 
-.nav > li.vegetables_bk, .nav > li.groceries_bk, .nav > li.prepared_bk, .nav > li.pg_bk {
-    width:6.5em;
+.nav > li.groceries_bk, 
+.nav > li.pg_bk, .nav > li.specials_bk, .nav > li.recommended_bk {
+    width:8em;
+}
+
+.nav > li.prepared_bk, .nav > li.vegetables_bk {
+    width:10em;
 }
 
 .nav > li.vegetables_bk > a {
-    background-position: 17px -5px;
+    background-position: 40px -10px;
 }
 
 .nav > li.groceries_bk > a {
-    background-position: 17px -87px;
+    background-position: 25px -98px;
 }
 
 .nav > li.prepared_bk > a {
-    background-position: 17px -173px;
+    background-position: 45px -193px;
 }
 
 .nav > li.pg_bk > a {
-    background-position: 17px -273px;
+    background-position: 23px -302px;
+}
+
+.nav > li.specials_bk > a {
+    background-position: 25px -512px;
+}
+
+.nav > li.recommended_bk >  a {
+    background-position: 25px -410px;
 }
 
 #productTabs > div.tab-content {
@@ -93,9 +108,19 @@
         flex-direction: column;
     }
 
+    .productCat_recommended_bk_ph{
+        background-image: url('/app/order-tabs.png');
+        background-position:2px -295px;
+    }
+
+    .productCat_specials_bk_ph{
+        background-image: url('/app/order-tabs.png');
+        background-position:2px -370px;
+    }
+
     .productCat_vegetables_bk_ph{
         background-image: url('/app/order-tabs.png');
-        background-position:2px -10px;
+        background-position:2px 0px;
     }
 
     .productCat_groceries_bk_ph{
@@ -111,5 +136,12 @@
     .productCat_pg_bk_ph{
         background-image: url('/app/order-tabs.png');
         background-position:2px -220px;
+    }
+}
+
+.EditOrderDetails  {
+    .noMarginNoPadding{
+        margin-bottom:0px;
+        padding-bottom:0px;
     }
 }
