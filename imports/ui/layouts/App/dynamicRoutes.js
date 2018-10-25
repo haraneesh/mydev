@@ -117,3 +117,12 @@ export const dVision = SuvaiLoadable({
 export const dReportsHome = SuvaiLoadable({
   loader: () => import('../../pages/Reports/ReportsHome/ReportsHome'),
 });
+
+// Reconcile Products
+export const dReconcileInventory = SuvaiLoadable({
+  loader: () => import('../../pages/ReconcileInventory/ReconcileInventory'),
+});
+
+export const dReconcileInventoryList = SuvaiLoadable({
+  loader: () => import('../../pages/ReconcileInventory/ReconcileInventoryList'),
+});

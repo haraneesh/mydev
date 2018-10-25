@@ -1,5 +1,8 @@
+import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
+import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit.js';
 import Products from './Products';
 
@@ -137,6 +140,16 @@ export const removeProduct = new ValidatedMethod({
   },
 });
 
+Meteor.methods({
+  'products.getItemsFromZoho': function getItemsFromZoho() {
+    try {
+      return getActiveItemsFromZoho();
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  }
+});
+
 rateLimit({
   methods: [
     insertProduct,
@@ -147,6 +160,7 @@ rateLimit({
     updateProductDescription,
     updateProductSKU,
     removeProduct,
+    'products.getItemsFromZoho',
   ],
   limit: 5,
   timeRange: 1000,

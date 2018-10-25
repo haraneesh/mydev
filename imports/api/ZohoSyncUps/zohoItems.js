@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import zh from '../ZohoSyncUps//ZohoBooks';
-import { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
-import { updateSyncAndReturn, retResponse } from '../ZohoSyncUps/zohoCommon';
+import zh from './ZohoBooks';
+import { syncUpConstants } from './ZohoSyncUps';
+import { updateSyncAndReturn, retResponse } from './zohoCommon';
 
-export const getItemsFromZoho = () => {
+const getItemsFromZoho = (status) => {
   const nowDate = new Date();
   const successResp = [];
   const errorResp = [];
@@ -15,7 +15,7 @@ export const getItemsFromZoho = () => {
     let hasMorePages = true;
 
     while (hasMorePages) {
-      const r = zh.getRecordsByParams('items', { filter_by: 'Status.Active', page });
+      const r = zh.getRecordsByParams('items', { filter_by: status, page });
       if (r.code === 0 /* Success */) {
         successResp.push(retResponse(r));
         items = items.concat(r.items);
@@ -35,16 +35,4 @@ export const getItemsFromZoho = () => {
   return items;
 };
 
-const addStockOnHand = (productsHash) => {
-  const itemsListFromZoho = getItemsFromZoho();
-
-  return itemsListFromZoho.reduce((map, item) => {
-    if (map[item.item_id]) {
-      map[item.item_id].stockOnHand = item.stock_on_hand;
-    }
-
-    return map;
-  }, productsHash);
-};
-
-export default addStockOnHand;
+export default function getActiveItemsFromZoho() { return getItemsFromZoho('Status.Active'); }

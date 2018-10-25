@@ -20,6 +20,10 @@ export function getDisplayShortDate(dateObject) {
   return moment(dateObject).local().format(dateSettings.shortFormat);
 }
 
+export function getDayWithoutTime(dateObject) {
+  return moment(dateObject).local().format(dateSettings.dayWithoutTime);
+}
+
 export function getDisplayDateTitle(startDateObj, EndDateObj) {
   return `${getDisplayDate(startDateObj)
               } - ${

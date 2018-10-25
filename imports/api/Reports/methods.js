@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import Orders from '../Orders/Orders';
-import addStockOnHand from './zohoItems';
+import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import addPOOrderedQty from './zohoPurchaseOrders';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
@@ -10,6 +9,18 @@ import handleMethodException from '../../modules/handle-method-exception';
 // import daysSummary from './daysSummary';
 
 // import { configure, getLogger } from 'log4js';
+
+const addStockOnHand = (productsHash) => {
+  const itemsListFromZoho = getActiveItemsFromZoho();
+
+  return itemsListFromZoho.reduce((map, item) => {
+    if (map[item.item_id]) {
+      map[item.item_id].stockOnHand = item.stock_on_hand;
+    }
+
+    return map;
+  }, productsHash);
+};
 
 const getProductsFrmAwaitingFullOrders = () => {
   const awaitingFullFillMentOrders = Orders.find({ order_status: constants.OrderStatus.Awaiting_Fulfillment.name }).fetch();

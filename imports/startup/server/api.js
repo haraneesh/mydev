@@ -42,10 +42,16 @@ import '../../api/Specials/server/publications';
 import '../../api/Comments/methods';
 import '../../api/Comments/server/publications';
 
+import '../../api/ReconcileInventory/methods';
+import '../../api/ReconcileInventory/server/publications';
+
 import '../../api/Payments/methods';
 
 import '../../api/FeedBacks/methods';
 // import '../../api/FeedBacks/server/publications';
+
+import '../../api/Users/methods';
+import '../../api/Users/server/publications';
 
 import '../../api/Media/methods';
 import '../../api/Media/Media';

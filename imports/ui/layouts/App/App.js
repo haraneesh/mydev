@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import Authenticated from '../../components/Routes/Authenticated';
 import AdminAuthenticated from '../../components/Routes/AdminAuthenticated';
@@ -37,6 +37,8 @@ import EditOrderDetails from '../../containers/Orders/EditOrder';
 /* layout */
 import { OrderLayout, MainLayout } from '../Layouts';
 
+import ReconcileInventoryList from '../../pages/ReconcileInventory/ReconcileInventoryList';
+
 import Analytics from 'analytics-node';
 
 /* Dynamic Components */
@@ -63,6 +65,8 @@ import {
   dZohoSyncUp,
   dMyWallet,
   dReportsHome,
+  dReconcileInventory,
+  dReconcileInventoryList,
 }
   from './dynamicRoutes';
 
@@ -146,6 +150,10 @@ const App = props => (
         { /* Admin Reports */ }
         <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
         
+        {/* Reconcile Products */}
+        <AdminAuthenticated exact routeName="Reconcile Inventory List" layout={MainLayout} path="/admin/reconcileInventoryList" component={ReconcileInventoryList} {...props} />
+        <AdminAuthenticated exact routeName="Reconcile Inventory" layout={MainLayout} path="/admin/reconcileInventory" component={dReconcileInventory} {...props} />
+         
         {/* Page not found */}
         <Redirect from="*" to="/" />
       </Switch>
@@ -163,7 +171,7 @@ const getUserName = name => ({
   object: `${name.first} ${name.last}`,
 }[typeof name]);
 
-export default createContainer(() => {
+export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
   const user = Meteor.user();
   const userId = Meteor.userId();
@@ -182,4 +190,4 @@ export default createContainer(() => {
     loggedInUser: user,
     analytics,
   };
-}, App);
+}) (App);

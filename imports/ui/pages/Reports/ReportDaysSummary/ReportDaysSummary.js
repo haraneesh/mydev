@@ -1,10 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { Panel, Row, Col, Button } from 'react-bootstrap';
-import { Image } from 'react-bootstrap';
 import Loading from '../../../components/Loading/Loading';
-import constants from '../../../../modules/constants';
 import dailySummary from '../../../../reports/client/GenerateOPL';
 
 export default class ReportDaysSummary extends React.Component {
@@ -31,6 +28,7 @@ export default class ReportDaysSummary extends React.Component {
       }
     });
   }
+
   render() {
     const loading = this.state.loading;
     return (!loading ? (
