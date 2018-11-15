@@ -121,7 +121,7 @@ const App = props => (
         <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
 
         {/* Product */}
-        <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/admin/products" component={dProductsAdmin} {...props} />
+        <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
 
         {/* Admin */
          /* ProductLists */}
@@ -134,7 +134,7 @@ const App = props => (
 
         <AdminAuthenticated exact routeName="View All Orders Admin" layout={MainLayout} path="/allorders" component={dAllOrders} {...props} />
         {/* Zoho Sync */}
-        <AdminAuthenticated exact routeName="Zoho Sync" layout={MainLayout} path="/admin/zohoSync" component={dZohoSyncUp} {...props} />
+        <AdminAuthenticated exact routeName="Zoho Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
         {/* end admin */}
         <NotAuthenticated routeName="Signup" layout={MainLayout} path="/signup" component={Signup} {...props} />
         <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
@@ -151,8 +151,8 @@ const App = props => (
         <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
         
         {/* Reconcile Products */}
-        <AdminAuthenticated exact routeName="Reconcile Inventory List" layout={MainLayout} path="/admin/reconcileInventoryList" component={ReconcileInventoryList} {...props} />
-        <AdminAuthenticated exact routeName="Reconcile Inventory" layout={MainLayout} path="/admin/reconcileInventory" component={dReconcileInventory} {...props} />
+        <AdminAuthenticated exact routeName="Reconcile Inventory List" layout={MainLayout} path="/reconcileInventoryList" component={ReconcileInventoryList} {...props} />
+        <AdminAuthenticated exact routeName="Reconcile Inventory" layout={MainLayout} path="/reconcileInventory" component={dReconcileInventory} {...props} />
          
         {/* Page not found */}
         <Redirect from="*" to="/" />

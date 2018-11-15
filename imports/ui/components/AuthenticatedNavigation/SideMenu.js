@@ -13,7 +13,10 @@ const SideMenu = props => (
     <Panel className="menu-panel">
       <Row>
         <div className="container">
-          <Col xs={12}>
+        <Col xs={12} sm={6}>
+            { <AdminNav {...props} /> }
+          </Col>
+          <Col xs={12} sm={6}>
             <ul>
               <li>
                 <NavLink to="/order"> Place Order</NavLink>
@@ -33,9 +36,6 @@ const SideMenu = props => (
               <li>
                 <NavLink to="/profile">My Profile</NavLink>
               </li>
-            </ul>
-            { <AdminNav {...props} /> }
-            <ul>
               <li>
                 <NavLink to="/vision">Our Vision</NavLink>
               </li>
@@ -46,7 +46,7 @@ const SideMenu = props => (
                 <Button id="app-logout" onClick={handleLogout}>Logout</Button>
               </li>
             </ul>
-          </Col>
+            </Col>
         </div>
       </Row>
     </Panel>

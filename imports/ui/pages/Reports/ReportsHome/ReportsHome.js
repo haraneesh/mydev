@@ -53,6 +53,9 @@ export default class ReportsHome extends React.Component {
             <Panel>
               <Button bsStyle="link" onClick={this.genDaysSummaryReport}>Days Summary</Button>
             </Panel>
+            <Panel>
+              <Button bsStyle="link" href="/reconcileInventoryList">Inventory Reconciliation</Button>
+            </Panel>
           </Col>
         </Row>
       </div>

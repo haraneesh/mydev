@@ -43,6 +43,9 @@ export default class ReconcileInventoryMain extends React.Component {
   }
 
   onValueChange(event) {
+    if (event.target.value === ''){
+      return;
+    }
     const zohoItemId = event.target.name;
     const physicalInventory = parseFloat(event.target.value);
     const { ItemHash } = this.state;

@@ -410,7 +410,12 @@ class ManageAllOrders extends React.Component {
             >
             Generate OPL New
           </Button>
-
+          <Button
+            bsStyle="default"
+            bsSize="small"
+            href="/reconcileInventory">
+            Daily Inventory Update
+          </Button>
 
           </ButtonToolbar>
         </Row>

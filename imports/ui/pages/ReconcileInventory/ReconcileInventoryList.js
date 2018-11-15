@@ -5,7 +5,6 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
 import Loading from '../../components/Loading/Loading';
-import { getDayWithoutTime } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
 import ReconcileInventory from '../../../api/ReconcileInventory/ReconcileInventory';
 import ReconcileInventoryListMain from '../../components/ReconcileInventory/ReconcileInventoryListMain';
@@ -19,7 +18,6 @@ const reactVar = new ReactiveVar(
 );
 
 const nextPage = () => {
-    alert('here');
     const reactVarTemp = reactVar.get();
     reactVarTemp.skip = reactVarTemp.skip + 1; 
     reactVar.set(reactVarTemp);
@@ -42,7 +40,7 @@ const ReconcileInventoryList = ({ loading, reconciledList, count, page }) => (!l
         Next Page &rarr;
         </Pager.Item>)
     }
-</Pager>;
+</Pager>
   </div>
 ) : <Loading />);
 

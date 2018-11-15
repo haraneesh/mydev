@@ -10,7 +10,7 @@ const AdminNav = (props) => {
         <div className="menu-header"> Admin </div>
         <ul>
           <li>
-            <NavLink to="/admin/products">Manage Products</NavLink>
+            <NavLink to="/products">Manage Products</NavLink>
           </li>
           <li>
             <NavLink to="/productLists">Manage ProductLists</NavLink>
@@ -34,7 +34,7 @@ const AdminNav = (props) => {
             <NavLink to="/updateProfile">Create / Update User</NavLink>
           </li>
           <li>
-            <NavLink to="/admin/zohoSync">Zoho Sync</NavLink>
+            <NavLink to="/zohoSync">Zoho Sync</NavLink>
           </li>
         </ul>
       </div>
