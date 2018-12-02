@@ -21,6 +21,7 @@ body {
 
   background-color: $navbar-default-bg;
   font-size:$font-size-small;
+  padding: 20px 0 10px;
 
   /*padding-bottom: 0px;
   width: 100%;
@@ -30,14 +31,6 @@ body {
   padding-bottom:1.2em;*/
   p {
     color: $gray-darker;
-    margin:0px;
-    padding: 1em 0em;    
-    a {
-      margin-right:15px;
-      &:last-child{
-        margin-right:0px;
-      }
-    }
   }
 
   ul {

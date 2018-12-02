@@ -11,25 +11,26 @@ const copyrightYear = () => {
 
 const Footer = () => (
   <div className="Footer">
+
     <Grid>
-      <Row>
-        <Col xs={12} sm={6}>
-          <p className="text-center">
-            &copy; {copyrightYear()} Organics | Healthy, Tasty and Organic
-          </p>
-        </Col>
-        <Col xs={6} sm={3} className="text-center">
-          <p><Link to="/pages/terms">Terms of Service</Link></p>
-        </Col>
-        {/*
-          <Col sm={4} xs={12} className="text-center">
-          <p><Link to="/pages/refund">Refund Policy</Link></p>
-          </Col>
-        */}
-        <Col xs={6} sm={3} className="text-center">
-          <p><Link to="/pages/privacy">Privacy Policy</Link></p>
-        </Col>
-      </Row>
+      <p className="pull-left">
+        &copy; {copyrightYear()} Suvai Organics 
+        <span className="hidden-xs"> | Healthy, Tasty and Organic </span>
+      </p>
+      <ul className="pull-right">
+        <li>
+          <Link to="pages/terms">
+            Terms
+            <span className="hidden-xs"> of Service</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/pages/privacy">
+            Privacy
+            <span className="hidden-xs"> Policy</span>
+          </Link>
+        </li>
+      </ul>
     </Grid>
   </div>
 );
