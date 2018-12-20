@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { ListGroup, ListGroupItem, Alert } from 'react-bootstrap';
-import ModalFeedBack from '../../FeedBacks/ModalFeedBack/ModalFeedBack';
+import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import OrderSummaryRow from './OrderSummaryRow';
@@ -49,8 +49,10 @@ export default class MyOrderList extends React.Component {
     const fB = {
       postId: this.feedBackPostId,
       postType: constants.PostTypes.Order.name,
-      description: feedBack.description,
+      feedBackType: 'NPS',
       rating: feedBack.rating,
+      questionAsked: feedBack.questionAsked,
+      description: feedBack.description,
     };
 
     Meteor.call(methodToCall, fB, (error) => {
@@ -70,7 +72,7 @@ export default class MyOrderList extends React.Component {
     const latestOrder = orders[0];
     if (latestOrder.order_status !== constants.OrderStatus.Completed.name) {
       return '';
-    }
+    } 
 
     let lastDate = null;
     orders.find((order, index) => {
@@ -103,9 +105,9 @@ export default class MyOrderList extends React.Component {
             <div>
 
               {showFeedBackForm && (
-                <ModalFeedBack
+                <NPSFeedBack
                   onClose={this.receiveFeedBack}
-                  feedBackQuestion={`How would you rate your experience, in the last ${feedBackPeriodInDays} days?`}
+                  feedBackQuestion={`How likely are you to recommend us to your family and friends?`}
                 />
               )}
 

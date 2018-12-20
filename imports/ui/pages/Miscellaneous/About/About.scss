@@ -17,15 +17,17 @@
         color: $headings-color;
         margin-top:1em;
     }
-
     .about-page {
-        margin-top:2em;
-        background: rgba(255, 255, 255, 0.9);
+        margin-top:1.5em;
     }
 
     @media (min-width: $screen-sm-min) {
         .about-page {
             padding: 1em 3em;
+        }
+
+        .about-getOrganic{
+            margin-top:2.5em;
         }
     }
 

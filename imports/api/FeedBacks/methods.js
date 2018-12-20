@@ -10,6 +10,8 @@ Meteor.methods({
     check(feedBack, {
       postId: String,
       postType: String,
+      feedBackType: String,
+      questionAsked: String,
       description: String,
       rating: Number,
     });

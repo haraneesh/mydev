@@ -38,14 +38,23 @@ FeedBacks.schema = new SimpleSchema({
     label: 'The type of the post on which the feedback was given',
     allowedValues: constants.PostTypes.allowedValues,
   },
-  description: {
+  feedBackType: {
     type: String,
-    label: 'The body of the feedback.',
-    optional: true,
+    label: 'The type of the feedback that was given',
+    allowedValues: constants.FeedBackTypes.allowedValues,
   },
   rating: {
     type: Number,
     label: 'Rating given by the feed back giver.',
+  },
+  questionAsked:{
+    type: String,
+    label: 'Question asked to the user.',
+  },
+  description: {
+    type: String,
+    label: 'The body of the feedback.',
+    optional: true,
   },
   createdAt: {
     type: String,

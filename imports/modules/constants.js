@@ -39,6 +39,7 @@ FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].dis
 // This for organizing tabs in the order screen
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 
+
 // This is for reporting purposes
 const ProductCategory = [
   'Vegetable - country',
@@ -170,6 +171,10 @@ PostTypes.allowedValues = _.reduce(PostTypes, (arr, postType) => {
   return arr;
 }, []);
 
+const FeedBackTypes = {
+  allowedValues : ['NPS'],
+}
+
 const SpecialThemes = ['None', 'Yellow', 'Red', 'Green', 'Orange'];
 
 const CommentTypes = {
@@ -244,6 +249,7 @@ const constants = {
   DifficultyLevels,
   FoodTypes,
   FoodGroups,
+  FeedBackTypes,
   SELECT_EMPTY_VALUE,
 };
 

@@ -7,6 +7,7 @@ import ContactUs from '../../../components/ContactUs/ContactUs';
 import './About.scss';
 
 class About extends React.Component {
+
   componentDidMount() {
    // $('body').attr('class', 'about-body');
     const bodyClassList = document.getElementsByTagName('body')[0].classList;
@@ -29,78 +30,98 @@ class About extends React.Component {
     // <img className = "about_to_rt" src="about/to_rt.jpg"/>
     // <img className = "about_bo_lt" src="about/bo_lt.jpg"/>
     // <img className = "about_bo_rt" src="about/bo_rt.jpg"/>
-
     return (
       <div>
         <Panel className="about-page">
           <Row className="about-section text-left">
-            <Col xs={12}>
-              <h3 className="page-header"> Living Healthy, Made Easy </h3>
-              <h4>Welcome to Namma Suvai</h4>
-              <Row>
-                <Col xs={12}>
-                  <p>
-                     We are a community of parents who are trying to revive healthy eating habits for our kids and family.
-                     To us Eating Healthy is,
-                  </p>
+                <Col sm={6} className="about-getOrganic text-center">
+                  <h4 className="page-header"> 
+					<span className="text-success">Get </span> <br />
+					Variety of Fresh Naturally Grown Vegetables, and Farm products delivered in 
+					<br />Chennai
+				  </h4>
+                  <p>100% Food - No Pesticides, No Artificial Colors, No Fillers</p>
+				  <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button>
                 </Col>
-                <Col xs={12}>
-                  <h4> 1. Eat Natural </h4>
-
-                  <p>
-                      Our bodies are not capable of digesting synthetic chemicals or toxins.
-                  </p>
-                  <p>
-                      We source food from our farms or from farmers and farms we know
-                      personally. It has no chemical pesticides, artificial colouring agents and additives.
-                  </p>
+                <Col sm={6}>
+                  <img src="about/1.png" width="100%"/>
                 </Col>
-                <Col xs={12}>
-                  <h4> 2. Eat Fresh</h4>
+            </Row>
+      </Panel>
 
-                  <p>
-                      Some nutrients in fruits and vegetables start to decay right after picking.
+	<Panel>
+		<Row className="text-center">
+		<h3 className="page-header"> Our Beliefs - Eating Healthy is</h3>
+			<Col xs={12} sm={4}>
+				<Row>
+					<Col className="image_service" xs={12}>
+						<img src="about/agriculture1.png" height="120" width="120"/>
+					</Col>
+					<Col className="describe_service" xs={12}>
+							<h4 className="name_service">
+								Eating Natural 
+							</h4>
+							<p>
+								Our vegetables and farm made produce have no chemical pesticides, artificial 
+					  			colouring agents and additives.
+					  		</p>
+					</Col>
+				</Row>
+			</Col>
+			<Col xs={12} sm={4}>
+				<Row>
+					<Col className="image_service" xs={12}>
+						<img src="about/agriculture3.png" height="120" width="120"/>
+					</Col>
+					<Col className="describe_service" xs={12}>
+							<h4 className="name_service">
+								Eating Right
+							</h4>
+							<p>
+							We can help in creating a custom Basket for you that ensures that your family eats the 
+							macro and micro nutrients necessary for you family's well being.
+					  		</p>
+					</Col>
+				</Row>
+			</Col>
+			<Col xs={12} sm={4}>
+				<Row>
+					<Col className="image_service" xs={12}>
+						<img src="about/agriculture2.png" height="120" width="120"/>
+					</Col>
+					<Col className="describe_service" xs={12}>
+							<h4 className="name_service">
+							Eating Fresh
+							</h4>
+							<p>
+							Some nutrients in fruits and vegetables start to decay right after picking.
                       Eating fresh ensures that you get the full nutrition from food.
-                  </p>
-                  <p>
-                      We ensure that food reaches you within hours of picking.
-                  </p>
+					  		</p>
+					</Col>
+				</Row>
+			</Col>
+			<Col xs={12}>
+                  <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link> 
+                  </h4>
                 </Col>
-                <Col xs={12}>
-                  <h4> 3. Eat Right </h4>
+		</Row>
+	</Panel>
+	<Panel>
+	<Row className="text-center">
+	<Col xs={12}>
+		<h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
+			<p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
+			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p> 
+		</Col>
+		</Row>
+	</Panel>
 
-                  <p>
-                      We need several macro and micro nutrients in appropriate proportions for our well being.
-                      So, It is imperative to eat the right food in the right proportions that our bodies needs.
-                  </p>
-                  <p>
-                      We, as a community, share and recommend how much to eat and what to eat. To help you eat the right food in the right amounts.
-                  </p>
-                </Col>
-                <Col xs={12}>
-                  <p>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link> or we can be reached at <span className="text-warning">+91 44 48569950</span>
-                  </p>
-                </Col>
-                <Col xs={12}>
-                  <p> We are always keen to welcome like minded members to learn from and share.</p>
-                </Col>
-              </Row>
-              { !this.props.authenticated &&
-          (<Row className="text-center member-section">
-            <Col xs={12}>
-                { /*<Button href="/signup">  Join </Button> */ }
-                <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button>
-            </Col>
-          </Row>)
-          }
-
-            </Col>
-          </Row>
-        </Panel>
-        <Row className="text-right" >
-          {/* <img alt="" className="splash-banner" src="about/about_banner.png" /> */}
-        </Row>
-        <ContactUs />
+	<Panel>
+	   <Row className="text-center">
+       <h4> <p> To Join the community, do send us a Whatsapp Message at <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
+       </Row>
+	</Panel>
+    <ContactUs />
       </div>
     );
   }
