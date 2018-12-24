@@ -29,8 +29,10 @@ export default class ProductsOrderMain extends React.Component {
     this.state = {
       products: productArray,
       totalBillAmount,
-      activePanel: (props.recommendations.length > 0) ? '1' : '3',
-      recommendations: props.recommendations,
+      //activePanel: (props.recommendations.length > 0) ? '1' : '3',
+      activePanel: '3', // make groceries open by default
+      //recommendations: props.recommendations,
+      recommendations: [], // do not show recommendations
     };
 
     this.isAdmin = isLoggedInUserAdmin();
@@ -253,12 +255,14 @@ export default class ProductsOrderMain extends React.Component {
           >
               { productSpecials }</Panel>)
           }
-
-          <Panel header={(<DisplayCategoryHeader clName="vegetables_bk_ph" title="Vegetables & Fruit" onclick={() => this.handlePanelSelect('3')} isOpen={this.state.activePanel === '3'} />)} eventKey="3">{ productVegetables }</Panel>
-          <Panel header={(<DisplayCategoryHeader clName="groceries_bk_ph" title="Groceries" onclick={() => this.handlePanelSelect('4')} isOpen={this.state.activePanel === '4'} />)} eventKey="4">{ productGroceries }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="groceries_bk_ph" title="Groceries" onclick={() => this.handlePanelSelect('3')} isOpen={this.state.activePanel === '3'} />)} eventKey="3">{ productGroceries }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="vegetables_bk_ph" title="Vegetables & Fruit" onclick={() => this.handlePanelSelect('4')} isOpen={this.state.activePanel === '4'} />)} eventKey="4">{ productVegetables }</Panel>
           <Panel header={(<DisplayCategoryHeader clName="prepared_bk_ph" title="Ready Mixes, Oil, Batter & Pickles" onclick={() => this.handlePanelSelect('5')} isOpen={this.state.activePanel === '5'} />)} eventKey="5">{ productBatters }</Panel>
-          <Panel header={(<DisplayCategoryHeader clName="pg_bk_ph" title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('6')} isOpen={this.state.activePanel === '6'} />)} eventKey="6">{ productPersonalHygiene }</Panel>
-        </PanelGroup>) }
+          {productPersonalHygiene.length > 0 && (<Panel 
+            header={(<DisplayCategoryHeader clName="pg_bk_ph" 
+            title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('6')} 
+          isOpen={this.state.activePanel === '6'} />)} eventKey="6">{ productPersonalHygiene }</Panel>)}
+        </PanelGroup>)}
 
 
         { !isMobile && (<Tabs defaultActiveKey={3} id="productTabs" bsStyle="pills">
@@ -270,18 +274,18 @@ export default class ProductsOrderMain extends React.Component {
             { productSpecials }
           </Tab>)
           }
-          <Tab eventKey={3} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
-            { productVegetables }
-          </Tab>
-          <Tab eventKey={4} title="Groceries" tabClassName="groceries_bk text-center">
+          <Tab eventKey={3} title="Groceries" tabClassName="groceries_bk text-center">
             { productGroceries }
+          </Tab>
+          <Tab eventKey={4} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
+            { productVegetables }
           </Tab>
           <Tab eventKey={5} title="Mixes, Oil, & Pickles" tabClassName="prepared_bk text-center">
             { productBatters }
           </Tab>
-          <Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
+          { productPersonalHygiene.length > 0 && (<Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
             { productPersonalHygiene }
-          </Tab>
+          </Tab>)}
         </Tabs>)}
 
       </div>
