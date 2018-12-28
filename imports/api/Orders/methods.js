@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { check, Match } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
@@ -295,6 +296,24 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
   },
 });
 
+Meteor.methods({
+  'admin.fetchOrderCount': function adminFetchOrders() { // eslint-disable-line
+   //check(options, Match.Maybe(Object));
+
+    try {
+      if (Roles.userIsInRole(this.userId, 'admin')) {
+        return {
+          total: Orders.find({}).count(),
+        };
+      }
+
+      throw new Meteor.Error('403', 'Sorry, you need to be an administrator to do this.');
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  }
+})
+
 rateLimit({
   methods: [
     getOrders,
@@ -305,6 +324,7 @@ rateLimit({
     upsertOrder,
     removeOrder,
     updateOrderStatus,
+    'admin.fetchOrderCount',
   ],
   limit: 5,
   timeRange: 1000,

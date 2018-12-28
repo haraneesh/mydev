@@ -25,7 +25,7 @@ export const dProductLists = SuvaiLoadable({
 
 // import { AllOrders } from '../pages/admin/AllOrders';
 export const dAllOrders = SuvaiLoadable({
-  loader: () => import('../../pages/Admin/AllOrders'),
+  loader: () => import('../../pages/Admin/AllOrdersNew'),
 });
 
 // import ViewProductListDetails from '../containers/productLists/ViewProductListDetails';

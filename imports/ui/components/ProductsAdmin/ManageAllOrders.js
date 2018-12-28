@@ -35,7 +35,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
     rowsCount={dataList.getSize()}
     width={dynamicWidth}
     onRowClick={onRowClickCallBack}
-    height={dataList.getSize() * 50.5}
+    height={5070}
   >
     <Column
       columnKey="selected"

@@ -4,8 +4,9 @@ import { check, Match } from 'meteor/check';
 import Orders from '../Orders';
 import constants from '../../../modules/constants';
 
+
 Meteor.publish('orders.list', function ordersList(options) {
-  check(options, { limit: Number,
+  check(options, { limit: Number, skip: Number,
     sort: {
       createdAt: Match.Maybe(Number),
       'customer_details.mobilePhone': Match.Maybe(Number),
@@ -15,10 +16,11 @@ Meteor.publish('orders.list', function ordersList(options) {
     },
   });
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort } = options;
+    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip } = options;
     return [Orders.find({}, {
       sort,
       limit,
+      skip,
     })];
   }
   return [];
