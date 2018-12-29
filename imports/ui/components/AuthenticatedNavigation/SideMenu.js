@@ -13,9 +13,10 @@ const SideMenu = props => (
     <Panel className="menu-panel">
       <Row>
         <div className="container">
-        <Col xs={12} sm={6}>
+        { props.isAdmin && (<Col xs={12} sm={6}>
             { <AdminNav {...props} /> }
-          </Col>
+          </Col>)
+        }
           <Col xs={12} sm={6}>
             <ul>
               <li>

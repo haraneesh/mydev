@@ -2,7 +2,7 @@
 
 @mixin alert-variant($background, $border, $text-color) {
   background-color: $background;
-  border-color: $border;
+  border-left-color: $border;
   color: $text-color;
 
   hr {

@@ -35,10 +35,11 @@ UserSignUps.schema = new SimpleSchema({
   username: { type: String, label: 'User Name' },
   email: { type: String, label: 'Email Address' },
   profile: { type: Object },
-  'profile.name.last': { type: String, label: 'Last Name' },
+  'profile.salutation': { type: String, label: 'Salutation' },
   'profile.name.first': { type: String, label: 'First Name' },
+  'profile.name.last': { type: String, label: 'Last Name' },
   'profile.whMobilePhone': { type: String, label: 'Mobile Phone' },
-  'profile.deliveryAddress': { type: String, label: ' Delivery Address' },
+  'profile.deliveryAddress': { type: String, label: 'Delivery Address' },
 });
 
 UserSignUps.attachSchema(UserSignUps.schema);

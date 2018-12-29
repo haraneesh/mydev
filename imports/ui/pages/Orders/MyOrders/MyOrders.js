@@ -7,10 +7,12 @@ import Orders from '../../../../api/Orders/Orders';
 import MyOrderList from '../../../components/Orders/MyOrdersList/MyOrdersList';
 import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
+import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
 const MyOrders = ({ loading, loggedInUser, orders }) => (!loading ? (
   <Row>
     <Col xs={12}>
+      <WelcomeMessage loggedInUser={loggedInUser} />
       <h3 className="page-header">My Orders</h3>
       <MyOrderList loggedInUser={loggedInUser} orders={orders} />
     </Col>

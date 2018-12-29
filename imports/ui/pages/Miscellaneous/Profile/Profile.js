@@ -28,6 +28,9 @@ class Profile extends React.Component {
 
     validate(component.form, {
       rules: {
+        salutation:{
+          required: true,
+        },
         firstName: {
           required: true,
         },
@@ -61,6 +64,9 @@ class Profile extends React.Component {
         },
       },
       messages: {
+        salutation: {
+          required: 'How would you like us to address you (Miss, Mrs or Mr)?',
+        },
         firstName: {
           required: 'What\'s your first name?',
         },
@@ -105,6 +111,7 @@ class Profile extends React.Component {
           first: this.firstName.value,
           last: this.lastName.value,
         },
+      salutation: this.salutation.selectedOptions[0].value,
       whMobilePhone: this.whMobilePhone.value,
       deliveryAddress: this.deliveryAddress.value,
       },
@@ -134,32 +141,38 @@ class Profile extends React.Component {
 
   renderPasswordUser(loading, user) {
     return !loading ? (<div>
-      <Row>
-        <Col xs={6}>
-          <FormGroup>
-            <ControlLabel>First Name</ControlLabel>
-            <input
-              type="text"
-              name="firstName"
-              defaultValue={user.profile.name.first}
-              ref={firstName => (this.firstName = firstName)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-        <Col xs={6}>
-          <FormGroup>
-            <ControlLabel>Last Name</ControlLabel>
-            <input
-              type="text"
-              name="lastName"
-              defaultValue={user.profile.name.last}
-              ref={lastName => (this.lastName = lastName)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-      </Row>
+        <FormGroup>
+          <ControlLabel>Salutation</ControlLabel>
+          <select name="salutation" 
+            ref={salutation=>(this.salutation=salutation)} 
+            className="form-control" 
+            defaultValue={(user.profile.salutation)?user.profile.salutation:""}>
+            <option value="Mrs.">Mrs</option>
+            <option value="Mr.">Mr</option>
+            <option value="Miss"> Miss</option>
+          </select>
+      </FormGroup>
+      <FormGroup>
+          <ControlLabel>First Name</ControlLabel>
+          <input
+            type="text"
+            name="firstName"
+            defaultValue={user.profile.name.first}
+            ref={firstName => (this.firstName = firstName)}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Last Name</ControlLabel>
+          <input
+            type="text"
+            name="lastName"
+            defaultValue={user.profile.name.last}
+            ref={lastName => (this.lastName = lastName)}
+            className="form-control"
+          />
+      </FormGroup>
+      
       <FormGroup>
         <ControlLabel>Email Address</ControlLabel>
         <input
@@ -202,17 +215,33 @@ class Profile extends React.Component {
           className="form-control"
         />
       </FormGroup>
-      <FormGroup>
-        <ControlLabel>Confirm New Password</ControlLabel>
-        <input
-          type="password"
-          name="confirmPassword"
-          ref={confirmPassword => (this.confirmPassword = confirmPassword)}
-          className="form-control"
-        />
-        <InputHint>Use at least six characters.</InputHint>
-      </FormGroup>
-      <Button type="submit" bsStyle="primary">Save Profile</Button>
+      <InputHint>
+        <ul className="col-xs-6">
+          <li>One Lowercase character</li>
+          <li>One Uppercase character</li>
+          <li>One Number</li>
+        </ul>
+        <ul className="col-xs-6">
+          <li>One Special character</li>
+          <li>6 characters minimum</li>
+        </ul>
+        </InputHint>
+        <Row>
+          <Col xs={12}>
+            <FormGroup>
+              <ControlLabel>Confirm New Password</ControlLabel>
+              <input
+                type="password"
+                name="confirmPassword"
+                ref={confirmPassword => (this.confirmPassword = confirmPassword)}
+                className="form-control"
+              />
+            </FormGroup>
+          </Col>
+      </Row>
+      <div>
+        <Button type="submit" bsStyle="primary">Save Profile</Button>
+      </div>
     </div>) : <div />;
   }
 

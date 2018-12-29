@@ -32,33 +32,38 @@ export const findUserForm = (callBack) =>{
             className="userProfileForm">
             <Panel>
             <Row>
-              <Col xs={ 12 } sm={ 6 }>
-              <Row>
-                  <Col xs={ 6 } sm={ 6 }>
-                    <FormGroup>
-                      <ControlLabel>First Name</ControlLabel>
-                      <FormControl
-                        type="text"
-                        ref="firstName"
-                        name="firstName"
-                        placeholder="First Name"
-                        defaultValue = { (user) ? user.profile.name.first:"" }
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col xs={ 6 } sm={ 6 }>
-                    <FormGroup>
-                      <ControlLabel>Last Name</ControlLabel>
-                      <FormControl
-                        type="text"
-                        ref="lastName"
-                        name="lastName"
-                        placeholder="Last Name" 
-                        defaultValue = { (user) ? user.profile.name.last:"" }
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
+              <Col xs={ 12 } sm={ 8 }>
+                <FormGroup>
+                  <ControlLabel>Salutation</ControlLabel>
+                  <select name="salutation" 
+                      ref={salutation=>(this.salutation=salutation)} 
+                      className="form-control" 
+                      defaultValue={(user && user.profile.salutation) ? user.profile.salutation:""}>
+                    <option value="Mrs.">Mrs</option>
+                    <option value="Mr.">Mr</option>
+                    <option value="Miss"> Miss</option>
+                  </select>
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>First Name</ControlLabel>
+                  <FormControl
+                    type="text"
+                    ref="firstName"
+                    name="firstName"
+                    placeholder="First Name"
+                    defaultValue = { (user) ? user.profile.name.first:"" }
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Last Name</ControlLabel>
+                  <FormControl
+                    type="text"
+                    ref="lastName"
+                    name="lastName"
+                    placeholder="Last Name" 
+                    defaultValue = { (user) ? user.profile.name.last:"" }
+                  />
+                </FormGroup>
                 <FormGroup>
                   <ControlLabel>Email Address</ControlLabel>
                   <FormControl
@@ -128,6 +133,7 @@ export const findUserForm = (callBack) =>{
         },
         whMobilePhone:document.querySelector('input[name="whMobilePhone"]').value,
         deliveryAddress:document.querySelector('[name="deliveryAddress"]').value,
+        salutation: document.querySelector('[name="salutation"]').selectedOptions[0].value,
       },
       isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked
     });

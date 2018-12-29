@@ -624,8 +624,7 @@ $modal-sm:                    300px !default;
 //== Alerts
 //
 //## Define alert colors, border radius, and padding.
-
-$alert-padding:               15px !default;
+$alert-padding:               20px !default;
 $alert-border-radius:         $border-radius-base !default;
 $alert-link-font-weight:      bold !default;
 
@@ -644,7 +643,6 @@ $alert-warning-border:        $state-warning-border !default;
 $alert-danger-bg:             $state-danger-bg !default;
 $alert-danger-text:           $state-danger-text !default;
 $alert-danger-border:         $state-danger-border !default;
-
 
 //== Progress bars
 //
