@@ -76,7 +76,7 @@ class About extends React.Component {
 							</h4>
 							<p>
 							We can help in creating a custom Basket for you that ensures that your family eats the 
-							macro and micro nutrients necessary for you family's well being.
+							macro and micro nutrients necessary for your family's well being.
 					  		</p>
 					</Col>
 				</Row>

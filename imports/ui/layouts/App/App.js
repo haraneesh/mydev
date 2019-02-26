@@ -61,6 +61,8 @@ import {
   dEditAllSpecials,
   dAllOrders,
   dVision,
+  dHealthPrinciples,
+  dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
   dMyWallet,
@@ -147,6 +149,8 @@ const App = props => (
         <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} {...props} />
         <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} {...props} />
         <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
+        <Public exact routeName="Health Principles" layout={MainLayout} path="/healthprinciples" component={dHealthPrinciples} {...props} />
+        <Public exact routeName="Health Principles FAQ" layout={MainLayout} path="/healthfaq" component={dHealthFAQ} {...props} />
         { /* Admin Reports */ }
         <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
         

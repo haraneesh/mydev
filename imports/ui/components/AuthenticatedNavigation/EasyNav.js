@@ -11,7 +11,7 @@ export const EasyNavNarrowScreen = () => (
       <Link to="/order"> <Glyphicon glyph="pencil" /> Place Order </Link>
     </li>
     <li className="col-xs-4 text-center">
-      <Link to="/specials"> Specials <Glyphicon glyph="heart" className="special-heart" /></Link>
+      <Link to="/healthprinciples"> <Glyphicon glyph="heart" className="alertMenu"/> Health</Link>
     </li>
     <li className="col-xs-4 text-center">
       <Link to="/"> <Glyphicon glyph="list" /> My Orders</Link>
@@ -25,7 +25,7 @@ export const EasyNavWideScreen = () => (
       <NavLink to="/order"><Glyphicon glyph="pencil" /> Place Order</NavLink>
     </li>
     <li>
-      <NavLink to="/specials"> Specials <Glyphicon glyph="heart" className="special-heart" /></NavLink>
+      <NavLink to="/healthprinciples"> <Glyphicon glyph="heart" className="alertMenu"/> Health </NavLink>
     </li>
     <li>
       <NavLink exact to="/"><Glyphicon glyph="list" /> My Orders</NavLink>

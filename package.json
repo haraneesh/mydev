@@ -4,7 +4,7 @@
   "description": "Namma Suvai",
   "private": true,
   "scripts": {
-    "start": "meteor --settings settings-development.json",
+    "dev": "meteor --settings settings-development.json",
     "bundleViz": "meteor --settings settings-development.json --extra-packages bundle-visualizer --production",
     "test": "jest"
   },

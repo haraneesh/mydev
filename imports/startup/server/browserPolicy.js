@@ -22,3 +22,5 @@ BrowserPolicy.content.allowOriginForAll('inventory.zoho.com');
 BrowserPolicy.content.allowOriginForAll('https://maxcdn.bootstrapcdn.com/');
 // Flickr url support
 // BrowserPolicy.content.allowOriginForAll("c1.staticflickr.com");
+// Linking videos
+BrowserPolicy.content.allowOriginForAll('player.vimeo.com');

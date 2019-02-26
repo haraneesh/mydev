@@ -113,6 +113,14 @@ export const dVision = SuvaiLoadable({
   loader: () => import('../../pages/Miscellaneous/Vision/Vision'),
 });
 
+export const dHealthPrinciples = SuvaiLoadable({
+  loader: () => import('../../pages/Miscellaneous/Health/Principles/Principles'),
+});
+
+export const dHealthFAQ = SuvaiLoadable({
+  loader: () => import('../../pages/Miscellaneous/Health/FAQ/FAQ'),
+});
+
 // Reports
 export const dReportsHome = SuvaiLoadable({
   loader: () => import('../../pages/Reports/ReportsHome/ReportsHome'),
