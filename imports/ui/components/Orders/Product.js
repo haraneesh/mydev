@@ -8,7 +8,7 @@ import './Product.scss';
 
 const Product = ({ updateProductQuantity, product, isAdmin }) => (
   <ListGroupItem key={product._id} className={(product.displayAsSpecial) ? 'special-product-item' : ''}>
-    {product.displayAsSpecial ? (<Label bsStyle="warning">special</Label>) : ''}
+    {/*product.displayAsSpecial ? (<Label bsStyle="warning">special</Label>) : ''*/}
     {!isAdmin ?
     (<ProductForNonAdmin
       productId={product._id}

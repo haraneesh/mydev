@@ -1,27 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, Glyphicon, FormControl, ListGroupItem } from 'react-bootstrap';
+import { Row, Col, Button, Glyphicon, FormControl, PanelGroup } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
 
 
-export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName }) => (
-  <ListGroupItem>
+export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName, onBackClick }) => (
     <Row>
-      <Col sm={9}>
+      <Col sm={8}>
         <h4 className="text-right-not-xs">Total <strong>{
                   formatMoney(totalBillAmount, accountSettings)
                 }</strong></h4>
       </Col>
-      <Col sm={3}>
-        <div className="text-right-not-xs">
-          <Button bsStyle="primary" disabled={totalBillAmount <= 0} onClick={onButtonClick}>
+      <Col className="text-right-not-xs" sm={4} xs={12}>
+        <Button bsStyle="primary" disabled={totalBillAmount <= 0} onClick={onButtonClick} className="btn-block">
             { submitButtonName }
           </Button>
-        </div>
       </Col>
+      {onBackClick && (<Col sm={4} xs={12}>
+          <Button  style={{marginTop:"0.5em"}} onClick={onBackClick} className="btn-block">← Back</Button>
+        </Col>)
+      }
     </Row>
-  </ListGroupItem>
 );
 
 OrderFooter.propTypes = {
@@ -47,7 +47,7 @@ DisplayCategoryHeader.propTypes = {
 }
 
 export const OrderComment = ({ comments }) => (
-  <ListGroupItem>
+    <PanelGroup>
     <Row>
       <Col sm={3}>
         <h4 className="noMarginNoPadding">
@@ -60,10 +60,11 @@ export const OrderComment = ({ comments }) => (
           componentClass="textarea"
           placeholder="Is there anything that you would like to tell us about this order?"
           defaultValue={comments}
+          rows="4"
         />
       </Col>
     </Row>
-  </ListGroupItem>
+    </PanelGroup>
 );
 
 OrderComment.propTypes = {

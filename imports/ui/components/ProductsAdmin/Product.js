@@ -289,7 +289,7 @@ export default class Product extends React.Component {
             </Col>
 
             <Col xs={3}>
-              <FieldGroup
+             {/*} <FieldGroup
                 controlType="select"
                 controlLabel="Category"
                 controlName="category"
@@ -297,6 +297,15 @@ export default class Product extends React.Component {
                 updateValue={this.handleProductUpsert}
                 defaultValue={this.props.product.category}
                 choiceValues={constants.ProductCategory}
+                help
+              />*/}
+              <FieldGroup
+                controlType="text"
+                controlLabel="Category"
+                controlName="category"
+                displayControlName="true"
+                updateValue={this.handleProductUpsert}
+                defaultValue={product.category}
                 help
               />
             </Col>

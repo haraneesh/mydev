@@ -1,6 +1,7 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
+import ScrollTrigger from 'react-scroll-trigger';
 import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
 import { Tabs, Tab, PanelGroup } from 'react-bootstrap';
 import $ from 'jquery';
@@ -12,7 +13,6 @@ import ProductSearch from '../ProductSearch/ProductSearch';
 import GenerateOrderList from '../../../../reports/client/GenerateOrderList';
 import { upsertOrder, updateMyOrderStatus } from '../../../../api/Orders/methods';
 import { OrderFooter, DisplayCategoryHeader, OrderComment } from '../ProductsOrderCommon/ProductsOrderCommon';
-import {ReviewOrder} from '../ViewOrderProducts/ViewOrderProducts';
 
 import './ProductsOrderMain.scss';
 
@@ -34,8 +34,7 @@ export default class ProductsOrderMain extends React.Component {
       //activePanel: (props.recommendations.length > 0) ? '1' : '3',
       activePanel: '3', // make groceries open by default
       //recommendations: props.recommendations,
-      recommendations: [], // do not show recommendations,
-      reviewSubmitOrder: false,
+      recommendations: [], // do not show recommendations
     };
 
     this.isAdmin = isLoggedInUserAdmin();
@@ -49,7 +48,6 @@ export default class ProductsOrderMain extends React.Component {
     this.getProductsMatchingSearch = this.getProductsMatchingSearch.bind(this);
     this.wasProductOrderedPreviously = this.wasProductOrderedPreviously.bind(this);
     this.displayProductsByTypeStandardView = this.displayProductsByTypeStandardView.bind(this);
-    this.handleReviewOrder = this.handleReviewOrder.bind(this);
   }
 
   componentDidMount() {
@@ -64,35 +62,23 @@ export default class ProductsOrderMain extends React.Component {
     if (this.state.activePanel !== this.noControlIsSelected && prevState.activePanel !== this.state.activePanel) {
       const elem = $('#accordion .in')[0];
       if (elem && elem.offsetTop) {
-        elem.scrollIntoView();
-        //const movLocation = elem.offsetTop+500;
-        //window.scrollTo(movLocation, 0);
+        window.scrollTo(elem.offsetTop, 0);
        // $('html, body').animate({ scrollTop: elem.offsetTop }, 250);
       }
       // window.scrollTo(elem.offsetTop, 0);
     }
   }
 
-  handleReviewOrder(reviewOrder){
-    this.setState({
-      reviewSubmitOrder: reviewOrder,
-    })
-
-  }
-
-  getSelectedProducts(products){
-    const selProducts = [];
-    for (const key in products) {
-      if (products[key].quantity && products[key].quantity > 0) {
-        selProducts.push(products[key]);
+  handleOrderSubmit() {
+    const products = [];
+    for (const key in this.state.products) {
+      if (this.state.products[key].quantity && this.state.products[key].quantity > 0) {
+        products.push(this.state.products[key]);
       }
     }
-    return selProducts;
-  }
 
-  handleOrderSubmit() {
     const order = {
-      products: this.getSelectedProducts(this.state.products),
+      products,
       _id: this.props.orderId,
       order_status: constants.OrderStatus.Pending.name,
           // totalBillAmount: this.state.totalBillAmount,
@@ -195,6 +181,7 @@ export default class ProductsOrderMain extends React.Component {
     });
   }
 
+
   wasProductOrderedPreviously(productId) {
     const { recommendations } = this.state;
     if (!recommendations.length > 0) {
@@ -267,6 +254,16 @@ export default class ProductsOrderMain extends React.Component {
        
     });
 
+    if (this.props.dateValue.getDay() === 2 /*Tuesday*/ || this.props.dateValue.getDay() === 4 /*Thursday*/) {
+      return this.displayProductsByTypeExperimentalView( 
+        productGroceries, 
+        productVegetables, 
+        productBatters, 
+        productPersonalHygiene, 
+        productSpecials, 
+        productRecommended,
+        isMobile);
+    }
     return this.displayProductsByTypeStandardView(
       productGroceries, 
       productVegetables, 
@@ -277,6 +274,45 @@ export default class ProductsOrderMain extends React.Component {
       isMobile);
     
   }
+
+  displayProductsByTypeExperimentalView(productGroceries, 
+    productVegetables, 
+    productBatters, 
+    productPersonalHygiene, 
+    productSpecials, 
+    productRecommended,
+    isMobile){
+      return(
+      <div className="productOrderList">
+        <Row className="stickyHeader">
+          <Col xs={3}><a href="#s">Special</a></Col>
+          <Col xs={3}><a href="#g">Groceries</a></Col>
+          <Col xs={3}><a href="#v">Vegetables</a></Col>
+          <Col xs={3}><a href="#h">Hygiene</a></Col>
+        </Row>
+        <Row>
+        <Col xs={12}>
+        <Row>
+          <h2 id="s" className="productCategoryHeading">Special</h2>
+          {productSpecials}
+        </Row>
+        <Row>
+          <h2 id="g" className="productCategoryHeading">Groceries</h2>
+          {productGroceries}
+        </Row>
+        <Row>
+          <h2 id="v" className="productCategoryHeading">Vegetables</h2>
+          {productVegetables}
+        </Row>
+        <Row>
+          <h2 id="h" className="productCategoryHeading">Hygiene</h2>
+          {productPersonalHygiene}
+        </Row>
+        </Col>
+        </Row>
+      </div>
+      );
+    }
 
   displayProductsByTypeStandardView(
     productGroceries, 
@@ -303,7 +339,6 @@ export default class ProductsOrderMain extends React.Component {
           }
 
           {productSpecials.length > 0 && (<Panel
-            className="stickyHeader"
             header={(<DisplayCategoryHeader
               clName="specials_bk_ph"
               title="Specials"
@@ -316,7 +351,7 @@ export default class ProductsOrderMain extends React.Component {
           }
           <Panel header={(<DisplayCategoryHeader clName="groceries_bk_ph" title="Groceries" onclick={() => this.handlePanelSelect('3')} isOpen={this.state.activePanel === '3'} />)} eventKey="3">{ productGroceries }</Panel>
           <Panel header={(<DisplayCategoryHeader clName="vegetables_bk_ph" title="Vegetables & Fruit" onclick={() => this.handlePanelSelect('4')} isOpen={this.state.activePanel === '4'} />)} eventKey="4">{ productVegetables }</Panel>
-          <Panel header={(<DisplayCategoryHeader clName="prepared_bk_ph" title="Podi, Oil, Batter & Pickles" onclick={() => this.handlePanelSelect('5')} isOpen={this.state.activePanel === '5'} />)} eventKey="5">{ productBatters }</Panel>
+          <Panel header={(<DisplayCategoryHeader clName="prepared_bk_ph" title="Ready Mixes, Oil, Batter & Pickles" onclick={() => this.handlePanelSelect('5')} isOpen={this.state.activePanel === '5'} />)} eventKey="5">{ productBatters }</Panel>
           {productPersonalHygiene.length > 0 && (<Panel 
             header={(<DisplayCategoryHeader clName="pg_bk_ph" 
             title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('6')} 
@@ -339,7 +374,7 @@ export default class ProductsOrderMain extends React.Component {
           <Tab eventKey={4} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
             { productVegetables }
           </Tab>
-          <Tab eventKey={5} title="Podi, Oil, & Pickles" tabClassName="prepared_bk text-center">
+          <Tab eventKey={5} title="Mixes, Oil, & Pickles" tabClassName="prepared_bk text-center">
             { productBatters }
           </Tab>
           { productPersonalHygiene.length > 0 && (<Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
@@ -351,7 +386,7 @@ export default class ProductsOrderMain extends React.Component {
     );
   }
 
-  displayProductsAndSubmit(buttonName) {
+  displayProductsAndSubmit(submitButtonName) {
    // Grouping product categories by tabs
     const ipadWidth = 768;
     const isMobile = window.innerWidth <= ipadWidth;
@@ -367,13 +402,14 @@ export default class ProductsOrderMain extends React.Component {
            <ListGroup className="products-list">
 
              { this.displayProductsByType(this.state.products, isMobile) }
-             
+             <Row>
+               <OrderComment comments={this.props.comments} />
                <OrderFooter
                  totalBillAmount={this.state.totalBillAmount}
-                 onButtonClick={()=>{this.handleReviewOrder(true)}}
-                 submitButtonName={buttonName}
+                 onButtonClick={this.handleOrderSubmit}
+                 submitButtonName={submitButtonName}
                />
-             
+             </Row>
            </ListGroup>
          </Col>
        </Row>
@@ -388,38 +424,18 @@ export default class ProductsOrderMain extends React.Component {
   render() {
     const formHeading = (this.props.orderStatus) ? 'Update Your Order' : ' Place Your Order';
     const submitButtonName = (this.props.orderStatus) ? 'Update Order' : ' Place Order';
-    const reviewOrderButton = 'Checkout →';
-
-      return this.state.reviewSubmitOrder ? (
-        <Row>
-          <Col xs={12}>
-            <h3 className="page-header"> Review Order</h3>
-          </Col>
-          <Col xs={12}>
-          <Panel>
-              <ReviewOrder products={this.getSelectedProducts(this.state.products)} />
-              <OrderComment comments={this.props.comments} />
-              <OrderFooter
-                totalBillAmount={this.state.totalBillAmount}
-                onButtonClick={this.handleOrderSubmit}
-                submitButtonName={submitButtonName}
-                onBackClick={()=>{this.handleReviewOrder(false)}}
-              />   
-          </Panel>
-         </Col>
-         </Row>
-    ) :(
+    return (
       <div className="EditOrderDetails ">
         <Row>
           <Col xs={12}>
             <h3 className="page-header"> { formHeading }
               { this.displayToolBar(this.props.orderStatus) }
             </h3>
-            { this.displayProductsAndSubmit(reviewOrderButton) }
+            { this.displayProductsAndSubmit(submitButtonName) }
           </Col>
         </Row>
       </div>
-      );
+    );
   }
 }
 

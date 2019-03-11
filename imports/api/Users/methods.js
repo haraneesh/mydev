@@ -10,6 +10,7 @@ import constants from '../../modules/constants';
 import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
+import {Emitter, Events} from '../events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 
 export const editUserProfile = new ValidatedMethod({
@@ -227,11 +228,19 @@ Meteor.methods({
   'users.sendVerificationEmail': function usersSendVerificationEmail() {
     return Accounts.sendVerificationEmail(this.userId);
   },
+  'users.visitedPlaceNewOrder': function lastVisitedPlaceNewOrder() {
+    try {
+      Emitter.emit(Events.NAV_PLACEORDER_LANDING, {userId:this.userId})
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
 });
 
 rateLimit({
   methods: [
     'users.sendVerificationEmail',
+    'users.visitedPlaceNewOrder',
     updateUser,
     adminUpdateUser,
     findUser,

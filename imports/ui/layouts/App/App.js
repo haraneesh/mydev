@@ -117,7 +117,7 @@ const App = props => (
 
         {/* Order */}
         <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
-        <Authenticated routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
+        <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
 
         {/* Accept Payment */}
         <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />

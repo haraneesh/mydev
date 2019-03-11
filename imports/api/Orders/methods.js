@@ -9,6 +9,7 @@ import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
+import {Emitter, Events} from '../events';
 
 const calculateOrderTotal = (order, productListId) => {
   // Get Product List for cost
@@ -112,6 +113,8 @@ export const upsertOrder = new ValidatedMethod({
     if (response.insertedId) {
       ProductLists.update({ _id: order.productOrderListId },
         { $addToSet: { order_ids: response.insertedId } });
+
+        Emitter.emit(Events.ORDER_CREATED, {userId:this.userId})
     }
     return response;
   },

@@ -1,14 +1,32 @@
 @import '../../../stylesheets/bootstrap/bootstrap/variables';
 
 .productOrderList{
+
+.panel-heading{
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: $table-border-color 1px solid !important;
+}
 .order-details-products .panel-default {
     border: 0px none;
     border-bottom: 1px solid;
     border-color: $gray-lighter;
 }
 
+.productCategoryHeading::before {
+    content:"";
+    display:block;
+    height:50px; /* fixed header height*/
+  }
+
 .order-image{
     height:5em;
+}
+
+.form-control{
+    font-size: $font-size-large;
 }
 
 // Product ordering tabs
@@ -106,6 +124,11 @@
         display: flex;
         justify-content: center;
         flex-direction: column;
+    }
+
+    .productCategoryHeading {
+        padding: 1em 0;
+        text-align: center;
     }
 
     .productCat_recommended_bk_ph{

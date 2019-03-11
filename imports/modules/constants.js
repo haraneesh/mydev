@@ -39,19 +39,6 @@ FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].dis
 // This for organizing tabs in the order screen
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 
-
-// This is for reporting purposes
-const ProductCategory = [
-  'Vegetable - country',
-  'Vegetable - hill',
-  'Vegetable - essential',
-  'Vegetable - greens',
-  'Provisions - processed',
-  'Provisions - whole',
-  'Fruit',
-  'Hygiene',
-];
-
 /*
 Pending — customer started the checkout process, but did not complete it.
       Incomplete orders are assigned a "Pending" status, and can be found under the More tab in the View Orders screen.
@@ -231,7 +218,6 @@ const SELECT_EMPTY_VALUE = '';
 
 const constants = {
   ProductType,
-  ProductCategory,
   OrderStatus,
   DaysFromTodayForward,
   ProductListStatus,
