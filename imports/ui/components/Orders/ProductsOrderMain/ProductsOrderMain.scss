@@ -2,6 +2,10 @@
 
 .productOrderList{
 
+.panel{
+    margin-top: 0.5rem;
+}
+
 .panel-heading{
     position: -webkit-sticky; /* Safari */
     position: sticky;
@@ -166,5 +170,16 @@
     .noMarginNoPadding{
         margin-bottom:0px;
         padding-bottom:0px;
+    }
+
+    @media (max-width: $screen-sm-min) {
+        .orderFooter{
+            position: fixed;
+            background:$navbar-default-bg;
+            width: 100%;
+            left: 0px;
+            bottom: 0px;
+            z-index: $zindex-navbar;
+        }
     }
 }

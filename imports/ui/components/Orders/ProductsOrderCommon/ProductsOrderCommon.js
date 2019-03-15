@@ -6,22 +6,31 @@ import { accountSettings } from '../../../../modules/settings';
 
 
 export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName, onBackClick }) => (
-    <Row>
-      <Col sm={8}>
-        <h4 className="text-right-not-xs">Total <strong>{
-                  formatMoney(totalBillAmount, accountSettings)
-                }</strong></h4>
+    <div className="orderFooter">
+      {onBackClick && (<Col sm={4} xs={12} className="visible-sm visible-md visible-lg">
+          <Button  onClick={onBackClick} className="btn-block">← Back</Button>
+        </Col>)}
+      <Col sm={ onBackClick? 4 : 8}>
+        <h4 className="text-right-not-xs">
+            Total  
+            <strong>
+            {
+              formatMoney(totalBillAmount, accountSettings)
+            }
+            </strong></h4>
       </Col>
       <Col className="text-right-not-xs" sm={4} xs={12}>
-        <Button bsStyle="primary" disabled={totalBillAmount <= 0} onClick={onButtonClick} className="btn-block">
+        <Button bsStyle="primary" style={{marginBottom:"0.5em"}} 
+          disabled={totalBillAmount <= 0} 
+          onClick={onButtonClick} className="btn-block">
             { submitButtonName }
           </Button>
       </Col>
-      {onBackClick && (<Col sm={4} xs={12}>
-          <Button  style={{marginTop:"0.5em"}} onClick={onBackClick} className="btn-block">← Back</Button>
+      {onBackClick && (<Col sm={4} xs={12} className="visible-xs ">
+          <Button  onClick={onBackClick} className="btn-block">← Back</Button>
         </Col>)
       }
-    </Row>
+    </div>
 );
 
 OrderFooter.propTypes = {
@@ -34,7 +43,9 @@ OrderFooter.propTypes = {
 export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} className={`productCat_${clName}`} />
-    <Col xs={8} className="prodCatTitle"> <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p> </Col>
+    <Col xs={8} className="prodCatTitle"> 
+      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p> 
+    </Col>
     <Col xs={1} className="prodCatPlus"> <small> <Glyphicon glyph={isOpen ? 'minus' : 'plus'} /> </small> </Col>
   </Row>
 );
