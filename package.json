@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "meteor --settings settings-development.json",
+    "devProd": "meteor --settings settings-development.json --production",
     "bundleViz": "meteor --settings settings-development.json --extra-packages bundle-visualizer --production",
     "test": "jest"
   },

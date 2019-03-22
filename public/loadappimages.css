@@ -1,0 +1,15 @@
+.productOrderList .nav>li.groceries_bk>a, 
+.productOrderList .nav>li.pg_bk>a, 
+.productOrderList .nav>li.prepared_bk>a, 
+.productOrderList .nav>li.recommended_bk>a, 
+.productOrderList .nav>li.specials_bk>a, 
+.productOrderList .nav>li.vegetables_bk>a, 
+.productOrderList  .productCat_recommended_bk_ph,
+.productOrderList .productCat_specials_bk_ph,
+.productOrderList .productCat_vegetables_bk_ph,
+.productOrderList .productCat_groceries_bk_ph,
+.productOrderList .productCat_prepared_bk_ph,
+.productOrderList .productCat_pg_bk_ph
+{
+    background-image: url(/app/order-tabs.png);
+}

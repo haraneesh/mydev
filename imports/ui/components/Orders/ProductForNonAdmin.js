@@ -52,7 +52,7 @@ const ProductForNonAdmin = ({
             totQuantityOrdered, previousOrdQty, quantitySelected)
           }
         /> }
-        <h4><small>{description}</small></h4>
+        <p><small>{description}</small></p>
       </Col>
 
       <Col sm={4}>

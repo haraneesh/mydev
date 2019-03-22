@@ -34,7 +34,7 @@ export default class Menu extends Component {
           </Button>
         </div>
         <div className="menu">
-          <div className={menuVisible + this.props.alignment} style={{zIndex:50}}>
+          <div className={menuVisible + this.props.alignment} style={{zIndex:1100}}>
             {this.props.children}
           </div>
         </div>

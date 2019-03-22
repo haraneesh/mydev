@@ -12,7 +12,7 @@ import ProductSearch from '../ProductSearch/ProductSearch';
 import ProductsOrderMobile from '../ProductsOrderMobile/ProductsOrderMobile';
 import GenerateOrderList from '../../../../reports/client/GenerateOrderList';
 import { upsertOrder, updateMyOrderStatus } from '../../../../api/Orders/methods';
-import { OrderFooter, DisplayCategoryHeader, OrderComment } from '../ProductsOrderCommon/ProductsOrderCommon';
+import { OrderFooter, OrderComment } from '../ProductsOrderCommon/ProductsOrderCommon';
 import {ReviewOrder} from '../ViewOrderProducts/ViewOrderProducts';
 
 import './ProductsOrderMain.scss';

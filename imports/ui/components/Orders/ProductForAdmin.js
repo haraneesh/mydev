@@ -71,7 +71,7 @@ class ProductForAdmin extends React.Component {
                 this.state.quantitySelected)
               }
           /> }
-          <h4><small>{description}</small></h4>
+          <p><small>{description}</small></p>
         </Col>
 
         <Col sm={3}>

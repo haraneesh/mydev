@@ -10,17 +10,16 @@ export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName, 
       {onBackClick && (<Col sm={4} xs={12} className="visible-sm visible-md visible-lg">
           <Button  onClick={onBackClick} className="btn-block">← Back</Button>
         </Col>)}
-      <Col sm={ onBackClick? 4 : 8}>
-        <h4 className="text-right-not-xs">
-            Total  
+      {onBackClick && (<Col sm={4}>
+        <h4 className="text-right-not-xs">{`Total `}
             <strong>
             {
               formatMoney(totalBillAmount, accountSettings)
             }
             </strong></h4>
-      </Col>
+      </Col>)}
       <Col className="text-right-not-xs" sm={4} xs={12}>
-        <Button bsStyle="primary" style={{marginBottom:"0.5em"}} 
+        <Button bsStyle="primary" style={{marginBottom:"0.5em", marginTop:"0.5em"}} 
           disabled={totalBillAmount <= 0} 
           onClick={onButtonClick} className="btn-block">
             { submitButtonName }

@@ -20,6 +20,7 @@ export default class ProductsOrderMobile extends React.Component {
       panelToFocus: "",
       //recommendations: props.recommendations,
       recommendations: [], // do not show recommendations,
+      scrollToLocation: false,
     };
 
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
@@ -36,11 +37,14 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   scrollToSelectedSection(){
-    document.getElementById(this.state.panelToFocus).scrollIntoView();
+    document.getElementById(this.state.panelToFocus).scrollIntoView(); 
+    this.setState({
+      scrollToLocation: false,
+    })
   }
 
   componentDidUpdate(){
-    if (this.state.panelToFocus !== "") {
+    if (this.state.scrollToLocation === true) {
       setTimeout(() => { this.scrollToSelectedSection() }, 350);
     }
   }
@@ -54,10 +58,10 @@ export default class ProductsOrderMobile extends React.Component {
     return selProducts;
   }
 
-
   handlePanelSelect(panelToFocus) {
     this.setState({
-      panelToFocus: (this.state.panelToFocus === ""? panelToFocus: "")
+      panelToFocus: (this.state.panelToFocus === ""? panelToFocus: ""),
+      scrollToLocation: true,
     });
   }
 
@@ -71,7 +75,7 @@ export default class ProductsOrderMobile extends React.Component {
     return (!!prevOrderedProducts[productId]);
   }
 
-  displayProductsByType(products) {
+  displayProductsByType() {
    
     const productGroups = this.props.productGroups;
 
@@ -185,7 +189,6 @@ export default class ProductsOrderMobile extends React.Component {
       </div>
     );
   }
-
 
   render() {
       return (
