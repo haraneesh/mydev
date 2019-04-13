@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, Glyphicon, FormControl, PanelGroup } from 'react-bootstrap';
+import { Row, Col, Button, FormControl, PanelGroup } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
 
@@ -18,7 +18,7 @@ export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName, 
             }
             </strong></h4>
       </Col>)}
-      <Col className="text-right-not-xs" sm={4} xs={12}>
+      <Col className="text-right-not-xs" sm={4}  smOffset={onBackClick?0:8} xs={12}>
         <Button bsStyle="primary" style={{marginBottom:"0.5em", marginTop:"0.5em"}} 
           disabled={totalBillAmount <= 0} 
           onClick={onButtonClick} className="btn-block">
@@ -45,7 +45,12 @@ export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
     <Col xs={8} className="prodCatTitle"> 
       <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p> 
     </Col>
-    <Col xs={1} className="prodCatPlus"> <small> <Glyphicon glyph={isOpen ? 'minus' : 'plus'} /> </small> </Col>
+    <Col xs={1} className="prodCatPlus"> 
+      <span className="text-default">
+        {!!isOpen && (<b className="fa fa-angle-up" style={{fontSize:'1.5em'}} />)}
+        {!isOpen && (<b className="fa fa-angle-down" style={{fontSize:'1.5em'}} />)}
+      </span> 
+    </Col>
   </Row>
 );
 

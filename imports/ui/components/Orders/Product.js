@@ -7,7 +7,7 @@ import ProductForNonAdmin from './ProductForNonAdmin';
 import './Product.scss';
 
 const Product = ({ updateProductQuantity, product, isAdmin }) => (
-  <ListGroupItem key={product._id} className={(product.displayAsSpecial) ? 'special-product-item' : ''}>
+  <div key={product._id} className={(product.displayAsSpecial) ? 'special-product-item' : ''}>
     {/*product.displayAsSpecial ? (<Label bsStyle="warning">special</Label>) : ''*/}
     {!isAdmin ?
     (<ProductForNonAdmin
@@ -46,7 +46,7 @@ const Product = ({ updateProductQuantity, product, isAdmin }) => (
       isAdmin={isAdmin}
     />)
   }
-  </ListGroupItem>
+  </div>
 );
 
 Product.defaultProps = {

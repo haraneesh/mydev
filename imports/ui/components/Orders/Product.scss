@@ -1,3 +1,5 @@
+@import '../../stylesheets/bootstrap/bootstrap/variables';
+
 .EditOrderDetails  {
     .product-name{
         margin-bottom:0px;
@@ -5,5 +7,25 @@
     }
     .product-name-subtext{
         margin-top:3px;
+    }
+    .no-aliasing-image {
+        image-rendering: optimizeSpeed;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -o-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
+    }
+    .item-image{
+        width: 100%;
+        margin: 0px auto;
+        vertical-align: middle;
+    }
+    @media (max-width: $screen-sm-min) {
+        .product-item{
+            display: inline-block;
+            padding-bottom: $padding-xs-horizontal;
+            border-bottom: 1px solid $table-border-color;
+        }
     }
 }

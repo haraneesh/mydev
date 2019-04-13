@@ -24,7 +24,6 @@ export default class ProductsOrderMobile extends React.Component {
     };
 
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
-    this.scrollToSelectedSection = this.scrollToSelectedSection.bind(this);
     this.displayProductsByTypeStandardView = this.displayProductsByTypeStandardView.bind(this);
   }
 
@@ -36,17 +35,15 @@ export default class ProductsOrderMobile extends React.Component {
     });
   }
 
-  scrollToSelectedSection(){
-    document.getElementById(this.state.panelToFocus).scrollIntoView(); 
-    this.setState({
-      scrollToLocation: false,
-    })
-  }
-
   componentDidUpdate(){
-    if (this.state.scrollToLocation === true) {
-      setTimeout(() => { this.scrollToSelectedSection() }, 350);
-    }
+    if (this.state.scrollToLocation){
+      if (this.state.panelToFocus){
+        document.getElementById(this.state.panelToFocus).scrollIntoView(true); 
+      }
+      this.setState({
+        scrollToLocation: false,
+    });
+  }
   }
   getSelectedProducts(products){
     const selProducts = [];
@@ -96,6 +93,8 @@ export default class ProductsOrderMobile extends React.Component {
     productPersonalHygiene, 
     productSpecials, 
     productRecommended,){
+
+    const expanded = this.state.panelToFocus !== "";
     return (
       <div className="productOrderList">
         { (<PanelGroup activeKey={this.state.activePanel} id="accordion">
@@ -107,10 +106,9 @@ export default class ProductsOrderMobile extends React.Component {
               onclick={() => this.handlePanelSelect('fav-header')}
               isOpen={this.state.panelToFocus !== ""}
               />)}
-              expanded={this.state.panelToFocus !== ""}
-              collapsible
+              expanded={expanded}
           >
-            { productRecommended }
+            { expanded && productRecommended }
           </Panel>
           </div>
           )
@@ -126,10 +124,9 @@ export default class ProductsOrderMobile extends React.Component {
                 isOpen={this.state.panelToFocus !== ""}
                 onclick={() => this.handlePanelSelect('spcl-header')}
                 />)}
-                expanded={this.state.panelToFocus !== ""}
-                collapsible
+                expanded={expanded}
               >
-                { productSpecials }
+                { expanded && productSpecials }
             </Panel>
           </div>)
           }
@@ -141,8 +138,8 @@ export default class ProductsOrderMobile extends React.Component {
               title="Groceries" 
               onclick={() => this.handlePanelSelect('groc-header')} 
               isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={this.state.panelToFocus !== ""} eventKey="3" collapsible>
-              { productGroceries }
+              expanded={expanded} eventKey="3" >
+              { expanded && productGroceries }
             </Panel>
           </div>
 
@@ -153,8 +150,8 @@ export default class ProductsOrderMobile extends React.Component {
               title="Vegetables & Fruit" 
               onclick={() => this.handlePanelSelect('veg-header')} 
               isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={this.state.panelToFocus !== ""} eventKey="4" collapsible>
-              { productVegetables }
+              expanded={expanded} eventKey="4" >
+              { expanded && productVegetables }
             </Panel>
             </div>
 
@@ -166,8 +163,8 @@ export default class ProductsOrderMobile extends React.Component {
               title="Podi, Oil, Batter & Pickles" 
               onclick={() => this.handlePanelSelect('prep-header')} 
               isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={this.state.panelToFocus !== ""} eventKey="5" collapsible>
-              {productBatters}
+              expanded={expanded} eventKey="5" >
+              {expanded && productBatters}
             </Panel>
           </div>
 
@@ -179,8 +176,8 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="pg_bk_ph" 
                 title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('pg-header')} 
                 isOpen={this.state.panelToFocus !== ""} />)} 
-                expanded={this.state.panelToFocus !== ""} eventKey="6" collapsible>
-                {productPersonalHygiene}
+                expanded={expanded} eventKey="6">
+                {expanded && productPersonalHygiene}
               </Panel>
           </div>
           )}

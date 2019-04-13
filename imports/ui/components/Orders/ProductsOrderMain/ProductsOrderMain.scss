@@ -31,6 +31,7 @@
 
 .form-control{
     font-size: $font-size-large;
+    max-width: 10em;
 }
 
 // Product ordering tabs
@@ -51,7 +52,6 @@
 .nav > li.prepared_bk > a, .nav > li.pg_bk > a, .nav > li.specials_bk > a, 
 .nav > li.recommended_bk > a {
     padding: 0px;
-    background-image: url('/app/order-tabs.png');
     background-size: 5em;
     background-repeat: no-repeat;
     padding-top: 3.6em;
@@ -118,7 +118,7 @@
         padding-left:0.5em;
     }
     .prodCatPlus{
-        padding-left:0px;
+        padding-left: 0px;
     }
 
     .productCatHead div{

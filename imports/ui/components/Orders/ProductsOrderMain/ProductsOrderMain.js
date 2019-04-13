@@ -194,13 +194,13 @@ export default class ProductsOrderMain extends React.Component {
     _.map(products, (product, index) => {
       if (this.wasProductOrderedPreviously(product._id)) {
         productRecommended.push(
-          <Product key={`recommended-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+          <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
         );
       }
 
       if (!!product.displayAsSpecial) {
         productSpecials.push(
-          <Product key={`special-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+          <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
         );
       }
 
@@ -237,7 +237,7 @@ export default class ProductsOrderMain extends React.Component {
         previousCategory = product.category;
       } */
       tempProductList.push(
-        <Product key={tempKey} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+        <Product isMobile={isMobile} key={tempKey} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
       );
        
     });
@@ -251,6 +251,19 @@ export default class ProductsOrderMain extends React.Component {
       productRecommended,
       isMobile);
     
+  }
+
+  addProductsToTabs(productArray){
+    let prodArr = [];
+      
+    productArray.forEach((element, index) => {
+      prodArr.push(element);
+      if (index % 2 && index !== 0){
+        prodArr.push(<Row></Row>);
+      }
+    });
+
+    return  prodArr;
   }
 
   displayProductsByTypeStandardView(
@@ -288,24 +301,26 @@ export default class ProductsOrderMain extends React.Component {
 
         { !isMobile && (<Tabs defaultActiveKey={3} id="productTabs" bsStyle="pills">
           {this.state.recommendations.length > 0 && (<Tab eventKey={1} title="My Favourites" tabClassName="recommended_bk text-center">
-            { productRecommended }
+            { this.addProductsToTabs(productRecommended) }
           </Tab>)
           }
           { productSpecials.length > 0 && (<Tab eventKey={2} title="Specials" tabClassName="specials_bk text-center">
-            { productSpecials }
+            { this.addProductsToTabs(productSpecials) }
           </Tab>)
           }
           <Tab eventKey={3} title="Groceries" tabClassName="groceries_bk text-center">
-            { productGroceries }
+            <Row>
+            { this.addProductsToTabs(productGroceries) }
+           </Row>
           </Tab>
           <Tab eventKey={4} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
-            { productVegetables }
+            { this.addProductsToTabs(productVegetables) }
           </Tab>
           <Tab eventKey={5} title="Podi, Oil, & Pickles" tabClassName="prepared_bk text-center">
-            { productBatters }
+            { this.addProductsToTabs(productBatters) }
           </Tab>
           { productPersonalHygiene.length > 0 && (<Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
-            { productPersonalHygiene }
+            { this.addProductsToTabs(productPersonalHygiene) }
           </Tab>)}
         </Tabs>)}
 
