@@ -65,12 +65,14 @@ import {
   dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
-  dMyWallet,
+  //dMyWallet,
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,
 }
   from './dynamicRoutes';
+
+import dMyWallet from '../../pages/Wallet/MyWallet';
 
 import './App.scss';
 

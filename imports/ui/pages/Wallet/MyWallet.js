@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Row, Col } from 'react-bootstrap';
 import AcceptPay from '../../components/Payments/AcceptPay/AcceptPay';
+import ListPayments from '../../components/Payments/ListPayments/ListPayments';
 import Loading from '../../components/Loading/Loading';
 
 const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
@@ -16,6 +17,9 @@ const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
           userWallet={userWallet}
         />
       </Col>
+    </Row>
+    <Row>
+      <ListPayments />
     </Row>
   </div>
 ) : <Loading />);

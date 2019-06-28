@@ -47,6 +47,11 @@ FeedBacks.schema = new SimpleSchema({
     type: Number,
     label: 'Rating given by the feed back giver.',
   },
+  ratingLabel: {
+    type: String,
+    optional: true,
+    label: 'Rating text chosen for the number value (rating).',
+  },
   questionAsked:{
     type: String,
     label: 'Question asked to the user.',

@@ -50,7 +50,7 @@ const ProductForNonAdmin = ({
   maxUnitsAvailableToOrder,
   totQuantityOrdered,
   previousOrdQty,
-  image_path,
+  image,
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
@@ -61,13 +61,13 @@ const ProductForNonAdmin = ({
     name={name} description={description}
     quantitySelected={quantitySelected} maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
     totQuantityOrdered={totQuantityOrdered} previousOrdQty={previousOrdQty} />);
-
-  const imageRow = (<img src={image_path?image_path:"/veggies/no-image.jpg"} alt="" className="item-image no-aliasing-image img-responsive" />);
+  const imagePath = Meteor.settings.public.Product_Images + image; 
+  const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
 
   return (
-    <Col sm={6} className="no-padding product-item">
+    <Col sm={12} md={6} className="no-padding product-item">
       <Col xs={8} xsOffset={2} sm={4} smOffset={0}>
-        {imageRow}
+        {!!image && imageRow}
       </Col>
 
       <Col xs={12} sm={8}>

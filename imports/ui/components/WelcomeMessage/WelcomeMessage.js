@@ -55,7 +55,7 @@ class WelcomeMessage extends React.Component {
     }
   }
 
-  WelcomeMessage.PropTypes = {
+  WelcomeMessage.propTypes = {
     loggedInUser: PropTypes.object.isRequired,
   }
   

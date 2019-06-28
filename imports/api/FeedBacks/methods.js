@@ -30,11 +30,47 @@ Meteor.methods({
       handleMethodException(exception);
     }*/
   },
+  'feedbacks.insertSurvey': function feedbacksInsertSurvey(feedBack) {
+    check(feedBack, {
+      postId: String,
+      postType: String,
+      feedBackType: String,
+      ratingsArrayWithValue:[{
+        questionIndexNumber: Number,
+        questionText: String,
+        ratingValue: Number,
+        ratingText: String
+      }]
+    });
+
+    feedBack.ratingsArrayWithValue.forEach((value)=>{
+
+      const fB = {
+        owner: this.userId,
+        postId: feedBack.postId,
+        postType: feedBack.postType,
+        feedBackType: feedBack.feedBackType,
+        questionAsked: value.questionText,
+        rating: value.ratingValue,
+        ratingLabel: value.ratingText,
+      };
+
+      switch (fB.postType) {
+        case constants.PostTypes.Order.name:
+          Orders.update({ _id: fB.postId }, { $set: { receivedFeedBack: true } });
+          break;
+      }
+      FeedBacks.upsert({ postId: fB.postId, postType: fB.postType, questionAsked: fB.questionAsked }, { $set: fB });
+    });
+    return true;
+  },
+      
 });
 
 rateLimit({
   methods: [
     'feedbacks.upsert',
+    'feedbacks.insertSurvey',
   ],
   limit: 5,
   timeRange: 1000,

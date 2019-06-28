@@ -61,8 +61,16 @@ function createCustomerPayment(args) {
   return response;
 }
 
+function getCustomerPayments(zhCustomerId){
+  const response = zh.getRecordsByParams('customerpayments', {
+    customer_id: zhCustomerId,
+  });
+  return response;
+}
+
 const zohoPayments = {
   createCustomerPayment,
+  getCustomerPayments,
 };
 
 export default zohoPayments;

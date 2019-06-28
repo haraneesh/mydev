@@ -55,6 +55,23 @@ Razor Pay
 
 */
 Meteor.methods({
+  'payments.getPayments': function getPayments(){
+    try {
+      if (Meteor.isServer){
+        const query = { _id: this.userId };
+        const user = Meteor.users.find(query).fetch();
+        const r = zohoPayments.getCustomerPayments( user[0].zh_contact_id);
+
+        if (r.code !== 0) {
+          handleMethodException(r, r.code);
+        }
+        return r.customerpayments;
+      }
+    }
+    catch (exception){
+      handleMethodException(exception);
+    }
+  },
   'payment.insert': async function paymentInsert(inputParams) {
     check(inputParams, {
       razorpay_payment_id: String,

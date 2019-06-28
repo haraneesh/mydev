@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button, Row, Col, FormControl } from 'react-bootstrap';
 
 const NPSRating = ({initialRating, finalRating, selectedRating, selectedRatingClass, onChange}) => {
 

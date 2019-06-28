@@ -5,6 +5,7 @@ BrowserPolicy.content.allowOriginForAll('cdnjs.cloudflare.com');
 BrowserPolicy.content.allowOriginForAll('fonts.googleapis.com');
 BrowserPolicy.content.allowOriginForAll('fonts.gstatic.com');
 BrowserPolicy.content.allowOriginForAll('netdna.bootstrapcdn.com');
+BrowserPolicy.content.allowOriginForAll('use.fontawesome.com');
 // BrowserPolicy.content.allowOriginForAll("allfont.net");
 // Google Maps
 BrowserPolicy.content.allowOriginForAll('www.google.com');

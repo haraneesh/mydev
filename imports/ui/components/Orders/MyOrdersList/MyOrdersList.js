@@ -4,7 +4,8 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { ListGroup, ListGroupItem, Alert } from 'react-bootstrap';
-import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
+//import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
+import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import OrderSummaryRow from './OrderSummaryRow';
@@ -21,6 +22,7 @@ export default class MyOrderList extends React.Component {
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
+    this.receiveSurveyFeedBack = this.receiveSurveyFeedBack.bind(this);
     this.saveFeedBack = this.saveFeedBack.bind(this);
     this.showFeedBack = this.showFeedBack.bind(this);
   }
@@ -33,6 +35,38 @@ export default class MyOrderList extends React.Component {
     Meteor.call('users.getUserWallet', {}, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
+      }
+    });
+  }
+
+  receiveSurveyFeedBack({ratingsObjectWithValue}){
+    this.setState({
+      showFeedBackForm: false,
+    });
+
+    let ratingsArrayWithValue = [];
+
+    Object.keys(ratingsObjectWithValue).forEach(function (key) {
+      ratingsArrayWithValue.push(ratingsObjectWithValue[key]);
+    });
+
+    this.saveSurveyFeedBack(ratingsArrayWithValue);
+  }
+
+  saveSurveyFeedBack(ratingsArrayWithValue) {
+    const methodToCall = 'feedbacks.insertSurvey';
+    const fB = {
+      postId: this.feedBackPostId,
+      postType: constants.PostTypes.Order.name,
+      feedBackType: 'SURVEY',
+      ratingsArrayWithValue,
+    };
+
+    Meteor.call(methodToCall, fB, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('Thank you for your feedback', 'success');
       }
     });
   }
@@ -65,6 +99,7 @@ export default class MyOrderList extends React.Component {
   }
 
   showFeedBack(orders) {
+
     if (orders.length < 1) {
       return '';
     }
@@ -105,9 +140,8 @@ export default class MyOrderList extends React.Component {
             <div>
 
               {showFeedBackForm && (
-                <NPSFeedBack
-                  onClose={this.receiveFeedBack}
-                  feedBackQuestion={`How likely are you to recommend us to your family and friends?`}
+                <SurveyFeedBack
+                  onClose={this.receiveSurveyFeedBack}
                 />
               )}
 

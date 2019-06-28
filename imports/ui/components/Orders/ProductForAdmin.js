@@ -59,7 +59,7 @@ class ProductForAdmin extends React.Component {
     } = this.props;
 
     return (
-      <Row>
+      <Col sm={12} className="no-padding product-item">
         <Col sm={5}>
           <h4 className="product-name"><strong>{`${name} ${unit}`}</strong></h4>
           { (this.state.quantitySelected > 0) && <InformProductUnavailability
@@ -74,7 +74,7 @@ class ProductForAdmin extends React.Component {
           <p><small>{description}</small></p>
         </Col>
 
-        <Col sm={3}>
+        <Col sm={2}>
           <div className="input-group">
             <input
               type="number"
@@ -88,13 +88,13 @@ class ProductForAdmin extends React.Component {
           </div>
         </Col>
 
-        <Col sm={4} className="text-right-not-xs">
+        <Col sm={5} className="text-right-not-xs">
           <h4>{formatMoney(unitprice, accountSettings)}
             <span className="text-muted">{` ${'x'} `}</span>
             {this.state.quantitySelected}
           </h4>
         </Col>
-      </Row>
+      </Col>
     );
   }
 }
