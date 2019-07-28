@@ -11,10 +11,12 @@ export const EasyNavNarrowScreen = () => (
       <Link to="/order"> <Glyphicon glyph="pencil" /> Place Order </Link>
     </li>
     <li className="col-xs-4 text-center">
-      <Link to="/healthprinciples"> <Glyphicon glyph="heart" className="alertMenu"/> Health</Link>
+      <Link to="/"> <Glyphicon glyph="list" /> My Orders</Link>
     </li>
     <li className="col-xs-4 text-center">
-      <Link to="/"> <Glyphicon glyph="list" /> My Orders</Link>
+      <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
+        <Glyphicon glyph="comment" className="alertMenu"/> Give Feedback
+      </a>
     </li>
   </ul>
 );
@@ -25,13 +27,15 @@ export const EasyNavWideScreen = () => (
       <NavLink to="/order"><Glyphicon glyph="pencil" /> Place Order</NavLink>
     </li>
     <li>
-      <NavLink to="/healthprinciples"> <Glyphicon glyph="heart" className="alertMenu"/> Health </NavLink>
-    </li>
-    <li>
       <NavLink exact to="/"><Glyphicon glyph="list" /> My Orders</NavLink>
     </li>
     <li>
-      <NavLink exact to="/vision">Vision </NavLink>
+      <NavLink to="/healthprinciples"> <Glyphicon glyph="heart" className="alertMenu"/> Health </NavLink>
+    </li>
+    <li>
+      <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
+        <Glyphicon glyph="comment" className="alertMenu"/> Give Feedback
+      </a>
     </li>
   </Nav>
 );

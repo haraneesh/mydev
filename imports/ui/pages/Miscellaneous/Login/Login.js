@@ -86,9 +86,11 @@ class Login extends React.Component {
               />
             </FormGroup>
             <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
-            {/*<AccountPageFooter>
-              <p>{'Would you like to join us?'} <Button byStyle="" href="/about">Join</Link></p>
-            </AccountPageFooter> */}
+            <AccountPageFooter>
+              <p>{'Not a member yet? '} 
+                  <a href="/signup" className="login-singup">Join</a>
+              </p>
+            </AccountPageFooter>
           </form>
           {/* } <Row>
             <p>- Or - </p>

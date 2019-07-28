@@ -144,7 +144,7 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['payments.insert'],
+  methods: ['payments.insert', 'payments.getPayments'],
   limit: 5,
   timeRange: 1000,
 });

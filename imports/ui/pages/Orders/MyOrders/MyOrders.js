@@ -13,8 +13,10 @@ const MyOrders = ({ loading, loggedInUser, orders }) => (!loading ? (
   <Row>
     <Col xs={12}>
       <WelcomeMessage loggedInUser={loggedInUser} />
+      
       <h3 className="page-header">My Orders</h3>
       <MyOrderList loggedInUser={loggedInUser} orders={orders} />
+
     </Col>
   </Row>
 ) : <Loading />);

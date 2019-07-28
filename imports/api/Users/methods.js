@@ -218,10 +218,15 @@ Meteor.methods({
     check(user, {
       username: String,
       email: String,
-      'profile.name.last': String,
-      'profile.name.first': String,
-      'profile.whMobilePhone': String,
-      'profile.deliveryAddress': String,
+      profile: {
+        name:{
+          last: String,
+          first: String,
+        },
+        whMobilePhone: String,
+        deliveryAddress: String,
+      },
+      password: String,
     });
    return UserSignUps.insert(user);
   },

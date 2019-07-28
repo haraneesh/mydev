@@ -43,4 +43,22 @@
         margin: 0 0.5em 0.5em;
         min-width: 9em;
     }
+
+    .how-section1{
+        padding-top: 5% 0 0 5%;
+    }
+    .how-section1 h4{
+        color: $brand-logo-yellow;
+        font-weight: bold;
+    }
+    .how-section1 .subheading{
+        color: $brand-success;
+    }
+    
+    .dt-align 
+    {
+        margin-top: 3rem !important;
+        color:$brand-primary;
+    }
+
 }

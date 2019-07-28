@@ -37,9 +37,8 @@ hr {
 }
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
-    color: #fff;
-    background-color: transparent;
-    color:$gray-base;
+    background-color: #fff;
+    color: $gray-base;
     border-bottom: 3px solid $brand-primary;
 }
 
@@ -49,7 +48,7 @@ hr {
 }
 
 .nav-pills > li > a {
-    border-radius: 0px;
+    border-radius: 3px;
     outline: none;
     outline-width: 0;
 }
@@ -262,6 +261,10 @@ input[type="checkbox"],
 .no-margin-no-padding{
     margin: 0px;
     padding: 0px;
+}
+
+.no-padding{
+  padding: 0px;
 }
 
 // Text Center =================================================================

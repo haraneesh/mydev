@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Panel, Row, Col, Glyphicon } from 'react-bootstrap';
+import { Grid, Panel, Row, Col } from 'react-bootstrap';
 
 import './ContactUs.scss';
 

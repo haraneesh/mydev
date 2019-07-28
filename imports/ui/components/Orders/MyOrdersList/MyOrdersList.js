@@ -3,13 +3,15 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { ListGroup, ListGroupItem, Alert } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Alert, Tabs, Tab } from 'react-bootstrap';
 //import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import OrderSummaryRow from './OrderSummaryRow';
 import AddToWallet from './AddToWallet';
+import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
+import ListPayments from '../../Payments/ListPayments/ListPayments';
 
 const feedBackPeriodInDays = 30;
 
@@ -135,48 +137,58 @@ export default class MyOrderList extends React.Component {
     return (
       <div>
         <AddToWallet userWallet={this.state.wallet} />
-        {
-          orders.length > 0 ? (
-            <div>
 
-              {showFeedBackForm && (
-                <SurveyFeedBack
-                  onClose={this.receiveSurveyFeedBack}
-                />
-              )}
+        <Tabs defaultActiveKey={1} id="" bsStyle="pills">
+          <Tab eventKey={1} title="Orders" tabClassName=" text-center">
+             {
+                orders.length > 0 ? (
+                  <div>
+                    {showFeedBackForm && (
+                      <SurveyFeedBack
+                        onClose={this.receiveSurveyFeedBack}
+                      />
+                    )}
 
-              <ListGroup className="orders-list">
-                {orders.map(
-                  (
-                    {
-                  _id,
-                      invoice_Id,
-                      order_status,
-                      createdAt,
-                      total_bill_amount,
-                      invoices,
-                },
-                    index,
-                  ) => (
-                      <ListGroupItem key={_id} href={`/order/${_id}`}>
-                        <OrderSummaryRow
-                          orderDate={createdAt}
-                          orderAmount={total_bill_amount}
-                          order_status={order_status}
-                          invoices = {invoices}
-                          key={`order-${index}`}
-                          userWallet={this.state.wallet}
-                        />
-                      </ListGroupItem>
-                    ),
-                )}
-              </ListGroup>
+                    <ListGroup className="orders-list">
+                      {orders.map(
+                        (
+                          {
+                        _id,
+                            invoice_Id,
+                            order_status,
+                            createdAt,
+                            total_bill_amount,
+                            invoices,
+                      },
+                          index,
+                        ) => (
+                            <ListGroupItem key={_id} href={`/order/${_id}`}>
+                              <OrderSummaryRow
+                                orderDate={createdAt}
+                                orderAmount={total_bill_amount}
+                                order_status={order_status}
+                                invoices = {invoices}
+                                key={`order-${index}`}
+                                userWallet={this.state.wallet}
+                              />
+                            </ListGroupItem>
+                          ),
+                      )}
+                    </ListGroup>
 
-            </div>
-          ) : (
-              <Alert bsStyle="info">You are yet to place an order.</Alert>
-            )
-        }
+                  </div>
+                ) : (
+                    <Alert bsStyle="info">You are yet to place an order.</Alert>
+                  )
+              }
+          </Tab>   
+          <Tab eventKey={2} title="Payments" tabClassName=" text-center">
+              <ListPayments />
+            </Tab>
+          <Tab eventKey={3} title="Refunds" tabClassName=" text-center">
+              <ListCreditNotes />
+          </Tab>
+        </Tabs>
       </div>
     );
   }

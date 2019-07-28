@@ -47,6 +47,8 @@ import '../../api/ReconcileInventory/server/publications';
 
 import '../../api/Payments/methods';
 
+import '../../api/CreditNotes/methods';
+
 import '../../api/FeedBacks/methods';
 // import '../../api/FeedBacks/server/publications';
 

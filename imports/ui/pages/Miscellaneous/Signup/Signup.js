@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import { Panel, Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -119,7 +119,7 @@ class Signup extends React.Component {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          Bert.alert('', 'success');
+          Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
           this.setState({
             signUpRequestSent: true,
           });
@@ -223,19 +223,23 @@ class Signup extends React.Component {
             </FormGroup>
             <Button type="submit" bsStyle="primary">Sign Up</Button>
             <AccountPageFooter>
-              <p>Already have an account? <Link to="/login">Log In</Link>.</p>
+              <p>Already have an account? <Link to="/login" className="login-singup">Log In</Link>.</p>
             </AccountPageFooter>
           </form>
         </Col>
       </Row>
     </div>) : (
-      <div>
-        <h3>Thanks for your interest in Suvai!</h3>
-        <p>
-          Please give us a few days for our admins to review the
-          request and send an invite to join our community.
-        </p>
-      </div>
+        <Panel style={{marginTop: '1.5em'}}>
+          <Row>
+          <Col xs={12}>
+           <h3>Thanks for your interest in Suvai!</h3>
+           <br />
+            <p>
+              Please give us a few days for our admins to review the
+              request and send an invite to join our community.
+            </p>
+          </Col></Row>
+        </Panel>
     )
     );
   }

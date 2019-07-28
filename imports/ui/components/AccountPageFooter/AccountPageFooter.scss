@@ -2,6 +2,10 @@
 
 .AccountPageFooter {
   margin: 25px 0 0;
-  padding-top: 20px;
   border-top: 1px solid $gray-lighter;
+}
+
+.login-singup {
+  color:$brand-primary;
+  font-size:$font-size-h4;
 }
