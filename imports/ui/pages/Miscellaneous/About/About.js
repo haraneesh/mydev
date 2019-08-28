@@ -46,7 +46,7 @@ class About extends React.Component {
                 </Col>
 				<Col xs={12} className="text-center">
 				<h4> Try our sample basket </h4>
-				<Button className="sampleBtn" bsStyle="primary" href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Now &rarr; </Button>
+				<Button className="sampleBtn" bsStyle="primary" href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket &rarr; </Button>
 			</Col>
 			</Row>
       </Panel>

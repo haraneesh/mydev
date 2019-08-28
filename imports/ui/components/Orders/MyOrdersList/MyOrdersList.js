@@ -134,9 +134,42 @@ export default class MyOrderList extends React.Component {
     this.feedBackPostId = this.showFeedBack(orders);
     const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
 
+   const displayOrderRows = [];
+   let numberOfAwaitingPayments = 0;
+
+   orders.map(
+    (
+      {
+    _id,
+        invoice_Id,
+        order_status,
+        createdAt,
+        total_bill_amount,
+        invoices,
+  },
+      index,
+    ) => { displayOrderRows.push(
+        <ListGroupItem key={_id} href={`/order/${_id}`}>
+          <OrderSummaryRow
+            orderDate={createdAt}
+            orderAmount={total_bill_amount}
+            order_status={order_status}
+            invoices = {invoices}
+            key={`order-${index}`}
+            userWallet={this.state.wallet}
+          />
+        </ListGroupItem>
+      );
+
+      if (order_status === constants.OrderStatus.Awaiting_Payment.name) {
+        numberOfAwaitingPayments = numberOfAwaitingPayments + 1;
+      }
+    }
+  );
+
     return (
       <div>
-        <AddToWallet userWallet={this.state.wallet} />
+        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments}/>
 
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
@@ -150,30 +183,7 @@ export default class MyOrderList extends React.Component {
                     )}
 
                     <ListGroup className="orders-list">
-                      {orders.map(
-                        (
-                          {
-                        _id,
-                            invoice_Id,
-                            order_status,
-                            createdAt,
-                            total_bill_amount,
-                            invoices,
-                      },
-                          index,
-                        ) => (
-                            <ListGroupItem key={_id} href={`/order/${_id}`}>
-                              <OrderSummaryRow
-                                orderDate={createdAt}
-                                orderAmount={total_bill_amount}
-                                order_status={order_status}
-                                invoices = {invoices}
-                                key={`order-${index}`}
-                                userWallet={this.state.wallet}
-                              />
-                            </ListGroupItem>
-                          ),
-                      )}
+                     {displayOrderRows}
                     </ListGroup>
 
                   </div>

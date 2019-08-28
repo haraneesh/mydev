@@ -19,6 +19,7 @@ const SideMenu = props => (
         }
           <Col xs={12} sm={6}>
             <ul>
+              {/*
               <li>
                 <NavLink to="/order"> Place Order</NavLink>
               </li>
@@ -27,7 +28,18 @@ const SideMenu = props => (
               </li>
               <li>
                 <NavLink exact to="/"> My Orders</NavLink>
+              </li> 
+              */}
+              <li>
+                <NavLink to="/about">About Us</NavLink>
               </li>
+              <li>
+                <NavLink exact to="/healthprinciples"> Our Health Principles </NavLink>
+              </li>
+              <li>
+                <NavLink to="/vision">Our Vision</NavLink>
+              </li>
+              <br/>
               <li>
                 <NavLink to="/invitations">Invite Friends</NavLink>
               </li>
@@ -36,12 +48,6 @@ const SideMenu = props => (
               </li> */}
               <li>
                 <NavLink to="/profile">My Profile</NavLink>
-              </li>
-              <li>
-                <NavLink to="/vision">Our Vision</NavLink>
-              </li>
-              <li>
-                <NavLink to="/about">About Us</NavLink>
               </li>
               <li>
                 <Button id="app-logout" onClick={handleLogout}>Logout</Button>
