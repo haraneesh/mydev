@@ -36,9 +36,9 @@ class About extends React.Component {
         <Panel className="about-page">
           <Row className="about-section text-left">
                 <Col sm={6} className="about-getOrganic text-center">
-										<h3> Organic & Natural</h3> 
-										<h4> produce delivered home, in Chennai </h4>
-                  <p>100% Food - No Pesticides, No Artificial Colors, No Fillers</p>
+				  <h3> Organic & Natural</h3> 
+			      <h4> produce delivered home, in Chennai </h4>
+                  <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic, Non-GMO and Sustainable</p>
 				 {/* <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button> */}
                 </Col>
                 <Col sm={6}>

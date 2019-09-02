@@ -17,6 +17,18 @@ import {ReviewOrder} from '../ViewOrderProducts/ViewOrderProducts';
 
 import './ProductsOrderMain.scss';
 
+const OrderView = {
+  RecommendedView: {
+    name: 'RecommendedView',
+  },
+  FullView: {
+    name: 'FullView'
+  },
+  CheckOut: {
+    name: 'CheckOut',
+  }
+}
+
 export default class ProductsOrderMain extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -32,22 +44,25 @@ export default class ProductsOrderMain extends React.Component {
     this.state = {
       products: productArray,
       totalBillAmount,
-      //recommendations: props.recommendations,
-      recommendations: [], // do not show recommendations,
-      reviewSubmitOrder: false,
+      recommendations: props.recommendations,
+      //recommendations: [], // do not show recommendations,
+      orderView: OrderView.RecommendedView.name,
     };
 
     this.isAdmin = isLoggedInUserAdmin();
 
-    this.updateProductQuantity = this.updateProductQuantity.bind(this);
-    this.handleOrderSubmit = this.handleOrderSubmit.bind(this);
+    this.changeView = this.changeView.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleOrderSubmit = this.handleOrderSubmit.bind(this);
+    this.displayOrderFooter = this.displayOrderFooter.bind(this);
+    this.updateProductQuantity = this.updateProductQuantity.bind(this);
+    this.changeProductQuantity = this.changeProductQuantity.bind(this);
+    this.showRecommendationsView = this.showRecommendationsView.bind(this);
     this.handlePrintProductList = this.handlePrintProductList.bind(this);
     this.displayProductsAndSubmit = this.displayProductsAndSubmit.bind(this);
     this.getProductsMatchingSearch = this.getProductsMatchingSearch.bind(this);
     this.wasProductOrderedPreviously = this.wasProductOrderedPreviously.bind(this);
     this.displayProductsByTypeStandardView = this.displayProductsByTypeStandardView.bind(this);
-    this.handleReviewOrder = this.handleReviewOrder.bind(this);
   }
 
   componentDidMount() {
@@ -56,13 +71,6 @@ export default class ProductsOrderMain extends React.Component {
         Bert.alert(error.reason, 'danger');
       } 
     });
-  }
-
-  handleReviewOrder(reviewOrder){
-    this.setState({
-      reviewSubmitOrder: reviewOrder,
-    })
-
   }
 
   getSelectedProducts(products){
@@ -138,7 +146,7 @@ export default class ProductsOrderMain extends React.Component {
         searchResults.push(
           <Product
             key={`srch-${index}`}
-            updateProductQuantity={this.updateProductQuantity}
+            updateProductQuantity={this.changeProductQuantity}
             product={product}
             isAdmin={this.isAdmin}
           />,
@@ -149,10 +157,19 @@ export default class ProductsOrderMain extends React.Component {
     return searchResults.slice(0, numOfElements);
   }
 
+  changeView(view){
+    this.setState({
+      orderView: view,
+    });
+  }
 
-  updateProductQuantity(event) {
+  changeProductQuantity(event) {
     const productId = event.target.name;
     const quantity = event.target.value;
+    this.updateProductQuantity(productId, quantity);
+  }
+
+  updateProductQuantity(productId, quantity){
     const productsCopy = this.state.products;
 
     productsCopy[productId].quantity = parseFloat((quantity) || 0);
@@ -177,6 +194,7 @@ export default class ProductsOrderMain extends React.Component {
     }
 
     const prevOrderedProducts = recommendations[0].recPrevOrderedProducts.prevOrderedProducts;
+    
     return (!!prevOrderedProducts[productId]);
   }
 
@@ -194,13 +212,13 @@ export default class ProductsOrderMain extends React.Component {
     _.map(products, (product, index) => {
       if (this.wasProductOrderedPreviously(product._id)) {
         productRecommended.push(
-          <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+          <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={this.changeProductQuantity} product={product} isAdmin={this.isAdmin} />,
         );
       }
 
       if (!!product.displayAsSpecial) {
         productSpecials.push(
-          <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+          <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={this.changeProductQuantity} product={product} isAdmin={this.isAdmin} />,
         );
       }
 
@@ -237,19 +255,19 @@ export default class ProductsOrderMain extends React.Component {
         previousCategory = product.category;
       } */
       tempProductList.push(
-        <Product isMobile={isMobile} key={tempKey} updateProductQuantity={this.updateProductQuantity} product={product} isAdmin={this.isAdmin} />,
+        <Product isMobile={isMobile} key={tempKey} updateProductQuantity={this.changeProductQuantity} product={product} isAdmin={this.isAdmin} />,
       );
        
     });
 
-    return this.displayProductsByTypeStandardView(
+    return {
       productGroceries, 
       productVegetables, 
       productBatters, 
       productPersonalHygiene, 
       productSpecials, 
       productRecommended,
-      isMobile);
+      isMobile};
     
   }
 
@@ -275,13 +293,14 @@ export default class ProductsOrderMain extends React.Component {
     productRecommended,
     isMobile){
 
-      const productGroups = [
+    
+    const productGroups = [
         productGroceries, 
         productVegetables, 
         productBatters, 
         productPersonalHygiene, 
         productSpecials, 
-        productRecommended];
+        productRecommended];  
 
     return (
       <div className="productOrderList">
@@ -299,27 +318,23 @@ export default class ProductsOrderMain extends React.Component {
           /> )
         }
 
-        { !isMobile && (<Tabs defaultActiveKey={3} id="productTabs" bsStyle="pills">
-          {this.state.recommendations.length > 0 && (<Tab eventKey={1} title="My Favourites" tabClassName="recommended_bk text-center">
-            { this.addProductsToTabs(productRecommended) }
-          </Tab>)
-          }
-          { productSpecials.length > 0 && (<Tab eventKey={2} title="Specials" tabClassName="specials_bk text-center">
+        { !isMobile && (<Tabs defaultActiveKey={2} id="productTabs" bsStyle="pills">
+          { productSpecials.length > 0 && (<Tab eventKey={1} title="Specials" tabClassName="specials_bk text-center">
             { this.addProductsToTabs(productSpecials) }
-          </Tab>)
+            </Tab>)
           }
-          <Tab eventKey={3} title="Groceries" tabClassName="groceries_bk text-center">
+          <Tab eventKey={2} title="Groceries" tabClassName="groceries_bk text-center">
             <Row>
             { this.addProductsToTabs(productGroceries) }
            </Row>
           </Tab>
-          <Tab eventKey={4} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
+          <Tab eventKey={3} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
             { this.addProductsToTabs(productVegetables) }
           </Tab>
-          <Tab eventKey={5} title="Podi, Oil, & Pickles" tabClassName="prepared_bk text-center">
+          <Tab eventKey={4} title="Podi, Oil, & Pickles" tabClassName="prepared_bk text-center">
             { this.addProductsToTabs(productBatters) }
           </Tab>
-          { productPersonalHygiene.length > 0 && (<Tab eventKey={6} title="Hygiene" tabClassName="pg_bk text-center">
+          { productPersonalHygiene.length > 0 && (<Tab eventKey={5} title="Hygiene" tabClassName="pg_bk text-center">
             { this.addProductsToTabs(productPersonalHygiene) }
           </Tab>)}
         </Tabs>)}
@@ -328,10 +343,7 @@ export default class ProductsOrderMain extends React.Component {
     );
   }
 
-  displayProductsAndSubmit(buttonName) {
-   // Grouping product categories by tabs
-    const ipadWidth = 768;
-    const isMobile = window.innerWidth <= ipadWidth;
+  displayProductsAndSubmit(isMobile, productGroups) {
     return (
      this.props.products.length > 0 ? <Panel>
        <Row>
@@ -342,13 +354,22 @@ export default class ProductsOrderMain extends React.Component {
          <Col xs={12}>
            <ListGroup className="products-list">
 
-             { this.displayProductsByType(this.state.products, isMobile) }
+             {
+               this.displayProductsByTypeStandardView(
+                productGroups.productGroceries, 
+                productGroups.productVegetables, 
+                productGroups.productBatters, 
+                productGroups.productPersonalHygiene, 
+                productGroups.productSpecials, 
+                //productGroups.productRecommended,
+                [],
+                isMobile)}
+
+             { 
+                //this.displayProductsByType(this.state.products, isMobile) 
+             }
              
-               <OrderFooter
-                 totalBillAmount={this.state.totalBillAmount}
-                 onButtonClick={()=>{this.handleReviewOrder(true)}}
-                 submitButtonName={buttonName}
-               />
+             {this.displayOrderFooter()}
              
            </ListGroup>
          </Col>
@@ -361,15 +382,60 @@ export default class ProductsOrderMain extends React.Component {
     );
   }
 
+  displayOrderFooter(){
+    const reviewOrderButton = 'Checkout →';
+    return (<OrderFooter
+    totalBillAmount={this.state.totalBillAmount}
+    onButtonClick={()=>{this.changeView(OrderView.CheckOut.name)}}
+    submitButtonName={reviewOrderButton} />
+    )
+  }
+
+  showRecommendationsView(recommendedProducts , isMobile){
+    return (<div className="EditOrderDetails ">
+    <Row>
+      <Col xs={12}>
+        <h3 className="page-header"> 
+          Curated for You
+        </h3>
+        <Panel>
+        { this.addProductsToTabs(recommendedProducts) }
+        {!!isMobile && (
+          <Row>
+            <Col xs={12}>
+              <Button className="btn-block" onClick={()=>{this.changeView()}}>See Full List</Button>
+              </Col>
+          </Row>)}
+        {!isMobile && (
+          <Row>
+            <Col sm={4}></Col>
+            <Col sm={4}>
+              <Button className="btn-block" onClick={()=>{this.changeView()}}>See Full List</Button>
+            </Col>
+          </Row>
+        )}
+        </Panel>
+      </Col>
+    </Row>
+    {this.displayOrderFooter()}
+    </div>
+    );
+
+  }
+
   render() {
+    // Grouping product categories by tabs
+    const ipadWidth = 768;
+    const isMobile = window.innerWidth <= ipadWidth;
     const formHeading = (this.props.orderStatus) ? 'Update Your Order' : ' Place Your Order';
     const submitButtonName = (this.props.orderStatus) ? 'Update Order' : ' Place Order';
-    const reviewOrderButton = 'Checkout →';
+    const productGroups = this.displayProductsByType(this.state.products, isMobile);
 
-      return this.state.reviewSubmitOrder ? (
-        <Row>
+    switch (this.state.orderView){
+      case OrderView.CheckOut.name:
+        return (<Row>
           <Col xs={12}>
-            <h3 className="page-header"> Review Order</h3>
+            <h3 className="page-header">Review Order</h3>
           </Col>
           <Col xs={12}>
           <Panel>
@@ -379,23 +445,26 @@ export default class ProductsOrderMain extends React.Component {
                 totalBillAmount={this.state.totalBillAmount}
                 onButtonClick={this.handleOrderSubmit}
                 submitButtonName={submitButtonName}
-                onBackClick={()=>{this.handleReviewOrder(false)}}
+                onBackClick={()=>{this.changeView(OrderView.FullView.name)}}
               />   
           </Panel>
          </Col>
-         </Row>
-    ) :(
-      <div className="EditOrderDetails ">
-        <Row>
+         </Row>);
+       case OrderView.RecommendedView.name && this.state.recommendations.length > 10: // only if more than 10 products were recommended
+          return this.showRecommendationsView(productGroups.productRecommended, isMobile)   
+      default: 
+        return (<div className="EditOrderDetails ">
+         <Row>
           <Col xs={12}>
             <h3 className="page-header"> { formHeading }
               { this.displayToolBar(this.props.orderStatus) }
             </h3>
-            { this.displayProductsAndSubmit(reviewOrderButton) }
+            { this.displayProductsAndSubmit(isMobile, productGroups) }
           </Col>
         </Row>
       </div>
       );
+    }
   }
 }
 

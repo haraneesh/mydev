@@ -18,8 +18,8 @@ export default class ProductsOrderMobile extends React.Component {
       products: this.props.productArray,
       totalBillAmount,
       panelToFocus: "",
-      //recommendations: props.recommendations,
-      recommendations: [], // do not show recommendations,
+      recommendations: props.recommendations,
+      //recommendations: [], // do not show recommendations,
       scrollToLocation: false,
     };
 
@@ -43,16 +43,7 @@ export default class ProductsOrderMobile extends React.Component {
       this.setState({
         scrollToLocation: false,
     });
-  }
-  }
-  getSelectedProducts(products){
-    const selProducts = [];
-    for (const key in products) {
-      if (products[key].quantity && products[key].quantity > 0) {
-        selProducts.push(products[key]);
-      }
-    }
-    return selProducts;
+   }
   }
 
   handlePanelSelect(panelToFocus) {
@@ -60,16 +51,6 @@ export default class ProductsOrderMobile extends React.Component {
       panelToFocus: (this.state.panelToFocus === ""? panelToFocus: ""),
       scrollToLocation: true,
     });
-  }
-
-  wasProductOrderedPreviously(productId) {
-    const { recommendations } = this.state;
-    if (!recommendations.length > 0) {
-      return false;
-    }
-
-    const prevOrderedProducts = recommendations[0].recPrevOrderedProducts.prevOrderedProducts;
-    return (!!prevOrderedProducts[productId]);
   }
 
   displayProductsByType() {
@@ -82,7 +63,8 @@ export default class ProductsOrderMobile extends React.Component {
         productGroups[1], 
         productGroups[2], 
         productGroups[3], 
-        productGroups[4]
+        productGroups[4],
+        productGroups[5],
         );
   }
 
@@ -98,7 +80,7 @@ export default class ProductsOrderMobile extends React.Component {
     return (
       <div className="productOrderList">
         { (<PanelGroup activeKey={this.state.activePanel} id="accordion">
-          {this.state.recommendations.length > 0 && (<div id="fav-header">
+          {productRecommended.length > 0 && (<div id="fav-header">
             <Panel
               header={(<DisplayCategoryHeader
               clName="recommended_bk_ph"
