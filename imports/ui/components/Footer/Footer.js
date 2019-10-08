@@ -15,7 +15,7 @@ const Footer = () => (
     <Grid>
       <p className="pull-left">
         &copy; {copyrightYear()} Suvai Organics 
-        <span className="hidden-xs"> | Healthy, Tasty and Organic </span>
+        <span className="hidden-xs"> | Foods that love you back </span>
       </p>
       <ul className="pull-right">
         <li>
