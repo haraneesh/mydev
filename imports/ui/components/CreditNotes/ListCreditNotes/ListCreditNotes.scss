@@ -1,0 +1,24 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+
+.refund-row {
+    padding: $padding-small-vertical;
+    border-top: $table-border-color 1px solid;
+
+    .refund-item {
+        padding-top: $padding-small-vertical;
+        color: $gray-base;
+    }
+
+    .refund-section {
+        margin-top: $padding-small-vertical;
+    }
+
+    .refund-expand {
+        color: $gray-lighter;
+    }
+
+}
+
+.refund-heading{
+    margin: $padding-base-vertical 0;
+}

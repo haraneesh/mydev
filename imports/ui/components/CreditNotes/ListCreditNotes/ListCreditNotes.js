@@ -1,9 +1,11 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import {  Button, Row, Table, Col, Panel } from 'react-bootstrap';
+import {  Button, Row, Table, Col, Panel, Glyphicon } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
+
+import './ListCreditNotes.scss';
 
 class ListCreditNotes extends React.Component {
 
@@ -11,9 +13,11 @@ class ListCreditNotes extends React.Component {
         super(props);
         this.state = {
             creditNotes: [],
+            creditNoteDetail: {},
         }
 
         this.fetchCreditNotes = this.fetchCreditNotes.bind(this);
+        this.fetchCreditNote = this.fetchCreditNote.bind(this);
     }
 
     componentDidMount() {
@@ -34,38 +38,72 @@ class ListCreditNotes extends React.Component {
         );
     }
 
+    fetchCreditNote(creditNoteId) {
+        Meteor.call('creditNotes.getCreditNote',creditNoteId,
+        (error, creditNote) => {
+            if (error) {
+                Bert.alert(error.reason, 'danger');    
+            } else {
+                this.setState({
+                    creditNoteDetail: creditNote,
+                });
+            }
+        }
+    );
+    }
+
+    refundDetails(creditNoteDetail) {
+        return (
+            <section className="refund-section">
+            {
+                creditNoteDetail.line_items.map((item) => (
+                    <Row className="refund-item">
+                        <Col xs={8}>{item.name}</Col> 
+                        <Col xs={4}>{getFormattedMoney(item.item_total)}</Col>
+                    </Row>
+                ))
+            }
+            </section>
+        )
+    }
+
     render(){
         const creditNotes = this.state.creditNotes;
+        const creditNoteDetail = this.state.creditNoteDetail;
         return(
             <Panel>
-                <Col xs={12}>
+                
                {/*} <Row>
                     <Button type="button" onClick={this.fetchCreditNotes}>Show Refunds</Button>
                 </Row>
                 */}
-                <Row>
-                    {creditNotes.length > 0 && (<Table>
-                        <thead>
-                            <tr>
-                                <th>Refund Date</th>
-                                <th>Refund Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    {creditNotes.length > 0 && (<Col xs={12}>
+                        <Row className="refund-heading">
+                               <Col xs={5}><b>Refund Date</b></Col>
+                               <Col xs={5}><b>Refund Amount</b></Col>
+                               <Col xs={2}></Col>
+                        </Row>
+                        
                             {
                                 creditNotes.map((creditNote) => {
+                                      const isCurrentRow = creditNote.creditnote_id === creditNoteDetail.creditnote_id;
                                       return (
-                                        <tr>
-                                          <td>{getDayWithoutTime(new Date(creditNote.date))}</td>
-                                          <td>{getFormattedMoney(creditNote.total)}</td>
-                                        </tr>
+                                        <Row className="refund-row">
+                                            <Col xs={5}>{getDayWithoutTime(new Date(creditNote.date))}</Col>
+                                            <Col xs={5}>{getFormattedMoney(creditNote.total)}</Col>
+                                            <Col xs={2}> 
+                                                {(!isCurrentRow) && (<Glyphicon glyph="plus" className="refund-expand" onClick={()=>{this.fetchCreditNote(creditNote.creditnote_id)}}/>) }
+                                                
+                                            </Col>
+                                            <Col xs={12}>
+                                            {(isCurrentRow) && this.refundDetails(creditNoteDetail)}
+                                            </Col>
+                                        </Row>
                                       );
                             })
                         }
-                        </tbody>
-                    </Table>)}
-                </Row>
-                </Col>
+                        </Col>
+                    )}
             </Panel>
         );
     }

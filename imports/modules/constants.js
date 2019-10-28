@@ -159,7 +159,7 @@ PostTypes.allowedValues = _.reduce(PostTypes, (arr, postType) => {
 }, []);
 
 const FeedBackTypes = {
-  allowedValues : ['NPS','SURVEY'],
+  allowedValues : ['NPS','SURVEY','PRODUCTFIT'],
 }
 
 const SpecialThemes = ['None', 'Yellow', 'Red', 'Green', 'Orange'];

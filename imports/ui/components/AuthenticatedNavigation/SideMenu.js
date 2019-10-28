@@ -6,7 +6,10 @@ import { Panel, Row, Col, Button } from 'react-bootstrap';
 import AdminNav from './AdminNav';
 import Menu from './Menu';
 
-const handleLogout = () => Meteor.logout();
+const handleLogout = (props) => {
+  props.history.push('/about');
+  Meteor.logout();
+};
 
 const SideMenu = props => (
   <Menu alignment="right">
@@ -50,7 +53,7 @@ const SideMenu = props => (
                 <NavLink to="/profile">My Profile</NavLink>
               </li>
               <li>
-                <Button id="app-logout" onClick={handleLogout}>Logout</Button>
+                <Button id="app-logout" onClick={() => handleLogout(props) }>Logout</Button>
               </li>
             </ul>
             </Col>

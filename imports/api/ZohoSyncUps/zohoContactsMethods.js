@@ -154,9 +154,10 @@ export function retWalletAndSyncIfNecessary(userId) {
 
       return zohoResponse.wallet;
     }
+    return user.wallet;
   }
 
-  return user.wallet;
+  return {};
 }
 
 export const getUserWallet = new ValidatedMethod({

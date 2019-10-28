@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { ListGroup, ListGroupItem, Alert, Tabs, Tab } from 'react-bootstrap';
 //import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
-import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
+// import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
+import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
 import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import OrderSummaryRow from './OrderSummaryRow';
@@ -24,7 +25,7 @@ export default class MyOrderList extends React.Component {
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
-    this.receiveSurveyFeedBack = this.receiveSurveyFeedBack.bind(this);
+    this.receiveProductFit = this.receiveProductFit.bind(this);
     this.saveFeedBack = this.saveFeedBack.bind(this);
     this.showFeedBack = this.showFeedBack.bind(this);
   }
@@ -41,7 +42,7 @@ export default class MyOrderList extends React.Component {
     });
   }
 
-  receiveSurveyFeedBack({ratingsObjectWithValue}){
+  receiveProductFit({ratingsObjectWithValue}){
     this.setState({
       showFeedBackForm: false,
     });
@@ -52,10 +53,10 @@ export default class MyOrderList extends React.Component {
       ratingsArrayWithValue.push(ratingsObjectWithValue[key]);
     });
 
-    this.saveSurveyFeedBack(ratingsArrayWithValue);
+    this.saveProductFit(ratingsArrayWithValue);
   }
 
-  saveSurveyFeedBack(ratingsArrayWithValue) {
+  saveProductFit(ratingsArrayWithValue) {
     const methodToCall = 'feedbacks.insertSurvey';
     const fB = {
       postId: this.feedBackPostId,
@@ -85,7 +86,7 @@ export default class MyOrderList extends React.Component {
     const fB = {
       postId: this.feedBackPostId,
       postType: constants.PostTypes.Order.name,
-      feedBackType: 'NPS',
+      feedBackType: 'PRODUCTFIT',
       rating: feedBack.rating,
       questionAsked: feedBack.questionAsked,
       description: feedBack.description,
@@ -120,8 +121,7 @@ export default class MyOrderList extends React.Component {
       return false;
     });
 
-    if (
-      !lastDate || (latestOrder.receivedFeedBack === false &&
+    if (!lastDate || (!latestOrder.receivedFeedBack &&
         getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
     ) {
       return latestOrder._id;
@@ -133,6 +133,7 @@ export default class MyOrderList extends React.Component {
     const { orders } = this.props;
     this.feedBackPostId = this.showFeedBack(orders);
     const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
+    //const showFeedBackForm = true;
 
    const displayOrderRows = [];
    let numberOfAwaitingPayments = 0;
@@ -177,8 +178,8 @@ export default class MyOrderList extends React.Component {
                 orders.length > 0 ? (
                   <div>
                     {showFeedBackForm && (
-                      <SurveyFeedBack
-                        onClose={this.receiveSurveyFeedBack}
+                      <ProductFit
+                        onClose={this.receiveProductFit}
                       />
                     )}
 

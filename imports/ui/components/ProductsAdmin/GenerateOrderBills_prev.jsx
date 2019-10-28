@@ -127,7 +127,7 @@ _writeOrderSummaryDetails (rowsDetails) {
     this.pdf.setFontSize(this.titleFontSize)
     this._printTextRow(this.pageX, this.pageY, this.rowHeight,"Suvai",this.pdf )
     this.pdf.setFontSize(this.bodyFontSize)
-    this._printTextRow(this.pageX + 45, this.pageY, 30," - Affordably, Healthy Organic Foods ",this.pdf )
+    this._printTextRow(this.pageX + 45, this.pageY, 30," - Foods that love you back",this.pdf )
     this.pageY = this._printTextRow(this.pageX + 400, this.pageY, this.rowHeight, 
                 moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format),this.pdf )
     if (order.customer_details.deliveryAddress){

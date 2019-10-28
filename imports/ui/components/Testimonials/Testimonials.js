@@ -4,7 +4,7 @@ import {Panel} from 'react-bootstrap';
 import './Testimonials.scss';
 
 const Testimonials = () => (
-    <Panel className="testimonials text-center">
+    <Panel className="testimonials text-center bodyCursText">
       <h2 class="mb-5">What people are saying...</h2>
       <div class="row">
       <div class="col-sm-4">

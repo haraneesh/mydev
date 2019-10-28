@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Row, Col, Panel, Modal } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
-import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
+import { calculateWalletBalanceInRs, isWalletUndefined } from '../../../../modules/both/walletHelpers';
 
 const displayWalletSummary = (amountInWalletInRs) => {
   let textClassName = '';

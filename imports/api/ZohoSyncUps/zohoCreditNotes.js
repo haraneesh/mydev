@@ -7,8 +7,14 @@ function getCustomerCreditNotes(zhCustomerId){
   return response;
 }
 
+function getCreditNote(creditNoteId){
+  const response = zh.getRecordById('creditnotes', creditNoteId);
+  return response;
+}
+
 const zohoCreditNotes = {
   getCustomerCreditNotes,
+  getCreditNote,
 };
 
 export default zohoCreditNotes;
