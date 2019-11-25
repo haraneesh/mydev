@@ -1,12 +1,11 @@
 import React from 'react';
-import { ListGroupItem, Label } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ProductForAdmin from './ProductForAdmin';
 import ProductForNonAdmin from './ProductForNonAdmin';
 
 import './Product.scss';
 
-const Product = ({ updateProductQuantity, product, isAdmin }) => (
+const Product = ({ updateProductQuantity, product, isAdmin, checkout }) => (
   <div key={product._id} className={(product.displayAsSpecial) ? 'special-product-item' : ''}>
     {/*product.displayAsSpecial ? (<Label bsStyle="warning">special</Label>) : ''*/}
     {!isAdmin ?
@@ -26,6 +25,7 @@ const Product = ({ updateProductQuantity, product, isAdmin }) => (
       totQuantityOrdered={product.totQuantityOrdered}
       previousOrdQty={(product.previousOrdQty) ? product.previousOrdQty : 0}
       isAdmin={isAdmin}
+      checkout={checkout}
     />)
     :
     (<ProductForAdmin
@@ -44,19 +44,21 @@ const Product = ({ updateProductQuantity, product, isAdmin }) => (
       totQuantityOrdered={product.totQuantityOrdered}
       previousOrdQty={(product.previousOrdQty) ? product.previousOrdQty : 0}
       isAdmin={isAdmin}
+      checkout={checkout}
     />)
   }
   </div>
 );
 
 Product.defaultProps = {
-  showQuantitySelector: true,
+  checkout: false,
 };
 
 Product.propTypes = {
   updateProductQuantity: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  checkout: PropTypes.bool,
 };
 
 export default Product;

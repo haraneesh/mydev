@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-tabs */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Panel, Col, Button } from 'react-bootstrap';
@@ -35,48 +37,74 @@ class About extends React.Component {
       <div>
         <Panel className="about-page">
           <Row className="about-section text-left">
-                <Col sm={6} className="about-getOrganic text-center">
-				  <h3> Organic & Natural</h3> 
-			      <h4> produce delivered home, in Chennai </h4>
-                  <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
-				 {/* <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button> */}
-                </Col>
-                <Col sm={6}>
-                  <img src="about/1.jpg" width="100%"/>
-                </Col>
-				<Col xs={12} className="text-center">
-				<h4> Try our sample basket </h4>
-				<Button className="sampleBtn" bsStyle="primary" href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket &rarr; </Button>
-			</Col>
+            <Col sm={6} className="about-getOrganic text-center">
+              <h3> Organic & Natural</h3>
+              <h4> produce delivered home, in Chennai </h4>
+              <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
+              {/* <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button> */}
+            </Col>
+            <Col sm={6}>
+              <img src="about/1.jpg" width="100%" />
+            </Col>
 			</Row>
-      </Panel>
-
-	  <Panel>
-		<Row className="text-center bodyCursText">
-			<h3 className="page-header no-margin-no-padding"> Why Us</h3>
 			<Row>
-				<Col sm={3}>
-					<h3 class="dt-align">4+ Years</h3> <p> promoting organic produce</p>
-				</Col>
-				<Col sm={3}>
-					<h3 class="dt-align">8+ Years</h3> <p> Organic farmers network</p>
-				</Col>
-				<Col sm={3}>
-					<h3 class="dt-align">300+ families</h3> <p> as members</p>
-				</Col>
-				<Col sm={3}>
-					<h3 class="dt-align">2 times</h3> <p> a week delivery</p>
-				</Col>
-			</Row>	
-		</Row>
-	</Panel>
+			<Col sm={6} className="text-center">
+              <h4>  Member </h4>
+              <Button className="sampleBtn" bsStyle="primary" href="/order"> Place Order </Button>
+            </Col>
+            <Col sm={6} className="text-center">
+              <h4> Not a Member </h4>
+              <Button className="sampleBtn"  href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket </Button>
+            </Col>
+          </Row>
+        </Panel>
 
-	<Panel>
-		<div>
-			<Col xs={12} sm={12} className="page-header text-center no-padding">
-				<h3> <span> Our Belief - Eating Healthy Is </span> </h3>
-		</Col>
-		{/* 
+        <Panel>
+          <Col xs={12} className="text-center">
+            <h3 className="page-header"> About Us - Belong to a Better Market</h3>
+
+            <p>
+					Suvai is an online community that leverages the power of direct buying to deliver the consumers best healthy food and natural products
+					while ensuring that the farmer gets paid above market prices thus encouraging them to continue doing good.
+            </p>
+            <p>
+					We work with passionate farmers who are into natural farming for about 10+ years inspite of struggling to market their produce.
+					We collect the produce from them at reasonable prices (mostly fixed by them) and cater to our members at affordable prices.
+            </p>
+            <p>
+					We began working with a few, select farmers and supplied to our close friends and families.
+					Now, We are proud to say that we are able to source more than 250 products (a range of fruits, vegetables and groceries) from over 500 farmers of 3 FPOs spanning across
+					3 states Andhra, Tamilnadu and Karnataka.
+            </p>
+          </Col>
+        </Panel>
+
+        <Panel>
+          <Row className="text-center bodyCursText">
+            <h3 className="page-header no-margin-no-padding"> Why Us</h3>
+            <Row>
+              <Col sm={3}>
+                <h3 className="dt-align">4+ Years</h3> <p> promoting organic produce</p>
+              </Col>
+              <Col sm={3}>
+                <h3 className="dt-align">8+ Years</h3> <p> Organic farmers network</p>
+              </Col>
+              <Col sm={3}>
+                <h3 className="dt-align">300+ families</h3> <p> as members</p>
+              </Col>
+              <Col sm={3}>
+                <h3 className="dt-align">2 times</h3> <p> a week delivery</p>
+              </Col>
+            </Row>
+          </Row>
+        </Panel>
+
+        <Panel>
+          <div>
+            <Col xs={12} sm={12} className="page-header text-center no-padding">
+              <h3> <span> Our Belief - Eating Healthy Is </span> </h3>
+            </Col>
+            {/*
 			<Col xs={12} sm={6} className="text-center no-padding">
 					<div className="heading-text">
 						<h3 style={{width:'100%'}}> <span> Our Belief</span> </h3>
@@ -94,63 +122,63 @@ class About extends React.Component {
 				</div>
 			</div>
 			</Col> */}
-		</div>
-		<section className="text-center">
-			{/* <h3 className="page-header"> Our Beliefs - Eating Healthy is</h3> */}
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture1.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
-								Eating Natural 
-							</h4>
-							<p >
-								Our vegetables and farm made produce have no chemical pesticides, no artificial 
-					  			colouring agents and no unnecessary additives.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture2.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
-								Eating Variety
-							</h4>
-							<p>
-							Eat a variety of vegetables and beans of different colors and type while avoiding the ones that don't suit you and your family for a balanced diet.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture3.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
-								Eating Whole Food
-							</h4>
-							<p>
-							 Avoid highly processed food, refined sugar and refined flour. Choose mostly minimally processed, whole foods.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12}>
-                  <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link> 
-                  </h4>
+          </div>
+          <section className="text-center">
+            {/* <h3 className="page-header"> Our Beliefs - Eating Healthy is</h3> */}
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture1.png" height="120" width="120" />
                 </Col>
-		</section>
-	</Panel>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
+								Eating Natural
+                  </h4>
+                  <p >
+								Our vegetables and farm made produce have no chemical pesticides, no artificial
+					  			colouring agents and no unnecessary additives.
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture2.png" height="120" width="120" />
+                </Col>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
+								Eating Variety
+                  </h4>
+                  <p>
+							Eat a variety of vegetables and beans of different colors and type while avoiding the ones that don't suit you and your family for a balanced diet.
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture3.png" height="120" width="120" />
+                </Col>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
+								Eating Whole Food
+                  </h4>
+                  <p>
+							 Avoid highly processed food, refined sugar and refined flour. Choose mostly minimally processed, whole foods.
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12}>
+              <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link>
+              </h4>
+            </Col>
+          </section>
+        </Panel>
 
-	{/*
+        {/*
 	 <Panel>
 		<section className="text-center">
 			<h3 className="page-header"> Our Quality Manifesto </h3>
@@ -158,7 +186,7 @@ class About extends React.Component {
 				<Row>
 					<Col className="describe_service" xs={12}>
 							<h4 className="name_service">
-								We carry only the best version of everything. 
+								We carry only the best version of everything.
 					  		</h4>
 							  <p>
 								  <ul>
@@ -175,7 +203,7 @@ class About extends React.Component {
 			</Col>
 		</section>
 	</Panel> */}
-{/*
+        {/*
 	<Panel>
 		<div class="how-section1">
 			<div class="row">
@@ -202,13 +230,13 @@ class About extends React.Component {
 								<h4 class="subheading">Most people are not fully aware</h4>
 								<p>
 									As our friends started selling their Organic produce, we realized that most people
-									did not realize the benefits of Organic food and what a good wholesome plant based diet 
+									did not realize the benefits of Organic food and what a good wholesome plant based diet
 									could do to one's wellbeing.<br/>
 									Years of marketing and ignorance of the changes happening in the farm have made general public oblivious
 									to ill effects of modern farming and are used to artifical low costs of produce.
 								</p>
 				</div>
-				
+
 			</div>
 			<div class="row">
 				<div class="col-md-2">
@@ -218,9 +246,9 @@ class About extends React.Component {
 					<h4>Variety</h4>
 								<h4 class="subheading">People shop variety</h4>
 								<p>
-									From any one farm only a few varieties of ingredients can be produced. 
+									From any one farm only a few varieties of ingredients can be produced.
 									However our diet needs several ingredients. We realized that unless we truly made a variety of Organic food available,
-									it was diffivult for people to switch and reap the full benefits. 
+									it was diffivult for people to switch and reap the full benefits.
 									<br/>
 									Farming and Distribution are both full time jobs. It is difficult to do both well at the same time.
 								</p>
@@ -234,7 +262,7 @@ class About extends React.Component {
 					<h4>Zero Budget Natural Farming</h4>
 								<h4 class="subheading">Spread organic farming</h4>
 								<p>
-									For variety we need several farmers across many geographies to do organic farming. 
+									For variety we need several farmers across many geographies to do organic farming.
 									ZBNF was started by a group of friends with this intent and we are a member and active participant.
 									This gives us access to very good high quality produce and most importantly a sense of doing good for society.
 								</p>
@@ -244,27 +272,27 @@ class About extends React.Component {
 	</Panel>
 */}
 
-	{/*
+        {/*
 	<Panel>
 	<Row className="text-center">
 	<Col xs={12}>
 		<h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
 			<p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
-			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p> 
+			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p>
 		</Col>
 		</Row>
 	</Panel>
 	*/}
 
-	<Panel>
-	   <Row className="text-center">
-       <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
-       </Row>
-	</Panel>
+        <Panel>
+          <Row className="text-center">
+            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
+          </Row>
+        </Panel>
 
-	<Testimonials/>
+        <Testimonials />
 
-    <ContactUs />
+        <ContactUs />
       </div>
     );
   }

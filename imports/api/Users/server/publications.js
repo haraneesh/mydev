@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import UserSignUps from '../UserSignUps';
 import { retWalletAndSyncIfNecessary } from '../../ZohoSyncUps/zohoContactsMethods';
 
 Meteor.publish('users.editProfile', function usersProfile() {
@@ -24,3 +25,5 @@ Meteor.publish('users.userWallet', function user() {
     },
   });
 });
+
+Meteor.publish('userSignUps.getUsers', () => UserSignUps.find({ status: { $exists: false } }));

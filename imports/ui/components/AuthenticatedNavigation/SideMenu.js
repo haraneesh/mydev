@@ -44,6 +44,9 @@ const SideMenu = props => (
               </li>
               <br/>
               <li>
+                <NavLink to="/approveSignUps"> Approve Sign Ups</NavLink>
+              </li>
+              <li>
                 <NavLink to="/invitations">Invite Friends</NavLink>
               </li>
               {/* <li>

@@ -1,13 +1,12 @@
 import React from 'react';
-import { Row, Col, FormControl } from 'react-bootstrap';
+import { Row, Col, FormControl, Panel } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { formatMoney } from 'accounting-js';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 import { accountSettings } from '../../../modules/settings';
 import { displayUnitOfSale } from '../../../modules/helpers';
 
-
-const QuantitySelector = ({
+const QuantitySelectorWithPrice = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   onChange,
   unit,
@@ -15,13 +14,34 @@ const QuantitySelector = ({
   controlName,
   quantitySelected,
 }) => (
+  <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
+    {values.map((selectValue, index) => {
+      const value = parseFloat(selectValue);
+      const cost = formatMoney(value * unitprice, accountSettings);
+      return (
+        <option value={value} key={`option-${index}`} > {`${displayUnitOfSale(selectValue, unit)} ${cost}`} </option>
+      );
+    },
+      )
+    }
+  </FormControl>
+  );
+
+const QuantitySelector = ({
+    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    onChange,
+    unit,
+    unitprice,
+    controlName,
+    quantitySelected,
+  }) => (
     <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
       {values.map((selectValue, index) => (
-        <option value={selectValue} key={`option-${index}`} > {displayUnitOfSale(selectValue, unit)} </option>
-      ))
-      }
+        <option value={parseFloat(selectValue)} key={`option-${index}`} > {displayUnitOfSale(selectValue, unit)} </option>
+        ))
+        }
     </FormControl>
-  );
+    );
 
 const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToOrder, totQuantityOrdered, previousOrdQty }) => (
   <div className="productNameDesc">
@@ -35,7 +55,7 @@ const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToO
     />}
     <p><small>{description}</small></p>
   </div>
-)
+);
 
 const ProductForNonAdmin = ({
   // <Col sm = { 2 }><Image  src={ image } className = "order-image" responsive /> </Col>
@@ -51,6 +71,7 @@ const ProductForNonAdmin = ({
   totQuantityOrdered,
   previousOrdQty,
   image,
+  checkout,
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
@@ -58,11 +79,49 @@ const ProductForNonAdmin = ({
   const lowestOrdQtyPrice = unitprice * lowestOrdQty;
 
   const prodNameDesc = (<ProductName
-    name={name} description={description}
-    quantitySelected={quantitySelected} maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-    totQuantityOrdered={totQuantityOrdered} previousOrdQty={previousOrdQty} />);
-  const imagePath = Meteor.settings.public.Product_Images + image; 
+    name={name}
+    description={description}
+    quantitySelected={quantitySelected}
+    maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+    totQuantityOrdered={totQuantityOrdered}
+    previousOrdQty={previousOrdQty}
+  />);
+  const imagePath = Meteor.settings.public.Product_Images + image;
   const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
+
+  if (checkout) {
+    return (
+      <Panel>
+        <Row>
+
+          <Col xs={7} sm={9} style={{paddingRight:'0px'}}>
+            {name}
+          </Col>
+          <Col xs={5} sm={3} style={{paddingLeft:'10px'}}>
+            <Row>
+              <Col xs={12}>
+                <QuantitySelector
+                  onChange={onChange}
+                  unit={unit}
+                  unitprice={unitprice}
+                  controlName={productId}
+                  quantitySelected={quantitySelected}
+                  values={unitsForSelectionArray}
+                  maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+                />
+              </Col>
+              <Col xs={12}>
+                {formatMoney(
+                      unitprice * quantitySelected,
+                      accountSettings,
+                    )}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Panel>
+    );
+  }
 
   return (
     <Col sm={12} md={6} className="no-padding product-item">
@@ -71,7 +130,7 @@ const ProductForNonAdmin = ({
       </Col>
 
       <Col xs={12} sm={8}>
-       <Row>
+        <Row>
           <Col xs={12}>
             {prodNameDesc}
           </Col>
@@ -91,13 +150,14 @@ const ProductForNonAdmin = ({
               maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             />
           </Col>
-      </Row>
+        </Row>
       </Col>
     </Col>
   );
 };
 
 ProductForNonAdmin.defaultProps = {
+  checkout: false,
   description: '',
   unitsForSelection: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 };
@@ -116,6 +176,7 @@ ProductForNonAdmin.propTypes = {
   image_path: PropTypes.string,
   unitsForSelection: PropTypes.array,
   isMobile: PropTypes.bool.isRequired,
+  checkout: PropTypes.bool,
 };
 
 /*

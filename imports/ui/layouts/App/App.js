@@ -6,6 +6,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import Authenticated from '../../components/Routes/Authenticated';
 import AdminAuthenticated from '../../components/Routes/AdminAuthenticated';
+import PlaceOrderAuthenticated from '../../components/Routes/PlaceOrderAuthenticated';
 import NotAuthenticated from '../../components/Routes/NotAuthenticated';
 import Public from '../../components/Routes/Public';
 /*
@@ -69,6 +70,7 @@ import {
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,
+  dApproveUserSignUps,
 }
   from './dynamicRoutes';
 
@@ -119,7 +121,7 @@ const App = props => (
 
         {/* Order */}
         <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
-        <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
+        <PlaceOrderAuthenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
 
         {/* Accept Payment */}
         <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
@@ -143,6 +145,8 @@ const App = props => (
         <NotAuthenticated routeName="Signup" layout={MainLayout} path="/signup" component={Signup} {...props} />
         <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
         <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
+        <AdminAuthenticated exact routeName="Approve Sign Ups" layout={MainLayout} path="/approveSignUps" component={dApproveUserSignUps} {...props} />
+        
         {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
         <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />
         <Public routeName="Recover Password" layout={MainLayout} path="/recover-password" component={RecoverPassword} />

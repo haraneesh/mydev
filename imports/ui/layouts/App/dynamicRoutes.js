@@ -134,3 +134,7 @@ export const dReconcileInventory = SuvaiLoadable({
 export const dReconcileInventoryList = SuvaiLoadable({
   loader: () => import('../../pages/ReconcileInventory/ReconcileInventoryList'),
 });
+
+export const dApproveUserSignUps = SuvaiLoadable({
+  loader: () => import('../../pages/Miscellaneous/ApproveSignUps'),
+});

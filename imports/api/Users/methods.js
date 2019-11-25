@@ -10,7 +10,7 @@ import constants from '../../modules/constants';
 import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
-import {Emitter, Events} from '../events';
+import { Emitter, Events } from '../events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 
 export const editUserProfile = new ValidatedMethod({
@@ -69,6 +69,43 @@ export const findUser = new ValidatedMethod({
   },
 });
 
+const createNewUser = (user) => {
+  const cuser = {
+    username: user.username,
+    email: user.email,
+    password: user.password,
+    updatedAt: new Date(),
+    profile: {
+      name: {
+        first: user.profile.name.first,
+        last: user.profile.name.last,
+      },
+      whMobilePhone: user.profile.whMobilePhone,
+      deliveryAddress: user.profile.deliveryAddress,
+    },
+  };
+
+  const wallet = {
+    unused_retainer_payments_InPaise: 0,
+    unused_credits_receivable_amount_InPaise: 0,
+    outstanding_receivable_amount_InPaise: 0,
+    lastZohoSync: new Date('1/1/2000'),
+  };
+
+  const userExists = Meteor.users.findOne({ username: cuser.username });
+
+  if (!userExists) {
+    const userId = Accounts.createUser(cuser);
+    if (user.isAdmin) {
+      Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
+    }
+    Meteor.users.update({ username: cuser.username }, { $set: { wallet } });
+    return Meteor.users.findOne({ username: cuser.username });
+  }
+
+  throw new Meteor.Error('500', 'A user with this username already exists.');
+};
+
 export const createUser = new ValidatedMethod({
   name: 'users.create',
   validate: new SimpleSchema({
@@ -85,39 +122,8 @@ export const createUser = new ValidatedMethod({
     password: { type: Object, blackbox: true },
   }).validator(),
   run(user) {
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name))      {
-      const cuser = {
-        username: user.username,
-        email: user.email,
-        password: user.password,
-        updatedAt: new Date(),
-        profile: {
-          name: {
-            first: user.profile.name.first,
-            last: user.profile.name.last,
-          },
-          whMobilePhone: user.profile.whMobilePhone,
-          deliveryAddress: user.profile.deliveryAddress,
-        },
-        wallet: {
-          unused_retainer_payments_InPaise: 0,
-          unused_credits_receivable_amount_InPaise: 0,
-          outstanding_receivable_amount_InPaise: 0,
-          lastZohoSync: new Date('1/1/2000'),
-        },
-      };
-
-      const userExists = Meteor.users.findOne({ username: cuser.username });
-
-      if (!userExists) {
-        const userId = Accounts.createUser(cuser);
-        if (user.isAdmin) {
-          Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
-        }
-        return Meteor.users.findOne({ username: cuser.username });
-      }
-
-      throw new Meteor.Error('500', 'A user with this username already exists.');
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      createNewUser(user);
     }
   },
 });
@@ -213,13 +219,28 @@ export const updateUser = new ValidatedMethod({
   },
 });
 
+const notifyUserSignUp = (content, subject) => {
+  const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
+  const fromEmail = Meteor.settings.private.fromInvitationEmail;
+  if (Meteor.isDevelopment) {
+    console.log(`To Email: ${toEmail} From Email: ${fromEmail} Subject: ${subject} Content: ${content}`);
+  } else {
+    Email.send({
+      to: toEmail,
+      from: `Suvai User SignUp ${fromEmail}`,
+      subject,
+      html: content,
+    });
+  }
+};
+
 Meteor.methods({
   'users.signUp': function userSelfSignUp(user) {
     check(user, {
       username: String,
       email: String,
       profile: {
-        name:{
+        name: {
           last: String,
           first: String,
         },
@@ -228,14 +249,28 @@ Meteor.methods({
       },
       password: String,
     });
-   return UserSignUps.insert(user);
+
+    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, Phone number: ${user.profile.whMobilePhone} has signed up. Please approve in the app.`, 'New user signup');
+    return UserSignUps.insert(user);
+  },
+  'users.approveSignUp': function usersApproveSignUp(userSignUpId, status) {
+    check(userSignUpId, String);
+    check(status, String);
+
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      const usr = UserSignUps.findOne({ _id: userSignUpId });
+      if (status === 'Approve') {
+        createNewUser(usr);
+      }
+      return UserSignUps.update({ _id: userSignUpId }, { $set: { status } });
+    }
   },
   'users.sendVerificationEmail': function usersSendVerificationEmail() {
     return Accounts.sendVerificationEmail(this.userId);
   },
   'users.visitedPlaceNewOrder': function lastVisitedPlaceNewOrder() {
     try {
-      Emitter.emit(Events.NAV_PLACEORDER_LANDING, {userId:this.userId})
+      Emitter.emit(Events.NAV_PLACEORDER_LANDING, { userId: this.userId });
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -246,6 +281,7 @@ rateLimit({
   methods: [
     'users.sendVerificationEmail',
     'users.visitedPlaceNewOrder',
+    'users.approveSignUp',
     updateUser,
     adminUpdateUser,
     findUser,
