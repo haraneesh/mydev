@@ -22,12 +22,12 @@ const OrderView = {
     name: 'RecommendedView',
   },
   FullView: {
-    name: 'FullView'
+    name: 'FullView',
   },
   CheckOut: {
     name: 'CheckOut',
-  }
-}
+  },
+};
 
 export default class ProductsOrderMain extends React.Component {
   constructor(props, context) {
@@ -45,7 +45,7 @@ export default class ProductsOrderMain extends React.Component {
       products: productArray,
       totalBillAmount,
       recommendations: props.recommendations,
-      //recommendations: [], // do not show recommendations,
+      // recommendations: [], // do not show recommendations,
       orderView: OrderView.RecommendedView.name,
     };
 
@@ -66,41 +66,25 @@ export default class ProductsOrderMain extends React.Component {
   }
 
   componentDidMount() {
-    Meteor.call('users.visitedPlaceNewOrder',(error) => {
+    Meteor.call('users.visitedPlaceNewOrder', (error) => {
       if (error && Meteor.isDevelopment) {
         Bert.alert(error.reason, 'danger');
-      } 
+      }
     });
   }
 
-  getSelectedProducts(products){
-    const selProducts = [];
-    for (const key in products) {
-      if (products[key].quantity && products[key].quantity > 0) {
-        selProducts.push(products[key]);
+  getSelectedProducts(products, includeRemovedAtCheckout = false) {
+    const allProductKeys = Object.keys(products);
+    const selectedProducts = [];
+    allProductKeys.forEach((key) => {
+      const selCondition = (products[key].quantity && products[key].quantity > 0) ||
+        (products[key].removedDuringCheckout && includeRemovedAtCheckout);
+      if (selCondition) {
+        selectedProducts.push(products[key]);
       }
-    }
-    return selProducts;
-  }
-
-  handleOrderSubmit() {
-    const order = {
-      products: this.getSelectedProducts(this.state.products),
-      _id: this.props.orderId,
-      order_status: constants.OrderStatus.Pending.name,
-          // totalBillAmount: this.state.totalBillAmount,
-      comments: document.querySelector('[name="comments"]').value,
-    };
-
-    upsertOrder.call(order, (error) => {
-      const confirmation = 'Your Order has been placed';
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        Bert.alert(confirmation, 'success');
-        this.props.history.push('/');
-      }
-    });
+    },
+    );
+    return selectedProducts;
   }
 
   handleCancel(e) {
@@ -126,7 +110,7 @@ export default class ProductsOrderMain extends React.Component {
   displayToolBar(orderStatus) {
     return (
       <ButtonToolbar className="pull-right">
-        { (orderStatus === constants.OrderStatus.Pending.name) && (<Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>)}
+        { (orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button bsSize="small" onClick={this.handleCancel}>Cancel Order</Button>)}
         { (this.isAdmin) && (<Button bsSize="small" onClick={this.handlePrintProductList}>Print Order List</Button>)}
       </ButtonToolbar>
     );
@@ -157,7 +141,29 @@ export default class ProductsOrderMain extends React.Component {
     return searchResults.slice(0, numOfElements);
   }
 
-  changeView(view){
+
+  handleOrderSubmit(saveStatus) {
+    const commentBox = document.querySelector('[name="comments"]');
+    const order = {
+      products: this.getSelectedProducts(this.state.products),
+      _id: this.props.orderId,
+      order_status: saveStatus,
+          // totalBillAmount: this.state.totalBillAmount,
+      comments: (commentBox) ? commentBox.value : '',
+    };
+
+    upsertOrder.call(order, (error) => {
+      const confirmation = 'Your Order has been placed';
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert(confirmation, 'success');
+        this.props.history.push('/');
+      }
+    });
+  }
+
+  changeView(view) {
     this.setState({
       orderView: view,
     });
@@ -169,10 +175,15 @@ export default class ProductsOrderMain extends React.Component {
     this.updateProductQuantity(productId, quantity);
   }
 
-  updateProductQuantity(productId, quantity){
+  updateProductQuantity(productId, quantity) {
     const productsCopy = this.state.products;
 
     productsCopy[productId].quantity = parseFloat((quantity) || 0);
+    productsCopy[productId].removedDuringCheckout = false;
+
+    if (this.state.orderView === OrderView.CheckOut.name && productsCopy[productId].quantity === 0) {
+      productsCopy[productId].removedDuringCheckout = true;
+    }
 
     let totalBillAmount = 0;
     // for (const key in productsCopy) {
@@ -194,7 +205,7 @@ export default class ProductsOrderMain extends React.Component {
     }
 
     const prevOrderedProducts = recommendations[0].recPrevOrderedProducts.prevOrderedProducts;
-    
+
     return (!!prevOrderedProducts[productId]);
   }
 
@@ -207,7 +218,7 @@ export default class ProductsOrderMain extends React.Component {
     const productSpecials = [];
     const productRecommended = [];
 
-    //let previousCategory = "Others";
+    // let previousCategory = "Others";
 
     _.map(products, (product, index) => {
       if (this.wasProductOrderedPreviously(product._id)) {
@@ -216,20 +227,20 @@ export default class ProductsOrderMain extends React.Component {
         );
       }
 
-      if (!!product.displayAsSpecial) {
+      if (product.displayAsSpecial) {
         productSpecials.push(
           <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={this.changeProductQuantity} product={product} isAdmin={this.isAdmin} />,
         );
       }
 
       let tempProductList = [];
-      let tempKey = "";
+      let tempKey = '';
 
       switch (true) {
-        /*case (!!product.displayAsSpecial): // Special
+        /* case (!!product.displayAsSpecial): // Special
           tempProductList = productSpecials;
           tempKey = `special-${index}`;
-          break;*/
+          break; */
         case (constants.ProductType[0] === product.type): // Vegetables
           tempProductList = productVegetables;
           tempKey = `vegetable-${index}`;
@@ -257,65 +268,61 @@ export default class ProductsOrderMain extends React.Component {
       tempProductList.push(
         <Product isMobile={isMobile} key={tempKey} updateProductQuantity={this.changeProductQuantity} product={product} isAdmin={this.isAdmin} />,
       );
-       
     });
 
     return {
-      productGroceries, 
-      productVegetables, 
-      productBatters, 
-      productPersonalHygiene, 
-      productSpecials, 
+      productGroceries,
+      productVegetables,
+      productBatters,
+      productPersonalHygiene,
+      productSpecials,
       productRecommended,
-      isMobile};
-    
+      isMobile };
   }
 
-  addProductsToTabs(productArray){
-    let prodArr = [];
-      
+  addProductsToTabs(productArray) {
+    const prodArr = [];
+
     productArray.forEach((element, index) => {
       prodArr.push(element);
-      if (index % 2 && index !== 0){
-        prodArr.push(<Row></Row>);
+      if (index % 2 && index !== 0) {
+        prodArr.push(<Row />);
       }
     });
 
-    return  prodArr;
+    return prodArr;
   }
 
   displayProductsByTypeStandardView(
-    productGroceries, 
-    productVegetables, 
-    productBatters, 
-    productPersonalHygiene, 
-    productSpecials, 
+    productGroceries,
+    productVegetables,
+    productBatters,
+    productPersonalHygiene,
+    productSpecials,
     productRecommended,
-    isMobile){
-
-    
+    isMobile) {
     const productGroups = [
-        productGroceries, 
-        productVegetables, 
-        productBatters, 
-        productPersonalHygiene, 
-        productSpecials, 
-        productRecommended];  
+      productGroceries,
+      productVegetables,
+      productBatters,
+      productPersonalHygiene,
+      productSpecials,
+      productRecommended];
 
     return (
       <div className="productOrderList">
         { isMobile && (
-          <ProductsOrderMobile 
-          productGroups={productGroups}
-          productArray= {this.state.products}
-          productGroupSelected={this.props.productGroupSelected}
-          orderId={this.props.orderId}
-          orderStatus={this.props.orderStatus}
-          comments={this.props.comments}
-          totalBillAmount={this.props.totalBillAmount}
-          dateValue= {this.props.dateValue}
-          history={this.props.history}
-          /> )
+          <ProductsOrderMobile
+            productGroups={productGroups}
+            productArray={this.state.products}
+            productGroupSelected={this.props.productGroupSelected}
+            orderId={this.props.orderId}
+            orderStatus={this.props.orderStatus}
+            comments={this.props.comments}
+            totalBillAmount={this.props.totalBillAmount}
+            dateValue={this.props.dateValue}
+            history={this.props.history}
+          />)
         }
 
         { !isMobile && (<Tabs defaultActiveKey={2} id="productTabs" bsStyle="pills">
@@ -325,8 +332,8 @@ export default class ProductsOrderMain extends React.Component {
           }
           <Tab eventKey={2} title="Groceries" tabClassName="groceries_bk text-center">
             <Row>
-            { this.addProductsToTabs(productGroceries) }
-           </Row>
+              { this.addProductsToTabs(productGroceries) }
+            </Row>
           </Tab>
           <Tab eventKey={3} title="Vegetables & Fruit" tabClassName="vegetables_bk text-center">
             { this.addProductsToTabs(productVegetables) }
@@ -356,22 +363,24 @@ export default class ProductsOrderMain extends React.Component {
 
              {
                this.displayProductsByTypeStandardView(
-                productGroups.productGroceries, 
-                productGroups.productVegetables, 
-                productGroups.productBatters, 
-                productGroups.productPersonalHygiene, 
-                productGroups.productSpecials, 
-                //productGroups.productRecommended,
+                productGroups.productGroceries,
+                productGroups.productVegetables,
+                productGroups.productBatters,
+                productGroups.productPersonalHygiene,
+                productGroups.productSpecials,
+                // productGroups.productRecommended,
                 [],
                 isMobile)}
 
-             { 
-                //this.displayProductsByType(this.state.products, isMobile) 
+             {
+                // this.displayProductsByType(this.state.products, isMobile)
              }
-             
-             {this.displayOrderFooter()}
-             
+
            </ListGroup>
+         </Col>
+
+         <Col xs={12}>
+           {this.displayOrderFooter(isMobile)}
          </Col>
        </Row>
      </Panel>
@@ -382,45 +391,48 @@ export default class ProductsOrderMain extends React.Component {
     );
   }
 
-  displayOrderFooter(){
+  displayOrderFooter(isMobile) {
     const reviewOrderButton = 'Checkout →';
     return (<OrderFooter
-    totalBillAmount={this.state.totalBillAmount}
-    onButtonClick={()=>{this.changeView(OrderView.CheckOut.name)}}
-    submitButtonName={reviewOrderButton} />
-    )
+      totalBillAmount={this.state.totalBillAmount}
+      onButtonClick={() => { this.changeView(OrderView.CheckOut.name); }}
+      submitButtonName={reviewOrderButton}
+      onSecondButtonClick={() => { this.handleOrderSubmit(constants.OrderStatus.Saved.name); }}
+      isMainProductListPage
+      isMobile={isMobile}
+    />
+    );
   }
 
-  showRecommendationsView(recommendedProducts , isMobile){
+  showRecommendationsView(recommendedProducts, isMobile) {
     return (<div className="EditOrderDetails ">
-    <Row>
-      <Col xs={12}>
-        <h3 className="page-header"> 
+      <Row>
+        <Col xs={12}>
+          <h3 className="page-header">
           Curated for You
-        </h3>
-        <Panel>
-        { this.addProductsToTabs(recommendedProducts) }
-        {!!isMobile && (
-          <Row>
-            <Col xs={12}>
-              <Button className="btn-block" onClick={()=>{this.changeView()}}>See Full List</Button>
+          </h3>
+          <Panel>
+            { this.addProductsToTabs(recommendedProducts) }
+            {!!isMobile && (
+            <Row>
+              <Col xs={12}>
+                <Button className="btn-block" onClick={() => { this.changeView(); }}>See Full List</Button>
               </Col>
-          </Row>)}
-        {!isMobile && (
-          <Row>
-            <Col sm={4}></Col>
-            <Col sm={4}>
-              <Button className="btn-block" onClick={()=>{this.changeView()}}>See Full List</Button>
-            </Col>
-          </Row>
+            </Row>)}
+            {!isMobile && (
+            <Row>
+              <Col sm={4} />
+              <Col sm={4}>
+                <Button className="btn-block" onClick={() => { this.changeView(); }}>See Full List</Button>
+              </Col>
+            </Row>
         )}
-        </Panel>
-      </Col>
-    </Row>
-    {this.displayOrderFooter()}
+          </Panel>
+        </Col>
+      </Row>
+      {this.displayOrderFooter()}
     </div>
     );
-
   }
 
   render() {
@@ -428,42 +440,46 @@ export default class ProductsOrderMain extends React.Component {
     const ipadWidth = 768;
     const isMobile = window.innerWidth <= ipadWidth;
     const formHeading = (this.props.orderStatus) ? 'Update Your Order' : ' Place Your Order';
-    const submitButtonName = (this.props.orderStatus) ? 'Update Order' : ' Place Order';
+    const submitButtonName = (this.props.orderStatus) ? 'Place Order' : ' Place Order';
     const productGroups = this.displayProductsByType(this.state.products, isMobile);
 
-    switch (this.state.orderView){
+    switch (this.state.orderView) {
       case OrderView.CheckOut.name:
         return (<Row>
           <Col xs={12}>
             <h3 className="page-header">Review Order</h3>
           </Col>
           <Col xs={12}>
-          <Panel>
-              <ReviewOrder products={this.getSelectedProducts(this.state.products)} updateProductQuantity={this.changeProductQuantity} isMobile={isMobile} isAdmin={this.isAdmin} />
+            <Panel>
+              <ReviewOrder products={this.getSelectedProducts(this.state.products, true)} updateProductQuantity={this.changeProductQuantity} isMobile={isMobile} isAdmin={this.isAdmin} />
+              <Row>
+                <Col xs={12} className="text-right">
+                  <Button style={{ marginBottom: '2.5em' }} onClick={() => { this.changeView(OrderView.FullView.name); }}>Add Items</Button>
+                </Col>
+              </Row>
               <OrderComment comments={this.props.comments} />
               <OrderFooter
                 totalBillAmount={this.state.totalBillAmount}
                 onButtonClick={this.handleOrderSubmit}
                 submitButtonName={submitButtonName}
-                onBackClick={()=>{this.changeView(OrderView.FullView.name)}}
-              />   
-          </Panel>
-         </Col>
-         </Row>);
-       case OrderView.RecommendedView.name && this.state.recommendations.length > 10: // only if more than 10 products were recommended
-          return this.showRecommendationsView(productGroups.productRecommended, isMobile)   
-      default: 
-        return (<div className="EditOrderDetails ">
-         <Row>
-          <Col xs={12}>
-            <h3 className="page-header"> { formHeading }
-              { this.displayToolBar(this.props.orderStatus) }
-            </h3>
-            { this.displayProductsAndSubmit(isMobile, productGroups) }
+              />
+            </Panel>
           </Col>
-        </Row>
-      </div>
-      );
+        </Row>);
+      case OrderView.RecommendedView.name && this.state.recommendations.length > 10: // only if more than 10 products were recommended
+        return this.showRecommendationsView(productGroups.productRecommended, isMobile);
+      default:
+        return (<div className="EditOrderDetails ">
+          <Row>
+            <Col xs={12}>
+              <h3 className="page-header"> { formHeading }
+                { this.displayToolBar(this.props.orderStatus) }
+              </h3>
+              { this.displayProductsAndSubmit(isMobile, productGroups) }
+            </Col>
+          </Row>
+        </div>
+        );
     }
   }
 }

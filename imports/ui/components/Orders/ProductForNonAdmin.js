@@ -1,6 +1,7 @@
 import React from 'react';
-import { Row, Col, FormControl, Panel } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import { Meteor } from 'meteor/meteor';
+import { Row, Col, FormControl, Panel } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 import { accountSettings } from '../../../modules/settings';
@@ -72,6 +73,7 @@ const ProductForNonAdmin = ({
   previousOrdQty,
   image,
   checkout,
+  removedDuringCheckout,
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
@@ -94,11 +96,17 @@ const ProductForNonAdmin = ({
       <Panel>
         <Row>
 
-          <Col xs={7} sm={9} style={{paddingRight:'0px'}}>
-            {name}
+          <Col xs={7} sm={9} style={{ paddingRight: '0px' }}>
+            { removedDuringCheckout ? (<s> {name} </s>) : name }
           </Col>
-          <Col xs={5} sm={3} style={{paddingLeft:'10px'}}>
+          <Col xs={5} sm={3} style={{ paddingLeft: '10px' }}>
             <Row>
+              <Col xs={12}>
+                {formatMoney(
+                      unitprice * quantitySelected,
+                      accountSettings,
+                )}
+              </Col>
               <Col xs={12}>
                 <QuantitySelector
                   onChange={onChange}
@@ -109,12 +117,6 @@ const ProductForNonAdmin = ({
                   values={unitsForSelectionArray}
                   maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
                 />
-              </Col>
-              <Col xs={12}>
-                {formatMoney(
-                      unitprice * quantitySelected,
-                      accountSettings,
-                    )}
               </Col>
             </Row>
           </Col>

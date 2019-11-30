@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { ListGroup, ListGroupItem, Alert, Tabs, Tab } from 'react-bootstrap';
-//import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
+// import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
 import { getNumDaysBetween } from '../../../../modules/helpers';
@@ -42,14 +42,14 @@ export default class MyOrderList extends React.Component {
     });
   }
 
-  receiveProductFit({ratingsObjectWithValue}){
+  receiveProductFit({ ratingsObjectWithValue }) {
     this.setState({
       showFeedBackForm: false,
     });
 
-    let ratingsArrayWithValue = [];
+    const ratingsArrayWithValue = [];
 
-    Object.keys(ratingsObjectWithValue).forEach(function (key) {
+    Object.keys(ratingsObjectWithValue).forEach((key) => {
       ratingsArrayWithValue.push(ratingsObjectWithValue[key]);
     });
 
@@ -102,7 +102,6 @@ export default class MyOrderList extends React.Component {
   }
 
   showFeedBack(orders) {
-
     if (orders.length < 1) {
       return '';
     }
@@ -110,7 +109,7 @@ export default class MyOrderList extends React.Component {
     const latestOrder = orders[0];
     if (latestOrder.order_status !== constants.OrderStatus.Completed.name) {
       return '';
-    } 
+    }
 
     let lastDate = null;
     orders.find((order, index) => {
@@ -133,12 +132,12 @@ export default class MyOrderList extends React.Component {
     const { orders } = this.props;
     this.feedBackPostId = this.showFeedBack(orders);
     const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
-    //const showFeedBackForm = true;
+    // const showFeedBackForm = true;
 
-   const displayOrderRows = [];
-   let numberOfAwaitingPayments = 0;
+    const displayOrderRows = [];
+    let numberOfAwaitingPayments = 0;
 
-   orders.map(
+    orders.map(
     (
       {
     _id,
@@ -149,32 +148,33 @@ export default class MyOrderList extends React.Component {
         invoices,
   },
       index,
-    ) => { displayOrderRows.push(
-        <ListGroupItem key={_id} href={`/order/${_id}`}>
+    ) => {
+ displayOrderRows.push(
+      <ListGroupItem key={_id} href={`/order/${_id}`}>
           <OrderSummaryRow
             orderDate={createdAt}
             orderAmount={total_bill_amount}
             order_status={order_status}
-            invoices = {invoices}
+            invoices ={invoices}
             key={`order-${index}`}
             userWallet={this.state.wallet}
           />
-        </ListGroupItem>
+        </ListGroupItem>,
       );
 
       if (order_status === constants.OrderStatus.Awaiting_Payment.name) {
-        numberOfAwaitingPayments = numberOfAwaitingPayments + 1;
+        numberOfAwaitingPayments += 1;
       }
-    }
+    },
   );
 
     return (
       <div>
-        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments}/>
+        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} />
 
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
-             {
+            {
                 orders.length > 0 ? (
                   <div>
                     {showFeedBackForm && (
@@ -184,20 +184,20 @@ export default class MyOrderList extends React.Component {
                     )}
 
                     <ListGroup className="orders-list">
-                     {displayOrderRows}
+                      {displayOrderRows}
                     </ListGroup>
 
                   </div>
                 ) : (
-                    <Alert bsStyle="info">You are yet to place an order.</Alert>
+                  <Alert bsStyle="info">You are yet to place an order.</Alert>
                   )
               }
-          </Tab>   
+          </Tab>
           <Tab eventKey={2} title="Payments" tabClassName=" text-center">
-              <ListPayments />
-            </Tab>
+            <ListPayments />
+          </Tab>
           <Tab eventKey={3} title="Refunds" tabClassName=" text-center">
-              <ListCreditNotes />
+            <ListCreditNotes />
           </Tab>
         </Tabs>
       </div>

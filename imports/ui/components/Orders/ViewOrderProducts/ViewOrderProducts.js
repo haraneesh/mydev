@@ -24,21 +24,21 @@ export const ViewOrderProducts = ({ products }) => (
           <Panel key={product._id}>
             <Row>
               <Col xs={4}>
-                  {`${product.name} ${product.unitOfSale}`} <br />
-                  <small> {product.description} </small>
-                </Col>
+                {`${product.name} ${product.unitOfSale}`} <br />
+                <small> {product.description} </small>
+              </Col>
               <Col xs={3} className="text-right-xs">
-                  {formatMoney(product.unitprice, accountSettings)}
-                </Col>
+                {formatMoney(product.unitprice, accountSettings)}
+              </Col>
               <Col xs={2} className="text-right-xs">
-                  {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
-                </Col>
+                {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
+              </Col>
               <Col xs={3} className="text-right">
-                  {formatMoney(
+                {formatMoney(
                     product.unitprice * product.quantity,
                     accountSettings,
                   )}
-                </Col>
+              </Col>
             </Row>
           </Panel>
         );
@@ -61,7 +61,7 @@ export const ReviewOrder = ({ products, updateProductQuantity, isMobile, isAdmin
       </Row>
     </Panel>
     {products.map((product, index) => {
-      if (product.quantity > 0) {
+      if (product.quantity > 0 || product.removedDuringCheckout) {
         return (
           <Product
             isMobile={isMobile}
@@ -79,4 +79,7 @@ export const ReviewOrder = ({ products, updateProductQuantity, isMobile, isAdmin
 
 ReviewOrder.propTypes = {
   products: PropTypes.object.isRequired,
+  updateProductQuantity: PropTypes.func.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };

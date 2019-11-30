@@ -76,9 +76,9 @@ const OrderSummaryRow = ({
         </Col>
       </Col>
 
-      <Col xs={1} className="addSpace">
+      <Col xs={1} className="addSpace" >
         <span className="text-muted">
-          <Glyphicon glyph="menu-right" bsSize="large" />
+          <Glyphicon glyph="chevron-right" bsSize="large" />
         </span>
       </Col>
     </Row>

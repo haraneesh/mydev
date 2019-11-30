@@ -3,53 +3,86 @@ import PropTypes from 'prop-types';
 import { Row, Col, Button, FormControl, PanelGroup } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
+import constants from '../../../../modules/constants';
 
 
-export const OrderFooter = ({ totalBillAmount, onButtonClick, submitButtonName, onBackClick }) => (
-    <div className="orderFooter">
-      {onBackClick && (<Col sm={4} xs={12} className="visible-sm visible-md visible-lg">
-          <Button  onClick={onBackClick} className="btn-block">← Back</Button>
-        </Col>)}
-      {onBackClick && (<Col sm={4}>
-        <h4 className="text-right-not-xs">{`Total `}
-            <strong>
-            {
-              formatMoney(totalBillAmount, accountSettings)
-            }
-            </strong></h4>
-      </Col>)}
-      <Col className="text-right-not-xs" sm={4}  smOffset={onBackClick?0:8} xs={12}>
-        <Button bsStyle="primary" style={{marginBottom:"0.5em", marginTop:"0.5em"}} 
-          disabled={totalBillAmount <= 0} 
-          onClick={onButtonClick} className="btn-block">
-            { submitButtonName }
+export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick, isMainProductListPage }) => {
+  if (isMainProductListPage) {
+    return (
+      <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
+        <Col className="text-left-not-xs" sm={4} xs={12}>
+          <Button
+            bsStyle="default"
+            style={{ marginBottom: '0.5em' }}
+            disabled={totalBillAmount <= 0}
+            onClick={onSecondButtonClick}
+            className="btn-block"
+          > Save Draft
           </Button>
+        </Col>
+
+        <Col className="text-right-not-xs" sm={4} smOffset={4} xs={12}>
+          <Button
+            bsStyle="primary"
+            disabled={totalBillAmount <= 0}
+            onClick={onButtonClick}
+            className="btn-block"
+          > { submitButtonName }
+          </Button>
+        </Col>
+      </Row>
+    );
+  }
+  return (
+    <div className="orderFooter">
+      {onSecondButtonClick && (<Col sm={4}>
+        <h4 className="text-right-not-xs">{'Total '}
+          <strong>
+            {
+                formatMoney(totalBillAmount, accountSettings)
+            }
+          </strong></h4>
+      </Col>)}
+      <Col className="text-right-not-xs" sm={4} xs={12}>
+        <Button
+          bsStyle="primary"
+          style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
+          disabled={totalBillAmount <= 0}
+          onClick={() => { onButtonClick(constants.OrderStatus.Pending.name); }}
+          className="btn-block"
+        >
+          { submitButtonName }
+        </Button>
       </Col>
-      {onBackClick && (<Col sm={4} xs={12} className="visible-xs ">
-          <Button  onClick={onBackClick} className="btn-block">← Back</Button>
-        </Col>)
-      }
     </div>
-);
+  );
+};
+
+OrderFooter.defaultProps = {
+  onSecondButtonClick: {},
+};
 
 OrderFooter.propTypes = {
+  isMobile: PropTypes.bool.isRequired,
   onButtonClick: PropTypes.func.isRequired,
+  onSecondButtonClick: PropTypes.func,
   totalBillAmount: PropTypes.number.isRequired,
   submitButtonName: PropTypes.string.isRequired,
+  isMainProductListPage: PropTypes.bool.isRequired,
 };
 
 
 export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} className={`productCat_${clName}`} />
-    <Col xs={8} className="prodCatTitle"> 
-      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p> 
+    <Col xs={8} className="prodCatTitle">
+      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p>
     </Col>
-    <Col xs={1} className="prodCatPlus"> 
+    <Col xs={1} className="prodCatPlus">
       <span className="text-default">
-        {!!isOpen && (<b className="fa fa-angle-up" style={{fontSize:'1.5em'}} />)}
-        {!isOpen && (<b className="fa fa-angle-down" style={{fontSize:'1.5em'}} />)}
-      </span> 
+        {!!isOpen && (<b className="fa fa-angle-up" style={{ fontSize: '1.5em' }} />)}
+        {!isOpen && (<b className="fa fa-angle-down" style={{ fontSize: '1.5em' }} />)}
+      </span>
     </Col>
   </Row>
 );
@@ -58,11 +91,11 @@ DisplayCategoryHeader.propTypes = {
   clName: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   onclick: PropTypes.func.isRequired,
-  isOpen: PropTypes.func.isRequired
-}
+  isOpen: PropTypes.func.isRequired,
+};
 
 export const OrderComment = ({ comments }) => (
-    <PanelGroup>
+  <PanelGroup>
     <Row>
       <Col sm={3}>
         <h4 className="noMarginNoPadding">
@@ -79,9 +112,10 @@ export const OrderComment = ({ comments }) => (
         />
       </Col>
     </Row>
-    </PanelGroup>
+  </PanelGroup>
 );
 
 OrderComment.propTypes = {
   comments: PropTypes.string.isRequired,
 }
+;

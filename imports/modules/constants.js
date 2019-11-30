@@ -40,6 +40,7 @@ FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].dis
 const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 
 /*
+Saved - customer saved the current selection, with the intent to resume.
 Pending — customer started the checkout process, but did not complete it.
       Incomplete orders are assigned a "Pending" status, and can be found under the More tab in the View Orders screen.
 Awaiting Payment — customer has completed checkout process, but payment has yet to be confirmed.
@@ -62,9 +63,14 @@ Verification Required — order on hold while some aspect (e.g. tax-exempt docum
         needs to be manually confirmed. Orders with this status must be updated manually. Capturing funds or other order actions will not automatically update the status of an order marked Verification Required.
  */
 const OrderStatus = {
+  Saved: {
+    name: 'Saved',
+    display_value: 'Draft',
+    label: 'warning',
+  },
   Pending: {
     name: 'Pending',
-    display_value: 'Pending',
+    display_value: 'Order Placed',
     label: 'logo-yellow',
   },
   Awaiting_Payment: {

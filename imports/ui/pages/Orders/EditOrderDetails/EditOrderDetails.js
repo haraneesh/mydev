@@ -9,7 +9,10 @@ import constants from '../../../../modules/constants';
 import Comments from '../../../containers/Comments/getComments';
 
 const EditOrderDetails = ({ order, history, loggedInUserId }) => {
-  if (order.order_status === constants.OrderStatus.Pending.name) {
+  if (
+      order.order_status === constants.OrderStatus.Pending.name ||
+      order.order_status === constants.OrderStatus.Saved.name
+    ) {
     return (
       <ProductsOrderMain
         orderId={order._id}

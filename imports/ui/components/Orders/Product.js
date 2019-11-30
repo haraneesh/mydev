@@ -26,6 +26,7 @@ const Product = ({ updateProductQuantity, product, isAdmin, checkout }) => (
       previousOrdQty={(product.previousOrdQty) ? product.previousOrdQty : 0}
       isAdmin={isAdmin}
       checkout={checkout}
+      removedDuringCheckout={product.removedDuringCheckout}
     />)
     :
     (<ProductForAdmin
