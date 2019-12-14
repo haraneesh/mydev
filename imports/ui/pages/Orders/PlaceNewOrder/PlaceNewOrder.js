@@ -8,7 +8,7 @@ import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
 
 const PlaceNewOrder =
- ({ loading, dateValue, name, recommendations, products, productListId, history }) => (!loading ? (
+ ({ loading, dateValue, name, recommendations, products, productListId, history, isCheckout }) => (!loading ? (
    <div className="OrderHomePage">
      <ProductsOrderMain
        products={products}
@@ -17,6 +17,7 @@ const PlaceNewOrder =
        name={name}
        dateValue={dateValue}
        recommendations={recommendations}
+       isCheckout={isCheckout}
      />
    </div>
 ) : <Loading />);
@@ -29,6 +30,7 @@ PlaceNewOrder.propTypes = {
   name: PropTypes.string.isRequired,
   dateValue: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  isCheckout: PropTypes.bool,
 };
 
 export default withTracker((args) => {
@@ -52,5 +54,6 @@ export default withTracker((args) => {
     history: args.history,
     orderId: args.match.id,
     dateValue: args.date,
+    isCheckout: args.isCheckout,
   };
 })(PlaceNewOrder);

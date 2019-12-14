@@ -37,7 +37,8 @@ FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].dis
 
 
 // This for organizing tabs in the order screen
-const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
+// const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
+const ProductType = ['Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene'];
 
 /*
 Saved - customer saved the current selection, with the intent to resume.
@@ -165,8 +166,8 @@ PostTypes.allowedValues = _.reduce(PostTypes, (arr, postType) => {
 }, []);
 
 const FeedBackTypes = {
-  allowedValues : ['NPS','SURVEY','PRODUCTFIT'],
-}
+  allowedValues: ['NPS', 'SURVEY', 'PRODUCTFIT'],
+};
 
 const SpecialThemes = ['None', 'Yellow', 'Red', 'Green', 'Orange'];
 

@@ -48,18 +48,34 @@
     margin-bottom:5px;
 }
 
-.nav > li.vegetables_bk > a, .nav > li.groceries_bk > a, 
-.nav > li.prepared_bk > a, .nav > li.pg_bk > a, .nav > li.specials_bk > a, 
-.nav > li.recommended_bk > a {
+.nav > li.recommended_bk > a,
+.nav > li.specials_bk > a,
+.nav > li.vegetables_bk > a,
+.nav > li.fruits_bk > a,
+.nav > li.grains_bk > a,
+.nav > li.dhals_bk > a,
+.nav > li.spices_bk > a,
+.nav > li.oils_bk > a,
+.nav > li.prepared_bk > a,
+.nav > li.hyg_bk > a
+{
     padding: 0px;
     background-size: 5em;
     background-repeat: no-repeat;
     padding-top: 3.6em;
 }
-
-.nav > li.groceries_bk, 
-.nav > li.pg_bk, .nav > li.specials_bk, .nav > li.recommended_bk {
-    width:8em;
+ 
+.nav > li.recommended_bk,
+.nav > li.specials_bk,
+.nav > li.vegetables_bk,
+.nav > li.fruits_bk,
+.nav > li.grains_bk,
+.nav > li.dhals_bk,
+.nav > li.spices_bk,
+.nav > li.oils_bk,
+.nav > li.prepared_bk,
+.nav > li.hyg_bk {
+    width:10em;
 }
 
 .nav > li.prepared_bk, .nav > li.vegetables_bk {
@@ -70,7 +86,15 @@
     background-position: 40px -10px;
 }
 
-.nav > li.groceries_bk > a {
+.nav > li.fruits_bk > a {
+    background-position: 40px -10px;
+}
+
+.nav > li.dhals_bk > a {
+    background-position: 25px -98px;
+}
+
+.nav > li.grains_bk > a {
     background-position: 25px -98px;
 }
 
@@ -78,8 +102,16 @@
     background-position: 45px -193px;
 }
 
-.nav > li.pg_bk > a {
+.nav > li.hyg_bk > a {
     background-position: 23px -302px;
+}
+
+.nav > li.spices_bk > a {
+    background-position: 25px -98px;
+}
+
+.nav > li.oils_bk > a {
+    background-position: 25px -98px;
 }
 
 .nav > li.specials_bk > a {
@@ -135,6 +167,46 @@
         text-align: center;
     }
 
+    .nav > li.vegetables_bk > a {
+        background-position: 40px -10px;
+    }   
+
+    .nav > li.fruits_bk > a {
+        background-position: 40x -10px;
+    }
+
+    .nav > li.dhals_bk > a {
+        background-position: 25px -98px;
+    }
+
+    .nav > li.grains_bk > a {
+        background-position: 25px -98px;
+    }
+
+    .nav > li.prepared_bk > a {
+        background-position: 45px -193px;
+    }
+
+    .nav > li.hyg_bk > a {
+        background-position: 23px -302px;
+    }
+
+    .nav > li.spices_bk > a {
+        background-position: 25px -98px;
+    }
+
+    .nav > li.oils_bk > a {
+        background-position: 25px -98px;
+    }
+
+    .nav > li.specials_bk > a {
+        background-position: 25px -512px;
+    }
+
+    .nav > li.recommended_bk >  a {
+        background-position: 25px -410px;
+    }
+
     .productCat_recommended_bk_ph{
         background-position:2px -295px;
     }
@@ -144,20 +216,37 @@
     }
 
     .productCat_vegetables_bk_ph{
-        background-position:2px 0px;
+        background-position: 2px 0px;
     }
 
-    .productCat_groceries_bk_ph{
-        background-position:2px -70px;
+    .productCat_dhals_bk_ph{
+        background-position: 2px -735px;
     }
 
     .productCat_prepared_bk_ph{
-        background-position:2px -139px;
+        background-position: 2px -139px;
     }
-
-    .productCat_pg_bk_ph{
+    
+    .productCat_fruits_bk_ph {
+        background-position: 2px -656px;
+    }
+    
+    .productCat_grains_bk_ph {
+        background-position:2px -70px;
+    }
+    
+    .productCat_hyg_bk_ph {
         background-position:2px -220px;
     }
+    
+    .productCat_spices_bk_ph {
+        background-position:2px -461px;
+    }
+    
+    .productCat_oils_bk_ph {
+        background-position:2px -560px;
+    }
+
 }
 
 .EditOrderDetails  {

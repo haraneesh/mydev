@@ -1,7 +1,7 @@
 import React from 'react';
-import {Meteor} from 'meteor/meteor';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { ListGroup, Row, Col, Panel } from 'react-bootstrap';
+import { Panel } from 'react-bootstrap';
 import { PanelGroup } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { DisplayCategoryHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
@@ -17,9 +17,9 @@ export default class ProductsOrderMobile extends React.Component {
     this.state = {
       products: this.props.productArray,
       totalBillAmount,
-      panelToFocus: "",
-      recommendations: props.recommendations,
-      //recommendations: [], // do not show recommendations,
+      panelToFocus: '',
+      recommendations: this.props.recommendations,
+      // recommendations: [], // do not show recommendations,
       scrollToLocation: false,
     };
 
@@ -28,70 +28,76 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   componentDidMount() {
-    Meteor.call('users.visitedPlaceNewOrder',(error) => {
+    Meteor.call('users.visitedPlaceNewOrder', (error) => {
       if (error && Meteor.isDevelopment) {
         Bert.alert(error.reason, 'danger');
-      } 
+      }
     });
   }
 
-  componentDidUpdate(){
-    if (this.state.scrollToLocation){
-      if (this.state.panelToFocus){
-        document.getElementById(this.state.panelToFocus).scrollIntoView(true); 
+  componentDidUpdate() {
+    if (this.state.scrollToLocation) {
+      if (this.state.panelToFocus) {
+        document.getElementById(this.state.panelToFocus).scrollIntoView(true);
       }
       this.setState({
         scrollToLocation: false,
-    });
-   }
+      });
+    }
   }
 
   handlePanelSelect(panelToFocus) {
     this.setState({
-      panelToFocus: (this.state.panelToFocus === ""? panelToFocus: ""),
+      panelToFocus: (this.state.panelToFocus === '' ? panelToFocus : ''),
       scrollToLocation: true,
     });
   }
 
   displayProductsByType() {
-   
     const productGroups = this.props.productGroups;
 
 
     return this.displayProductsByTypeStandardView(
-        productGroups[0], 
-        productGroups[1], 
-        productGroups[2], 
-        productGroups[3], 
+        productGroups[0],
+        productGroups[1],
+        productGroups[2],
+        productGroups[3],
         productGroups[4],
         productGroups[5],
+        productGroups[6],
+        productGroups[7],
+        productGroups[8],
+        productGroups[9],
         );
   }
 
   displayProductsByTypeStandardView(
-    productGroceries, 
-    productVegetables, 
-    productBatters, 
-    productPersonalHygiene, 
-    productSpecials, 
-    productRecommended,){
-
-    const expanded = this.state.panelToFocus !== "";
+    productVegetables,
+    productFruits,
+    productDhals,
+    productGrains,
+    productSpices,
+    productOils,
+    productPrepared,
+    productHygiene,
+    productSpecials,
+    productRecommended) {
+    const expanded = this.state.panelToFocus !== '';
     return (
       <div className="productOrderList">
-        { (<PanelGroup activeKey={this.state.activePanel} id="accordion">
+        {(<PanelGroup activeKey={this.state.activePanel} id="accordion">
           {productRecommended.length > 0 && (<div id="fav-header">
             <Panel
               header={(<DisplayCategoryHeader
-              clName="recommended_bk_ph"
-              title="My Favourites"
-              onclick={() => this.handlePanelSelect('fav-header')}
-              isOpen={this.state.panelToFocus !== ""}
+                clName="recommended_bk_ph"
+                title="My Favourites"
+                onclick={() => this.handlePanelSelect('fav-header')}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
               expanded={expanded}
-          >
-            { expanded && productRecommended }
-          </Panel>
+            >
+              { expanded && productRecommended }
+            </Panel>
           </div>
           )
           }
@@ -101,68 +107,138 @@ export default class ProductsOrderMobile extends React.Component {
               <Panel
                 className="stickyHeader"
                 header={(<DisplayCategoryHeader
-                clName="specials_bk_ph"
-                title="Specials"
-                isOpen={this.state.panelToFocus !== ""}
-                onclick={() => this.handlePanelSelect('spcl-header')}
+                  clName="specials_bk_ph"
+                  title="Specials"
+                  isOpen={this.state.panelToFocus !== ''}
+                  onclick={() => this.handlePanelSelect('spcl-header')}
                 />)}
                 expanded={expanded}
               >
                 { expanded && productSpecials }
-            </Panel>
-          </div>)
+              </Panel>
+            </div>)
           }
 
-          <div id="groc-header" >
-            <Panel 
-              header={(<DisplayCategoryHeader 
-              clName="groceries_bk_ph" 
-              title="Groceries" 
-              onclick={() => this.handlePanelSelect('groc-header')} 
-              isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={expanded} eventKey="3" >
-              { expanded && productGroceries }
-            </Panel>
-          </div>
-
-          <div id="veg-header">
-            <Panel 
-              header={(<DisplayCategoryHeader 
-              clName="vegetables_bk_ph" 
-              title="Vegetables & Fruit" 
-              onclick={() => this.handlePanelSelect('veg-header')} 
-              isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={expanded} eventKey="4" >
+          <div id="veg-header" >
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="vegetables_bk_ph"
+                title="Vegetables"
+                onclick={() => this.handlePanelSelect('veg-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="3"
+            >
               { expanded && productVegetables }
             </Panel>
-            </div>
+          </div>
 
-          <div id="prep-header">
-            <Panel 
-              id="prep-header"
-              header={(<DisplayCategoryHeader 
-              clName="prepared_bk_ph" 
-              title="Podi, Oil, Batter & Pickles" 
-              onclick={() => this.handlePanelSelect('prep-header')} 
-              isOpen={this.state.panelToFocus !== ""} />)} 
-              expanded={expanded} eventKey="5" >
-              {expanded && productBatters}
+          <div id="fruits-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="fruits_bk_ph"
+                title="Fruits"
+                onclick={() => this.handlePanelSelect('fruits-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="4"
+            >
+              { expanded && productFruits }
             </Panel>
           </div>
 
-
-          {productPersonalHygiene.length > 0 && (
-            <div  id="pg-header">
-              <Panel  
-                header={(<DisplayCategoryHeader 
-                clName="pg_bk_ph" 
-                title="Personal & General Hygiene" onclick={() => this.handlePanelSelect('pg-header')} 
-                isOpen={this.state.panelToFocus !== ""} />)} 
-                expanded={expanded} eventKey="6">
-                {expanded && productPersonalHygiene}
-              </Panel>
+          <div id="grain-header">
+            <Panel
+              id="grain-header"
+              header={(<DisplayCategoryHeader
+                clName="grains_bk_ph"
+                title="Grains & Flour"
+                onclick={() => this.handlePanelSelect('grain-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="5"
+            >
+              {expanded && productGrains}
+            </Panel>
           </div>
-          )}
+
+          <div id="dhals-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="dhals_bk_ph"
+                title="Pulses, Lentils & Dried Beans"
+                onclick={() => this.handlePanelSelect('dhals-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="6"
+            >
+              {expanded && productDhals}
+            </Panel>
+          </div>
+
+          <div id="spices-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="spices_bk_ph"
+                title="Spices & Nuts"
+                onclick={() => this.handlePanelSelect('spices-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="7"
+            >
+              {expanded && productSpices}
+            </Panel>
+          </div>
+
+          <div id="oils-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="oils_bk_ph"
+                title="Oils, Butter & Ghee"
+                onclick={() => this.handlePanelSelect('oils-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="8"
+            >
+              {expanded && productOils}
+            </Panel>
+          </div>
+
+          <div id="prepared-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="prepared_bk_ph"
+                title="Pickles & Podis"
+                onclick={() => this.handlePanelSelect('prepared-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="9"
+            >
+              {expanded && productPrepared}
+            </Panel>
+          </div>
+
+          <div id="hyg-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="hyg_bk_ph"
+                title="Personal & General Hygiene"
+                onclick={() => this.handlePanelSelect('hyg-header')}
+                isOpen={this.state.panelToFocus !== ''}
+              />)}
+              expanded={expanded}
+              eventKey="10"
+            >
+              {expanded && productHygiene}
+            </Panel>
+          </div>
         </PanelGroup>)}
 
       </div>
@@ -170,9 +246,9 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   render() {
-      return (
+    return (
         this.displayProductsByType(this.state.products)
-      );
+    );
   }
 }
 
@@ -189,10 +265,11 @@ ProductsOrderMobile.propTypes = {
   productGroups: PropTypes.array.isRequired,
   productArray: PropTypes.object.isRequired,
   productGroupSelected: PropTypes.number,
+  recommendations: PropTypes.array.isRequired,
   orderId: PropTypes.string,
   orderStatus: PropTypes.string,
   comments: PropTypes.string,
   totalBillAmount: PropTypes.number,
   dateValue: PropTypes.object,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };

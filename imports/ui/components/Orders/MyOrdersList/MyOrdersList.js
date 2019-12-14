@@ -149,13 +149,13 @@ export default class MyOrderList extends React.Component {
   },
       index,
     ) => {
- displayOrderRows.push(
-      <ListGroupItem key={_id} href={`/order/${_id}`}>
+      displayOrderRows.push(
+        <ListGroupItem key={_id} href={`/order/${_id}`}>
           <OrderSummaryRow
             orderDate={createdAt}
             orderAmount={total_bill_amount}
             order_status={order_status}
-            invoices ={invoices}
+            invoices={invoices}
             key={`order-${index}`}
             userWallet={this.state.wallet}
           />
