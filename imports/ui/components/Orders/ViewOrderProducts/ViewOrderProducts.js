@@ -52,12 +52,12 @@ ViewOrderProducts.propTypes = {
 };
 
 export const ReviewOrder = ({ products, updateProductQuantity, isMobile, isAdmin }) => (
-  <PanelGroup className="order-details-products row">
+  <PanelGroup className="order-details-products">
     <Panel>
       <Row>
-        <Col xs={7}> <strong> Name </strong></Col>
+        <Col xs={7} sm={9}> <strong> Name </strong></Col>
         {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} className="text-right"> <strong> Value </strong></Col>
+        <Col xs={5} sm={3} className="text-left"> <strong> Value </strong></Col>
       </Row>
     </Panel>
     {products.map((product, index) => {

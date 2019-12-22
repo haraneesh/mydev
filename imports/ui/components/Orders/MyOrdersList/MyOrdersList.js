@@ -14,7 +14,7 @@ import AddToWallet from './AddToWallet';
 import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
 
-const feedBackPeriodInDays = 30;
+const feedBackPeriodInDays = 3000; // was 30 before
 
 export default class MyOrderList extends React.Component {
   constructor(props) {

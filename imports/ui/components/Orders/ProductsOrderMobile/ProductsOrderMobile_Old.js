@@ -48,7 +48,7 @@ export default class ProductsOrderMobile extends React.Component {
 
   handlePanelSelect(panelToFocus) {
     this.setState({
-      panelToFocus: (this.state.panelToFocus === panelToFocus ? '' : panelToFocus),
+      panelToFocus: (this.state.panelToFocus === '' ? panelToFocus : ''),
       scrollToLocation: true,
     });
   }
@@ -82,7 +82,7 @@ export default class ProductsOrderMobile extends React.Component {
     productHygiene,
     productSpecials,
     productRecommended) {
-    //const expanded = this.state.panelToFocus !== '';
+    const expanded = this.state.panelToFocus !== '';
     return (
       <div className="productOrderList">
         {(<PanelGroup activeKey={this.state.activePanel} id="accordion">
@@ -92,11 +92,11 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="recommended_bk_ph"
                 title="My Favourites"
                 onclick={() => this.handlePanelSelect('fav-header')}
-                isOpen={this.state.panelToFocus === 'fav-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'fav-header')}
+              expanded={expanded}
             >
-              { (this.state.panelToFocus === 'fav-header') && productRecommended }
+              { expanded && productRecommended }
             </Panel>
           </div>
           )
@@ -109,12 +109,12 @@ export default class ProductsOrderMobile extends React.Component {
                 header={(<DisplayCategoryHeader
                   clName="specials_bk_ph"
                   title="Specials"
-                  isOpen={this.state.panelToFocus === 'spcl-header'}
+                  isOpen={this.state.panelToFocus !== ''}
                   onclick={() => this.handlePanelSelect('spcl-header')}
                 />)}
-                expanded={(this.state.panelToFocus === 'spcl-header')}
+                expanded={expanded}
               >
-                { (this.state.panelToFocus === 'spcl-header') && productSpecials }
+                { expanded && productSpecials }
               </Panel>
             </div>)
           }
@@ -125,12 +125,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="vegetables_bk_ph"
                 title="Vegetables"
                 onclick={() => this.handlePanelSelect('veg-header')}
-                isOpen={this.state.panelToFocus === 'veg-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'veg-header')}
+              expanded={expanded}
               eventKey="3"
             >
-              { (this.state.panelToFocus === 'veg-header') && productVegetables }
+              { expanded && productVegetables }
             </Panel>
           </div>
 
@@ -140,12 +140,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="fruits_bk_ph"
                 title="Fruits"
                 onclick={() => this.handlePanelSelect('fruits-header')}
-                isOpen={this.state.panelToFocus === 'fruits-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'fruits-header')}
+              expanded={expanded}
               eventKey="4"
             >
-              { (this.state.panelToFocus === 'fruits-header') && productFruits }
+              { expanded && productFruits }
             </Panel>
           </div>
 
@@ -156,12 +156,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="grains_bk_ph"
                 title="Grains & Flour"
                 onclick={() => this.handlePanelSelect('grain-header')}
-                isOpen={this.state.panelToFocus === 'grain-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'grain-header')}
+              expanded={expanded}
               eventKey="5"
             >
-              {(this.state.panelToFocus === 'grain-header') && productGrains}
+              {expanded && productGrains}
             </Panel>
           </div>
 
@@ -171,12 +171,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="dhals_bk_ph"
                 title="Pulses, Lentils & Dried Beans"
                 onclick={() => this.handlePanelSelect('dhals-header')}
-                isOpen={this.state.panelToFocus === 'dhals-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'dhals-header')}
+              expanded={expanded}
               eventKey="6"
             >
-              {(this.state.panelToFocus === 'dhals-header') && productDhals}
+              {expanded && productDhals}
             </Panel>
           </div>
 
@@ -186,12 +186,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="spices_bk_ph"
                 title="Spices & Nuts"
                 onclick={() => this.handlePanelSelect('spices-header')}
-                isOpen={this.state.panelToFocus === 'spices-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'spices-header')}
+              expanded={expanded}
               eventKey="7"
             >
-              {(this.state.panelToFocus === 'spices-header') && productSpices}
+              {expanded && productSpices}
             </Panel>
           </div>
 
@@ -201,12 +201,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="oils_bk_ph"
                 title="Oils, Butter & Ghee"
                 onclick={() => this.handlePanelSelect('oils-header')}
-                isOpen={this.state.panelToFocus === 'oils-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'oils-header')}
+              expanded={expanded}
               eventKey="8"
             >
-              {(this.state.panelToFocus === 'oils-header') && productOils}
+              {expanded && productOils}
             </Panel>
           </div>
 
@@ -216,12 +216,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="prepared_bk_ph"
                 title="Pickles & Podis"
                 onclick={() => this.handlePanelSelect('prepared-header')}
-                isOpen={this.state.panelToFocus === 'prepared-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'prepared-header')}
+              expanded={expanded}
               eventKey="9"
             >
-              {(this.state.panelToFocus === 'prepared-header') && productPrepared}
+              {expanded && productPrepared}
             </Panel>
           </div>
 
@@ -231,12 +231,12 @@ export default class ProductsOrderMobile extends React.Component {
                 clName="hyg_bk_ph"
                 title="Personal & General Hygiene"
                 onclick={() => this.handlePanelSelect('hyg-header')}
-                isOpen={this.state.panelToFocus === 'hyg-header'}
+                isOpen={this.state.panelToFocus !== ''}
               />)}
-              expanded={(this.state.panelToFocus === 'hyg-header')}
+              expanded={expanded}
               eventKey="10"
             >
-              {(this.state.panelToFocus === 'hyg-header') && productHygiene}
+              {expanded && productHygiene}
             </Panel>
           </div>
         </PanelGroup>)}

@@ -8,19 +8,17 @@ import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
 
 const PlaceNewOrder =
- ({ loading, dateValue, name, recommendations, products, productListId, history, isCheckout }) => (!loading ? (
-   <div className="OrderHomePage">
-     <ProductsOrderMain
-       products={products}
-       history={history}
-       productListId={productListId}
-       name={name}
-       dateValue={dateValue}
-       recommendations={recommendations}
-       isCheckout={isCheckout}
-     />
-   </div>
-) : <Loading />);
+ ({ loading, dateValue, name, recommendations, products, productListId, history, isCheckout }) => (!loading ? (<div className="OrderHomePage">
+   <ProductsOrderMain
+     products={products}
+     history={history}
+     productListId={productListId}
+     name={name}
+     dateValue={dateValue}
+     recommendations={recommendations}
+     isCheckout={isCheckout}
+   />
+ </div>) : <Loading />);
 
 PlaceNewOrder.propTypes = {
   loading: PropTypes.bool.isRequired,

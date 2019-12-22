@@ -73,10 +73,11 @@ export default class ProductsOrderMain extends React.Component {
 
   getInitialProductArray() {
     const localStoreCart = getFromLocalStore(StoreConstants.CART);
+    const orderId = this.props.orderId;
     const productArray = this.props.products.reduce((map, product) => {
       const prd = product;
       switch (true) {
-        case this.props.orderId:
+        case orderId !== '':
           map[product._id] = prd;
           break;
         case !!localStoreCart:
@@ -243,24 +244,26 @@ export default class ProductsOrderMain extends React.Component {
   }
 
   clearCart() {
-    removeFromLocalStore(StoreConstants.CART);
-    const productArray = this.getInitialProductArray();
-    const totalBillAmount = this.calcTotalBillAmount(productArray);
-    this.setState({
-      products: productArray,
-      totalBillAmount,
-      orderView: OrderView.RecommendedView.name,
-    });
-    Session.set(StoreConstants.CARTICON,false);
+    if (confirm('All the items in the cart will be removed, do you want to continue?')) {
+      removeFromLocalStore(StoreConstants.CART);
+      const productArray = this.getInitialProductArray();
+      const totalBillAmount = this.calcTotalBillAmount(productArray);
+      this.setState({
+        products: productArray,
+        totalBillAmount,
+        orderView: OrderView.RecommendedView.name,
+      });
+      Session.set(StoreConstants.CARTICON, false);
+    }
   }
 
   updateLocalStore(selectedProducts) {
     removeFromLocalStore(StoreConstants.CART);
     if (Object.entries(selectedProducts).length > 0) {
       saveInLocalStore(StoreConstants.CART, selectedProducts);
-      Session.set(StoreConstants.CARTICON,true);
+      Session.set(StoreConstants.CARTICON, true);
     } else {
-      Session.set(StoreConstants.CARTICON,false);
+      Session.set(StoreConstants.CARTICON, false);
     }
   }
 
@@ -451,10 +454,12 @@ export default class ProductsOrderMain extends React.Component {
     return (
      this.props.products.length > 0 ? <Panel>
        <Row>
-         <ProductSearch
-           getProductsMatchingSearch={this.getProductsMatchingSearch}
-           ref={productSearchCtrl => (this.productSearchCtrl = productSearchCtrl)}
-         />
+         <Col xs={12}>
+           <ProductSearch
+             getProductsMatchingSearch={this.getProductsMatchingSearch}
+             ref={productSearchCtrl => (this.productSearchCtrl = productSearchCtrl)}
+           />
+         </Col>
          <Col xs={12}>
            <ListGroup className="products-list">
 
@@ -555,10 +560,10 @@ export default class ProductsOrderMain extends React.Component {
               <ReviewOrder products={this.getSelectedProducts(this.state.products, true)} updateProductQuantity={this.changeProductQuantity} isMobile={isMobile} isAdmin={this.isAdmin} />
               <Row>
                 <Col xs={6} className="text-left">
-                  <Button style={{ marginBottom: '2.5em' }} onClick={() => { this.clearCart(); }}>Clear Cart</Button>
+                  <Button style={{ marginBottom: '2.5em', marginLeft: '.5em' }} onClick={() => { this.clearCart(); }}>Clear Cart</Button>
                 </Col>
                 <Col xs={6} className="text-right">
-                  <Button style={{ marginBottom: '2.5em' }} onClick={() => { this.changeView(OrderView.FullView.name); }}>Add Items</Button>
+                  <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { this.changeView(OrderView.FullView.name); }}>Add Items</Button>
                 </Col>
               </Row>
               <OrderComment comments={this.props.comments} />

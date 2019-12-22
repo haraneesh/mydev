@@ -40,8 +40,8 @@ class Menu extends Component {
     const menuVisible = this.state.visible ? 'visible ' : '';
     return (
       <Row className="pull-right">
-        {<span id="cartIcon" style={{ marginTop: '14px', float: 'left', fontSize: '1.5em', display: this.props.shoppingCartIcon ? 'block' : 'none' }}>
-          <a href="/order/checkout"> <Glyphicon glyph="shopping-cart" className="alertMenu" /> {/* <b style={shoppingCartBubble} /> */} </a>
+        {<span id="cartIcon" style={{ marginTop: '18px', float: 'left', fontSize: '1.25em', display: this.props.shoppingCartIcon ? 'block' : 'none' }}>
+          <a href="/order/checkout"> <i className="fa fa-shopping-bag alertMenu" /> {/* <b style={shoppingCartBubble} /> */} </a>
         </span>}
         <div className="menu-expand-button">
           <Button type="button" bsStyle="link" className={''} onClick={this.show}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Row, Col, FormControl, Panel } from 'react-bootstrap';
+import { Row, Col, FormControl, Panel, Button, Glyphicon } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 import { accountSettings } from '../../../modules/settings';
@@ -58,6 +58,25 @@ const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToO
   </div>
 );
 
+const AddToCart = ({
+  values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  onChange,
+  controlName,
+  quantitySelected,
+}) => {
+  const target = { name: controlName, value: 0 };
+  if (!quantitySelected) {
+    target.value = values[1];
+    return (<div className="addToCart text-center-xs">
+      <Button className="btn-block btn-success" name={controlName} onClick={() => { onChange({ target }); }}> Add To Cart</Button>
+    </div>);
+  }
+
+  return (<div className="removeFromCart text-center-xs">
+    <Button name={controlName} className="btn-block" onClick={() => { onChange({ target }); }}> Remove From Cart</Button>
+  </div>);
+};
+
 const ProductForNonAdmin = ({
   // <Col sm = { 2 }><Image  src={ image } className = "order-image" responsive /> </Col>
   productId,
@@ -95,19 +114,18 @@ const ProductForNonAdmin = ({
     return (
       <Panel>
         <Row>
-
-          <Col xs={7} sm={9} style={{ paddingRight: '0px' }}>
+          <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
             { removedDuringCheckout ? (<s> {name} </s>) : name }
           </Col>
-          <Col xs={5} sm={3} style={{ paddingLeft: '10px' }}>
-            <Row>
-              <Col xs={12}>
+          <Col xs={6} sm={3} style={{ paddingLeft: '10px' }}>
+            <Col xs={12} className="no-padding">
+              <Col xs={12} className="no-padding">
                 {formatMoney(
                       unitprice * quantitySelected,
                       accountSettings,
                 )}
               </Col>
-              <Col xs={12}>
+              <Col xs={10} className="no-padding">
                 <QuantitySelector
                   onChange={onChange}
                   unit={unit}
@@ -118,7 +136,14 @@ const ProductForNonAdmin = ({
                   maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
                 />
               </Col>
-            </Row>
+              <Col xs={2} className="no-padding">
+                <Glyphicon
+                  style={{ paddingLeft: '35%', paddingTop: '10px' }}
+                  glyph="trash"
+                  onClick={() => { onChange({ target: { name: productId, value: 0 } }); }}
+                />
+              </Col>
+            </Col>
           </Col>
         </Row>
       </Panel>
@@ -127,7 +152,7 @@ const ProductForNonAdmin = ({
 
   return (
     <Col sm={12} md={6} className="no-padding product-item">
-      <Col xs={8} xsOffset={2} sm={4} smOffset={0}>
+      <Col xs={12} sm={4} smOffset={0}>
         {!!image && imageRow}
       </Col>
 
@@ -142,7 +167,16 @@ const ProductForNonAdmin = ({
           </Col>
 
           <Col xs={12}>
-            <QuantitySelector
+            {/* <QuantitySelector
+              onChange={onChange}
+              unit={unit}
+              unitprice={unitprice}
+              controlName={productId}
+              quantitySelected={quantitySelected}
+              values={unitsForSelectionArray}
+              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            /> */}
+            <AddToCart
               onChange={onChange}
               unit={unit}
               unitprice={unitprice}
@@ -154,6 +188,7 @@ const ProductForNonAdmin = ({
           </Col>
         </Row>
       </Col>
+
     </Col>
   );
 };
@@ -175,9 +210,8 @@ ProductForNonAdmin.propTypes = {
   quantitySelected: PropTypes.number.isRequired,
   previousOrdQty: PropTypes.number.isRequired,
   description: PropTypes.string,
-  image_path: PropTypes.string,
+  image: PropTypes.string,
   unitsForSelection: PropTypes.array,
-  isMobile: PropTypes.bool.isRequired,
   checkout: PropTypes.bool,
 };
 

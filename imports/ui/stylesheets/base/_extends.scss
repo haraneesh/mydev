@@ -17,6 +17,11 @@ body{
   text-rendering: optimizeLegibility;
 }
 
+.container, .panel-body {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
 h1, h2, h3, .h1, .h2, .h3{
   font-family:'Montserrat';
   //text-shadow: 0px 1px 0px rgba(255,255,255,0.6);

@@ -11,14 +11,14 @@ export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitBu
     return (
       <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
         <Col className="text-left-not-xs" sm={4} xs={12}>
-          <Button
+          {/* } <Button
             bsStyle="default"
             style={{ marginBottom: '0.5em' }}
             disabled={totalBillAmount <= 0}
             onClick={onSecondButtonClick}
             className="btn-block"
           > Save Draft
-          </Button>
+          </Button> */}
         </Col>
 
         <Col className="text-right-not-xs" sm={4} smOffset={4} xs={12}>
@@ -74,14 +74,14 @@ OrderFooter.propTypes = {
 
 export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
-    <Col xs={3} className={`productCat_${clName}`} />
-    <Col xs={8} className="prodCatTitle">
+    <Col xs={3} sm={2} className={`productCat_${clName}`} />
+    <Col xs={8} sm={9} className="prodCatTitle">
       <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p>
     </Col>
     <Col xs={1} className="prodCatPlus">
       <span className="text-default">
-        {!!isOpen && (<b className="fa fa-angle-up" style={{ fontSize: '1.5em' }} />)}
-        {!isOpen && (<b className="fa fa-angle-down" style={{ fontSize: '1.5em' }} />)}
+        {!!isOpen && (<b style={{ fontSize: '1.5em' }} > - </b>)}
+        {!isOpen && (<b style={{ fontSize: '1.5em' }} > + </b>)}
       </span>
     </Col>
   </Row>
