@@ -9,7 +9,7 @@ import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
-import {Emitter, Events} from '../events';
+import { Emitter, Events } from '../events';
 
 const calculateOrderTotal = (order, productListId) => {
   // Get Product List for cost
@@ -56,9 +56,7 @@ const addNewOrderedQuantity = (order) => {
   });
 };
 
-const getDeliveryDate = () =>{
-  return orderCommon.getTomorrowDateOnServer();
-}
+const getDeliveryDate = () => orderCommon.getTomorrowDateOnServer();
 
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
@@ -70,53 +68,56 @@ export const upsertOrder = new ValidatedMethod({
     'products.$': { type: Object, blackbox: true, optional: true },
   }).validator(),
   run(order) {
-      // if (Meteor.isServer) {
-    const isUpdate = !!order._id;
-    if (isUpdate) {
+    if (Meteor.isServer) {
+      const isUpdate = !!order._id;
+      if (isUpdate) {
             // delete order.customer_details
             // delete order.productOrderListId
-      const existingOrder = Orders.findOne(order._id);
-      const loggedInUserId = Meteor.userId();
-      if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
-        order.customer_details = existingOrder.customer_details;
-        order.productOrderListId = existingOrder.productOrderListId;
-        order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId);
+        const existingOrder = Orders.findOne(order._id);
+        const loggedInUserId = Meteor.userId();
+        if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
+          order.customer_details = existingOrder.customer_details;
+          order.productOrderListId = existingOrder.productOrderListId;
+          order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
+          order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId);
+        } else {
+          throw new Meteor.Error(401, 'Access denied');
+        }
+        removePreviousOrderedQuantity(existingOrder);
       } else {
-        throw new Meteor.Error(401, 'Access denied');
-      }
-      removePreviousOrderedQuantity(existingOrder);
-    } else {
-      const loggedInUser = Meteor.users.findOne(Meteor.userId());
-      const today = new Date();
-      const productListActiveToday = ProductLists.findOne(
-        { $and: [
+        const loggedInUser = Meteor.users.findOne(Meteor.userId());
+        const today = new Date();
+        const productListActiveToday = ProductLists.findOne(
+          { $and: [
                       { activeStartDateTime: { $lte: today } },
                       { activeEndDateTime: { $gte: today } },
-        ],
-        },
+          ],
+          },
       );
-      order.productOrderListId = productListActiveToday._id;
-      order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId);
-      order.customer_details = {
-        _id: loggedInUser._id,
-        name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
-        email: loggedInUser.emails[0].address,
-        mobilePhone: loggedInUser.profile.whMobilePhone,
-        deliveryAddress: loggedInUser.profile.deliveryAddress,
-      };
-    }
-    
-    order.expectedDeliveryDate = getDeliveryDate();
+        order.productOrderListId = productListActiveToday._id;
+        order.order_status = constants.OrderStatus.Pending.name;
+        order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId);
+        order.customer_details = {
+          _id: loggedInUser._id,
+          name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
+          email: loggedInUser.emails[0].address,
+          mobilePhone: loggedInUser.profile.whMobilePhone,
+          deliveryAddress: loggedInUser.profile.deliveryAddress,
+        };
+      }
 
-    const response = Orders.upsert({ _id: order._id }, { $set: order });
-    addNewOrderedQuantity(order);
-    if (response.insertedId) {
-      ProductLists.update({ _id: order.productOrderListId },
+      order.expectedDeliveryDate = getDeliveryDate();
+
+      const response = Orders.upsert({ _id: order._id }, { $set: order });
+      addNewOrderedQuantity(order);
+      if (response.insertedId) {
+        ProductLists.update({ _id: order.productOrderListId },
         { $addToSet: { order_ids: response.insertedId } });
 
-        Emitter.emit(Events.ORDER_CREATED, {userId:this.userId})
+        Emitter.emit(Events.ORDER_CREATED, { userId: this.userId });
+      }
+      return response;
     }
-    return response;
   },
 });
 
@@ -157,30 +158,29 @@ export const updateExpectedDeliveryDate = new ValidatedMethod({
   validate: new SimpleSchema({
     orderIds: { type: Array },
     'orderIds.$': { type: String },
-    incrementDeliveryDateBy : { type: Number },
+    incrementDeliveryDateBy: { type: Number },
   }).validator(),
-  run({ orderIds, incrementDeliveryDateBy  }) {
+  run({ orderIds, incrementDeliveryDateBy }) {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       handleMethodException('Access denied', 403);
     }
 
-     const orders = Orders.find({ 
-        _id: { $in: orderIds }, 
-        order_status: constants.OrderStatus.Pending.name  
-      }, { _id:1 }).fetch();
+    const orders = Orders.find({
+      _id: { $in: orderIds },
+      order_status: constants.OrderStatus.Pending.name,
+    }, { _id: 1 }).fetch();
 
-      if (orderIds.length !== orders.length) {
-        handleMethodException(`Please select only orders in ${constants.OrderStatus.Pending.name} status.`, 403);
-      }
+    if (orderIds.length !== orders.length) {
+      handleMethodException(`Please select only orders in ${constants.OrderStatus.Pending.name} status.`, 403);
+    }
 
-      const newExpectedDeliveryDate = orderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy );
+    const newExpectedDeliveryDate = orderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy);
 
-      return Orders.update(
+    return Orders.update(
       { _id: { $in: orderIds } },
        { $set: { expectedDeliveryDate: newExpectedDeliveryDate } },
         { multi: true },
       );
-
   },
 });
 
@@ -301,7 +301,7 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
 
 Meteor.methods({
   'admin.fetchOrderCount': function adminFetchOrders() { // eslint-disable-line
-   //check(options, Match.Maybe(Object));
+   // check(options, Match.Maybe(Object));
 
     try {
       if (Roles.userIsInRole(this.userId, 'admin')) {
@@ -314,8 +314,8 @@ Meteor.methods({
     } catch (exception) {
       handleMethodException(exception);
     }
-  }
-})
+  },
+});
 
 rateLimit({
   methods: [

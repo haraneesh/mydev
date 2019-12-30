@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Alert } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -33,8 +34,10 @@ import About from '../../pages/Miscellaneous/About/About';
 import PlaceOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
 
 import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
-import EditOrderDetails from '../../containers/Orders/EditOrder';
+// import EditOrderDetails from '../../containers/Orders/EditOrder';
+import EditOrderDetails from '../../pages/Orders/EditOrderDetails/EditOrderDetails';
 
+import Cart from '../../pages/Cart/CartHome';
 /* layout */
 import { OrderLayout, MainLayout } from '../Layouts';
 
@@ -66,7 +69,8 @@ import {
   dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
-  //dMyWallet,
+  // dCart,
+  // dMyWallet,
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,
@@ -76,103 +80,113 @@ import {
 
 import dMyWallet from '../../pages/Wallet/MyWallet';
 
+import { CartProvider } from '../../stores/ShoppingCart';
+
 import './App.scss';
 
 const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
+
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      <Switch>
-        <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
-        <Authenticated routeName="My Orders" layout={MainLayout} exact path="/myorders" component={MyOrders} {...props} />
-        {/*
+      <Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+        <small>Happy New Year !</small> <br />
+        <small>Wednesday and Thursday deliveries will happen <span style={{ borderBottom: '2px solid #EF0905', paddingBottom: '1px' }}>after Friday</span>.</small>
+      </Alert>
+      <CartProvider>
+        <Switch>
+          <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
+          <Authenticated routeName="My Orders" layout={MainLayout} exact path="/myorders" component={MyOrders} {...props} />
+          {/*
           <Authenticated routeName="Documents" exact path="/documents" component={Documents} {...props} />
           <Authenticated routeName="New document" exact path="/documents/new" component={NewDocument} {...props} />
           <Authenticated routeName="View document" exact path="/documents/:_id" component={ViewDocument} {...props} />
           <Authenticated routeName="Edit document" exact path="/documents/:_id/edit" component={EditDocument} {...props} />
           <Authenticated routeName="Profile" exact path="/profile" component={Profile} {...props} />
           */}
-        <Authenticated routeName="Profile" layout={MainLayout} exact path="/profile" component={Profile} {...props} />
-        {/* Update Other User's Profile */}
-        <AdminAuthenticated exact routeName="Update Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
+          <Authenticated routeName="Profile" layout={MainLayout} exact path="/profile" component={Profile} {...props} />
+          {/* Update Other User's Profile */}
+          <AdminAuthenticated exact routeName="Update Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
 
-        {/* Recipes */}
-        <Authenticated exact routeName="Recipes Home" layout={MainLayout} path="/recipes" component={dRecipesHome} {...props} />
-        <Authenticated exact routeName="View Recipes By Category" layout={MainLayout} path="/recipes/foodtype/:category" component={dRecipes} {...props} />
-        <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
-        <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
-        <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
+          {/* Recipes */}
+          <Authenticated exact routeName="Recipes Home" layout={MainLayout} path="/recipes" component={dRecipesHome} {...props} />
+          <Authenticated exact routeName="View Recipes By Category" layout={MainLayout} path="/recipes/foodtype/:category" component={dRecipes} {...props} />
+          <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
+          <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
+          <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
 
-        {/* Suppliers */}
-        <Authenticated exact routeName="Suppliers" layout={MainLayout} path="/suppliers" component={dSuppliers} {...props} />
-        <Authenticated exact routeName="New Supplier" layout={MainLayout} path="/suppliers/new" component={dNewSupplier} {...props} />
-        <Authenticated exact routeName="View Supplier" layout={MainLayout} path="/suppliers/:_id" component={dViewSupplier} {...props} />
-        <Authenticated exact routeName="Edit Supplier" layout={MainLayout} path="/suppliers/:_id/edit" component={dEditSupplier} {...props} />
+          {/* Suppliers */}
+          <Authenticated exact routeName="Suppliers" layout={MainLayout} path="/suppliers" component={dSuppliers} {...props} />
+          <Authenticated exact routeName="New Supplier" layout={MainLayout} path="/suppliers/new" component={dNewSupplier} {...props} />
+          <Authenticated exact routeName="View Supplier" layout={MainLayout} path="/suppliers/:_id" component={dViewSupplier} {...props} />
+          <Authenticated exact routeName="Edit Supplier" layout={MainLayout} path="/suppliers/:_id/edit" component={dEditSupplier} {...props} />
 
-        {/* Invitations */}
-        <Authenticated exact routeName="My Invitations" layout={MainLayout} path="/invitations" component={dInvitations} {...props} />
-        <Authenticated exact routeName="New Invitation" layout={MainLayout} path="/invitations/new" component={dNewInvitation} {...props} />
-        <Public routeName="Accept Invitation" layout={MainLayout} path="/invitations/:token" component={Signup} {...props} />
+          {/* Invitations */}
+          <Authenticated exact routeName="My Invitations" layout={MainLayout} path="/invitations" component={dInvitations} {...props} />
+          <Authenticated exact routeName="New Invitation" layout={MainLayout} path="/invitations/new" component={dNewInvitation} {...props} />
+          <Public routeName="Accept Invitation" layout={MainLayout} path="/invitations/:token" component={Signup} {...props} />
 
-        {/* Specials */}
-        <Authenticated exact routeName="View Specials" layout={MainLayout} path="/specials" component={dListSpecials} {...props} />
-        <AdminAuthenticated exact routeName="Edit Specials" layout={MainLayout} path="/specials/edit" component={dEditAllSpecials} {...props} />
+          {/* Specials */}
+          <Authenticated exact routeName="View Specials" layout={MainLayout} path="/specials" component={dListSpecials} {...props} />
+          <AdminAuthenticated exact routeName="Edit Specials" layout={MainLayout} path="/specials/edit" component={dEditAllSpecials} {...props} />
 
-        {/* Order */}
-        <PlaceOrderAuthenticated exact routeName="Check Order" path="/order/checkout" layout={OrderLayout} component={PlaceOrder} isCheckout {...props} />
-        <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
-        <PlaceOrderAuthenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
-        
+          {/* Order */}
+          <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id/:addItemsFromCart?" component={EditOrderDetails} {...props} />
+          <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
 
-        {/* Accept Payment */}
-        <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
+          {/* CartHome */}
+          <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
 
-        {/* Product */}
-        <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
+          {/* Accept Payment */}
+          <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
 
-        {/* Admin */
+          {/* Product */}
+          <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
+
+          {/* Admin */
          /* ProductLists */}
-        <AdminAuthenticated exact routeName="Edit Products Admin" layout={MainLayout} path="/productLists/:_id/edit" component={dProductsAdmin} {...props} />
-        <AdminAuthenticated exact routeName="View Product List Details Admin" layout={MainLayout} path="/productLists/:_id" component={dViewProductListDetails} {...props} />
-        <AdminAuthenticated exact routeName="View Product Lists Admin" layout={MainLayout} path="/productLists" component={dProductLists} {...props} />
+          <AdminAuthenticated exact routeName="Edit Products Admin" layout={MainLayout} path="/productLists/:_id/edit" component={dProductsAdmin} {...props} />
+          <AdminAuthenticated exact routeName="View Product List Details Admin" layout={MainLayout} path="/productLists/:_id" component={dViewProductListDetails} {...props} />
+          <AdminAuthenticated exact routeName="View Product Lists Admin" layout={MainLayout} path="/productLists" component={dProductLists} {...props} />
 
-        {/* Orders
+          {/* Orders
           <Route routeName="View All Orders Admin" path="/allorders" component={AllOrders} onEnter={authenticate} /> */}
 
-        <AdminAuthenticated exact routeName="View All Orders Admin" layout={MainLayout} path="/allorders" component={dAllOrders} {...props} />
-        {/* Zoho Sync */}
-        <AdminAuthenticated exact routeName="Zoho Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
-        {/* end admin */}
-        <NotAuthenticated routeName="Signup" layout={MainLayout} path="/signup" component={Signup} {...props} />
-        <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
-        <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
-        <AdminAuthenticated exact routeName="Approve Sign Ups" layout={MainLayout} path="/approveSignUps" component={dApproveUserSignUps} {...props} />
-        
-        {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
-        <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />
-        <Public routeName="Recover Password" layout={MainLayout} path="/recover-password" component={RecoverPassword} />
-        <Public routeName="Reset Password" layout={MainLayout} path="/reset-password/:token" component={ResetPassword} />
-        <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} {...props} />
-        <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} {...props} />
-        <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} {...props} />
-        <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
-        <Public exact routeName="Health Principles" layout={MainLayout} path="/healthprinciples" component={dHealthPrinciples} {...props} />
-        <Public exact routeName="Health Principles FAQ" layout={MainLayout} path="/healthfaq" component={dHealthFAQ} {...props} />
-        { /* Admin Reports */ }
-        <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
-        
-        {/* Reconcile Products */}
-        <AdminAuthenticated exact routeName="Reconcile Inventory List" layout={MainLayout} path="/reconcileInventoryList" component={ReconcileInventoryList} {...props} />
-        <AdminAuthenticated exact routeName="Reconcile Inventory" layout={MainLayout} path="/reconcileInventory" component={dReconcileInventory} {...props} />
-         
-        {/* Page not found */}
-        <Redirect from="*" to="/" />
-      </Switch>
-      <Footer />
+          <AdminAuthenticated exact routeName="View All Orders Admin" layout={MainLayout} path="/allorders" component={dAllOrders} {...props} />
+          {/* Zoho Sync */}
+          <AdminAuthenticated exact routeName="Zoho Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
+          {/* end admin */}
+          <NotAuthenticated routeName="Signup" layout={MainLayout} path="/signup" component={Signup} {...props} />
+          <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
+          <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
+          <AdminAuthenticated exact routeName="Approve Sign Ups" layout={MainLayout} path="/approveSignUps" component={dApproveUserSignUps} {...props} />
+
+          {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
+          <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />
+          <Public routeName="Recover Password" layout={MainLayout} path="/recover-password" component={RecoverPassword} />
+          <Public routeName="Reset Password" layout={MainLayout} path="/reset-password/:token" component={ResetPassword} />
+          <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} {...props} />
+          <Public routeName="Privacy" layout={MainLayout} path="/pages/privacy" component={Privacy} {...props} />
+          <Public routeName="Refund" layout={MainLayout} path="/pages/refund" component={Refund} {...props} />
+          <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
+          <Public exact routeName="Health Principles" layout={MainLayout} path="/healthprinciples" component={dHealthPrinciples} {...props} />
+          <Public exact routeName="Health Principles FAQ" layout={MainLayout} path="/healthfaq" component={dHealthFAQ} {...props} />
+          { /* Admin Reports */ }
+          <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
+
+          {/* Reconcile Products */}
+          <AdminAuthenticated exact routeName="Reconcile Inventory List" layout={MainLayout} path="/reconcileInventoryList" component={ReconcileInventoryList} {...props} />
+          <AdminAuthenticated exact routeName="Reconcile Inventory" layout={MainLayout} path="/reconcileInventory" component={dReconcileInventory} {...props} />
+
+          {/* Page not found */}
+          <Redirect from="*" to="/" />
+        </Switch>
+        <Footer />
+      </CartProvider>
     </div> : ''}
   </Router>
-);
+  );
 
 App.propTypes = {
   loading: PropTypes.bool.isRequired,
@@ -202,4 +216,4 @@ export default withTracker(() => {
     loggedInUser: user,
     analytics,
   };
-}) (App);
+})(App);

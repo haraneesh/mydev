@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import ProductLists from './ProductLists';
 import Products from '../../api/Products/Products';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
 
 const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   const newOrderableProducts = [];
@@ -90,6 +92,17 @@ export const removeProductList = new ValidatedMethod({
   },
 });
 
+Meteor.methods({
+  'getProductList.view': function getProductsList(productListId) {
+    check(productListId, String);
+    try {
+      return ProductLists.findOne({ _id: productListId }, { fields: { products: 1 } });
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+});
+
 /*
 export const updateProductListWithOrderId = new ValidatedMethod({
   name: 'productLists.updateProductListWithOrderId',
@@ -107,6 +120,7 @@ rateLimit({
   methods: [
     upsertProductList,
     removeProductList,
+    'getProductList.view',
   ],
   limit: 5,
   timeRange: 1000,

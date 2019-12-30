@@ -131,8 +131,8 @@ export default class MyOrderList extends React.Component {
   render() {
     const { orders } = this.props;
     this.feedBackPostId = this.showFeedBack(orders);
-    const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
-    // const showFeedBackForm = true;
+    // const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
+    const showFeedBackForm = false; // disable for now
 
     const displayOrderRows = [];
     let numberOfAwaitingPayments = 0;
@@ -149,8 +149,9 @@ export default class MyOrderList extends React.Component {
   },
       index,
     ) => {
+      /* <ListGroupItem key={_id} href={`/order/${_id}`}> */
       displayOrderRows.push(
-        <ListGroupItem key={_id} href={`/order/${_id}`}>
+        <ListGroupItem key={_id} onClick={() => { this.props.history.push(`/order/${_id}`); }}>
           <OrderSummaryRow
             orderDate={createdAt}
             orderAmount={total_bill_amount}
@@ -208,6 +209,7 @@ export default class MyOrderList extends React.Component {
 MyOrderList.propTypes = {
   orders: PropTypes.array,
   loggedInUser: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 MyOrderList.defaultProps = {

@@ -12,7 +12,6 @@ class ProductSearch extends React.Component {
     };
     this.onsearchStringChange = this.onsearchStringChange.bind(this);
     this.clear = this.clear.bind(this);
-    this.onFocus = this.onFocus.bind(this);
   }
 
   onsearchStringChange() {
@@ -23,15 +22,11 @@ class ProductSearch extends React.Component {
     });
   }
 
-  onFocus() {
-    this.props.onFocus();
-  }
-
   informProductUnavailability() {
     return (<Col xs={12}>
       <p>
         Oops! We are not able to find what you are looking for. You could try a different spelling or browse for it in the lists below.
-    </p> </Col>);
+      </p> </Col>);
   }
 
   clear() {
@@ -58,7 +53,6 @@ class ProductSearch extends React.Component {
                   value={this.state.searchString}
                   onChange={this.onsearchStringChange}
                   ref={searchBox => (this.searchBox = searchBox)}
-                  onFocus={this.onFocus}
                 />
                 <span className="input-group-addon">
                   <Glyphicon glyph="remove" onClick={this.clear} />
@@ -76,7 +70,6 @@ class ProductSearch extends React.Component {
 
 ProductSearch.propTypes = {
   getProductsMatchingSearch: PropTypes.func.isRequired,
-  onFocus: PropTypes.func.isRequired,
 };
 
 export default ProductSearch;

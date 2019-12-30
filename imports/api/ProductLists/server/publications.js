@@ -2,17 +2,15 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import ProductLists from '../ProductLists';
 
-Meteor.publish('productLists.list', function productListsList() { 
-    return ProductLists.find({});
-});
+Meteor.publish('productLists.list', () => ProductLists.find({}));
 
-Meteor.publish('productList.view', function productListView(_id) {
+Meteor.publish('productList.view', (_id) => {
   check(_id, String);
-  return ProductLists.find(_id);
+  return ProductLists.find(_id, { products: 1, activeStartDateTime: 0, activeEndDateTime: 0, createdAt: 0, updatedAt: 0, order_ids: 0 });
 });
 
 
-Meteor.publish('productOrderList.view', function productOrderListView(dateValue) {
+Meteor.publish('productOrderList.view', (dateValue) => {
   check(dateValue, Date);
   return ProductLists.find(
     { $and: [

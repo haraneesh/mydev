@@ -65,8 +65,8 @@ const AddToCart = ({
   quantitySelected,
 }) => {
   const target = { name: controlName, value: 0 };
-  if (!quantitySelected) {
-    target.value = values[1];
+  if (quantitySelected === 0) {
+    target.value = parseFloat(values[1]);
     return (<div className="addToCart text-center-xs">
       <Button className="btn-block btn-success" name={controlName} onClick={() => { onChange({ target }); }}> Add To Cart</Button>
     </div>);
@@ -197,6 +197,7 @@ ProductForNonAdmin.defaultProps = {
   checkout: false,
   description: '',
   unitsForSelection: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  removedDuringCheckout: false,
 };
 
 ProductForNonAdmin.propTypes = {
@@ -213,6 +214,7 @@ ProductForNonAdmin.propTypes = {
   image: PropTypes.string,
   unitsForSelection: PropTypes.array,
   checkout: PropTypes.bool,
+  removedDuringCheckout: PropTypes.bool,
 };
 
 /*

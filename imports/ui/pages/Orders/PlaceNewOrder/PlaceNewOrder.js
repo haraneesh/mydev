@@ -6,18 +6,33 @@ import RecommendationsCollection from '../../../../api/Recommendations/Recommend
 import ProductLists from '../../../../api/ProductLists/ProductLists';
 import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
+import { CartStateContext, CartDispatchContext } from '../../../stores/ShoppingCart';
+
 
 const PlaceNewOrder =
  ({ loading, dateValue, name, recommendations, products, productListId, history, isCheckout }) => (!loading ? (<div className="OrderHomePage">
-   <ProductsOrderMain
-     products={products}
-     history={history}
-     productListId={productListId}
-     name={name}
-     dateValue={dateValue}
-     recommendations={recommendations}
-     isCheckout={isCheckout}
-   />
+
+   <CartStateContext.Consumer>
+     { cartState => (
+       <CartDispatchContext.Consumer>
+         { cartDispatch => (
+           <ProductsOrderMain
+             products={products}
+             history={history}
+             productListId={productListId}
+             name={name}
+             dateValue={dateValue}
+             recommendations={recommendations}
+             isCheckout={isCheckout}
+             cartState={cartState}
+             cartDispatch={cartDispatch}
+           />
+          )}
+       </CartDispatchContext.Consumer>
+      )}
+   </CartStateContext.Consumer>
+
+
  </div>) : <Loading />);
 
 PlaceNewOrder.propTypes = {

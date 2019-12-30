@@ -34,92 +34,92 @@ class About extends React.Component {
       <div>
         <Panel className="about-page">
           <Row className="about-section text-left">
-                <Col sm={6} className="about-getOrganic text-center">
-										<h3> Best Organic & Wholesome</h3> 
-										<h4> Vegetables, Fruits, Groceries and products delivered home, in Chennai </h4>
-                  <p>100% Food - No Pesticides, No Artificial Colors, No Fillers, Non-toxic and sustainable</p>
+            <Col sm={6} className="about-getOrganic text-center">
+              <h3> Best Organic & Wholesome</h3>
+              <h4> Vegetables, Fruits, Groceries and products delivered home, in Chennai </h4>
+              <p>100% Food - No Pesticides, No Artificial Colors, No Fillers, Non-toxic and sustainable</p>
 
-				  <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button>
-                </Col>
-                <Col sm={6}>
-                  <img src="about/1.jpg" width="100%"/>
-                </Col>
-            </Row>
-      </Panel>
+              <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button>
+            </Col>
+            <Col sm={6}>
+              <img src="about/1.jpg" width="100%" />
+            </Col>
+          </Row>
+        </Panel>
 
-	<Panel>
-		<Row className="text-center">
-		<h3 className="page-header"> Our Beliefs - Eating Healthy is</h3>
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture1.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
-								Eating Natural 
-							</h4>
-							<p>
-								Our vegetables and farm made produce have no chemical pesticides, artificial 
+        <Panel>
+          <Row className="text-center">
+            <h3 className="page-header"> Our Beliefs - Eating Healthy is</h3>
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture1.png" height="120" width="120" />
+                </Col>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
+								Eating Natural
+                  </h4>
+                  <p>
+								Our vegetables and farm made produce have no chemical pesticides, artificial
 					  			colouring agents and additives.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture3.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture3.png" height="120" width="120" />
+                </Col>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
 								Eating Right
-							</h4>
-							<p>
-							We can help in creating a custom Basket for you that ensures that your family eats the 
+                  </h4>
+                  <p>
+							We can help in creating a custom Basket for you that ensures that your family eats the
 							macro and micro nutrients necessary for your family's well being.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12} sm={4}>
-				<Row>
-					<Col className="image_service" xs={12}>
-						<img src="about/agriculture2.png" height="120" width="120"/>
-					</Col>
-					<Col className="describe_service" xs={12}>
-							<h4 className="name_service">
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Row>
+                <Col className="image_service" xs={12}>
+                  <img src="about/agriculture2.png" height="120" width="120" />
+                </Col>
+                <Col className="describe_service" xs={12}>
+                  <h4 className="name_service">
 							Eating Fresh
-							</h4>
-							<p>
+                  </h4>
+                  <p>
 							Some nutrients in fruits and vegetables start to decay right after picking.
                       Eating fresh ensures that you get the full nutrition from food.
-					  		</p>
-					</Col>
-				</Row>
-			</Col>
-			<Col xs={12}>
-                  <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link> 
-                  </h4>
+                  </p>
                 </Col>
-		</Row>
-	</Panel>
-	<Panel>
-	<Row className="text-center">
-	<Col xs={12}>
-		<h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
-			<p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
-			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p> 
-		</Col>
-		</Row>
-	</Panel>
+              </Row>
+            </Col>
+            <Col xs={12}>
+              <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link>
+              </h4>
+            </Col>
+          </Row>
+        </Panel>
+        <Panel>
+          <Row className="text-center">
+            <Col xs={12}>
+              <h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
+              <p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
+              <p>No more hassle of remembering to order and having to decide what is good for your family every week. </p>
+            </Col>
+          </Row>
+        </Panel>
 
-	<Panel>
-	   <Row className="text-center">
-       <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
-       </Row>
-	</Panel>
-    <ContactUs />
+        <Panel>
+          <div className="text-center">
+            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
+          </div>
+        </Panel>
+        <ContactUs />
       </div>
     );
   }

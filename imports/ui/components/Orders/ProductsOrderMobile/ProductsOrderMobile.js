@@ -38,7 +38,7 @@ export default class ProductsOrderMobile extends React.Component {
   componentDidUpdate() {
     if (this.state.scrollToLocation) {
       if (this.state.panelToFocus) {
-        document.getElementById(this.state.panelToFocus).scrollIntoView(true);
+        document.getElementById(this.state.panelToFocus).scrollIntoView({ behavior: 'smooth' });
       }
       this.setState({
         scrollToLocation: false,
@@ -82,7 +82,7 @@ export default class ProductsOrderMobile extends React.Component {
     productHygiene,
     productSpecials,
     productRecommended) {
-    //const expanded = this.state.panelToFocus !== '';
+    // const expanded = this.state.panelToFocus !== '';
     return (
       <div className="productOrderList">
         {(<PanelGroup activeKey={this.state.activePanel} id="accordion">

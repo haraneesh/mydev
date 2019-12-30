@@ -37,31 +37,31 @@ class About extends React.Component {
       <div>
         <Panel className="about-page">
           <Row className="about-section text-left">
+            <Col sm={6}>
+              <img src="about/1.jpg" width="100%" />
+            </Col>
             <Col sm={6} className="about-getOrganic text-center">
               <h3> Organic & Natural</h3>
               <h4> produce delivered home, in Chennai </h4>
               <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
-              {/* <Button className="membersBtn" bsStyle="primary" href="/login"> Members &rarr; </Button> */}
+              <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
             </Col>
-            <Col sm={6}>
-              <img src="about/1.jpg" width="100%" />
-            </Col>
-			</Row>
-			<Row>
-			<Col sm={6} className="text-center">
+          </Row>
+          {/* <Row>
+             <Col sm={12} className="text-center">
               <h4>  Member </h4>
               <Button className="sampleBtn" bsStyle="primary" href="/order"> Place Order </Button>
             </Col>
             <Col sm={6} className="text-center">
               <h4> Not a Member </h4>
-              <Button className="sampleBtn"  href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket </Button>
+              <Button className="sampleBtn" href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket </Button>
             </Col>
-          </Row>
+              </Row> */}
         </Panel>
 
         <Panel>
           <Col xs={12} className="text-center">
-            <h3 className="page-header"> About Us - Belong to a Better Market</h3>
+            <h3 className="page-header"> Belong to a Better Market</h3>
 
             <p>
 					Suvai is an online community that leverages the power of direct buying to deliver the consumers best healthy food and natural products

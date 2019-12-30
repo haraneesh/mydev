@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Navbar } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
 import SideMenu from '../AuthenticatedNavigation/SideMenu';
 import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigation/EasyNav';
@@ -13,13 +12,13 @@ const Navigation = props => (
   <Navbar>
     <Navbar.Header>
       <Navbar.Brand>
-        <Link to="/">
+        <a onClick={() => { props.history.push('/'); }}>
           <img
             className="brand-logo"
             src="/logo.png"
             alt="Suvai"
           />
-        </Link>
+        </a>
       </Navbar.Brand>
       { !props.authenticated && <PublicNavigation {...props} /> }
       { !!props.authenticated && <EasyNavWideScreen /> }

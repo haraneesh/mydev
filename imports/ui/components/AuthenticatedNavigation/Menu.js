@@ -1,22 +1,40 @@
 import React, { Component } from 'react';
-import { Button, Row, Glyphicon } from 'react-bootstrap';
+import { Button, Row } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { getFromLocalStore, StoreConstants } from '../../../modules/client/store';
-import { Session } from 'meteor/session';
-import { withTracker } from 'meteor/react-meteor-data';
+import { Bert } from 'meteor/themeteorchef:bert';
 
 const shoppingCartBubble = {
-  background: '#54ae68',
-  borderRadius: '100%',
+  background: '#EF0905',
+  borderRadius: '50%',
   fontSize: '11px',
-  lineHeight: '1',
-  padding: '5px 5px',
-  position: 'absolute',
-  right: '-5px',
-  top: '-3px',
+  position: 'relative',
+  boxShadow: '0 3px 5px rgba(0,0,0,0.2)',
+  left: '8px',
+  top: '-42px',
+  color: '#fff',
+  minWidth: '2.5em',
+  lineHeight: '2.2em',
+  border: '2px solid #fff',
+  textAlign: 'center',
+  display: 'block',
 };
 
-class Menu extends Component {
+const cartMenu = () => (
+  <div className="dropdown">
+    <button className="btn btn-default dropdown-toggle btn-link" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Dropdown
+    </button>
+    <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <li><a href="#">Action</a></li>
+      <li><a href="#">Another action</a></li>
+      <li><a href="#">Something else here</a></li>
+      <li role="separator" className="divider" />
+      <li><a href="#">Separated link</a></li>
+    </ul>
+  </div>
+);
+
+export default class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,9 +44,12 @@ class Menu extends Component {
     this.hide = this.hide.bind(this);
   }
 
-  show() {
-    this.setState({ visible: true });
-    document.addEventListener('click', this.hide);
+  onCartIconClick(history, totalProductsInCount) {
+    if (totalProductsInCount > 0) {
+      history.push('/cart');
+    } else {
+      Bert.alert('Cart is empty', 'info');
+    }
   }
 
   hide() {
@@ -36,12 +57,21 @@ class Menu extends Component {
     this.setState({ visible: false });
   }
 
+  show() {
+    this.setState({ visible: true });
+    document.addEventListener('click', this.hide);
+  }
+
   render() {
     const menuVisible = this.state.visible ? 'visible ' : '';
+    const totalProductsInCount = this.props.cartState.newCartCountOfItemsForMenu;
+
     return (
       <Row className="pull-right">
-        {<span id="cartIcon" style={{ marginTop: '18px', float: 'left', fontSize: '1.25em', display: this.props.shoppingCartIcon ? 'block' : 'none' }}>
-          <a href="/order/checkout"> <i className="fa fa-shopping-bag alertMenu" /> {/* <b style={shoppingCartBubble} /> */} </a>
+        {<span id="cartIcon" style={{ marginTop: '16px', float: 'left', fontSize: '1.25em', display: 'block' }}>
+          <a onClick={() => { this.onCartIconClick(this.props.history, totalProductsInCount); }}> <i className="fa fa-shopping-bag" style={{ color: '#522E23' }} />
+            {(totalProductsInCount > 0) && (<b style={shoppingCartBubble} className="alertMenu"> {totalProductsInCount} </b>)}
+          </a>
         </span>}
         <div className="menu-expand-button">
           <Button type="button" bsStyle="link" className={''} onClick={this.show}>
@@ -60,20 +90,9 @@ class Menu extends Component {
   }
 }
 
-Menu.defaultProps = {
-  shoppingCartIcon: false,
-};
-
 Menu.propTypes = {
   alignment: PropTypes.string.isRequired,
   children: PropTypes.object.isRequired,
-  shoppingCartIcon: PropTypes.bool,
+  history: PropTypes.object.isRequired,
+  cartState: PropTypes.object.isRequired,
 };
-
-Session.set(StoreConstants.CARTICON, !!getFromLocalStore(StoreConstants.CART));
-
-export default (withTracker(() => {
-  const shoppingCartIcon = Session.get(StoreConstants.CARTICON);
-
-  return { shoppingCartIcon };
-})(Menu));

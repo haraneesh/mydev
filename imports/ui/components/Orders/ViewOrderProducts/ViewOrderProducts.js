@@ -60,7 +60,8 @@ export const ReviewOrder = ({ products, updateProductQuantity, isMobile, isAdmin
         <Col xs={5} sm={3} className="text-left"> <strong> Value </strong></Col>
       </Row>
     </Panel>
-    {products.map((product, index) => {
+    {Object.keys(products).map((key, index) => {
+      const product = products[key];
       if (product.quantity > 0 || product.removedDuringCheckout) {
         return (
           <Product

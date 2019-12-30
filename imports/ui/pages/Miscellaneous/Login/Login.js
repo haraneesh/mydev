@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import { Panel, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -58,41 +58,42 @@ class Login extends React.Component {
 
   render() {
     return (<div className="Login Absolute-Center is-Responsive">
-      <Row>
-        <Col xs={12} sm={6} md={5} lg={4}>
-          <h3 className="page-header">Log In</h3>
-          <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-            <FormGroup>
-              <ControlLabel>Mobile Number</ControlLabel>
-              <input
-                type="text"
-                name="mobilePhone"
-                ref={mobilePhone => (this.mobilePhone = mobilePhone)}
-                className="form-control"
-                placeholder="10 digit number example, 8787989897"
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel className="clearfix">
-                <span className="pull-left">Password</span>
-                <Link className="pull-right" to="/recover-password">Forgot password?</Link>
-              </ControlLabel>
-              <input
-                type="password"
-                name="password"
-                ref={password => (this.password = password)}
-                className="form-control"
-                placeholder="Password"
-              />
-            </FormGroup>
-            <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
-            <AccountPageFooter>
-              <p>{'Not a member yet? '} 
-                  <a href="/signup" className="login-singup">Join</a>
-              </p>
-            </AccountPageFooter>
-          </form>
-          {/* } <Row>
+      <Col xs={12} sm={6} md={5} lg={4}>
+        <h3 className="page-header">Log In</h3>
+        <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
+          <FormGroup>
+            <ControlLabel>Mobile Number</ControlLabel>
+            <input
+              type="text"
+              name="mobilePhone"
+              ref={mobilePhone => (this.mobilePhone = mobilePhone)}
+              className="form-control"
+              placeholder="10 digit number example, 8787989897"
+            />
+          </FormGroup>
+          <FormGroup>
+            <ControlLabel className="clearfix">
+              <span className="pull-left">Password</span>
+              <Link className="pull-right" to="/recover-password">Forgot password?</Link>
+            </ControlLabel>
+            <input
+              type="password"
+              name="password"
+              ref={password => (this.password = password)}
+              className="form-control"
+              placeholder="Password"
+            />
+          </FormGroup>
+          <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
+          <AccountPageFooter>
+            <div className="panel text-center" style={{ marginBottom: '0px', padding: '12.5px' }}>
+              <span>{'Not a member yet? '}
+                <a href="/signup" className="login-singup">Join</a>
+              </span>
+            </div>
+          </AccountPageFooter>
+        </form>
+        {/* } <Row>
             <p>- Or - </p>
           </Row>
           <Row>
@@ -102,8 +103,7 @@ class Login extends React.Component {
               />
             </Col>
           </Row> */}
-        </Col>
-      </Row>
+      </Col>
     </div>);
   }
 }

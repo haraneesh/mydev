@@ -1,7 +1,6 @@
 import React from 'react';
 import {Meteor} from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import ScrollTrigger from 'react-scroll-trigger';
 import { ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar } from 'react-bootstrap';
 import { Tabs, Tab, PanelGroup } from 'react-bootstrap';
 import $ from 'jquery';

@@ -132,7 +132,7 @@ class Signup extends React.Component {
     const { signUpRequestSent } = this.state;
 
     return (!signUpRequestSent ? (<div className="Signup">
-      <Row>
+      <div>
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Sign Up</h3>
           { /* <Row>
@@ -227,19 +227,20 @@ class Signup extends React.Component {
             </AccountPageFooter>
           </form>
         </Col>
-      </Row>
+      </div>
     </div>) : (
-        <Panel style={{marginTop: '1.5em'}}>
-          <Row>
+      <Panel style={{ marginTop: '1.5em' }}>
+        <Row>
           <Col xs={12}>
-           <h3>Thanks for your interest in Suvai!</h3>
-           <br />
+            <h3>Thanks for your interest in Suvai!</h3>
+            <br />
             <p>
               Please give us a few days for our admins to review the
               request and send an invite to join our community.
             </p>
-          </Col></Row>
-        </Panel>
+          </Col>
+        </Row>
+      </Panel>
     )
     );
   }

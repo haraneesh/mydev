@@ -9,13 +9,13 @@ import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
 import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
-const MyOrders = ({ loading, loggedInUser, orders }) => (!loading ? (
+const MyOrders = ({ history, loading, loggedInUser, orders }) => (!loading ? (
   <Row>
     <Col xs={12}>
       <WelcomeMessage loggedInUser={loggedInUser} />
-      
+
       <h3 className="page-header">My Orders</h3>
-      <MyOrderList loggedInUser={loggedInUser} orders={orders} />
+      <MyOrderList loggedInUser={loggedInUser} orders={orders} history={history} />
 
     </Col>
   </Row>
@@ -25,6 +25,7 @@ MyOrders.propTypes = {
   loggedInUser: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default withTracker((args) => {

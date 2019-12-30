@@ -1,17 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, FormControl, PanelGroup } from 'react-bootstrap';
-import { formatMoney } from 'accounting-js';
-import { accountSettings } from '../../../../modules/settings';
+import Product from '../Product';
 import constants from '../../../../modules/constants';
 
-
-export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick, isMainProductListPage }) => {
-  if (isMainProductListPage) {
-    return (
-      <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
-        <Col className="text-left-not-xs" sm={4} xs={12}>
-          {/* } <Button
+export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick }) => (
+  <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
+    <Col className="text-left-not-xs" sm={4} xs={12}>
+      {/* } <Button
             bsStyle="default"
             style={{ marginBottom: '0.5em' }}
             disabled={totalBillAmount <= 0}
@@ -19,44 +15,19 @@ export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitBu
             className="btn-block"
           > Save Draft
           </Button> */}
-        </Col>
+    </Col>
 
-        <Col className="text-right-not-xs" sm={4} smOffset={4} xs={12}>
-          <Button
-            bsStyle="primary"
-            disabled={totalBillAmount <= 0}
-            onClick={onButtonClick}
-            className="btn-block"
-          > { submitButtonName }
-          </Button>
-        </Col>
-      </Row>
+    <Col className="text-right-not-xs" sm={4} smOffset={4} xs={12}>
+      <Button
+        bsStyle="primary"
+        disabled={totalBillAmount <= 0}
+        onClick={onButtonClick}
+        className="btn-block"
+      > { submitButtonName }
+      </Button>
+    </Col>
+  </Row>
     );
-  }
-  return (
-    <div className="orderFooter">
-      {onSecondButtonClick && (<Col sm={4}>
-        <h4 className="text-right-not-xs">{'Total '}
-          <strong>
-            {
-                formatMoney(totalBillAmount, accountSettings)
-            }
-          </strong></h4>
-      </Col>)}
-      <Col className="text-right-not-xs" sm={4} xs={12}>
-        <Button
-          bsStyle="primary"
-          style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
-          disabled={totalBillAmount <= 0}
-          onClick={() => { onButtonClick(constants.OrderStatus.Pending.name); }}
-          className="btn-block"
-        >
-          { submitButtonName }
-        </Button>
-      </Col>
-    </div>
-  );
-};
 
 OrderFooter.defaultProps = {
   onSecondButtonClick: {},
@@ -68,7 +39,6 @@ OrderFooter.propTypes = {
   onSecondButtonClick: PropTypes.func,
   totalBillAmount: PropTypes.number.isRequired,
   submitButtonName: PropTypes.string.isRequired,
-  isMainProductListPage: PropTypes.bool.isRequired,
 };
 
 
@@ -117,5 +87,91 @@ export const OrderComment = ({ comments }) => (
 
 OrderComment.propTypes = {
   comments: PropTypes.string.isRequired,
+};
+
+export function displayProductsByType({ products, isMobile, isAdmin, updateProductQuantity, wasProductOrderedPreviously, cartScreen }) {
+  // Grouping product categories by tabs
+  const productVegetables = [];
+  const productFruits = [];
+  const productDhals = [];
+  const productGrains = [];
+  const productSpices = [];
+  const productOils = [];
+  const productPrepared = [];
+  const productHygiene = [];
+  const productSpecials = [];
+  const productRecommended = [];
+
+  const checkout = !!(cartScreen);
+   // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene';
+  _.map(products, (product, index) => {
+    if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
+      productRecommended.push(
+        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+       );
+    }
+
+    if (product.displayAsSpecial) {
+      productSpecials.push(
+        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+       );
+    }
+
+    let tempProductList = [];
+    let tempKey = '';
+
+    switch (true) {
+      case (constants.ProductType[0] === product.type): // Vegetables
+        tempProductList = productVegetables;
+        tempKey = `vegetable-${index}`;
+        break;
+      case (constants.ProductType[1] === product.type): // Fruits
+        tempProductList = productFruits;
+        tempKey = `fruit-${index}`;
+        break;
+      case (constants.ProductType[2] === product.type): // Dhals
+        tempProductList = productDhals;
+        tempKey = `dhal-${index}`;
+        break;
+      case (constants.ProductType[3] === product.type): // Grains
+        tempProductList = productGrains;
+        tempKey = `grain-${index}`;
+        break;
+      case (constants.ProductType[4] === product.type): // Spice
+        tempProductList = productSpices;
+        tempKey = `spice-${index}`;
+        break;
+      case (constants.ProductType[5] === product.type): // Oils
+        tempProductList = productOils;
+        tempKey = `oil-${index}`;
+        break;
+      case (constants.ProductType[6] === product.type): // Prepared
+        tempProductList = productPrepared;
+        tempKey = `processed-${index}`;
+        break;
+      case (constants.ProductType[7] === product.type): // Hygiene
+        tempProductList = productHygiene;
+        tempKey = `hygiene-${index}`;
+        break;
+      default:
+        break;
+    }
+
+    tempProductList.push(
+      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+     );
+  });
+
+  return {
+    productVegetables,
+    productFruits,
+    productDhals,
+    productGrains,
+    productSpices,
+    productOils,
+    productPrepared,
+    productHygiene,
+    productSpecials,
+    productRecommended,
+    isMobile };
 }
-;

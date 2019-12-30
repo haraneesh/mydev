@@ -138,3 +138,7 @@ export const dReconcileInventoryList = SuvaiLoadable({
 export const dApproveUserSignUps = SuvaiLoadable({
   loader: () => import('../../pages/Miscellaneous/ApproveSignUps'),
 });
+
+export const dCart = SuvaiLoadable({
+  loader: () => import('../../pages/Cart/CartHome'),
+});
