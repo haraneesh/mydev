@@ -74,7 +74,6 @@ const createNewUser = (user) => {
     username: user.username,
     email: user.email,
     password: user.password,
-    updatedAt: new Date(),
     profile: {
       name: {
         first: user.profile.name.first,
@@ -99,7 +98,7 @@ const createNewUser = (user) => {
     if (user.isAdmin) {
       Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
     }
-    Meteor.users.update({ username: cuser.username }, { $set: { wallet } });
+    Meteor.users.update({ username: cuser.username }, { $set: { wallet, updatedAt: new Date() } });
     return Meteor.users.findOne({ username: cuser.username });
   }
 
