@@ -9,37 +9,38 @@ import Product from '../Product';
 import './ViewOrderProducts.scss';
 
 export const ViewOrderProducts = ({ products }) => (
-  <PanelGroup className="order-details-products row">
+  <PanelGroup className="order-details-products">
     <Panel>
-      <Row>
-        <Col xs={4}> <strong> Name </strong></Col>
-        <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col>
-        <Col xs={2} className="text-right-xs"> <strong> Qty </strong></Col>
-        <Col xs={3} className="text-right"> <strong> Value </strong></Col>
-      </Row>
+
+      <Col xs={4}> <strong> Name </strong></Col>
+      <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col>
+      <Col xs={2} className="text-right-xs"> <strong> Qty </strong></Col>
+      <Col xs={3} className="text-right"> <strong> Value </strong></Col>
+
+
     </Panel>
     {products.map((product) => {
       if (product.quantity > 0) {
         return (
           <Panel key={product._id}>
-            <Row>
-              <Col xs={4}>
-                {`${product.name} ${product.unitOfSale}`} <br />
-                <small> {product.description} </small>
-              </Col>
-              <Col xs={3} className="text-right-xs">
-                {formatMoney(product.unitprice, accountSettings)}
-              </Col>
-              <Col xs={2} className="text-right-xs">
-                {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
-              </Col>
-              <Col xs={3} className="text-right">
-                {formatMoney(
+
+            <Col xs={4}>
+              {`${product.name} ${product.unitOfSale}`} <br />
+              <small> {product.description} </small>
+            </Col>
+            <Col xs={3} className="text-right-xs">
+              {formatMoney(product.unitprice, accountSettings)}
+            </Col>
+            <Col xs={2} className="text-right-xs">
+              {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
+            </Col>
+            <Col xs={3} className="text-right">
+              {formatMoney(
                     product.unitprice * product.quantity,
                     accountSettings,
                   )}
-              </Col>
-            </Row>
+            </Col>
+
           </Panel>
         );
       }

@@ -9,7 +9,7 @@ import { displayProductsByType } from '../../components/Orders/ProductsOrderComm
 const displayWithDivider = (displayArray, displayText) => (
   displayArray.length > 0 && (
     <div className="panel panel-default" style={{ borderBottomWidth: '0px' }}>
-      <div className="panel-heading">
+      <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
         <small className="text-uppercase">{displayText}</small>
       </div>
       <div className="panel-body">
@@ -159,7 +159,7 @@ OrderFooter.propTypes = {
   orderId: PropTypes.string,
 };
 
-export const OrderComment = ({ onCommentChange, comments }) => (
+export const OrderComment = ({ refComment, onCommentChange, comments }) => (
   <PanelGroup>
     <Row>
       <Col sm={3}>
@@ -176,6 +176,7 @@ export const OrderComment = ({ onCommentChange, comments }) => (
           onBlur={onCommentChange}
           rows="4"
           className="form-control"
+          ref={refComment}
         />
       </Col>
     </Row>

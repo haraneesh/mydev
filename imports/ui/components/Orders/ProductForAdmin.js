@@ -18,7 +18,7 @@ class ProductForAdmin extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.quantitySelected === this.props.quantitySelected) {
       return;
     }

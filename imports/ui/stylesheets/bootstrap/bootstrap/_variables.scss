@@ -16,13 +16,13 @@ $gray-light:             lighten($gray-base, 45%) !default;
 $gray-lighter:           lighten($gray-base, 55%) !default;
 $gray-lightText:        #fff !default;
  
-$brand-primary:         #00A500 !default; //  Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C 
+$brand-primary:         #00A500 !default; //  Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C #69af07
 $brand-default:         #522E23 !default; // Secondary #6F5F5C #3E1F0C
 $brand-success:         #3F7738 !default; // #39B424 #8BC058 #65A832 #506d2f
 $brand-info:            #976A4B !default; //#92B955
-$brand-warning:         #FF6D00 !default; //#EBBB1E #E86D00  
+$brand-warning:         #FD6C00 !default; //#EBBB1E #E86D00 #FF6D00
 $brand-danger:          #EF0905 !default; //#EA3128
-$brand-logo-yellow:     #FDC123 !default; //#FFC63B
+$brand-logo-yellow:     #FFB800 !default; //#FDC123
 
 //== Scaffolding
 //
@@ -53,7 +53,7 @@ $font-family-base:        $font-family-sans-serif !default;
 
 $font-size-base:          16px !default;
 $font-size-large:         ceil(($font-size-base * 1.10)) !default; // ~22px
-$font-size-small:         ceil(($font-size-base * 0.85)) !default; // ~12px
+$font-size-small:         ceil(($font-size-base * 0.80)) !default; // ~12px
 
 $font-size-h1:            floor(($font-size-base * 2)) !default; // ~32px
 $font-size-h2:            floor(($font-size-base * 1.8)) !default; // ~30px
@@ -158,10 +158,10 @@ $table-condensed-cell-padding:  5px !default;
 //** Default background color used for all tables.
 $table-bg:                      transparent !default;
 //** Background color used for `.table-striped`.
-$table-bg-accent:               #FCF9F4; //lighten($gray-lighter,10%) !default;
+$table-bg-accent:               #f9f4f0; //lighten($gray-lighter,10%) #FCF9F4 !default;
 //** Background color used for `.table-hover`.
 //$table-bg-hover:                #f5f5f5 !default;
-$table-bg-hover:                #FCF9F4; // $gray-lighter !default;
+$table-bg-hover:                #f9f4f0; // $gray-lighter #FCF9F4 !default;
 
 $table-bg-active:               $table-bg-hover !default;
 

@@ -22,7 +22,7 @@ function FieldGroup({ label, value }) {
 
 const ViewProductListProducts = ({ products }) => (
 
-  <Row className="view-product-list-details">
+  <div className="view-product-list-details">
     <h4> Products </h4>
     {
       products.map(product => (
@@ -39,7 +39,7 @@ const ViewProductListProducts = ({ products }) => (
         ),
       )
     }
-  </Row>
+  </div>
 );
 
 class ViewProductListDetails extends React.Component {

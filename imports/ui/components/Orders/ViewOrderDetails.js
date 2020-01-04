@@ -6,7 +6,7 @@ import 'moment-timezone';
 import PropTypes from 'prop-types';
 import { accountSettings, dateSettings } from '../../../modules/settings';
 import constants from '../../../modules/constants';
-import {ViewOrderProducts} from './ViewOrderProducts/ViewOrderProducts';
+import { ViewOrderProducts } from './ViewOrderProducts/ViewOrderProducts';
 
 class ViewOrderDetails extends React.Component {
   constructor(props, context) {
@@ -39,21 +39,21 @@ class ViewOrderDetails extends React.Component {
           </Row>
         </div>
         <Panel>
-          <Row>
+          <div>
             <Col xs={12}>
               <Label bsStyle={constants.OrderStatus[order.order_status].label}>
                 {constants.OrderStatus[order.order_status].display_value}
               </Label>
             </Col>
-          </Row>
+          </div>
           <div className="orderDetails panel-body">
-            <Row>
+            <div>
               <ViewOrderProducts products={order.products} />
-            </Row>
-            <Row>
+            </div>
+            <div>
               <Col xs={12}> <strong> Comments </strong></Col>
               <Col xs={12}> {order.comments} </Col>
-            </Row>
+            </div>
           </div>
           <div className="panel-footer">
             <Row>

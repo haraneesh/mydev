@@ -60,6 +60,7 @@ const cartActions = {
   updateCart: 'UPDATE_CART',
   activateCart: 'NEW_CART',
   setCartComments: 'SET_COMMENTS',
+  orderFlowComplete: 'ORDER_FLOW_COMPLETE',
 };
 
 // Reducer
@@ -110,6 +111,13 @@ const cartReducer = (currentState, action) => {
         lastUpdateDate: new Date(),
         comments: currentState.carts[cartId].comments,
       };
+      break;
+    }
+    case cartActions.orderFlowComplete: {
+      if (cartId === 'NEW') {
+        newState.carts[cartId] = emptyCart;
+      }
+
       break;
     }
     default:

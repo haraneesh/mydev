@@ -10,61 +10,76 @@ import ViewInvoicedOrderDetails from '../../../components/Orders/ViewInvoicedOrd
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
 import constants from '../../../../modules/constants';
 import Comments from '../../../containers/Comments/getComments';
-import { CartStateContext, CartDispatchContext } from '../../../stores/ShoppingCart';
 import OrdersCollection from '../../../../api/Orders/Orders';
 import Loading from '../../../components/Loading/Loading';
+import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 
+const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFromCart }) => {
+  const cartState = useCartState();
+  const cartDispatch = useCartDispatch();
+  const [order, setOrder] = useState(selectedOrder);
+  const currentActiveCartId = cartState.activeCartId;
+  const editOrder = (order.order_status === constants.OrderStatus.Pending.name ||
+ order.order_status === constants.OrderStatus.Saved.name);
 
-const EditOrderDetails = ({ loading, order, history, loggedInUserId, addItemsFromCart }) => {
-  switch (true) {
-    case loading: {
-      return <Loading />;
-    }
-    case (order.order_status === constants.OrderStatus.Pending.name ||
-      order.order_status === constants.OrderStatus.Saved.name) : {
-        const productListId = order.productOrderListId;
-        const [productList, setProductList] = useState([]);
-        const [isProductListLoading, setIsLoading] = useState(true);
-        useEffect(() => {
-          setIsLoading(true);
-          Meteor.call('getProductList.view', productListId,
-          (error, value) => {
-            if (error) {
-              Bert.alert(error.reason, 'danger');
-            } else {
-              setProductList(value);
-              setIsLoading(false);
-            }
-          },
-
-    );
-        }, []);
-
-        return !isProductListLoading ? (
-          <CartStateContext.Consumer>
-            { cartState => (
-              <CartDispatchContext.Consumer>
-                { cartDispatch => (
-                  <ProductsOrderMain
-                    productList={productList}
-                    orderId={order._id}
-                    orderedProducts={(order.products) ? order.products : []}
-                    products={productList.products}
-                    productListId={(order.productOrderListId) ? order.productOrderListId : ''}
-                    orderStatus={order.order_status}
-                    comments={order.comments}
-                    totalBillAmount={order.total_bill_amount}
-                    history={history}
-                    addItemsFromCart={addItemsFromCart}
-                    cartState={cartState}
-                    cartDispatch={cartDispatch}
-                  />
-        )}
-              </CartDispatchContext.Consumer>
-      )}
-          </CartStateContext.Consumer>
-    ) : <Loading />;
+  const updateCart = ({ orderId, products, comments }) => {
+    switch (true) {
+      case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
+        cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: orderId } });
+        break;
       }
+      case (orderId !== ''): {
+        const selectedProducts = {};
+        const orderedProducts = products || [];
+        orderedProducts.forEach((product) => {
+          selectedProducts[product._id] = product;
+        });
+        cartDispatch({ type: cartActions.setActiveCart, payload: { activeCartId: orderId, selectedProducts, comments } });
+        break;
+      }
+      default: {
+        cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: 'NEW' } });
+      }
+    }
+  };
+
+  const [productList, setProductList] = useState([]);
+  const [isProductListLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    if (editOrder) {
+      const productListId = order.productOrderListId;
+      setIsLoading(true);
+      Meteor.call('getProductList.view', productListId,
+    (error, prdList) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        updateCart({ orderId: order._id, products: order.products, comments: order.comments });
+        setProductList(prdList);
+        setIsLoading(false);
+      }
+    });
+    } else {
+      setIsLoading(false);
+    }
+  }
+, []);
+
+
+  switch (true) {
+    case (editOrder) : {
+      return !isProductListLoading ?
+        (<ProductsOrderMain
+          productList={productList}
+          orderId={order._id || ''}
+          products={productList.products}
+          productListId={(order.productOrderListId) ? order.productOrderListId : ''}
+          orderStatus={order.order_status}
+          comments={order.comments}
+          history={history}
+          addItemsFromCart={addItemsFromCart}
+        />) : <Loading />;
+    }
     case (order.invoices): {
       return (
         <div>
@@ -77,7 +92,8 @@ const EditOrderDetails = ({ loading, order, history, loggedInUserId, addItemsFro
               loggedUserId={loggedInUserId}
             />
           </Panel>
-        </div>);
+        </div>
+      );
     }
     default: {
       return (<div>
@@ -97,8 +113,10 @@ EditOrderDetails.propTypes = {
   history: PropTypes.object.isRequired,
   loggedInUserId: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
-  addItemsFromCart: PropTypes.bool.isRequired,
 };
+
+const EditOrderDetailsWrapper = props => props.loading ? (<Loading />) : (<EditOrderDetails {...props} />);
+
 
 export default withTracker((args) => {
   const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
@@ -107,9 +125,8 @@ export default withTracker((args) => {
 
   return {
     loading: !subscription.ready(),
-    order,
+    selectedOrder: order,
     history: args.history,
     loggedInUserId: args.loggedInUserId,
-    addItemsFromCart: !!(args.match.params.addItemsFromCart),
   };
-})(EditOrderDetails);
+})(EditOrderDetailsWrapper);

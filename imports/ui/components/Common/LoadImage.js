@@ -1,10 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import PropTypes from 'prop-types';
 
-var PendingPool = {};
-var ReadyPool = {};
+const PendingPool = {};
+const ReadyPool = {};
 
-class LoadImage extends React.Component{
+class LoadImage extends React.Component {
 
   getInitialState() {
     return {
@@ -16,24 +16,24 @@ class LoadImage extends React.Component{
     this._load(this.props.src);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.src !== this.props.src) {
-      this.setState({src: null});
+      this.setState({ src: null });
       this._load(nextProps.src);
     }
   }
 
   render() {
-    var style = this.state.src ?
-      { backgroundImage : 'url(' + this.state.src + ')'} :
+    const style = this.state.src ?
+      { backgroundImage: `url(${this.state.src})` } :
       undefined;
 
     return <div className="LoadImage" style={style} />;
   }
 
-  _load(/*string*/ src) {
+  _load(/* string */ src) {
     if (ReadyPool[src]) {
-      this.setState({src: src});
+      this.setState({ src });
       return;
     }
 
@@ -44,9 +44,9 @@ class LoadImage extends React.Component{
 
     PendingPool[src] = [this._onLoad];
 
-    var img = new Image();
+    const img = new Image();
     img.onload = () => {
-      PendingPool[src].forEach(/*function*/ callback => {
+      PendingPool[src].forEach(/* function */ (callback) => {
         callback(src);
       });
       delete PendingPool[src];
@@ -56,11 +56,11 @@ class LoadImage extends React.Component{
     img.src = src;
   }
 
-  _onLoad(/*string*/ src) {
+  _onLoad(/* string */ src) {
     ReadyPool[src] = true;
     if (this.isMounted() && src === this.props.src) {
       this.setState({
-        src: src,
+        src,
       });
     }
   }
@@ -68,6 +68,6 @@ class LoadImage extends React.Component{
 
 LoadImage.propTypes = {
   src: PropTypes.string.isRequired,
-}
+};
 
-export default LoadImage
+export default LoadImage;

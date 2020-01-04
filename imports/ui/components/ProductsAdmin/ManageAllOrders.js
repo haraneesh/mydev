@@ -15,11 +15,13 @@ import generateOrderBills from '../../../reports/client/GenerateOrderBills';
 import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
 
-const UpdateStatusButtons = ({ title, statuses, onSelectCallBack }) => {
+const UpdateStatusButtons = ({ title, statuses, onSelectCallBack, ignoreStatuses }) => {
   const rows = [];
   _.each(statuses, (value, key) => {
-    rows.push(<MenuItem eventKey={value.name} onSelect={onSelectCallBack} >
-      {`to ${value.display_value}`} </MenuItem>);
+    if (!ignoreStatuses[key]) {
+      rows.push(<MenuItem eventKey={value.name} onSelect={onSelectCallBack} >
+        {`to ${value.display_value}`} </MenuItem>);
+    }
   });
   return (
     <SplitButton bsSize="small" title={title} key="split-button-status-change" id={'split-button-basic-status'}>
@@ -46,7 +48,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.selected}
         >
                     Selected
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
       cell={<RowSelectedCell data={dataList} onChecked={onChecked} />}
       flexGrow={1}
@@ -64,7 +66,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.status}
         >
                     Status
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
     />
     <Column
@@ -75,7 +77,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.name}
         >
                     Name
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
       cell={<TextCell data={dataList} />}
       width={100}
@@ -89,7 +91,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.whMobileNum}
         >
                     Mobile Number
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
       cell={<TextCell data={dataList} />}
       width={100}
@@ -103,7 +105,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.date}
         >
                     Delivery Date
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
       cell={<DateCell data={dataList} />}
       width={100}
@@ -117,7 +119,7 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           sortDir={colSortDirs.amount}
         >
                     Bill Amount
-                </SortHeaderCell>
+        </SortHeaderCell>
             }
       cell={<AmountCell data={dataList} />}
       width={100}
@@ -265,7 +267,7 @@ class ManageAllOrders extends React.Component {
         Bert.alert(this.reportPopupAllowMsg, 'info');
       }
     });
-}
+  }
 
   handleGenerateBills() {
     const orderIds = [...this.selectedOrderIds];
@@ -294,7 +296,7 @@ class ManageAllOrders extends React.Component {
       this.selectedOrderIds.add(orderId);
     }
 
-    //const sortedDataList = _.clone(this.state.sortedDataList);
+    // const sortedDataList = _.clone(this.state.sortedDataList);
     const sortedDataList = Object.create(this.state.sortedDataList);
     sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected;
         // this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
@@ -307,7 +309,7 @@ class ManageAllOrders extends React.Component {
 
           this.setState(
               {sortedDataList}
-          )*/
+          ) */
   }
 
   getsortedDataList(orders) {
@@ -321,7 +323,7 @@ class ManageAllOrders extends React.Component {
     return new DataListWrapper(this._defaultSortIndexes, this._dataList);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.orders !== this.props.orders) {
       const sortedDataList = this.getsortedDataList(nextProps.orders);
       this.setState({
@@ -383,11 +385,13 @@ class ManageAllOrders extends React.Component {
               title={'Update Status'}
               statuses={constants.OrderStatus}
               onSelectCallBack={this.handleStatusUpdate}
+              ignoreStatuses={{ Saved: constants.OrderStatus.Saved }}
             />
             <UpdateStatusButtons
               title={'Change Delivery Date'}
               statuses={constants.DaysFromTodayForward}
               onSelectCallBack={this.handleDeliveryDateUpdate}
+              ignoreStatuses={{}}
             />
             <Button
               bsStyle="default"
@@ -402,20 +406,21 @@ class ManageAllOrders extends React.Component {
               onClick={this.handleGenerateOPL}
             >
             Generate OPL
-          </Button>
+            </Button>
             <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPLNew}
             >
             Generate OPL New
-          </Button>
-          <Button
-            bsStyle="default"
-            bsSize="small"
-            href="/reconcileInventory">
+            </Button>
+            <Button
+              bsStyle="default"
+              bsSize="small"
+              href="/reconcileInventory"
+            >
             Daily Inventory Update
-          </Button>
+            </Button>
 
           </ButtonToolbar>
         </Row>

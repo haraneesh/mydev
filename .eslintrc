@@ -8,6 +8,7 @@
   "plugins": [
     "meteor",
     "react",
+    "react-hooks",
   ],
   "extends": [
     "airbnb",
@@ -40,5 +41,6 @@
     "react/jsx-filename-extension": 0,
     "react/forbid-prop-types": 0,
     "allowImportExportEverywhere": 0,
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
   }
 }

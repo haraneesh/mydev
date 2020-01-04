@@ -20,7 +20,7 @@ export default class ImageUploader extends React.Component {
     this._changePhoto = this._changePhoto.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.imageUrl !== this.props.imageUrl) {
       this.setState({
         state: (nextProps.imageUrl) ? 'complete' : 'upload',

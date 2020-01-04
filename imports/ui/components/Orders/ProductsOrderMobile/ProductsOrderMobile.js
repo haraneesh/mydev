@@ -15,7 +15,7 @@ export default class ProductsOrderMobile extends React.Component {
     const totalBillAmount = (props.totalBillAmount) ? props.totalBillAmount : 0;
 
     this.state = {
-      products: this.props.productArray,
+      products: this.props.productsArray,
       totalBillAmount,
       panelToFocus: '',
       recommendations: this.props.recommendations,
@@ -263,7 +263,7 @@ ProductsOrderMobile.defaultProps = {
 
 ProductsOrderMobile.propTypes = {
   productGroups: PropTypes.array.isRequired,
-  productArray: PropTypes.object.isRequired,
+  productsArray: PropTypes.object.isRequired,
   productGroupSelected: PropTypes.number,
   recommendations: PropTypes.array.isRequired,
   orderId: PropTypes.string,

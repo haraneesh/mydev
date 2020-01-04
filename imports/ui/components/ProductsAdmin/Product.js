@@ -82,7 +82,7 @@ export default class Product extends React.Component {
   }
 
   // Life cycle function which will check if the props are updated
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.prodId !== nextProps.prodId) {
       this.setState({
         product: Object.assign({}, nextProps.product),
@@ -273,7 +273,7 @@ export default class Product extends React.Component {
                 onChange={this.handleProductUpsert}
               >
               Display this as special?
-            </Checkbox>
+              </Checkbox>
             </Col>
             <Col xs={2}>
               <FieldGroup
@@ -289,7 +289,7 @@ export default class Product extends React.Component {
             </Col>
 
             <Col xs={3}>
-             {/*} <FieldGroup
+              {/* } <FieldGroup
                 controlType="select"
                 controlLabel="Category"
                 controlName="category"
@@ -298,7 +298,7 @@ export default class Product extends React.Component {
                 defaultValue={this.props.product.category}
                 choiceValues={constants.ProductCategory}
                 help
-              />*/}
+              /> */}
               <FieldGroup
                 controlType="text"
                 controlLabel="Category"

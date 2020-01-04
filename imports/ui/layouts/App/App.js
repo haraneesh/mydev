@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
+// import { Alert } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -38,6 +38,7 @@ import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 import EditOrderDetails from '../../pages/Orders/EditOrderDetails/EditOrderDetails';
 
 import Cart from '../../pages/Cart/CartHome';
+import ConfirmOrderPlaced from '../../pages/Cart/ConfirmOrderPlaced';
 /* layout */
 import { OrderLayout, MainLayout } from '../Layouts';
 
@@ -69,6 +70,7 @@ import {
   dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
+  dBasket,
   // dCart,
   // dMyWallet,
   dReportsHome,
@@ -90,10 +92,11 @@ const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segment
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      <Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
-        <small>Happy New Year !</small> <br />
-        <small>Wednesday and Thursday deliveries will happen <span style={{ borderBottom: '2px solid #EF0905', paddingBottom: '1px' }}>after Friday</span>.</small>
-      </Alert>
+      { /* props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+        <small> This week's Delivery Schedule </small> <br />
+        <small> <span style={{ color: '#EF0905' }}>Wednesday </span> deliveries  will happen on <span style={{ color: '#EF0905' }}>Tuesday.</span></small> <br />
+        <small> <span style={{ color: '#EF0905' }}>Thursday</span> deliveries  will happen on <span style={{ color: '#EF0905' }}>Friday.</span></small>
+        </Alert>) */ }
       <CartProvider>
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
@@ -132,8 +135,12 @@ const App = props => (
           <AdminAuthenticated exact routeName="Edit Specials" layout={MainLayout} path="/specials/edit" component={dEditAllSpecials} {...props} />
 
           {/* Order */}
-          <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id/:addItemsFromCart?" component={EditOrderDetails} {...props} />
+          <PlaceOrderAuthenticated exact routeName="Order Placed" layout={MainLayout} path="/order/confirm" component={ConfirmOrderPlaced} {...props} />
+          <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
           <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
+
+          {/* Basket */}
+          <Authenticated routeName="Basket" path="/baskets/:basketId?" layout={MainLayout} component={dBasket} {...props} />
 
           {/* CartHome */}
           <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />

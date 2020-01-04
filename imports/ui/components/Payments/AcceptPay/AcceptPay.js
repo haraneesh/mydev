@@ -44,7 +44,7 @@ class AcceptPay extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.userWallet !== this.props.userWallet) {
       this.setState(this.prepareState(nextProps.userWallet));
     }

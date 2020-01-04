@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Panel, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -11,6 +11,7 @@ import Loading from '../Loading/Loading';
 const CartDetails = ({ history, orderId, loggedInUser }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
+  const refComment = useRef();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
 
@@ -64,8 +65,8 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
+          cartDispatch({ type: cartActions.orderFlowComplete });
           Bert.alert(confirmation, 'success');
-          cartDispatch({ type: cartActions.emptyCart });
           history.push('/');
         }
       });
@@ -84,7 +85,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
   };
 
   const handleAddItems = () => {
-    if (orderId) { history.push(`/order/${orderId}/true`); } else { history.push('/order/'); }
+    if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/order/'); }
   };
 
   const handleCommentChange = (e) => {
@@ -94,6 +95,13 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const { current } = refComment;
+    if (current) {
+      current.value = cartState.cart.comments || ''; // comments={cartState.cart.comments || ''}
+    }
+  });
 
   switch (true) {
     case (!cartState.cart): {
@@ -136,7 +144,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
                   <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { handleAddItems(); }}>Add Items</Button>
                 </Col>
               </Row>
-              <OrderComment comments={cartState.cart.comments || ''} onCommentChange={handleCommentChange} />
+              <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}
