@@ -3,10 +3,6 @@
     z-index:999;
 }
 
-.sec-menu-bar {
-    background-color:$navbar-default-bg;
-}
-
 //Convert hamburger to cross icon
 .icon-bar {
     display: block;
@@ -76,9 +72,10 @@
 }
 
 .sec-menu-bar{
+  background-color:$navbar-default-bg;
   padding-left: 0px;
-  margin-bottom:1rem;
-  margin-top:2rem;
+  margin-bottom:'1rem 0rem';
+  margin-top:1rem;
 }
 
 .sec-menu-bar, .menu ul{

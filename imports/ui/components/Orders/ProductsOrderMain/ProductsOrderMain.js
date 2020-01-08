@@ -226,7 +226,7 @@ const ProductsOrderMain = (props) => {
      </Panel>
       :
      <Alert bsStyle="info">
-        Every day, List of fresh items available to order is posted after 11 AM. Please wait for the message in the group.
+        Every day, List of available fresh items and their prices will be updated by 11 AM. Please wait for the message in the group.
      </Alert>
     );
 

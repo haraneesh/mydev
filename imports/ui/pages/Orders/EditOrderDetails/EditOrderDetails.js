@@ -13,11 +13,12 @@ import Comments from '../../../containers/Comments/getComments';
 import OrdersCollection from '../../../../api/Orders/Orders';
 import Loading from '../../../components/Loading/Loading';
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
+import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
 const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFromCart }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
-  const [order, setOrder] = useState(selectedOrder);
+  const [order] = useState(selectedOrder);
   const currentActiveCartId = cartState.activeCartId;
   const editOrder = (order.order_status === constants.OrderStatus.Pending.name ||
  order.order_status === constants.OrderStatus.Saved.name);
@@ -80,7 +81,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
           addItemsFromCart={addItemsFromCart}
         />) : <Loading />;
     }
-    case (order.invoices): {
+    case (order.invoices !== undefined): {
       return (
         <div>
           <ViewInvoicedOrderDetails order={order} history={history} />
@@ -115,7 +116,8 @@ EditOrderDetails.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const EditOrderDetailsWrapper = props => props.loading ? (<Loading />) : (<EditOrderDetails {...props} />);
+const EditOrderDetailsWrapper = props => props.loading ? (<Loading />) :
+ (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />);
 
 
 export default withTracker((args) => {

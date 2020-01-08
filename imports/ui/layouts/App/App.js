@@ -38,7 +38,7 @@ import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 import EditOrderDetails from '../../pages/Orders/EditOrderDetails/EditOrderDetails';
 
 import Cart from '../../pages/Cart/CartHome';
-import ConfirmOrderPlaced from '../../pages/Cart/ConfirmOrderPlaced';
+import SuccessOrderPlaced from '../../pages/Cart/SuccessOrderPlaced';
 /* layout */
 import { OrderLayout, MainLayout } from '../Layouts';
 
@@ -135,7 +135,7 @@ const App = props => (
           <AdminAuthenticated exact routeName="Edit Specials" layout={MainLayout} path="/specials/edit" component={dEditAllSpecials} {...props} />
 
           {/* Order */}
-          <PlaceOrderAuthenticated exact routeName="Order Placed" layout={MainLayout} path="/order/confirm" component={ConfirmOrderPlaced} {...props} />
+          <PlaceOrderAuthenticated exact routeName="Order Sucess" layout={MainLayout} path="/order/success" component={SuccessOrderPlaced} {...props} />
           <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
           <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
 

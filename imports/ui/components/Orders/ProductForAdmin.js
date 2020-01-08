@@ -62,7 +62,7 @@ class ProductForAdmin extends React.Component {
       <Col sm={12} className="no-padding product-item">
         <Col sm={5}>
           <h4 className="product-name"><strong>{`${name} ${unit}`}</strong></h4>
-          { (this.state.quantitySelected > 0) && <InformProductUnavailability
+          {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             excessQtyOrdered={
               calcExcessQtyOrdered(maxUnitsAvailableToOrder,
@@ -70,7 +70,7 @@ class ProductForAdmin extends React.Component {
                 previousOrdQty,
                 this.state.quantitySelected)
               }
-          /> }
+            /> */ }
           <p><small>{description}</small></p>
         </Col>
 

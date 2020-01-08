@@ -176,7 +176,7 @@ class ManageAllOrders extends React.Component {
     this.handleDeliveryDateUpdate = this.handleDeliveryDateUpdate.bind(this);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.resetSelectedOrderIds();
   }
 

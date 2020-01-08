@@ -19,7 +19,9 @@ const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
       </Col>
     </Row>
     <Row>
-      <ListPayments />
+      <Col xs={12}>
+        <ListPayments />
+      </Col>
     </Row>
   </div>
 ) : <Loading />);

@@ -12,7 +12,7 @@ class LoadImage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this._load(this.props.src);
   }
 

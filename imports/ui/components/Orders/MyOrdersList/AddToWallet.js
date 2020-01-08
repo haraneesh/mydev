@@ -24,7 +24,7 @@ const displayWalletSummary = (amountInWalletInRs) => {
 };
 
 
-const AddToWallet = ({ userWallet, numberOfAwaitingPayments }) => {
+const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
   const walletBalanceInRs = calculateWalletBalanceInRs(userWallet);
   return (
     <Panel>
@@ -36,7 +36,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments }) => {
           {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (<h4> -- </h4>)}
         </Col>
         <Col xs={12} sm={3} className="text-right">
-          <Button bsStyle="primary" href="/mywallet">
+          <Button bsStyle="primary" onClick={() => { history.push('/mywallet'); }}>
           Add Money
           </Button>
         </Col>
@@ -57,6 +57,7 @@ AddToWallet.defaultProps = {
 AddToWallet.propTypes = {
   userWallet: PropTypes.object.isRequired,
   numberOfAwaitingPayments: PropTypes.number,
+  history: PropTypes.object.isRequired,
 };
 
 export default AddToWallet;

@@ -23,26 +23,37 @@ const QuantitySelectorWithPrice = ({
         <option value={value} key={`option-${index}`} > {`${displayUnitOfSale(selectValue, unit)} ${cost}`} </option>
       );
     },
-      )
+    )
     }
   </FormControl>
-  );
+);
 
 const QuantitySelector = ({
-    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    onChange,
-    unit,
-    unitprice,
-    controlName,
-    quantitySelected,
-  }) => (
-    <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
-      {values.map((selectValue, index) => (
-        <option value={parseFloat(selectValue)} key={`option-${index}`} > {displayUnitOfSale(selectValue, unit)} </option>
+  values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  onChange,
+  unit,
+  unitprice,
+  controlName,
+  quantitySelected,
+}) => (
+  <div>
+    <Col xs={10} className="no-padding">
+      <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
+        {values.map((selectValue, index) => (
+          <option value={parseFloat(selectValue)} key={`option-${index}`} > {displayUnitOfSale(selectValue, unit)} </option>
         ))
         }
-    </FormControl>
-    );
+      </FormControl>
+    </Col>
+    <Col xs={2} className="no-padding">
+      <Glyphicon
+        style={{ paddingLeft: '35%', paddingTop: '10px' }}
+        glyph="trash"
+        onClick={() => { onChange({ target: { name: controlName, value: 0 } }); }}
+      />
+    </Col>
+  </div>
+);
 
 const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToOrder, totQuantityOrdered, previousOrdQty }) => (
   <div className="productNameDesc">
@@ -61,8 +72,11 @@ const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToO
 const AddToCart = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   onChange,
+  unit,
+  unitprice,
   controlName,
   quantitySelected,
+  maxUnitsAvailableToOrder,
 }) => {
   const target = { name: controlName, value: 0 };
   if (quantitySelected === 0) {
@@ -72,9 +86,21 @@ const AddToCart = ({
     </div>);
   }
 
+  /*
   return (<div className="removeFromCart text-center-xs">
     <Button name={controlName} className="btn-block" onClick={() => { onChange({ target }); }}> Remove From Cart</Button>
   </div>);
+  */
+
+  return (<QuantitySelector
+    onChange={onChange}
+    unit={unit}
+    unitprice={unitprice}
+    controlName={controlName}
+    quantitySelected={quantitySelected}
+    values={values}
+    maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+  />);
 };
 
 const ProductForNonAdmin = ({
@@ -121,28 +147,19 @@ const ProductForNonAdmin = ({
             <Col xs={12} className="no-padding">
               <Col xs={12} className="no-padding">
                 {formatMoney(
-                      unitprice * quantitySelected,
-                      accountSettings,
+                  unitprice * quantitySelected,
+                  accountSettings,
                 )}
               </Col>
-              <Col xs={10} className="no-padding">
-                <QuantitySelector
-                  onChange={onChange}
-                  unit={unit}
-                  unitprice={unitprice}
-                  controlName={productId}
-                  quantitySelected={quantitySelected}
-                  values={unitsForSelectionArray}
-                  maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-                />
-              </Col>
-              <Col xs={2} className="no-padding">
-                <Glyphicon
-                  style={{ paddingLeft: '35%', paddingTop: '10px' }}
-                  glyph="trash"
-                  onClick={() => { onChange({ target: { name: productId, value: 0 } }); }}
-                />
-              </Col>
+              <QuantitySelector
+                onChange={onChange}
+                unit={unit}
+                unitprice={unitprice}
+                controlName={productId}
+                quantitySelected={quantitySelected}
+                values={unitsForSelectionArray}
+                maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+              />
             </Col>
           </Col>
         </Row>
