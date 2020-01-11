@@ -23,7 +23,7 @@ Orders.deny({
 
 
 const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
-productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a particular product that was ordered', defaultValue: 0 };
+productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a particular product that was ordered', min: 0.00001 };
 
 const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 

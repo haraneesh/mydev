@@ -15,7 +15,7 @@ export const EasyNavNarrowScreen = () => (
     </li>
     <li className="col-xs-4 text-center">
       <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
-        <Glyphicon glyph="comment" className="highlightMenu" /> Give Feedback
+        <Glyphicon glyph="comment"/> Give Feedback
       </a>
     </li>
   </ul>
@@ -34,7 +34,7 @@ export const EasyNavWideScreen = () => (
     </li>
     <li>
       <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
-        <Glyphicon glyph="comment" className="highlightMenu" /> Give Feedback
+        <Glyphicon glyph="comment" /> Give Feedback
       </a>
     </li>
   </Nav>

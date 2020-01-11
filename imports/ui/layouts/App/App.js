@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -92,11 +92,11 @@ const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segment
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      { /* props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
-        <small> This week's Delivery Schedule </small> <br />
-        <small> <span style={{ color: '#EF0905' }}>Wednesday </span> deliveries  will happen on <span style={{ color: '#EF0905' }}>Tuesday.</span></small> <br />
-        <small> <span style={{ color: '#EF0905' }}>Thursday</span> deliveries  will happen on <span style={{ color: '#EF0905' }}>Friday.</span></small>
-        </Alert>) */ }
+      {props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+        <small> Pongal Delivery Schedule </small> <br />
+        <small><span style={{ color: '#EF0905' }}>Wednesday (15th Jan) </span> till <span style={{ color: '#EF0905' }}>Saturday (18th Jan)</span> there will <span style={{ color: '#EF0905' }}>NOT</span> be any deliveries.</small> <br />
+        <small> Please order on or before <span style={{ color: '#EF0905' }}> Tuesday (14th Jan)</span>.</small>
+        </Alert>)}
       <CartProvider>
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />

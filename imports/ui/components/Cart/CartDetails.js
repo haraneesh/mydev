@@ -67,7 +67,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
         } else {
           cartDispatch({ type: cartActions.orderFlowComplete });
           Bert.alert(confirmation, 'success');
-          history.push('/');
+          history.push('/order/success');
         }
       });
     } else {

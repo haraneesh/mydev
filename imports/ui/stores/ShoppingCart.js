@@ -100,7 +100,8 @@ const cartReducer = (currentState, action) => {
       const product = action.payload.product;
       const productsInCart = { ...currentState.carts[cartId].productsInCart };
       productsInCart[product._id] = product;
-      if (product.quantity === 0) {
+      if (!(parseFloat(product.quantity) > 0)) {
+      //if (product.quantity === 0) {
         delete productsInCart[product._id];
       }
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(productsInCart);
