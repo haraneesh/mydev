@@ -32,6 +32,7 @@ import About from '../../pages/Miscellaneous/About/About';
 /* order */
 // import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
 import PlaceOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+import SelectBasket from '../../pages/Orders/PlaceNewOrder/SelectBasket';
 
 import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
 // import EditOrderDetails from '../../containers/Orders/EditOrder';
@@ -45,6 +46,8 @@ import { OrderLayout, MainLayout } from '../Layouts';
 import ReconcileInventoryList from '../../pages/ReconcileInventory/ReconcileInventoryList';
 
 import Analytics from 'analytics-node';
+
+import dCreateBasket from '../../pages/Baskets/CreateBasket';
 
 /* Dynamic Components */
 import {
@@ -71,6 +74,7 @@ import {
   dProfileUpdate,
   dZohoSyncUp,
   dBasket,
+  //dCreateBasket,
   // dCart,
   // dMyWallet,
   dReportsHome,
@@ -92,11 +96,11 @@ const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segment
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      {props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+      {/*props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
         <small> Pongal Delivery Schedule </small> <br />
         <small><span style={{ color: '#EF0905' }}>Wednesday (15th Jan) </span> till <span style={{ color: '#EF0905' }}>Saturday (18th Jan)</span> there will <span style={{ color: '#EF0905' }}>NOT</span> be any deliveries.</small> <br />
         <small> Please order on or before <span style={{ color: '#EF0905' }}> Tuesday (14th Jan)</span>.</small>
-        </Alert>)}
+</Alert>)*/}
       <CartProvider>
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
@@ -135,12 +139,15 @@ const App = props => (
           <AdminAuthenticated exact routeName="Edit Specials" layout={MainLayout} path="/specials/edit" component={dEditAllSpecials} {...props} />
 
           {/* Order */}
-          <PlaceOrderAuthenticated exact routeName="Order Sucess" layout={MainLayout} path="/order/success" component={SuccessOrderPlaced} {...props} />
+          <PlaceOrderAuthenticated exact routeName="Order Sucess" layout={MainLayout} path="/order/success/:orderId?" component={SuccessOrderPlaced} {...props} />
           <Authenticated exact routeName="Edit Order Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
-          <Authenticated exact routeName="Place Order" path="/order" layout={OrderLayout} component={PlaceOrder} {...props} />
+          <Authenticated exact routeName="Choose Basket Prefill" path="/neworder/selectbasket" layout={OrderLayout} component={SelectBasket} {...props} />
+          <Authenticated exact routeName="Place Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
+
 
           {/* Basket */}
           <Authenticated routeName="Basket" path="/baskets/:basketId?" layout={MainLayout} component={dBasket} {...props} />
+          <Authenticated routeName="Create Basket From Order" path="/createBasket/:orderId" layout={MainLayout} component={dCreateBasket} {...props} />
 
           {/* CartHome */}
           <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
@@ -179,7 +186,7 @@ const App = props => (
           <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
           <Public exact routeName="Health Principles" layout={MainLayout} path="/healthprinciples" component={dHealthPrinciples} {...props} />
           <Public exact routeName="Health Principles FAQ" layout={MainLayout} path="/healthfaq" component={dHealthFAQ} {...props} />
-          { /* Admin Reports */ }
+          { /* Admin Reports */}
           <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
 
           {/* Reconcile Products */}
@@ -193,7 +200,7 @@ const App = props => (
       </CartProvider>
     </div> : ''}
   </Router>
-  );
+);
 
 App.propTypes = {
   loading: PropTypes.bool.isRequired,

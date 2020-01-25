@@ -43,13 +43,13 @@ class ViewInvoicedOrderDetails extends React.Component {
           </Row>
         </div>
         <Panel>
-          <Row>
+          
             <Col xs={12}>
               <Label bsStyle={constants.OrderStatus[order.order_status].label}>
                 {constants.OrderStatus[order.order_status].display_value}
               </Label>
             </Col>
-          </Row>
+          
           { viewInvoiceComponents }
         </Panel>
         <Pager>

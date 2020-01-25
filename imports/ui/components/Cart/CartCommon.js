@@ -16,7 +16,7 @@ const displayWithDivider = (displayArray, displayText) => (
         {displayArray}
       </div>
     </div>
-));
+  ));
 
 export const ListProducts = ({ products, deletedProducts, updateProductQuantity, isMobile, isAdmin }) => {
   const { productVegetables,
@@ -27,7 +27,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     productOils,
     productPrepared,
     productHygiene,
-   } = displayProductsByType({ products, isMobile, isAdmin, cartScreen: true, updateProductQuantity });
+  } = displayProductsByType({ products, isMobile, isAdmin, cartScreen: true, updateProductQuantity });
 
   const chosenButDeleted = [];
   Object.keys(deletedProducts).map((key, index) => {
@@ -124,8 +124,8 @@ export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, 
       <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>{'Total '}
         <strong>
           {
-                  formatMoney(totalBillAmount, accountSettings)
-              }
+            formatMoney(totalBillAmount, accountSettings)
+          }
         </strong>
       </h4>
     </Col>
@@ -137,11 +137,11 @@ export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, 
         onClick={() => { onButtonClick({ history, orderId }); }}
         className="btn-block"
       >
-        { submitButtonName }
+        {submitButtonName}
       </Button>
     </Col>
   </div>
-  );
+);
 
 OrderFooter.defaultProps = {
   onSecondButtonClick: {},
@@ -163,7 +163,7 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
   <PanelGroup>
     <Row>
       <Col sm={3}>
-        <h4 className="noMarginNoPadding">
+        <h4 className="text-right-not-xs">
           <strong> Comments </strong>
         </h4>
       </Col>
@@ -181,7 +181,7 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
       </Col>
     </Row>
   </PanelGroup>
-  );
+);
 
 OrderComment.propTypes = {
   onCommentChange: PropTypes.func.isRequired,

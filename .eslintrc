@@ -1,19 +1,22 @@
 {
   "parser": "babel-eslint",
   "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "modules": true
     }
   },
   "plugins": [
     "meteor",
     "react",
-    "react-hooks",
+    "react-hooks"
   ],
   "extends": [
     "airbnb",
     "plugin:meteor/recommended",
-    "plugin:react/recommended",
+    "plugin:react/recommended"
   ],
   "env": {
     "browser": true
@@ -41,6 +44,6 @@
     "react/jsx-filename-extension": 0,
     "react/forbid-prop-types": 0,
     "allowImportExportEverywhere": 0,
-    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/rules-of-hooks": "error" // Checks rules of Hooks
   }
 }

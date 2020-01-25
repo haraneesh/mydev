@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -6,20 +6,63 @@ import RecommendationsCollection from '../../../../api/Recommendations/Recommend
 import ProductLists from '../../../../api/ProductLists/ProductLists';
 import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
+import { cartActions, useCartDispatch } from '../../../stores/ShoppingCart';
 
 
-const PlaceNewOrder =
- ({ loading, dateValue, name, products, productListId, history }) => (!loading ? (<div className="OrderHomePage">
+const PlaceNewOrder = ({ dateValue, name, products, productListId, history, basketId }) => {
 
-   <ProductsOrderMain
-     products={products}
-     history={history}
-     productListId={productListId}
-     name={name}
-     dateValue={dateValue}
-   />
+  const [isBasketLoading, setIsLoading] = useState(true);
+  const cartDispatch = useCartDispatch();
 
- </div>) : <Loading />);
+  const updateNewCart = (productsInBasket, productsInProductList) => {
+    cartDispatch({ type: cartActions.emptyCart, payload: { basketId } });
+
+    const inBasketProductsHash = {};
+    productsInBasket.forEach((product) => {
+      inBasketProductsHash[product._id] = product;
+    });
+
+    productsInProductList.forEach((product) => {
+      if (inBasketProductsHash[product._id]) {
+        product.quantity = inBasketProductsHash[product._id].quantity;
+        cartDispatch({ type: cartActions.updateCart, payload: { product } });
+      }
+    })
+  }
+
+  useEffect(() => {
+    cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: 'NEW', basketId } })
+    if (basketId) {
+      setIsLoading(true);
+      Meteor.call('baskets.getOne', basketId,
+        (error, basketDetails) => {
+          if (error) {
+            Bert.alert(error.reason, 'danger');
+          } else {
+            updateNewCart(basketDetails.products, products, basketId)
+            setIsLoading(false);
+          }
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return (!isBasketLoading ? (<div className="OrderHomePage">
+
+    <ProductsOrderMain
+      products={products}
+      history={history}
+      productListId={productListId}
+      name={name}
+      dateValue={dateValue}
+    />
+
+  </div>) : <Loading />)
+}
+
+const PlaceNewOrderWrapper = props => props.loading ? (<Loading />) :
+  (<PlaceNewOrder {...props} />);
 
 PlaceNewOrder.propTypes = {
   loading: PropTypes.bool.isRequired,
@@ -50,7 +93,7 @@ export default withTracker((args) => {
     products,
     name: args.name,
     history: args.history,
-    orderId: args.match.id,
     dateValue: args.date,
+    basketId: args.match.params.basketId
   };
-})(PlaceNewOrder);
+})(PlaceNewOrderWrapper);

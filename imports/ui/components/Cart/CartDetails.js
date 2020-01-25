@@ -39,7 +39,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
     const productId = e.target.name;
     const quantity = parseFloat(e.target.value);
     const product = cartState.cart.productsInCart[productId] ?
-        cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
+      cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
     product.quantity = quantity;
     delete product.removedDuringCheckout;
     updateDeletedProducts(quantity, productId, product);
@@ -60,18 +60,18 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
         comments: cartState.cart.comments ? cartState.cart.comments : '',
       };
 
-      upsertOrder.call(order, (error) => {
+      upsertOrder.call(order, (error, order) => {
         const confirmation = 'Your Order has been placed';
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
           cartDispatch({ type: cartActions.orderFlowComplete });
           Bert.alert(confirmation, 'success');
-          history.push('/order/success');
+          history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
         }
       });
     } else {
-        // Sign up
+      // Sign up
 
 
     }
@@ -85,7 +85,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
   };
 
   const handleAddItems = () => {
-    if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/order/'); }
+    if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/neworder/'); }
   };
 
   const handleCommentChange = (e) => {
@@ -108,20 +108,20 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
       history.push('/');
       return (<Loading />);
     }
-    case (cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0 && !!orderId) : {
+    case (cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0 && !!orderId): {
       history.push(`/order/${orderId}`);
       return (<div />);
     }
-    case (!orderId && cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0) : {
+    case (!orderId && cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0): {
       return (
         <Row>
           <Col xs={12}>
-            <h3 className="page-header">{ 'Your Cart' }</h3>
+            <h3 className="page-header">{'Your Cart'}</h3>
           </Col>
           <Col xs={12}>
             <Panel>
               <h4> Cart is Empty! </h4>
-              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { history.push('/order'); }}>Add Items</Button>
+              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { history.push('/neworder/selectbasket'); }}>Add Items</Button>
             </Panel>
           </Col>
         </Row>
@@ -131,7 +131,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
       return (
         <Row>
           <Col xs={12}>
-            <h3 className="page-header">{ orderId ? 'Update Order' : 'Your Cart' }</h3>
+            <h3 className="page-header">{orderId ? 'Update Order' : 'Your Cart'}</h3>
           </Col>
           <Col xs={12}>
             <Panel>

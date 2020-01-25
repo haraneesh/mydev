@@ -89,7 +89,11 @@ const cartReducer = (currentState, action) => {
       break;
     }
     case cartActions.activateCart: {
-      newState.activeCartId = action.payload.cartIdToActivate;
+      const activeCartId = action.payload.cartIdToActivate;
+      newState.activeCartId = activeCartId;
+      if (action.payload.basketId) {
+        newState.carts[activeCartId].basketId = action.payload.basketId;
+      }
       break;
     }
     case cartActions.emptyCart: {
@@ -101,7 +105,7 @@ const cartReducer = (currentState, action) => {
       const productsInCart = { ...currentState.carts[cartId].productsInCart };
       productsInCart[product._id] = product;
       if (!(parseFloat(product.quantity) > 0)) {
-      //if (product.quantity === 0) {
+        //if (product.quantity === 0) {
         delete productsInCart[product._id];
       }
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(productsInCart);
@@ -138,7 +142,7 @@ const CartDispatchContext = React.createContext();
 const CartProvider = ({ children }) => {
   const [state, dispatch] = React.useReducer(cartReducer, emptyCart, initializeCart);
   return (
-    <CartStateContext.Provider value={{ cart: getActiveCart(state), newCartCountOfItemsForMenu: state.carts.NEW.countOfItems, activeCartId: state.activeCartId }}>
+    <CartStateContext.Provider value={{ cart: getActiveCart(state), newCartCountOfItems: state.carts.NEW.countOfItems, activeCartId: state.activeCartId }}>
       <CartDispatchContext.Provider value={dispatch}>
         {children}
       </CartDispatchContext.Provider>

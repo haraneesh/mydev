@@ -82,19 +82,17 @@ class ViewInvoice extends React.Component {
             { invoice.line_items && <DisplayOrderProducts products={invoice.line_items} total={invoice.total} /> }
           </Col>
         </Row>
-        <Row>
+        <div>
           {invoice.balance > 0 && <div className="panel-footer">
-            <Row>
-              <Col xs={4} />
-              <Col xs={4}> <strong> Pending </strong> </Col>
-              <Col xs={4}>
-                <strong>
-                  { formatMoney(invoice.balance, accountSettings) }
+            <Row className="text-right">
+              <Col xs={12}> 
+                  <strong> 
+                    {`Pending : ${ formatMoney(invoice.balance, accountSettings) }`}
                 </strong>
               </Col>
             </Row>
           </div>}
-        </Row>
+        </div>
       </div>
     ) :
     (<Loading />);

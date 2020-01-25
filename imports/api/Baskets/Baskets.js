@@ -23,7 +23,8 @@ Baskets.schema = new SimpleSchema({
   name: { type: String, label: 'Basket Name' },
   owner: { type: String },
   isOwnerAdmin: { type: Boolean },
-  createdAt: { type: Date,
+  createdAt: {
+    type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
@@ -52,5 +53,9 @@ Baskets.schema = new SimpleSchema({
   order_ids: { type: Array, optional: true },
   'order_ids.$': { type: String },
 });
+
+if (Meteor.isServer) {
+  Baskets._ensureIndex({ owner: 1 });
+}
 
 Baskets.attachSchema(Baskets.schema);

@@ -250,11 +250,6 @@
 }
 
 .EditOrderDetails  {
-    .noMarginNoPadding{
-        margin-bottom:0px;
-        padding-bottom:0px;
-    }
-
     @media (max-width: $screen-sm-min) {
         .orderFooter{
             position: fixed;

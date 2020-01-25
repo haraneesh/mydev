@@ -5,7 +5,7 @@ import ProductForNonAdmin from './ProductForNonAdmin';
 
 import './Product.scss';
 
-const Product = ({ updateProductQuantity, product, isAdmin, checkout }) => (
+const Product = ({ updateProductQuantity, product, isAdmin, checkout, isBasket }) => (
   <div key={product._id} className={(product.displayAsSpecial) ? 'special-product-item' : ''}>
     {/*product.displayAsSpecial ? (<Label bsStyle="warning">special</Label>) : ''*/}
     {!isAdmin ?
@@ -27,6 +27,7 @@ const Product = ({ updateProductQuantity, product, isAdmin, checkout }) => (
       isAdmin={isAdmin}
       checkout={checkout}
       removedDuringCheckout={product.removedDuringCheckout}
+      isBasket={isBasket}
     />)
     :
     (<ProductForAdmin

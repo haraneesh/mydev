@@ -6,18 +6,18 @@ import constants from '../../../../modules/constants';
 
 export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick }) => (
   <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
-    <Col className="text-left-not-xs" sm={4} xs={12}>
-      {/* } <Button
+    {/* <Col className="text-left-not-xs" sm={4} xs={12}>
+       } <Button
             bsStyle="default"
             style={{ marginBottom: '0.5em' }}
             disabled={totalBillAmount <= 0}
             onClick={onSecondButtonClick}
             className="btn-block"
           > Save Draft
-          </Button> */}
-    </Col>
+          </Button>
+    </Col> */}
 
-    <Col className="text-right-not-xs" sm={4} smOffset={4} xs={12}>
+    <Col sm={6} smOffset={3} xs={10} xsOffset={1}>
       <Button
         bsStyle="primary"
         disabled={totalBillAmount <= 0}
@@ -46,7 +46,7 @@ export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} sm={2} className={`productCat_${clName}`} />
     <Col xs={8} sm={9} className="prodCatTitle">
-      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p>
+      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle', fontWeight: '900' }}> {title} </span> </p>
     </Col>
     <Col xs={1} className="prodCatPlus">
       <span className="text-default">
@@ -89,7 +89,7 @@ OrderComment.propTypes = {
   comments: PropTypes.string.isRequired,
 };
 
-export function displayProductsByType({ products, isMobile, isAdmin, updateProductQuantity, wasProductOrderedPreviously, cartScreen }) {
+export function displayProductsByType({ products, isMobile, isAdmin, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket }) {
   // Grouping product categories by tabs
   const productVegetables = [];
   const productFruits = [];
@@ -107,13 +107,13 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
-        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket}/>,
        );
     }
 
     if (product.displayAsSpecial) {
       productSpecials.push(
-        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket}/>,
        );
     }
 
@@ -158,7 +158,7 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
     }
 
     tempProductList.push(
-      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} />,
+      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
      );
   });
 

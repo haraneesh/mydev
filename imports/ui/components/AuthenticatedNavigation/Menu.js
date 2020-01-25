@@ -22,7 +22,7 @@ const shoppingCartBubble = {
 const cartMenu = () => (
   <div className="dropdown">
     <button className="btn btn-default dropdown-toggle btn-link" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Dropdown
+      Dropdown
     </button>
     <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
       <li><a href="#">Action</a></li>
@@ -64,7 +64,7 @@ export default class Menu extends Component {
 
   render() {
     const menuVisible = this.state.visible ? 'visible ' : '';
-    const totalProductsInCount = this.props.cartState.newCartCountOfItemsForMenu;
+    const totalProductsInCount = this.props.cartState.newCartCountOfItems;
 
     return (
       <Row className="pull-right">

@@ -7,7 +7,7 @@ import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 
 Meteor.methods({
-  'baskets.get': function basketsGet(basketId) {
+  'baskets.getOne': function basketsGetOne(basketId) {
     check(basketId, String);
 
     if (Meteor.isServer) {
@@ -20,13 +20,26 @@ Meteor.methods({
       new Meteor.Error(403, 'Access Denied');
     }
   },
+  'baskets.getAll': function basketsGetAll() {
+
+    if (Meteor.isServer) {
+      try {
+        return Baskets.find({ owner: this.userId }, { sort: { name: 1 } }).fetch()
+      } catch (exception) {
+        handleMethodException(exception);
+      }
+    } else {
+      new Meteor.Error(403, 'Access Denied');
+    }
+  },
   'baskets.insert': function basketsInsert(basket) {
     check(basket, {
       name: String,
       products: [{
         _id: String,
-        quantity: String,
-      }] });
+        quantity: Number,
+      }]
+    });
 
     if (Meteor.isServer) {
       try {
@@ -39,14 +52,29 @@ Meteor.methods({
   'baskets.update': function basketsUpdate(basket) {
     check(basket, {
       _id: String,
-      title: String,
-      body: String,
+      name: String,
+      products: [{
+        _id: String,
+        quantity: Number,
+      }]
     });
 
     try {
-      const basketumentId = basket._id;
-      Baskets.update(basketumentId, { $set: basket });
-      return basketumentId; // Return _id so we can redirect to basketument after update.
+      const basket = Baskets.findOne({ _id });
+
+      if (Meteor.isServer && !Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        try {
+
+          if (basket.owner !== this.userId) {
+            throw new Meteor.Error('111', 'Basket was created by a different user');
+          }
+        } catch (exception) {
+          handleMethodException(exception);
+        }
+      }
+
+      Baskets.update(basketId, { $set: basket });
+      return basketId; // Return _id so we can redirect to basketument after update.
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -67,7 +95,8 @@ rateLimit({
     'baskets.insert',
     'baskets.update',
     'baskets.remove',
-    'baskets.get',
+    'baskets.getOne',
+    'baskets.getAll',
   ],
   limit: 5,
   timeRange: 1000,

@@ -86,7 +86,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
         <div>
           <ViewInvoicedOrderDetails order={order} history={history} />
           <Panel>
-            <h4>Responses</h4>
+            <h4>Responses 1</h4>
             <Comments
               postId={order._id}
               postType={constants.PostTypes.Order.name}

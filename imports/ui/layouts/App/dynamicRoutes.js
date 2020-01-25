@@ -142,3 +142,7 @@ export const dApproveUserSignUps = SuvaiLoadable({
 export const dBasket = SuvaiLoadable({
   loader: () => import('../../pages/Baskets/EditBasket'),
 });
+
+export const dCreateBasket = SuvaiLoadable({
+  loader: () => import('../../pages/Baskets/CreateBasket'),
+});

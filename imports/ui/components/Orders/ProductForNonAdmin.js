@@ -118,6 +118,7 @@ const ProductForNonAdmin = ({
   previousOrdQty,
   image,
   checkout,
+  isBasket,
   removedDuringCheckout,
 }) => {
   const firstNonZeroOrderQty = 1;
@@ -145,12 +146,12 @@ const ProductForNonAdmin = ({
           </Col>
           <Col xs={6} sm={3} style={{ paddingLeft: '10px' }}>
             <Col xs={12} className="no-padding">
-              <Col xs={12} className="no-padding">
+              {!isBasket && (<Col xs={12} className="no-padding">
                 {formatMoney(
                   unitprice * quantitySelected,
                   accountSettings,
                 )}
-              </Col>
+              </Col>)}
               <QuantitySelector
                 onChange={onChange}
                 unit={unit}

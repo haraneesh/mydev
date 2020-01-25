@@ -14,15 +14,15 @@ const handleLogout = (props) => {
 
 const SideMenu = props => (
   <CartStateContext.Consumer>
-    { cartState => (
-      <Menu alignment="right" cartState={cartState} {... props}>
+    {cartState => (
+      <Menu alignment="right" cartState={cartState} {...props}>
         <Panel className="menu-panel">
           <Row>
             <div className="container">
-              { props.isAdmin && (<Col xs={12} sm={6}>
-                { <AdminNav {...props} /> }
+              {props.isAdmin && (<Col xs={12} sm={6}>
+                {<AdminNav {...props} />}
               </Col>)
-        }
+              }
               <Col xs={12} sm={6}>
                 <ul>
                   {/*
@@ -47,9 +47,6 @@ const SideMenu = props => (
                   </li>
                   <br />
                   <li>
-                    <NavLink to="/approveSignUps"> Approve Sign Ups</NavLink>
-                  </li>
-                  <li>
                     <NavLink to="/invitations">Invite Friends</NavLink>
                   </li>
                   {/* <li>
@@ -67,7 +64,7 @@ const SideMenu = props => (
           </Row>
         </Panel>
       </Menu>
- )}
+    )}
   </CartStateContext.Consumer>
 
 );
