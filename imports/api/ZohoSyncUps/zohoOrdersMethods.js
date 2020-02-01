@@ -3,7 +3,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
-import Orders from '../Orders/Orders';
+import { Orders } from '../Orders/Orders';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
@@ -101,13 +101,14 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
       handleMethodException('Access denied', 403);
     }
     const nowDate = new Date();
-    
+
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
       const query = {
         order_status: constants.OrderStatus.Pending.name,
         expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
+        orderRole: { $not: { $eq: constants.Roles.shopOwner.name } },
       };
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 

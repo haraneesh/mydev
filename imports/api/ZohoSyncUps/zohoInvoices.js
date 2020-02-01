@@ -1,7 +1,7 @@
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { retResponse } from './zohoCommon';
-import Orders from '../Orders/Orders';
+import { Orders } from '../Orders/Orders';
 
 const areAllItemsInvoiced = zhSalesOrder => {
   const lineItems = zhSalesOrder.line_items;

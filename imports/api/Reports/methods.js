@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import Orders from '../Orders/Orders';
+import { Orders } from '../Orders/Orders';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import addPOOrderedQty from './zohoPurchaseOrders';
 import constants from '../../modules/constants';

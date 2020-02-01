@@ -3,18 +3,34 @@ import { check } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import ProductLists from './ProductLists';
+import Suppliers from '../Suppliers/Suppliers';
 import Products from '../../api/Products/Products';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import handleMethodException from '../../modules/handle-method-exception';
 
+
 const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   const newOrderableProducts = [];
+
+  //get all the suppliers and create a hash
+
   products.forEach((product) => {
     const key = product._id;
-    const prod = product;
+    const prod = { ...product };
     prod.totQuantityOrdered = (currentProductHash && currentProductHash[key] && currentProductHash[key].totQuantityOrdered) ?
-           currentProductHash[key].totQuantityOrdered : 0;
+      currentProductHash[key].totQuantityOrdered : 0;
+
+    const newSupplierArray = [];
+
+    if (product.sourceSuppliers) {
+      product.sourceSuppliers.map((supplier) => {
+        const currSupplier = Suppliers.findOne({ _id: supplier._id });
+        newSupplierArray.push(currSupplier);
+      });
+      prod.sourceSuppliers = newSupplierArray;
+    }
+
     newOrderableProducts.push(prod);
   });
   return newOrderableProducts;
@@ -30,7 +46,7 @@ export const upsertProductList = new ValidatedMethod({
   run(params) {
     if (Meteor.isServer) {
       if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      // user not authorized. do not publish secrets
+        // user not authorized. do not publish secrets
         throw new Meteor.Error(401, 'Access denied');
       }
 
@@ -38,12 +54,12 @@ export const upsertProductList = new ValidatedMethod({
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
       let orderableProducts = Products.find({ availableToOrder: true }, { sort: { type: 1, category: 1, displayOrder: 1 } }).fetch();
-    /* $or: [
-                { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
-                { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
-                { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
-                ]
-    */
+      /* $or: [
+                  { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
+                  { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
+                  { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
+                  ]
+      */
       if (!productListsId) {
         const overlappingProductList = ProductLists.findOne(
           { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },

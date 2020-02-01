@@ -4,7 +4,7 @@ import { Email } from 'meteor/email';
 import moment from 'moment';
 import 'moment-timezone';
 import Comments from './Comments';
-import Orders from '../Orders/Orders';
+import { Orders } from '../Orders/Orders';
 import { dateSettings } from '../../modules/settings';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';

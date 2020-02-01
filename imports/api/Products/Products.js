@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { SupplierSchemaDefObject } from '../Suppliers/Suppliers';
 
 const Products = new Mongo.Collection('Products');
 export default Products;
@@ -18,7 +19,8 @@ Products.deny({
   remove: () => true,
 });
 
-const supplierSchema = new SimpleSchema({ _id: String, name: String });
+const supplierSchemaDefObject = _.clone(SupplierSchemaDefObject);
+const SupplierSchema = new SimpleSchema(supplierSchemaDefObject)
 
 export const ProductSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
@@ -26,13 +28,15 @@ export const ProductSchemaDefObject = {
   name: { type: String, label: 'The name of the product.' },
   unitOfSale: { type: String, label: 'The unit of sale of the product.' },
   unitprice: { type: Number, label: 'The unit price of the product.' },
-  unitsForSelection: { type: String,
+  wSaleBaseUnitPrice: { type: Number, label: 'The whole sale base price of product.' },
+  unitsForSelection: {
+    type: String,
     label: 'Units for selection.',
     defaultValue: '0,1,2,3,4,5,6,7,8,9,10',
     optional: true,
   },
   description: { type: String, label: 'The description of the product.', optional: true },
-  image_path: { type: String, label: 'The image path of the product.' },
+  image_path: { type: String, label: 'The image path of the product.', optional: true },
   type: { type: String, label: 'The type of the product.' },
   category: { type: String, label: 'The category of the product.', optional: true },
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
@@ -59,11 +63,12 @@ export const ProductSchemaDefObject = {
     label: 'A food group',
     optional: true,
   },
-  sourceSupplier: {
-    type: supplierSchema,
-    label: 'Supplier from whom this was sourced',
+  sourceSuppliers: {
+    type: Array,
+    label: 'The list of suppliers to which this product belongs to',
     optional: true,
   },
+  'sourceSuppliers.$': SupplierSchema.omit('createdAt', 'updatedAt'),
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   createdAt: {

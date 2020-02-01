@@ -9,6 +9,10 @@ Meteor.methods({
     check(supp, {
       name: String,
       description: String,
+      marginPercentage: Number,
+      zohoAuthtoken: String,
+      zohoOrganizationId: String,
+
     });
 
     try {
@@ -22,6 +26,9 @@ Meteor.methods({
       _id: String,
       name: String,
       description: String,
+      marginPercentage: Number,
+      zohoAuthtoken: String,
+      zohoOrganizationId: String,
     });
 
     try {

@@ -17,7 +17,8 @@ Suppliers.deny({
   remove: () => true,
 });
 
-Suppliers.schema = new SimpleSchema({
+export const SupplierSchemaDefObject = {
+  _id: { type: String, label: 'The default _id of the supplier', optional: true },
   owner: {
     type: String,
     label: 'The ID of the user this document belongs to.',
@@ -43,6 +44,24 @@ Suppliers.schema = new SimpleSchema({
   description: {
     type: String,
     label: 'The name of the supplier.',
+  },
+  marginPercentage: {
+    type: Number,
+    label: 'Supplier Margin Percentage.',
+  },
+  zohoAuthtoken: {
+    type: String,
+    label: 'Zoho Auth Token for the supplier',
+  },
+  zohoOrganizationId: {
+    type: String,
+    label: 'Zoho Organization Id for the supplier.'
+  },
+};
+
+Suppliers.schema = new SimpleSchema(SupplierSchemaDefObject, {
+  clean: {
+    autoConvert: true,
   },
 });
 

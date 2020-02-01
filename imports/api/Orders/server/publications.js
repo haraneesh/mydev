@@ -1,12 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { check, Match } from 'meteor/check';
-import Orders from '../Orders';
+import { Orders } from '../Orders';
 import constants from '../../../modules/constants';
 
 
 Meteor.publish('orders.list', function ordersList(options) {
-  check(options, { limit: Number,
+  check(options, {
+    limit: Number,
     skip: Number,
     sort: {
       createdAt: Match.Maybe(Number),
@@ -18,7 +19,7 @@ Meteor.publish('orders.list', function ordersList(options) {
   });
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
     const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip } = options;
-    return [Orders.find({ order_status: { $not: { $eq: constants.OrderStatus.Saved.name } } }, {
+    return [Orders.find({ orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }, {
       sort,
       limit,
       skip,
@@ -34,8 +35,8 @@ Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   }
   return Orders.find({
     $and: [
-        { order_status: { $in: orderStatuses } },
-        { 'customer_details._id': this.userId },
+      { order_status: { $in: orderStatuses } },
+      { 'customer_details._id': this.userId },
     ],
   });
 });

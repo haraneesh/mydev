@@ -38,6 +38,9 @@ class SupplierEditor extends React.Component {
     const supp = {
       name: this.name.value.trim(),
       description: this.description.value.trim(),
+      marginPercentage: parseFloat(this.marginPercentage.value),
+      zohoAuthtoken: this.zohoAuthtoken.value.trim(),
+      zohoOrganizationId: this.zohoOrganizationId.value.trim(),
     };
 
     if (existingSupplier) supp._id = existingSupplier;
@@ -66,6 +69,39 @@ class SupplierEditor extends React.Component {
           ref={name => (this.name = name)}
           defaultValue={supp && supp.name}
           placeholder="Name of the supplier."
+        />
+      </FormGroup>
+      <FormGroup>
+        <ControlLabel>Margin ( % )</ControlLabel>
+        <input
+          type="text"
+          className="form-control"
+          name="name"
+          ref={marginPercentage => (this.marginPercentage = marginPercentage)}
+          defaultValue={supp && supp.marginPercentage}
+          placeholder="margin percentage"
+        />
+      </FormGroup>
+      <FormGroup>
+        <ControlLabel>Zoho Auth Token</ControlLabel>
+        <input
+          type="text"
+          className="form-control"
+          name="zohoAuthtoken"
+          ref={zohoAuthtoken => (this.zohoAuthtoken = zohoAuthtoken)}
+          defaultValue={supp && supp.zohoAuthtoken}
+          placeholder="Zoho Auth Token"
+        />
+      </FormGroup>
+      <FormGroup>
+        <ControlLabel>Zoho Organization Id</ControlLabel>
+        <input
+          type="text"
+          className="form-control"
+          name="zohoOrganizationId"
+          ref={zohoOrganizationId => (this.zohoOrganizationId = zohoOrganizationId)}
+          defaultValue={supp && supp.zohoOrganizationId}
+          placeholder="Write a  note about the supplier."
         />
       </FormGroup>
       <FormGroup>

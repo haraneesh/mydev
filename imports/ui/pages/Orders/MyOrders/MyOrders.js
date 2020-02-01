@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
-import Orders from '../../../../api/Orders/Orders';
+import { Orders } from '../../../../api/Orders/Orders';
 import MyOrderList from '../../../components/Orders/MyOrdersList/MyOrdersList';
 import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';

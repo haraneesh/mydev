@@ -142,7 +142,12 @@ const ProductListStatus = {
 
 const Roles = {
   admin: { name: 'admin', display_value: 'Admin' },
+  shopOwner: { name: 'shopOwner', display_value: 'Shop Owner' },
+  supplier: { name: 'supplier', display_value: 'Supplier' },
+  customer: { name: 'customer', display_value: 'Customer' },
 };
+
+Roles.allowedValues = [Roles.shopOwner.name, Roles.customer.name];
 
 const InvitationStatus = {
   Sent: { name: 'Sent', display_value: 'Sent', label: 'default' },
@@ -198,26 +203,26 @@ const MediaStores = {
   },
 };
 
-    // The toolbarConfig object allows you to specify custom buttons, reorder buttons and to add custom css classes.
-    // Supported inline styles: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Inline-Styles.md
-    // Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
+// The toolbarConfig object allows you to specify custom buttons, reorder buttons and to add custom css classes.
+// Supported inline styles: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Inline-Styles.md
+// Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
 const RichEditorToolbarConfig = {
-      // Optionally specify the groups to display (displayed in the order listed).
+  // Optionally specify the groups to display (displayed in the order listed).
   display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', /* 'LINK_BUTTONS', 'BLOCK_TYPE_DROPDOWN', */ 'HISTORY_BUTTONS'],
   INLINE_STYLE_BUTTONS: [
-        { label: 'Bold', style: 'BOLD', className: 'custom-css-class' },
-        { label: 'Italic', style: 'ITALIC' },
-        { label: 'Underline', style: 'UNDERLINE' },
+    { label: 'Bold', style: 'BOLD', className: 'custom-css-class' },
+    { label: 'Italic', style: 'ITALIC' },
+    { label: 'Underline', style: 'UNDERLINE' },
   ],
   BLOCK_TYPE_DROPDOWN: [
-        { label: 'Normal', style: 'unstyled' },
-        { label: 'Heading Large', style: 'header-one' },
-        { label: 'Heading Medium', style: 'header-two' },
-        { label: 'Heading Small', style: 'header-three' },
+    { label: 'Normal', style: 'unstyled' },
+    { label: 'Heading Large', style: 'header-one' },
+    { label: 'Heading Medium', style: 'header-two' },
+    { label: 'Heading Small', style: 'header-three' },
   ],
   BLOCK_TYPE_BUTTONS: [
-        { label: 'List', style: 'unordered-list-item' },
-        { label: 'Numbered List', style: 'ordered-list-item' },
+    { label: 'List', style: 'unordered-list-item' },
+    { label: 'Numbered List', style: 'ordered-list-item' },
   ],
 };
 

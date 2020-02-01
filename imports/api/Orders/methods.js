@@ -3,7 +3,7 @@ import { check, Match } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import Orders from './Orders';
+import { Orders } from './Orders';
 import constants from '../../modules/constants';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
@@ -16,6 +16,8 @@ const calculateOrderTotal = (order, productListId) => {
   // Get Order for list of items
   // calculate Total and return
 
+  const isCustomer = Roles.userIsInRole(this.userId, constants.Roles.customer.name);
+
   const productList = ProductLists.findOne({ _id: productListId });
 
   const productArray = productList.products.reduce((map, obj) => {
@@ -27,7 +29,17 @@ const calculateOrderTotal = (order, productListId) => {
   order.products.forEach((product) => {
     const key = product._id;
     const quantity = product.quantity ? product.quantity : 0;
-    totalBillAmount += quantity * productArray[key].unitprice;
+    if (isCustomer) {
+      totalBillAmount += quantity * productArray[key].unitprice;
+    }
+    else {
+      if (product.sourceSuppliers && product.sourceSuppliers.length > 0) {
+        totalBillAmount += quantity * product.wSaleBaseUnitPrice * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
+      } else {
+        totalBillAmount += quantity * product.wSaleBaseUnitPrice * 1.15;
+        // to be removed once all the products have been assigned a source supplier
+      }
+    }
   });
 
   return totalBillAmount;
@@ -41,8 +53,8 @@ const removePreviousOrderedQuantity = (existingOrder) => {
 
   existingOrder.products.forEach((product) => {
     ProductLists.update(
-        { _id: productListId, 'products._id': product._id },
-        { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } });
+      { _id: productListId, 'products._id': product._id },
+      { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } });
   });
 };
 
@@ -51,8 +63,8 @@ const addNewOrderedQuantity = (order) => {
   // update new order count
   order.products.forEach((product) => {
     ProductLists.update(
-        { _id: productListId, 'products._id': product._id },
-        { $inc: { 'products.$.totQuantityOrdered': product.quantity } });
+      { _id: productListId, 'products._id': product._id },
+      { $inc: { 'products.$.totQuantityOrdered': product.quantity } });
   });
 };
 
@@ -71,8 +83,8 @@ export const upsertOrder = new ValidatedMethod({
     if (Meteor.isServer) {
       const isUpdate = !!order._id;
       if (isUpdate) {
-            // delete order.customer_details
-            // delete order.productOrderListId
+        // delete order.customer_details
+        // delete order.productOrderListId
         const existingOrder = Orders.findOne(order._id);
         const loggedInUserId = Meteor.userId();
         if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
@@ -88,12 +100,13 @@ export const upsertOrder = new ValidatedMethod({
         const loggedInUser = Meteor.users.findOne(Meteor.userId());
         const today = new Date();
         const productListActiveToday = ProductLists.findOne(
-          { $and: [
-                      { activeStartDateTime: { $lte: today } },
-                      { activeEndDateTime: { $gte: today } },
-          ],
+          {
+            $and: [
+              { activeStartDateTime: { $lte: today } },
+              { activeEndDateTime: { $gte: today } },
+            ],
           },
-      );
+        );
         order.productOrderListId = productListActiveToday._id;
         order.order_status = constants.OrderStatus.Pending.name;
         order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId);
@@ -108,11 +121,13 @@ export const upsertOrder = new ValidatedMethod({
 
       order.expectedDeliveryDate = getDeliveryDate();
 
+      order.orderRole = getOrderRole(order.customer_details._id);
       const response = Orders.upsert({ _id: order._id }, { $set: order });
+
       addNewOrderedQuantity(order);
       if (response.insertedId) {
         ProductLists.update({ _id: order.productOrderListId },
-        { $addToSet: { order_ids: response.insertedId } });
+          { $addToSet: { order_ids: response.insertedId } });
 
         Emitter.emit(Events.ORDER_CREATED, { userId: this.userId });
       }
@@ -120,6 +135,15 @@ export const upsertOrder = new ValidatedMethod({
     }
   },
 });
+
+const getOrderRole = (customerId) => {
+
+  if (Roles.userIsInRole(customerId, constants.Roles.customer.name)) {
+    return constants.Roles.customer.name;
+  }
+
+  return constants.Roles.shopOwner.name;
+}
 
 export const removeOrder = new ValidatedMethod({
   name: 'order.remove',
@@ -178,9 +202,9 @@ export const updateExpectedDeliveryDate = new ValidatedMethod({
 
     return Orders.update(
       { _id: { $in: orderIds } },
-       { $set: { expectedDeliveryDate: newExpectedDeliveryDate } },
-        { multi: true },
-      );
+      { $set: { expectedDeliveryDate: newExpectedDeliveryDate } },
+      { multi: true },
+    );
   },
 });
 
@@ -218,9 +242,9 @@ export const updateOrderStatus = new ValidatedMethod({
 
     return Orders.update(
       { _id: { $in: orderIds } },
-       { $set: { order_status: updateToStatus } },
-        { multi: true },
-      );
+      { $set: { order_status: updateToStatus } },
+      { multi: true },
+    );
   },
 });
 
@@ -244,20 +268,27 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         return Orders.aggregate([{
-          $match: { order_status: 'Awaiting_Fulfillment' },
+          //$match: { order_status: 'Awaiting_Fulfillment' },
+          $match: {
+            $and: [
+              { order_status: 'Awaiting_Fulfillment' },
+              { orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }
+            ]
+          }
         },
         {
           $unwind: '$products',
         },
         {
-          $group: { _id: {
-            // orderId: '$_id',
-            productType: '$products.type',
-            productName: '$products.name',
-            productUnitOfSale: '$products.unitOfSale',
-            productQuantity: '$products.quantity',
-          },
-           // totalQuantity: { $sum: '$products.quantity' },
+          $group: {
+            _id: {
+              // orderId: '$_id',
+              productType: '$products.type',
+              productName: '$products.name',
+              productUnitOfSale: '$products.unitOfSale',
+              productQuantity: '$products.quantity',
+            },
+            // totalQuantity: { $sum: '$products.quantity' },
             totalCount: { $sum: 1 },
             customerName: { $first: '$customer_details.name' },
           },
@@ -281,15 +312,21 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         return Orders.aggregate([{
-          $match: { order_status: 'Awaiting_Fulfillment' },
+          $match: {
+            $and: [
+              { order_status: 'Awaiting_Fulfillment' },
+              { orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }
+            ]
+          },
         }, {
           $unwind: '$products',
         },
         {
-          $group: { _id: {
-            productName: '$products.name',
-            productUnitOfSale: '$products.unitOfSale',
-          },
+          $group: {
+            _id: {
+              productName: '$products.name',
+              productUnitOfSale: '$products.unitOfSale',
+            },
             totalQuantity: { $sum: '$products.quantity' },
           },
         },
@@ -301,7 +338,7 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
 
 Meteor.methods({
   'admin.fetchOrderCount': function adminFetchOrders() { // eslint-disable-line
-   // check(options, Match.Maybe(Object));
+    // check(options, Match.Maybe(Object));
 
     try {
       if (Roles.userIsInRole(this.userId, 'admin')) {

@@ -16,7 +16,7 @@ export const ProductTableHeader = () => (
       <Col xs={1}>Unit Of Sale</Col>
       <Col xs={1}>Max Units Available</Col>
       <Col xs={1}>Display Order</Col>
-      <Col xs={2}>Supplier</Col>
+      <Col xs={2}>Whole Sale Unit Price</Col>
       <Col xs={1}>Can be ordered?</Col>
       <Col xs={1} />
     </Row>
@@ -58,7 +58,7 @@ function FieldGroup({ controlType, controlLabel, controlName, updateValue, defau
           <option value={optionValue._id ? optionValue._id : optionValue} key={`prd-${index}`}>
             {optionValue.name ? optionValue.name : optionValue}
           </option>
-          ))
+        ))
         }
       </FormControl>
     </FormGroup>
@@ -128,11 +128,10 @@ export default class Product extends React.Component {
       case 'associatedFoodGroups':
         valueToUpdate = retMultiSelectValueInArr(event.target.selectedOptions);
         break;
-      case 'sourceSupplier':
-        valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? {
-          _id: selectedValue,
-          name: supplierHash[selectedValue].name,
-        } : null;
+      case 'sourceSuppliers':
+        valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? [{
+          ...supplierHash[selectedValue]
+        }] : null;
         break;
       default: valueToUpdate = selectedValue;
         break;
@@ -163,6 +162,7 @@ export default class Product extends React.Component {
     const confirmation = 'Product updated!';
     const upsert = Object.assign({}, this.state.product);
     upsert.unitprice = parseFloat(upsert.unitprice);
+    upsert.wSaleBaseUnitPrice = parseFloat(upsert.wSaleBaseUnitPrice);
     upsert.maxUnitsAvailableToOrder = parseFloat(upsert.maxUnitsAvailableToOrder);
     upsert.displayOrder = parseFloat(upsert.displayOrder);
     upsertProduct.call(upsert, (error) => {
@@ -218,7 +218,7 @@ export default class Product extends React.Component {
               controlName="maxUnitsAvailableToOrder"
               updateValue={this.handleProductUpsert}
               defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
-                  product.maxUnitsAvailableToOrder : ''}
+                product.maxUnitsAvailableToOrder : ''}
               help
             />
           </Col>
@@ -229,18 +229,19 @@ export default class Product extends React.Component {
               controlName="displayOrder"
               updateValue={this.handleProductUpsert}
               defaultValue={(product.displayOrder) ?
-                  product.displayOrder : ''}
+                product.displayOrder : ''}
               help
             />
           </Col>
           <Col xs={2}>
             <FieldGroup
-              controlType="select"
-              controlLabel="Supplier"
-              controlName="sourceSupplier"
+              controlType="number"
+              controlLabel="Whole Price"
+              controlName="wSaleBaseUnitPrice"
               updateValue={this.handleProductUpsert}
-              defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
-              choiceValues={this.props.suppliers}
+              defaultValue={product.wSaleBaseUnitPrice}
+              //defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
+              //choiceValues={this.props.suppliers}
               help
             />
           </Col>
@@ -272,7 +273,7 @@ export default class Product extends React.Component {
                 checked={this.state.product.displayAsSpecial}
                 onChange={this.handleProductUpsert}
               >
-              Display this as special?
+                Display this as special?
               </Checkbox>
             </Col>
             <Col xs={2}>
@@ -384,6 +385,18 @@ export default class Product extends React.Component {
                 displayControlName="true"
                 updateValue={this.handleProductUpsert}
                 defaultValue={product.unitsForSelection}
+                help
+              />
+            </Col>
+            <Col xs={3}>
+              <FieldGroup
+                controlType="select"
+                controlLabel="Suppliers"
+                controlName="sourceSuppliers"
+                displayControlName="true"
+                updateValue={this.handleProductUpsert}
+                defaultValue={this.props.product.sourceSuppliers && this.props.product.sourceSuppliers.length > 0 ? this.props.product.sourceSuppliers[0]._id : ''}
+                choiceValues={this.props.suppliers}
                 help
               />
             </Col>

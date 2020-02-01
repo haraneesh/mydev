@@ -12,40 +12,40 @@ import { Row, Col } from 'react-bootstrap';
 import constants from '../../../modules/constants';
 import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
-import OrdersCollection from '../../../api/Orders/Orders';
+import { Orders } from '../../../api/Orders/Orders';
 
 const FIRSTPAGE = 1;
 const NUMBEROFROWS = 100;
 const reactVar = new ReactiveVar(
-    {
-      sortBy: { createdAt: constants.Sort.DESCENDING },
-      currentPage: FIRSTPAGE,
-      limit: NUMBEROFROWS,
-    },
+  {
+    sortBy: { createdAt: constants.Sort.DESCENDING },
+    currentPage: FIRSTPAGE,
+    limit: NUMBEROFROWS,
+  },
 );
 
 class AllOrders extends React.Component {
   constructor(props) {
     super(props);
     this.colSortDirs = { date: SortTypes.DESC };
-    this.state ={
-        total:-1,
+    this.state = {
+      total: -1,
     }
     autoBind(this);
   }
 
-  handlePageChange(pageNumber){
-    let {sortBy, limit} = reactVar.get();
+  handlePageChange(pageNumber) {
+    let { sortBy, limit } = reactVar.get();
     reactVar.set({
-        sortBy,
-        limit,
-        currentPage:  pageNumber
-      });
+      sortBy,
+      limit,
+      currentPage: pageNumber
+    });
   }
 
   componentDidUpdate(previousProps) {
-    if (this.props.currentPage !== previousProps.currentPage || this.state.total === -1){
-        this.fetchOrderCount();
+    if (this.props.currentPage !== previousProps.currentPage || this.state.total === -1) {
+      this.fetchOrderCount();
     }
   }
 
@@ -85,22 +85,22 @@ class AllOrders extends React.Component {
       [columnKey]: sortDir,
     };
 
-    let {limit} = reactVar.get();
+    let { limit } = reactVar.get();
     reactVar.set({
-        currentPage: FIRSTPAGE,
-        limit,
-        sortBy,
-      });
+      currentPage: FIRSTPAGE,
+      limit,
+      sortBy,
+    });
   }
 
 
   render() {
     const { loading, orders, history } = this.props;
-    let {currentPage,limit} = reactVar.get();
+    let { currentPage, limit } = reactVar.get();
     return (
       //!loading ? (
       <div className="AllOrders">
-         <Row>
+        <Row>
           <Col xs={12}>
             <h3 className="page-header">All Orders</h3>
             <ManageAllOrders
@@ -120,37 +120,36 @@ class AllOrders extends React.Component {
         />
 
       </div>
-    //): <Loading />
+      //): <Loading />
     );
   }
 }
 
 AllOrders.propTypes = {
-    orders: PropTypes.arrayOf(PropTypes.object).isRequired,
-    loading: PropTypes.bool.isRequired,
-    history: PropTypes.object.isRequired,
-    currentPage: PropTypes.number.isRequired,
+  orders: PropTypes.arrayOf(PropTypes.object).isRequired,
+  loading: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired,
+  currentPage: PropTypes.number.isRequired,
 };
 
 export default withTracker((args) => {
-    const {currentPage, limit, sortBy} = reactVar.get();
-    
-    const skip = (currentPage * limit) - limit;
-    const subscriptionsReady = [
-        Meteor.subscribe('orders.list', {
-          sort: sortBy,
-          limit: limit,
-          skip: skip,
-        },
-      )].every(subscription => subscription.ready());
-    
-      const cursor = OrdersCollection.find({},{sort: sortBy} );
-    
-      return {
-        loading: !subscriptionsReady,
-        orders: cursor && cursor.fetch(),
-        currentPage: currentPage,
-      };
+  const { currentPage, limit, sortBy } = reactVar.get();
 
-  })(AllOrders);
-  
+  const skip = (currentPage * limit) - limit;
+  const subscriptionsReady = [
+    Meteor.subscribe('orders.list', {
+      sort: sortBy,
+      limit: limit,
+      skip: skip,
+    },
+    )].every(subscription => subscription.ready());
+
+  const cursor = Orders.find({}, { sort: sortBy });
+
+  return {
+    loading: !subscriptionsReady,
+    orders: cursor && cursor.fetch(),
+    currentPage: currentPage,
+  };
+
+})(AllOrders);

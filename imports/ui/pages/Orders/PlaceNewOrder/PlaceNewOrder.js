@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
 import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
 import ProductLists from '../../../../api/ProductLists/ProductLists';
+import { getProductUnitPrice } from '../../../../modules/helpers';
+import constants from '../../../../modules/constants';
 import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
 import { cartActions, useCartDispatch } from '../../../stores/ShoppingCart';
@@ -81,8 +84,9 @@ export default withTracker((args) => {
   // const recommendations = RecommendationsCollection.find().fetch();
 
   const productList = ProductLists.findOne();
-  const products = (productList) ? productList.products : [];
+  const prds = (productList) ? productList.products : [];
   const productListId = (productList) ? productList._id : '';
+  const products = getProductUnitPrice(Roles.userIsInRole(args.loggedInUserId, constants.Roles.customer.name), prds);
 
 
   return {

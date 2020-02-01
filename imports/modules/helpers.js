@@ -5,6 +5,26 @@ import { formatMoney } from 'accounting-js';
 import constants from './constants';
 import { accountSettings, dateSettings } from './settings';
 
+export function isCustomer(userId) {
+  return Roles.userIsInRole(userId, constants.Roles.customer.name);
+}
+
+export function getProductUnitPrice(isCustomerPrice, productsArray) {
+
+  if (isCustomerPrice) return productsArray;
+
+  return productsArray.map((product) => {
+    const prd = product;
+    if (prd.sourceSuppliers && prd.sourceSuppliers.length > 0) {
+      prd.unitprice = prd.wSaleBaseUnitPrice * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
+    } else {
+      prd.unitprice = prd.wSaleBaseUnitPrice * 1.15;
+      // to be removed once all the products have been assigned a source supplier
+    }
+
+    return (prd);
+  });
+}
 
 export function getDisplayDate(dateObject) {
   // return moment(dateObject).tz(dateSettings.timeZone).format(dateSettings.format);
@@ -26,18 +46,17 @@ export function getDayWithoutTime(dateObject) {
 
 export function getDisplayDateTitle(startDateObj, EndDateObj) {
   return `${getDisplayDate(startDateObj)
-              } - ${
-            getDisplayDate(EndDateObj)}`;
+    } - ${
+    getDisplayDate(EndDateObj)}`;
 }
-
 
 export function getProductListStatus(activeStartDateTime, activeEndDateTime) {
   const today = moment().local();
   const productListStatus = today.isAfter(activeEndDateTime) ?
-            constants.ProductListStatus.Expired.name
-            : today.isBefore(activeStartDateTime) ?
-                constants.ProductListStatus.Future.name
-                    : constants.ProductListStatus.Active_Now.name;
+    constants.ProductListStatus.Expired.name
+    : today.isBefore(activeStartDateTime) ?
+      constants.ProductListStatus.Future.name
+      : constants.ProductListStatus.Active_Now.name;
 
   return productListStatus;
 }

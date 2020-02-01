@@ -7,7 +7,7 @@ import { Row, Col } from 'react-bootstrap';
 import Loading from '../../components/Loading/Loading';
 import { getScrollPercent } from '../../../modules/infiniteScroll';
 import constants from '../../../modules/constants';
-import OrdersCollection from '../../../api/Orders/Orders';
+import { Orders } from '../../../api/Orders/Orders';
 import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
 
@@ -105,7 +105,7 @@ class AllOrders extends React.Component {
             />
           </Col>
         </Row>
-    ) : <Loading />);
+      ) : <Loading />);
   }
 }
 
@@ -124,9 +124,9 @@ export default createContainer(() => {
       sort: reactVarTemp.sortBy,
       limit: reactVarTemp.limit,
     },
-  )].every(subscription => subscription.ready());
+    )].every(subscription => subscription.ready());
 
-  const cursor = OrdersCollection.find({}, {
+  const cursor = Orders.find({}, {
     sort: reactVarTemp.sortBy,
     limit: reactVarTemp.limit,
   });

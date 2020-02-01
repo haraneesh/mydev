@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { composeWithTracker } from 'react-komposer';
-import Orders from '../../../api/Orders/Orders';
+import { Orders } from '../../../api/Orders/Orders';
 import ProductsOrderList from '../../components/Orders/ProductsOrderList';
 import Loading from '../../components/Loading/Loading';
 

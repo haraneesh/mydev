@@ -60,6 +60,17 @@ export const updateProductUnitPrice = new ValidatedMethod({
   },
 });
 
+export const updateProductwSaleBaseUnitPrice = new ValidatedMethod({
+  name: 'products.wSaleBaseUnitPrice.update',
+  validate: new SimpleSchema({
+    _id: { type: String },
+    'update.wSaleBaseUnitPrice': { type: Number, optional: true },
+  }).validator(),
+  run({ _id, update }) {
+    Products.update(_id, { $set: update });
+  },
+});
+
 export const updateUnitForSelection = new ValidatedMethod({
   name: 'products.unitsForSelection.update',
   validate: new SimpleSchema({
@@ -157,6 +168,7 @@ rateLimit({
     updateProductName,
     updateProductType,
     updateProductUnitPrice,
+    updateProductwSaleBaseUnitPrice,
     updateProductDescription,
     updateProductSKU,
     removeProduct,

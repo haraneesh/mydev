@@ -24,7 +24,7 @@ const handleRemove = (supplierId, history) => {
 const renderSupplier = (supp, match, history) => (supp ? (
   <div className="ViewSupplier">
     <div className="page-header clearfix">
-      <h3 className="pull-left">{ supp && supp.name }</h3>
+      <h3 className="pull-left">{supp && supp.name}</h3>
       <ButtonToolbar className="pull-right">
         <ButtonGroup bsSize="small">
           <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
@@ -34,7 +34,49 @@ const renderSupplier = (supp, match, history) => (supp ? (
         </ButtonGroup>
       </ButtonToolbar>
     </div>
-    { supp && supp.description }
+
+    <section className="panel panel-default">
+      <div className="panel-body">
+        <div className="col-xs-6">
+          Margin:
+          </div>
+        <div className="col-xs-6">
+          {supp && supp.marginPercentage} %
+        </div>
+      </div>
+    </section>
+    <section className="panel panel-default">
+      <div className="panel-body">
+        <div className="col-xs-6">
+          Zoho Auth Token:
+        </div>
+        <div className="col-xs-6">
+          {supp && supp.zohoAuthtoken}
+        </div>
+      </div>
+    </section>
+    <section className="panel panel-default">
+      <div className="panel-body">
+        <div className="col-xs-6">
+          Zoho Organization Id:
+        </div>
+        <div className="col-xs-6">
+          {supp && supp.zohoOrganizationId}
+        </div>
+      </div>
+    </section>
+
+    <section className="panel panel-default">
+      <div className="panel-body">
+        <div className="col-xs-12">
+          Description: <br />
+          {supp && supp.description}
+        </div>
+      </div>
+    </section>
+
+
+
   </div>
 ) : <NotFound />);
 

@@ -68,8 +68,8 @@ export default class Menu extends Component {
 
     return (
       <Row className="pull-right">
-        {<span id="cartIcon" style={{ marginTop: '16px', float: 'left', fontSize: '1.25em', display: 'block' }}>
-          <a onClick={() => { this.onCartIconClick(this.props.history, totalProductsInCount); }}> <i className="fas fa-shopping-bag" style={{ color: '#522E23' }} />
+        {<span id="cartIcon" style={{ marginTop: '18px', float: 'left', fontSize: '1.25em', display: 'block' }}>
+          <a onClick={() => { this.onCartIconClick(this.props.history, totalProductsInCount); }}> <i className="fas fa-shopping-basket" style={{ color: '#522E23' }} />
             {(totalProductsInCount > 0) && (<b style={shoppingCartBubble} className="alertMenu"> {totalProductsInCount} </b>)}
           </a>
         </span>}

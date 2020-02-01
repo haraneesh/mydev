@@ -3,7 +3,7 @@ import FeedBacks from './FeedBacks';
 import { check } from 'meteor/check';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
-import Orders from '../Orders/Orders';
+import { Orders } from '../Orders/Orders';
 
 Meteor.methods({
   'feedbacks.upsert': function feedbacksInsert(feedBack) {

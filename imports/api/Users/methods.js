@@ -69,6 +69,23 @@ export const findUser = new ValidatedMethod({
   },
 });
 
+const assignUserRole = (userId, selectedRole) => {
+  console.log(selectedRole);
+  switch (selectedRole) {
+    case constants.Roles.admin.name:
+      Roles.setUserRoles(userId, [constants.Roles.admin.name]);
+      break;
+    case constants.Roles.shopOwner.name:
+      Roles.setUserRoles(userId, [constants.Roles.shopOwner.name]);
+      break;
+    case constants.Roles.supplier.name:
+      Roles.setUserRoles(userId, [constants.Roles.supplier.name]);
+      break;
+    default:
+      Roles.setUserRoles(userId, [constants.Roles.customer.name]);
+      break;
+  }
+}
 const createNewUser = (user) => {
   const cuser = {
     username: user.username,
@@ -95,9 +112,10 @@ const createNewUser = (user) => {
 
   if (!userExists) {
     const userId = Accounts.createUser(cuser);
-    if (user.isAdmin) {
+    /*if (user.isAdmin) {
       Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
-    }
+    }*/
+    assignUserRole(userId, user.role);
     Meteor.users.update({ username: cuser.username }, { $set: { wallet, updatedAt: new Date() } });
     return Meteor.users.findOne({ username: cuser.username });
   }
@@ -117,8 +135,9 @@ export const createUser = new ValidatedMethod({
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
     'profile.deliveryAddress': { type: String },
-    isAdmin: { type: Boolean },
+    //isAdmin: { type: Boolean, optional: true },
     password: { type: Object, blackbox: true },
+    role: { type: String },
   }).validator(),
   run(user) {
     if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
@@ -140,11 +159,14 @@ export const adminUpdateUser = new ValidatedMethod({
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
     'profile.deliveryAddress': { type: String },
-    isAdmin: { type: Boolean },
     password: { type: Object, optional: true, blackbox: true },
+    role: { type: String },
   }).validator(),
   run(usr) {
     const user = usr;
+    const userRole = usr.role;
+    delete user.role;
+
     if (
       Meteor.isServer &&
       Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
@@ -172,11 +194,13 @@ export const adminUpdateUser = new ValidatedMethod({
         user.updatedAt = new Date();
         const u = Meteor.users.update({ _id: cuser._id }, { $set: user });
 
+        assignUserRole(cuser._id, userRole);
+        /*
         if (u && user.isAdmin) {
           Roles.addUsersToRoles(cuser._id, [constants.Roles.admin.name]);
         } else if (u && !user.isAdmin) {
           Roles.removeUsersFromRoles(cuser._id, [constants.Roles.admin.name]);
-        }
+        }*/
         return u;
       }
     }

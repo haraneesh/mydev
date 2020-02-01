@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { Panel } from 'react-bootstrap';
@@ -8,10 +9,11 @@ import ViewOrderDetails from '../../../components/Orders/ViewOrderDetails';
 import ViewInvoicedOrderDetails from '../../../components/Orders/ViewInvoicedOrderDetails';
 // import ProductsOrderList from '../../../components/Orders/ProductsOrderList';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
-import constants from '../../../../modules/constants';
 import Comments from '../../../containers/Comments/getComments';
-import OrdersCollection from '../../../../api/Orders/Orders';
+import { Orders } from '../../../../api/Orders/Orders';
 import Loading from '../../../components/Loading/Loading';
+import { getProductUnitPrice } from '../../../../modules/helpers';
+import constants from '../../../../modules/constants';
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
@@ -21,7 +23,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
   const [order] = useState(selectedOrder);
   const currentActiveCartId = cartState.activeCartId;
   const editOrder = (order.order_status === constants.OrderStatus.Pending.name ||
- order.order_status === constants.OrderStatus.Saved.name);
+    order.order_status === constants.OrderStatus.Saved.name);
 
   const updateCart = ({ orderId, products, comments }) => {
     switch (true) {
@@ -51,29 +53,29 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
       const productListId = order.productOrderListId;
       setIsLoading(true);
       Meteor.call('getProductList.view', productListId,
-    (error, prdList) => {
-      if (error) {
-        Bert.alert(error.reason, 'danger');
-      } else {
-        updateCart({ orderId: order._id, products: order.products, comments: order.comments });
-        setProductList(prdList);
-        setIsLoading(false);
-      }
-    });
+        (error, prdList) => {
+          if (error) {
+            Bert.alert(error.reason, 'danger');
+          } else {
+            updateCart({ orderId: order._id, products: order.products, comments: order.comments });
+            setProductList(prdList);
+            setIsLoading(false);
+          }
+        });
     } else {
       setIsLoading(false);
     }
   }
-, []);
+    , []);
 
 
   switch (true) {
-    case (editOrder) : {
+    case (editOrder): {
       return !isProductListLoading ?
         (<ProductsOrderMain
           productList={productList}
           orderId={order._id || ''}
-          products={productList.products}
+          products={getProductUnitPrice(Roles.userIsInRole(loggedInUserId, constants.Roles.customer.name), productList.products)}
           productListId={(order.productOrderListId) ? order.productOrderListId : ''}
           orderStatus={order.order_status}
           comments={order.comments}
@@ -117,13 +119,13 @@ EditOrderDetails.propTypes = {
 };
 
 const EditOrderDetailsWrapper = props => props.loading ? (<Loading />) :
- (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />);
+  (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />);
 
 
 export default withTracker((args) => {
   const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
 
-  const order = OrdersCollection.findOne({ _id: args.match.params._id });
+  const order = Orders.findOne({ _id: args.match.params._id });
 
   return {
     loading: !subscription.ready(),
