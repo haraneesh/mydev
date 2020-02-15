@@ -11,12 +11,15 @@ import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
 import { Emitter, Events } from '../events';
 
-const calculateOrderTotal = (order, productListId) => {
+const calculateOrderTotal = (order, productListId, userId) => {
   // Get Product List for cost
   // Get Order for list of items
   // calculate Total and return
 
-  const isCustomer = Roles.userIsInRole(this.userId, constants.Roles.customer.name);
+  const isCustomer = Roles.userIsInRole(userId, constants.Roles.customer.name);
+
+  console.log(isCustomer);
+  console.log(userId);
 
   const productList = ProductLists.findOne({ _id: productListId });
 
@@ -82,22 +85,22 @@ export const upsertOrder = new ValidatedMethod({
   run(order) {
     if (Meteor.isServer) {
       const isUpdate = !!order._id;
+      const loggedInUserId = Meteor.userId();
       if (isUpdate) {
         // delete order.customer_details
         // delete order.productOrderListId
         const existingOrder = Orders.findOne(order._id);
-        const loggedInUserId = Meteor.userId();
         if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
           order.customer_details = existingOrder.customer_details;
           order.productOrderListId = existingOrder.productOrderListId;
           order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
-          order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId);
+          order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId, existingOrder.customer_details._id);
         } else {
           throw new Meteor.Error(401, 'Access denied');
         }
         removePreviousOrderedQuantity(existingOrder);
       } else {
-        const loggedInUser = Meteor.users.findOne(Meteor.userId());
+        const loggedInUser = Meteor.users.findOne(loggedInUserId);
         const today = new Date();
         const productListActiveToday = ProductLists.findOne(
           {
@@ -109,7 +112,7 @@ export const upsertOrder = new ValidatedMethod({
         );
         order.productOrderListId = productListActiveToday._id;
         order.order_status = constants.OrderStatus.Pending.name;
-        order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId);
+        order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUserId);
         order.customer_details = {
           _id: loggedInUser._id,
           name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,

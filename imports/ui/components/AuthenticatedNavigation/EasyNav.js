@@ -6,14 +6,14 @@ import { Glyphicon } from 'react-bootstrap';
 import './EasyNav.scss';
 
 export const EasyNavNarrowScreen = () => (
-  <ul className="sec-menu-bar visible-sm visible-xs row">
-    <li className="col-xs-4 text-center">
+  <ul className="sec-menu-bar visible-sm visible-xs">
+    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to="/neworder/selectbasket"> <Glyphicon glyph="pencil" /> Place Order </Link>
     </li>
-    <li className="col-xs-4 text-center">
+    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to="/"> <Glyphicon glyph="list" /> My Orders</Link>
     </li>
-    <li className="col-xs-4 text-center">
+    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
         <Glyphicon glyph="comment" /> Give Feedback
       </a>

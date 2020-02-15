@@ -8,10 +8,23 @@ import AccountPageFooter from '../../../components/AccountPageFooter/AccountPage
 import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
 import validate from '../../../../modules/validate';
 
+
+const showPasswordButtonPositions = {
+  position: 'relative',
+  top: '-38px',
+  padding: '5px',
+  right: '5px',
+  float: 'right'
+}
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showPassword: false
+    }
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.switchPasswordBox = this.switchPasswordBox.bind(this);
   }
 
   componentDidMount() {
@@ -56,6 +69,10 @@ class Login extends React.Component {
     });
   }
 
+  switchPasswordBox() {
+    this.setState({ showPassword: !this.state.showPassword });
+  }
+
   render() {
     return (<div className="Login Absolute-Center is-Responsive">
       <Col xs={12} sm={6} md={5} lg={4}>
@@ -77,12 +94,15 @@ class Login extends React.Component {
               <Link className="pull-right" to="/recover-password">Forgot password?</Link>
             </ControlLabel>
             <input
-              type="password"
+              type={(this.state.showPassword ? 'text' : 'password')}
               name="password"
               ref={password => (this.password = password)}
               className="form-control"
               placeholder="Password"
             />
+            <Button className='btn-xs btn-info' onClick={this.switchPasswordBox} style={showPasswordButtonPositions}>
+              {this.state.showPassword ? 'Hide' : 'Show'}
+            </Button>
           </FormGroup>
           <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
           <AccountPageFooter>

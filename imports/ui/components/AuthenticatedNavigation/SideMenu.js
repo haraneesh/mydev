@@ -5,27 +5,24 @@ import { NavLink } from 'react-router-dom';
 import { Panel, Row, Col, Button } from 'react-bootstrap';
 import AdminNav from './AdminNav';
 import Menu from './Menu';
-import { CartStateContext } from '../../stores/ShoppingCart';
 
 const handleLogout = (props) => {
   props.history.push('/about');
   Meteor.logout();
 };
 
-const SideMenu = props => (
-  <CartStateContext.Consumer>
-    {cartState => (
-      <Menu alignment="right" cartState={cartState} {...props}>
-        <Panel className="menu-panel">
-          <Row>
-            <div className="container">
-              {props.isAdmin && (<Col xs={12} sm={6}>
-                {<AdminNav {...props} />}
-              </Col>)
-              }
-              <Col xs={12} sm={6}>
-                <ul>
-                  {/*
+const SideMenu = (props) => (
+  <Menu alignment="right" {...props}>
+    <Panel className="menu-panel">
+      <Row>
+        <div className="container">
+          {props.isAdmin && (<Col xs={12} sm={6}>
+            {<AdminNav {...props} />}
+          </Col>)
+          }
+          <Col xs={12} sm={6}>
+            <ul>
+              {/*
               <li>
                 <NavLink to="/order"> Place Order</NavLink>
               </li>
@@ -36,37 +33,34 @@ const SideMenu = props => (
                 <NavLink exact to="/"> My Orders</NavLink>
               </li>
               */}
-                  <li>
-                    <NavLink to="/about">About Us</NavLink>
-                  </li>
-                  <li>
-                    <NavLink exact to="/healthprinciples"> Our Health Principles </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/vision">Our Vision</NavLink>
-                  </li>
-                  <br />
-                  <li>
-                    <NavLink to="/invitations">Invite Friends</NavLink>
-                  </li>
-                  {/* <li>
+              <li>
+                <NavLink to="/about">About Us</NavLink>
+              </li>
+              <li>
+                <NavLink exact to="/healthprinciples"> Our Health Principles </NavLink>
+              </li>
+              <li>
+                <NavLink to="/vision">Our Vision</NavLink>
+              </li>
+              <br />
+              <li>
+                <NavLink to="/invitations">Invite Friends</NavLink>
+              </li>
+              {/* <li>
                 <NavLink to="/recover-password">Change Password</NavLink>
               </li> */}
-                  <li>
-                    <NavLink to="/profile">My Profile</NavLink>
-                  </li>
-                  <li>
-                    <Button id="app-logout" onClick={() => handleLogout(props)}>Logout</Button>
-                  </li>
-                </ul>
-              </Col>
-            </div>
-          </Row>
-        </Panel>
-      </Menu>
-    )}
-  </CartStateContext.Consumer>
-
+              <li>
+                <NavLink to="/profile">My Profile</NavLink>
+              </li>
+              <li>
+                <Button id="app-logout" onClick={() => handleLogout(props)}>Logout</Button>
+              </li>
+            </ul>
+          </Col>
+        </div>
+      </Row>
+    </Panel>
+  </Menu>
 );
 
 SideMenu.propTypes = {

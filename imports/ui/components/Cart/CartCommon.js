@@ -7,7 +7,7 @@ import { accountSettings } from '../../../modules/settings';
 import { displayProductsByType } from '../../components/Orders/ProductsOrderCommon/ProductsOrderCommon';
 
 const displayWithDivider = (displayArray, displayText) => (
-  displayArray.length > 0 && (
+  displayArray && displayArray.length > 0 && (
     <div className="panel panel-default" style={{ borderBottomWidth: '0px' }}>
       <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
         <small className="text-uppercase">{displayText}</small>
@@ -27,6 +27,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     productOils,
     productPrepared,
     productHygiene,
+    productsNoCategory
   } = displayProductsByType({ products, isMobile, isAdmin, cartScreen: true, updateProductQuantity });
 
   const chosenButDeleted = [];
@@ -63,7 +64,9 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
       {displayWithDivider(productOils, 'Oils, Butter & Ghee')}
       {displayWithDivider(productPrepared, 'Pickles & Podis')}
       {displayWithDivider(productHygiene, 'Personal & General Hygiene')}
+      {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
+
     </PanelGroup>
   );
 };

@@ -12,9 +12,10 @@ Bert.defaults.type = 'default';
 
 Meteor.startup(() => {
 
-  //const serviceWorkerUrl = (process.env.NODE_ENV === 'production') ? 'https://nammasuvai.com/sw.js' : '/sw.js';
-  navigator.serviceWorker.register(`${window.location.origin}/sw.js`).then().catch(err => console.log('ServiceWorker registration failed: ', err));
-
+  if ('serviceWorker' in navigator) {
+    //const serviceWorkerUrl = (process.env.NODE_ENV === 'production') ? 'https://nammasuvai.com/sw.js' : '/sw.js';
+    navigator.serviceWorker.register(`${window.location.origin}/sw.js`).then().catch(err => console.log('ServiceWorker registration failed: ', err));
+  }
   /*serviceWorker.register();
 
   console.log(`window.location.origin ${window.location.origin}`);

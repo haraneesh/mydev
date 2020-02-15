@@ -23,11 +23,11 @@ export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitBu
         disabled={totalBillAmount <= 0}
         onClick={onButtonClick}
         className="btn-block"
-      > { submitButtonName }
+      > {submitButtonName}
       </Button>
     </Col>
   </Row>
-    );
+);
 
 OrderFooter.defaultProps = {
   onSecondButtonClick: {},
@@ -101,20 +101,21 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
   const productHygiene = [];
   const productSpecials = [];
   const productRecommended = [];
+  const productsNoCategory = [];
 
   const checkout = !!(cartScreen);
-   // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene';
+  // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene';
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
-        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket}/>,
-       );
+        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
+      );
     }
 
     if (product.displayAsSpecial) {
       productSpecials.push(
-        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket}/>,
-       );
+        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
+      );
     }
 
     let tempProductList = [];
@@ -154,12 +155,14 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
         tempKey = `hygiene-${index}`;
         break;
       default:
+        tempProductList = productsNoCategory;
+        tempKey = `noCat-${index}`;
         break;
     }
 
     tempProductList.push(
       <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
-     );
+    );
   });
 
   return {
@@ -173,5 +176,7 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
     productHygiene,
     productSpecials,
     productRecommended,
-    isMobile };
+    productsNoCategory,
+    isMobile
+  };
 }
