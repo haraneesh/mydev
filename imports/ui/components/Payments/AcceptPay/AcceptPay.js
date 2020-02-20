@@ -10,6 +10,28 @@ import validate from '../../../../modules/validate';
 import RazorPayButton from '../RazorPay/RazorPayButton';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
+const OtherPayMentOptions = () => {
+  return (
+    <Panel>
+      <Col xs={12} >
+        <p> Pay By Apps</p>
+        <p> Will reflect in 2 days on suvai</p>
+      </Col>
+      <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
+        <h3>
+          UPI: suvai@icici
+          </h3>
+      </Col>
+
+      <Row>
+        <Col xs={12} className="text-center">
+          <img style={{ maxWidth: '648px', width: '100%' }} src="/about/paymentOptions.png" />
+        </Col>
+      </Row>
+    </Panel>
+  )
+}
+
 class AcceptPay extends React.Component {
 
   constructor(props) {
@@ -123,17 +145,24 @@ class AcceptPay extends React.Component {
         {this.state.paymentInProcess && (<Loading />)}
         <Panel>
           <Row>
-            <Col xs={6} className="text-right">
+            <Col xs={7} sm={6} className="text-right">
               <h4>Wallet Balance</h4>
             </Col>
-            <Col xs={6} className="text-left">
+            <Col xs={5} sm={6} className="text-left">
               <h4 className={this.state.balanceAmountClass}>
                 {`${formatMoney(this.state.netAmountInWalletInRs, accountSettings)}`}
               </h4>
             </Col>
           </Row>
         </Panel>
+
+        <OtherPayMentOptions />
         <Panel>
+
+          <Col xs={12}>
+            <p> Pay On Suvai </p>
+          </Col>
+
           <form
             ref={form => (this.form = form)}
             onSubmit={event => event.preventDefault()}
@@ -153,6 +182,7 @@ class AcceptPay extends React.Component {
               </Col>
               <Col xs={12} sm={3}>
                 <RazorPayButton
+                  buttonText={(this.state.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
                   paymentDetails={{
                     moneyToChargeInPaise: this.state.amountToChargeInRs * 100,
                     description: 'Add to Wallet',

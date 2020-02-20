@@ -18,9 +18,6 @@ const calculateOrderTotal = (order, productListId, userId) => {
 
   const isCustomer = Roles.userIsInRole(userId, constants.Roles.customer.name);
 
-  console.log(isCustomer);
-  console.log(userId);
-
   const productList = ProductLists.findOne({ _id: productListId });
 
   const productArray = productList.products.reduce((map, obj) => {
