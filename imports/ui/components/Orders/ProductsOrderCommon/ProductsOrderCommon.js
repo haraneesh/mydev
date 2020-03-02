@@ -46,7 +46,7 @@ export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen }) => (
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} sm={2} className={`productCat_${clName}`} />
     <Col xs={8} sm={9} className="prodCatTitle">
-      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle', fontWeight: '900' }}> {title} </span> </p>
+      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p>
     </Col>
     <Col xs={1} className="prodCatPlus">
       <span className="text-default">

@@ -13,10 +13,10 @@ import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpe
 const OtherPayMentOptions = () => {
   return (
     <Panel>
-      <Col xs={12} >
-        <p> Pay By Apps</p>
+      <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+        <small className="text-uppercase">Pay By Apps</small>
         <p> Will reflect in 2 days on suvai</p>
-      </Col>
+      </div>
       <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
         <h3>
           UPI: suvai@icici
@@ -159,9 +159,9 @@ class AcceptPay extends React.Component {
         <OtherPayMentOptions />
         <Panel>
 
-          <Col xs={12}>
-            <p> Pay On Suvai </p>
-          </Col>
+          <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+            <small className="text-uppercase">Pay On Suvai </small>
+          </div>
 
           <form
             ref={form => (this.form = form)}

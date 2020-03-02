@@ -9,19 +9,17 @@ export function isCustomer(userId) {
   return Roles.userIsInRole(userId, constants.Roles.customer.name);
 }
 
-export function getProductUnitPrice(isCustomerPrice, productsArray) {
+export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
 
-  if (isCustomerPrice) return productsArray;
+  if (!isShopOwnerPrice) return productsArray;
 
   return productsArray.map((product) => {
     const prd = product;
     if (prd.sourceSuppliers && prd.sourceSuppliers.length > 0) {
       prd.unitprice = prd.wSaleBaseUnitPrice * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
     } else {
-      prd.unitprice = prd.wSaleBaseUnitPrice * 1.15;
-      // to be removed once all the products have been assigned a source supplier
+      prd.unitprice = prd.wSaleBaseUnitPrice;
     }
-
     return (prd);
   });
 }

@@ -12,7 +12,7 @@ import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/Prod
 import { cartActions, useCartDispatch } from '../../../stores/ShoppingCart';
 
 
-const PlaceNewOrder = ({ dateValue, name, products, productListId, history, basketId }) => {
+const PlaceNewOrder = ({ dateValue, name, products, productListId, history, basketId, loggedInUser }) => {
 
   const [isBasketLoading, setIsLoading] = useState(true);
   const cartDispatch = useCartDispatch();
@@ -59,6 +59,7 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
       productListId={productListId}
       name={name}
       dateValue={dateValue}
+      loggedInUser={loggedInUser}
     />
 
   </div>) : <Loading />)
@@ -69,6 +70,7 @@ const PlaceNewOrderWrapper = props => props.loading ? (<Loading />) :
 
 PlaceNewOrder.propTypes = {
   loading: PropTypes.bool.isRequired,
+  loggedInUser: PropTypes.object.loggedInUser,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   productListId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -86,7 +88,7 @@ export default withTracker((args) => {
   const productList = ProductLists.findOne();
   const prds = (productList) ? productList.products : [];
   const productListId = (productList) ? productList._id : '';
-  const products = getProductUnitPrice(Roles.userIsInRole(args.loggedInUserId, constants.Roles.customer.name), prds);
+  const products = getProductUnitPrice(Roles.userIsInRole(args.loggedInUserId, constants.Roles.shopOwner.name), prds);
 
 
   return {
@@ -98,6 +100,7 @@ export default withTracker((args) => {
     name: args.name,
     history: args.history,
     dateValue: args.date,
+    loggedInUser: args.loggedInUser,
     basketId: args.match.params.basketId
   };
 })(PlaceNewOrderWrapper);

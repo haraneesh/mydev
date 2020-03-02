@@ -17,7 +17,7 @@ import constants from '../../../../modules/constants';
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
-const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFromCart }) => {
+const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser, addItemsFromCart }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const [order] = useState(selectedOrder);
@@ -75,12 +75,13 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
         (<ProductsOrderMain
           productList={productList}
           orderId={order._id || ''}
-          products={getProductUnitPrice(Roles.userIsInRole(loggedInUserId, constants.Roles.customer.name), productList.products)}
+          products={getProductUnitPrice(Roles.userIsInRole(loggedInUserId, constants.Roles.shopOwner.name), productList.products)}
           productListId={(order.productOrderListId) ? order.productOrderListId : ''}
           orderStatus={order.order_status}
           comments={order.comments}
           history={history}
           addItemsFromCart={addItemsFromCart}
+          loggedInUser={loggedInUser}
         />) : <Loading />;
     }
     case (order.invoices !== undefined): {
@@ -88,7 +89,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, addItemsFrom
         <div>
           <ViewInvoicedOrderDetails order={order} history={history} />
           <Panel>
-            <h4>Responses 1</h4>
+            <h4>Responses</h4>
             <Comments
               postId={order._id}
               postType={constants.PostTypes.Order.name}
@@ -115,6 +116,7 @@ EditOrderDetails.propTypes = {
   order: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   loggedInUserId: PropTypes.string.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
 };
 
@@ -132,5 +134,6 @@ export default withTracker((args) => {
     selectedOrder: order,
     history: args.history,
     loggedInUserId: args.loggedInUserId,
+    loggedInUser: args.loggedInUser,
   };
 })(EditOrderDetailsWrapper);

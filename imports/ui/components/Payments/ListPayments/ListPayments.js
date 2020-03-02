@@ -21,16 +21,16 @@ class ListPayments extends React.Component {
 
   fetchLastPayments() {
     Meteor.call('payments.getPayments',
-            (error, payments) => {
-              if (error) {
-                Bert.alert(error.reason, 'danger');
-              } else {
-                this.setState({
-                  lastPayments: payments,
-                });
-              }
-            },
-        );
+      (error, payments) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          this.setState({
+            lastPayments: payments,
+          });
+        }
+      },
+    );
   }
 
   render() {
@@ -53,14 +53,14 @@ class ListPayments extends React.Component {
               </thead>
               <tbody>
                 {
-                                payments.map(payment => (
-                                  <tr>
-                                    <td>{getDayWithoutTime(new Date(payment.date))}</td>
-                                    <td>{getFormattedMoney(payment.amount)}</td>
-                                    <td>{payment.payment_mode}</td>
-                                  </tr>
-                                      ))
-                        }
+                  payments.map(payment => (
+                    <tr>
+                      <td>{getDayWithoutTime(new Date(payment.date))}</td>
+                      <td>{getFormattedMoney(payment.amount)}</td>
+                      <td>{payment.payment_mode}</td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </Table>)}
           </Row>

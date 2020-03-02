@@ -70,11 +70,11 @@ class ProductForAdmin extends React.Component {
                 previousOrdQty,
                 this.state.quantitySelected)
               }
-            /> */ }
-          <p><small>{description}</small></p>
+            /> 
+            <p><small>{description}</small></p> */}
         </Col>
 
-        <Col sm={2}>
+        <Col sm={3}>
           <div className="input-group">
             <input
               type="number"
@@ -88,7 +88,7 @@ class ProductForAdmin extends React.Component {
           </div>
         </Col>
 
-        <Col sm={5} className="text-right-not-xs">
+        <Col sm={4} className="text-right-not-xs">
           <h4>{formatMoney(unitprice, accountSettings)}
             <span className="text-muted">{` ${'x'} `}</span>
             {this.state.quantitySelected}

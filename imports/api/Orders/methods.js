@@ -16,7 +16,7 @@ const calculateOrderTotal = (order, productListId, userId) => {
   // Get Order for list of items
   // calculate Total and return
 
-  const isCustomer = Roles.userIsInRole(userId, constants.Roles.customer.name);
+  const isShopOwner = Roles.userIsInRole(userId, constants.Roles.shopOwner.name);
 
   const productList = ProductLists.findOne({ _id: productListId });
 
@@ -29,16 +29,15 @@ const calculateOrderTotal = (order, productListId, userId) => {
   order.products.forEach((product) => {
     const key = product._id;
     const quantity = product.quantity ? product.quantity : 0;
-    if (isCustomer) {
-      totalBillAmount += quantity * productArray[key].unitprice;
-    }
-    else {
+    if (isShopOwner) {
       if (product.sourceSuppliers && product.sourceSuppliers.length > 0) {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
       } else {
-        totalBillAmount += quantity * product.wSaleBaseUnitPrice * 1.15;
-        // to be removed once all the products have been assigned a source supplier
+        totalBillAmount += quantity * product.wSaleBaseUnitPrice;
       }
+    }
+    else {
+      totalBillAmount += quantity * productArray[key].unitprice;
     }
   });
 
@@ -68,7 +67,82 @@ const addNewOrderedQuantity = (order) => {
   });
 };
 
+const addUpdateOrder = (order, loggedInUser) => {
+  const isUpdate = !!order._id;
+  if (isUpdate) {
+    // delete order.customer_details
+    // delete order.productOrderListId
+    const existingOrder = Orders.findOne(order._id);
+    if (loggedInUser._id === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUser._id, ['admin'])) {
+      order.customer_details = existingOrder.customer_details;
+      order.productOrderListId = existingOrder.productOrderListId;
+      order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
+      order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId, existingOrder.customer_details._id);
+    } else {
+      throw new Meteor.Error(401, 'Access denied');
+    }
+    removePreviousOrderedQuantity(existingOrder);
+  } else {
+    const today = new Date();
+    const productListActiveToday = ProductLists.findOne(
+      {
+        $and: [
+          { activeStartDateTime: { $lte: today } },
+          { activeEndDateTime: { $gte: today } },
+        ],
+      },
+    );
+    order.productOrderListId = productListActiveToday._id;
+    order.order_status = constants.OrderStatus.Pending.name;
+    order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUser._id);
+    order.customer_details = {
+      _id: loggedInUser._id,
+      name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
+      email: loggedInUser.emails[0].address,
+      mobilePhone: loggedInUser.profile.whMobilePhone,
+      deliveryAddress: loggedInUser.profile.deliveryAddress,
+    };
+  }
+
+  order.expectedDeliveryDate = getDeliveryDate();
+
+  order.customer_details.role = getOrderRole(order.customer_details._id);
+  const response = Orders.upsert({ _id: order._id }, { $set: order });
+
+  addNewOrderedQuantity(order);
+  if (response.insertedId) {
+    ProductLists.update({ _id: order.productOrderListId },
+      { $addToSet: { order_ids: response.insertedId } });
+
+    Emitter.emit(Events.ORDER_CREATED, { userId: loggedInUser._id });
+  }
+  return response;
+}
+
 const getDeliveryDate = () => orderCommon.getTomorrowDateOnServer();
+
+const splitWHOrdersBySupplier = (order) => {
+  const ordersBySuppliers = [];
+  const productsBySupplierHash = {};
+
+  order.products.map(product => {
+    const selectedSource = product.sourceSuppliers[0]._id;
+    if (!productsBySupplierHash[selectedSource]) {
+      productsBySupplierHash[selectedSource] = [];
+    }
+    productsBySupplierHash[selectedSource].push(product)
+  });
+
+  Object.keys(productsBySupplierHash).map(supplierId => {
+    const products = productsBySupplierHash[supplierId];
+    const splitOrder = { ...order, products };
+    splitOrder.sourceSupplierId = supplierId;
+    ordersBySuppliers.push(splitOrder);
+  })
+
+  return ordersBySuppliers;
+
+}
 
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
@@ -81,57 +155,20 @@ export const upsertOrder = new ValidatedMethod({
   }).validator(),
   run(order) {
     if (Meteor.isServer) {
-      const isUpdate = !!order._id;
       const loggedInUserId = Meteor.userId();
-      if (isUpdate) {
-        // delete order.customer_details
-        // delete order.productOrderListId
-        const existingOrder = Orders.findOne(order._id);
-        if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
-          order.customer_details = existingOrder.customer_details;
-          order.productOrderListId = existingOrder.productOrderListId;
-          order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
-          order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId, existingOrder.customer_details._id);
-        } else {
-          throw new Meteor.Error(401, 'Access denied');
-        }
-        removePreviousOrderedQuantity(existingOrder);
-      } else {
-        const loggedInUser = Meteor.users.findOne(loggedInUserId);
-        const today = new Date();
-        const productListActiveToday = ProductLists.findOne(
-          {
-            $and: [
-              { activeStartDateTime: { $lte: today } },
-              { activeEndDateTime: { $gte: today } },
-            ],
-          },
-        );
-        order.productOrderListId = productListActiveToday._id;
-        order.order_status = constants.OrderStatus.Pending.name;
-        order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUserId);
-        order.customer_details = {
-          _id: loggedInUser._id,
-          name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
-          email: loggedInUser.emails[0].address,
-          mobilePhone: loggedInUser.profile.whMobilePhone,
-          deliveryAddress: loggedInUser.profile.deliveryAddress,
-        };
+      const loggedInUser = Meteor.users.findOne(loggedInUserId);
+      if (getOrderRole(loggedInUserId) === constants.Roles.shopOwner.name) {
+        const splitOrders = splitWHOrdersBySupplier(order, loggedInUser);
+        let returnStatus;
+        splitOrders.map(order => {
+          returnStatus = addUpdateOrder(order, loggedInUser);
+        });
+        return returnStatus;
+      }
+      else {
+        return addUpdateOrder(order, loggedInUser);
       }
 
-      order.expectedDeliveryDate = getDeliveryDate();
-
-      order.orderRole = getOrderRole(order.customer_details._id);
-      const response = Orders.upsert({ _id: order._id }, { $set: order });
-
-      addNewOrderedQuantity(order);
-      if (response.insertedId) {
-        ProductLists.update({ _id: order.productOrderListId },
-          { $addToSet: { order_ids: response.insertedId } });
-
-        Emitter.emit(Events.ORDER_CREATED, { userId: this.userId });
-      }
-      return response;
     }
   },
 });

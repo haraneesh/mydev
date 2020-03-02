@@ -15,14 +15,22 @@ import { cartActions, useCartState, useCartDispatch } from '../../../stores/Shop
 
 import './ProductsOrderMain.scss';
 
+const displayProductForAdmin = (loggedInUser) => {
+  if (Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name) ||
+    Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)) {
+    return true;
+  }
+  return false;
+
+}
 
 const ProductsOrderMain = (props) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const { orderId, comments, products, history, dateValue, orderStatus } = props;
   const isAdmin = isLoggedInUserAdmin();
+  const dProductForAdmin = displayProductForAdmin(props.loggedInUser);
   const [productsArray, setProductsArray] = useState({});
-
 
   useEffect(() => {
     if (cartState.cart && cartState.cart.productsInCart) {
@@ -60,10 +68,10 @@ const ProductsOrderMain = (props) => {
 
   const displayToolBar = orderStatus => (
     <ButtonToolbar className="pull-right">
-      { (orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button bsSize="small" onClick={handleCancel}>Cancel Order</Button>)}
-      { (isAdmin) && (<Button bsSize="small" onClick={handlePrintProductList}>Print Order List</Button>)}
+      {(orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button bsSize="small" onClick={handleCancel}>Cancel Order</Button>)}
+      {(isAdmin) && (<Button bsSize="small" onClick={handlePrintProductList}>Print Order List</Button>)}
     </ButtonToolbar>
-    );
+  );
 
   const handlePrintProductList = () => {
     GenerateOrderList(products, dateValue);
@@ -82,7 +90,7 @@ const ProductsOrderMain = (props) => {
       products: selectedProducts,
       _id: orderId,
       order_status: saveStatus,
-          // totalBillAmount: this.state.totalBillAmount,
+      // totalBillAmount: this.state.totalBillAmount,
       comments: (commentBox) ? commentBox.value : '',
     };
 
@@ -118,16 +126,16 @@ const ProductsOrderMain = (props) => {
     _.map(products, (product, index) => {
       if (product.name.toLowerCase().indexOf(lowerSearchString) > -1) {
         const prd = cartState.cart.productsInCart[product._id] ?
-           cartState.cart.productsInCart[product._id] : { ...product, quantity: 0 };
+          cartState.cart.productsInCart[product._id] : { ...product, quantity: 0 };
 
         searchResults.push(
           <Product
             key={`srch-${index}`}
             updateProductQuantity={changeProductQuantity}
             product={prd}
-            isAdmin={this.isAdmin}
+            dProductForAdmin={dProductForAdmin}
           />,
-          );
+        );
       }
     });
 
@@ -160,7 +168,7 @@ const ProductsOrderMain = (props) => {
 
     return (
       <div className="productOrderList">
-        { isMobile && (
+        {isMobile && (
           <ProductsOrderMobile
             productGroups={productGroups}
             productsArray={productsArray}
@@ -179,30 +187,29 @@ const ProductsOrderMain = (props) => {
   const displayOrderFooter = isMobile => (<OrderFooter
     totalBillAmount={cartState.cart.totalBillAmount}
     onButtonClick={
-        () => {
-          history.push(`/cart/${orderId || ''}`);
-        }
+      () => {
+        history.push(`/cart/${orderId || ''}`);
       }
+    }
     submitButtonName={'Checkout →'}
     onSecondButtonClick={() => { handleOrderSubmit(constants.OrderStatus.Saved.name); }}
     isMobile={isMobile}
   />
-);
+  );
 
   const displayProductsAndSubmit = (isMobile, productGroups) => (
-     products.length > 0 ? <Panel>
-       <Row>
-         <Col xs={12}>
-           <ProductSearch
-             getProductsMatchingSearch={getProductsMatchingSearch}
-             ref={productSearchCtrl => (productSearchCtrl = productSearchCtrl)}
-           />
-         </Col>
-         <Col xs={12}>
-           <ListGroup className="products-list">
-
-             {
-               displayProductsByTypeStandardView(
+    products.length > 0 ? <Panel>
+      <Row>
+        <Col xs={12}>
+          <ProductSearch
+            getProductsMatchingSearch={getProductsMatchingSearch}
+            ref={productSearchCtrl => (productSearchCtrl = productSearchCtrl)}
+          />
+        </Col>
+        <Col xs={12}>
+          <ListGroup className="products-list">
+            {
+              displayProductsByTypeStandardView(
                 productGroups.productVegetables,
                 productGroups.productFruits,
                 productGroups.productDhals,
@@ -216,21 +223,21 @@ const ProductsOrderMain = (props) => {
                 [],
                 isMobile)}
 
-           </ListGroup>
-         </Col>
+          </ListGroup>
+        </Col>
 
-         <Col xs={12}>
-           {displayOrderFooter(isMobile)}
-         </Col>
-       </Row>
-     </Panel>
+        <Col xs={12}>
+          {displayOrderFooter(isMobile)}
+        </Col>
+      </Row>
+    </Panel>
       :
-     <Alert bsStyle="info">
+      <Alert bsStyle="info">
         Every day, List of available fresh items and their prices will be updated by 11 AM. Please wait for the message in the group.
      </Alert>
-    );
+  );
 
-    // Grouping product categories by tabs
+  // Grouping product categories by tabs
   const ipadWidth = 8000; // 768
   const isMobile = window.innerWidth <= ipadWidth;
   const formHeading = (orderStatus) ? 'Update Your Order' : ' Place Your Order';
@@ -239,18 +246,18 @@ const ProductsOrderMain = (props) => {
     {
       products: productsArray,
       isMobile,
-      isAdmin,
+      isAdmin: dProductForAdmin,
       updateProductQuantity: changeProductQuantity,
     },
-    );
+  );
 
   return (<div className="EditOrderDetails ">
     <Row>
       <Col xs={12}>
-        <h3 className="page-header"> { formHeading }
-          { displayToolBar(orderStatus) }
+        <h3 className="page-header"> {formHeading}
+          {displayToolBar(orderStatus)}
         </h3>
-        { displayProductsAndSubmit(isMobile, productGroups) }
+        {displayProductsAndSubmit(isMobile, productGroups)}
       </Col>
     </Row>
   </div>
@@ -275,6 +282,7 @@ ProductsOrderMain.propTypes = {
   dateValue: PropTypes.object,
   history: PropTypes.object.isRequired,
   addItemsFromCart: PropTypes.bool,
+  loggedInUser: PropTypes.object.isRequired,
 };
 
 export default ProductsOrderMain;

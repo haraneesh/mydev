@@ -4,6 +4,7 @@ import { Roles } from 'meteor/alanning:roles';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import { Orders } from '../Orders/Orders';
+import Suppliers from '../Suppliers/Suppliers';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
@@ -70,6 +71,14 @@ const _createZohoSalesOrder = (order) => {
 const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
   const zhSalesOrder = _createZohoSalesOrder(order);
+  /*let connectionString;
+
+   if order is WH then get the connection information
+   if (order.orderRole === constants.Roles.shopOwner.name) {
+    const supplier = Suppliers.findOne({ _id: order.sourceSupplierId });
+    connectionString = zh.getConnectionInfo(supplier.zohoAuthtoken, supplier.zohoOrganizationId);
+  } */
+
   const r = (order.zh_salesorder_id) ?
     zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
     zh.createRecord('salesorders', zhSalesOrder);
@@ -117,6 +126,35 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
       });
     }
     return updateSyncAndReturn('orders', successResp, errorResp, nowDate, syncUpConstants.ordersToZoho);
+  },
+});
+
+// Wholesale
+export const syncBulkWHOrdersWithZoho = new ValidatedMethod({
+  name: 'orders.syncBulkWHOrdersWithZoho',
+  validate() { },
+  run() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      // user not authorized. do not publish secrets
+      handleMethodException('Access denied', 403);
+    }
+    const nowDate = new Date();
+
+    const successResp = [];
+    const errorResp = [];
+    if (Meteor.isServer) {
+      const query = {
+        order_status: constants.OrderStatus.Pending.name,
+        expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
+        orderRole: { $eq: constants.Roles.shopOwner.name },
+      };
+      const orders = Orders.find(query).fetch(); // change to get products updated after sync date
+
+      orders.forEach((ord) => {
+        syncOrdersWithZoho(ord, successResp, errorResp);
+      });
+    }
+    return updateSyncAndReturn('ordersWH', successResp, errorResp, nowDate, syncUpConstants.ordersToZoho);
   },
 });
 
@@ -212,7 +250,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
 
 
 rateLimit({
-  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho],
+  methods: [syncBulkOrdersWithZoho, syncBulkWHOrdersWithZoho, getOrdersAndInvoicesFromZoho],
   limit: 5,
   timeRange: 1000,
 });

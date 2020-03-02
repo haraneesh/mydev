@@ -70,7 +70,6 @@ export const findUser = new ValidatedMethod({
 });
 
 const assignUserRole = (userId, selectedRole) => {
-  console.log(selectedRole);
   switch (selectedRole) {
     case constants.Roles.admin.name:
       Roles.setUserRoles(userId, [constants.Roles.admin.name]);

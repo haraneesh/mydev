@@ -27,10 +27,10 @@ productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a par
 const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 
 Orders.schema = new SimpleSchema({
-  orderRole: {
+  sourceSupplierId: {
     type: String,
-    allowedValues: constants.Roles.allowedValue,
-    label: 'Role in which the customer is ordering',
+    label: 'Source supplier id',
+    optional: true,
   },
   createdAt: {
     type: Date,
@@ -65,6 +65,11 @@ Orders.schema = new SimpleSchema({
   invoices: { type: Array, optional: true },
   'invoices.$': InvoiceSchemaDefObj,
   customer_details: { type: Object },
+  'customer_details.role': {
+    type: String,
+    allowedValues: constants.Roles.allowedValue,
+    label: 'Role in which the customer is ordering'
+  },
   'customer_details._id': { type: String, label: 'The customer id.', optional: true },
   'customer_details.name': { type: String, label: 'The customer name.' },
   'customer_details.email': { type: String, label: 'The customer email address.' },
@@ -95,8 +100,8 @@ Orders.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Orders._ensureIndex({ order_status: 1, 'customer_details._id': 1 });
-  Orders._ensureIndex({ 'products.name': 1, 'products.unitOfSale': 1 });
+  Orders.rawCollection().createIndex({ order_status: 1, 'customer_details._id': 1 }, { unique: false });
+  Orders.rawCollection().createIndex({ 'products.name': 1, 'products.unitOfSale': 1 }, { unique: false });
 }
 
 Orders.attachSchema(Orders.schema);

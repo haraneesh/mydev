@@ -9,15 +9,20 @@ const _callType = {
 
 };
 
+const getConnectionInfo = (authToken, organizationId) => ({
+  authtoken: authToken,
+  organization_id: organizationId,
+});
+
 const setAPICall = () => ({
   authtoken: Meteor.settings.private.zoho_authtoken,
   organization_id: Meteor.settings.private.zoho_organization_id,
 });
 
-const callAPI = (requestType, endpoint, params) => {
+const callAPI = (requestType, endpoint, params, connectionInfo) => {
   const args = {};
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
-  args.params = setAPICall();
+  args.params = (connectionInfo) ? connectionInfo : setAPICall();
 
   if (params) {
     switch (true) {
@@ -43,7 +48,7 @@ const callAPI = (requestType, endpoint, params) => {
       // console.log('--------------------------------------');
       // console.log(args.params);
     }
-    
+
     const result = HTTP.call(requestType, callUrl, args);
     return result.data;
   } catch (e) {
@@ -55,7 +60,7 @@ const callAPI = (requestType, endpoint, params) => {
     }
     const argMsg = (args.params.JSONString) ? args.params.JSONString : ' ';
     if (e.response) {
-       // return e.response.data;
+      // return e.response.data;
       return {
         code: e.response.data.code,
         message: `${e.response.data.message} ${argMsg}`,
@@ -69,35 +74,35 @@ const callAPI = (requestType, endpoint, params) => {
   }
 };
 
-const createRecord = (module, params) => {
-    // check
+const createRecord = (module, params, connectionInfo) => {
+  // check
   const endpoint = module;
-  return callAPI(_callType.POST, endpoint, params);
+  return callAPI(_callType.POST, endpoint, params, connectionInfo);
 };
 
-const updateRecord = (module, id, params) => {
+const updateRecord = (module, id, params, connectionInfo) => {
   const endpoint = `${module}/${id}`;
-  return callAPI(_callType.PUT, endpoint, params);
+  return callAPI(_callType.PUT, endpoint, params, connectionInfo);
 };
 
-const getRecords = (module, page = 1) => {
+const getRecords = (module, page = 1, connectionInfo) => {
   const endpoint = module;
-  return callAPI(_callType.GET, endpoint, {}, page);
+  return callAPI(_callType.GET, endpoint, {}, page, connectionInfo);
 };
 
-const getRecordsByParams = (module, params) => {
+const getRecordsByParams = (module, params, connectionInfo) => {
   const endpoint = module;
-  return callAPI(_callType.GET, endpoint, params);
+  return callAPI(_callType.GET, endpoint, params, connectionInfo);
 };
 
-const getRecordById = (module, id) => {
+const getRecordById = (module, id, connectionInfo) => {
   const endpoint = `${module}/${id}`;
-  return callAPI(_callType.GET, endpoint);
+  return callAPI(_callType.GET, endpoint, connectionInfo);
 };
 
-const deleteRecord = (module, id) => {
+const deleteRecord = (module, id, connectionInfo) => {
   const endpoint = `${module}/${id}`;
-  return callAPI(_callType.DELETE, endpoint);
+  return callAPI(_callType.DELETE, endpoint, connectionInfo);
 };
 
 
@@ -108,4 +113,5 @@ export default ZohoBooks = {
   deleteRecord,
   getRecordById,
   getRecordsByParams,
+  getConnectionInfo,
 };

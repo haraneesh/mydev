@@ -65,6 +65,10 @@ Suppliers.schema = new SimpleSchema(SupplierSchemaDefObject, {
   },
 });
 
+if (Meteor.isServer) {
+  Suppliers.rawCollection().createIndex({ name: 1 }, { unique: true });
+}
+
 Suppliers.attachSchema(Suppliers.schema);
 
 export default Suppliers;
