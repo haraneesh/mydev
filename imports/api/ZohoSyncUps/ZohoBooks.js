@@ -14,10 +14,12 @@ const getConnectionInfo = (authToken, organizationId) => ({
   organization_id: organizationId,
 });
 
-const setAPICall = () => ({
-  authtoken: Meteor.settings.private.zoho_authtoken,
-  organization_id: Meteor.settings.private.zoho_organization_id,
-});
+const setAPICall = () => {
+  return {
+    authtoken: Meteor.settings.private.zoho_authtoken,
+    organization_id: Meteor.settings.private.zoho_organization_id,
+  }
+};
 
 const callAPI = (requestType, endpoint, params, connectionInfo) => {
   const args = {};

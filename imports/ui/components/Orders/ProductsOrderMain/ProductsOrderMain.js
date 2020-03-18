@@ -15,22 +15,14 @@ import { cartActions, useCartState, useCartDispatch } from '../../../stores/Shop
 
 import './ProductsOrderMain.scss';
 
-const displayProductForAdmin = (loggedInUser) => {
-  if (Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name) ||
-    Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)) {
-    return true;
-  }
-  return false;
-
-}
-
 const ProductsOrderMain = (props) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
+  const [productsArray, setProductsArray] = useState({});
   const { orderId, comments, products, history, dateValue, orderStatus } = props;
   const isAdmin = isLoggedInUserAdmin();
-  const dProductForAdmin = displayProductForAdmin(props.loggedInUser);
-  const [productsArray, setProductsArray] = useState({});
+  const isShopOwner = Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name)
+
 
   useEffect(() => {
     if (cartState.cart && cartState.cart.productsInCart) {
@@ -89,6 +81,7 @@ const ProductsOrderMain = (props) => {
     const order = {
       products: selectedProducts,
       _id: orderId,
+      loggedInUserId: loggedInUser._id,
       order_status: saveStatus,
       // totalBillAmount: this.state.totalBillAmount,
       comments: (commentBox) ? commentBox.value : '',
@@ -133,7 +126,8 @@ const ProductsOrderMain = (props) => {
             key={`srch-${index}`}
             updateProductQuantity={changeProductQuantity}
             product={prd}
-            dProductForAdmin={dProductForAdmin}
+            isAdmin={isAdmin}
+            isShopOwner={isShopOwner}
           />,
         );
       }
@@ -246,7 +240,8 @@ const ProductsOrderMain = (props) => {
     {
       products: productsArray,
       isMobile,
-      isAdmin: dProductForAdmin,
+      isAdmin,
+      isShopOwner,
       updateProductQuantity: changeProductQuantity,
     },
   );

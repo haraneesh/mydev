@@ -67,13 +67,14 @@ const addNewOrderedQuantity = (order) => {
   });
 };
 
-const addUpdateOrder = (order, loggedInUser) => {
+const addUpdateOrder = (order) => {
   const isUpdate = !!order._id;
+  const loggedInUserId = order.loggedInUserId;
   if (isUpdate) {
     // delete order.customer_details
     // delete order.productOrderListId
     const existingOrder = Orders.findOne(order._id);
-    if (loggedInUser._id === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUser._id, ['admin'])) {
+    if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
       order.customer_details = existingOrder.customer_details;
       order.productOrderListId = existingOrder.productOrderListId;
       order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
@@ -94,9 +95,10 @@ const addUpdateOrder = (order, loggedInUser) => {
     );
     order.productOrderListId = productListActiveToday._id;
     order.order_status = constants.OrderStatus.Pending.name;
-    order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUser._id);
+    order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUserId);
+    const loggedInUser = Meteor.users.find({ _id: loggedInUserId }).fetch()[0];
     order.customer_details = {
-      _id: loggedInUser._id,
+      _id: loggedInUserId,
       name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
       email: loggedInUser.emails[0].address,
       mobilePhone: loggedInUser.profile.whMobilePhone,
@@ -114,35 +116,12 @@ const addUpdateOrder = (order, loggedInUser) => {
     ProductLists.update({ _id: order.productOrderListId },
       { $addToSet: { order_ids: response.insertedId } });
 
-    Emitter.emit(Events.ORDER_CREATED, { userId: loggedInUser._id });
+    Emitter.emit(Events.ORDER_CREATED, { userId: loggedInUserId });
   }
   return response;
 }
 
 const getDeliveryDate = () => orderCommon.getTomorrowDateOnServer();
-
-const splitWHOrdersBySupplier = (order) => {
-  const ordersBySuppliers = [];
-  const productsBySupplierHash = {};
-
-  order.products.map(product => {
-    const selectedSource = product.sourceSuppliers[0]._id;
-    if (!productsBySupplierHash[selectedSource]) {
-      productsBySupplierHash[selectedSource] = [];
-    }
-    productsBySupplierHash[selectedSource].push(product)
-  });
-
-  Object.keys(productsBySupplierHash).map(supplierId => {
-    const products = productsBySupplierHash[supplierId];
-    const splitOrder = { ...order, products };
-    splitOrder.sourceSupplierId = supplierId;
-    ordersBySuppliers.push(splitOrder);
-  })
-
-  return ordersBySuppliers;
-
-}
 
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
@@ -150,25 +129,13 @@ export const upsertOrder = new ValidatedMethod({
     _id: { type: String, optional: true },
     order_status: { type: String, optional: true },
     comments: { type: String, optional: true },
+    loggedInUserId: { type: String },
     products: { type: Array, optional: true },
     'products.$': { type: Object, blackbox: true, optional: true },
   }).validator(),
   run(order) {
     if (Meteor.isServer) {
-      const loggedInUserId = Meteor.userId();
-      const loggedInUser = Meteor.users.findOne(loggedInUserId);
-      if (getOrderRole(loggedInUserId) === constants.Roles.shopOwner.name) {
-        const splitOrders = splitWHOrdersBySupplier(order, loggedInUser);
-        let returnStatus;
-        splitOrders.map(order => {
-          returnStatus = addUpdateOrder(order, loggedInUser);
-        });
-        return returnStatus;
-      }
-      else {
-        return addUpdateOrder(order, loggedInUser);
-      }
-
+      return addUpdateOrder(order);
     }
   },
 });

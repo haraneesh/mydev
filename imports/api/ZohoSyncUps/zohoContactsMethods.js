@@ -34,7 +34,8 @@ const _createZohoInventoryContact = usr => ({
 
 const createZohoBooksContact = usr => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
-  gst_treatment: 'consumer',
+  customer_sub_type: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
+  //gst_treatment: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
   billing_address: {
     address: usr.profile.deliveryAddress,
     city: 'chennai',
@@ -133,7 +134,7 @@ export function retWalletAndSyncIfNecessary(userId) {
   const userSyncedWithZoho = user && user.zh_contact_id;
   if (Meteor.isServer && userSyncedWithZoho) {
     const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync) ?
-        user.wallet.lastZohoSync : new Date('1/1/2000');
+      user.wallet.lastZohoSync : new Date('1/1/2000');
     const now = moment(new Date()); // todays date
     const end = moment(lastWalletSyncDate);
     const duration = moment.duration(now.diff(end));

@@ -4,17 +4,17 @@ import { Grid, Panel, Row, Col } from 'react-bootstrap';
 import './ContactUs.scss';
 
 const ContactUs = () => (
-  <Panel className="ContactUs">
+  <Panel className="ContactUs text-center">
     <p><h3>Contact Us</h3></p>
     <Grid>
       <Row>
         <Col xs={12} sm={6}>
           <address>
             <strong>Address</strong> <br />
-              59 Kurinji Street, <br />
-              Fathima Nagar, <br />
-              Valasaravakkam, <br />
-              Tamil Nadu 600089 <br />
+            59 Kurinji Street, <br />
+            Fathima Nagar, <br />
+            Valasaravakkam, <br />
+            Tamil Nadu 600089 <br />
             <p>
               <a href="https://goo.gl/maps/GnWveu17Jb42" target="_blank">
                 <span className="text-primary">View on Maps &rarr;</span>

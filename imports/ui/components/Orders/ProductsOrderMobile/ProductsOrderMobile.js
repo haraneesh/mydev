@@ -58,17 +58,17 @@ export default class ProductsOrderMobile extends React.Component {
 
 
     return this.displayProductsByTypeStandardView(
-        productGroups[0],
-        productGroups[1],
-        productGroups[2],
-        productGroups[3],
-        productGroups[4],
-        productGroups[5],
-        productGroups[6],
-        productGroups[7],
-        productGroups[8],
-        productGroups[9],
-        );
+      productGroups[0],
+      productGroups[1],
+      productGroups[2],
+      productGroups[3],
+      productGroups[4],
+      productGroups[5],
+      productGroups[6],
+      productGroups[7],
+      productGroups[8],
+      productGroups[9],
+    );
   }
 
   displayProductsByTypeStandardView(
@@ -96,11 +96,10 @@ export default class ProductsOrderMobile extends React.Component {
               />)}
               expanded={(this.state.panelToFocus === 'fav-header')}
             >
-              { (this.state.panelToFocus === 'fav-header') && productRecommended }
+              {(this.state.panelToFocus === 'fav-header') && productRecommended}
             </Panel>
           </div>
-          )
-          }
+          )}
 
           {productSpecials.length > 0 && (
             <div id="spcl-header">
@@ -114,12 +113,11 @@ export default class ProductsOrderMobile extends React.Component {
                 />)}
                 expanded={(this.state.panelToFocus === 'spcl-header')}
               >
-                { (this.state.panelToFocus === 'spcl-header') && productSpecials }
+                {(this.state.panelToFocus === 'spcl-header') && productSpecials}
               </Panel>
-            </div>)
-          }
+            </div>)}
 
-          <div id="veg-header" >
+          {productVegetables.length > 0 && (<div id="veg-header" >
             <Panel
               header={(<DisplayCategoryHeader
                 clName="vegetables_bk_ph"
@@ -130,11 +128,11 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'veg-header')}
               eventKey="3"
             >
-              { (this.state.panelToFocus === 'veg-header') && productVegetables }
+              {(this.state.panelToFocus === 'veg-header') && productVegetables}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="fruits-header">
+          {productFruits.length > 0 && (<div id="fruits-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="fruits_bk_ph"
@@ -145,11 +143,11 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'fruits-header')}
               eventKey="4"
             >
-              { (this.state.panelToFocus === 'fruits-header') && productFruits }
+              {(this.state.panelToFocus === 'fruits-header') && productFruits}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="grain-header">
+          {productGrains.length > 0 && (<div id="grain-header">
             <Panel
               id="grain-header"
               header={(<DisplayCategoryHeader
@@ -163,9 +161,9 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'grain-header') && productGrains}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="dhals-header">
+          {productDhals.length > 0 && (<div id="dhals-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="dhals_bk_ph"
@@ -178,9 +176,9 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'dhals-header') && productDhals}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="spices-header">
+          {productSpices.length > 0 && (<div id="spices-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="spices_bk_ph"
@@ -193,9 +191,9 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'spices-header') && productSpices}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="oils-header">
+          {productOils.length > 0 && (<div id="oils-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="oils_bk_ph"
@@ -208,9 +206,9 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'oils-header') && productOils}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="prepared-header">
+          {productPrepared.length > 0 && (<div id="prepared-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="prepared_bk_ph"
@@ -223,9 +221,9 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'prepared-header') && productPrepared}
             </Panel>
-          </div>
+          </div>)}
 
-          <div id="hyg-header">
+          {productHygiene.length > 0 && (<div id="hyg-header">
             <Panel
               header={(<DisplayCategoryHeader
                 clName="hyg_bk_ph"
@@ -238,16 +236,15 @@ export default class ProductsOrderMobile extends React.Component {
             >
               {(this.state.panelToFocus === 'hyg-header') && productHygiene}
             </Panel>
-          </div>
+          </div>)}
         </PanelGroup>)}
-
       </div>
     );
   }
 
   render() {
     return (
-        this.displayProductsByType(this.state.products)
+      this.displayProductsByType(this.state.products)
     );
   }
 }

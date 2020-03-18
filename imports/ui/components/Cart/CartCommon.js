@@ -18,7 +18,7 @@ const displayWithDivider = (displayArray, displayText) => (
     </div>
   ));
 
-export const ListProducts = ({ products, deletedProducts, updateProductQuantity, isMobile, isAdmin }) => {
+export const ListProducts = ({ products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner }) => {
   const { productVegetables,
     productFruits,
     productDhals,
@@ -28,7 +28,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     productPrepared,
     productHygiene,
     productsNoCategory
-  } = displayProductsByType({ products, isMobile, isAdmin, cartScreen: true, updateProductQuantity });
+  } = displayProductsByType({ products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity });
 
   const chosenButDeleted = [];
   Object.keys(deletedProducts).map((key, index) => {
@@ -40,7 +40,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
           key={`review-${index}`}
           updateProductQuantity={updateProductQuantity}
           product={product}
-          isAdmin={isAdmin}
+          isAdmin={isAdmin || isShopOwner}
           checkout
         />,
       );

@@ -1,73 +1,62 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Row, Table, Col, Panel } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
-class ListPayments extends React.Component {
+import React, { useState, useEffect } from 'react';
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      lastPayments: [],
-    };
+const ListPayments = (props) => {
 
-    this.fetchLastPayments = this.fetchLastPayments.bind(this);
-  }
+  const [payments, setPayments] = useState([]);
+  const [isPaymentstLoading, setIsLoading] = useState(true);
 
-  componentDidMount() {
-    this.fetchLastPayments();
-  }
-
-  fetchLastPayments() {
+  useEffect(() => {
+    setIsLoading(true);
     Meteor.call('payments.getPayments',
       (error, payments) => {
+        setIsLoading(false);
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          this.setState({
+          setPayments(payments);
+          /*this.setState({
             lastPayments: payments,
-          });
+          });*/
         }
       },
     );
-  }
+  }, []);
 
-  render() {
-    const payments = this.state.lastPayments;
-    return (
-      <Panel>
-        <Col xs={12}>
-          {/* <Row>
-                    <Button type="button" onClick={this.fetchLastPayments}>Show Last Payments</Button>
-                </Row> */}
+  return !isPaymentstLoading ? (
+    <Panel>
+      <Col xs={12}>
+        <Row>
+          {payments.length > 0 && (<Table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                payments.map(payment => (
+                  <tr>
+                    <td>{getDayWithoutTime(new Date(payment.date))}</td>
+                    <td>{getFormattedMoney(payment.amount)}</td>
+                    <td>{payment.payment_mode}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </Table>)}
+        </Row>
+      </Col>
+    </Panel>
 
-          <Row>
-            {payments.length > 0 && (<Table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Method</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  payments.map(payment => (
-                    <tr>
-                      <td>{getDayWithoutTime(new Date(payment.date))}</td>
-                      <td>{getFormattedMoney(payment.amount)}</td>
-                      <td>{payment.payment_mode}</td>
-                    </tr>
-                  ))
-                }
-              </tbody>
-            </Table>)}
-          </Row>
-        </Col>
-      </Panel>
-    );
-  }
+  ) : (<div> Loading ... </div>);
+
 }
 
 export default ListPayments;

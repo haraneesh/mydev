@@ -6,7 +6,7 @@ import moment from 'moment';
 import 'moment-timezone';
 import Product from './Product';
 import { ProductTableHeader } from './Product';
-import { Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab } from 'react-bootstrap';
 import { dateSettings } from '../../../modules/settings';
 import { upsertProductList } from '../../../api/ProductLists/methods';
 
@@ -109,14 +109,36 @@ class ListAllProducts extends React.Component {
 
   render() {
     const { suppliers } = this.props;
+    let sectionHeaderName = '';
+    let sectionCount = 0;
+    const productsDisplay = [];
+    const productRows = [];
+    productRows['New'] = [];
     return (
       this.props.products.length > 0 ?
         <ListGroup className="product-list">
-          {<ProductTableHeader />}
+          {this.props.products.map((product, index) => {
 
-          {this.props.products.map((product, index) => (
-            <Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />
-          ))}
+            if (product.type !== sectionHeaderName) {
+              sectionHeaderName = product.type;
+              if (!(sectionHeaderName in productRows)) {
+                productRows[sectionHeaderName] = [];
+              }
+              productRows[sectionHeaderName].push(<ProductTableHeader />);
+            }
+
+            productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
+          })}
+
+
+          {Object.keys(productRows).forEach((key) => {
+            sectionCount++;
+            productsDisplay.push(<Tab eventKey={sectionCount} title={key}> {productRows[key]} </Tab>);
+          })}
+
+          <Tabs defaultActiveKey={1} animation={false} id="adminProductList">
+            {productsDisplay}
+          </Tabs>
 
           <hr />
           {this.publishSection()}

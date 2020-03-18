@@ -75,7 +75,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
         (<ProductsOrderMain
           productList={productList}
           orderId={order._id || ''}
-          products={getProductUnitPrice(Roles.userIsInRole(loggedInUserId, constants.Roles.shopOwner.name), productList.products)}
+          products={getProductUnitPrice(Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name), productList.products)}
           productListId={(order.productOrderListId) ? order.productOrderListId : ''}
           orderStatus={order.order_status}
           comments={order.comments}

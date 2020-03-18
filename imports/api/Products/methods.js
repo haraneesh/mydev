@@ -22,7 +22,11 @@ export const insertProduct = new ValidatedMethod({
   }).validator(),*/
   validate: Products.schema.omit('createdAt', 'updatedAt').validator(),
   run(product) {
-    Products.insert(product);
+    try {
+      Products.insert(product);
+    } catch (exception) {
+      handleMethodException(exception);
+    }
   },
 });
 

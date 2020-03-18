@@ -13,15 +13,22 @@ export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
 
   if (!isShopOwnerPrice) return productsArray;
 
-  return productsArray.map((product) => {
+  const products = [];
+
+  productsArray.forEach((product) => {
     const prd = product;
     if (prd.sourceSuppliers && prd.sourceSuppliers.length > 0) {
       prd.unitprice = prd.wSaleBaseUnitPrice * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
     } else {
       prd.unitprice = prd.wSaleBaseUnitPrice;
     }
-    return (prd);
+
+    if (prd.unitprice > 0) {
+      products.push(prd);
+    }
   });
+
+  return products;
 }
 
 export function getDisplayDate(dateObject) {

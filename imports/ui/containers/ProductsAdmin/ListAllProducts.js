@@ -8,7 +8,7 @@ import { Loading } from '../../components/Loading/Loading';
 const composer = (params, onData) => {
   const subscription = Meteor.subscribe('products.list');
   if (subscription.ready()) {
-    const products = Products.find().fetch();
+    const products = Products.find({}, { sort: { type: 1, name: 1 } }).fetch();
     const subscriptionToSuppliers = Meteor.subscribe('suppliers');
     if (subscriptionToSuppliers.ready()) {
       const suppliers = SuppliersCollection.find().fetch();

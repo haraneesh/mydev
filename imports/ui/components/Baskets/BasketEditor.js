@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
+import constants from '../../../modules/constants';
 import { ListProducts } from './BasketCommon';
 
 const createProductHash = (productArray) => {
@@ -43,7 +44,7 @@ const getSplitProductsHash = (productsHash) => {
   }
 }
 
-const BasketEditor = ({ history, basketDetails }) => {
+const BasketEditor = ({ history, basketDetails, loggedInUser }) => {
   const refName = useRef();
   const [productsHashInBasket, setProductsHashBasketDetails] = useState(createProductHash(basketDetails.products));
   const { selectedProductsHash, deletedProductsHash } = getSplitProductsHash(productsHashInBasket);
@@ -133,7 +134,14 @@ const BasketEditor = ({ history, basketDetails }) => {
               <Row>
                 {basketDetails._id}
               </Row>
-              <ListProducts products={selectedProductsHash.products} deletedProducts={deletedProductsHash.products} updateProductQuantity={updateProductQuantity} isMobile />
+              <ListProducts
+                products={selectedProductsHash.products}
+                deletedProducts={deletedProductsHash.products}
+                updateProductQuantity={updateProductQuantity}
+                isMobile
+                isAdmin={Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)}
+                isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
+              />
               {/* <ListProducts products={deletedProductsState.deletedProducts.productsInCart} deletedProducts={deletedProducts.deletedProducts} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} /> */}
               <Row>
                 <Col xsOffset={1} xs={10} smOffset={3} sm={6}>
@@ -161,6 +169,7 @@ BasketEditor.defaultProps = {
 BasketEditor.propTypes = {
   history: PropTypes.object.isRequired,
   basketDetails: PropTypes.object,
+  loggedInUser: PropTypes.object.isRequired,
 };
 
 export default BasketEditor;

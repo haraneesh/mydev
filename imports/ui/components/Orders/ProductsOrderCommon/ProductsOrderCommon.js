@@ -89,7 +89,7 @@ OrderComment.propTypes = {
   comments: PropTypes.string.isRequired,
 };
 
-export function displayProductsByType({ products, isMobile, isAdmin, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket }) {
+export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket }) {
   // Grouping product categories by tabs
   const productVegetables = [];
   const productFruits = [];
@@ -108,13 +108,13 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
-        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
+        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );
     }
 
     if (product.displayAsSpecial) {
       productSpecials.push(
-        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
+        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );
     }
 
@@ -122,35 +122,35 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
     let tempKey = '';
 
     switch (true) {
-      case (constants.ProductType[0] === product.type): // Vegetables
+      case (constants.ProductType[1] === product.type): // Vegetables
         tempProductList = productVegetables;
         tempKey = `vegetable-${index}`;
         break;
-      case (constants.ProductType[1] === product.type): // Fruits
+      case (constants.ProductType[2] === product.type): // Fruits
         tempProductList = productFruits;
         tempKey = `fruit-${index}`;
         break;
-      case (constants.ProductType[2] === product.type): // Dhals
+      case (constants.ProductType[3] === product.type): // Dhals
         tempProductList = productDhals;
         tempKey = `dhal-${index}`;
         break;
-      case (constants.ProductType[3] === product.type): // Grains
+      case (constants.ProductType[4] === product.type): // Grains
         tempProductList = productGrains;
         tempKey = `grain-${index}`;
         break;
-      case (constants.ProductType[4] === product.type): // Spice
+      case (constants.ProductType[5] === product.type): // Spice
         tempProductList = productSpices;
         tempKey = `spice-${index}`;
         break;
-      case (constants.ProductType[5] === product.type): // Oils
+      case (constants.ProductType[6] === product.type): // Oils
         tempProductList = productOils;
         tempKey = `oil-${index}`;
         break;
-      case (constants.ProductType[6] === product.type): // Prepared
+      case (constants.ProductType[7] === product.type): // Prepared
         tempProductList = productPrepared;
         tempKey = `processed-${index}`;
         break;
-      case (constants.ProductType[7] === product.type): // Hygiene
+      case (constants.ProductType[8] === product.type): // Hygiene
         tempProductList = productHygiene;
         tempKey = `hygiene-${index}`;
         break;
@@ -161,7 +161,7 @@ export function displayProductsByType({ products, isMobile, isAdmin, updateProdu
     }
 
     tempProductList.push(
-      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin} checkout={checkout} isBasket={isBasket} />,
+      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
     );
   });
 

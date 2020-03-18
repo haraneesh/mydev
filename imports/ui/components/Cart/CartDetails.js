@@ -4,6 +4,7 @@ import { Row, Col, Panel, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
+import constants from '../../../modules/constants';
 import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
@@ -58,6 +59,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
         products,
         _id: orderId && orderId !== 'NEW' ? orderId : '',
         comments: cartState.cart.comments ? cartState.cart.comments : '',
+        loggedInUserId: loggedInUser._id,
       };
 
       upsertOrder.call(order, (error, order) => {
@@ -135,7 +137,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
           </Col>
           <Col xs={12}>
             <Panel>
-              <ListProducts products={cartState.cart.productsInCart} deletedProducts={deletedProducts.cart} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} />
+              <ListProducts products={cartState.cart.productsInCart} deletedProducts={deletedProducts.cart} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)} />
               <Row>
                 <Col xs={6} className="text-left">
                   <Button style={{ marginBottom: '2.5em', marginLeft: '.5em' }} onClick={() => { clearCart(); }}>Clear Cart</Button>
@@ -168,6 +170,7 @@ CartDetails.propTypes = {
   history: PropTypes.object.isRequired,
   orderId: PropTypes.string.isRequired,
   loggedUserId: PropTypes.string,
+  loggedInUser: PropTypes.object.isRequired,
 };
 
 export default CartDetails;

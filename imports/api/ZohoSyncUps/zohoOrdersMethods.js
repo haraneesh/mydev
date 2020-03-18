@@ -4,7 +4,6 @@ import { Roles } from 'meteor/alanning:roles';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import { Orders } from '../Orders/Orders';
-import Suppliers from '../Suppliers/Suppliers';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
@@ -71,26 +70,38 @@ const _createZohoSalesOrder = (order) => {
 const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
   const zhSalesOrder = _createZohoSalesOrder(order);
-  /*let connectionString;
 
-   if order is WH then get the connection information
-   if (order.orderRole === constants.Roles.shopOwner.name) {
-    const supplier = Suppliers.findOne({ _id: order.sourceSupplierId });
-    connectionString = zh.getConnectionInfo(supplier.zohoAuthtoken, supplier.zohoOrganizationId);
-  } */
-
-  const r = (order.zh_salesorder_id) ?
-    zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
-    zh.createRecord('salesorders', zhSalesOrder);
+  let r = {};
+  if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
+    r = (order.zh_salesorder_id) ?
+      zh.updateRecord('deliverychallans', order.zh_salesorder_id, zhSalesOrder) :
+      zh.createRecord('deliverychallans', zhSalesOrder);
+  } else {
+    r = (order.zh_salesorder_id) ?
+      zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
+      zh.createRecord('salesorders', zhSalesOrder);
+  }
 
   if (r.code === 0 /* Success */) {
-    Orders.update({ _id: order._id }, {
-      $set: {
-        zh_salesorder_id: r.salesorder.salesorder_id,
-        zh_salesorder_number: r.salesorder.salesorder_number,
-        order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
-      },
-    });
+    if (r.salesorder) {
+      Orders.update({ _id: order._id }, {
+        $set: {
+          zh_sales_type: 'salesorder',
+          zh_salesorder_id: r.salesorder.salesorder_id,
+          zh_salesorder_number: r.salesorder.salesorder_number,
+          order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+        },
+      });
+    } else {
+      Orders.update({ _id: order._id }, {
+        $set: {
+          zh_sales_type: 'deliverychallan',
+          zh_salesorder_id: r.deliverychallan.deliverychallan_id,
+          zh_salesorder_number: r.deliverychallan.deliverychallan_number,
+          order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+        },
+      });
+    }
     successResp.push(retResponse(r));
   } else {
     const res = {
@@ -117,7 +128,6 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
       const query = {
         order_status: constants.OrderStatus.Pending.name,
         expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
-        orderRole: { $not: { $eq: constants.Roles.shopOwner.name } },
       };
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
@@ -129,63 +139,47 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
   },
 });
 
-// Wholesale
-export const syncBulkWHOrdersWithZoho = new ValidatedMethod({
-  name: 'orders.syncBulkWHOrdersWithZoho',
-  validate() { },
-  run() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      // user not authorized. do not publish secrets
-      handleMethodException('Access denied', 403);
-    }
-    const nowDate = new Date();
-
-    const successResp = [];
-    const errorResp = [];
-    if (Meteor.isServer) {
-      const query = {
-        order_status: constants.OrderStatus.Pending.name,
-        expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
-        orderRole: { $eq: constants.Roles.shopOwner.name },
-      };
-      const orders = Orders.find(query).fetch(); // change to get products updated after sync date
-
-      orders.forEach((ord) => {
-        syncOrdersWithZoho(ord, successResp, errorResp);
-      });
-    }
-    return updateSyncAndReturn('ordersWH', successResp, errorResp, nowDate, syncUpConstants.ordersToZoho);
-  },
-});
-
 // Zoho status = Allowed Values: draft, open, invoiced, partially_invoiced, void and overdue.
 // Zoho order_status = draft, open, closed, void
 const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
   let getInvoices = false;
 
-  const r = zh.getRecordById('salesorders', order.zh_salesorder_id);
-  if (r.code === 0 /* Success */) {
-    const orderQuery = {
-      zh_salesorder_status: r.salesorder.status,
-      zh_salesorder_order_status: r.salesorder.order_status,
-    };
+  let r = {};
+  let dcOrSo = 'salesorder';
 
-    if (r.salesorder.status === 'void') {
-      orderQuery.order_status = constants.OrderStatus.Cancelled.name;
-    } else {
-      getInvoices = true;
-    }
+  if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
+    dcOrSo = 'deliverychallan';
+    //r = zh.getRecordById('deliverychallans', order.zh_salesorder_id);
+    getInvoices = true;
 
-    Orders.update({ _id: order._id }, { $set: orderQuery });
-    successResp.push(retResponse(r));
   } else {
-    const res = {
-      code: r.code,
-      message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id}`,
-    };
-    errorResp.push(retResponse(res));
+    dcOrSo = 'salesorder';
+    r = zh.getRecordById('salesorders', order.zh_salesorder_id);
+
+    if (r.code === 0 /* Success */) {
+      const orderQuery = {
+        zh_salesorder_status: r[dcOrSo].status,
+        zh_salesorder_order_status: r[dcOrSo].order_status,
+      };
+
+      if (r.salesorder.status === 'void') {
+        orderQuery.order_status = constants.OrderStatus.Cancelled.name;
+      } else {
+        getInvoices = true;
+      }
+
+      Orders.update({ _id: order._id }, { $set: orderQuery });
+      successResp.push(retResponse(r));
+    } else {
+      const res = {
+        code: r.code,
+        message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id}`,
+      };
+      errorResp.push(retResponse(res));
+    }
   }
+
   return getInvoices;
 };
 
@@ -250,7 +244,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
 
 
 rateLimit({
-  methods: [syncBulkOrdersWithZoho, syncBulkWHOrdersWithZoho, getOrdersAndInvoicesFromZoho],
+  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho],
   limit: 5,
   timeRange: 1000,
 });

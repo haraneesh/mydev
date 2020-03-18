@@ -12,7 +12,7 @@ import './About.scss';
 class About extends React.Component {
 
   componentDidMount() {
-   // $('body').attr('class', 'about-body');
+    // $('body').attr('class', 'about-body');
     const bodyClassList = document.getElementsByTagName('body')[0].classList;
     bodyClassList.add('about-body');
 
@@ -64,17 +64,17 @@ class About extends React.Component {
             <h3 className="page-header"> Belong to a Better Market</h3>
 
             <p>
-					Suvai is an online community that leverages the power of direct buying to deliver the consumers best healthy food and natural products
-					while ensuring that the farmer gets paid above market prices thus encouraging them to continue doing good.
+              Suvai is an online community that leverages the power of direct buying to deliver the consumers best healthy food and natural products
+              while ensuring that the farmer gets paid above market prices thus encouraging them to continue doing good.
             </p>
             <p>
-					We work with passionate farmers who are into natural farming for about 10+ years inspite of struggling to market their produce.
-					We collect the produce from them at reasonable prices (mostly fixed by them) and cater to our members at affordable prices.
+              We work with passionate farmers who are into natural farming for about 10+ years inspite of struggling to market their produce.
+              We collect the produce from them at reasonable prices (mostly fixed by them) and cater to our members at affordable prices.
             </p>
             <p>
-					We began working with a few, select farmers and supplied to our close friends and families.
-					Now, We are proud to say that we are able to source more than 250 products (a range of fruits, vegetables and groceries) from over 500 farmers of 3 FPOs spanning across
-					3 states Andhra, Tamilnadu and Karnataka.
+              We began working with a few, select farmers and supplied to our close friends and families.
+              Now, We are proud to say that we are able to source more than 250 products (a range of fruits, vegetables and groceries) from over 500 farmers of 3 FPOs spanning across
+              3 states Andhra, Tamilnadu and Karnataka.
             </p>
           </Col>
         </Panel>
@@ -82,20 +82,20 @@ class About extends React.Component {
         <Panel>
           <Row className="text-center bodyCursText">
             <h3 className="page-header no-margin-no-padding"> Why Us</h3>
-            <Row>
-              <Col sm={3}>
-                <h3 className="dt-align">4+ Years</h3> <p> promoting organic produce</p>
-              </Col>
-              <Col sm={3}>
-                <h3 className="dt-align">8+ Years</h3> <p> Organic farmers network</p>
-              </Col>
-              <Col sm={3}>
-                <h3 className="dt-align">300+ families</h3> <p> as members</p>
-              </Col>
-              <Col sm={3}>
-                <h3 className="dt-align">2 times</h3> <p> a week delivery</p>
-              </Col>
-            </Row>
+
+            <Col sm={3}>
+              <h3 className="dt-align">4+ Years</h3> <p> promoting organic produce</p>
+            </Col>
+            <Col sm={3}>
+              <h3 className="dt-align">8+ Years</h3> <p> Organic farmers network</p>
+            </Col>
+            <Col sm={3}>
+              <h3 className="dt-align">300+ families</h3> <p> as members</p>
+            </Col>
+            <Col sm={3}>
+              <h3 className="dt-align">2 times</h3> <p> a week delivery</p>
+            </Col>
+
           </Row>
         </Panel>
 
@@ -132,11 +132,11 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-								Eating Natural
+                    Eating Natural
                   </h4>
                   <p >
-								Our vegetables and farm made produce have no chemical pesticides, no artificial
-					  			colouring agents and no unnecessary additives.
+                    Our vegetables and farm made produce have no chemical pesticides, no artificial
+                      colouring agents and no unnecessary additives.
                   </p>
                 </Col>
               </Row>
@@ -148,10 +148,10 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-								Eating Variety
+                    Eating Variety
                   </h4>
                   <p>
-							Eat a variety of vegetables and beans of different colors and type while avoiding the ones that don't suit you and your family for a balanced diet.
+                    Eat a variety of vegetables and beans of different colors and type while avoiding the ones that don't suit you and your family for a balanced diet.
                   </p>
                 </Col>
               </Row>
@@ -163,10 +163,10 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-								Eating Whole Food
+                    Eating Whole Food
                   </h4>
                   <p>
-							 Avoid highly processed food, refined sugar and refined flour. Choose mostly minimally processed, whole foods.
+                    Avoid highly processed food, refined sugar and refined flour. Choose mostly minimally processed, whole foods.
                   </p>
                 </Col>
               </Row>
@@ -282,12 +282,62 @@ class About extends React.Component {
 		</Col>
 		</Row>
 	</Panel>
-	*/}
+	
 
         <Panel>
-          <Row className="text-center">
+          <div>
+            <Col xs={12} sm={12} className="page-header text-center no-padding">
+              <h3> <span> We Deliver Here </span> </h3>
+            </Col>
+          </div>
+          <section className="text-left">
+            <Col xs={12} sm={4}>
+            Valasravakkam, Ramapuram, Virugambakkam, koyembedu, Anna nagar,Kelly's, Kilpauk, Egmore, Chetpet, Choolaimedu, Kodambakkam, Vadapalani, Saligrammam, KK Nagar, Ashok Nagar, Arumbakkam, Nanganallur, Velachery, Cathedral road, Mylapore, Rangarajapuram, Adayar, Besant Nagar, Perungudi
+            
+              <ul>
+                <li>Ramapuram</li>
+                <li>Virugambakkam</li>
+                <li>Valasaravakkam</li>
+                <li>Saligrammam</li>
+                <li>KK Nagar</li>
+                <li>Ashok Nagar</li>
+                <li>Vadapalani</li>
+                <li>Porur</li>
+                <li>Iyapathangal</li>
+              </ul>
+            </Col>
+            <Col xs={12} sm={4}>
+              <ul>
+                <li>Arumbakkam</li>
+                <li>Anna nagar</li>
+                <li>Koyembedu</li>
+                <li>Kodambakkam</li>
+                <li>Kelly's</li>
+                <li>Kilpauk</li>
+                <li>Egmore</li>
+                <li>Chetpet</li>
+                <li>Choolaimedu</li>
+              </ul>
+            </Col>
+            <Col xs={12} sm={4}>
+              <ul>
+                <li>Adayar</li>
+                <li>Nanganallur</li>
+                <li>Velachery</li>
+                <li>Cathedral road</li>
+                <li>Mylapore</li>
+                <li>Rangarajapuram</li>
+                <li>Besant Nagar</li>
+                <li>Perungudi</li>
+              </ul>
+            </Col>
+        </section> 
+        </Panel> */}
+
+        <Panel>
+          <Col xs={12} className="text-center">
             <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
-          </Row>
+          </Col>
         </Panel>
 
         <Testimonials />

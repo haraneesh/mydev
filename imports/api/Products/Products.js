@@ -42,7 +42,7 @@ export const ProductSchemaDefObject = {
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
   maxUnitsAvailableToOrder: { type: Number, min: 0, defaultValue: 0, label: 'Max Units Available to order', optional: true },
   displayAsSpecial: { type: Boolean, label: 'Is this a special product?', optional: true },
-  displayOrder: { type: Number, defaultValue: 0, label: 'Order to display in.', optional: true },
+  //displayOrder: { type: Number, defaultValue: 0, label: 'Order to display in.', optional: true },
   vendor_details: { type: Object },
   'vendor_details.id': { type: Number, label: 'The vendor details of the product.' },
   'vendor_details.slug': { type: String, label: 'The vendor slug of the product.' },

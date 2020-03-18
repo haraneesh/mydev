@@ -9,12 +9,14 @@ const handleInsertProduct = (event) => {
   const name = document.querySelector('[name="productName"]').value;
   if (name !== '') {
     const unitprice = 0;
+    const wSaleBaseUnitPrice = 0;
     const sku = `${name}-number`;
     const unitOfSale = '1Kg';
     const description = '';
     const image_path = '/blank_image.png';
-    const type = constants.ProductType[0];
+    const type = constants.ProductType[0]; //New
     const availableToOrder = false;
+    const maxUnitsAvailableToOrder = 99999;
     const vendor_details = {
       'id': 1,
       'slug': 'healthy-farm-foods',
@@ -25,6 +27,8 @@ const handleInsertProduct = (event) => {
       sku,
       name,
       unitOfSale,
+      wSaleBaseUnitPrice,
+      maxUnitsAvailableToOrder,
       unitprice,
       description,
       image_path,
@@ -46,14 +50,14 @@ const handleInsertProduct = (event) => {
 const InsertProduct = () => (
   <FormGroup>
     <Row>
-      <Col xs={10}>
+      <Col xs={9}>
         <FormControl
           type="text"
           placeholder="Type a product title and press Add Product button"
           name="productName"
         />
       </Col>
-      <Col xs={2} > <Button onClick={handleInsertProduct} bsStyle="primary"> Add Product </Button> </Col>
+      <Col xs={3} > <Button onClick={handleInsertProduct} bsStyle="primary"> Add Product </Button> </Col>
     </Row>
   </FormGroup>
 );

@@ -19,13 +19,13 @@ const OtherPayMentOptions = () => {
       </div>
       <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
         <h3>
-          UPI: suvai@icici
-          </h3>
+          UPI: <b>suvai@icici</b>
+        </h3>
       </Col>
 
       <Row>
         <Col xs={12} className="text-center">
-          <img style={{ maxWidth: '648px', width: '100%' }} src="/about/paymentOptions.png" />
+          <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png" />
         </Col>
       </Row>
     </Panel>
