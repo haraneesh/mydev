@@ -73,8 +73,8 @@ cusers.forEach((u) => {
 //Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });
 // Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: 'blank_image.png' } }, { multi: true });
 //Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: '' } }, { multi: true });
-Products.update({}, { $set: { displayOrder: 1 } }, { multi: true });
-Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
+//Products.update({}, { $set: { displayOrder: 1 } }, { multi: true });
+//Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
 
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });

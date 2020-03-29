@@ -47,6 +47,14 @@ import ReconcileInventoryList from '../../pages/ReconcileInventory/ReconcileInve
 
 import Analytics from 'analytics-node';
 
+import dBaskets from '../../pages/Baskets/Baskets';
+
+import dViewBasket from '../../pages/Baskets/ViewBasket';
+
+import dEditBasket from '../../pages/Baskets/EditBasket';
+
+import dNewBasket from '../../pages/Baskets/NewBasket';
+
 import dCreateBasket from '../../pages/Baskets/CreateBasket';
 
 /* Dynamic Components */
@@ -73,10 +81,11 @@ import {
   dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
-  dBasket,
+  //dBaskets,
   //dCreateBasket,
-  // dCart,
-  // dMyWallet,
+  //dViewBasket,
+  //dEditBasket,
+  //dNewBasket,
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,
@@ -96,12 +105,12 @@ const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segment
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      {/*props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
-        <small> Pongal Delivery Schedule </small> <br />
-        <small><span style={{ color: '#EF0905' }}>Wednesday (15th Jan) </span> till <span style={{ color: '#EF0905' }}>Saturday (18th Jan)</span> there will <span style={{ color: '#EF0905' }}>NOT</span> be any deliveries.</small> <br />
-        <small> Please order on or before <span style={{ color: '#EF0905' }}> Tuesday (14th Jan)</span>.</small>
-</Alert>)*/}
-      <CartProvider>
+      {props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+        <small> Due to Mandate on Quarantine and rapidly changing situation, Suvai will have to suspend deliveries till <span style={{ color: '#EF0905' }}>31st March.</span>
+        </small> <br />
+        <small> Hope your are sufficiently stocked and are safe at home. </small>
+      </Alert>)}
+      < CartProvider >
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/myorders" component={MyOrders} {...props} />
@@ -146,8 +155,13 @@ const App = props => (
 
 
           {/* Basket */}
-          <Authenticated routeName="Basket" path="/baskets/:basketId?" layout={MainLayout} component={dBasket} {...props} />
+
+          <Authenticated exact routeName="Baskets" layout={MainLayout} path="/baskets" component={dBaskets} {...props} />
+          <Authenticated exact routeName="New Basket" layout={MainLayout} path="/baskets/new" component={dNewBasket} {...props} />
+          <Authenticated exact routeName="View Basket" layout={MainLayout} path="/baskets/:_id" component={dViewBasket} {...props} />
+          <Authenticated exact routeName="Edit Basket" layout={MainLayout} path="/baskets/:_id/edit" component={dEditBasket} {...props} />
           <Authenticated routeName="Create Basket From Order" path="/createBasket/:orderId" layout={MainLayout} component={dCreateBasket} {...props} />
+
 
           {/* CartHome */}
           <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
@@ -198,8 +212,8 @@ const App = props => (
         </Switch>
         <Footer />
       </CartProvider>
-    </div> : ''}
-  </Router>
+    </div > : ''}
+  </Router >
 );
 
 App.propTypes = {

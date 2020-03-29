@@ -139,8 +139,22 @@ export const dApproveUserSignUps = SuvaiLoadable({
   loader: () => import('../../pages/Miscellaneous/ApproveSignUps'),
 });
 
-export const dBasket = SuvaiLoadable({
+// Basket
+
+export const dBaskets = SuvaiLoadable({
+  loader: () => import('../../pages/Baskets/Baskets'),
+});
+
+export const dViewBasket = SuvaiLoadable({
+  loader: () => import('../../pages/Baskets/ViewBasket'),
+});
+
+export const dEditBasket = SuvaiLoadable({
   loader: () => import('../../pages/Baskets/EditBasket'),
+});
+
+export const dNewBasket = SuvaiLoadable({
+  loader: () => import('../../pages/Baskets/NewBasket'),
 });
 
 export const dCreateBasket = SuvaiLoadable({

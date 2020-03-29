@@ -21,6 +21,7 @@ Baskets.deny({
 Baskets.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the Product List' },
   name: { type: String, label: 'Basket Name' },
+  description: { type: String, optional: true, label: 'Basket Description' },
   owner: { type: String },
   isOwnerAdmin: { type: Boolean },
   createdAt: {

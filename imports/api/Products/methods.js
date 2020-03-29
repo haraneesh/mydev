@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import { Roles } from 'meteor/alanning:roles';
 import SimpleSchema from 'simpl-schema';
+import constants from '../../modules/constants';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import handleMethodException from '../../modules/handle-method-exception';
@@ -162,7 +165,33 @@ Meteor.methods({
     } catch (exception) {
       handleMethodException(exception);
     }
-  }
+  },
+  'products.bulkUpdatePrices': async function bulkUpdateProductPrices(productPricesArray) {
+    check(productPricesArray,
+      [{
+        _id: String,
+        name: String,
+        unitprice: String,
+        wSaleBaseUnitPrice: String,
+      }]
+    );
+
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      try {
+        let bulk = Products.rawCollection().initializeOrderedBulkOp();
+
+        productPricesArray.forEach((row) => {
+          bulk.find({ _id: row._id }).update({ $set: { unitprice: row.unitprice, wSaleBaseUnitPrice: row.wSaleBaseUnitPrice } });
+        })
+
+        const bulkWriteResult = await bulk.execute();
+        return bulkWriteResult;
+
+      } catch (exception) {
+        handleMethodException(exception);
+      }
+    }
+  },
 });
 
 rateLimit({
@@ -177,6 +206,7 @@ rateLimit({
     updateProductSKU,
     removeProduct,
     'products.getItemsFromZoho',
+    'products.bulkUpdatePrices',
   ],
   limit: 5,
   timeRange: 1000,

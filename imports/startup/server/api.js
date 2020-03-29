@@ -53,6 +53,7 @@ import '../../api/FeedBacks/methods';
 // import '../../api/FeedBacks/server/publications';
 
 import '../../api/Baskets/methods';
+import '../../api/Baskets/server/publications';
 
 import '../../api/Media/methods';
 import '../../api/Media/Media';

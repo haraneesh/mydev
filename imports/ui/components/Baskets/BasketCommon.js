@@ -60,7 +60,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
       {displayWithDivider(productOils, 'Oils, Butter & Ghee')}
       {displayWithDivider(productPrepared, 'Pickles & Podis')}
       {displayWithDivider(productHygiene, 'Personal & General Hygiene')}
-      {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
+      {displayWithDivider(chosenButDeleted, 'Yet To Be Added To Basket')}
     </PanelGroup>
   );
 };

@@ -276,7 +276,7 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
           $match: {
             $and: [
               { order_status: 'Awaiting_Fulfillment' },
-              { orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }
+              { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } }
             ]
           }
         },
@@ -289,12 +289,13 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
               // orderId: '$_id',
               productType: '$products.type',
               productName: '$products.name',
-              productUnitOfSale: '$products.unitOfSale',
-              productQuantity: '$products.quantity',
+              customerName: '$customer_details.name',
             },
+            productUnitOfSale: { $first: '$products.unitOfSale' },
+            productQuantity: { $sum: '$products.quantity' },
             // totalQuantity: { $sum: '$products.quantity' },
-            totalCount: { $sum: 1 },
-            customerName: { $first: '$customer_details.name' },
+            // totalCount: { $sum: 1 },
+            //customerName: { $first: '$customer_details.name' },
           },
         },
         {
@@ -319,7 +320,7 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
           $match: {
             $and: [
               { order_status: 'Awaiting_Fulfillment' },
-              { orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }
+              { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } }
             ]
           },
         }, {

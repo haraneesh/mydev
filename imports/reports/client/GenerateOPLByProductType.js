@@ -7,34 +7,34 @@ import { displayUnitOfSale } from '../../modules/helpers';
 
 const getHeader = () => '<!DOCTYPE html> <html> <head> ' +
   ' <title>OPL By Product Type | Suvai</title> ' +
-   '<link rel="stylesheet" type="text/css" ' +
-   'href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />' +
-   '</head><body>';
+  '<link rel="stylesheet" type="text/css" ' +
+  'href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />' +
+  '</head><body>';
 
 const getFooter = () => '</body></html>';
+let heading = "";
 
-const addProductRows = rowsDetails => rowsDetails.map((rowDetail, index, theArray) => {
-  if (rowDetail.totalCount > 0) {
-    const rows = [];
-    const prevIndex = (index > 0) ? index - 1 : 0;
-    if (index === 0 || theArray[prevIndex]._id.productType !== rowDetail._id.productType) {
-      rows.push(<tr>
-        <td className="text-left">
-          <strong> {rowDetail._id.productType} </strong>
-        </td>
-        <td />
-        <td />
-      </tr>);
-    }
-    rows.push(
-      <tr>
-        <td className="text-left">{rowDetail._id.productName}</td>
-        <td className="text-center"> {displayUnitOfSale(rowDetail._id.productQuantity, rowDetail._id.productUnitOfSale)} </td>
-        <td className="text-center"> {rowDetail.totalCount} </td>
-      </tr>);
-
-    return (rows);
+const addProductRows = rowsDetails => rowsDetails.map((rowDetail) => {
+  // if (rowDetail.totalCount > 0) {
+  const rows = [];
+  if (heading !== rowDetail._id.productName) {
+    heading = rowDetail._id.productName;
+    rows.push(<tr>
+      <td className="text-left">
+        <strong> {rowDetail._id.productName} </strong>
+      </td>
+      <td />
+    </tr>);
   }
+  rows.push(
+    <tr>
+      { /*<td className="text-left">{rowDetail._id.productName}</td> */}
+      <td className="text-left"> {rowDetail._id.customerName} </td>
+      <td className="text-center"> {displayUnitOfSale(rowDetail.productQuantity, rowDetail.productUnitOfSale)} </td>
+    </tr>);
+
+  return (rows);
+  //}
 });
 
 
@@ -61,13 +61,13 @@ const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderTo
           <div className="panel-body">
             <div className="table-responsive">
               <table className="table table-condensed">
-                <thead>
-                  <tr>
-                    <td className="text-left"><strong>Product Name</strong></td>
+                {/* <thead>
+                 <tr>
+                     <td className="text-left"><strong>Product Name</strong></td> 
+                    <td className="text-left"><strong> Type / Customer Name</strong></td>
                     <td className="text-center"><strong>Quantity</strong></td>
-                    <td className="text-center"><strong>Count</strong></td>
-                  </tr>
-                </thead>
+                  </tr> 
+                </thead> */}
                 <tbody>
                   {addProductRows(rowsDetails)}
                 </tbody>
@@ -76,8 +76,8 @@ const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderTo
           </div>
         </div>
       </div>
-    </div>
-  </div>,
+    </div >
+  </div >,
 );
 
 const GenerateOPLByProductType = (rowsDetails) => {
