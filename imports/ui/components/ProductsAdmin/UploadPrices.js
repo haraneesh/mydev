@@ -49,7 +49,7 @@ const UploadPrices = ({ history, products }) => {
             } else {
                 Bert.alert('success', 'success');
             }
-            history.go(0xx);
+            history.go(0);
         })
     }
 
