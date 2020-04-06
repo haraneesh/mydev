@@ -19,7 +19,7 @@ Meteor.publish('orders.list', function ordersList(options) {
   });
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
     const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip } = options;
-    return [Orders.find({ orderRole: { $not: { $eq: constants.Roles.shopOwner.name } } }, {
+    return [Orders.find({}, {
       sort,
       limit,
       skip,
@@ -28,28 +28,6 @@ Meteor.publish('orders.list', function ordersList(options) {
   return [];
 });
 
-Meteor.publish('wholeSaleOrders.wList', function wholeSaleOrdersList(options) {
-  check(options, {
-    limit: Number,
-    skip: Number,
-    sort: {
-      createdAt: Match.Maybe(Number),
-      'customer_details.mobilePhone': Match.Maybe(Number),
-      'customer_details.name': Match.Maybe(Number),
-      order_status: Match.Maybe(Number),
-      total_bill_amount: Match.Maybe(Number),
-    },
-  });
-  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip } = options;
-    return [Orders.find({ orderRole: { $eq: constants.Roles.shopOwner.name } }, {
-      sort,
-      limit,
-      skip,
-    })];
-  }
-  return [];
-});
 
 Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);

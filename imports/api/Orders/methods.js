@@ -5,6 +5,7 @@ import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Orders } from './Orders';
 import constants from '../../modules/constants';
+import Products from '../Products/Products';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 import orderCommon from '../../modules/both/orderCommon';
@@ -26,9 +27,21 @@ const calculateOrderTotal = (order, productListId, userId) => {
   }, {});
 
   let totalBillAmount = 0;
-  order.products.forEach((product) => {
-    const key = product._id;
-    const quantity = product.quantity ? product.quantity : 0;
+  let productsToUpdate = [];
+  order.products.forEach((prd) => {
+
+    const key = prd._id;
+    let product = productArray[key];
+    if (!product) { /* product removed from product List after use chose it */
+      product = prd;
+      const findProduct = Products.findOne({ _id: key });
+      product.unitprice = findProduct.unitprice;
+      product.wSaleBaseUnitPrice = findProduct.wSaleBaseUnitPrice;
+    }
+
+    const quantity = prd.quantity ? prd.quantity : 0;
+
+
     if (isShopOwner) {
       if (product.sourceSuppliers && product.sourceSuppliers.length > 0) {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
@@ -37,9 +50,14 @@ const calculateOrderTotal = (order, productListId, userId) => {
       }
     }
     else {
-      totalBillAmount += quantity * productArray[key].unitprice;
+      totalBillAmount += quantity * product.unitprice;
     }
+
+    product.quantity = quantity;
+    productsToUpdate.push(product);
   });
+
+  Orders.update({ _id: order._id }, { $set: { products: productsToUpdate } });
 
   return totalBillAmount;
 };

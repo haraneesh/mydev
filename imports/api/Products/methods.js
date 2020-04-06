@@ -167,16 +167,22 @@ Meteor.methods({
     }
   },
   'products.bulkUpdatePrices': async function bulkUpdateProductPrices(productPricesArray) {
-    check(productPricesArray,
-      [{
-        _id: String,
-        name: String,
-        unitprice: String,
-        wSaleBaseUnitPrice: String,
-      }]
-    );
 
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    try {
+      check(productPricesArray,
+        [{
+          _id: String,
+          name: String,
+          unitprice: String,
+          wSaleBaseUnitPrice: String,
+        }]
+      );
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+
+
+    if (/*Meteor.isServer && */ Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       try {
         let bulk = Products.rawCollection().initializeOrderedBulkOp();
 

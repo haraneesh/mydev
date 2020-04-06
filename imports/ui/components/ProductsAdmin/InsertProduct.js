@@ -16,6 +16,7 @@ const handleInsertProduct = (event) => {
     const image_path = '/blank_image.png';
     const type = constants.ProductType[0]; //New
     const availableToOrder = false;
+    const availableToOrderWH = false;
     const maxUnitsAvailableToOrder = 99999;
     const vendor_details = {
       'id': 1,
@@ -34,6 +35,7 @@ const handleInsertProduct = (event) => {
       image_path,
       type,
       availableToOrder,
+      availableToOrderWH,
       vendor_details,
     }, (error) => {
       if (error) {

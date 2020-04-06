@@ -12,11 +12,12 @@ export const ProductTableHeader = () => (
     <Row>
       <Col xs={1}>&nbsp;</Col>
       <Col xs={2}>Product Name</Col>
-      <Col xs={2}>Unit Price</Col>
+      <Col xs={2}>Retail Price</Col>
+      <Col xs={1}>Retail ordered?</Col>
       <Col xs={1}>Unit Of Sale</Col>
-      <Col xs={2}>Whole Sale Unit Price</Col>
-      <Col xs={2}>Type</Col>
-      <Col xs={1}>Can be ordered?</Col>
+      <Col xs={2}>Whole Sale Price</Col>
+      <Col xs={1}>WH ordered?</Col>
+      <Col xs={1}>Special?</Col>
       <Col xs={1} />
     </Row>
   </ListGroupItem>
@@ -122,6 +123,8 @@ export default class Product extends React.Component {
     switch (field) {
       case 'availableToOrder': valueToUpdate = !product.availableToOrder;
         break;
+      case 'availableToOrderWH': valueToUpdate = !product.availableToOrderWH;
+        break;
       case 'displayAsSpecial': valueToUpdate = !product.displayAsSpecial;
         break;
       case 'associatedFoodGroups':
@@ -205,6 +208,15 @@ export default class Product extends React.Component {
             />
           </Col>
           <Col xs={1}>
+            <Checkbox
+              name="availableToOrder"
+              checked={this.state.product.availableToOrder}
+              onChange={this.handleProductUpsert}
+            >
+              {/* Is Available To Order */}
+            </Checkbox>
+          </Col>
+          <Col xs={1}>
             <FieldGroup
               controlType="text"
               controlLabel="Unit Of Sale"
@@ -226,24 +238,20 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={2}>
-            <FieldGroup
-              controlType="select"
-              controlLabel="Type"
-              controlName="type"
-              updateValue={this.handleProductUpsert}
-              defaultValue={product.type}
-              choiceValues={constants.ProductType}
-              help
+          <Col xs={1}>
+            <Checkbox
+              name="availableToOrderWH"
+              checked={this.state.product.availableToOrderWH}
+              onChange={this.handleProductUpsert}
             />
           </Col>
           <Col xs={1}>
             <Checkbox
-              name="availableToOrder"
-              checked={this.state.product.availableToOrder}
+              name="displayAsSpecial"
+              checked={this.state.product.displayAsSpecial}
               onChange={this.handleProductUpsert}
             >
-              {/* Is Available To Order */}
+              {/*Display this as special? */}
             </Checkbox>
           </Col>
           <Col xs={1} >
@@ -259,15 +267,6 @@ export default class Product extends React.Component {
         <Panel collapsible expanded={this.state.open}>
           <Row>
             <Col xs={1} />
-            <Col xs={3}>
-              <Checkbox
-                name="displayAsSpecial"
-                checked={this.state.product.displayAsSpecial}
-                onChange={this.handleProductUpsert}
-              >
-                Display this as special?
-              </Checkbox>
-            </Col>
 
             <Col xs={2}>
               <FieldGroup
@@ -305,6 +304,18 @@ export default class Product extends React.Component {
                 help
               /> */}
             <Col xs={2}>
+              <FieldGroup
+                controlType="select"
+                controlLabel="Type"
+                controlName="type"
+                displayControlName="true"
+                updateValue={this.handleProductUpsert}
+                defaultValue={product.type}
+                choiceValues={constants.ProductType}
+                help
+              />
+            </Col>
+            <Col xs={3}>
               <FieldGroup
                 controlType="text"
                 controlLabel="Category"

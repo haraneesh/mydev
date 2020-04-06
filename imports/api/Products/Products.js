@@ -40,6 +40,7 @@ export const ProductSchemaDefObject = {
   type: { type: String, label: 'The type of the product.' },
   category: { type: String, label: 'The category of the product.', optional: true },
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
+  availableToOrderWH: { type: Boolean, label: 'Is product availableToOrderWH?', optional: true },
   maxUnitsAvailableToOrder: { type: Number, min: 0, defaultValue: 0, label: 'Max Units Available to order', optional: true },
   displayAsSpecial: { type: Boolean, label: 'Is this a special product?', optional: true },
   //displayOrder: { type: Number, defaultValue: 0, label: 'Order to display in.', optional: true },

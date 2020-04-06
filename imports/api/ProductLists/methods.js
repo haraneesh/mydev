@@ -53,7 +53,8 @@ export const upsertProductList = new ValidatedMethod({
       const startDate = params.activeStartDateTime;
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
-      let orderableProducts = Products.find({ availableToOrder: true }, { sort: { type: 1, category: 1, /*displayOrder: 1,*/ name: 1 } }).fetch();
+      // db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } )
+      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, category: 1, /*displayOrder: 1,*/ name: 1 } }).fetch();
       /* $or: [
                   { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
                   { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },

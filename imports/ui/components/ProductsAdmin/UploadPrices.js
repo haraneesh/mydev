@@ -32,14 +32,16 @@ const UploadPrices = ({ history, products }) => {
         fileData.map((row, rowIndex) => {
             if (rowIndex > 0) {
                 const rowSplit = row.split(',');
-                return prepProductPricesForUpdate.push(
-                    {
-                        _id: rowSplit[0],
-                        name: rowSplit[1],
-                        unitprice: rowSplit[2],
-                        wSaleBaseUnitPrice: rowSplit[3],
+                if (rowSplit[0] !== "") {
+                    return prepProductPricesForUpdate.push(
+                        {
+                            _id: rowSplit[0],
+                            name: rowSplit[1],
+                            unitprice: rowSplit[2],
+                            wSaleBaseUnitPrice: rowSplit[3],
 
-                    });
+                        });
+                }
             }
         });
 
@@ -49,8 +51,12 @@ const UploadPrices = ({ history, products }) => {
             } else {
                 Bert.alert('success', 'success');
             }
-            history.go(0);
+            resetUpload();
         })
+    }
+
+    function refreshPage() {
+        history.go(0);
     }
 
     function handleFileSelect() {
@@ -126,7 +132,7 @@ const UploadPrices = ({ history, products }) => {
                             <Modal.Title>Prices to Update</Modal.Title>
                         </Modal.Header>
 
-                        <Modal.Body style={{ maxHeight: '768px', overflowY: 'scroll' }}>{createTableWithFileData()}</Modal.Body>
+                        <Modal.Body style={{ maxHeight: '700px', overflowY: 'scroll' }}>{createTableWithFileData()}</Modal.Body>
 
                         <Modal.Footer>
                             <Button onClick={resetUpload}>Close</Button>
@@ -137,6 +143,7 @@ const UploadPrices = ({ history, products }) => {
             )}
 
             <Button onClick={() => { exportTableToCSV() }}>Download Template</Button>
+            <Button onClick={refreshPage} style={{ marginLeft: '10px' }}> Reload Data </Button>
             <div id="list"></div>
         </div>
     );

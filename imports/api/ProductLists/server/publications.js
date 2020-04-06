@@ -2,7 +2,10 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import ProductLists from '../ProductLists';
 
-Meteor.publish('productLists.list', () => ProductLists.find({}));
+Meteor.publish('productLists.list', () => ProductLists.find({}, {
+  sort: { updatedAt: -1 },
+  limit: 10
+}));
 
 Meteor.publish('productList.view', (_id) => {
   check(_id, String);
@@ -13,10 +16,11 @@ Meteor.publish('productList.view', (_id) => {
 Meteor.publish('productOrderList.view', (dateValue) => {
   check(dateValue, Date);
   return ProductLists.find(
-    { $and: [
-              { activeStartDateTime: { $lte: dateValue } },
-              { activeEndDateTime: { $gte: dateValue } },
-    ],
+    {
+      $and: [
+        { activeStartDateTime: { $lte: dateValue } },
+        { activeEndDateTime: { $gte: dateValue } },
+      ],
     },
   );
 });

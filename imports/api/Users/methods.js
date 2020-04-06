@@ -95,6 +95,7 @@ const createNewUser = (user) => {
         first: user.profile.name.first,
         last: user.profile.name.last,
       },
+      salutation: user.profile.salutation,
       whMobilePhone: user.profile.whMobilePhone,
       deliveryAddress: user.profile.deliveryAddress,
     },
@@ -140,7 +141,7 @@ export const createUser = new ValidatedMethod({
   }).validator(),
   run(user) {
     if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      createNewUser(user);
+      return createNewUser(user);
     }
   },
 });

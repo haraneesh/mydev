@@ -38,7 +38,8 @@ FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].dis
 
 // This for organizing tabs in the order screen
 // const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
-const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene'];
+const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners'];
+
 
 /*
 Saved - customer saved the current selection, with the intent to resume.

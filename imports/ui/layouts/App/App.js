@@ -105,11 +105,11 @@ const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segment
 const App = props => (
   <Router>
     {!props.loading ? <div className="App">
-      {props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
+      {/*props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
         <small> Due to Mandate on Quarantine and rapidly changing situation, Suvai will have to suspend deliveries till <span style={{ color: '#EF0905' }}>31st March.</span>
         </small> <br />
         <small> Hope your are sufficiently stocked and are safe at home. </small>
-      </Alert>)}
+        </Alert>)*/}
       < CartProvider >
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />

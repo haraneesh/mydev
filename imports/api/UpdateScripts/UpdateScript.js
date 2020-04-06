@@ -3,7 +3,7 @@
 //import { Mongo } from 'meteor/mongo';
 //import { Meteor } from 'meteor/meteor';
 // import Ingredients from '../Ingredients/Ingredients';
-import Products from '../Products/Products';
+//import Products from '../Products/Products';
 //import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 //import { Orders } from '../Orders/Orders';
 //import { Roles } from 'meteor/alanning:roles';
@@ -76,5 +76,6 @@ cusers.forEach((u) => {
 //Products.update({}, { $set: { displayOrder: 1 } }, { multi: true });
 //Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
 
+//Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
