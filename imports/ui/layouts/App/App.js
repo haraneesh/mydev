@@ -47,6 +47,7 @@ import ReconcileInventoryList from '../../pages/ReconcileInventory/ReconcileInve
 
 import Analytics from 'analytics-node';
 
+/*
 import dBaskets from '../../pages/Baskets/Baskets';
 
 import dViewBasket from '../../pages/Baskets/ViewBasket';
@@ -55,7 +56,7 @@ import dEditBasket from '../../pages/Baskets/EditBasket';
 
 import dNewBasket from '../../pages/Baskets/NewBasket';
 
-import dCreateBasket from '../../pages/Baskets/CreateBasket';
+import dCreateBasket from '../../pages/Baskets/CreateBasket'; */
 
 /* Dynamic Components */
 import {
@@ -81,11 +82,11 @@ import {
   dHealthFAQ,
   dProfileUpdate,
   dZohoSyncUp,
-  //dBaskets,
-  //dCreateBasket,
-  //dViewBasket,
-  //dEditBasket,
-  //dNewBasket,
+  dBaskets,
+  dCreateBasket,
+  dViewBasket,
+  dEditBasket,
+  dNewBasket,
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,

@@ -5,7 +5,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import './Footer.scss';
 
 const copyrightYear = () => {
-  const currentYear = 2019;
+  const currentYear = 2020;
   return currentYear;
 };
 
@@ -14,7 +14,7 @@ const Footer = () => (
 
     <Grid>
       <p className="pull-left">
-        &copy; {copyrightYear()} Suvai Organics 
+        &copy; {copyrightYear()} Suvai Organics
         <span className="hidden-xs"> | Foods that love you back </span>
       </p>
       <ul className="pull-right">

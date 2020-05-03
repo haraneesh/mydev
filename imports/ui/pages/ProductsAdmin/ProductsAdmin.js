@@ -1,17 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Meteor } from 'meteor/meteor';
 import { Row, Col } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
-//import ListAllProducts from '../../containers/ProductsAdmin/ListAllProducts';
+import { Bert } from 'meteor/themeteorchef:bert';
 import InsertProduct from '../../components/ProductsAdmin/InsertProduct';
 import UploadPrices from '../../components/ProductsAdmin/UploadPrices';
 import ListAllProducts from '../../components/ProductsAdmin/ListAllProducts';
 import Products from '../../../api/Products/Products';
-import SuppliersCollection from '../../../api/Suppliers/Suppliers';
 import Loading from '../../components/Loading/Loading';
 
-const ProductsAdmin = ({ loading, products, suppliers, productListId, history }) => (!loading ? (
+const ProductsAdmin = (args) => {
 
-  <Row>
+  const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true);
+  const [suppliers, setSuppliers] = useState([]);
+
+  useEffect(() => {
+    setIsLoadingSuppliers(true);
+    Meteor.call('suppliers.list', (error, supplierss) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        setSuppliers(supplierss);
+      }
+      setIsLoadingSuppliers(false);
+    });
+  }, []);
+
+
+  return isLoadingSuppliers ? (<Loading />) : (<ProductsAdminSub history={args.history} productListId={args.match.params._id} suppliers={suppliers} />);
+
+};
+
+export default ProductsAdmin;
+
+const ProductsAdminDetail = ({ loading, products, suppliers, productListId, history }) => (
+  !loading ? (<Row>
     <Col xs={12}>
       <h3 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h3>
       <InsertProduct history={history} />
@@ -26,20 +49,15 @@ const ProductsAdmin = ({ loading, products, suppliers, productListId, history })
   </Row>) : (<Loading />)
 );
 
-export default withTracker((args) => {
-  const productListId = args.match.params._id;
-
+const ProductsAdminSub = withTracker(({ history, productListId, suppliers }) => {
   const subscriptionProducts = Meteor.subscribe('products.list');
 
-  const subscriptionToSuppliers = Meteor.subscribe('suppliers');
-
-
   return {
-    loading: !subscriptionProducts.ready() || !subscriptionToSuppliers.ready(),
+    loading: !subscriptionProducts.ready(),
     products: Products.find({}, { sort: { type: 1, name: 1 } }).fetch(),
-    suppliers: SuppliersCollection.find().fetch(),
+    suppliers: suppliers,
     productListId,
-    history: args.history,
+    history: history,
   };
-})(ProductsAdmin);
+})(ProductsAdminDetail);
 

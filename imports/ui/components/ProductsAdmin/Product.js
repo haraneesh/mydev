@@ -82,12 +82,19 @@ export default class Product extends React.Component {
   }
 
   // Life cycle function which will check if the props are updated
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.prodId !== nextProps.prodId) {
-      this.setState({
-        product: Object.assign({}, nextProps.product),
-      });
-    }
+  /* UNSAFE_componentWillReceiveProps(nextProps) {
+     if (this.props.prodId !== nextProps.prodId) {
+       this.setState({
+         product: Object.assign({}, nextProps.product),
+       });
+     }
+   } */
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    /*  if (nextProps.propId !== prevState.product._id) {
+        return { product: Object.assign({}, nextProps.product) };
+      }
+      else return null; */
   }
 
   retSupplierHash(suppliers /* _id, name */) {
@@ -264,23 +271,24 @@ export default class Product extends React.Component {
             </Button>
           </Col>
         </Row>
-        <Panel collapsible expanded={this.state.open}>
-          <Row>
-            <Col xs={1} />
+        {this.state.open && (
+          <Panel>
+            <Row>
+              <Col xs={1} />
 
-            <Col xs={2}>
-              <FieldGroup
-                controlType="number"
-                controlLabel="Max Units Available"
-                controlName="maxUnitsAvailableToOrder"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
-                  product.maxUnitsAvailableToOrder : ''}
-                help
-              />
-            </Col>
-            {/* <Col xs={1}>
+              <Col xs={2}>
+                <FieldGroup
+                  controlType="number"
+                  controlLabel="Max Units Available"
+                  controlName="maxUnitsAvailableToOrder"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
+                    product.maxUnitsAvailableToOrder : ''}
+                  help
+                />
+              </Col>
+              {/* <Col xs={1}>
               <FieldGroup
                 controlType="number"
                 controlLabel="Display Order"
@@ -303,130 +311,131 @@ export default class Product extends React.Component {
                 choiceValues={constants.ProductCategory}
                 help
               /> */}
-            <Col xs={2}>
-              <FieldGroup
-                controlType="select"
-                controlLabel="Type"
-                controlName="type"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.type}
-                choiceValues={constants.ProductType}
-                help
-              />
-            </Col>
-            <Col xs={3}>
-              <FieldGroup
-                controlType="text"
-                controlLabel="Category"
-                controlName="category"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.category}
-                help
-              />
-            </Col>
-            <Col xs={3}>
-              <FieldGroup
-                controlType="text"
-                controlLabel="SKU"
-                controlName="sku"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.sku}
-                help
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={1} />
-            <Col xs={7}>
-              <FieldGroup
-                controlType="textarea"
-                controlLabel="Description"
-                controlName="description"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.description}
-                help
-              />
-            </Col>
-            <Col xs={4}>
-              <FieldGroup
-                controlType="text"
-                controlLabel="Image URL"
-                controlName="image_path"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.image_path}
-                help
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={1} />
-            <Col xs={6}>
-              <ControlLabel>Associated with Ingredient:
+              <Col xs={2}>
+                <FieldGroup
+                  controlType="select"
+                  controlLabel="Type"
+                  controlName="type"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.type}
+                  choiceValues={constants.ProductType}
+                  help
+                />
+              </Col>
+              <Col xs={3}>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="Category"
+                  controlName="category"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.category}
+                  help
+                />
+              </Col>
+              <Col xs={3}>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="SKU"
+                  controlName="sku"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.sku}
+                  help
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1} />
+              <Col xs={7}>
+                <FieldGroup
+                  controlType="textarea"
+                  controlLabel="Description"
+                  controlName="description"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.description}
+                  help
+                />
+              </Col>
+              <Col xs={4}>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="Image URL"
+                  controlName="image_path"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.image_path}
+                  help
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1} />
+              <Col xs={6}>
+                <ControlLabel>Associated with Ingredient:
                 <strong>
-                  {product.associatedIngredient ? ` ${product.associatedIngredient.Long_Desc}` : ''}
-                </strong>
-              </ControlLabel>
-              <AttachIngredient
-                onChange={this.handleChangeInAssocIngredient}
-                ingredient={product.associatedIngredient}
-              />
-            </Col>
-            <Col xs={5}>
-              <FieldGroup
-                style={{ height: '170px' }}
-                controlType="select"
-                controlLabel="Food Group"
-                controlName="associatedFoodGroups"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.associatedFoodGroups}
-                choiceValues={constants.FoodGroups.names}
-                multiple
-                help
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={1} />
-            <Col xs={5}>
-              <FieldGroup
-                controlType="text"
-                controlLabel="Units For Selection"
-                controlName="unitsForSelection"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={product.unitsForSelection}
-                help
-              />
-            </Col>
-            <Col xs={3}>
-              <FieldGroup
-                controlType="select"
-                controlLabel="Suppliers"
-                controlName="sourceSuppliers"
-                displayControlName="true"
-                updateValue={this.handleProductUpsert}
-                defaultValue={this.props.product.sourceSuppliers && this.props.product.sourceSuppliers.length > 0 ? this.props.product.sourceSuppliers[0]._id : ''}
-                choiceValues={this.props.suppliers}
-                help
-              />
-            </Col>
-            <Col xs={2}>
-              <ControlLabel>&nbsp;</ControlLabel><br />
-              <Button
-                bsSize="small"
-                name={product._id}
-                onClick={this.handleRemoveProduct}
-              > Delete Product
+                    {product.associatedIngredient ? ` ${product.associatedIngredient.Long_Desc}` : ''}
+                  </strong>
+                </ControlLabel>
+                <AttachIngredient
+                  onChange={this.handleChangeInAssocIngredient}
+                  ingredient={product.associatedIngredient}
+                />
+              </Col>
+              <Col xs={5}>
+                <FieldGroup
+                  style={{ height: '170px' }}
+                  controlType="select"
+                  controlLabel="Food Group"
+                  controlName="associatedFoodGroups"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.associatedFoodGroups}
+                  choiceValues={constants.FoodGroups.names}
+                  multiple
+                  help
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1} />
+              <Col xs={5}>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="Units For Selection"
+                  controlName="unitsForSelection"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.unitsForSelection}
+                  help
+                />
+              </Col>
+              <Col xs={3}>
+                <FieldGroup
+                  controlType="select"
+                  controlLabel="Suppliers"
+                  controlName="sourceSuppliers"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={this.props.product.sourceSuppliers && this.props.product.sourceSuppliers.length > 0 ? this.props.product.sourceSuppliers[0]._id : ''}
+                  choiceValues={this.props.suppliers}
+                  help
+                />
+              </Col>
+              <Col xs={2}>
+                <ControlLabel>&nbsp;</ControlLabel><br />
+                <Button
+                  bsSize="small"
+                  name={product._id}
+                  onClick={this.handleRemoveProduct}
+                > Delete Product
               </Button>
-            </Col>
-          </Row>
-        </Panel>
+              </Col>
+            </Row>
+          </Panel>
+        )}
       </ListGroupItem >
     );
   }

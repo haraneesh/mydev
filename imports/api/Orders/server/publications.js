@@ -7,6 +7,7 @@ import constants from '../../../modules/constants';
 
 Meteor.publish('orders.list', function ordersList(options) {
   check(options, {
+    isWholeSale: Boolean,
     limit: Number,
     skip: Number,
     sort: {
@@ -17,9 +18,16 @@ Meteor.publish('orders.list', function ordersList(options) {
       total_bill_amount: Match.Maybe(Number),
     },
   });
+
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip } = options;
-    return [Orders.find({}, {
+    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip, isWholeSale } = options;
+
+    let customerRoles = [constants.Roles.customer.name, constants.Roles.admin.name]
+    if (isWholeSale) {
+      customerRoles = [constants.Roles.shopOwner.name]
+    }
+
+    return [Orders.find({ 'customer_details.role': { $in: customerRoles } }, {
       sort,
       limit,
       skip,

@@ -118,6 +118,7 @@ const addUpdateOrder = (order) => {
     order.customer_details = {
       _id: loggedInUserId,
       name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
+      role: Roles.getRolesForUser(loggedInUserId)[0],
       email: loggedInUser.emails[0].address,
       mobilePhone: loggedInUser.profile.whMobilePhone,
       deliveryAddress: loggedInUser.profile.deliveryAddress,
@@ -285,17 +286,25 @@ export const getOrders = new ValidatedMethod({
 
 export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMethod({
   name: 'order.getProductQuantityForOrdersAwaitingFullFillmentNEW',
-  validate: new SimpleSchema({}).validator(),
-  run() {
+  validate: new SimpleSchema({ isWholeSale: { type: Boolean } }).validator(),
+  run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+
+        const selectQuery = (isWholeSale) ?
+          [
+            { order_status: 'Awaiting_Fulfillment' },
+            { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
+          ] :
+          [
+            { order_status: 'Awaiting_Fulfillment' },
+            { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
+          ];
+
         return Orders.aggregate([{
           //$match: { order_status: 'Awaiting_Fulfillment' },
           $match: {
-            $and: [
-              { order_status: 'Awaiting_Fulfillment' },
-              { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } }
-            ]
+            $and: selectQuery,
           }
         },
         {
@@ -330,16 +339,24 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
 
 export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMethod({
   name: 'order.getProductQuantityForOrdersAwaitingFullFillment',
-  validate: new SimpleSchema({}).validator(),
-  run() {
+  validate: new SimpleSchema({ isWholeSale: { type: Boolean } }).validator(),
+  run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+
+        const selectQuery = (isWholeSale) ?
+          [
+            { order_status: 'Awaiting_Fulfillment' },
+            { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
+          ] :
+          [
+            { order_status: 'Awaiting_Fulfillment' },
+            { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
+          ];
+
         return Orders.aggregate([{
           $match: {
-            $and: [
-              { order_status: 'Awaiting_Fulfillment' },
-              { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } }
-            ]
+            $and: selectQuery,
           },
         }, {
           $unwind: '$products',
@@ -370,11 +387,53 @@ Meteor.methods({
         };
       }
 
-      throw new Meteor.Error('403', 'Sorry, you need to be an administrator to do this.');
+      throw new Meteor.Error('403', 'You need to be an administrator to do this.');
     } catch (exception) {
       handleMethodException(exception);
     }
   },
+
+  'admin.fetchDetailsForPO': function adminFetchDetailsForPO(orderIds) { // eslint-disable-line
+    check(orderIds, Array);
+
+    try {
+      if (Meteor.isServer) {
+        if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+
+          const selectQuery =
+            [
+              //{ order_status: 'Awaiting_Fulfillment' },
+              { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
+              { _id: { $in: orderIds } },
+            ]
+
+          return Orders.aggregate([{
+            $match: {
+              $and: selectQuery,
+            },
+          }, {
+            $unwind: '$products',
+          },
+          {
+            $group: {
+              _id: {
+                productSKU: '$products.sku',
+                productName: '$products.name',
+                productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
+              },
+              totalQuantity: { $sum: '$products.quantity' },
+            },
+          },
+          ]);
+        } else {
+          throw new Meteor.Error('403', 'You need to be an administrator to do this.');
+        }
+      }
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+
 });
 
 rateLimit({
@@ -388,6 +447,7 @@ rateLimit({
     removeOrder,
     updateOrderStatus,
     'admin.fetchOrderCount',
+    'admin.fetchDetailsForPO',
   ],
   limit: 5,
   timeRange: 1000,

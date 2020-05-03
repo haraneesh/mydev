@@ -100,11 +100,12 @@ export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner
   const productPrepared = [];
   const productHygiene = [];
   const productSpecials = [];
+  const productSweetners = [];
   const productRecommended = [];
   const productsNoCategory = [];
 
   const checkout = !!(cartScreen);
-  // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene';
+  // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners';
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
@@ -154,6 +155,10 @@ export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner
         tempProductList = productHygiene;
         tempKey = `hygiene-${index}`;
         break;
+      case (constants.ProductType[9] === product.type): // Sweetners
+        tempProductList = productSweetners;
+        tempKey = `sweetners-${index}`;
+        break;
       default:
         tempProductList = productsNoCategory;
         tempKey = `noCat-${index}`;
@@ -175,6 +180,7 @@ export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner
     productPrepared,
     productHygiene,
     productSpecials,
+    productSweetners,
     productRecommended,
     productsNoCategory,
     isMobile

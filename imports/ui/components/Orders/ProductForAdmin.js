@@ -56,11 +56,12 @@ class ProductForAdmin extends React.Component {
       maxUnitsAvailableToOrder,
       totQuantityOrdered,
       previousOrdQty,
+      isBasket,
     } = this.props;
 
     return (
       <Col sm={12} className="no-padding product-item">
-        <Col sm={5}>
+        <Col sm={!isBasket ? 5 : 8}>
           <h4 className="product-name"><strong>{`${name} ${unit}`}</strong></h4>
           {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -74,7 +75,7 @@ class ProductForAdmin extends React.Component {
             <p><small>{description}</small></p> */}
         </Col>
 
-        <Col sm={3}>
+        <Col sm={!isBasket ? 3 : 4}>
           <div className="input-group">
             <input
               type="number"
@@ -87,13 +88,13 @@ class ProductForAdmin extends React.Component {
             <span className="input-group-addon">{`${extractString(unit)}`}</span>
           </div>
         </Col>
-
-        <Col sm={4} className="text-right-not-xs">
-          <h4>{formatMoney(unitprice, accountSettings)}
-            <span className="text-muted">{` ${'x'} `}</span>
-            {this.state.quantitySelected}
-          </h4>
-        </Col>
+        {!isBasket && (
+          <Col sm={4} className="text-right-not-xs">
+            <h4>{formatMoney(unitprice, accountSettings)}
+              <span className="text-muted">{` ${'x'} `}</span>
+              {this.state.quantitySelected}
+            </h4>
+          </Col>)}
       </Col>
     );
   }

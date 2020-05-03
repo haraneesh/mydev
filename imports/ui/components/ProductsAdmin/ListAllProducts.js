@@ -12,6 +12,29 @@ import { upsertProductList } from '../../../api/ProductLists/methods';
 
 import 'react-datetime/css/react-datetime.css';
 
+const NewTab = 'New';
+
+const createProductRows = ({ suppliers, products }) => {
+  const productRows = [];
+  productRows[NewTab] = [];
+
+  let sectionHeaderName = '';
+  products.map((product, index) => {
+
+    if (product.type !== sectionHeaderName) {
+      sectionHeaderName = product.type;
+      if (!(sectionHeaderName in productRows)) {
+        productRows[sectionHeaderName] = [];
+      }
+      productRows[sectionHeaderName].push(<ProductTableHeader />);
+    }
+
+    productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
+  })
+
+  return productRows;
+}
+
 class ListAllProducts extends React.Component {
 
   constructor(props, context) {
@@ -21,13 +44,15 @@ class ListAllProducts extends React.Component {
       activeStartDate: null,
       activeEndDate: null,
       showEndDateError: false,
+      productRows: createProductRows({ products: props.products, suppliers: props.suppliers }),
+      selectedHeaderKey: 1,
     };
 
     this.productListId = this.props.productListId;
-
     this.publishProductList = this.publishProductList.bind(this);
     this.checkValidStartDate = this.checkValidStartDate.bind(this);
     this.checkValidEndDate = this.checkValidEndDate.bind(this);
+    this.tabOnClick = this.tabOnClick.bind(this);
   }
 
   onFocusChange(focusedInput) {
@@ -107,36 +132,38 @@ class ListAllProducts extends React.Component {
     );
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // const productRows = createProductRows({ products: nextProps.products, suppliers: nextProps.suppliers })
+    // if (productRows !== prevState.productRows) {
+    //return { productRows };
+    // }
+    // else return null;
+  }
+
+  tabOnClick(selectedHeaderKey) {
+    this.setState({ selectedHeaderKey });
+  }
+
   render() {
-    const { suppliers } = this.props;
-    let sectionHeaderName = '';
+
     let sectionCount = 0;
     const productsDisplay = [];
-    const productRows = [];
-    productRows['New'] = [];
+    const productRows = this.state.productRows;
+    const productKeys = Object.keys(productRows);
+    const selectedHeaderKey = this.state.selectedHeaderKey;
+
     return (
-      this.props.products.length > 0 ?
+      productKeys.length > 0 ?
         <ListGroup className="product-list">
-          {this.props.products.map((product, index) => {
-
-            if (product.type !== sectionHeaderName) {
-              sectionHeaderName = product.type;
-              if (!(sectionHeaderName in productRows)) {
-                productRows[sectionHeaderName] = [];
-              }
-              productRows[sectionHeaderName].push(<ProductTableHeader />);
-            }
-
-            productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
-          })}
-
-
-          {Object.keys(productRows).forEach((key) => {
+          {productKeys.forEach((key) => {
             sectionCount++;
-            productsDisplay.push(<Tab eventKey={sectionCount} title={key}> {productRows[key]} </Tab>);
+            productsDisplay.push(
+              <Tab eventKey={sectionCount} title={key}>
+                {(sectionCount === selectedHeaderKey) && productRows[key]}
+              </Tab>);
           })}
 
-          <Tabs defaultActiveKey={1} animation={false} id="adminProductList">
+          <Tabs animation={false} id="adminProductList" activeKey={selectedHeaderKey} onSelect={this.tabOnClick}>
             {productsDisplay}
           </Tabs>
 

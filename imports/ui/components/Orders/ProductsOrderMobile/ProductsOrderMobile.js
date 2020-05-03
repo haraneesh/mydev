@@ -68,6 +68,7 @@ export default class ProductsOrderMobile extends React.Component {
       productGroups[7],
       productGroups[8],
       productGroups[9],
+      productGroups[10],
     );
   }
 
@@ -80,6 +81,7 @@ export default class ProductsOrderMobile extends React.Component {
     productOils,
     productPrepared,
     productHygiene,
+    productSweetners,
     productSpecials,
     productRecommended) {
     // const expanded = this.state.panelToFocus !== '';
@@ -208,6 +210,21 @@ export default class ProductsOrderMobile extends React.Component {
             </Panel>
           </div>)}
 
+          {productSweetners.length > 0 && (<div id="swt-header">
+            <Panel
+              header={(<DisplayCategoryHeader
+                clName="swt_bk_ph"
+                title="Sweetners"
+                onclick={() => this.handlePanelSelect('swt-header')}
+                isOpen={this.state.panelToFocus === 'swt-header'}
+              />)}
+              expanded={(this.state.panelToFocus === 'swt-header')}
+              eventKey="10"
+            >
+              {(this.state.panelToFocus === 'swt-header') && productSweetners}
+            </Panel>
+          </div>)}
+
           {productPrepared.length > 0 && (<div id="prepared-header">
             <Panel
               header={(<DisplayCategoryHeader
@@ -237,7 +254,8 @@ export default class ProductsOrderMobile extends React.Component {
               {(this.state.panelToFocus === 'hyg-header') && productHygiene}
             </Panel>
           </div>)}
-        </PanelGroup>)}
+        </PanelGroup>)
+        }
       </div>
     );
   }

@@ -5,8 +5,8 @@
 // import Ingredients from '../Ingredients/Ingredients';
 //import Products from '../Products/Products';
 //import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
-//import { Orders } from '../Orders/Orders';
-//import { Roles } from 'meteor/alanning:roles';
+import { Orders } from '../Orders/Orders';
+import { Roles } from 'meteor/alanning:roles';
 //import constants from '../../modules/constants';
 
 /*
@@ -79,3 +79,9 @@ cusers.forEach((u) => {
 //Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
+
+/*
+Orders.find({}).fetch().forEach(order => {
+  const role = Roles.getRolesForUser(order.customer_details._id)[0];
+  Orders.update({ _id: order._id }, { $set: { 'customer_details.role': role } });
+});*/

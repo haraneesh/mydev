@@ -16,8 +16,9 @@
 .productOrderList .productCat_dhals_bk_ph,
 .productOrderList .productCat_spices_bk_ph,
 .productOrderList .productCat_oils_bk_ph,
+.productOrderList .productCat_swt_bk_ph,
 .productOrderList .productCat_prepared_bk_ph,
 .productOrderList .productCat_hyg_bk_ph
 {
-    background-image: url(/app/order-tabs.png?1);
+    background-image: url(/app/order-tabs.png?11);
 }

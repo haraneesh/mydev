@@ -54,13 +54,14 @@ export const upsertProductList = new ValidatedMethod({
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
       // db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } )
-      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, category: 1, /*displayOrder: 1,*/ name: 1 } }).fetch();
+      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, /*category: 1, displayOrder: 1,*/ name: 1 } }).fetch();
       /* $or: [
                   { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
                   { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
                   { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
                   ]
       */
+
       if (!productListsId) {
         const overlappingProductList = ProductLists.findOne(
           { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Alert, Button, Panel } from 'react-bootstrap';
+import { Row, Col, Alert, Button, Panel } from 'react-bootstrap';
 //import { timeago, monthDayYearAtTime } from '@cleverbeagle/dates';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -27,37 +27,23 @@ const Baskets = ({ loading, baskets, match, history }) => (!loading ? (
             <h3 className="pull-left">Baskets</h3>
             <Link className="btn btn-primary pull-right" to={`${match.url}/new`}>Add Basket</Link>
         </div>
-        {baskets.length ? <Panel> <Table responsive>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th />
-                </tr>
-            </thead>
-            <tbody>
-                {baskets.map(({ _id, name, description }) => (
-                    <tr key={_id}>
-                        <td>{name}</td>
-                        <td>{description}</td>
-                        <td>
-                            <Button
-                                bsStyle="primary"
-                                onClick={() => history.push(`${match.url}/${_id}`)}
-                                block
-                            >View</Button>
-                        </td>
-                        <td>
-                            <Button
-                                bsStyle="info"
-                                onClick={() => handleRemove(_id)}
-                                block
-                            >Delete</Button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </Table> </Panel> : <Alert bsStyle="info">No baskets yet!</Alert>}
+        {baskets.length ? <Panel>
+            {baskets.map(({ _id, name, description }) => (
+                <Row>
+                    <Col xs={12} sm={4} style={{ marginBottom: '3px' }}>{name}</Col>
+                    <Col xs={12} sm={5} className="text-muted" style={{ marginBottom: '3px' }}>{description}</Col>
+                    <Col xs={12} sm={3} style={{ marginBottom: '3px' }}>
+                        <Button className="btn-sm"
+                            style={{ marginRight: '2px' }}
+                            bsStyle="primary"
+                            onClick={() => history.push(`/baskets/${_id}`)}>View</Button>
+                        <Button className="btn-sm"
+                            bsStyle="info"
+                            onClick={() => handleRemove(_id)}>Delete</Button>
+                    </Col>
+                </Row>
+            ))}
+        </Panel> : <Alert bsStyle="info">No baskets yet!</Alert>}
     </div>
 ) : <Loading />);
 

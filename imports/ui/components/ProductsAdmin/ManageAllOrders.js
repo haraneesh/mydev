@@ -4,16 +4,22 @@ import { Row, SplitButton, MenuItem, Button, ButtonToolbar } from 'react-bootstr
 import { Table, Column } from 'fixed-data-table-2';
 import Dimensions from 'react-dimensions';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
-  TextCell, DateCell } from '../Common/ShopTableCells';
+import {
+  DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
+  TextCell, DateCell
+} from '../Common/ShopTableCells';
 import constants from '../../../modules/constants';
-import { updateOrderStatus, getOrders, updateExpectedDeliveryDate,
+import {
+  updateOrderStatus, getOrders, updateExpectedDeliveryDate,
   getProductQuantityForOrderAwaitingFullFillment,
-  getProductQuantityForOrderAwaitingFullFillmentNEW }
+  getProductQuantityForOrderAwaitingFullFillmentNEW
+}
   from '../../../api/Orders/methods';
 import generateOrderBills from '../../../reports/client/GenerateOrderBills';
 import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
+import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
+import autoBind from 'react-autobind/lib/autoBind';
 
 const UpdateStatusButtons = ({ title, statuses, onSelectCallBack, ignoreStatuses }) => {
   const rows = [];
@@ -41,15 +47,15 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
   >
     <Column
       columnKey="selected"
-            // header = { <Cell>Selected</Cell> }
+      // header = { <Cell>Selected</Cell> }
       header={
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.selected}
         >
-                    Selected
+          Selected
         </SortHeaderCell>
-            }
+      }
       cell={<RowSelectedCell data={dataList} onChecked={onChecked} />}
       flexGrow={1}
       width={50}
@@ -59,15 +65,15 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
       cell={<OrderStatusCell data={dataList} />}
       flexGrow={2}
       width={50}
-            // header = { <Cell>Status</Cell> }
+      // header = { <Cell>Status</Cell> }
       header={
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.status}
         >
-                    Status
+          Status
         </SortHeaderCell>
-            }
+      }
     />
     <Column
       columnKey="name"
@@ -76,9 +82,9 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.name}
         >
-                    Name
+          Name
         </SortHeaderCell>
-            }
+      }
       cell={<TextCell data={dataList} />}
       width={100}
       flexGrow={3}
@@ -90,9 +96,9 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.whMobileNum}
         >
-                    Mobile Number
+          Mobile Number
         </SortHeaderCell>
-            }
+      }
       cell={<TextCell data={dataList} />}
       width={100}
       flexGrow={2}
@@ -104,9 +110,9 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.date}
         >
-                    Delivery Date
+          Delivery Date
         </SortHeaderCell>
-            }
+      }
       cell={<DateCell data={dataList} />}
       width={100}
       flexGrow={3}
@@ -118,9 +124,9 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.amount}
         >
-                    Bill Amount
+          Bill Amount
         </SortHeaderCell>
-            }
+      }
       cell={<AmountCell data={dataList} />}
       width={100}
       flexGrow={2}
@@ -140,8 +146,8 @@ class DataListWrapper {
 
   getObjectAt(index) {
     return this._data.getObjectAt(
-            this._indexMap[index],
-        );
+      this._indexMap[index],
+    );
   }
 }
 
@@ -165,6 +171,8 @@ class ManageAllOrders extends React.Component {
       colSortDirs: this.props.colSortDirs || {},
     };
 
+    autoBind(this);
+    /*
     this.handleRowClick = this.handleRowClick.bind(this);
     this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this);
     this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
@@ -174,6 +182,7 @@ class ManageAllOrders extends React.Component {
     this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
     this.handleGenerateOPLNew = this.handleGenerateOPLNew.bind(this);
     this.handleDeliveryDateUpdate = this.handleDeliveryDateUpdate.bind(this);
+    */
   }
 
   UNSAFE_componentWillMount() {
@@ -242,28 +251,28 @@ class ManageAllOrders extends React.Component {
   }
 
   resetSelectedOrderIds() {
-     /* Create a new property to save checked boxes */
+    /* Create a new property to save checked boxes */
     this.selectedOrderIds = new Set();
   }
 
 
   handleGenerateOPL() {
-    getProductQuantityForOrderAwaitingFullFillment.call({}, (error, aggr) => {
+    getProductQuantityForOrderAwaitingFullFillment.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        generateOPL(aggr);
+        generateOPL(aggr, this.props.isWholeSale);
         Bert.alert(this.reportPopupAllowMsg, 'info');
       }
     });
   }
 
   handleGenerateOPLNew() {
-    getProductQuantityForOrderAwaitingFullFillmentNEW.call({}, (error, aggr) => {
+    getProductQuantityForOrderAwaitingFullFillmentNEW.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        generateOPLByProductType(aggr);
+        generateOPLByProductType(aggr, this.props.isWholeSale);
         Bert.alert(this.reportPopupAllowMsg, 'info');
       }
     });
@@ -281,15 +290,28 @@ class ManageAllOrders extends React.Component {
     });
   }
 
+  handleGeneratePOsAsCSV() {
+    const selectedWholeSaleOrderIds = [...this.selectedOrderIds];;
+    Meteor.call('admin.fetchDetailsForPO', selectedWholeSaleOrderIds, (error, poDetails) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        exportPOsAsCSV(poDetails);
+        Bert.alert('PO Details Downloaded', 'success');
+      }
+    });
+
+  }
+
   handleRowClick(e, rowIndex) {
     e.preventDefault();
-        // this.props.history.push("/order/" + this.state.sortedDataList[rowIndex].id)
+    // this.props.history.push("/order/" + this.state.sortedDataList[rowIndex].id)
     this.props.history.push(`/order/${this.state.sortedDataList.getObjectAt(rowIndex).id}`);
   }
 
   handleCheckBoxClick(e, rowIndex) {
     const orderId = this.state.sortedDataList.getObjectAt(rowIndex).id;
-        // const orderId = this._dataList.getObjectAt(rowIndex)["id"]
+    // const orderId = this._dataList.getObjectAt(rowIndex)["id"]
     if (this.selectedOrderIds.has(orderId)) {
       this.selectedOrderIds.delete(orderId);
     } else {
@@ -299,17 +321,17 @@ class ManageAllOrders extends React.Component {
     // const sortedDataList = _.clone(this.state.sortedDataList);
     const sortedDataList = Object.create(this.state.sortedDataList);
     sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected;
-        // this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
+    // this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
     this.setState({
       sortedDataList,
     });
 
-        /*  let sortedDataList = this.state.sortedDataList
-          sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected
+    /*  let sortedDataList = this.state.sortedDataList
+      sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected
 
-          this.setState(
-              {sortedDataList}
-          ) */
+      this.setState(
+          {sortedDataList}
+      ) */
   }
 
   getsortedDataList(orders) {
@@ -336,14 +358,14 @@ class ManageAllOrders extends React.Component {
   handleDeliveryDateUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
       Bert.alert(`Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`,
-                'danger');
+        'danger');
     } else {
       const orderIds = [...this.selectedOrderIds];
       const incrementDeliveryDateBy = constants.DaysFromTodayForward[eventKey].increment;
       updateExpectedDeliveryDate.call({ orderIds, incrementDeliveryDateBy }, (error) => {
         const confirmation = `Delivery date of selected order(s) have been updated to ${
-                    constants.DaysFromTodayForward[eventKey].display_value
-                    } successfully!`;
+          constants.DaysFromTodayForward[eventKey].display_value
+          } successfully!`;
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
@@ -357,14 +379,14 @@ class ManageAllOrders extends React.Component {
   handleStatusUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
       Bert.alert(`Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`,
-                'danger');
+        'danger');
     } else {
       const orderIds = [...this.selectedOrderIds];
       const updateToStatus = constants.OrderStatus[eventKey].name;
       updateOrderStatus.call({ orderIds, updateToStatus }, (error) => {
         const confirmation = `Status of selected order(s) have been updated to ${
-                    constants.OrderStatus[eventKey].display_value
-                    } successfully!`;
+          constants.OrderStatus[eventKey].display_value
+          } successfully!`;
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
@@ -398,28 +420,35 @@ class ManageAllOrders extends React.Component {
               bsSize="small"
               onClick={this.handleGenerateBills}
             >
-            Generate Bills
+              Generate Bills
             </Button>
             <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPL}
             >
-            Generate OPL
+              Generate OPL
             </Button>
             <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPLNew}
             >
-            Generate OPL New
+              Generate OPL New
             </Button>
+            {this.props.isWholeSale && (<Button
+              bsStyle="success"
+              bsSize="small"
+              onClick={this.handleGeneratePOsAsCSV}
+            >
+              Export POs
+            </Button>)}
             <Button
               bsStyle="default"
               bsSize="small"
               href="/reconcileInventory"
             >
-            Daily Inventory Update
+              Daily Inventory Update
             </Button>
 
           </ButtonToolbar>
@@ -447,6 +476,7 @@ ManageAllOrders.propTypes = {
   containerHeight: PropTypes.number.isRequired,
   history: PropTypes.object.isRequired,
   changeSortOptions: PropTypes.func.isRequired,
+  isWholeSale: PropTypes.bool.isRequired,
 };
 
 export default Dimensions()(ManageAllOrders);

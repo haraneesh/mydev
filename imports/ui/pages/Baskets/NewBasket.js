@@ -7,7 +7,7 @@ import BasketEditor from '../../components/Baskets/BasketEditor';
 
 
 const NewBasket = ({ loading, history, products, loggedInUser }) => {
-    const newBasket = { products }
+    const newBasket = { products: [] }
 
     if (loading) {
         return (<Loading />);
@@ -17,6 +17,7 @@ const NewBasket = ({ loading, history, products, loggedInUser }) => {
             <BasketEditor
                 history={history}
                 basketDetails={newBasket}
+                allProducts={products}
                 loggedInUser={loggedInUser}
             />
         )

@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import Baskets from './Baskets';
 import { Roles } from 'meteor/alanning:roles';
 import constants from '../../modules/constants';
@@ -24,7 +24,7 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       try {
-        return Baskets.find({ owner: this.userId }, { sort: { name: 1 } }).fetch()
+        return Baskets.find({ $or: [{ owner: this.userId }, { isOwnerAdmin: true }] }, { sort: { name: 1 } }).fetch()
       } catch (exception) {
         handleMethodException(exception);
       }
@@ -35,6 +35,7 @@ Meteor.methods({
   'baskets.insert': function basketsInsert(basket) {
     check(basket, {
       name: String,
+      description: Match.Maybe(String),
       products: [{
         _id: String,
         quantity: Number,
@@ -53,6 +54,7 @@ Meteor.methods({
     check(basket, {
       _id: String,
       name: String,
+      description: Match.Maybe(String),
       products: [{
         _id: String,
         quantity: Number,
@@ -60,12 +62,12 @@ Meteor.methods({
     });
 
     try {
-      const basket = Baskets.findOne({ _id });
+      const savedBasket = Baskets.findOne({ _id: basket._id });
 
       if (Meteor.isServer && !Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         try {
 
-          if (basket.owner !== this.userId) {
+          if (savedBasket.owner !== this.userId) {
             throw new Meteor.Error('111', 'Basket was created by a different user');
           }
         } catch (exception) {
@@ -73,8 +75,7 @@ Meteor.methods({
         }
       }
 
-      Baskets.update(basketId, { $set: basket });
-      return basketId; // Return _id so we can redirect to basketument after update.
+      return Baskets.update({ _id: basket._id }, { $set: basket });
     } catch (exception) {
       handleMethodException(exception);
     }

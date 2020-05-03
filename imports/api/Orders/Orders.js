@@ -70,7 +70,7 @@ Orders.schema = new SimpleSchema({
     allowedValues: constants.Roles.allowedValue,
     label: 'Role in which the customer is ordering'
   },
-  'customer_details._id': { type: String, label: 'The customer id.', optional: true },
+  'customer_details._id': { type: String, label: 'The customer id.' },
   'customer_details.name': { type: String, label: 'The customer name.' },
   'customer_details.email': { type: String, label: 'The customer email address.' },
   'customer_details.mobilePhone': { type: Number, label: 'The customer name.' },

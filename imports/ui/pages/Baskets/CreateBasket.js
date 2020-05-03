@@ -13,6 +13,7 @@ const CreateBasket = ({ history, selectedOrder, loggedInUser, loading }) => {
     <BasketEditor
       history={history}
       basketDetails={{ products: selectedOrder.products }}
+      allProducts={selectedOrder.products}
       loggedInUser={loggedInUser}
     />
 

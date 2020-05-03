@@ -7,12 +7,12 @@ import { dateSettingsWithTime } from '../../modules/settings';
 const getHeader = () => '<!DOCTYPE html> <html> <title>OPL Report | Suvai</title> <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <head></head><body>';
 const getFooter = () => '</body></html>';
 
-const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToStaticMarkup(
+const writeOrderSummaryDetails = (rowsDetails, today, type) => ReactDOMServer.renderToStaticMarkup(
   <div className="container">
     <div className="row">
       <div className="invoice-title">
         <div className="col-xs-12">
-          <h3>Suvai - OPL Report, Status Considered: Awaiting Fullfilment</h3>
+          <h3>{`${type} Suvai - OPL Report, Status Considered: Awaiting Fullfilment`}</h3>
         </div>
         <div className="col-xs-12">
           <h4>
@@ -39,17 +39,17 @@ const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderTo
                 </thead>
                 <tbody>
                   {
-                     rowsDetails.map((rowDetail) => {
-                       if (rowDetail.totalQuantity > 0) {
-                         return (
-                           <tr>
-                             <td className="text-center">{rowDetail._id.productName}</td>
-                             <td className="text-center">{rowDetail._id.productUnitOfSale}</td>
-                             <td className="text-right">{rowDetail.totalQuantity}</td>
-                           </tr>
-                         );
-                       }
-                     })
+                    rowsDetails.map((rowDetail) => {
+                      if (rowDetail.totalQuantity > 0) {
+                        return (
+                          <tr>
+                            <td className="text-center">{rowDetail._id.productName}</td>
+                            <td className="text-center">{rowDetail._id.productUnitOfSale}</td>
+                            <td className="text-right">{rowDetail.totalQuantity}</td>
+                          </tr>
+                        );
+                      }
+                    })
                   }
                 </tbody>
               </table>
@@ -61,10 +61,11 @@ const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderTo
   </div>
 );
 
-const generateOPL = (rowsDetails) => {
+const generateOPL = (rowsDetails, isWholeSale) => {
+  const type = (isWholeSale) ? "WHOLESALE" : " RETAIL";
   let htmlReport = getHeader();
 
-  htmlReport += writeOrderSummaryDetails(rowsDetails, new Date());
+  htmlReport += writeOrderSummaryDetails(rowsDetails, new Date(), type);
 
   htmlReport += getFooter();
 

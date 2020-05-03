@@ -38,12 +38,12 @@ const addProductRows = rowsDetails => rowsDetails.map((rowDetail) => {
 });
 
 
-const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToStaticMarkup(
+const writeOrderSummaryDetails = (rowsDetails, today, type) => ReactDOMServer.renderToStaticMarkup(
   <div className="container">
     <div className="row">
       <div className="invoice-title">
         <div className="col-xs-12">
-          <h3>Suvai - OPL Report, Status Considered: Awaiting Fullfilment</h3>
+          <h3> {`${type} Suvai - OPL Report, Status Considered: Awaiting Fullfilment`}</h3>
         </div>
         <div className="col-xs-12">
           <h4>
@@ -80,10 +80,11 @@ const writeOrderSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderTo
   </div >,
 );
 
-const GenerateOPLByProductType = (rowsDetails) => {
-  let htmlReport = getHeader();
+const GenerateOPLByProductType = (rowsDetails, isWholeSale) => {
+  const type = (isWholeSale) ? "WHOLESALE" : " RETAIL";
+  let htmlReport = getHeader(type);
 
-  htmlReport += writeOrderSummaryDetails(rowsDetails, new Date());
+  htmlReport += writeOrderSummaryDetails(rowsDetails, new Date(), type);
 
   htmlReport += getFooter();
 

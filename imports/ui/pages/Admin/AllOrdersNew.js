@@ -14,10 +14,12 @@ import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
 import { Orders } from '../../../api/Orders/Orders';
 
+
 const FIRSTPAGE = 1;
 const NUMBEROFROWS = 100;
 const reactVar = new ReactiveVar(
   {
+    isWholeSale: false,
     sortBy: { createdAt: constants.Sort.DESCENDING },
     currentPage: FIRSTPAGE,
     limit: NUMBEROFROWS,
@@ -35,10 +37,9 @@ class AllOrders extends React.Component {
   }
 
   handlePageChange(pageNumber) {
-    let { sortBy, limit } = reactVar.get();
+    let prevValue = reactVar.get();
     reactVar.set({
-      sortBy,
-      limit,
+      ...prevValue,
       currentPage: pageNumber
     });
   }
@@ -85,29 +86,63 @@ class AllOrders extends React.Component {
       [columnKey]: sortDir,
     };
 
-    let { limit } = reactVar.get();
+    let prevValue = reactVar.get();
     reactVar.set({
+      ...prevValue,
       currentPage: FIRSTPAGE,
-      limit,
       sortBy,
     });
   }
 
+  onRadioClick(e) {
+    const prevValue = reactVar.get();
+    if (e.target.value === 'whSale') {
+      reactVar.set({
+        ...prevValue,
+        isWholeSale: true,
+      });
+    } else {
+      reactVar.set({
+        ...prevValue,
+        isWholeSale: false,
+      });
+    }
+  }
+
+  selectView() {
+    const { isWholeSale } = reactVar.get();
+    return (
+      <div className="panel panel-body form-group form-inline" style={{ textAlign: 'center' }}>
+        <label class="radio-inline form-inline" for="retail" style={{ borderWidth: '0px' }}>
+          <input type="radio" id="retail" name="orderView" value="retail" onClick={this.onRadioClick} checked={(!isWholeSale) ? "checked" : ""} />
+          Retail Orders
+        </label>
+        <label class="radio-inline form-control" for="whSale" style={{ borderWidth: '0px' }}>
+          <input type="radio" id="whSale" name="orderView" value="whSale" onClick={this.onRadioClick} checked={(!!isWholeSale) ? "checked" : ""} />
+          WholeSale Orders
+        </label>
+      </div>
+    );
+  }
 
   render() {
-    const { loading, orders, history } = this.props;
-    let { currentPage, limit } = reactVar.get();
+    const { orders, history } = this.props;
+    let { currentPage, limit, isWholeSale } = reactVar.get();
     return (
-      //!loading ? (
+
       <div className="AllOrders">
         <Row>
           <Col xs={12}>
             <h3 className="page-header">All Orders</h3>
+
+            {this.selectView()}
+
             <ManageAllOrders
               history={history}
               orders={orders}
               changeSortOptions={this.changeSortOptions}
               colSortDirs={this.colSortDirs}
+              isWholeSale={isWholeSale}
             />
           </Col>
         </Row>
@@ -120,7 +155,6 @@ class AllOrders extends React.Component {
         />
 
       </div>
-      //): <Loading />
     );
   }
 }
@@ -133,11 +167,12 @@ AllOrders.propTypes = {
 };
 
 export default withTracker((args) => {
-  const { currentPage, limit, sortBy } = reactVar.get();
+  const { currentPage, limit, sortBy, isWholeSale } = reactVar.get();
 
   const skip = (currentPage * limit) - limit;
   const subscriptionsReady = [
     Meteor.subscribe('orders.list', {
+      isWholeSale: isWholeSale,
       sort: sortBy,
       limit: limit,
       skip: skip,
@@ -147,7 +182,6 @@ export default withTracker((args) => {
   const cursor = Orders.find({}, { sort: sortBy });
 
   return {
-    loading: !subscriptionsReady,
     orders: cursor && cursor.fetch(),
     currentPage: currentPage,
   };

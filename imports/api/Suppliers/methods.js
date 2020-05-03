@@ -48,6 +48,17 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+  'suppliers.list': function suppliersList() {
+    try {
+      if (Meteor.isServer) {
+        return Suppliers.find({ owner: this.userId }, { fields: { createdAt: 0, updatedAt: 0 } }).fetch();
+      } else {
+        return [];
+      }
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
 });
 
 rateLimit({
@@ -55,6 +66,7 @@ rateLimit({
     'suppliers.insert',
     'suppliers.update',
     'suppliers.remove',
+    'suppliers.list',
   ],
   limit: 5,
   timeRange: 1000,

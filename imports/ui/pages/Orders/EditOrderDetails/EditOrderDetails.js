@@ -77,6 +77,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
           orderId={order._id || ''}
           products={getProductUnitPrice(Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name), productList.products)}
           productListId={(order.productOrderListId) ? order.productOrderListId : ''}
+          orderCustomerId={order.customer_details._id}
           orderStatus={order.order_status}
           comments={order.comments}
           history={history}
@@ -84,7 +85,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
           loggedInUser={loggedInUser}
         />) : <Loading />;
     }
-    case (order.invoices !== undefined): {
+    case ('invoices' in order && order.invoices !== null && order.invoices.length > 0): {
       return (
         <div>
           <ViewInvoicedOrderDetails order={order} history={history} />

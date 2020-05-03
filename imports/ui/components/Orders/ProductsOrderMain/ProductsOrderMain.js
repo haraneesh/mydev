@@ -19,9 +19,9 @@ const ProductsOrderMain = (props) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const [productsArray, setProductsArray] = useState({});
-  const { orderId, comments, products, history, dateValue, orderStatus } = props;
+  const { orderId, comments, products, history, dateValue, orderStatus, orderCustomerId } = props;
   const isAdmin = isLoggedInUserAdmin();
-  const isShopOwner = Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name)
+  const isShopOwner = (isAdmin && orderCustomerId) ? Roles.userIsInRole(orderCustomerId, constants.Roles.shopOwner.name) : Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name);
 
 
   useEffect(() => {
@@ -145,6 +145,7 @@ const ProductsOrderMain = (props) => {
     productOils,
     productPrepared,
     productHygiene,
+    productSweetners,
     productSpecials,
     productRecommended,
     isMobile) => {
@@ -157,6 +158,7 @@ const ProductsOrderMain = (props) => {
       productOils,
       productPrepared,
       productHygiene,
+      productSweetners,
       productSpecials,
       productRecommended];
 
@@ -212,6 +214,7 @@ const ProductsOrderMain = (props) => {
                 productGroups.productOils,
                 productGroups.productPrepared,
                 productGroups.productHygiene,
+                productGroups.productSweetners,
                 productGroups.productSpecials,
                 // productGroups.productRecommended,
                 [],
@@ -270,14 +273,15 @@ ProductsOrderMain.defaultProps = {
 
 ProductsOrderMain.propTypes = {
   products: PropTypes.array.isRequired,
+  history: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object.isRequired,
+  addItemsFromCart: PropTypes.bool,
   orderedProducts: PropTypes.array,
   orderId: PropTypes.string,
   orderStatus: PropTypes.string,
   comments: PropTypes.string,
   dateValue: PropTypes.object,
-  history: PropTypes.object.isRequired,
-  addItemsFromCart: PropTypes.bool,
-  loggedInUser: PropTypes.object.isRequired,
+  orderCustomerId: PropTypes.string,
 };
 
 export default ProductsOrderMain;

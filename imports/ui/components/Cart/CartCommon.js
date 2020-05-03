@@ -27,6 +27,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     productOils,
     productPrepared,
     productHygiene,
+    productSweetners,
     productsNoCategory
   } = displayProductsByType({ products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity });
 
@@ -63,6 +64,7 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
       {displayWithDivider(productSpices, 'Spices & Nuts')}
       {displayWithDivider(productOils, 'Oils, Butter & Ghee')}
       {displayWithDivider(productPrepared, 'Pickles & Podis')}
+      {displayWithDivider(productSweetners, 'Sweetners')}
       {displayWithDivider(productHygiene, 'Personal & General Hygiene')}
       {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}

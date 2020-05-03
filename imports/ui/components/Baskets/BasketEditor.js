@@ -4,85 +4,85 @@ import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
-import { ListProducts } from './BasketCommon';
-
-const createProductHash = (productArray) => {
-  const productsHash = {};
-  productArray.forEach(product => {
-    productsHash[product._id] = product;
-  });
-  return productsHash;
-}
+import { ListProducts, createProductHash } from './BasketCommon';
 
 const createProductArrayFromHash = (productsHash) => {
   const productArray = [];
   Object.keys(productsHash).map((key) => {
     const product = productsHash[key];
-    productArray.push({ _id: product._id, quantity: product.quantity })
+    productArray.push({ _id: product._id, quantity: parseFloat(product.quantity) })
   })
   return productArray;
 }
 
-const getSplitProductsHash = (productsHash) => {
-  const selectedProductsHash = { count: 0, products: {} };
-  const deletedProductsHash = { count: 0, products: {} };
-  Object.keys(productsHash).map((key, index) => {
-    const product = productsHash[key];
-    if (product.quantity > 0) {
-      selectedProductsHash.count += 1;
-      selectedProductsHash.products[product._id] = product;
-    }
-    else {
-      deletedProductsHash.count += 1;
-      deletedProductsHash.products[product._id] = product;
+const getDeletedProductsHash = (allProductsArray, productsHashInBasket) => {
+  const selectedProductsHash = {};
+  const notSelectedProductsHash = {};
+  allProductsArray.map((prd) => {
+    if (!productsHashInBasket[prd._id]) {
+      notSelectedProductsHash[prd._id] = prd;
+    } else {
+      const product = { ...prd, quantity: productsHashInBasket[prd._id].quantity }
+      selectedProductsHash[prd._id] = product;
     }
   });
 
   return {
     selectedProductsHash,
-    deletedProductsHash
+    notSelectedProductsHash
   }
 }
 
-const BasketEditor = ({ history, basketDetails, loggedInUser }) => {
+const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => {
   const refName = useRef();
-  const [productsHashInBasket, setProductsHashBasketDetails] = useState(createProductHash(basketDetails.products));
-  const { selectedProductsHash, deletedProductsHash } = getSplitProductsHash(productsHashInBasket);
+  const refDescription = useRef();
+  const allProductHash = createProductHash(allProducts);
+  const { selectedProductsHash, notSelectedProductsHash } = getDeletedProductsHash(allProducts, createProductHash(basketDetails.products));
+  const [productsHashInBasket, setProductsHashBasketDetails] = useState(selectedProductsHash);
+  const [productsHashNotInBasketDetails, setProductsHashNotInBasketDetails] = useState(notSelectedProductsHash);
 
   const updateProductQuantity = (e) => {
     const productId = e.target.name;
     const quantity = parseFloat(e.target.value);
 
     const currentProductsInBasket = { ...productsHashInBasket };
-    const product = productsHashInBasket[productId];
-    product.quantity = quantity;
+    const notSelectedProductsHash = { ...productsHashNotInBasketDetails };
+    const product = allProductHash[productId];
+
     if (quantity > 0) {
-      delete product.removedDuringCheckout;
+      product.quantity = quantity;
+      currentProductsInBasket[product._id] = product;
+      delete notSelectedProductsHash[product._id];
     } else {
-      product.removedDuringCheckout = true;
+      product.quantity = 0;
+      delete currentProductsInBasket[product._id];
+      notSelectedProductsHash[product._id] = product;
     }
-    currentProductsInBasket[productId] = product;
 
     setProductsHashBasketDetails(currentProductsInBasket);
+    setProductsHashNotInBasketDetails(notSelectedProductsHash);
 
   };
 
   const handleSaveBasket = () => {
     const methodToCall = basketDetails._id ? 'baskets.update' : 'baskets.insert';
     const txtName = refName.current;
+    const txtDescription = refDescription.current;
     const basket = {
+      _id: basketDetails._id,
       name: txtName.value,
-      products: createProductArrayFromHash(selectedProductsHash.products)
+      description: txtDescription.value,
+      products: createProductArrayFromHash(productsHashInBasket)
     };
 
     if (validateBasket(basket)) {
-      Meteor.call(methodToCall, basket, (error, basketId) => {
+      Meteor.call(methodToCall, basket, (error, succ) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
           const confirmation = basketDetails._id ? 'Basket is updated' : 'New Basket was created';
           Bert.alert(confirmation, 'success');
-          history.push('/');
+          history.goBack();
         }
       });
     }
@@ -90,7 +90,7 @@ const BasketEditor = ({ history, basketDetails, loggedInUser }) => {
 
   const validateBasket = ({ name, products }) => {
     if (name.length <= 0) {
-      Bert.alert('A basket name is mandatory'), 'warning';
+      Bert.alert('A basket name is mandatory', 'warning');
       return false;
     }
 
@@ -118,47 +118,61 @@ const BasketEditor = ({ history, basketDetails, loggedInUser }) => {
           </section>
           <section className="panel-body">
             <Col xs={12} style={{ display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px' }}>
-              <Col xs={3}>
+              <Col xs={5} >
                 <p className="noMarginNoPadding">Name</p>
               </Col>
-              <Col xs={9}>
+              <Col xs={8} className="noMarginNoPadding">
                 <input type="text"
                   name="basketName"
                   placeholder="Name your basket"
+                  defaultValue={basketDetails.name}
                   className="form-control"
                   ref={refName}
                 />
               </Col>
             </Col>
+            <Col xs={12} style={{ display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px' }}>
+              <Col xs={5} >
+                <p className="noMarginNoPadding">Description</p>
+              </Col>
+              <Col xs={8} className="noMarginNoPadding">
+                <textarea
+                  name="basketDesc"
+                  defaultValue={basketDetails.description}
+                  rows="4"
+                  placeholder="Describe your basket"
+                  className="form-control"
+                  ref={refDescription}
+                />
+              </Col>
+            </Col>
+          </section>
+
+          <section className="panel-body">
             <Col xs={12}>
-              <Row>
-                {basketDetails._id}
-              </Row>
               <ListProducts
-                products={selectedProductsHash.products}
-                deletedProducts={deletedProductsHash.products}
+                products={productsHashInBasket}
+                productsNotInBasket={productsHashNotInBasketDetails}
                 updateProductQuantity={updateProductQuantity}
                 isMobile
                 isAdmin={Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)}
                 isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
               />
-              {/* <ListProducts products={deletedProductsState.deletedProducts.productsInCart} deletedProducts={deletedProducts.deletedProducts} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} /> */}
-              <Row>
-                <Col xsOffset={1} xs={10} smOffset={3} sm={6}>
-                  <Button className="btn-block btn-primary"
-                    disabled={selectedProductsHash.count === 0}
-                    style={{ marginBottom: '2.5em', marginRight: '.5em' }}
-                    onClick={() => { handleSaveBasket(); }}>
-                    {basketDetails._id ? 'Save Basket' : 'Create Basket'}
-                  </Button>
-                </Col>
-              </Row>
-
             </Col>
           </section>
         </Row>
       </div>
-    </div>
+      <div style={{ position: 'fixed', bottom: '0px', backgroundColor: '#fff', width: '100%', zIndex: '9999', left: '-2px' }} >
+        <Col xsOffset={1} xs={10} smOffset={3} sm={6}>
+          <Button className="btn-block btn-primary"
+            disabled={Object.keys(productsHashInBasket).length === 0}
+            style={{ marginBottom: '.5em', marginTop: '.5em' }}
+            onClick={() => { handleSaveBasket(); }}>
+            {basketDetails._id ? 'Save Basket' : 'Create Basket'}
+          </Button>
+        </Col>
+      </div>
+    </div >
   );
 };
 

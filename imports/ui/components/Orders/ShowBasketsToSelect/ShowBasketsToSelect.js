@@ -29,12 +29,19 @@ const ShowBasketsToSelect = ({ history, basketLists, onBasketSelect, onEmptyCart
                 <Col xs={12} className="panel panel-default">
                     {basketLists.map(element => (
                         <div className="panel-body">
-                            <Col xs={8}><p>{element.name}</p></Col>
-                            <Col xs={4} className="noMarginNoPadding text-right">
-                                <Button className="btn-primary btn-sm" onClick={() => handleSelectPrefillBasket(element._id)}>
-                                    Prefill
+                            <div>
+                                <Col xs={8}><p>{element.name}</p></Col>
+                                <Col xs={4} className="noMarginNoPadding text-right">
+                                    <Button className="btn-primary btn-sm" onClick={() => handleSelectPrefillBasket(element._id)}>
+                                        Prefill
                                 </Button>
-                            </Col>
+                                </Col>
+                            </div>
+                            <div>
+                                <Col xs={12}>
+                                    <p className="text-muted">{element.description}</p>
+                                </Col>
+                            </div>
                         </div>
                     ))}
                 </Col>
