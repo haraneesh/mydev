@@ -19,6 +19,7 @@ import generateOrderBills from '../../../reports/client/GenerateOrderBills';
 import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
 import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
+import exportPackingPOsAsCSV from '../../../reports/client/GenerateWholeSalePackingPOs';
 import autoBind from 'react-autobind/lib/autoBind';
 
 const UpdateStatusButtons = ({ title, statuses, onSelectCallBack, ignoreStatuses }) => {
@@ -291,12 +292,26 @@ class ManageAllOrders extends React.Component {
   }
 
   handleGeneratePOsAsCSV() {
-    const selectedWholeSaleOrderIds = [...this.selectedOrderIds];;
-    Meteor.call('admin.fetchDetailsForPO', selectedWholeSaleOrderIds, (error, poDetails) => {
+    const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
+    Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: false }, (error, poDetails) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
         exportPOsAsCSV(poDetails);
+        Bert.alert('PO Details Downloaded', 'success');
+      }
+    });
+
+  }
+
+  handleGeneratePackingPOs() {
+    const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
+
+    Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: true }, (error, poDetails) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        exportPackingPOsAsCSV(poDetails);
         Bert.alert('PO Details Downloaded', 'success');
       }
     });
@@ -415,41 +430,53 @@ class ManageAllOrders extends React.Component {
               onSelectCallBack={this.handleDeliveryDateUpdate}
               ignoreStatuses={{}}
             />
-            <Button
+            {!this.props.isWholeSale && (<Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateBills}
             >
               Generate Bills
-            </Button>
-            <Button
+            </Button>)}
+
+            {!this.props.isWholeSale && (<Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPL}
             >
               Generate OPL
-            </Button>
-            <Button
+            </Button>)}
+
+            {!this.props.isWholeSale && (<Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPLNew}
             >
               Generate OPL New
-            </Button>
-            {this.props.isWholeSale && (<Button
+            </Button>)}
+
+            {!!this.props.isWholeSale && (<Button
+              bsStyle="success"
+              bsSize="small"
+              onClick={this.handleGeneratePackingPOs}
+            >
+              Export Packing POs
+            </Button>)}
+
+            {!!this.props.isWholeSale && (<Button
               bsStyle="success"
               bsSize="small"
               onClick={this.handleGeneratePOsAsCSV}
             >
               Export POs
             </Button>)}
-            <Button
+
+            {!this.props.isWholeSale && (<Button
               bsStyle="default"
               bsSize="small"
               href="/reconcileInventory"
             >
               Daily Inventory Update
-            </Button>
+            </Button>)}
 
           </ButtonToolbar>
         </Row>

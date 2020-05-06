@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Button } from 'react-bootstrap';
+import constants from '../../../modules/constants';
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -46,16 +47,19 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
           <p> Next time, You can save on time by prefilling cart with this order. </p>
           <Button bsStyle="primary" onClick={() => { history.push(`/createBasket/${orderId}`) }}>Save Order To Prefill </Button>
         </section>
-        <section className="panel-body">
-          <Col xs={12}>
-            <h4> Congratulations for doing Good</h4>
-            <SuccessRow heading={'Good for You'} text={'Choosing Nutrition rich wholesome food'} iconName={'food'} />
-            <SuccessRow heading={'Good for You'} text={'Limiting highly processed and refined food'} iconName={'junk'} />
-            <SuccessRow heading={'Good for You'} text={'Avoiding pesticides, artificial colors and preservatives'} iconName={'safe'} />
-            <SuccessRow heading={'Good for Farmers'} text={'Supporting Rural Economy, through farmers and self help groups'} iconName={'rural'} />
-            <SuccessRow heading={'Good for Earth'} text={'Promoting Sustainable living by doing your bit for the planet'} iconName={'sustainable'} />
-          </Col>
-        </section>
+
+        {!Roles.userIsInRole(loggedInUser._id, constants.Roles.shopOwner.name) && (
+          <section className="panel-body">
+            <Col xs={12}>
+              <h4> Congratulations for doing Good</h4>
+              <SuccessRow heading={'Good for You'} text={'Choosing Nutrition rich wholesome food'} iconName={'food'} />
+              <SuccessRow heading={'Good for You'} text={'Limiting highly processed and refined food'} iconName={'junk'} />
+              <SuccessRow heading={'Good for You'} text={'Avoiding pesticides, artificial colors and preservatives'} iconName={'safe'} />
+              <SuccessRow heading={'Good for Farmers'} text={'Supporting Rural Economy, through farmers and self help groups'} iconName={'rural'} />
+              <SuccessRow heading={'Good for Earth'} text={'Promoting Sustainable living by doing your bit for the planet'} iconName={'sustainable'} />
+            </Col>
+          </section>)}
+
       </div>
     </div>
   );

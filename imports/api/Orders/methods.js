@@ -393,8 +393,9 @@ Meteor.methods({
     }
   },
 
-  'admin.fetchDetailsForPO': function adminFetchDetailsForPO(orderIds) { // eslint-disable-line
-    check(orderIds, Array);
+  'admin.fetchDetailsForPO': function adminFetchDetailsForPO(options) { // eslint-disable-line
+    check(options, { orderIds: Array, includeBuyer: Boolean });
+    //check(orderIds, Array);
 
     try {
       if (Meteor.isServer) {
@@ -404,8 +405,21 @@ Meteor.methods({
             [
               //{ order_status: 'Awaiting_Fulfillment' },
               { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
-              { _id: { $in: orderIds } },
+              { _id: { $in: options.orderIds } },
             ]
+
+          const id = (!options.includeBuyer) ? {
+            productSKU: '$products.sku',
+            productName: '$products.name',
+            productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
+          } : {
+              productSKU: '$products.sku',
+              productName: '$products.name',
+              productUnitOfSale: '$products.unitOfSale',
+              productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
+              customerId: '$customer_details._id',
+              customerName: '$customer_details.name',
+            }
 
           return Orders.aggregate([{
             $match: {
@@ -416,11 +430,7 @@ Meteor.methods({
           },
           {
             $group: {
-              _id: {
-                productSKU: '$products.sku',
-                productName: '$products.name',
-                productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
-              },
+              _id: id,
               totalQuantity: { $sum: '$products.quantity' },
             },
           },

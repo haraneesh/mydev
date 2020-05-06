@@ -99,11 +99,13 @@ class AllOrders extends React.Component {
     if (e.target.value === 'whSale') {
       reactVar.set({
         ...prevValue,
+        currentPage: FIRSTPAGE,
         isWholeSale: true,
       });
     } else {
       reactVar.set({
         ...prevValue,
+        currentPage: FIRSTPAGE,
         isWholeSale: false,
       });
     }

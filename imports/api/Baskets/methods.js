@@ -12,7 +12,7 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       try {
-        return Baskets.findOne({ _id: basketId, owner: this.userId });
+        return Baskets.findOne({ $and: [{ _id: basketId }, { $or: [{ owner: this.userId }, { isOwnerAdmin: true }] }] });
       } catch (exception) {
         handleMethodException(exception);
       }
