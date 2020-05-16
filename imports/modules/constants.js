@@ -164,10 +164,66 @@ const PostTypes = {
   Recipe: { name: 'Recipe', display_value: 'Recipe' },
   Product: { name: 'Product', display_value: 'Product' },
   Order: { name: 'Order', display_value: 'Order' },
+  Messages: { name: 'Message', display_value: 'Message' },
 };
 
 PostTypes.allowedValues = _.reduce(PostTypes, (arr, postType) => {
   arr.push(postType.name);
+  return arr;
+}, []);
+
+const MessageStatus = {
+  Open: {
+    name: 'Open',
+    display_value: 'Open',
+    label: 'warning',
+  },
+  Read: {
+    name: 'Pending',
+    display_value: 'Order Placed',
+    label: 'logo-yellow',
+  },
+  Closed: {
+    name: 'Closed',
+    display_value: 'Closed',
+    label: 'success',
+  },
+};
+
+MessageStatus.allowedValues = _.reduce(MessageStatus, (arr, ticketStatus) => {
+  arr.push(ticketStatus.name);
+  return arr;
+}, []);
+
+const MessageTypes = {
+  Message: {
+    name: 'Message',
+    display_value: 'Enquiry, Share',
+    label: 'info',
+    iconClass: 'fas fa-comment',
+  },
+  Suggestion: {
+    name: 'Suggestion',
+    display_value: 'Suggestion, Idea',
+    label: 'success',
+    iconClass: 'fas fa-lightbulb',
+  },
+  Appreciation: {
+    name: 'Appreciation',
+    display_value: 'Appreciation',
+    label: 'success',
+    iconClass: 'fas fa-heart',
+  },
+  Issue: {
+    name: 'Issue',
+    display_value: 'Urgent - Issue, Quality, Payments',
+    label: 'danger',
+    iconClass: 'fas fa-hourglass-end',
+  },
+};
+
+MessageTypes.allowedValues = _.reduce(MessageTypes, (arr, ticketTypes) => {
+  arr.push(ticketTypes.name);
   return arr;
 }, []);
 
@@ -249,6 +305,8 @@ const constants = {
   FoodTypes,
   FoodGroups,
   FeedBackTypes,
+  MessageStatus,
+  MessageTypes,
   SELECT_EMPTY_VALUE,
 };
 

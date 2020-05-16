@@ -44,16 +44,16 @@ export const upsertComment = new ValidatedMethod({
         const correspondingOrder = Orders.findOne({ _id: comment.postId });
         const customer = Meteor.users.findOne({ _id: comment.owner });
 
-        this.unblock();
+        /* this.unblock();
         const name = `${customer.profile.name.last}, ${customer.profile.name.first}`;
         const orderDate = moment(correspondingOrder.createdAt).tz(dateSettings.timeZone).format(dateSettings.shortFormat);
-        notifyCommentOnOrder(
+         notifyCommentOnOrder(
           OrderCommentTemplate(
             orderDate,
             name,
             customer.profile.whMobilePhone,
             comment.description),
-          `${orderDate}, ${name} commented on an order.`);
+          `${orderDate}, ${name} commented on an order.`); */
       }
       return response;
     } catch (exception) {

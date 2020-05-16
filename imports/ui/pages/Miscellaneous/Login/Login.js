@@ -14,15 +14,15 @@ const showPasswordButtonPositions = {
   top: '-38px',
   padding: '5px',
   right: '5px',
-  float: 'right'
-}
+  float: 'right',
+};
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showPassword: false
-    }
+      showPassword: false,
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.switchPasswordBox = this.switchPasswordBox.bind(this);
   }
@@ -100,7 +100,7 @@ class Login extends React.Component {
               className="form-control"
               placeholder="Password"
             />
-            <Button className='btn-xs btn-info' onClick={this.switchPasswordBox} style={showPasswordButtonPositions}>
+            <Button className="btn-xs btn-info" onClick={this.switchPasswordBox} style={showPasswordButtonPositions}>
               {this.state.showPassword ? 'Hide' : 'Show'}
             </Button>
           </FormGroup>

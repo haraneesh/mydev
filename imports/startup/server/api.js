@@ -1,7 +1,10 @@
-import '../../api/Documents/methods';
-import '../../api/Documents/server/publications';
+// import '../../api/Documents/methods';
+// import '../../api/Documents/server/publications';
 
 import '../../api/OAuth/methods';
+
+import '../../api/Messages/methods';
+import '../../api/Messages/server/publications';
 
 import '../../api/Users/methods';
 import '../../api/Users/server/publications';

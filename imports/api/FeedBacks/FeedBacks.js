@@ -52,7 +52,7 @@ FeedBacks.schema = new SimpleSchema({
     optional: true,
     label: 'Rating text chosen for the number value (rating).',
   },
-  questionAsked:{
+  questionAsked: {
     type: String,
     label: 'Question asked to the user.',
   },
@@ -67,7 +67,7 @@ FeedBacks.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) return (new Date()).toISOString();
     },
-    optional:true,
+    optional: true,
   },
   updatedAt: {
     type: String,
@@ -75,7 +75,7 @@ FeedBacks.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
     },
-    optional:true,
+    optional: true,
   },
 });
 
