@@ -10,7 +10,6 @@ import Products from '../../../api/Products/Products';
 import Loading from '../../components/Loading/Loading';
 
 const ProductsAdmin = (args) => {
-
   const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true);
   const [suppliers, setSuppliers] = useState([]);
 
@@ -28,7 +27,6 @@ const ProductsAdmin = (args) => {
 
 
   return isLoadingSuppliers ? (<Loading />) : (<ProductsAdminSub history={args.history} productListId={args.match.params._id} suppliers={suppliers} />);
-
 };
 
 export default ProductsAdmin;
@@ -39,12 +37,12 @@ const ProductsAdminDetail = ({ loading, products, suppliers, productListId, hist
       <h3 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h3>
       <InsertProduct history={history} />
       <UploadPrices products={products} history={history} />
-      {/*<ListAllProducts productListId={match.params._id} history={history} />*/}
       <ListAllProducts
         products={products}
         suppliers={suppliers}
         productListId={productListId}
-        history={history} />
+        history={history}
+      />
     </Col>
   </Row>) : (<Loading />)
 );
@@ -55,9 +53,9 @@ const ProductsAdminSub = withTracker(({ history, productListId, suppliers }) => 
   return {
     loading: !subscriptionProducts.ready(),
     products: Products.find({}, { sort: { type: 1, name: 1 } }).fetch(),
-    suppliers: suppliers,
+    suppliers,
     productListId,
-    history: history,
+    history,
   };
 })(ProductsAdminDetail);
 

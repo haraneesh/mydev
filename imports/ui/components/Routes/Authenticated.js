@@ -28,16 +28,16 @@ const Authenticated = ({ layout: Layout, roles, authenticated, component: Compon
     {...rest}
     render={props => (
       authenticated ?
-      (<Layout
-        {...props}
-        isAdmin={roles.indexOf('admin') !== -1}
-        authenticated
-        {...rest}
-      >
-        <Component {...props} authenticated {...rest} />
-      </Layout>)
-      :
-      (<Redirect to="/about" />)
+        (<Layout
+          {...props}
+          isAdmin={roles.indexOf('admin') !== -1}
+          authenticated
+          {...rest}
+        >
+          <Component {...props} authenticated {...rest} roles={roles} />
+        </Layout>)
+        :
+        (<Redirect to="/about" />)
     )}
   />
 );

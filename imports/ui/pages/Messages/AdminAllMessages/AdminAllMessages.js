@@ -40,7 +40,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
                 onsuccessFullUpdate={handleMessageUpdate}
               />
               ) :
-              (<MessageView existingMessage={msg} handleEditMessage={handleEditMessage} />)
+              (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
           }
         </p>
         )) : <Alert bsStyle="warning">No messages yet!</Alert>}
@@ -54,9 +54,10 @@ MessagesAdmin.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default withTracker(() => {
+export default withTracker((args) => {
   const subscription = Meteor.subscribe('messages.all');
   return {
+    history: args.history,
     loading: !subscription.ready(),
     messages: MessagesCollection.find({}, { sort: { updatedAt: constants.Sort.DESCENDING } }).fetch(),
   };

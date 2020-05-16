@@ -28,16 +28,16 @@ const AdminAuthenticated = ({ layout: Layout, authenticated, roles, component: C
     {...rest}
     render={props => (
       authenticated && roles.indexOf('admin') !== -1 ?
-      (<Layout
-        {...props}
-        isAdmin
-        authenticated
-        {...rest}
-      >
-        <Component {...props} authenticated {...rest} />
-      </Layout>)
-      :
-      (<Redirect to="/about" />)
+        (<Layout
+          {...props}
+          isAdmin
+          authenticated
+          {...rest}
+        >
+          <Component {...props} authenticated {...rest} roles={roles} />
+        </Layout>)
+        :
+        (<Redirect to="/about" />)
     )}
   />
 );

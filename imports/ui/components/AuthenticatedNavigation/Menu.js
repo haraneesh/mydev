@@ -1,4 +1,4 @@
-//import React, { Component } from 'react';
+// import React, { Component } from 'react';
 import React, { useState, useEffect } from 'react';
 import { Button, Row } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -36,7 +36,7 @@ const cartMenu = () => (
   </div>
 );
 
-/*export default class Menu extends Component {
+/* export default class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,10 +44,9 @@ const cartMenu = () => (
     };
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
-  }*/
+  } */
 
 const Menu = (props) => {
-
   const [isMenuVisible, setMenuVisibility] = useState(false);
   const cartState = useCartState();
 
@@ -57,7 +56,7 @@ const Menu = (props) => {
     } else {
       Bert.alert('Cart is empty', 'info');
     }
-  }
+  };
 
   useEffect(() => {
     setMenuVisibility(false);
@@ -66,17 +65,17 @@ const Menu = (props) => {
   const hide = () => {
     setMenuVisibility(false);
     document.removeEventListener('click', hide);
-  }
+  };
 
   const show = () => {
     if (!isMenuVisible) {
       document.addEventListener('click', hide);
     }
     setMenuVisibility(true);
-  }
+  };
 
 
-  const menuVisible = isMenuVisible ? 'visible' : ''; //this.state.visible ? 'visible ' : '';
+  const menuVisible = isMenuVisible ? 'visible' : ''; // this.state.visible ? 'visible ' : '';
   const totalProductsInCount = cartState.newCartCountOfItems;
 
   return (
@@ -101,7 +100,7 @@ const Menu = (props) => {
       </div>
     </Row>
   );
-}
+};
 
 export default Menu;
 

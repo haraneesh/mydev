@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Button, Panel, Row } from 'react-bootstrap';
+import { FormGroup, Button, Panel, Col, Row } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
@@ -19,13 +19,15 @@ const handleRemove = (messageId) => {
   }
 };
 
-const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate }) => {
+const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMessagePage }) => {
   const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
   const [isActive, setActive] = useState(!!(existingMessage._id) || showOpen);
   const [message, setMessage] = useState(existingMessage);
 
   const activateControl = (activate) => {
-    setActive(activate);
+    if (!editMessagePage) {
+      setActive(activate);
+    }
     if (onsuccessFullUpdate) {
       onsuccessFullUpdate();
     }
@@ -81,14 +83,22 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate }) => {
     (<p><form onSubmit={e => e.preventDefault()}>
       <Panel>
         <FormGroup id="msgTypes">
-          <button
-            className="btn btn-xs btn-info"
-            style={{ top: '-7px', position: 'relative', float: 'right' }}
-            onClick={() => { activateControl(false); }}
-          >
-            close
-          </button>
-
+          <Row className="panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
+            <Col xs={8}>
+              <span className="text-info">
+                {message.ownerName}
+              </span>
+            </Col>
+            <Col xs={4} className="text-right">
+              {(!editMessagePage) && (<button
+                className="btn btn-xs btn-info"
+                style={{ top: '-7px', position: 'relative', float: 'right' }}
+                onClick={() => { activateControl(false); }}
+              >
+                close
+              </button>)}
+            </Col>
+          </Row>
           {
             constants.MessageTypes.allowedValues.map((value, index) => {
               const item = constants.MessageTypes[value];
@@ -134,12 +144,14 @@ MessageEditor.defaultProps = {
   existingMessage: { messageType: '', message: '' },
   showOpen: false,
   onsuccessFullUpdate: undefined,
+  editMessagePage: false,
 };
 
 MessageEditor.propTypes = {
   existingMessage: PropTypes.object,
   showOpen: PropTypes.bool,
   onsuccessFullUpdate: PropTypes.func,
+  editMessagePage: PropTypes.bool,
 };
 
 export default MessageEditor;
