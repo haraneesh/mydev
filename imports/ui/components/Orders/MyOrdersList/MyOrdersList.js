@@ -138,36 +138,36 @@ export default class MyOrderList extends React.Component {
     let numberOfAwaitingPayments = 0;
 
     orders.map(
-    (
-      {
-    _id,
-        invoice_Id,
-        order_status,
-        createdAt,
-        total_bill_amount,
-        invoices,
-  },
-      index,
-    ) => {
+      (
+        {
+          _id,
+          invoice_Id,
+          order_status,
+          createdAt,
+          total_bill_amount,
+          invoices,
+        },
+        index,
+      ) => {
       /* <ListGroupItem key={_id} href={`/order/${_id}`}> */
-      displayOrderRows.push(
-        <ListGroupItem key={_id} onClick={() => { this.props.history.push(`/order/${_id}`); }}>
-          <OrderSummaryRow
-            orderDate={createdAt}
-            orderAmount={total_bill_amount}
-            order_status={order_status}
-            invoices={invoices}
-            key={`order-${index}`}
-            userWallet={this.state.wallet}
-          />
-        </ListGroupItem>,
-      );
+        displayOrderRows.push(
+          <ListGroupItem key={_id} onClick={() => { this.props.history.push(`/order/${_id}`); }}>
+            <OrderSummaryRow
+              orderDate={createdAt}
+              orderAmount={total_bill_amount}
+              order_status={order_status}
+              invoices={invoices}
+              key={`order-${index}`}
+              userWallet={this.state.wallet}
+            />
+          </ListGroupItem>,
+        );
 
-      if (order_status === constants.OrderStatus.Awaiting_Payment.name) {
-        numberOfAwaitingPayments += 1;
-      }
-    },
-  );
+        if (order_status === constants.OrderStatus.Awaiting_Payment.name) {
+          numberOfAwaitingPayments += 1;
+        }
+      },
+    );
 
     return (
       <div>
@@ -176,23 +176,23 @@ export default class MyOrderList extends React.Component {
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
             {
-                orders.length > 0 ? (
-                  <div>
-                    {showFeedBackForm && (
-                      <ProductFit
-                        onClose={this.receiveProductFit}
-                      />
-                    )}
+              orders.length > 0 ? (
+                <div>
+                  {showFeedBackForm && (
+                    <ProductFit
+                      onClose={this.receiveProductFit}
+                    />
+                  )}
 
-                    <ListGroup className="orders-list">
-                      {displayOrderRows}
-                    </ListGroup>
+                  <ListGroup className="orders-list">
+                    {displayOrderRows}
+                  </ListGroup>
 
-                  </div>
-                ) : (
-                  <Alert bsStyle="info">You are yet to place an order.</Alert>
-                  )
-              }
+                </div>
+              ) : (
+                <Alert bsStyle="info">You are yet to place an order.</Alert>
+              )
+            }
           </Tab>
           <Tab eventKey={2} title="Payments" tabClassName=" text-center">
             <ListPayments />

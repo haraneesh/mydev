@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Button, Panel } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { FormGroup, Button, Panel, Col } from 'react-bootstrap';
 
-const handleRemove = (commentId) => {
+const handleRemove = (commentId, postId) => {
   if (confirm('Are you sure? This is permanent!')) {
-    Meteor.call('comments.remove', commentId, (error) => {
+    Meteor.call('messages.removeComment', { commentId, postId }, (error) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
@@ -18,42 +18,19 @@ const handleRemove = (commentId) => {
   }
 };
 
-const MessageCommentEditor = ({ existingComment, showOpen, onsuccessFullUpdate }) => {
-  const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
-  const [isActive, setActive] = useState(!!(existingComment._id) || showOpen);
+const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullUpdate }) => {
   const [comment, setComment] = useState(existingComment);
 
-  const activateControl = (activate) => {
-    setActive(activate);
-    if (onsuccessFullUpdate) {
-      onsuccessFullUpdate();
-    }
-  };
+  const handleCommentSubmit = () => {
+    const methodToCall = comment._id ? 'messages.updateComment' : 'messages.addComment';
 
-  const handleSubmit = () => {
-    const methodToCall = comment._id ? 'comments.update' : 'comments.insert';
+    const msg = {
+      postId: existingMessage._id,
+      commentText: comment.description,
+    };
 
-    let msg = {};
-
-    if (!comment.commentType) {
-      setShowSelectMTypeMsg(true);
-      return;
-    }
-
-    if (!comment._id) {
-      msg = {
-        commentType: comment.commentType,
-        comment: comment.comment,
-      };
-    } else {
-      msg = {
-        _id: comment._id,
-        postId: comment.postId,
-        postType: comment.postType,
-        commentType: comment.commentType,
-        comment: comment.comment,
-        commentStatus: comment.commentStatus,
-      };
+    if (comment._id) {
+      msg.commentId = comment._id;
     }
 
     Meteor.call(methodToCall, msg, (error) => {
@@ -62,45 +39,49 @@ const MessageCommentEditor = ({ existingComment, showOpen, onsuccessFullUpdate }
       } else {
         const confirmation = comment ? 'Comments updated!' : 'Comments added!';
         Bert.alert(confirmation, 'success');
-        activateControl(false);
+        setComment({ ...comment, description: '' });
+        if (onsuccessFullUpdate) {
+          onsuccessFullUpdate();
+        }
       }
     });
   };
 
-  const handleOnCommentTypeSelect = (e) => {
-    const newComment = { ...comment, commentType: e.target.value };
-    setComment(newComment);
-  };
-
   const handleCommentUpdate = (e) => {
-    setComment({ ...comment, comment: e.target.value });
+    setComment({ ...comment, description: e.target.value });
   };
 
-  return !isActive ? (<p><input type="text" className="form-control" rows="1" onClick={() => { activateControl(true); }} placeholder="Tap to send a comment." /></p>) :
-    (<p><form onSubmit={e => e.preventDefault()}>
+  const isEdit = (comment && comment._id);
+  return (
+    <p><form onSubmit={e => e.preventDefault()}>
       <Panel>
-        <FormGroup id="msgTypes">
-          <button
+        <Col xs={7} style={{ paddingBottom: '10px' }}>
+          <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
+            {isEdit ? 'Edit Reply' : 'Your reply' }
+          </div>
+        </Col>
+        <Col xs={5} className="text-right">
+          {(isEdit) && (<button
             className="btn btn-xs btn-info"
-            style={{ top: '-7px', position: 'relative', float: 'right' }}
-            onClick={() => { activateControl(false); }}
+            style={{ float: 'right' }}
+            onClick={() => { onsuccessFullUpdate(); }}
           >
-            close
-          </button>
-        </FormGroup>
+            cancel
+          </button>)}
+        </Col>
         <FormGroup>
           <textarea
             className="form-control"
             name="comment"
             rows="4"
-            defaultValue={comment && comment.comment}
+            value={comment && comment.description}
             onChange={handleCommentUpdate}
-            placeholder="You can say something ..."
+            placeholder="Would you like to respond ..."
           />
         </FormGroup>
-        {(comment && comment._id) && <Button className="btn-default btn-sm" onClick={() => { handleRemove(comment._id); }}>Delete</Button>}
-        <Button type="submit" bsStyle="primary btn-sm" onClick={handleSubmit} style={{ float: 'right' }}>
-          {comment && comment._id ? 'Update' : 'Reply'}
+        {(isEdit) && <Button className="btn-default btn-sm" onClick={() => { handleRemove(comment._id, comment.postId); }}>Delete</Button>}
+        <Button type="submit" bsStyle="primary btn-sm" onClick={handleCommentSubmit} style={{ float: 'right' }}>
+          {isEdit ? 'Update' : 'Reply'}
         </Button>
       </Panel>
     </form></p>);
@@ -113,8 +94,8 @@ MessageCommentEditor.defaultProps = {
 };
 
 MessageCommentEditor.propTypes = {
+  existingMessage: PropTypes.object.isRequired,
   existingComment: PropTypes.object,
-  showOpen: PropTypes.bool,
   onsuccessFullUpdate: PropTypes.func,
 };
 

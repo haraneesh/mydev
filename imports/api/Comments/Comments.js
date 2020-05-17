@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
+import { string } from 'prop-types';
 
 const Comments = new Mongo.Collection('Comments');
 export default Comments;
@@ -46,6 +47,11 @@ Comments.schema = new SimpleSchema({
     type: String,
     label: 'The person who created the post.',
   },
+  ownerName: {
+    type: String,
+    label: 'The name of the person who commented',
+    optional: true,
+  },
   status: {
     type: String,
     label: 'The status of the comment.',
@@ -59,7 +65,7 @@ Comments.schema = new SimpleSchema({
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },

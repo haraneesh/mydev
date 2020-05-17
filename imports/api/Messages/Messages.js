@@ -53,12 +53,14 @@ Messages.schema = new SimpleSchema({
     allowedValues: constants.PostTypes.allowedValues,
     optional: true,
   },
-  comments: {
+  commentIds: {
     type: Array,
-    label: 'Message Comments',
+    label: 'The list of comments attached to the recipe.',
     optional: true,
   },
-  'comments.$': Comments.schema.omit('_id'),
+  'commentsIds.$': {
+    type: String,
+  },
   message: {
     type: String,
     label: 'The body of the message.',

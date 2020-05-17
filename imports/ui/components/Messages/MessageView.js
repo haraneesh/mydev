@@ -15,20 +15,20 @@ const MessageView = ({ existingMessage, handleEditMessage, editMessagePage, hist
     <p className="messageView" key={_id}>
       <div className="list-group-item">
         <Row>
-          <Col xs={6} style={{ paddingBottom: '10px' }}>
+          <Col xs={7} style={{ paddingBottom: '10px' }}>
             <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
               <i className={`text-muted ${constants.MessageTypes[messageType].iconClass}`} /> &nbsp;
               {ownerName}
             </div>
           </Col>
-          <Col xs={6} style={{ textAlign: 'right' }}>
-            <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small> &nbsp;
+          <Col xs={5} style={{ textAlign: 'right' }}>
             {(isIssue) && (<small>
-              <Label bsStyle={constants.MessageStatus[messageStatus].label}>
+              <Label bsStyle={constants.MessageStatus[messageStatus].label} style={{ marginRight: '5px' }}>
                 {constants.MessageStatus[messageStatus].display_value}
               </Label>
             </small>)}
-            {(!isClosed && !editMessagePage) && (<button className="btn btn-info btn-xs" id={`id-${_id}`} onClick={() => { handleEditMessage(_id); }}>edit</button>)}
+            <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small>
+            {(!isClosed && !editMessagePage) && (<button className="btn btn-info btn-xs" style={{ marginLeft: '5px' }} id={`id-${_id}`} onClick={() => { handleEditMessage(_id); }}>edit</button>)}
           </Col>
         </Row>
         <Row>

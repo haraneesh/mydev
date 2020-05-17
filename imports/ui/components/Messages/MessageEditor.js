@@ -19,7 +19,7 @@ const handleRemove = (messageId) => {
   }
 };
 
-const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMessagePage }) => {
+const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMessagePage, isAdmin }) => {
   const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
   const [isActive, setActive] = useState(!!(existingMessage._id) || showOpen);
   const [message, setMessage] = useState(existingMessage);
@@ -79,6 +79,11 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMes
     setMessage({ ...message, message: e.target.value });
   };
 
+  const handleCheckClicked = (e) => {
+    const messageStatus = (e.target.checked) ? constants.MessageStatus.Closed.name : constants.MessageStatus.Open.name;
+    setMessage({ ...message, messageStatus });
+  };
+
   return !isActive ? (<p><input type="text" className="form-control" rows="1" onClick={() => { activateControl(true); }} placeholder="Tap to send a message." /></p>) :
     (<p><form onSubmit={e => e.preventDefault()}>
       <Panel>
@@ -92,10 +97,10 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMes
             <Col xs={4} className="text-right">
               {(!editMessagePage) && (<button
                 className="btn btn-xs btn-info"
-                style={{ top: '-7px', position: 'relative', float: 'right' }}
+                style={{ float: 'right' }}
                 onClick={() => { activateControl(false); }}
               >
-                close
+                cancel
               </button>)}
             </Col>
           </Row>
@@ -132,6 +137,10 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMes
             placeholder="Today is your day. Let us know how Suvai can help you."
           />
         </FormGroup>
+        {isAdmin && message.messageType === constants.MessageTypes.Issue.name && (<FormGroup>
+          <input type="checkbox" id="closeMessage" name="CloseMessage" value="closeMessage" onClick={handleCheckClicked} checked={message.messageStatus === constants.MessageStatus.Closed.name} />
+          <label htmlFor="closeMessage">Mark this issue as resolved</label>
+        </FormGroup>)}
         {(message && message._id) && <Button className="btn-default btn-sm" onClick={() => { handleRemove(message._id); }}>Delete</Button>}
         <Button type="submit" bsStyle="primary btn-sm" onClick={handleSubmit} style={{ float: 'right' }}>
           {message && message._id ? 'Update' : 'Send Message'}
@@ -145,11 +154,13 @@ MessageEditor.defaultProps = {
   showOpen: false,
   onsuccessFullUpdate: undefined,
   editMessagePage: false,
+  isAdmin: false,
 };
 
 MessageEditor.propTypes = {
   existingMessage: PropTypes.object,
   showOpen: PropTypes.bool,
+  isAdmin: PropTypes.bool,
   onsuccessFullUpdate: PropTypes.func,
   editMessagePage: PropTypes.bool,
 };

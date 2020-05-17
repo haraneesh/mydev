@@ -1,31 +1,26 @@
 import { Meteor } from 'meteor/meteor';
+import React, { useState } from 'react';
 import { Row, Table, Col, Panel } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
-import React, { useState, useEffect } from 'react';
-
-const ListPayments = (props) => {
-
+const ListPayments = () => {
   const [payments, setPayments] = useState([]);
   const [isPaymentstLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const loadPaymentHistory = () => {
     setIsLoading(true);
     Meteor.call('payments.getPayments',
-      (error, payments) => {
+      (error, paymentss) => {
         setIsLoading(false);
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
-          setPayments(payments);
-          /*this.setState({
-            lastPayments: payments,
-          });*/
+          setPayments(paymentss);
         }
       },
     );
-  }, []);
+  };
 
   return !isPaymentstLoading ? (
     <Panel>
@@ -42,7 +37,7 @@ const ListPayments = (props) => {
             <tbody>
               {
                 payments.map(payment => (
-                  <tr>
+                  <tr key={payment.invoice_numbers}>
                     <td>{getDayWithoutTime(new Date(payment.date))}</td>
                     <td>{getFormattedMoney(payment.amount)}</td>
                     <td>{payment.payment_mode}</td>
@@ -55,8 +50,7 @@ const ListPayments = (props) => {
       </Col>
     </Panel>
 
-  ) : (<div> Loading ... </div>);
-
-}
+  ) : (<Panel> <button className="btn btn-sm btn-primary" onClick={loadPaymentHistory}> Fetch Payments History </button> </Panel>);
+};
 
 export default ListPayments;

@@ -1,12 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import constants from '../../../modules/constants';
 import Comments from '../Comments';
 
 Meteor.publish('comments.list', () => Comments.find());
 
 Meteor.publish('comments.view', (postDetails) => {
   check(postDetails, { postId: String, postType: String });
-  return Comments.find({ postId: postDetails.postId, postType: postDetails.postType });
+  return Comments.find({ postId: postDetails.postId, postType: postDetails.postType }, { sort: { updatedAt: constants.Sort.DESCENDING } });
 });
 
 Meteor.publishComposite('comments.viewExpanded', (options) => {

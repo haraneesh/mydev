@@ -1,54 +1,66 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
 import MessageCommentEditor from './MessageCommentEditor';
 import MessageCommentView from './MessageCommentView';
 
-const MessageComments = ({ messageComments, history }) => {
-  const [editMessage, setEditMessage] = useState('');
+const MessageComments = ({ existingMessage, messageComments, history, isAdmin, loggedInUserId }) => {
+  const [editMessage, setEditComment] = useState('');
 
-  const handleEditMessage = (id) => {
-    setEditMessage(id);
+  const handleEditComment = (commentId) => {
+    setEditComment(commentId);
   };
 
-  const handleMessageUpdate = () => {
-    setEditMessage('');
+  const handleCommentUpdate = () => {
+    setEditComment('');
   };
 
   return (
     <div className="MessagesComments">
-      <div className="page-header clearfix">
-        <h3>MessagesComments</h3>
-      </div>
+      <MessageCommentEditor
+        history={history}
+        isAdmin={isAdmin}
+        loggedInUserId={loggedInUserId}
+        existingMessage={existingMessage}
+        showOpen
+      />
 
-      <MessageCommentEditor history={history} />
+
       {messageComments.length ?
-        messageComments.map(msg => (<p key={msg._id}>
+        messageComments.map(comment => (<p key={comment._id}>
           {
-            (editMessage === msg._id) ?
+            (editMessage === comment._id) ?
               (<MessageCommentEditor
                 history={history}
-                existingMessage={msg}
+                existingComment={comment}
+                isAdmin={isAdmin}
+                loggedInUserId={loggedInUserId}
+                existingMessage={existingMessage}
                 showOpen
-                onsuccessFullUpdate={handleMessageUpdate}
+                onsuccessFullUpdate={handleCommentUpdate}
               />
               ) :
-              (<MessageCommentView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
+              (<MessageCommentView
+                comment={comment}
+                isAdmin={isAdmin}
+                loggedInUserId={loggedInUserId}
+                handleEditComment={handleEditComment}
+              />)
           }
         </p>
-        )) : <Alert bsStyle="warning">No messageComments yet!</Alert>}
+        )) : <div />}
     </div>);
 };
 
 export default MessageComments;
 
-MessageComments.deaultProps = {
+MessageComments.defaultProps = {
   isAdmin: false,
 };
 
 MessageComments.propTypes = {
   isAdmin: PropTypes.bool,
   loggedInUserId: PropTypes.string.isRequired,
+  existingMessage: PropTypes.object.isRequired,
   messageComments: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
 };

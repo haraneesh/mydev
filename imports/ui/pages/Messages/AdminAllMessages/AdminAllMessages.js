@@ -38,6 +38,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
                 existingMessage={msg}
                 showOpen
                 onsuccessFullUpdate={handleMessageUpdate}
+                isAdmin
               />
               ) :
               (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)

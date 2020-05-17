@@ -2,25 +2,10 @@ import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import Messages from './Messages';
+import commentFunctions from '../Comments/commentFunctions';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
-
-function getUser(userId) {
-  const msgCreator = Meteor.users.find(userId, {
-    fields: {
-      profile: 1,
-      roles: 1,
-    },
-  }).fetch()[0];
-
-  const ownerName = `${msgCreator.profile.salutation} ${msgCreator.profile.name.last}, ${msgCreator.profile.name.first}`;
-  return {
-    owner: userId,
-    ownerName,
-    ownerRole: msgCreator.roles[0],
-  };
-}
 
 Meteor.methods({
   'messages.insert': function messagesInsert(msg) {
@@ -32,7 +17,7 @@ Meteor.methods({
       messageStatus: Match.Maybe(String),
     });
 
-    const userObj = getUser(this.userId);
+    const userObj = commentFunctions.getUser(this.userId);
     const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj };
 
     try {
@@ -61,8 +46,8 @@ Meteor.methods({
 
     try {
       const messageId = msg._id;
-      const userObj = getUser(this.userId);
-      const message = { ...msg, ...userObj };
+      // const userObj = commentFunctions.getUser(this.userId);
+      const message = { ...msg };
 
       if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         message.to = constants.Roles.admin.name;
@@ -74,32 +59,11 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'messages.adminUpdate': function messagesAdminUpdate(msg) {
-    check(msg, {
-      _id: String,
-      postId: Match.Maybe(String),
-      postType: Match.Maybe(String),
-      messageType: String,
-      message: String,
-      messageStatus: String,
-    });
+  'message.detail': function messageDetail(msgId) {
+    check(msgId, String);
 
     try {
-      const messageId = msg._id;
-      const userObj = getUser(this.userId);
-      const message = { ...msg, ...userObj };
-
-      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        message.to = constants.Roles.admin.name;
-      }
-
-      if (!msg.messageStatus) {
-        message.messageStatus = (msg.messageType !== constants.MessageTypes.Issue.name) ?
-          constants.MessageStatus.Closed.name : constants.MessageStatus.Open.name;
-      }
-
-      Messages.update(messageId, { $set: message });
-      return messageId;
+      return Messages.find({ _id: msgId }).fetch()[0];
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -113,13 +77,79 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+  'messages.addComment': function messagesAddComment(comment) {
+    check(comment, {
+      postId: String,
+      commentText: String,
+    });
+
+    try {
+      const message = Messages.find({ _id: comment.postId }).fetch()[0];
+      const cmt = {
+        ...comment,
+        owner: this.userId,
+        commentStatus: constants.CommentTypes.Approved.name,
+        postType: constants.PostTypes.Messages.name };
+
+      const commentId = commentFunctions.commentInsert(cmt);
+      const commentIds = (message.commentIds) ? message.commentIds : [];
+      commentIds.push(commentId);
+      Messages.update({ _id: comment.postId }, { $set: { commentIds } });
+      return message;
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+  'messages.updateComment': function messagesUpdateComment(comment) {
+    check(comment, {
+      commentId: String,
+      postId: String,
+      commentText: String,
+    });
+
+    try {
+      const message = Messages.find({ _id: comment.postId }).fetch()[0];
+
+      if (message.owner === this.userId || Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        const cmt = {
+          ...comment,
+          owner: message.owner,
+          commentStatus: constants.CommentTypes.Approved.name,
+          postType: constants.PostTypes.Messages.name };
+
+        commentFunctions.commentUpdate(cmt);
+      }
+      return message;
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+  'messages.removeComment': function messagesRemoveComment(options) {
+    check(options, {
+      commentId: String,
+      postId: String,
+    });
+
+    try {
+      commentFunctions.commentDelete(options.commentId);
+      const commentsForPost = commentFunctions.getComments(options.postId);
+      const commentIds = commentsForPost.map(comment => comment._id);
+      return Messages.update({ _id: options.postId }, { $set: { commentIds } });
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
 });
 
 rateLimit({
   methods: [
     'messages.insert',
     'messages.update',
+    'message.detail',
     'messages.remove',
+    'messages.addComment',
+    'messages.updateComment',
+    'messages.removeComment',
   ],
   limit: 5,
   timeRange: 1000,

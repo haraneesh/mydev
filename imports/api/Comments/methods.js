@@ -40,11 +40,11 @@ export const upsertComment = new ValidatedMethod({
     comment.status = constants.CommentTypes.Approved.name;
     try {
       const response = Comments.upsert({ _id: comment._id }, { $set: comment });
-      if (constants.PostTypes.Order.name === comment.postType && Meteor.isServer) {
+      /*  if (constants.PostTypes.Order.name === comment.postType && Meteor.isServer) {
         const correspondingOrder = Orders.findOne({ _id: comment.postId });
         const customer = Meteor.users.findOne({ _id: comment.owner });
 
-        /* this.unblock();
+        this.unblock();
         const name = `${customer.profile.name.last}, ${customer.profile.name.first}`;
         const orderDate = moment(correspondingOrder.createdAt).tz(dateSettings.timeZone).format(dateSettings.shortFormat);
          notifyCommentOnOrder(
@@ -53,8 +53,8 @@ export const upsertComment = new ValidatedMethod({
             name,
             customer.profile.whMobilePhone,
             comment.description),
-          `${orderDate}, ${name} commented on an order.`); */
-      }
+          `${orderDate}, ${name} commented on an order.`);
+      } */
       return response;
     } catch (exception) {
       handleMethodException(exception);
@@ -71,6 +71,7 @@ export const removeComment = new ValidatedMethod({
     Comments.remove(_id);
   },
 });
+
 
 rateLimit({
   methods: [
