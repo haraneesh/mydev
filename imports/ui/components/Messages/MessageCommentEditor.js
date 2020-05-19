@@ -6,6 +6,8 @@ import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { FormGroup, Button, Panel, Col } from 'react-bootstrap';
 
+import './Message.scss';
+
 const handleRemove = (commentId, postId) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('messages.removeComment', { commentId, postId }, (error) => {
@@ -53,8 +55,8 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
 
   const isEdit = (comment && comment._id);
   return (
-    <p><form onSubmit={e => e.preventDefault()}>
-      <Panel>
+    <div>
+      <Panel className="commentBackGround">
         <Col xs={7} style={{ paddingBottom: '10px' }}>
           <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
             {isEdit ? 'Edit Reply' : 'Your reply' }
@@ -84,7 +86,7 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
           {isEdit ? 'Update' : 'Reply'}
         </Button>
       </Panel>
-    </form></p>);
+    </div>);
 };
 
 MessageCommentEditor.defaultProps = {

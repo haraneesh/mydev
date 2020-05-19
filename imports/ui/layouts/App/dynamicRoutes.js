@@ -160,3 +160,14 @@ export const dNewBasket = SuvaiLoadable({
 export const dCreateBasket = SuvaiLoadable({
   loader: () => import('../../pages/Baskets/CreateBasket'),
 });
+
+// Messages
+export const dMessages = SuvaiLoadable({
+  loader: () => import('../../pages/Messages/MessageHome/Messages'),
+});
+export const dEditMessage = SuvaiLoadable({
+  loader: () => import('../../pages/Messages/EditMessage/EditMessage'),
+});
+export const dAdminAllMessages = SuvaiLoadable({
+  loader: () => import('../../pages/Messages/AdminAllMessages/AdminAllMessages'),
+});

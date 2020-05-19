@@ -10,8 +10,8 @@ const MessageCommentView = ({ comment, handleEditComment, isAdmin, loggedInUserI
   const { updatedAt, description, _id, ownerName, owner } = comment;
   const isLoggedInUserCommentOwner = (owner === loggedInUserId);
   return (
-    <p className="messageView" key={_id}>
-      <div className="list-group-item">
+    <div key={_id}>
+      <div className="list-group-item commentBackGround">
         <Row>
           <Col xs={7} style={{ paddingBottom: '10px' }}>
             <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
@@ -32,7 +32,7 @@ const MessageCommentView = ({ comment, handleEditComment, isAdmin, loggedInUserI
           <Col xs={12} className="text-right" style={{ paddingBottom: '1.5em' }} />
         </Row>
       </div>
-    </p>);
+    </div>);
 };
 
 MessageCommentView.propTypes = {

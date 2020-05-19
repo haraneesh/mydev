@@ -19,15 +19,14 @@ const handleRemove = (messageId) => {
   }
 };
 
-const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMessagePage, isAdmin }) => {
+const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin }) => {
   const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
   const [isActive, setActive] = useState(!!(existingMessage._id) || showOpen);
   const [message, setMessage] = useState(existingMessage);
 
   const activateControl = (activate) => {
-    if (!editMessagePage) {
-      setActive(activate);
-    }
+    setActive(activate);
+
     if (onsuccessFullUpdate) {
       onsuccessFullUpdate();
     }
@@ -95,13 +94,13 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, editMes
               </span>
             </Col>
             <Col xs={4} className="text-right">
-              {(!editMessagePage) && (<button
+              <button
                 className="btn btn-xs btn-info"
                 style={{ float: 'right' }}
                 onClick={() => { activateControl(false); }}
               >
                 cancel
-              </button>)}
+              </button>
             </Col>
           </Row>
           {
@@ -153,7 +152,6 @@ MessageEditor.defaultProps = {
   existingMessage: { messageType: '', message: '' },
   showOpen: false,
   onsuccessFullUpdate: undefined,
-  editMessagePage: false,
   isAdmin: false,
 };
 
@@ -162,7 +160,6 @@ MessageEditor.propTypes = {
   showOpen: PropTypes.bool,
   isAdmin: PropTypes.bool,
   onsuccessFullUpdate: PropTypes.func,
-  editMessagePage: PropTypes.bool,
 };
 
 export default MessageEditor;

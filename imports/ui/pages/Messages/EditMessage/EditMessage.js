@@ -13,6 +13,8 @@ import CommentsCollection from '../../../../api/Comments/Comments';
 
 const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) => {
   const [loadingMessage, setLoadingMessage] = useState(true);
+  const [messageEdit, setMessageEdit] = useState(true);
+
   const [message, setMessage] = useState([]);
   const isAdmin = (roles.indexOf('admin') !== -1);
 
@@ -30,8 +32,12 @@ const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) =>
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
+  const handleEditMessage = (msgId) => {
+    setMessageEdit((msgId) || '');
+  };
+
   if (message) {
-    const canEditMsg = (isAdmin || loggedInUserId === message.owner);
+    const isEditMode = (message._id === messageEdit);
     return (
       <div className="EditMessage">
         <h3 className="page-header">
@@ -40,8 +46,8 @@ const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) =>
           </button>
           {'Message Details'}
         </h3>
-        {(!loadingMessage && canEditMsg) && (<MessageEditor existingMessage={message} history={history} editMessagePage isAdmin />)}
-        {(!loadingMessage && !canEditMsg) && (<MessageView existingMessage={message} editMessagePage />)}
+        {(!loadingMessage && isEditMode) && (<MessageEditor existingMessage={message} history={history} isAdmin onsuccessFullUpdate={handleEditMessage} />) }
+        {(!loadingMessage && !isEditMode) && (<MessageView existingMessage={message} editMessagePage isAdmin loggedInUserId={loggedInUserId} handleEditMessage={handleEditMessage} />)}
         {(!loadingMessage) && (<MessageComments isAdmin={isAdmin} loggedInUserId={loggedInUserId} existingMessage={message} messageComments={comments} history={history} />)}
       </div>);
   }

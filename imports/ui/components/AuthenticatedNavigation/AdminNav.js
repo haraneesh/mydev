@@ -19,6 +19,9 @@ const AdminNav = (props) => {
             <NavLink to="/allorders"> Manage Orders</NavLink>
           </li>
           <li>
+            <NavLink to="/messagesadmin"> Manage Messages</NavLink>
+          </li>
+          <li>
             <NavLink to="/recipes">Manage Recipes</NavLink>
           </li>
           <li>

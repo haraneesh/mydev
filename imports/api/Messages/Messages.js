@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import Comments from '../Comments/Comments';
 import constants from '../../modules/constants';
+import { number } from 'prop-types';
 
 const Messages = new Mongo.Collection('Messages');
 
@@ -53,13 +54,9 @@ Messages.schema = new SimpleSchema({
     allowedValues: constants.PostTypes.allowedValues,
     optional: true,
   },
-  commentIds: {
-    type: Array,
-    label: 'The list of comments attached to the recipe.',
-    optional: true,
-  },
-  'commentsIds.$': {
-    type: String,
+  commentCount: {
+    type: Number,
+    label: 'The count of comments',
   },
   message: {
     type: String,

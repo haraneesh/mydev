@@ -18,7 +18,7 @@ Meteor.methods({
     });
 
     const userObj = commentFunctions.getUser(this.userId);
-    const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj };
+    const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0 };
 
     try {
       if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
@@ -77,42 +77,43 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'messages.addComment': function messagesAddComment(comment) {
-    check(comment, {
+  'messages.addComment': function messagesAddComment(options) {
+    check(options, {
       postId: String,
       commentText: String,
     });
 
     try {
-      const message = Messages.find({ _id: comment.postId }).fetch()[0];
+      // const message = Messages.find({ _id: comment.postId }).fetch()[0];
       const cmt = {
-        ...comment,
+        ...options,
         owner: this.userId,
         commentStatus: constants.CommentTypes.Approved.name,
         postType: constants.PostTypes.Messages.name };
 
-      const commentId = commentFunctions.commentInsert(cmt);
-      const commentIds = (message.commentIds) ? message.commentIds : [];
-      commentIds.push(commentId);
-      Messages.update({ _id: comment.postId }, { $set: { commentIds } });
-      return message;
+      commentFunctions.commentInsert(cmt);
+      const commentCount = commentFunctions.getComments(options.postId).length;
+      // const commentIds = (message.commentIds) ? message.commentIds : [];
+      // commentIds.push(commentId);
+      Messages.update({ _id: options.postId }, { $set: { commentCount } });
+      // return message;
     } catch (exception) {
       handleMethodException(exception);
     }
   },
-  'messages.updateComment': function messagesUpdateComment(comment) {
-    check(comment, {
+  'messages.updateComment': function messagesUpdateComment(options) {
+    check(options, {
       commentId: String,
       postId: String,
       commentText: String,
     });
 
     try {
-      const message = Messages.find({ _id: comment.postId }).fetch()[0];
+      const message = Messages.find({ _id: options.postId }).fetch()[0];
 
       if (message.owner === this.userId || Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         const cmt = {
-          ...comment,
+          ...options,
           owner: message.owner,
           commentStatus: constants.CommentTypes.Approved.name,
           postType: constants.PostTypes.Messages.name };
