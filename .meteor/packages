@@ -17,7 +17,6 @@ shell-server@0.5.0            # Server-side component of the `meteor shell` comm
 
 react-meteor-data@0.2.13
 alanning:roles
-#twbs:bootstrap
 accounts-base@1.6.0
 accounts-password@1.6.0
 service-configuration@1.0.11
@@ -30,8 +29,6 @@ ddp-rate-limiter@1.0.7
 dynamic-import@0.5.2
 static-html
 
-mdg:validated-method
-#dburles:factory@1.0.0
 reywood:publish-composite
 cfs:standard-packages
 cfs:filesystem
@@ -47,3 +44,4 @@ sakulstra:aggregate
 standard-minifier-css@1.6.0
 themeteorchef:bert
 fourseven:scss@4.12.0
+mdg:validated-method

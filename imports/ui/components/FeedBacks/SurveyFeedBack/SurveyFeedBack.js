@@ -8,7 +8,6 @@ import { Modal, Button, Row, Col, FormGroup } from 'react-bootstrap';
 import './SurveyFeedBack.scss';
 
 export default class SurveyFeedBack extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { ratingsObjectWithValue: {}, show: true };
@@ -18,13 +17,13 @@ export default class SurveyFeedBack extends React.Component {
 
   handleRatingSelect(valueObject) {
     const indexNumber = valueObject.questionIndexNumber;
-    let value = this.state.ratingsObjectWithValue;
+    const value = this.state.ratingsObjectWithValue;
     value[indexNumber] = {
       questionIndexNumber: valueObject.questionIndexNumber,
       questionText: valueObject.questionText,
       ratingValue: valueObject.ratingValue,
-      ratingText: valueObject.ratingText    
-    }
+      ratingText: valueObject.ratingText,
+    };
     this.setState({ ratingsObjectWithValue: value });
   }
 
@@ -45,68 +44,69 @@ export default class SurveyFeedBack extends React.Component {
       <div>
         <Modal show={this.state.show} className="modalSurveyFeedBack">
           <Modal.Header>
-            <Modal.Title> <i class="fas fa-award" style={{fontSize: '130%'}}></i> &nbsp; {feedBackOnTitle} </Modal.Title>
+            <Modal.Title> <i className="fas fa-award" style={{ fontSize: '130%' }} /> &nbsp; {feedBackOnTitle} </Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
             <FormGroup>
-            <Row>
-              <Col xs={12}>
-                <p> {feedBackQuestion} </p>
-              </Col>
-              <Col xs={12}>
-                <div className="ratingsModal">
-                  <SurveyQuestion
-                  questionIndexNumber={1}
-                  questionText='Would you say you’re eating healthier than before, in the last 30 days?'
-                  ratingsObjectArray= {[
-                     {ratingValue: 4,
-                      ratingText: 'Definitely healthier'},
-                     {ratingValue: 3,
-                      ratingText: 'A little healthier'},
-                     {ratingValue: 2,
-                        ratingText: 'Same as always'},
-                     {ratingValue: 1,
-                        ratingText: 'Less healthy'} 
-                  ]}
-                  onChange={this.handleRatingSelect} 
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12}>
-                <p> {feedBackQuestion} </p>
-              </Col>
-              <Col xs={12}>
-                <div className="ratingsModal">
-                  <SurveyQuestion
-                  questionIndexNumber={2}
-                  questionText='How often did you eat 5 daily servings of fruits and vegetables, in the last 30 days?'
-                  ratingsObjectArray={[
-                    {ratingValue: 4,
-                      ratingText: 'Almost every day in a week'},
-                    {ratingValue: 3,
-                      ratingText: 'Just 3 or 4 days in a week'},
-                    {ratingValue: 2,
-                      ratingText: 'Just 1 or 2 days in a week'},
-                      {ratingValue: 1,
-                        ratingText: 'Never'}, 
-                  ]}
-                  onChange={this.handleRatingSelect} 
-                  />
-                </div>
-              </Col>
-              <Col xs={12}>
-                <Button 
-                  onClick={this.handleDoneClick} 
-                  bsStyle="primary" 
-                  className="pull-right" 
-                  style={{marginTop : "0.5em"}}> 
-                    Send Survey 
-                </Button>
-              </Col>
-            </Row>
+              <Row>
+                <Col xs={12}>
+                  <p> {feedBackQuestion} </p>
+                </Col>
+                <Col xs={12}>
+                  <div className="ratingsModal">
+                    <SurveyQuestion
+                      questionIndexNumber={1}
+                      questionText="Would you say you’re eating healthier than before, in the last 30 days?"
+                      ratingsObjectArray={[
+                        { ratingValue: 4,
+                          ratingText: 'Definitely healthier' },
+                        { ratingValue: 3,
+                          ratingText: 'A little healthier' },
+                        { ratingValue: 2,
+                          ratingText: 'Same as always' },
+                        { ratingValue: 1,
+                          ratingText: 'Less healthy' },
+                      ]}
+                      onChange={this.handleRatingSelect}
+                    />
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <p> {feedBackQuestion} </p>
+                </Col>
+                <Col xs={12}>
+                  <div className="ratingsModal">
+                    <SurveyQuestion
+                      questionIndexNumber={2}
+                      questionText="How often did you eat 5 daily servings of fruits and vegetables, in the last 30 days?"
+                      ratingsObjectArray={[
+                        { ratingValue: 4,
+                          ratingText: 'Almost every day in a week' },
+                        { ratingValue: 3,
+                          ratingText: 'Just 3 or 4 days in a week' },
+                        { ratingValue: 2,
+                          ratingText: 'Just 1 or 2 days in a week' },
+                        { ratingValue: 1,
+                          ratingText: 'Never' },
+                      ]}
+                      onChange={this.handleRatingSelect}
+                    />
+                  </div>
+                </Col>
+                <Col xs={12}>
+                  <Button
+                    onClick={this.handleDoneClick}
+                    bsStyle="primary"
+                    className="pull-right"
+                    style={{ marginTop: '0.5em' }}
+                  >
+                    Send Survey
+                  </Button>
+                </Col>
+              </Row>
             </FormGroup>
           </Modal.Body>
         </Modal>

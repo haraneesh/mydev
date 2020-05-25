@@ -5,7 +5,6 @@ import { findUser, adminUpdateUser, createUser } from '../../../api/Users/method
 import { hookUpValidation, getUserData, findUserForm, userProfileForm } from './SubUserForms';
 
 export default class ProfileUpdate extends React.Component {
-
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -33,12 +32,10 @@ export default class ProfileUpdate extends React.Component {
     createUser.call(user, (error, msg) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
-      } else {
-        if (msg){
-          //msg comes as empty from client side method call
-          Bert.alert(`${msg.profile.name.first} ${msg.profile.name.last} has been added.`, 'success');
-          this.setState({ user: msg, mode: 'update' });
-        }
+      } else if (msg) {
+        // msg comes as empty from client side method call
+        Bert.alert(`${msg.profile.name.first} ${msg.profile.name.last} has been added.`, 'success');
+        this.setState({ user: msg, mode: 'update' });
       }
     });
   }
