@@ -190,6 +190,21 @@ const MessageStatus = {
   },
 };
 
+
+const OrderReceivedType = {
+  whatsApp: {
+    name: 'whatsApp',
+    display_value: 'WhatsApp',
+  },
+  phone: {
+    name: 'phone',
+    display_value: 'Phone',
+  },
+};
+
+OrderReceivedType.allowedValues =
+  Object.keys(OrderReceivedType).map(typ => OrderReceivedType[typ].name);
+
 MessageStatus.allowedValues = _.reduce(MessageStatus, (arr, ticketStatus) => {
   arr.push(ticketStatus.name);
   return arr;
@@ -307,6 +322,7 @@ const constants = {
   FeedBackTypes,
   MessageStatus,
   MessageTypes,
+  OrderReceivedType,
   SELECT_EMPTY_VALUE,
 };
 

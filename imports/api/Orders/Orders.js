@@ -40,7 +40,7 @@ Orders.schema = new SimpleSchema({
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },
@@ -68,7 +68,7 @@ Orders.schema = new SimpleSchema({
   'customer_details.role': {
     type: String,
     allowedValues: constants.Roles.allowedValue,
-    label: 'Role in which the customer is ordering'
+    label: 'Role in which the customer is ordering',
   },
   'customer_details._id': { type: String, label: 'The customer id.' },
   'customer_details.name': { type: String, label: 'The customer name.' },
@@ -89,9 +89,12 @@ Orders.schema = new SimpleSchema({
       } else if (this.isUpsert) {
         return { $setOnInsert: `INV-${Random.id()}` };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
   },
+  onBehalf: { type: Object, optional: true },
+  'onBehalf.postUserId': { type: String },
+  'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   receivedFeedBack: { type: Boolean, label: 'Received customer feedback on the Order', optional: true },
   zh_sales_type: { type: String, label: 'Zoho Sales Type', allowedValues: ['salesorder', 'deliverychallan'], optional: true },
   zh_salesorder_id: { type: String, label: 'Corresponding Zoho Sales Order Id', optional: true },

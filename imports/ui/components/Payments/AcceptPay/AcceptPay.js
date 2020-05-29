@@ -1,39 +1,39 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
+import { Roles } from 'meteor/alanning:roles';
 import { FormGroup, InputGroup, FormControl, Row, Col, Panel } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { formatMoney } from 'accounting-js';
 import Loading from '../../Loading/Loading';
 import { accountSettings } from '../../../../modules/settings';
+import constants from '../../../../modules/constants';
 import validate from '../../../../modules/validate';
 import RazorPayButton from '../RazorPay/RazorPayButton';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
-const OtherPayMentOptions = () => {
-  return (
-    <Panel>
-      <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-        <small className="text-uppercase">Pay By Apps</small>
-        <p> Will reflect in 2 days on suvai</p>
-      </div>
-      <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
-        <h3>
-          UPI: <b>suvai@icici</b>
-        </h3>
-      </Col>
 
-      <Row>
-        <Col xs={12} className="text-center">
-          <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png" />
-        </Col>
-      </Row>
-    </Panel>
-  )
-}
+const OtherPayMentOptions = () => (
+  <Panel>
+    <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+      <small className="text-uppercase">Pay By Apps</small>
+      <p> Will reflect in 2 days on suvai</p>
+    </div>
+    <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
+      <h3>
+        <small> UPI:</small> <b>suvai@icici</b>
+      </h3>
+    </Col>
+
+    <Row>
+      <Col xs={12} className="text-center">
+        <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png" />
+      </Col>
+    </Row>
+  </Panel>
+);
 
 class AcceptPay extends React.Component {
-
   constructor(props) {
     super(props);
     const { userWallet } = this.props;
@@ -157,7 +157,8 @@ class AcceptPay extends React.Component {
         </Panel>
 
         <OtherPayMentOptions />
-        <Panel>
+
+        { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && <Panel>
 
           <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
             <small className="text-uppercase">Pay On Suvai </small>
@@ -200,7 +201,7 @@ class AcceptPay extends React.Component {
               </Col>
             </FormGroup>
           </form>
-        </Panel>
+        </Panel>}
       </div>
     );
   }

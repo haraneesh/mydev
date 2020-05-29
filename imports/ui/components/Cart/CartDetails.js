@@ -5,16 +5,19 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
-import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
+import { ListProducts, OrderComment, OrderFooter, OrderOnBehalf } from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
 
-const CartDetails = ({ history, orderId, loggedInUser }) => {
+const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
+  const refReceivedType = useRef();
+  const refOnBehalfMemberPhone = useRef();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
+  const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !orderId && roles.includes(constants.Roles.admin.name) });
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
@@ -36,6 +39,22 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
     setDeletedProducts(deletedProductsList);
   };
 
+  const onUserPhoneNumberChange = () => {
+    const { current } = refOnBehalfMemberPhone;
+    if (current.value) {
+      const mobileNumber = current.value;
+      Meteor.call('users.find', { mobileNumber }, (error, user) => {
+        if (error) {
+          Bert.alert(error.reason, 'danger');
+        } else {
+          const onBehalfUserTemp = { ...onBehalfUser };
+          onBehalfUserTemp.user = user;
+          setOnBehalfUser(onBehalfUserTemp);
+        }
+      });
+    }
+  };
+
   const updateProductQuantity = (e) => {
     const productId = e.target.name;
     const quantity = parseFloat(e.target.value);
@@ -48,6 +67,23 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
   };
 
   const handleOrderSubmit = () => {
+    const { current } = refReceivedType;
+    if (onBehalfUser.isNecessary) {
+      if (!constants.OrderReceivedType.allowedValues.includes(current.value)) {
+        const onBehalfUserTemp = { ...onBehalfUser };
+        onBehalfUserTemp.selectedReceivedMethodError = true;
+        setOnBehalfUser(onBehalfUserTemp);
+        return;
+      }
+
+      if (!onBehalfUser.user) {
+        const onBehalfUserTemp = { ...onBehalfUser };
+        onBehalfUserTemp.user = '';
+        setOnBehalfUser(onBehalfUserTemp);
+        return;
+      }
+    }
+
     if (loggedInUser) {
       const products = [];
 
@@ -61,6 +97,15 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
         comments: cartState.cart.comments ? cartState.cart.comments : '',
         loggedInUserId: loggedInUser._id,
       };
+
+      if (onBehalfUser.isNecessary) {
+        order.loggedInUserId = onBehalfUser.user._id;
+        order.onBehalf = {
+          postUserId: loggedInUser._id,
+          orderReceivedAs: (onBehalfUser.isNecessary) ? current.value : '',
+        };
+      }
+
 
       upsertOrder.call(order, (error, order) => {
         const confirmation = 'Your Order has been placed';
@@ -135,6 +180,7 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
           <Col xs={12}>
             <h3 className="page-header">{orderId ? 'Update Order' : 'Your Cart'}</h3>
           </Col>
+
           <Col xs={12}>
             <Panel>
               <ListProducts products={cartState.cart.productsInCart} deletedProducts={deletedProducts.cart} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)} />
@@ -147,6 +193,13 @@ const CartDetails = ({ history, orderId, loggedInUser }) => {
                 </Col>
               </Row>
               <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+              {onBehalfUser.isNecessary && (<OrderOnBehalf
+                onUserPhoneNumberChange={onUserPhoneNumberChange}
+                selectedUser={onBehalfUser.user}
+                refOnBehalfMemberPhone={refOnBehalfMemberPhone}
+                refReceivedType={refReceivedType}
+                selectedReceivedMethodError={onBehalfUser.selectedReceivedMethodError}
+              />)}
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}
@@ -171,6 +224,7 @@ CartDetails.propTypes = {
   orderId: PropTypes.string.isRequired,
   loggedUserId: PropTypes.string,
   loggedInUser: PropTypes.object.isRequired,
+  roles: PropTypes.array.isRequired,
 };
 
 export default CartDetails;

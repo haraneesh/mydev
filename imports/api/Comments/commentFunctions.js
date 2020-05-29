@@ -12,7 +12,8 @@ function getUser(userId) {
     },
   }).fetch()[0];
 
-  const ownerName = `${usr.profile.salutation} ${usr.profile.name.last}, ${usr.profile.name.first}`;
+  const ownerName = `${usr.profile.salutation ? usr.profile.salutation : 'Mrs'} ${[usr.profile.name.last, usr.profile.name.first].filter(Boolean).join(', ')}`;
+
   return {
     owner: userId,
     ownerName,

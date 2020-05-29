@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Panel, Row, Col, Button } from 'react-bootstrap';
+import { Bert } from 'meteor/themeteorchef:bert';
+import { Panel, Row, Col, Button, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Image } from 'react-bootstrap';
+
 import Loading from '../../components/Loading/Loading';
 import constants from '../../../modules/constants';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
@@ -34,58 +35,53 @@ const recipeHomeCategoryRow = (name, displayName, recipeCount, index) => (<Panel
   </Row>
 </Panel>);
 
-export default class RecipesHome extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = { recipeCounts: {} };
-    this.loading = true;
-  }
+const RecipesHome = () => {
+  const [recipeCounts, setRecipesCount] = useState({});
+  const [isLoading, setLoading] = useState(true);
 
-  componentDidMount() {
+  useEffect(() => {
     Meteor.call('recipes.countByCategory', (error, success) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        this.loading = false;
-        const recipeCounts = [];
+        const rcpCounts = [];
         success.forEach((row) => {
-          recipeCounts[row._id.typeOfFood] = row.count;
+          rcpCounts[row._id.typeOfFood] = row.count;
         });
-        this.setState({ recipeCounts });
+        setRecipesCount({ rcpCounts });
+        setLoading(false);
       }
     });
-  }
+  }, []);
 
-  render() {
-    const isAdmin = isLoggedInUserAdmin();
-    const loading = this.loading;
-    const { recipeCounts } = this.state;
-    const foodTypes = constants.FoodTypes;
-    const foodTypeNames = constants.FoodTypes.names;
+  const isAdmin = isLoggedInUserAdmin();
+  const foodTypes = constants.FoodTypes;
+  const foodTypeNames = constants.FoodTypes.names;
 
-    return (!loading ? (
-      <div className="RecipesHome">
-        <Row>
-          <Col xs={12}>
-            <div className="page-header clearfix">
-              <h3 className="pull-left">Recipes</h3>
-              { isAdmin && <Button
-                bsStyle="primary"
-                className="pull-right"
-                href="/recipes/new"
-              >New Recipe</Button> }
-            </div>
-          </Col>
-        </Row>
-        {
-          foodTypeNames.map((name, index) => {
-            if (name === 'snack' || name === 'diabetic') {
-              return (recipeHomeCategoryRow(name, foodTypes[name].displayName, recipeCounts[name], index));
-            }
-          },
-          )
-        }
-      </div>
-    ) : <Loading />);
-  }
-}
+  return (!isLoading ? (
+    <div className="RecipesHome">
+      <Row>
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h3>Recipes</h3>
+            { isAdmin && <Button
+              bsStyle="primary"
+              className="pull-right"
+              href="/recipes/new"
+            >New Recipe</Button> }
+          </div>
+        </Col>
+      </Row>
+      {
+        foodTypeNames.map((name, index) => {
+          if (name === 'snack' || name === 'diabetic') {
+            return (recipeHomeCategoryRow(name, foodTypes[name].displayName, recipeCounts[name], index));
+          }
+        },
+        )
+      }
+    </div>
+  ) : <Loading />);
+};
+
+export default RecipesHome;

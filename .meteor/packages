@@ -30,9 +30,6 @@ dynamic-import@0.5.2
 static-html
 
 reywood:publish-composite
-cfs:standard-packages
-cfs:filesystem
-cfs:s3
 cfs:access-point
 cfs:graphicsmagick
 http@1.4.2

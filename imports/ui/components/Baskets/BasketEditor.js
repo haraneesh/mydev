@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useRef, useState } from 'react';
+import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -10,10 +11,10 @@ const createProductArrayFromHash = (productsHash) => {
   const productArray = [];
   Object.keys(productsHash).map((key) => {
     const product = productsHash[key];
-    productArray.push({ _id: product._id, quantity: parseFloat(product.quantity) })
-  })
+    productArray.push({ _id: product._id, quantity: parseFloat(product.quantity) });
+  });
   return productArray;
-}
+};
 
 const getDeletedProductsHash = (allProductsArray, productsHashInBasket) => {
   const selectedProductsHash = {};
@@ -22,16 +23,16 @@ const getDeletedProductsHash = (allProductsArray, productsHashInBasket) => {
     if (!productsHashInBasket[prd._id]) {
       notSelectedProductsHash[prd._id] = prd;
     } else {
-      const product = { ...prd, quantity: productsHashInBasket[prd._id].quantity }
+      const product = { ...prd, quantity: productsHashInBasket[prd._id].quantity };
       selectedProductsHash[prd._id] = product;
     }
   });
 
   return {
     selectedProductsHash,
-    notSelectedProductsHash
-  }
-}
+    notSelectedProductsHash,
+  };
+};
 
 const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => {
   const refName = useRef();
@@ -61,7 +62,6 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
 
     setProductsHashBasketDetails(currentProductsInBasket);
     setProductsHashNotInBasketDetails(notSelectedProductsHash);
-
   };
 
   const handleSaveBasket = () => {
@@ -72,7 +72,7 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
       _id: basketDetails._id,
       name: txtName.value,
       description: txtDescription.value,
-      products: createProductArrayFromHash(productsHashInBasket)
+      products: createProductArrayFromHash(productsHashInBasket),
     };
 
     if (validateBasket(basket)) {
@@ -100,8 +100,7 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
       return false;
     }
     return true;
-
-  }
+  };
 
   return (
     <div>
@@ -110,7 +109,7 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
         <Row>
           <section className="panel-body">
             <Col xs={12} className="text-center">
-              {/*<p> You can prefill your order from Baskets you are creating.</p>*/}
+              {/* <p> You can prefill your order from Baskets you are creating.</p> */}
               <p> Basket is a list of your favorite products.</p>
               {/* <p> Next time you order, you can save time, by choosing to prefill your cart from Basket you are creating.</p> */}
               <p> Save time, when you order next by selecting a bucket to prefill your cart.</p>
@@ -122,7 +121,8 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
                 <p className="noMarginNoPadding">Name</p>
               </Col>
               <Col xs={8} className="noMarginNoPadding">
-                <input type="text"
+                <input
+                  type="text"
                   name="basketName"
                   placeholder="Name your basket"
                   defaultValue={basketDetails.name}
@@ -164,10 +164,12 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
       </div>
       <div style={{ position: 'fixed', bottom: '0px', backgroundColor: '#fff', width: '100%', zIndex: '9999', left: '-2px' }} >
         <Col xsOffset={1} xs={10} smOffset={3} sm={6}>
-          <Button className="btn-block btn-primary"
+          <Button
+            className="btn-block btn-primary"
             disabled={Object.keys(productsHashInBasket).length === 0}
             style={{ marginBottom: '.5em', marginTop: '.5em' }}
-            onClick={() => { handleSaveBasket(); }}>
+            onClick={() => { handleSaveBasket(); }}
+          >
             {basketDetails._id ? 'Save Basket' : 'Create Basket'}
           </Button>
         </Col>

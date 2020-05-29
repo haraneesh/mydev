@@ -80,6 +80,11 @@ const Menu = (props) => {
 
   return (
     <Row className="pull-right">
+      {<span id="profileIcon" style={{ marginTop: '18px', marginRight: '10px', float: 'left', fontSize: '1.25em', display: 'block' }}>
+        <a onClick={() => { props.history.push('/profile'); }} href="#">
+          <i className="fas fa-user" style={{ color: '#522E23' }} />
+        </a>
+      </span>}
       {<span id="cartIcon" style={{ marginTop: '18px', float: 'left', fontSize: '1.25em', display: 'block' }}>
         <a onClick={() => { onCartIconClick(props.history, totalProductsInCount); }}>
           <i className="fas fa-shopping-basket" style={{ color: '#522E23' }} />

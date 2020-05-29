@@ -27,9 +27,8 @@ const calculateOrderTotal = (order, productListId, userId) => {
   }, {});
 
   let totalBillAmount = 0;
-  let productsToUpdate = [];
+  const productsToUpdate = [];
   order.products.forEach((prd) => {
-
     const key = prd._id;
     let product = productArray[key];
     if (!product) { /* product removed from product List after use chose it */
@@ -48,8 +47,7 @@ const calculateOrderTotal = (order, productListId, userId) => {
       } else {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice;
       }
-    }
-    else {
+    } else {
       totalBillAmount += quantity * product.unitprice;
     }
 
@@ -92,7 +90,7 @@ const addUpdateOrder = (order) => {
     // delete order.customer_details
     // delete order.productOrderListId
     const existingOrder = Orders.findOne(order._id);
-    if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(loggedInUserId, ['admin'])) {
+    if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(Meteor.userId(), ['admin'])) {
       order.customer_details = existingOrder.customer_details;
       order.productOrderListId = existingOrder.productOrderListId;
       order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
@@ -138,7 +136,7 @@ const addUpdateOrder = (order) => {
     Emitter.emit(Events.ORDER_CREATED, { userId: loggedInUserId });
   }
   return response;
-}
+};
 
 const getDeliveryDate = () => orderCommon.getTomorrowDateOnServer();
 
@@ -151,6 +149,9 @@ export const upsertOrder = new ValidatedMethod({
     loggedInUserId: { type: String },
     products: { type: Array, optional: true },
     'products.$': { type: Object, blackbox: true, optional: true },
+    onBehalf: { type: Object, optional: true },
+    'onBehalf.postUserId': { type: String },
+    'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   }).validator(),
   run(order) {
     if (Meteor.isServer) {
@@ -160,13 +161,12 @@ export const upsertOrder = new ValidatedMethod({
 });
 
 const getOrderRole = (customerId) => {
-
   if (Roles.userIsInRole(customerId, constants.Roles.customer.name)) {
     return constants.Roles.customer.name;
   }
 
   return constants.Roles.shopOwner.name;
-}
+};
 
 export const removeOrder = new ValidatedMethod({
   name: 'order.remove',
@@ -290,7 +290,6 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
   run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-
         const selectQuery = (isWholeSale) ?
           [
             { order_status: 'Awaiting_Fulfillment' },
@@ -302,10 +301,10 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
           ];
 
         return Orders.aggregate([{
-          //$match: { order_status: 'Awaiting_Fulfillment' },
+          // $match: { order_status: 'Awaiting_Fulfillment' },
           $match: {
             $and: selectQuery,
-          }
+          },
         },
         {
           $unwind: '$products',
@@ -322,7 +321,7 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
             productQuantity: { $sum: '$products.quantity' },
             // totalQuantity: { $sum: '$products.quantity' },
             // totalCount: { $sum: 1 },
-            //customerName: { $first: '$customer_details.name' },
+            // customerName: { $first: '$customer_details.name' },
           },
         },
         {
@@ -343,7 +342,6 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
   run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-
         const selectQuery = (isWholeSale) ?
           [
             { order_status: 'Awaiting_Fulfillment' },
@@ -395,31 +393,30 @@ Meteor.methods({
 
   'admin.fetchDetailsForPO': function adminFetchDetailsForPO(options) { // eslint-disable-line
     check(options, { orderIds: Array, includeBuyer: Boolean });
-    //check(orderIds, Array);
+    // check(orderIds, Array);
 
     try {
       if (Meteor.isServer) {
         if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-
           const selectQuery =
             [
-              //{ order_status: 'Awaiting_Fulfillment' },
+              // { order_status: 'Awaiting_Fulfillment' },
               { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
               { _id: { $in: options.orderIds } },
-            ]
+            ];
 
           const id = (!options.includeBuyer) ? {
             productSKU: '$products.sku',
             productName: '$products.name',
             productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
           } : {
-              productSKU: '$products.sku',
-              productName: '$products.name',
-              productUnitOfSale: '$products.unitOfSale',
-              productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
-              customerId: '$customer_details._id',
-              customerName: '$customer_details.name',
-            }
+            productSKU: '$products.sku',
+            productName: '$products.name',
+            productUnitOfSale: '$products.unitOfSale',
+            productWSaleBaseUnitPrice: '$products.wSaleBaseUnitPrice',
+            customerId: '$customer_details._id',
+            customerName: '$customer_details.name',
+          };
 
           return Orders.aggregate([{
             $match: {
@@ -435,9 +432,8 @@ Meteor.methods({
             },
           },
           ]);
-        } else {
-          throw new Meteor.Error('403', 'You need to be an administrator to do this.');
         }
+        throw new Meteor.Error('403', 'You need to be an administrator to do this.');
       }
     } catch (exception) {
       handleMethodException(exception);
