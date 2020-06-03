@@ -6,6 +6,7 @@ import { FormGroup, Button, Panel, Col, Row } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
+import OnBehalf from '../OnBehalf/OnBehalf';
 
 const handleRemove = (messageId) => {
   if (confirm('Are you sure? This is permanent!')) {
@@ -20,6 +21,9 @@ const handleRemove = (messageId) => {
 };
 
 const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin }) => {
+  const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !existingMessage._id && isAdmin, user: {} });
+  const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
+
   const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
   const [isActive, setActive] = useState(!!(existingMessage._id) || showOpen);
   const [message, setMessage] = useState(existingMessage);
@@ -33,6 +37,14 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin
   };
 
   const handleSubmit = () => {
+    if (onBehalfUser.isNecessary && !(
+      constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs) &&
+        'profile' in onBehalfUser.user)
+    ) {
+      setOnBehalfUserInfoError(true);
+      return;
+    }
+
     const methodToCall = message._id ? 'messages.update' : 'messages.insert';
 
     let msg = {};
@@ -46,7 +58,15 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin
       msg = {
         messageType: message.messageType,
         message: message.message,
+        to: (isAdmin) ? 'ALL' : constants.Roles.admin,
       };
+
+      if (onBehalfUser.isNecessary) {
+        msg.onBehalf = {
+          onBehalfUserId: onBehalfUser.user._id,
+          orderReceivedAs: onBehalfUser.orderReceivedAs,
+        };
+      }
     } else {
       msg = {
         _id: message._id,
@@ -67,6 +87,13 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin
         activateControl(false);
       }
     });
+  };
+
+  const onSelectedChange = (newObject) => {
+    const onBehalfUserTemp = { ...onBehalfUser };
+    onBehalfUserTemp.user = newObject.user;
+    onBehalfUserTemp.orderReceivedAs = newObject.orderReceivedAs;
+    setOnBehalfUser(onBehalfUserTemp);
   };
 
   const handleOnMessageTypeSelect = (e) => {
@@ -141,6 +168,12 @@ const MessageEditor = ({ existingMessage, showOpen, onsuccessFullUpdate, isAdmin
           <label htmlFor="closeMessage">Mark this issue as resolved</label>
         </FormGroup>)}
         {(message && message._id) && <Button className="btn-default btn-sm" onClick={() => { handleRemove(message._id); }}>Delete</Button>}
+
+        {onBehalfUser.isNecessary && (<OnBehalf
+          onSelectedChange={onSelectedChange}
+          showMandatoryFields={onBehalfUserInfoError}
+        />)}
+
         <Button type="submit" bsStyle="primary btn-sm" onClick={handleSubmit} style={{ float: 'right' }}>
           {message && message._id ? 'Update' : 'Send Message'}
         </Button>

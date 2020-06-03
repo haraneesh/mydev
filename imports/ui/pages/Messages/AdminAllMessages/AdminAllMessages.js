@@ -33,7 +33,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
         {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
-      <MessageEditor history={history} />
+      <MessageEditor history={history} isAdmin />
 
       <div className="panel-heading" style={{ padding: '0.5rem 0.5rem' }}>
         <select className="form-control" name="filter" id="idFilter" onChange={onFilterSelect}>

@@ -23,7 +23,7 @@ Messages.deny({
 
 
 if (Meteor.isServer) {
-  Messages._ensureIndex({ postId: 1, postType: 1 });
+  Messages._ensureIndex({ to: 1 });
 }
 
 Messages.schema = new SimpleSchema({
@@ -50,18 +50,26 @@ Messages.schema = new SimpleSchema({
   },
   postType: {
     type: String,
-    label: 'The type of the post on which the message was given',
+    label: 'The type of the post',
     allowedValues: constants.PostTypes.allowedValues,
     optional: true,
   },
   commentCount: {
     type: Number,
+    min: 0,
     label: 'The count of comments',
+  },
+  unreadCommentCount: {
+    type: Number,
+    label: 'The count of unread comments',
   },
   message: {
     type: String,
     label: 'The body of the message.',
   },
+  onBehalf: { type: Object, optional: true },
+  'onBehalf.postedByUserId': { type: String },
+  'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   messageStatus: {
     type: String,
     label: 'The status of message .',

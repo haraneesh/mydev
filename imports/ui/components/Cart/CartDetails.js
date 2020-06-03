@@ -5,7 +5,8 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
-import { ListProducts, OrderComment, OrderFooter, OrderOnBehalf } from './CartCommon';
+import OnBehalf from '../OnBehalf/OnBehalf';
+import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
 
@@ -13,11 +14,10 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
-  const refReceivedType = useRef();
-  const refOnBehalfMemberPhone = useRef();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
+  const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
-  const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !orderId && roles.includes(constants.Roles.admin.name) });
+  const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {} });
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
@@ -39,22 +39,6 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
     setDeletedProducts(deletedProductsList);
   };
 
-  const onUserPhoneNumberChange = () => {
-    const { current } = refOnBehalfMemberPhone;
-    if (current.value) {
-      const mobileNumber = current.value;
-      Meteor.call('users.find', { mobileNumber }, (error, user) => {
-        if (error) {
-          Bert.alert(error.reason, 'danger');
-        } else {
-          const onBehalfUserTemp = { ...onBehalfUser };
-          onBehalfUserTemp.user = user;
-          setOnBehalfUser(onBehalfUserTemp);
-        }
-      });
-    }
-  };
-
   const updateProductQuantity = (e) => {
     const productId = e.target.name;
     const quantity = parseFloat(e.target.value);
@@ -66,23 +50,22 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
     cartDispatch({ type: cartActions.updateCart, payload: { product } });
   };
 
-  const handleOrderSubmit = () => {
-    const { current } = refReceivedType;
-    if (onBehalfUser.isNecessary) {
-      if (!constants.OrderReceivedType.allowedValues.includes(current.value)) {
-        const onBehalfUserTemp = { ...onBehalfUser };
-        onBehalfUserTemp.selectedReceivedMethodError = true;
-        setOnBehalfUser(onBehalfUserTemp);
-        return;
-      }
+  const onSelectedChange = (newObject) => {
+    const onBehalfUserTemp = { ...onBehalfUser };
+    onBehalfUserTemp.user = newObject.user;
+    onBehalfUserTemp.orderReceivedAs = newObject.orderReceivedAs;
+    setOnBehalfUser(onBehalfUserTemp);
+  };
 
-      if (!onBehalfUser.user) {
-        const onBehalfUserTemp = { ...onBehalfUser };
-        onBehalfUserTemp.user = '';
-        setOnBehalfUser(onBehalfUserTemp);
-        return;
-      }
+  const handleOrderSubmit = () => {
+    if (onBehalfUser.isNecessary && !(
+      constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs) &&
+        'profile' in onBehalfUser.user)
+    ) {
+      setOnBehalfUserInfoError(true);
+      return;
     }
+
 
     if (loggedInUser) {
       const products = [];
@@ -102,7 +85,7 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
         order.loggedInUserId = onBehalfUser.user._id;
         order.onBehalf = {
           postUserId: loggedInUser._id,
-          orderReceivedAs: (onBehalfUser.isNecessary) ? current.value : '',
+          orderReceivedAs: onBehalfUser.orderReceivedAs,
         };
       }
 
@@ -193,12 +176,9 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
                 </Col>
               </Row>
               <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
-              {onBehalfUser.isNecessary && (<OrderOnBehalf
-                onUserPhoneNumberChange={onUserPhoneNumberChange}
-                selectedUser={onBehalfUser.user}
-                refOnBehalfMemberPhone={refOnBehalfMemberPhone}
-                refReceivedType={refReceivedType}
-                selectedReceivedMethodError={onBehalfUser.selectedReceivedMethodError}
+              {onBehalfUser.isNecessary && (<OnBehalf
+                onSelectedChange={onSelectedChange}
+                showMandatoryFields={onBehalfUserInfoError}
               />)}
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}

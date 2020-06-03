@@ -21,11 +21,11 @@ const Navigation = props => (
         </a>
       </Navbar.Brand>
       { !props.authenticated && <PublicNavigation {...props} /> }
-      { !!props.authenticated && <EasyNavWideScreen /> }
+      { !!props.authenticated && <EasyNavWideScreen isAdmin={props.isAdmin} /> }
       { !!props.authenticated && <SideMenu {...props} /> }
     </Navbar.Header>
 
-    { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen /> }
+    { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen isAdmin={props.isAdmin} /> }
 
   </Navbar>
 );
@@ -37,6 +37,7 @@ Navigation.defaultProps = {
 Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   history: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default Navigation;

@@ -7,6 +7,15 @@ import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 
+const validateTo = (to, isAdmin) => {
+  switch (true) {
+    case (isAdmin || to !== 'ALL'):
+      return to;
+    default:
+      return constants.Roles.admin.name;
+  }
+};
+
 Meteor.methods({
   'messages.insert': function messagesInsert(msg) {
     check(msg, {
@@ -15,18 +24,29 @@ Meteor.methods({
       messageType: String,
       message: String,
       messageStatus: Match.Maybe(String),
+      onBehalf: {
+        onBehalfUserId: Match.Maybe(String),
+        orderReceivedAs: Match.Maybe(String),
+      },
+      to: Match.Maybe(String),
     });
 
-    const userObj = commentFunctions.getUser(this.userId);
-    const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0 };
-
     try {
-      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        message.to = constants.Roles.admin.name;
-      }
+      const isAdmin = Roles.userIsInRole(this.userId, constants.Roles.admin.name);
+      const userObj = (isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId) ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
+        : commentFunctions.getUser(this.userId);
 
-      if (!msg.messageStatus) {
-        message.messageStatus = constants.MessageStatus.Open.name;
+      const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0 };
+      delete message.onBehalf;
+
+      message.to = validateTo(msg.to, isAdmin);
+
+
+      if (isAdmin && msg.onBehalf) {
+        message.onBehalf = {
+          postedByUserId: this.userId,
+          orderReceivedAs: msg.onBehalf.orderReceivedAs,
+        };
       }
 
       return Messages.insert(message);
