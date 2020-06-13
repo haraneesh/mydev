@@ -43,7 +43,8 @@
     "react-rte": "^0.16.1",
     "request": "^2.88.2",
     "simpl-schema": "^0.3.2",
-    "timeago.js": "^4.0.2"
+    "timeago.js": "^4.0.2",
+    "xml": "^1.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",

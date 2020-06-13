@@ -17,6 +17,10 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
+          if (!user){
+            Bert.alert('No user was found','warning');
+            return;
+          } 
           const onBehalfUserTemp = { ...onBehalfUser };
           onBehalfUserTemp.user = user;
           setOnBehalfUser(onBehalfUserTemp);

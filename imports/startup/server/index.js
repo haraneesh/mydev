@@ -4,3 +4,4 @@ import './fixtures';
 import './email';
 import './browserPolicy';
 // import './jobs';
+import './sitemap';
