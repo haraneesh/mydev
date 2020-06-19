@@ -18,7 +18,7 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
   const cartDispatch = useCartDispatch();
 
   const updateNewCart = (productsInBasket, productsInProductList) => {
-    cartDispatch({ type: cartActions.emptyCart, payload: { basketId } });
+    cartDispatch({ type: cartActions.emptyCart });
 
     const inBasketProductsHash = {};
     productsInBasket.forEach((product) => {
@@ -28,7 +28,7 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
     productsInProductList.forEach((product) => {
       if (inBasketProductsHash[product._id]) {
         product.quantity = inBasketProductsHash[product._id].quantity;
-        cartDispatch({ type: cartActions.updateCart, payload: { product } });
+        cartDispatch({ type: cartActions.updateCart, payload: { product, basketId } });
       }
     })
   }
@@ -60,6 +60,7 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
       name={name}
       dateValue={dateValue}
       loggedInUser={loggedInUser}
+      basketId={basketId}
     />
 
   </div>) : <Loading />)

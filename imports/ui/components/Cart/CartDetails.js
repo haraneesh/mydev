@@ -77,7 +77,8 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
       const order = {
         products,
         _id: orderId && orderId !== 'NEW' ? orderId : '',
-        comments: cartState.cart.comments ? cartState.cart.comments : '',
+        comments: cartState.cart.comments || '',
+        basketId: cartState.cart.basketId || '',
         loggedInUserId: loggedInUser._id,
       };
 

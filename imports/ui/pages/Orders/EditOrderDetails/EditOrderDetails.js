@@ -25,7 +25,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
   const editOrder = (order.order_status === constants.OrderStatus.Pending.name ||
     order.order_status === constants.OrderStatus.Saved.name);
 
-  const updateCart = ({ orderId, products, comments }) => {
+  const updateCart = ({ orderId, products, comments, basketId }) => {
     switch (true) {
       case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
         cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: orderId } });
@@ -37,7 +37,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
         orderedProducts.forEach((product) => {
           selectedProducts[product._id] = product;
         });
-        cartDispatch({ type: cartActions.setActiveCart, payload: { activeCartId: orderId, selectedProducts, comments } });
+        cartDispatch({ type: cartActions.setActiveCart, payload: { activeCartId: orderId, selectedProducts, comments, basketId } });
         break;
       }
       default: {
@@ -57,7 +57,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
           if (error) {
             Bert.alert(error.reason, 'danger');
           } else {
-            updateCart({ orderId: order._id, products: order.products, comments: order.comments });
+            updateCart({ orderId: order._id, products: order.products, comments: order.comments, basketId: order.basketId || '' });
             setProductList(prdList);
             setIsLoading(false);
           }

@@ -101,12 +101,18 @@ Meteor.methods({
 
         const paidUser = Meteor.users.find({ _id: this.userId }).fetch()[0];
 
+        const amountAfterFeeTax = paymentResponse.amount - paymentResponse.fee - paymentResponse.tax;
+
         const zhResponse = zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id,
-          paymentAmountInPaise: inputParams.amountChargedInPaise,
+          paymentAmountInPaise: paymentResponse.amount, //amountAfterFeeTax,
           paymentMode: paymentResponse.method,
           razorPaymentId: inputParams.razorpay_payment_id,
-          paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} ,${paymentResponse.description} `,
+          paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} 
+            fee: ${ paymentResponse.fee } 
+            tax: ${ paymentResponse.tax }
+            ${ paymentResponse.description } 
+            `,
           zoho_fund_deposit_account_id: Meteor.settings.private.Razor.zoho_fund_deposit_account_id,
         });
 
@@ -141,7 +147,11 @@ Meteor.methods({
           handleMethodException(zhContactResponse.zohoResponse, zhContactResponse.zohoResponse.code);
         }
       }
-      return 'Success';
+      return {
+        amountInPaise: paymentResponse.amount,
+        feeInPaise: paymentResponse.fee,
+        taxInPaise: paymentResponse.tax,
+      };
     } catch (exception) {
       handleMethodException(exception);
     }

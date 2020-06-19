@@ -230,7 +230,7 @@ class Signup extends React.Component {
       </div>
     </div>) : (
       <Panel style={{ marginTop: '1.5em' }}>
-        <Row>
+        <Row className="text-center">
           <Col xs={12}>
             <h3>Thanks for your interest in Suvai!</h3>
             <br />
@@ -238,6 +238,14 @@ class Signup extends React.Component {
               Please give us a few days for our admins to review the
               request and send an invite to join our community.
             </p>
+          </Col>
+          <Col xs={12} style={{ marginTop: '2rem' }}>
+            <p>
+              While you are waiting, here is our manifesto on Healthy Living.
+            </p>
+            <h4>
+              <a className="text-primary" href="/healthprinciples"> Suvai's Health Principles</a>
+            </h4>
           </Col>
         </Row>
       </Panel>

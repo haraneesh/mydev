@@ -147,6 +147,7 @@ export const upsertOrder = new ValidatedMethod({
     order_status: { type: String, optional: true },
     comments: { type: String, optional: true },
     loggedInUserId: { type: String },
+    basketId: { type: String, optional: true },
     products: { type: Array, optional: true },
     'products.$': { type: Object, blackbox: true, optional: true },
     onBehalf: { type: Object, optional: true },

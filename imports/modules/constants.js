@@ -43,6 +43,7 @@ const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices',
 
 /*
 Saved - customer saved the current selection, with the intent to resume.
+Processing — customer has placed and order and we are ready to start processing the request.
 Pending — customer started the checkout process, but did not complete it.
       Incomplete orders are assigned a "Pending" status, and can be found under the More tab in the View Orders screen.
 Awaiting Payment — customer has completed checkout process, but payment has yet to be confirmed.
@@ -75,15 +76,19 @@ const OrderStatus = {
     display_value: 'Order Placed',
     label: 'logo-yellow',
   },
+  Processing: {
+    name: 'Processing',
+    display_value: 'Processing',
+    label: 'warning' },
+  Awaiting_Fulfillment: {
+    name: 'Awaiting_Fulfillment',
+    display_value: 'Packing',
+    label: 'primary',
+  },
   Awaiting_Payment: {
     name: 'Awaiting_Payment',
     display_value: 'Awaiting Payment',
-    label: 'warning',
-  },
-  Awaiting_Fulfillment: {
-    name: 'Awaiting_Fulfillment',
-    display_value: 'Awaiting Fulfillment',
-    label: 'info',
+    label: 'danger',
   },
   Completed: {
     name: 'Completed',

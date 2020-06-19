@@ -92,6 +92,7 @@ Orders.schema = new SimpleSchema({
       this.unset(); // Prevent user from supplying their own value
     },
   },
+  basketId: { type: String, optional: true },
   onBehalf: { type: Object, optional: true },
   'onBehalf.postUserId': { type: String },
   'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },

@@ -41,8 +41,6 @@ UserSignUps.schema = new SimpleSchema({
   'profile.name.last': { type: String, label: 'Last Name' },
   'profile.whMobilePhone': { type: String, label: 'Mobile Phone' },
   'profile.deliveryAddress': { type: String, label: 'Delivery Address' },
-  'profile.infoMessageCount': { type: Number, label: 'Count of info messages', min: 0 },
-  'profile.alertMessageCount': { type: Number, label: 'Count of alert messages', min: 0 },
   password: { type: String, label: 'Password' },
   status: { type: String, label: 'Status of the sign up request', optional: true },
 });

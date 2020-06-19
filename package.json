@@ -1,6 +1,6 @@
 {
   "name": "NammaSuvai",
-  "version": "3.0.0",
+  "version": "3.2.0",
   "description": "Namma Suvai",
   "private": true,
   "scripts": {
@@ -17,10 +17,10 @@
     "bcrypt": "^3.0.8",
     "commonmark": "^0.27.0",
     "core-js": "^2.6.11",
-    "fixed-data-table-2": "^1.1.0",
+    "fixed-data-table-2": "^1.1.1",
     "jquery": "^3.5.1",
     "jquery-validation": "^1.19.1",
-    "meteor-node-stubs": "^0.4.1",
+    "meteor-node-stubs": "^1.0.0",
     "moment": "^2.25.3",
     "moment-timezone": "^0.5.28",
     "prop-types": "^15.7.2",

@@ -10,7 +10,7 @@ import { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate } from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
 import handleMethodException from '../../modules/handle-method-exception';
-import orderCommon from '../../modules/both/orderCommon';
+//import orderCommon from '../../modules/both/orderCommon';
 
 // TODO May have to be a seperate table
 const _productTypeToZohoGroupIdMap = {
@@ -25,6 +25,7 @@ const _getZohoGroupId = type => _productTypeToZohoGroupIdMap[type];
 
 const _orderStatusToZohoSalesOrderStatus = {
   Pending: { zh_status: 'draft' },
+  Processing: { zh_status: 'open' },
   Awaiting_Payment: { zh_status: 'open' },
   Awaiting_Fulfillment: { zh_status: 'open' },
   Completed: { zh_status: 'invoiced' },
@@ -126,8 +127,8 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
     const errorResp = [];
     if (Meteor.isServer) {
       const query = {
-        order_status: constants.OrderStatus.Pending.name,
-        expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
+        order_status: constants.OrderStatus.Processing.name,
+        //expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
       };
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
@@ -194,6 +195,7 @@ export const getUserOrdersAndInvoicesFromZoho = (userId) => {
         { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
         { order_status: { $ne: constants.OrderStatus.Completed.name } },
         { order_status: { $ne: constants.OrderStatus.Pending.name } },
+        { order_status: { $ne: constants.OrderStatus.Processing.name } },
       ],
     };
     const orders = Orders.find(query).fetch();
@@ -226,6 +228,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
           { order_status: { $ne: constants.OrderStatus.Cancelled.name } },
           { order_status: { $ne: constants.OrderStatus.Completed.name } },
           { order_status: { $ne: constants.OrderStatus.Pending.name } },
+          { order_status: { $ne: constants.OrderStatus.Processing.name } },
         ],
       };
       const orders = Orders.find(query).fetch();

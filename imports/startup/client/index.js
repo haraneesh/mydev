@@ -7,7 +7,7 @@ import App from '../../ui/layouts/App/App';
 
 import '../../ui/stylesheets/application.scss';
 
-Bert.defaults.style = 'growl-top-right';
+Bert.defaults.style = 'growl-top-left';
 Bert.defaults.type = 'default';
 
 Meteor.startup(() => {

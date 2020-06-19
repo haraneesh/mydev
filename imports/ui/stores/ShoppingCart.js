@@ -76,6 +76,7 @@ const cartReducer = (currentState, action) => {
       const newActiveCartId = action.payload.activeCartId;
       const selectedProducts = action.payload.selectedProducts;
       const comments = action.payload.comments;
+      const basketId = action.payload.basketId;
       newState.activeCartId = newActiveCartId;
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(selectedProducts);
       newState.carts[newActiveCartId] = {
@@ -84,16 +85,13 @@ const cartReducer = (currentState, action) => {
         countOfItems,
         lastUpdateDate: new Date(),
         comments,
-
+        basketId,
       };
       break;
     }
     case cartActions.activateCart: {
       const activeCartId = action.payload.cartIdToActivate;
       newState.activeCartId = activeCartId;
-      if (action.payload.basketId) {
-        newState.carts[activeCartId].basketId = action.payload.basketId;
-      }
       break;
     }
     case cartActions.emptyCart: {
@@ -103,9 +101,9 @@ const cartReducer = (currentState, action) => {
     case cartActions.updateCart: {
       const product = action.payload.product;
       const productsInCart = { ...currentState.carts[cartId].productsInCart };
+      const basketId = currentState.carts[cartId].basketId || action.payload.basketId;
       productsInCart[product._id] = product;
       if (!(parseFloat(product.quantity) > 0)) {
-        //if (product.quantity === 0) {
         delete productsInCart[product._id];
       }
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(productsInCart);
@@ -115,6 +113,7 @@ const cartReducer = (currentState, action) => {
         countOfItems,
         lastUpdateDate: new Date(),
         comments: currentState.carts[cartId].comments,
+        basketId: basketId,
       };
       break;
     }
