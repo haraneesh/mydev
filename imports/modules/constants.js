@@ -280,6 +280,18 @@ const MediaStores = {
   },
 };
 
+const ScreenWidths = {
+  iphone5: {
+    width: 320,
+    height: 568,
+    name: 'iphone5',
+  },
+  ipad: {
+    width: 768,
+    height: 568,
+    name: 'ipad',
+  },
+};
 // The toolbarConfig object allows you to specify custom buttons, reorder buttons and to add custom css classes.
 // Supported inline styles: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Inline-Styles.md
 // Supported block types: https://github.com/facebook/draft-js/blob/master/docs/Advanced-Topics-Custom-Block-Render.md#draft-default-block-render-map
@@ -327,6 +339,7 @@ const constants = {
   FeedBackTypes,
   MessageStatus,
   MessageTypes,
+  ScreenWidths,
   OrderReceivedType,
   SELECT_EMPTY_VALUE,
 };

@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
+import { Roles } from 'meteor/alanning:roles';
 // import 'moment-timezone';
 import { formatMoney } from 'accounting-js';
 import constants from './constants';
@@ -10,7 +11,6 @@ export function isCustomer(userId) {
 }
 
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
-
   if (!isShopOwnerPrice) return productsArray.filter(product => product.availableToOrder === true);
 
   const products = [];
@@ -51,7 +51,7 @@ export function getDayWithoutTime(dateObject) {
 
 export function getDisplayDateTitle(startDateObj, EndDateObj) {
   return `${getDisplayDate(startDateObj)
-    } - ${
+  } - ${
     getDisplayDate(EndDateObj)}`;
 }
 

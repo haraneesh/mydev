@@ -2,7 +2,7 @@
 /* eslint-disable no-tabs */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Panel, Col, Button } from 'react-bootstrap';
+import { Panel, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ContactUs from '../../../components/ContactUs/ContactUs';
 import Testimonials from '../../../components/Testimonials/Testimonials';
@@ -10,7 +10,6 @@ import Testimonials from '../../../components/Testimonials/Testimonials';
 import './About.scss';
 
 class About extends React.Component {
-
   componentDidMount() {
     // $('body').attr('class', 'about-body');
     const bodyClassList = document.getElementsByTagName('body')[0].classList;
@@ -36,9 +35,9 @@ class About extends React.Component {
     return (
       <div>
         <Panel className="about-page">
-          <Row className="about-section text-left">
-            <Col sm={6}>
-              <img src="about/1.jpg" width="100%" />
+          <div className="about-section text-left">
+            <Col sm={6} className="no-padding">
+              <img src="about/1.jpg" width="100%" alt="food" />
             </Col>
             <Col sm={6} className="about-getOrganic text-center">
               <h3> Organic & Natural</h3>
@@ -46,8 +45,8 @@ class About extends React.Component {
               <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
             </Col>
-          </Row>
-          {/* <Row>
+          </div>
+          {/* <div>
              <Col sm={12} className="text-center">
               <h4>  Member </h4>
               <Button className="sampleBtn" bsStyle="primary" href="/order"> Place Order </Button>
@@ -56,7 +55,7 @@ class About extends React.Component {
               <h4> Not a Member </h4>
               <Button className="sampleBtn" href="https://docs.google.com/forms/d/1nYjPnaM5E36RA-wjYHBGgWcFtWOd_UybB_1_fSKTCtY/"> Order Sample Basket </Button>
             </Col>
-              </Row> */}
+              </div> */}
         </Panel>
 
         <Panel>
@@ -80,7 +79,7 @@ class About extends React.Component {
         </Panel>
 
         <Panel>
-          <Row className="text-center bodyCursText">
+          <div className="text-center bodyCursText">
             <h3 className="page-header no-margin-no-padding"> Why Us</h3>
 
             <Col sm={3}>
@@ -96,7 +95,7 @@ class About extends React.Component {
               <h3 className="dt-align">2 times</h3> <p> a week delivery</p>
             </Col>
 
-          </Row>
+          </div>
         </Panel>
 
         <Panel>
@@ -126,7 +125,7 @@ class About extends React.Component {
           <section className="text-center">
             {/* <h3 className="page-header"> Our Beliefs - Eating Healthy is</h3> */}
             <Col xs={12} sm={4}>
-              <Row>
+              <div>
                 <Col className="image_service" xs={12}>
                   <img src="about/agriculture1.png" height="120" width="120" />
                 </Col>
@@ -136,13 +135,13 @@ class About extends React.Component {
                   </h4>
                   <p >
                     Our vegetables and farm made produce have no chemical pesticides, no artificial
-                      colouring agents and no unnecessary additives.
+                    colouring agents and no unnecessary additives.
                   </p>
                 </Col>
-              </Row>
+              </div>
             </Col>
             <Col xs={12} sm={4}>
-              <Row>
+              <div>
                 <Col className="image_service" xs={12}>
                   <img src="about/agriculture2.png" height="120" width="120" />
                 </Col>
@@ -154,10 +153,10 @@ class About extends React.Component {
                     Eat a variety of vegetables and beans of different colors and type while avoiding the ones that don't suit you and your family for a balanced diet.
                   </p>
                 </Col>
-              </Row>
+              </div>
             </Col>
             <Col xs={12} sm={4}>
-              <Row>
+              <div>
                 <Col className="image_service" xs={12}>
                   <img src="about/agriculture3.png" height="120" width="120" />
                 </Col>
@@ -169,7 +168,7 @@ class About extends React.Component {
                     Avoid highly processed food, refined sugar and refined flour. Choose mostly minimally processed, whole foods.
                   </p>
                 </Col>
-              </Row>
+              </div>
             </Col>
             <Col xs={12}>
               <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link>
@@ -183,7 +182,7 @@ class About extends React.Component {
 		<section className="text-center">
 			<h3 className="page-header"> Our Quality Manifesto </h3>
 			<Col xs={12}>
-				<Row>
+				<div>
 					<Col className="describe_service" xs={12}>
 							<h4 className="name_service">
 								We carry only the best version of everything.
@@ -199,7 +198,7 @@ class About extends React.Component {
 							  </p>
 
 					</Col>
-				</Row>
+				</div>
 			</Col>
 		</section>
 	</Panel> */}
@@ -274,15 +273,15 @@ class About extends React.Component {
 
         {/*
 	<Panel>
-	<Row className="text-center">
+	<div className="text-center">
 	<Col xs={12}>
 		<h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
 			<p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
 			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p>
 		</Col>
-		</Row>
+		</div>
 	</Panel>
-	
+
 
         <Panel>
           <div>
@@ -293,7 +292,7 @@ class About extends React.Component {
           <section className="text-left">
             <Col xs={12} sm={4}>
             Valasravakkam, Ramapuram, Virugambakkam, koyembedu, Anna nagar,Kelly's, Kilpauk, Egmore, Chetpet, Choolaimedu, Kodambakkam, Vadapalani, Saligrammam, KK Nagar, Ashok Nagar, Arumbakkam, Nanganallur, Velachery, Cathedral road, Mylapore, Rangarajapuram, Adayar, Besant Nagar, Perungudi
-            
+
               <ul>
                 <li>Ramapuram</li>
                 <li>Virugambakkam</li>
@@ -331,7 +330,7 @@ class About extends React.Component {
                 <li>Perungudi</li>
               </ul>
             </Col>
-        </section> 
+        </section>
         </Panel> */}
 
         <Panel>

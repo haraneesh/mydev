@@ -66,7 +66,7 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
       setIsLoading(false);
     }
   }
-    , []);
+  , []);
 
 
   switch (true) {
@@ -121,8 +121,8 @@ EditOrderDetails.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const EditOrderDetailsWrapper = props => props.loading ? (<Loading />) :
-  (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />);
+const EditOrderDetailsWrapper = props => (props.loading ? (<Loading />) :
+  (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />));
 
 
 export default withTracker((args) => {

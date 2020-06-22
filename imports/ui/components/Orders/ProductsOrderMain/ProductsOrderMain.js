@@ -235,8 +235,7 @@ const ProductsOrderMain = (props) => {
   );
 
   // Grouping product categories by tabs
-  const ipadWidth = 8000; // 768
-  const isMobile = window.innerWidth <= ipadWidth;
+  const isMobile = true;
   const formHeading = (orderStatus) ? 'Update Your Order' : ' Place Your Order';
 
   const productGroups = displayProductsByType(

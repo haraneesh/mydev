@@ -7,7 +7,7 @@ const ContactUs = () => (
   <Panel className="ContactUs text-center">
     <p><h3>Contact Us</h3></p>
     <Grid>
-      <Row>
+      <div>
         <Col xs={12} sm={6}>
           <address>
             <strong>Address</strong> <br />
@@ -29,14 +29,14 @@ const ContactUs = () => (
           </address>
           <address>
             <strong>Whats App</strong> <br />
-            <a href="tel:+917397459010">+91 7397459010</a>
+            <a href="tel:+919361032849">+91 9361032849</a>
           </address>
           <address>
             <strong>E-Mail</strong> <br />
             <a href="mailto:#">community@nammasuvai.com</a>
           </address>
         </Col>
-      </Row>
+      </div>
     </Grid>
   </Panel>
 );

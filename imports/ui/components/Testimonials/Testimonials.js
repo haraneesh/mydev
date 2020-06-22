@@ -6,7 +6,7 @@ import './Testimonials.scss';
 const Testimonials = () => (
     <Panel className="testimonials text-center bodyCursText">
       <h2 class="mb-5">What people are saying...</h2>
-      <div class="row">
+      <div>
       <div class="col-sm-4">
           <div class="testimonial-item mb-3 ">
             {/*<img class="img-fluid img-circle mb-3" src="about/testimonials-3.jpg" alt="" />*/}

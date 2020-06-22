@@ -116,7 +116,7 @@ class About extends React.Component {
 
         <Panel>
           <div className="text-center">
-            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
+            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+919361032849" className="text-primary">+91 9361032849</a> </p></h4>
           </div>
         </Panel>
         <ContactUs />

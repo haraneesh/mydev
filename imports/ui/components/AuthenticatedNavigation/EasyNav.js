@@ -8,13 +8,13 @@ import './EasyNav.scss';
 export const EasyNavNarrowScreen = props => (
   <ul className="sec-menu-bar visible-sm visible-xs">
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to="/neworder/selectbasket"> <Glyphicon glyph="pencil" /> Place Order </Link>
+      <Link to="/neworder/selectbasket"> Place Order </Link>
     </li>
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to="/"> <Glyphicon glyph="list" /> My Orders</Link>
+      <Link to="/"> My Orders</Link>
     </li>
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> <Glyphicon glyph="comment" className="highlightMenu" /> Message Us</Link>
+      <Link to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> Message Us</Link>
     </li>
     {/*
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>

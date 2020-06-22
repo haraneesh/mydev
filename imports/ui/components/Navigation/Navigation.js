@@ -7,7 +7,6 @@ import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigati
 
 import './Navigation.scss';
 
-
 const Navigation = props => (
   <Navbar>
     <Navbar.Header>
@@ -38,6 +37,8 @@ Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   history: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  showEasyNav: PropTypes.bool.isRequired,
+  containerWidth: PropTypes.bool.isRequired,
 };
 
 export default Navigation;

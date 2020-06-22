@@ -5,7 +5,6 @@ settings-production.json
 settings-development.json
 public/bg-new.jpg
 .meteor/.gitignore
-public/favicon-new.png
-public/logo-new.png
+public/ignore
 imports/api/Reports/items.js
 imports/api/Reports/pos.js

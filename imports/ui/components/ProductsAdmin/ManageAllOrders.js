@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, SplitButton, MenuItem, Button, ButtonToolbar } from 'react-bootstrap';
+import autoBind from 'react-autobind/lib/autoBind';
 import { Table, Column } from 'fixed-data-table-2';
 import Dimensions from 'react-dimensions';
 import { Bert } from 'meteor/themeteorchef:bert';
 import {
   DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
-  TextCell, DateCell
+  TextCell, DateCell,
 } from '../Common/ShopTableCells';
 import constants from '../../../modules/constants';
 import {
   updateOrderStatus, getOrders, updateExpectedDeliveryDate,
   getProductQuantityForOrderAwaitingFullFillment,
-  getProductQuantityForOrderAwaitingFullFillmentNEW
+  getProductQuantityForOrderAwaitingFullFillmentNEW,
 }
   from '../../../api/Orders/methods';
 import generateOrderBills from '../../../reports/client/GenerateOrderBills';
@@ -20,7 +21,6 @@ import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
 import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
 import exportPackingPOsAsCSV from '../../../reports/client/GenerateWholeSalePackingPOs';
-import autoBind from 'react-autobind/lib/autoBind';
 
 const UpdateStatusButtons = ({ title, statuses, onSelectCallBack, ignoreStatuses }) => {
   const rows = [];
