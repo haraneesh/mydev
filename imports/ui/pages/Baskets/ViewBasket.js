@@ -51,15 +51,11 @@ const renderBasket = ({ products, basketId, history }) => {
 
       <section className="panel panel-default">
         <div className="panel-body">
-          <div className="col-xs-12">
-            <ButtonToolbar className="pull-right">
-              <ButtonGroup bsSize="small">
-                <Button onClick={() => history.push(`${history.location.pathname}/edit`)}>Edit</Button>
-                <Button onClick={() => handleRemove(basket._id, history)} className="text-danger">
-                  Delete
-                </Button>
-              </ButtonGroup>
-            </ButtonToolbar>
+          <div className="col-xs-12 text-right">
+            <Button style={{ marginRight: '2px' }} bsStyle="info" className="btn-sm" onClick={() => history.push(`${history.location.pathname}/edit`)}>Edit</Button>
+            <Button onClick={() => handleRemove(basket._id, history)} bsStyle="default" className="btn-sm">
+              Delete
+            </Button>
           </div>
         </div>
 
@@ -77,8 +73,8 @@ const renderBasket = ({ products, basketId, history }) => {
             <b style={{ marginBottom: '3px' }}> Products:</b>
             {basket && basket.products && basket.products.map(product => (
               <Row key={product._id} style={{ paddingBottom: '4px' }}>
-                <Col xs={8}>{productHash[product._id].name}</Col>
-                <Col xs={4}>{displayUnitOfSale(product.quantity, productHash[product._id].unitOfSale)}</Col>
+                <Col xs={9}>{productHash[product._id].name}</Col>
+                <Col xs={3}>{displayUnitOfSale(product.quantity, productHash[product._id].unitOfSale)}</Col>
               </Row>
             ))}
 

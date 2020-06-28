@@ -11,7 +11,7 @@ export const EasyNavNarrowScreen = props => (
       <Link to="/neworder/selectbasket"> Place Order </Link>
     </li>
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to="/"> My Orders</Link>
+      <Link to="/baskets">Baskets</Link>
     </li>
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> Message Us</Link>
@@ -28,13 +28,13 @@ export const EasyNavNarrowScreen = props => (
 export const EasyNavWideScreen = props => (
   <Nav className="hidden-xs hidden-sm wide-menu-bar" >
     <li>
-      <NavLink to="/neworder/selectbasket"><Glyphicon glyph="pencil" /> Place Order</NavLink>
+      <NavLink to="/neworder/selectbasket"> Place Order</NavLink>
     </li>
     <li>
-      <NavLink exact to="/"><Glyphicon glyph="list" /> My Orders</NavLink>
+      <NavLink exact to="/"> My Orders</NavLink>
     </li>
     <li>
-      <NavLink to="/healthprinciples"> <Glyphicon glyph="heart" /> Health </NavLink>
+      <NavLink to="/healthprinciples"> Health </NavLink>
     </li>
     <li>
       <NavLink to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> <Glyphicon glyph="comment" className="highlightMenu" /> Message Us </NavLink>

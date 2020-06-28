@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useRef, useState } from 'react';
 import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Col, Button } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
 import { ListProducts, createProductHash } from './BasketCommon';

@@ -3,7 +3,7 @@
 .EditOrderDetails  {
     .product-name{
         margin-bottom:0px;
-        padding-bottom:0px;
+        padding-bottom:5px;
     }
     .product-name-subtext{
         margin-top:3px;
@@ -21,7 +21,7 @@
         margin: 0px auto;
         vertical-align: middle;
     }
-    @media (max-width: $screen-sm-min) {
+    @media (max-width: $screen-xs-min) {
         .product-item{
             display: inline-block;
             padding-bottom: $padding-xs-horizontal;

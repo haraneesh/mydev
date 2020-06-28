@@ -29,10 +29,17 @@ const SideMenu = (props) => (
               <li>
                 <NavLink to="/specials"> Specials </NavLink>
               </li>
-              <li>
-                <NavLink exact to="/"> My Orders</NavLink>
-              </li>
               */}
+              <li>
+                <NavLink to="/">My Orders</NavLink>
+              </li>
+              <li>
+                <NavLink to="/profile">My Profile</NavLink>
+              </li>
+              <li>
+                <NavLink to="/invitations">Invite Friends</NavLink>
+              </li>
+              <br />
               <li>
                 <NavLink to="/about">About Us</NavLink>
               </li>
@@ -42,16 +49,9 @@ const SideMenu = (props) => (
               <li>
                 <NavLink to="/vision">Our Vision</NavLink>
               </li>
-              <br />
-              <li>
-                <NavLink to="/invitations">Invite Friends</NavLink>
-              </li>
               {/* <li>
                 <NavLink to="/recover-password">Change Password</NavLink>
               </li> */}
-              <li>
-                <NavLink to="/profile">My Profile</NavLink>
-              </li>
               <li>
                 <Button id="app-logout" onClick={() => handleLogout(props)}>Logout</Button>
               </li>

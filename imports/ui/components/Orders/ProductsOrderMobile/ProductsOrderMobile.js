@@ -1,8 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Panel } from 'react-bootstrap';
-import { PanelGroup } from 'react-bootstrap';
+import { Panel, PanelGroup } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { DisplayCategoryHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
 
@@ -55,35 +54,22 @@ export default class ProductsOrderMobile extends React.Component {
 
   displayProductsByType() {
     const productGroups = this.props.productGroups;
-
-
-    return this.displayProductsByTypeStandardView(
-      productGroups[0],
-      productGroups[1],
-      productGroups[2],
-      productGroups[3],
-      productGroups[4],
-      productGroups[5],
-      productGroups[6],
-      productGroups[7],
-      productGroups[8],
-      productGroups[9],
-      productGroups[10],
-    );
+    return this.displayProductsByTypeStandardView(productGroups);
   }
 
-  displayProductsByTypeStandardView(
-    productVegetables,
-    productFruits,
-    productDhals,
-    productGrains,
-    productSpices,
-    productOils,
-    productPrepared,
-    productHygiene,
-    productSweetners,
-    productSpecials,
-    productRecommended) {
+  displayProductsByTypeStandardView(productGroups) {
+    const productVegetables = productGroups.productVegetables;
+    const productFruits = productGroups.productFruits;
+    const productDhals = productGroups.productDhals;
+    const productGrains = productGroups.productGrains;
+    const productSpices = productGroups.productSpices;
+    const productOils = productGroups.productOils;
+    const productPrepared = productGroups.productPrepared;
+    const productHygiene = productGroups.productHygiene;
+    const productSweetners = productGroups.productSweetners;
+    const productSpecials = productGroups.productSpecials;
+    const productRecommended = [];
+
     // const expanded = this.state.panelToFocus !== '';
     return (
       <div className="productOrderList">
@@ -95,6 +81,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="My Favourites"
                 onclick={() => this.handlePanelSelect('fav-header')}
                 isOpen={this.state.panelToFocus === 'fav-header'}
+                tabHash={productGroups.productGroupMetaHash.productRecommended}
               />)}
               expanded={(this.state.panelToFocus === 'fav-header')}
             >
@@ -112,6 +99,7 @@ export default class ProductsOrderMobile extends React.Component {
                   title="Specials"
                   isOpen={this.state.panelToFocus === 'spcl-header'}
                   onclick={() => this.handlePanelSelect('spcl-header')}
+                  tabHash={productGroups.productGroupMetaHash.productSpecials}
                 />)}
                 expanded={(this.state.panelToFocus === 'spcl-header')}
               >
@@ -126,6 +114,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Vegetables"
                 onclick={() => this.handlePanelSelect('veg-header')}
                 isOpen={this.state.panelToFocus === 'veg-header'}
+                tabHash={productGroups.productGroupMetaHash.productVegetables}
               />)}
               expanded={(this.state.panelToFocus === 'veg-header')}
               eventKey="3"
@@ -141,6 +130,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Fruits"
                 onclick={() => this.handlePanelSelect('fruits-header')}
                 isOpen={this.state.panelToFocus === 'fruits-header'}
+                tabHash={productGroups.productGroupMetaHash.productFruits}
               />)}
               expanded={(this.state.panelToFocus === 'fruits-header')}
               eventKey="4"
@@ -157,6 +147,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Grains & Flour"
                 onclick={() => this.handlePanelSelect('grain-header')}
                 isOpen={this.state.panelToFocus === 'grain-header'}
+                tabHash={productGroups.productGroupMetaHash.productGrains}
               />)}
               expanded={(this.state.panelToFocus === 'grain-header')}
               eventKey="5"
@@ -172,6 +163,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Pulses, Lentils & Dried Beans"
                 onclick={() => this.handlePanelSelect('dhals-header')}
                 isOpen={this.state.panelToFocus === 'dhals-header'}
+                tabHash={productGroups.productGroupMetaHash.productDhals}
               />)}
               expanded={(this.state.panelToFocus === 'dhals-header')}
               eventKey="6"
@@ -187,6 +179,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Spices & Nuts"
                 onclick={() => this.handlePanelSelect('spices-header')}
                 isOpen={this.state.panelToFocus === 'spices-header'}
+                tabHash={productGroups.productGroupMetaHash.productSpices}
               />)}
               expanded={(this.state.panelToFocus === 'spices-header')}
               eventKey="7"
@@ -202,6 +195,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Oils, Butter & Ghee"
                 onclick={() => this.handlePanelSelect('oils-header')}
                 isOpen={this.state.panelToFocus === 'oils-header'}
+                tabHash={productGroups.productGroupMetaHash.productOils}
               />)}
               expanded={(this.state.panelToFocus === 'oils-header')}
               eventKey="8"
@@ -217,6 +211,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Sweetners"
                 onclick={() => this.handlePanelSelect('swt-header')}
                 isOpen={this.state.panelToFocus === 'swt-header'}
+                tabHash={productGroups.productGroupMetaHash.productSweetners}
               />)}
               expanded={(this.state.panelToFocus === 'swt-header')}
               eventKey="10"
@@ -232,6 +227,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Pickles & Podis"
                 onclick={() => this.handlePanelSelect('prepared-header')}
                 isOpen={this.state.panelToFocus === 'prepared-header'}
+                tabHash={productGroups.productGroupMetaHash.productPrepared}
               />)}
               expanded={(this.state.panelToFocus === 'prepared-header')}
               eventKey="9"
@@ -247,6 +243,7 @@ export default class ProductsOrderMobile extends React.Component {
                 title="Personal & General Hygiene"
                 onclick={() => this.handlePanelSelect('hyg-header')}
                 isOpen={this.state.panelToFocus === 'hyg-header'}
+                tabHash={productGroups.productGroupMetaHash.productHygiene}
               />)}
               expanded={(this.state.panelToFocus === 'hyg-header')}
               eventKey="10"

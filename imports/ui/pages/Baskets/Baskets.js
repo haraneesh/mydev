@@ -29,8 +29,8 @@ const Baskets = ({ loading, baskets, match, history }) => (!loading ? (
       <Col xs={12}>
         {/* <p> You can prefill your order from Baskets you are creating.</p> */}
         <p> Basket is a list of your favorite products.</p>
-        {/* <p> Next time you order, you can save time, by choosing to prefill your cart from Basket you are creating.</p> */}
-        <p> Save time, when you order next by selecting a basket to prefill your cart.</p>
+        <p> Next time you order, you can save time, by choosing to prefill your cart from Basket you are creating.</p>
+        {/*<p> Next time you order, you can select a basket to prefill your cart and save time.</p>*/}
       </Col>
       <Link className="btn btn-primary" to={`${match.url}/new`}>Create New Basket</Link>
     </section>
@@ -46,7 +46,7 @@ const Baskets = ({ loading, baskets, match, history }) => (!loading ? (
               style={{ marginRight: '2px' }}
               bsStyle="info"
               onClick={() => history.push(`/baskets/${_id}`)}
-            >Edit</Button>
+            >View</Button>
             <Button
               className="btn-sm"
               bsStyle="default"

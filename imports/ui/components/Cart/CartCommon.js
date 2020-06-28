@@ -131,7 +131,7 @@ export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, 
         <strong>
           {
             formatMoney(totalBillAmount, accountSettings)
-          }
+          } &nbsp;
         </strong>
       </h4>
     </Col>
@@ -170,7 +170,7 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
     <Row>
       <Col sm={3}>
         <h4 className="text-right-not-xs">
-          <strong> Comments </strong>
+          <strong>Comments</strong> &nbsp;
         </h4>
       </Col>
       <Col sm={9}>

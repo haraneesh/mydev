@@ -62,6 +62,7 @@ Messages.schema = new SimpleSchema({
   unreadCommentCount: {
     type: Number,
     label: 'The count of unread comments',
+    optional: true,
   },
   message: {
     type: String,

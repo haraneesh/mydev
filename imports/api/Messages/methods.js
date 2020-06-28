@@ -24,10 +24,10 @@ Meteor.methods({
       messageType: String,
       message: String,
       messageStatus: Match.Maybe(String),
-      onBehalf: {
+      onBehalf: Match.Maybe({
         onBehalfUserId: Match.Maybe(String),
         orderReceivedAs: Match.Maybe(String),
-      },
+      }),
       to: Match.Maybe(String),
     });
 
@@ -39,8 +39,8 @@ Meteor.methods({
       const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0 };
       delete message.onBehalf;
 
-      message.to = validateTo(msg.to, isAdmin);
-
+      //message.to = validateTo(msg.to, isAdmin);
+      message.to = constants.Roles.admin.name;
 
       if (isAdmin && msg.onBehalf) {
         message.onBehalf = {

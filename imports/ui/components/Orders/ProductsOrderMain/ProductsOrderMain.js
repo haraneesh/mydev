@@ -137,30 +137,8 @@ const ProductsOrderMain = (props) => {
   };
 
   const displayProductsByTypeStandardView = (
-    productVegetables,
-    productFruits,
-    productDhals,
-    productGrains,
-    productSpices,
-    productOils,
-    productPrepared,
-    productHygiene,
-    productSweetners,
-    productSpecials,
-    productRecommended,
+    productGroups,
     isMobile) => {
-    const productGroups = [
-      productVegetables,
-      productFruits,
-      productDhals,
-      productGrains,
-      productSpices,
-      productOils,
-      productPrepared,
-      productHygiene,
-      productSweetners,
-      productSpecials,
-      productRecommended];
 
     return (
       <div className="productOrderList">
@@ -206,18 +184,7 @@ const ProductsOrderMain = (props) => {
           <ListGroup className="products-list">
             {
               displayProductsByTypeStandardView(
-                productGroups.productVegetables,
-                productGroups.productFruits,
-                productGroups.productDhals,
-                productGroups.productGrains,
-                productGroups.productSpices,
-                productGroups.productOils,
-                productGroups.productPrepared,
-                productGroups.productHygiene,
-                productGroups.productSweetners,
-                productGroups.productSpecials,
-                // productGroups.productRecommended,
-                [],
+                productGroups,
                 isMobile)}
 
           </ListGroup>

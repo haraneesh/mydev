@@ -169,7 +169,7 @@ const ProductForNonAdmin = ({
   }
 
   return (
-    <Col sm={12} md={6} className="no-padding product-item">
+    <Col xs={12} sm={6} className="no-padding product-item">
       <Col xs={12} sm={4} smOffset={0}>
         {!!image && imageRow}
       </Col>

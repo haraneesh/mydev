@@ -10,8 +10,19 @@ import './Navigation.scss';
 const Navigation = props => (
   <Navbar>
     <Navbar.Header>
+      {props.authenticated &&
+        <span
+          id="backIcon"
+          className="visible-xs-inline"
+          style={{ marginTop: '18px', marginLeft: '10px', float: 'left', fontSize: '1.25em', display: 'block' }}
+        >
+          <a onClick={() => { props.history.goBack(); }} href="#">
+            <i className="fa fa-arrow-left" style={{ color: '#522E23' }} />
+          </a>
+        </span>}
+
       <Navbar.Brand>
-        <a onClick={() => { props.history.push('/'); }}>
+        <a onClick={() => { props.history.push('/'); }} style={{marginLeft: '1rem'}}>
           <img
             className="brand-logo"
             src="/logo.png"

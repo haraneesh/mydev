@@ -41,10 +41,7 @@ const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) =>
     return (
       <div className="EditMessage">
         <h3 className="page-header">
-          <button className="btn btn-link" style={{ fontSize: '1.5em' }} onClick={() => { history.goBack(); }}>
-            <i className="far fa-arrow-alt-circle-left text-primary" />
-          </button>
-          {'Message Details'}
+          Message Details
         </h3>
         {(!loadingMessage && isEditMode) && (<MessageEditor existingMessage={message} history={history} isAdmin onsuccessFullUpdate={handleEditMessage} />) }
         {(!loadingMessage && !isEditMode) && (<MessageView existingMessage={message} editMessagePage isAdmin loggedInUserId={loggedInUserId} handleEditMessage={handleEditMessage} />)}
