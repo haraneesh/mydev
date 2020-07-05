@@ -1,16 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Datetime from 'react-datetime';
-import moment from 'moment';
-import 'moment-timezone';
-import Product from './Product';
-import { ProductTableHeader } from './Product';
-import { Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab } from 'react-bootstrap';
-import { dateSettings } from '../../../modules/settings';
-import { upsertProductList } from '../../../api/ProductLists/methods';
-
 import 'react-datetime/css/react-datetime.css';
+import { Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab } from 'react-bootstrap';
+import Product, { ProductTableHeader } from './Product';
+import { upsertProductList } from '../../../api/ProductLists/methods';
 
 const NewTab = 'New';
 
@@ -20,7 +16,6 @@ const createProductRows = ({ suppliers, products }) => {
 
   let sectionHeaderName = '';
   products.map((product, index) => {
-
     if (product.type !== sectionHeaderName) {
       sectionHeaderName = product.type;
       if (!(sectionHeaderName in productRows)) {
@@ -30,13 +25,12 @@ const createProductRows = ({ suppliers, products }) => {
     }
 
     productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
-  })
+  });
 
   return productRows;
-}
+};
 
 class ListAllProducts extends React.Component {
-
   constructor(props, context) {
     super(props, context);
 
@@ -55,35 +49,16 @@ class ListAllProducts extends React.Component {
     this.tabOnClick = this.tabOnClick.bind(this);
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // const productRows = createProductRows({ products: nextProps.products, suppliers: nextProps.suppliers })
+    // if (productRows !== prevState.productRows) {
+    // return { productRows };
+    // }
+    // else return null;
+  }
+
   onFocusChange(focusedInput) {
     this.setState({ focusedInput });
-  }
-
-  publishProductList() {
-    if (this.state.showEndDateError) {
-      Bert.alert('Your dates are not quiet right, do correct them and publish', 'danger');
-      return;
-    }
-
-    const params = {
-      activeStartDateTime: new Date(this.state.activeStartDate),
-      activeEndDateTime: new Date(this.state.activeEndDate),
-      _id: this.productListId,
-    };
-
-    upsertProductList.call(params, (error) => {
-      if (error) {
-        Bert.alert(error.reason || error.message, 'danger');
-      } else {
-        const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
-        Bert.alert(successMsg, 'success');
-      }
-    });
-  }
-
-  checkIsValidDate(current) {
-    const yesterday = moment().tz(dateSettings.timeZone).subtract(1, 'day');
-    return current.isAfter(yesterday);
   }
 
   checkValidStartDate(current) {
@@ -101,6 +76,28 @@ class ListAllProducts extends React.Component {
     });
   }
 
+  publishProductList() {
+    if (this.state.showEndDateError) {
+      Bert.alert('Your dates are not quiet right, do correct them and publish', 'danger');
+      return;
+    }
+
+    const params = {
+      activeStartDateTime: new Date(this.state.activeStartDate),
+      activeEndDateTime: new Date(this.state.activeEndDate),
+      _id: this.productListId,
+    };
+
+    Meteor.call('productLists.upsert', params, (error) => {
+      if (error) {
+        Bert.alert(error.reason || error.message, 'danger');
+      } else {
+        const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
+        Bert.alert(successMsg, 'success');
+      }
+    });
+  }
+
   publishSection() {
     return (
       <ListGroupItem className="publishSection">
@@ -111,7 +108,11 @@ class ListAllProducts extends React.Component {
             <ControlLabel> Active start date </ControlLabel>
           </Col>
           <Col xs={6}>
-            <Datetime closeOnSelect isValidDate={this.checkIsValidDate} onChange={this.checkValidStartDate} />
+            <Datetime
+              closeOnSelect
+              isValidDate={this.checkIsValidDate}
+              onChange={this.checkValidStartDate}
+            />
           </Col>
         </Row>
         <Row>
@@ -132,20 +133,11 @@ class ListAllProducts extends React.Component {
     );
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // const productRows = createProductRows({ products: nextProps.products, suppliers: nextProps.suppliers })
-    // if (productRows !== prevState.productRows) {
-    //return { productRows };
-    // }
-    // else return null;
-  }
-
   tabOnClick(selectedHeaderKey) {
     this.setState({ selectedHeaderKey });
   }
 
   render() {
-
     let sectionCount = 0;
     const productsDisplay = [];
     const productRows = this.state.productRows;

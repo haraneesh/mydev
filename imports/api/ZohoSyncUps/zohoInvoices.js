@@ -58,7 +58,6 @@ const createInvoiceObject = (orderId, zhInvoice) => {
   invoice.zhInvoiceStatus = zhInvoice.status;
   invoice.createdAt = zhInvoice.created_time;
   invoice.updatedAt = zhInvoice.last_modified_time;
-
   return invoice;
 };
 

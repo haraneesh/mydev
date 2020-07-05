@@ -43,7 +43,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
       </Row>
       <Row>
         <Col xs={12}>
-          {numberOfAwaitingPayments > 2 && walletBalanceInRs < 0 && (<p className="text-danger">  Did you know you can pay us online, now? </p>)}
+          {numberOfAwaitingPayments > 2 && walletBalanceInRs < 0 && (<p className="text-danger">  Did you know you can pay online, now? </p>)}
         </Col>
       </Row>
     </Panel>

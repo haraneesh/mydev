@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { Match, check } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
+import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import ProductLists from './ProductLists';
 import Suppliers from '../Suppliers/Suppliers';
@@ -13,7 +14,7 @@ import handleMethodException from '../../modules/handle-method-exception';
 const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   const newOrderableProducts = [];
 
-  //get all the suppliers and create a hash
+  // get all the suppliers and create a hash
 
   products.forEach((product) => {
     const key = product._id;
@@ -35,61 +36,6 @@ const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   });
   return newOrderableProducts;
 };
-
-export const upsertProductList = new ValidatedMethod({
-  name: 'productLists.upsert',
-  validate: new SimpleSchema({
-    _id: { type: String, optional: true },
-    activeStartDateTime: { type: Date },
-    activeEndDateTime: { type: Date },
-  }).validator(),
-  run(params) {
-    if (Meteor.isServer) {
-      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        // user not authorized. do not publish secrets
-        throw new Meteor.Error(401, 'Access denied');
-      }
-
-      const startDate = params.activeStartDateTime;
-      const endDate = params.activeEndDateTime;
-      const productListsId = params._id;
-      // db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } )
-      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, /*category: 1, displayOrder: 1,*/ name: 1 } }).fetch();
-      /* $or: [
-                  { $and:  [ {activeStartDateTime:{ $gte: startDate}} , { activeStartDateTime:{ $lte: endDate }} ] },
-                  { $and:  [ {activeEndDateTime:{ $gte: startDate}} , {activeEndDateTime:{ $lte: endDate }} ] },
-                  { $and:  [ {activeStartDateTime:{ $lte: startDate}} , {activeEndDateTime:{ $gte: endDate }} ] }
-                  ]
-      */
-
-      if (!productListsId) {
-        const overlappingProductList = ProductLists.findOne(
-          { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },
-        );
-        if (overlappingProductList) {
-          throw new Meteor.Error(417, ' Another Product List is active during this period. Product List was not created.');
-        }
-        orderableProducts = updateWithTotQuantityOrdered(orderableProducts);
-      } else {
-        const currentProductList = ProductLists.findOne({ _id: productListsId });
-        const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
-          map[obj._id] = obj;
-          return map;
-        }, {});
-
-        orderableProducts = updateWithTotQuantityOrdered(orderableProducts, currentProductHashMap);
-      }
-
-      const productList = {
-        activeStartDateTime: params.activeStartDateTime,
-        activeEndDateTime: params.activeEndDateTime,
-        products: orderableProducts,
-      };
-
-      return ProductLists.upsert({ _id: productListsId }, { $set: productList });
-    }
-  },
-});
 
 export const removeProductList = new ValidatedMethod({
   name: 'productLists.remove',
@@ -119,6 +65,50 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+  'productLists.upsert': function updateProductList(params) {
+    check(params, {
+      _id: Match.Maybe(String),
+      activeStartDateTime: Date,
+      activeEndDateTime: Date,
+    });
+
+    if (Meteor.isServer) {
+      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        // user not authorized. do not publish secrets
+        handleMethodException('Access denied', 401);
+      }
+
+      const startDate = params.activeStartDateTime;
+      const endDate = params.activeEndDateTime;
+      const productListsId = params._id;
+      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, /* category: 1, displayOrder: 1, */ name: 1 } }).fetch();
+      if (!productListsId) {
+        const overlappingProductList = ProductLists.findOne(
+          { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },
+        );
+        if (overlappingProductList) {
+          handleMethodException(' Another Product List is active during this period. Product List was not created.', 417);
+        }
+        orderableProducts = updateWithTotQuantityOrdered(orderableProducts);
+      } else {
+        const currentProductList = ProductLists.findOne({ _id: productListsId });
+        const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
+          map[obj._id] = obj;
+          return map;
+        }, {});
+
+        orderableProducts = updateWithTotQuantityOrdered(orderableProducts, currentProductHashMap);
+      }
+
+      const productList = {
+        activeStartDateTime: params.activeStartDateTime,
+        activeEndDateTime: params.activeEndDateTime,
+        products: orderableProducts,
+      };
+
+      ProductLists.upsert({ _id: productListsId }, { $set: productList });
+    }
+  },
 });
 
 /*
@@ -136,9 +126,9 @@ export const updateProductListWithOrderId = new ValidatedMethod({
 
 rateLimit({
   methods: [
-    upsertProductList,
     removeProductList,
     'getProductList.view',
+    'productLists.upsert',
   ],
   limit: 5,
   timeRange: 1000,

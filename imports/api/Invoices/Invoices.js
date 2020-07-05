@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import SimpleSchema from 'simpl-schema';
 
-export const InvoiceSchemaDefObj = new SimpleSchema({
+export default new SimpleSchema({
   totalInvoicedAmount: { type: Number, label: 'The total bill amount.', min: 0 },
   createdAt: { type: Date, label: 'The date on which the invoice was created in Zoho.' },
   updatedAt: {

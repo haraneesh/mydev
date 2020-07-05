@@ -21,6 +21,7 @@ class Profile extends React.Component {
     this.renderOAuthUser = this.renderOAuthUser.bind(this);
     this.renderPasswordUser = this.renderPasswordUser.bind(this);
     this.renderProfileForm = this.renderProfileForm.bind(this);
+    this.handleVerifyEmail = this.handleVerifyEmail.bind(this);
   }
 
   componentDidMount() {
@@ -28,7 +29,7 @@ class Profile extends React.Component {
 
     validate(component.form, {
       rules: {
-        salutation:{
+        salutation: {
           required: true,
         },
         firstName: {
@@ -42,12 +43,12 @@ class Profile extends React.Component {
           email: true,
         },
         whMobilePhone: {
-        required: true,
-        indiaMobilePhone: true,
-      },
-      deliveryAddress: {
-        required: true,
-      },
+          required: true,
+          indiaMobilePhone: true,
+        },
+        deliveryAddress: {
+          required: true,
+        },
         newPassword: {
           required() {
             // Only required if newPassword field has a value.
@@ -57,10 +58,10 @@ class Profile extends React.Component {
         },
         confirmPassword: {
           required() {
-            return (component.newPassword.value.length > 0 );
+            return (component.newPassword.value.length > 0);
           },
           minlength: 6,
-          equalTo:"#newPassword",
+          equalTo: '#newPassword',
         },
       },
       messages: {
@@ -78,7 +79,7 @@ class Profile extends React.Component {
           email: 'Is this email address correct?',
         },
         newPassword: {
-          required: 'Need your new password if changing.'
+          required: 'Need your new password if changing.',
         },
         confirmPassword: {
           required: 'The new password and confirm password are not matching, please try again.',
@@ -103,6 +104,17 @@ class Profile extends React.Component {
     return service === 'password' ? 'password' : 'oauth';
   }
 
+  handleVerifyEmail() {
+    const emailAddress = this.emailAddress.value;
+    Meteor.call('users.sendVerificationEmail', emailAddress, (error) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        Bert.alert('A verification email has been sent. Please check your email.', 'success');
+      }
+    });
+  }
+
   handleSubmit() {
     const profile = {
       emailAddress: this.emailAddress.value,
@@ -111,9 +123,9 @@ class Profile extends React.Component {
           first: this.firstName.value,
           last: this.lastName.value,
         },
-      salutation: this.salutation.selectedOptions[0].value,
-      whMobilePhone: this.whMobilePhone.value,
-      deliveryAddress: this.deliveryAddress.value,
+        salutation: this.salutation.selectedOptions[0].value,
+        whMobilePhone: this.whMobilePhone.value,
+        deliveryAddress: this.deliveryAddress.value,
       },
     };
 
@@ -141,40 +153,52 @@ class Profile extends React.Component {
 
   renderPasswordUser(loading, user) {
     return !loading ? (<div>
-        <FormGroup>
-          <ControlLabel>Salutation</ControlLabel>
-          <select name="salutation" 
-            ref={salutation=>(this.salutation=salutation)} 
-            className="form-control" 
-            defaultValue={(user.profile.salutation)?user.profile.salutation:""}>
-            <option value="Mrs.">Mrs</option>
-            <option value="Mr.">Mr</option>
-            <option value="Miss"> Miss</option>
-          </select>
+      <FormGroup>
+        <ControlLabel>Salutation</ControlLabel>
+        <select
+          name="salutation"
+          ref={salutation => (this.salutation = salutation)}
+          className="form-control"
+          defaultValue={(user.profile.salutation) ? user.profile.salutation : ''}
+        >
+          <option value="Mrs.">Mrs</option>
+          <option value="Mr.">Mr</option>
+          <option value="Miss"> Miss</option>
+        </select>
       </FormGroup>
       <FormGroup>
-          <ControlLabel>First Name</ControlLabel>
-          <input
-            type="text"
-            name="firstName"
-            defaultValue={user.profile.name.first}
-            ref={firstName => (this.firstName = firstName)}
-            className="form-control"
-          />
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Last Name</ControlLabel>
-          <input
-            type="text"
-            name="lastName"
-            defaultValue={user.profile.name.last}
-            ref={lastName => (this.lastName = lastName)}
-            className="form-control"
-          />
+        <ControlLabel>First Name</ControlLabel>
+        <input
+          type="text"
+          name="firstName"
+          defaultValue={user.profile.name.first}
+          ref={firstName => (this.firstName = firstName)}
+          className="form-control"
+        />
       </FormGroup>
-      
       <FormGroup>
-        <ControlLabel>Email Address</ControlLabel>
+        <ControlLabel>Last Name</ControlLabel>
+        <input
+          type="text"
+          name="lastName"
+          defaultValue={user.profile.name.last}
+          ref={lastName => (this.lastName = lastName)}
+          className="form-control"
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <Row>
+          <Col xs={6}>
+            <ControlLabel>Email Address</ControlLabel>
+          </Col>
+          <Col xs={6} className="text-right" style={{ top: '-0.5rem' }}>
+            {!user.emails[0].verified ?
+              (<Button className="btn-warning btn-sm" onClick={this.handleVerifyEmail}>Verify Email</Button>) :
+              (<span className="text-default">Verified</span>)
+            }
+          </Col>
+        </Row>
         <input
           type="email"
           name="emailAddress"
@@ -182,6 +206,7 @@ class Profile extends React.Component {
           ref={emailAddress => (this.emailAddress = emailAddress)}
           className="form-control"
         />
+
       </FormGroup>
       <FormGroup>
         <ControlLabel>Mobile Number</ControlLabel>
@@ -189,21 +214,21 @@ class Profile extends React.Component {
           type="text"
           ref={whMobilePhone => (this.whMobilePhone = whMobilePhone)}
           name="whMobilePhone"
-          placeholder="10 digit number example, 8787989897" 
-          defaultValue = { user.profile.whMobilePhone }
+          placeholder="10 digit number example, 8787989897"
+          defaultValue={user.profile.whMobilePhone}
           className="form-control"
         />
-        </FormGroup>
+      </FormGroup>
       <FormGroup>
-          <ControlLabel>Delivery Address</ControlLabel>
-          <textarea
-            ref={deliveryAddress => (this.deliveryAddress = deliveryAddress)}
-            name="deliveryAddress"
-            placeholder="Complete address to deliver at, including Landmark, Pincode." 
-            rows="6"
-            defaultValue = { user.profile.deliveryAddress }
-            className="form-control"
-          />
+        <ControlLabel>Delivery Address</ControlLabel>
+        <textarea
+          ref={deliveryAddress => (this.deliveryAddress = deliveryAddress)}
+          name="deliveryAddress"
+          placeholder="Complete address to deliver at, including Landmark, Pincode."
+          rows="6"
+          defaultValue={user.profile.deliveryAddress}
+          className="form-control"
+        />
       </FormGroup>
       <FormGroup>
         <ControlLabel>New Password</ControlLabel>
@@ -225,19 +250,19 @@ class Profile extends React.Component {
           <li>One Special character</li>
           <li>6 characters minimum</li>
         </ul>
-        </InputHint>
-        <Row>
-          <Col xs={12}>
-            <FormGroup>
-              <ControlLabel>Confirm New Password</ControlLabel>
-              <input
-                type="password"
-                name="confirmPassword"
-                ref={confirmPassword => (this.confirmPassword = confirmPassword)}
-                className="form-control"
-              />
-            </FormGroup>
-          </Col>
+      </InputHint>
+      <Row>
+        <Col xs={12}>
+          <FormGroup>
+            <ControlLabel>Confirm New Password</ControlLabel>
+            <input
+              type="password"
+              name="confirmPassword"
+              ref={confirmPassword => (this.confirmPassword = confirmPassword)}
+              className="form-control"
+            />
+          </FormGroup>
+        </Col>
       </Row>
       <div>
         <Button type="submit" bsStyle="primary">Save Profile</Button>

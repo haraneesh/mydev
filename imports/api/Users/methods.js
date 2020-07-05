@@ -84,7 +84,7 @@ const assignUserRole = (userId, selectedRole) => {
       Roles.setUserRoles(userId, [constants.Roles.customer.name]);
       break;
   }
-}
+};
 const createNewUser = (user) => {
   const cuser = {
     username: user.username,
@@ -112,9 +112,9 @@ const createNewUser = (user) => {
 
   if (!userExists) {
     const userId = Accounts.createUser(cuser);
-    /*if (user.isAdmin) {
+    /* if (user.isAdmin) {
       Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
-    }*/
+    } */
     assignUserRole(userId, user.role);
     Meteor.users.update({ username: cuser.username }, { $set: { wallet, updatedAt: new Date() } });
     return Meteor.users.findOne({ username: cuser.username });
@@ -135,7 +135,7 @@ export const createUser = new ValidatedMethod({
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
     'profile.deliveryAddress': { type: String },
-    //isAdmin: { type: Boolean, optional: true },
+    // isAdmin: { type: Boolean, optional: true },
     password: { type: Object, blackbox: true },
     role: { type: String },
   }).validator(),
@@ -162,9 +162,9 @@ export const adminUpdateUser = new ValidatedMethod({
     password: { type: Object, optional: true, blackbox: true },
     role: { type: String },
   }).validator(),
-  run(usr) {
-    const user = usr;
-    const userRole = usr.role;
+  run(options) {
+    const user = { ...options };
+    const userRole = options.role;
     delete user.role;
 
     if (
@@ -174,11 +174,11 @@ export const adminUpdateUser = new ValidatedMethod({
       const cuser = Meteor.users.findOne({ _id: user._id });
 
       if (cuser) {
-        if (user.email && user.email !== cuser.email) {
-          const email = [];
-          email.push({ address: user.email, verified: 'false' });
-          delete user.email;
-          user.emails = email;
+        delete user.email;
+        if (options.email && options.email !== cuser.emails[0].address) {
+          const emails = [];
+          emails.push({ address: options.email, verified: 'false' });
+          user.emails = emails;
         }
 
         // Set password
@@ -200,45 +200,10 @@ export const adminUpdateUser = new ValidatedMethod({
           Roles.addUsersToRoles(cuser._id, [constants.Roles.admin.name]);
         } else if (u && !user.isAdmin) {
           Roles.removeUsersFromRoles(cuser._id, [constants.Roles.admin.name]);
-        }*/
+        } */
         return u;
       }
     }
-  },
-});
-
-export const updateUser = new ValidatedMethod({
-  name: 'users.update',
-  validate: new SimpleSchema({
-    username: { type: String, optional: true },
-    email: { type: String, optional: true },
-    'profile.name.last': { type: String, optional: true },
-    'profile.name.first': { type: String, optional: true },
-    'profile.whMobilePhone': { type: String, optional: true },
-    'profile.deliveryAddress': { type: String, optional: true },
-    // password: { type: String, optional:true }
-  }).validator(),
-  run(usr) {
-    const user = usr;
-    if (user.email) {
-      const email = [];
-      email.push({ address: user.email, verified: 'false' });
-      delete user.email;
-      user.emails = email;
-    }
-    if (Meteor.isServer) {
-      /* }
-      const authtoken = Meteor.settings.private.zoho_authtoken;
-      const organizationId = Meteor.settings.private.zoho_organization_id;
-
-      const zh = new ZohoInventory(authtoken, organizationId);
-      zh.getRecords('contacts');
-      zh.getRecords('items');
-      zh.getRecords('bills');
-      zh.getRecords('users'); */
-      // console.log(zh.getContacts('contacts'));
-    }
-    return Meteor.users.update({ _id: Meteor.userId() }, { $set: user });
   },
 });
 
@@ -288,8 +253,17 @@ Meteor.methods({
       return UserSignUps.update({ _id: userSignUpId }, { $set: { status } });
     }
   },
-  'users.sendVerificationEmail': function usersSendVerificationEmail() {
-    return Accounts.sendVerificationEmail(this.userId);
+  'users.sendVerificationEmail': function usersSendVerificationEmail(emailAddress) {
+    check(emailAddress, String);
+    const userId = this.userId;
+    Meteor.users.update({ _id: userId }, {
+      $set: {
+        'emails.0.address': emailAddress,
+        'emails.0.verified': false,
+      },
+    });
+
+    return Accounts.sendVerificationEmail(userId);
   },
   'users.visitedPlaceNewOrder': function lastVisitedPlaceNewOrder() {
     try {
@@ -305,7 +279,6 @@ rateLimit({
     'users.sendVerificationEmail',
     'users.visitedPlaceNewOrder',
     'users.approveSignUp',
-    updateUser,
     adminUpdateUser,
     findUser,
     createUser,

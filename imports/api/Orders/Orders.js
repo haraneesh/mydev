@@ -5,7 +5,7 @@ import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
 import constants from '../../modules/constants';
 import { ProductSchemaDefObject } from '../Products/Products';
-import { InvoiceSchemaDefObj } from '../Invoices/Invoices';
+import InvoiceSchemaDefObj from '../Invoices/Invoices';
 
 export const Orders = new Mongo.Collection('Orders');
 

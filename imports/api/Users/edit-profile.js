@@ -14,9 +14,14 @@ const updatePassword = (userId, newPassword) => {
 
 const updateUser = (userId, { emailAddress, profile }) => {
   try {
+    const user = Meteor.users.findOne({ _id: userId });
+    const presentEmailAddress = user && user.emails && user.emails[0].address;
+
     Meteor.users.update(userId, {
       $set: {
         'emails.0.address': emailAddress,
+        'emails.0.verified': (presentEmailAddress && presentEmailAddress === emailAddress) ?
+          user.emails[0].verified : false,
         updatedAt: new Date(),
         profile,
       },
@@ -29,7 +34,6 @@ const updateUser = (userId, { emailAddress, profile }) => {
 const editProfile = ({ userId, profile }, promise) => {
   try {
     action = promise;
-
     updateUser(userId, profile);
     if (profile.password) updatePassword(userId, profile.password);
 
@@ -40,5 +44,5 @@ const editProfile = ({ userId, profile }, promise) => {
 };
 
 export default options =>
-new Promise((resolve, reject) =>
-editProfile(options, { resolve, reject }));
+  new Promise((resolve, reject) =>
+    editProfile(options, { resolve, reject }));

@@ -25,6 +25,7 @@ import Privacy from '../../pages/Miscellaneous/Privacy/Privacy';
 import Signup from '../../pages/Miscellaneous/Signup/Signup';
 import Login from '../../pages/Miscellaneous/Login/Login';
 import Logout from '../../pages/Miscellaneous/Logout/Logout';
+import VerifyEmail from '../../pages/Miscellaneous/VerifyEmail';
 import RecoverPassword from '../../pages/Miscellaneous/RecoverPassword/RecoverPassword';
 import ResetPassword from '../../pages/Miscellaneous/ResetPassword/ResetPassword';
 import Profile from '../../pages/Miscellaneous/Profile/Profile';
@@ -95,8 +96,11 @@ import {
   dMessages,
   dEditMessage,
   dAdminAllMessages,
+
 }
   from './dynamicRoutes';
+
+import VerifyEmailAlert from '../../components/VerifyEmailAlert/';
 
 import dMyWallet from '../../pages/Wallet/MyWallet';
 
@@ -104,8 +108,8 @@ import { CartProvider } from '../../stores/ShoppingCart';
 
 import './App.scss';
 
-const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
+const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
 const App = props => (
   <Router>
@@ -115,6 +119,11 @@ const App = props => (
         </small> <br />
         <small> Hope your are sufficiently stocked and are safe at home. </small>
         </Alert>) */}
+      {/* props.authenticated && (
+        <VerifyEmailAlert
+          {...props}
+        />
+      ) */ }
       <CartProvider >
         <Switch>
           <Authenticated routeName="My Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
@@ -201,6 +210,7 @@ const App = props => (
 
           {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
           <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />
+          <Public routeName="Verify Email" layout={MainLayout} path="/verify-email/:token" component={VerifyEmail} />
           <Public routeName="Recover Password" layout={MainLayout} path="/recover-password" component={RecoverPassword} />
           <Public routeName="Reset Password" layout={MainLayout} path="/reset-password/:token" component={ResetPassword} />
           <Public routeName="Terms" layout={MainLayout} path="/pages/terms" component={Terms} {...props} />
@@ -241,16 +251,21 @@ export default withTracker(() => {
   const loading = !Roles.subscription.ready();
   const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
   const emailAddress = user && user.emails && user.emails[0].address;
+  const emailVerified = user && user.emails && user.emails[0].verified;
+  const userSettings = user && user.settings && user.settings;
 
   return {
     loading,
     loggingIn,
     authenticated: !loggingIn && !!userId,
-    name: name || emailAddress,
+    name,
+    emailAddress,
+    emailVerified,
     date: new Date(),
     roles: !loading && Roles.getRolesForUser(userId),
     loggedInUserId: userId,
     loggedInUser: user,
+    userSettings,
     analytics,
   };
 })(App);

@@ -1,13 +1,13 @@
 // upgrade to 2.0.0 - to support recipes
 // add measures to ingredients
-//import { Mongo } from 'meteor/mongo';
-//import { Meteor } from 'meteor/meteor';
+// import { Mongo } from 'meteor/mongo';
+import { Meteor } from 'meteor/meteor';
 // import Ingredients from '../Ingredients/Ingredients';
-//import Products from '../Products/Products';
-//import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
+// import Products from '../Products/Products';
+// import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 import { Orders } from '../Orders/Orders';
 import { Roles } from 'meteor/alanning:roles';
-//import constants from '../../modules/constants';
+// import constants from '../../modules/constants';
 
 /*
 const IngWeights = new Mongo.Collection('IngWeights');
@@ -40,18 +40,32 @@ Products.update( { _id: "x9AnG9zNXosQLFuc9" },{ $set : {"zh_item_id" : "70220700
 Products.update( { _id: "HKpzgEHxP2huBJnyw" },{ $set : {"zh_item_id" : "702207000007988005"} }); */
 
 /*
-Meteor.users.update({ wallet: { $exists: false } }, {
+Meteor.users.update({ settings: { $exists: false } }, {
   $set: {
-    wallet: {
-      unused_retainer_payments_InPaise: 0,
-      unused_credits_receivable_amount_InPaise: 0,
-      outstanding_receivable_amount_InPaise: 0,
-      lastZohoSync: new Date('1/1/2000')
-    }
-  }
+    settings: {
+      dieteryPreference: {
+        value: '',
+      },
+    },
+  },
 },
-  { multi: true });
+{ multi: true }); */
 
+const cusers = Meteor.users.find({}).fetch();
+
+cusers.forEach((u) => {
+  if (u.emails[0].verified === 'false') {
+    const user = u;
+    const email = [];
+    email.push({ address: u.emails[0].address, verified: false });
+    delete user.email;
+    user.emails = email;
+    Meteor.users.update({ _id: u._id }, { $set: user });
+  }
+});
+
+
+/*
 const cusers = Meteor.users.find({}).fetch();
 
 cusers.forEach((u) => {
@@ -63,20 +77,20 @@ cusers.forEach((u) => {
 });
 */
 
-/*Orders.update({ expectedDeliveryDate: { $exists: false } }, {
+/* Orders.update({ expectedDeliveryDate: { $exists: false } }, {
   $set: {
     expectedDeliveryDate: new Date(2017, 1, 1),
   },
-}, { multi: true });*/
+}, { multi: true }); */
 
-//Products.update({ wSaleBaseUnitPrice: { $exists: false } }, { $set: { wSaleBaseUnitPrice: 0 } }, { multi: true });
-//Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });
+// Products.update({ wSaleBaseUnitPrice: { $exists: false } }, { $set: { wSaleBaseUnitPrice: 0 } }, { multi: true });
+// Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });
 // Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: 'blank_image.png' } }, { multi: true });
-//Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: '' } }, { multi: true });
-//Products.update({}, { $set: { displayOrder: 1 } }, { multi: true });
-//Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
+// Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: '' } }, { multi: true });
+// Products.update({}, { $set: { displayOrder: 1 } }, { multi: true });
+// Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
 
-//Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
+// Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
 
@@ -84,4 +98,4 @@ cusers.forEach((u) => {
 Orders.find({}).fetch().forEach(order => {
   const role = Roles.getRolesForUser(order.customer_details._id)[0];
   Orders.update({ _id: order._id }, { $set: { 'customer_details.role': role } });
-});*/
+}); */
