@@ -42,7 +42,7 @@ export default class IngredientSelector extends React.Component {
           ingredientList: Object.assign({}, ingredientList),
         },
       },
-        );
+    );
     this.props.onChange(Object.assign({}, ingredientList));
   }
 
@@ -79,14 +79,14 @@ export default class IngredientSelector extends React.Component {
           addIngredient={this.handleAddIngredient}
         />
         {
-              _.map(ingredients.ingredientList, (value, index) =>
-                (<IngredientItem
-                  ingredient={value}
-                  key={index}
-                  removeIngredient={this.handleMinusIngredient}
-                  onWeightChange={this.handleWeightChange}
-                  onDisplayNameChange={this.handleDisplayNameChange}
-                />), this)
+          _.map(ingredients.ingredientList, (value, index) =>
+            (<IngredientItem
+              ingredient={value}
+              key={index}
+              removeIngredient={this.handleMinusIngredient}
+              onWeightChange={this.handleWeightChange}
+              onDisplayNameChange={this.handleDisplayNameChange}
+            />), this)
         }
       </Panel>
     );

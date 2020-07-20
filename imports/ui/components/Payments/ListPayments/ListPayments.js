@@ -50,7 +50,7 @@ const ListPayments = () => {
       </Col>
     </Panel>
 
-  ) : (<Panel> <button className="btn btn-sm btn-primary" onClick={loadPaymentHistory}> Fetch Payments History </button> </Panel>);
+  ) : (<Panel> <button className="btn btn-sm btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button> </Panel>);
 };
 
 export default ListPayments;

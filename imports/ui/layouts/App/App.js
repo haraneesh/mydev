@@ -1,8 +1,8 @@
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'react-bootstrap';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
-import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import Authenticated from '../../components/Routes/Authenticated';
@@ -70,7 +70,7 @@ import {
   dRecipesHome,
   dRecipes,
   dNewRecipe,
-  dEditRecipe,
+  //dEditRecipe,
   dViewRecipe,
   dSuppliers,
   dNewSupplier,
@@ -103,6 +103,7 @@ import {
 import VerifyEmailAlert from '../../components/VerifyEmailAlert/';
 
 import dMyWallet from '../../pages/Wallet/MyWallet';
+import dEditRecipe from '../../pages/Recipes/EditRecipe';
 
 import { CartProvider } from '../../stores/ShoppingCart';
 
@@ -143,7 +144,7 @@ const App = props => (
           <Authenticated exact routeName="Recipes Home" layout={MainLayout} path="/recipes" component={dRecipesHome} {...props} />
           <Authenticated exact routeName="View Recipes By Category" layout={MainLayout} path="/recipes/foodtype/:category" component={dRecipes} {...props} />
           <AdminAuthenticated exact routeName="New Recipe" layout={MainLayout} path="/recipes/new" component={dNewRecipe} {...props} />
-          <AdminAuthenticated exact routeName="EditRecipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
+          <AdminAuthenticated exact routeName="Edit Recipe" layout={MainLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
           <Authenticated routeName="View Recipe" layout={MainLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />
 
           {/* Suppliers */}

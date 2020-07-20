@@ -81,10 +81,12 @@ export const dNewRecipe = SuvaiLoadable({
   loader: () => import('../../pages/Recipes/NewRecipe'),
 });
 
-// import EditRecipe from '../containers/recipes/EditRecipe';
-export const dEditRecipe = SuvaiLoadable({
+//import EditRecipe from '../containers/recipes/EditRecipe' 
+//import dEditRecipe from '../../pages/Recipes/EditRecipe';
+
+/*export const dEditRecipe = SuvaiLoadable({
   loader: () => import('../../containers/Recipes/EditRecipe'),
-});
+});*/
 
 // import ViewRecipe from '../containers/recipes/ViewRecipe';
 export const dViewRecipe = SuvaiLoadable({

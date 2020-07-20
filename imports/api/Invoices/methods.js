@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
-import { check } from 'meteor/check';
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import rateLimit from '../../modules/rate-limit';
 import zh from '../ZohoSyncUps/ZohoBooks';
 import handleMethodException from '../../modules/handle-method-exception';

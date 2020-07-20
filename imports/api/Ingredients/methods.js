@@ -22,6 +22,16 @@ const filterGroup = [
 ];
 
 Meteor.methods({
+  'ingredients.add': function ingredientsAdd(params) {
+    check(params, {
+      ingredientName: String,
+    });
+    const id = Ingredients.insert({ name: params.ingredientName });
+    return {
+      _id: id,
+      name: params.ingredientName,
+    };
+  },
   'ingredients.find': function ingredientsFind(searchParams) {
     check(searchParams, {
       searchString: String,
@@ -31,8 +41,8 @@ Meteor.methods({
       const srchString = `\"${searchParams.searchString.split(' ').join('\" \"')}\"`;
       const retVal = Ingredients.find(
         {
-          $text: { $search: srchString },
-          FdGrp_Cd: { $in: filterGroup },
+          $text: { $search: srchString } // FdGrp_Cd: { $in: filterGroup },
+          ,
         },
         {
           fields: {
@@ -104,6 +114,7 @@ Meteor.methods({
 
 rateLimit({
   methods: [
+    'ingredients.add',
     'ingredients.find',
     'ingredients.getApi',
   ],

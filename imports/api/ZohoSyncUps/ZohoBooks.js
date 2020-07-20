@@ -14,22 +14,21 @@ const getConnectionInfo = (authToken, organizationId) => ({
   organization_id: organizationId,
 });
 
-const setAPICall = () => {
-  return {
-    authtoken: Meteor.settings.private.zoho_authtoken,
-    organization_id: Meteor.settings.private.zoho_organization_id,
-  }
-};
+const setAPICall = () => ({
+  authtoken: Meteor.settings.private.zoho_authtoken,
+  organization_id: Meteor.settings.private.zoho_organization_id,
+});
 
-const callAPI = (requestType, endpoint, params, connectionInfo) => {
+const callAPI = (requestType, endpoint, params, connectionInfo, getParamsWithPost) => {
   const args = {};
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
-  args.params = (connectionInfo) ? connectionInfo : setAPICall();
+  args.params = (connectionInfo) || setAPICall();
 
   if (params) {
     switch (true) {
       case (requestType === _callType.POST):
-        args.params.JSONString = JSON.stringify(params);
+        // args.params.JSONString = JSON.stringify(params);
+        args.params = Object.assign(args.params, { JSONString: JSON.stringify(params) }, getParamsWithPost);
         break;
       case (requestType === _callType.PUT):
         args.params.JSONString = JSON.stringify(params);
@@ -41,16 +40,22 @@ const callAPI = (requestType, endpoint, params, connectionInfo) => {
   }
 
   const callUrl = `${apiBaseUrl}/${endpoint}`;
+  if (Meteor.isDevelopment) {
+    console.log('---------------Call Url-----------------------');
+    console.log(callUrl);
+    console.log('---------------Params-----------------------');
+    console.log(args.params);
+  }
+
   try {
     const result = HTTP.call(requestType, callUrl, args);
     if (Meteor.isDevelopment) {
-      console.log(callUrl);
-      console.log('--------------------------------------');
+      console.log('---------------Data-----------------------');
       console.log(result.data);
-      console.log('--------------------------------------');
-      console.log(args.params);
+      console.log('---------------Content-----------------------');
+      console.log(result.content);
     }
-    return result.data;
+    return result.data || result.content;
   } catch (e) {
     // Got a network error, timeout, or HTTP error in the 400 or 500 range.
     if (Meteor.isDevelopment) {
@@ -100,17 +105,29 @@ const getRecordById = (module, id, connectionInfo) => {
   return callAPI(_callType.GET, endpoint, connectionInfo);
 };
 
+const getRecordByIdAndParams = ({ module, id, submodule, params, connectionInfo }) => {
+  const endpoint = (submodule) ? `${module}/${id}/${submodule}` : `${module}/${id}`;
+  return callAPI(_callType.GET, endpoint, params, connectionInfo);
+};
+
+const postRecordByIdAndParams = ({ module, id, submodule, params, connectionInfo, getParamsWithPost }) => {
+  const endpoint = (submodule) ? `${module}/${id}/${submodule}` : `${module}/${id}`;
+  return callAPI(_callType.POST, endpoint, params, connectionInfo, getParamsWithPost);
+};
+
 const deleteRecord = (module, id, connectionInfo) => {
   const endpoint = `${module}/${id}`;
   return callAPI(_callType.DELETE, endpoint, connectionInfo);
 };
 
 
-export default ZohoBooks = {
+export default {
   createRecord,
   updateRecord,
   getRecords,
   deleteRecord,
+  postRecordByIdAndParams,
+  getRecordByIdAndParams,
   getRecordById,
   getRecordsByParams,
   getConnectionInfo,

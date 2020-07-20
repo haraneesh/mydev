@@ -1,5 +1,5 @@
 const accountSettings = {
-  symbol: 'Rs. ',       // default currency symbol is '$'
+  symbol: 'Rs. ', // default currency symbol is '$'
 };
 
 const dateSettings = {
@@ -16,7 +16,7 @@ const dateSettingsWithTime = {
 };
 
 export {
-    accountSettings,
-    dateSettings,
-    dateSettingsWithTime,
-  };
+  accountSettings,
+  dateSettings,
+  dateSettingsWithTime,
+};

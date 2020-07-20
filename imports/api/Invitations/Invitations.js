@@ -42,7 +42,7 @@ const InvitationsSchema = new SimpleSchema({
       } else if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },

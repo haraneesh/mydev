@@ -1,41 +1,22 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
 import moment from 'moment';
+import { dateSettings } from '../../modules/settings';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
+import statementEmail from '../../startup/server/accounts/email-templates';
 import zh from './ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
 import { getUserOrdersAndInvoicesFromZoho } from './zohoOrdersMethods';
 import handleMethodException from '../../modules/handle-method-exception';
 
-const _createZohoInventoryContact = usr => ({
-  contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
-  billing_address: {
-    address: 'Street address',
-    city: 'chennai',
-    state: 'TN',
-  },
-  shipping_address: {
-    address: 'Street Address goes here',
-    city: 'chennai',
-    state: 'TN',
-  },
-  contact_persons: [{
-    first_name: usr.profile.name.first,
-    last_name: usr.profile.name.last,
-    email: usr.email,
-    mobile: usr.profile.whMobilePhone,
-    is_primary_contact: true,
-  }],
-});
-
-
 const createZohoBooksContact = usr => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
   customer_sub_type: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
-  //gst_treatment: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
+  // gst_treatment: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
   billing_address: {
     address: usr.profile.deliveryAddress,
     city: 'chennai',
@@ -169,9 +150,141 @@ export const getUserWallet = new ValidatedMethod({
   },
 });
 
+const sendMessage = ({ user, generatedDate, startDate, endDate, emailAddress }) => {
+  const zhStartDate = moment(startDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+  const zhEndDate = moment(endDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+  const zhGeneratedDate = moment(generatedDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+
+  const salutation = user.profile.salutation || '';
+  const firstName = user.profile.name.first;
+
+  const zhContactResponse = zh.postRecordByIdAndParams({
+    module: 'contacts',
+    id: user.zh_contact_id,
+    submodule: 'statements/email',
+    getParamsWithPost: {
+      start_date: zhStartDate,
+      end_date: zhEndDate },
+    params: {
+      send_from_org_email_id: false,
+      to_mail_ids: [emailAddress],
+      subject: statementEmail.subject(zhGeneratedDate),
+      body: statementEmail.body({
+        salutation,
+        firstName,
+        startDate: zhStartDate,
+        endDate: zhEndDate,
+      }),
+    },
+  });
+  return zhContactResponse;
+};
+
+Meteor.methods({
+  'customer.sendStatement': function sendStatement(params) {
+    check(params, {
+      periodSelected: String,
+    });
+
+    if (Meteor.isServer) {
+      const user = Meteor.users.findOne({ _id: this.userId });
+      if (!user.emails[0].verified) {
+        return {
+          message: 'Email Address is Not Verified',
+          messageType: 'EmailVerifyError',
+        };
+      }
+
+      try {
+        const today = moment();
+        let startDate;
+        let endDate;
+
+        switch (params.periodSelected) {
+          /* case constants.StatementPeriod.Today.name:
+            startDate = today;
+            endDate = today;
+            break; */
+          case constants.StatementPeriod.ThisWeek.name:
+            startDate = moment().day('Sunday');
+            endDate = today;
+            break;
+          case constants.StatementPeriod.ThisMonth.name:
+            startDate = moment().date(1);
+            endDate = today;
+            break;
+          case constants.StatementPeriod.ThisYear.name:
+            startDate = moment().dayOfYear(1);
+            endDate = today;
+            break;
+            /* case constants.StatementPeriod.Yesterday.name:
+            startDate = moment().subtract(1, 'days');
+            endDate = startDate;
+            break; */
+          case constants.StatementPeriod.PreviousWeek.name:
+            startDate = moment().subtract(7, 'days').day('Sunday');
+            endDate = moment().subtract(7, 'days').day('Saturday');
+            break;
+          case constants.StatementPeriod.PreviousMonth.name:
+            startDate = moment().subtract(1, 'months').date(1);
+            endDate = moment().date(1).subtract(1, 'days');
+            break;
+          case constants.StatementPeriod.PreviousYear.name:
+            startDate = moment().subtract(1, 'years').dayOfYear(1);
+            endDate = moment().dayOfYear(1).subtract(1, 'days');
+            break;
+          default:
+            handleMethodException('The period selected is not supported yet.', 404);
+            break;
+        }
+
+        const zohoResponse = sendMessage({ user, generatedDate: today, startDate, endDate, emailAddress: user.emails[0].address });
+
+        if (zohoResponse.code !== 0) {
+          handleMethodException(zohoResponse, zohoResponse.code);
+        }
+        return {
+          emailAddress: user.emails[0].address,
+          message: zohoResponse.message,
+          messageType: 'success',
+        };
+      } catch (exception) {
+        handleMethodException(exception);
+      }
+    }
+  },
+  'customer.getStatement': function getStatement(params) {
+    check(params, {
+      accept: String,
+      fromDate: String,
+      toDate: String,
+    });
+
+    if (Meteor.isServer) {
+      try {
+        const user = Meteor.users.find(this.userId).fetch({}, {
+          fields: {
+            zh_contact_id: 1,
+          },
+        })[0];
+
+        const zhContactResponse = zh.getRecordByIdAndParams({
+          module: 'contacts',
+          id: user.zh_contact_id,
+          submodule: 'statements',
+          params: { from_date: params.fromDate, to_date: params.toDate, accept: params.accept },
+        });
+        return zhContactResponse;
+      } catch (exception) {
+        handleMethodException(exception);
+      }
+    }
+  },
+});
+
 
 rateLimit({
-  methods: [bulkSyncUsersZoho, getUserWallet],
+  methods: ['customer.getStatement', 'customer.sendStatement', bulkSyncUsersZoho, getUserWallet],
   limit: 5,
   timeRange: 1000,
 });

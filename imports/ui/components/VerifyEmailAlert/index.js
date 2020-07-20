@@ -37,6 +37,7 @@ VerifyEmailAlert.propTypes = {
   loggedInUserId: PropTypes.string.isRequired,
   emailVerified: PropTypes.bool.isRequired,
   emailAddress: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default withRouter(VerifyEmailAlert);

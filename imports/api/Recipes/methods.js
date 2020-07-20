@@ -7,7 +7,7 @@ import rateLimit from '../../modules/rate-limit.js';
 import constants from '../../modules/constants';
 import handleMethodException from '../../modules/handle-method-exception';
 
-const _upsertRecipe = (recipe) => {
+const upsertRecipe = (recipe) => {
   recipe.owner = Meteor.userId();
   if (Roles.userIsInRole(recipe.owner, ['admin']) || !recipe._id) {
     return Recipes.upsert({ _id: recipe._id }, { $set: recipe });
@@ -27,25 +27,39 @@ export const upsertRecipeDraft = new ValidatedMethod({
   run(recipe) {
     // Check if recipe creator is the one who is updating
     recipe.publishStatus = constants.PublishStatus.Draft.name;
-    return _upsertRecipe(recipe);
+    return upsertRecipe(recipe);
   },
 });
 
-const recipePublishSchema = new SimpleSchema({
-  _id: { type: String },
-  title: { type: String },
-  description: {
-    type: Object,
-    blackbox: true,
-    custom() {
+/* custom() {
       const { convertFromRaw } = require('draft-js');
       if (!convertFromRaw(this.value).hasText()) {
         return 'emptyRecipeDescription';
       }
-    },
-  },
+    }, */
+
+const recipePublishSchema = new SimpleSchema({
+  _id: { type: String },
+  title: { type: String },
+  description: { type: String, label: 'Recipe description' },
   ingredients: { type: Array, minCount: 1 },
-  'ingredients.$': { type: Object, blackbox: true },
+  'ingredients.$': { type: Object },
+  'ingredients.$._id': {
+    type: String,
+    label: 'Ingredient Id',
+  },
+  'ingredients.$.measure': {
+    type: Number,
+    label: 'Ingredient Measure',
+  },
+  'ingredients.$.name': {
+    type: String,
+    label: 'Ingredient Name',
+  },
+  'ingredients.$.unit': {
+    type: String,
+    label: 'Ingredient Unit',
+  },
   imageUrl: { type: String },
   commentIds: {
     type: Array,
@@ -84,7 +98,7 @@ const recipePublishSchema = new SimpleSchema({
 
 recipePublishSchema.messageBox.messages({
   en: {
-    'minCount ingredients': 'You must specify at least [minCount] ingredient',
+    minCount: 'You must specify at least {{minCount}} ingredient',
     emptyRecipeDescription: "To publish the recipe, recipe's description is mandatory. To save recipe and edit it later, click on save recipe instead.",
   },
 });
@@ -95,7 +109,7 @@ export const upsertRecipePublish = new ValidatedMethod({
   run(recipe) {
     // Check if recipe creator is the one who is updating
     recipe.publishStatus = constants.PublishStatus.Published.name;
-    return _upsertRecipe(recipe);
+    return upsertRecipe(recipe);
   },
 });
 

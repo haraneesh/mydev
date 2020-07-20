@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Glyphicon, Button } from 'react-bootstrap';
+import autoBind from 'react-autobind';
 import Autosuggest from 'react-autosuggest';
 import { Bert } from 'meteor/themeteorchef:bert';
 
@@ -9,27 +10,21 @@ import './AddIngredient.scss';
 
 function renderSuggestion(suggestion) {
   return (
-    <span>{suggestion.Long_Desc}</span>
+    <span>{suggestion.name}</span>
   );
 }
 
 export default class AddIngredient extends React.Component {
-
   constructor(props, context) {
     super(props, context);
     this.state = {
       value: '',
       suggestions: [],
-      isLoading: false,
     };
 
     this.lastRequestId = null;
 
-    this.onChange = this.onChange.bind(this);
-    this.getSuggestionValue = this.getSuggestionValue.bind(this);
-    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
-    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
-    this.loadSuggestions = this.loadSuggestions.bind(this);
+    autoBind(this);
   }
 
   onChange(event, { newValue }) {
@@ -50,7 +45,7 @@ export default class AddIngredient extends React.Component {
 
   getSuggestionValue(ingredient) {
     this.setState({
-      value: ingredient.Long_Desc,
+      value: ingredient.name,
     });
     this.props.addIngredient(ingredient);
     return '';
@@ -62,22 +57,30 @@ export default class AddIngredient extends React.Component {
       clearTimeout(this.lastRequestId);
     }
 
-    this.setState({
-      isLoading: true,
-    });
-
     this.lastRequestId = setTimeout(() => {
       Meteor.call('ingredients.find', { searchString: value }, (error, result) => {
         if (error) {
           Bert.alert(error.reason, 'danger');
         } else {
           this.setState({
-            isLoading: false,
             suggestions: result,
           });
         }
       });
     }, 250);
+  }
+
+  addIngredient() {
+    Meteor.call('ingredients.add', { ingredientName: this.state.value }, (error, result) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        this.setState({
+          value: '',
+        });
+        this.props.addIngredient(result);
+      }
+    });
   }
 
   render() {
@@ -89,7 +92,7 @@ export default class AddIngredient extends React.Component {
     };
 
     return (<Row>
-      <Col xs={12}>
+      <Col xs={10}>
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
@@ -98,6 +101,11 @@ export default class AddIngredient extends React.Component {
           renderSuggestion={renderSuggestion}
           inputProps={inputProps}
         />
+      </Col>
+      <Col xs={2} className="text-center" style={{ paddingTop: '0.7rem' }}>
+        <Button bsSize="xsmall" onClick={this.addIngredient}>
+          <i className="fa fa-plus" />
+        </Button>
       </Col>
     </Row>);
   }

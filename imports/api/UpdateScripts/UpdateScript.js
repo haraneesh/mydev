@@ -2,7 +2,7 @@
 // add measures to ingredients
 // import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
-// import Ingredients from '../Ingredients/Ingredients';
+import Ingredients from '../Ingredients/Ingredients';
 // import Products from '../Products/Products';
 // import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 import { Orders } from '../Orders/Orders';
@@ -51,7 +51,7 @@ Meteor.users.update({ settings: { $exists: false } }, {
 },
 { multi: true }); */
 
-const cusers = Meteor.users.find({}).fetch();
+/* const cusers = Meteor.users.find({}).fetch();
 
 cusers.forEach((u) => {
   if (u.emails[0].verified === 'false') {
@@ -62,7 +62,7 @@ cusers.forEach((u) => {
     user.emails = email;
     Meteor.users.update({ _id: u._id }, { $set: user });
   }
-});
+}); */
 
 
 /*

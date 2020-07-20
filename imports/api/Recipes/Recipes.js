@@ -24,6 +24,8 @@ function isMandatoryIfStatusIsPublished() {
   const publishStatus = this.field('publishStatus').value;
   const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
 
+  console.log(`${publishStatus} ${value}`);
+
   if (shouldBeRequired && !(value)) {
     return SimpleSchema.ErrorTypes.REQUIRED;
   }
@@ -45,7 +47,22 @@ Recipes.schema = new SimpleSchema({
     type: Object,
     label: 'An ingredient',
     optional: true,
-    blackbox: true,
+  },
+  'ingredients.$._id': {
+    type: String,
+    label: 'Ingredient Id',
+  },
+  'ingredients.$.measure': {
+    type: Number,
+    label: 'Ingredient Measure',
+  },
+  'ingredients.$.name': {
+    type: String,
+    label: 'Ingredient Name',
+  },
+  'ingredients.$.unit': {
+    type: String,
+    label: 'Ingredient Unit',
   },
   commentIds: {
     type: Array,
@@ -56,7 +73,7 @@ Recipes.schema = new SimpleSchema({
     type: String,
   },
   description: {
-    type: Object,
+    type: String,
     label: 'The recipe goes here.',
     blackbox: true,
     optional: true,

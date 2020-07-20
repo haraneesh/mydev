@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormGroup, Button, ButtonToolbar, Panel, Row, Col } from 'react-bootstrap';
 import RichTextEditor, { EditorValue } from 'react-rte';
 import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
-import { upsertSpecialDraft, upsertSpecialPublish, removeSpecial } from '../../../api/Specials/methods';
 import { Bert } from 'meteor/themeteorchef:bert';
 import constants from '../../../modules/constants';
-import PropTypes from 'prop-types';
+import { upsertSpecialDraft, upsertSpecialPublish, removeSpecial } from '../../../api/Specials/methods';
 import FieldGroup from '../Common/FieldGroup';
 
 
@@ -67,7 +67,7 @@ export default class EditSpecial extends React.Component {
 
   updateSpecial(special, publishStatus) {
     const upsertSpecial = (publishStatus === constants.PublishStatus.Published.name) ?
-    upsertSpecialPublish : upsertSpecialDraft;
+      upsertSpecialPublish : upsertSpecialDraft;
     upsertSpecial.call(special, (error, msg) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
@@ -80,7 +80,7 @@ export default class EditSpecial extends React.Component {
 
   render() {
     const { special } = this.props;
-    const label = (special.publishStatus === constants.PublishStatus.Published.name)?'label-success':'label-info';
+    const label = (special.publishStatus === constants.PublishStatus.Published.name) ? 'label-success' : 'label-info';
     if (special) {
       return (
         <Panel className={`specialCard-${special.colorTheme}`}>
@@ -157,10 +157,10 @@ export default class EditSpecial extends React.Component {
             <ButtonToolbar >
               <Button bsSize="small" className="pull-right" type="submit" bsStyle="primary" onClick={event => this.saveOrUpdateSpecial(event, constants.PublishStatus.Published.name)}>
                 Save and Publish
-             </Button>
+              </Button>
 
               <Button bsSize="small" className="pull-right" type="submit" onClick={event => this.saveOrUpdateSpecial(event, constants.PublishStatus.Draft.name)}>
-                 Save as Draft
+                Save as Draft
               </Button>
 
               <Button bsSize="small" onClick={this.deleteSpecial}>Delete</Button>

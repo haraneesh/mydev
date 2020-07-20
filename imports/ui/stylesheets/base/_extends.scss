@@ -36,6 +36,18 @@ body{
   padding-left: 5px;
 }
 
+.rowTopSpacing {
+  padding-top: 10px;
+}
+
+.rowRightSpacing {
+  padding-right: 5px;
+}
+
+.buttonRowSpacing {
+  padding-top: 15px;
+}
+
 section.panel-body {
   border-top: 1px solid #E4DFDB;
 }
@@ -53,6 +65,12 @@ h4, .h4, .panel-heading {
 
 hr {
   border-top: 2px dashed $brand-default;
+}
+
+@media (max-width: 767px) {
+  .nav > li > a {
+    padding: 10px 4px;
+  }
 }
 
 .nav > li > a:hover, .nav > li > a:focus {

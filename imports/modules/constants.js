@@ -112,6 +112,20 @@ const OrderStatus = {
   },
 };
 
+const StatementPeriod = {
+  /* Today: { name: 'Today', display_value: 'Today' },
+  Yesterday: { name: 'Yesterday', display_value: 'Yesterday' }, */
+
+  ThisWeek: { name: 'ThisWeek', display_value: 'This Week' },
+  PreviousWeek: { name: 'PreviousWeek', display_value: 'Last Week' },
+
+  ThisMonth: { name: 'ThisMonth', display_value: 'This Month' },
+  PreviousMonth: { name: 'PreviousMonth', display_value: 'Last Month' },
+
+  ThisYear: { name: 'ThisYear', display_value: 'This Year' },
+  PreviousYear: { name: 'PreviousYear', display_value: 'Last Year' },
+};
+
 const DaysFromTodayForward = {
   Today: {
     name: 'Today',
@@ -135,6 +149,34 @@ const DaysFromTodayForward = {
   },
 };
 
+const UnitOfRecipes = {
+  TeaSpoons: {
+    name: 'TeaSpoons',
+    display_value: 'tea spoons',
+  },
+  Cups: {
+    name: 'Cups',
+    display_value: 'cups',
+  },
+  Ml: {
+    name: 'Ml',
+    display_value: 'ml',
+  },
+  Mg: {
+    name: 'Mg',
+    display_value: 'mg',
+  },
+  Liter: {
+    name: 'Liter',
+    display_value: 'l',
+  },
+  Grams: {
+    name: 'Grams',
+    display_value: 'grams',
+  },
+};
+
+UnitOfRecipes.names = Object.keys(UnitOfRecipes).map(cat => UnitOfRecipes[cat].name);
 
 const ProductListStatus = {
   Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
@@ -321,6 +363,7 @@ const constants = {
   ProductType,
   OrderStatus,
   DaysFromTodayForward,
+  StatementPeriod,
   ProductListStatus,
   Sort,
   Roles,
@@ -341,6 +384,7 @@ const constants = {
   MessageTypes,
   ScreenWidths,
   OrderReceivedType,
+  UnitOfRecipes,
   SELECT_EMPTY_VALUE,
 };
 

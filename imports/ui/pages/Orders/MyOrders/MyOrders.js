@@ -9,23 +9,33 @@ import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
 import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
-const MyOrders = ({ history, loading, loggedInUser, orders }) => (!loading ? (
+const MyOrders = ({ history, loading, loggedInUser, orders, emailVerified, loggedInUserId, emailAddress }) => (!loading ? (
   <Row>
     <Col xs={12}>
       <WelcomeMessage loggedInUser={loggedInUser} />
 
       <h3 className="page-header">My Orders</h3>
-      <MyOrderList loggedInUser={loggedInUser} orders={orders} history={history} />
+      <MyOrderList
+        loggedInUser={loggedInUser}
+        orders={orders}
+        history={history}
+        loggedInUserId={loggedInUserId}
+        emailVerified={emailVerified}
+        emailAddress={emailAddress}
+      />
 
     </Col>
   </Row>
 ) : <Loading />);
 
 MyOrders.propTypes = {
+  emailVerified: PropTypes.bool.isRequired,
   loggedInUser: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
+  loggedInUserId: PropTypes.string.isRequired,
+  emailAddress: PropTypes.string.isRequired,
 };
 
 export default withTracker((args) => {
@@ -37,5 +47,9 @@ export default withTracker((args) => {
     orders: Orders.find({}, { sort: { createdAt: constants.Sort.DESCENDING } }).fetch(),
     loggedInUser: args.loggedInUser,
     userWallet: args.loggedInUser.wallet,
+    emailVerified: args.emailVerified,
+    loggedInUserId: args.loggedInUserId,
+    emailAddress: args.emailAddress,
+
   };
 })(MyOrders);

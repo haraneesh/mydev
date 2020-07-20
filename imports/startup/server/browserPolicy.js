@@ -27,3 +27,4 @@ BrowserPolicy.content.allowOriginForAll('https://maxcdn.bootstrapcdn.com/');
 // BrowserPolicy.content.allowOriginForAll("c1.staticflickr.com");
 // Linking videos
 BrowserPolicy.content.allowOriginForAll('player.vimeo.com');
+//BrowserPolicy.content.allowOriginForAll('blob:');

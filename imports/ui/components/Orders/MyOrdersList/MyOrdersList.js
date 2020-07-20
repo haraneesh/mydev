@@ -13,6 +13,7 @@ import OrderSummaryRow from './OrderSummaryRow';
 import AddToWallet from './AddToWallet';
 import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
+import ShowStatement from '../../Payments/Statement';
 
 const feedBackPeriodInDays = 3000; // was 30 before
 
@@ -200,6 +201,14 @@ export default class MyOrderList extends React.Component {
           <Tab eventKey={3} title="Refunds" tabClassName=" text-center">
             <ListCreditNotes />
           </Tab>
+          <Tab eventKey={4} title="Statements" tabClassName="text-center">
+            <ShowStatement
+              emailVerified={this.props.emailVerified}
+              loggedInUserId={this.props.loggedInUserId}
+              emailAddress={this.props.emailAddress}
+              history={this.props.history}
+            />
+          </Tab>
         </Tabs>
       </div>
     );
@@ -209,7 +218,10 @@ export default class MyOrderList extends React.Component {
 MyOrderList.propTypes = {
   orders: PropTypes.array,
   loggedInUser: PropTypes.object.isRequired,
+  loggedInUserId: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired,
+  emailVerified: PropTypes.bool.isRequired,
+  emailAddress: PropTypes.string.isRequired,
 };
 
 MyOrderList.defaultProps = {

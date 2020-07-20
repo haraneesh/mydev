@@ -102,7 +102,7 @@ class ListCreditNotes extends React.Component {
         </Col>
         )}
       </Panel>
-    ) : (<Panel> <button className="btn btn-sm btn-primary" onClick={this.fetchCreditNotes}> Fetch Refund History </button> </Panel>);
+    ) : (<Panel> <button className="btn btn-sm btn-default" onClick={this.fetchCreditNotes}> Fetch Refund History </button> </Panel>);
   }
 }
 

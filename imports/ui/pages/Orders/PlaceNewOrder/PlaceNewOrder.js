@@ -13,7 +13,6 @@ import { cartActions, useCartDispatch } from '../../../stores/ShoppingCart';
 
 
 const PlaceNewOrder = ({ dateValue, name, products, productListId, history, basketId, loggedInUser }) => {
-
   const [isBasketLoading, setIsLoading] = useState(true);
   const cartDispatch = useCartDispatch();
 
@@ -30,11 +29,11 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
         product.quantity = inBasketProductsHash[product._id].quantity;
         cartDispatch({ type: cartActions.updateCart, payload: { product, basketId } });
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
-    cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: 'NEW', basketId } })
+    cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: 'NEW', basketId } });
     if (basketId) {
       setIsLoading(true);
       Meteor.call('baskets.getOne', basketId,
@@ -42,7 +41,7 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
           if (error) {
             Bert.alert(error.reason, 'danger');
           } else {
-            updateNewCart(basketDetails.products, products, basketId)
+            updateNewCart(basketDetails.products, products, basketId);
             setIsLoading(false);
           }
         });
@@ -63,11 +62,11 @@ const PlaceNewOrder = ({ dateValue, name, products, productListId, history, bask
       basketId={basketId}
     />
 
-  </div>) : <Loading />)
-}
+  </div>) : <Loading />);
+};
 
-const PlaceNewOrderWrapper = props => props.loading ? (<Loading />) :
-  (<PlaceNewOrder {...props} />);
+const PlaceNewOrderWrapper = props => (props.loading ? (<Loading />) :
+  (<PlaceNewOrder {...props} />));
 
 PlaceNewOrder.propTypes = {
   loading: PropTypes.bool.isRequired,
@@ -102,6 +101,6 @@ export default withTracker((args) => {
     history: args.history,
     dateValue: args.date,
     loggedInUser: args.loggedInUser,
-    basketId: args.match.params.basketId
+    basketId: args.match.params.basketId,
   };
 })(PlaceNewOrderWrapper);
