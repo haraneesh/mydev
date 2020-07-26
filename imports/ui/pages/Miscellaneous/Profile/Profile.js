@@ -9,6 +9,7 @@ import { Bert } from 'meteor/themeteorchef:bert';
 import { createContainer } from 'meteor/react-meteor-data';
 import InputHint from '../../../components/InputHint/InputHint';
 import validate from '../../../../modules/validate';
+import constants from '../../../../modules/constants';
 
 import './Profile.scss';
 
@@ -63,6 +64,9 @@ class Profile extends React.Component {
           minlength: 6,
           equalTo: '#newPassword',
         },
+        dietPreference: {
+          required: true,
+        },
       },
       messages: {
         salutation: {
@@ -80,6 +84,9 @@ class Profile extends React.Component {
         },
         newPassword: {
           required: 'Need your new password if changing.',
+        },
+        dietPreference: {
+          required: 'What is your product preference?',
         },
         confirmPassword: {
           required: 'The new password and confirm password are not matching, please try again.',
@@ -126,6 +133,9 @@ class Profile extends React.Component {
         salutation: this.salutation.selectedOptions[0].value,
         whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
+      },
+      settings: {
+        dietPreference: this.dietPreference.selectedOptions[0].value,
       },
     };
 
@@ -186,7 +196,6 @@ class Profile extends React.Component {
           className="form-control"
         />
       </FormGroup>
-
       <FormGroup>
         <Row>
           <Col xs={6}>
@@ -206,7 +215,6 @@ class Profile extends React.Component {
           ref={emailAddress => (this.emailAddress = emailAddress)}
           className="form-control"
         />
-
       </FormGroup>
       <FormGroup>
         <ControlLabel>Mobile Number</ControlLabel>
@@ -218,6 +226,22 @@ class Profile extends React.Component {
           defaultValue={user.profile.whMobilePhone}
           className="form-control"
         />
+      </FormGroup>
+      <FormGroup>
+        <ControlLabel>Dietary Preference</ControlLabel>
+        <select
+          name="dietPreference"
+          ref={dietPreference => (this.dietPreference = dietPreference)}
+          className="form-control"
+          defaultValue={(user.settings && user.settings.dietPreference) ? user.settings.dietPreference : ''}
+        >
+          <option value="" key="notselected" />
+          {constants.DietaryPreferences.names.map(name => (<option value={name} key={name}>
+            {constants.DietaryPreferences[name].display_value}
+          </option>
+          ),
+          )}
+        </select>
       </FormGroup>
       <FormGroup>
         <ControlLabel>Delivery Address</ControlLabel>

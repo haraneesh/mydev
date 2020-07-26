@@ -1,13 +1,14 @@
 /* eslint-disable max-len, no-return-assign */
 
 import React, { useEffect, useState, useRef } from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { FormGroup, FormControl, Button, ButtonToolbar, Row, Col } from 'react-bootstrap';
 import RecipeRTE from './RecipeRTE/RecipeRTE';
 import { upsertRecipeDraft, upsertRecipePublish, removeRecipe } from '../../../api/Recipes/methods';
 import IngredientSelector from './IngredientSelector';
-import ImageUploader from '../Common/ImageUploader';
+import ImageUploader from '../ImageUpload/ImageUpload';
 import constants from '../../../modules/constants';
 
 const createIngredientsHash = (ingredients) => {
@@ -21,11 +22,14 @@ const createIngredientsHash = (ingredients) => {
 
 // export default class RecipeEditor extends React.Component {
 const RecipeEditor = ({ recipe, history }) => {
+  const [imageProps, setImageProps] = useState(
+    { imageId: (recipe && recipe.imageId) ? recipe.imageId : null,
+      imageUrl: (recipe && recipe.imageUrl) ? recipe.imageUrl : null },
+  );
 
-  const publishStatus = (recipe) ? recipe.publishStatus : constants.PublishStatus.Draft.name;
-  const ingredientListRef = useRef((recipe && recipe.ingredient )? createIngredientsHash(recipe.ingredient) : {});
+  const ingredientListRef = useRef((recipe && recipe.ingredient) ? createIngredientsHash(recipe.ingredient) : {});
 
-  let recipeUrl = (recipe && recipe.imageUrl) ? recipe.imageUrl : '';
+  //const recipeUrl = (recipe && recipe.imageUrl) ? recipe.imageUrl : '';
 
   function ingredientListOnChange(ingredientId, ingredient) {
     ingredientListRef.current[ingredientId] = ingredient;
@@ -47,17 +51,6 @@ const RecipeEditor = ({ recipe, history }) => {
         }
       }
     });
-  }
-
-  function updateImageUrl(url) {
-    recipeUrl = url;
-    const updRecipe = {
-      _id: recipe._id,
-      title: document.querySelector('[name="title"]').value.trim(),
-      imageUrl: url,
-    };
-
-    updateRecipe(updRecipe, publishStatus, true);
   }
 
   function cancelSaveRecipe() {
@@ -101,11 +94,25 @@ const RecipeEditor = ({ recipe, history }) => {
     return result;
   }
 
+  function changeImage({ imageUrl, thumbNailUrl, imageId }) {
+    Meteor.call('recipes.updateImageUrl', ({ recipeId: recipe._id, imageUrl, thumbNailUrl, imageId }), (error, msg) => {
+      if (error) {
+        Bert.alert(error.reason, 'danger');
+      } else {
+        setImageProps({
+          imageUrl,
+          imageId,
+        });
+      }
+    });
+  }
+
   const rteContent = useRef((recipe && recipe.description) ? recipe.description : '');
 
   function rteValueUpdate(value) {
     rteContent.current = value;
   }
+
 
   function saveOrUpdateRecipe(event, updPublishStatus) {
     const updRecipe = {
@@ -113,7 +120,8 @@ const RecipeEditor = ({ recipe, history }) => {
       title: document.querySelector('[name="title"]').value.trim(),
       description: rteContent.current,
       ingredients: Object.keys(ingredientListRef.current).map(ingredientId => ingredientListRef.current[ingredientId]),
-      imageUrl: recipeUrl,
+      imageUrl: imageProps.imageUrl,
+      imageId: imageProps.imageId,
       prepTimeInMins: parseFloat(document.querySelector('[name="prepTimeInMins"]').value.trim()),
       cookingTimeInMins: parseFloat(document.querySelector('[name="cookingTimeInMins"]').value.trim()),
       serves: parseFloat(document.querySelector('[name="serves"]').value.trim()),
@@ -139,7 +147,9 @@ const RecipeEditor = ({ recipe, history }) => {
       </FormGroup>
 
       <FormGroup>
-        <h4>Add Photo</h4>
+        <h4>Banner Image</h4>
+        {imageProps.imageUrl && (<img src={imageProps.imageUrl} style={{maxWidth:'100%'}} />) }
+        <ImageUploader onChange={changeImage} folder={'recipes'} imageId={recipe.imageId} />
         {/* } <ImageUploader
             imageUrl={(recipe) ? recipe.imageUrl : ''}
             updateImageUrl={this.updateImageUrl}

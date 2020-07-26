@@ -6,7 +6,7 @@ import moment from 'moment';
 import { dateSettings } from '../../modules/settings';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
-import statementEmail from '../../startup/server/accounts/email-templates';
+import statementEmail from './statementEmailTemplate';
 import zh from './ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';

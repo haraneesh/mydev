@@ -104,6 +104,7 @@ service-configuration@1.0.11
 session@1.2.0
 sha@1.0.9
 shell-server@0.5.0
+socialize:cloudinary@1.0.4
 socket-stream-client@0.3.0
 spacebars@1.0.15
 spacebars-compiler@1.1.3

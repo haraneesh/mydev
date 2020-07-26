@@ -24,8 +24,6 @@ function isMandatoryIfStatusIsPublished() {
   const publishStatus = this.field('publishStatus').value;
   const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
 
-  console.log(`${publishStatus} ${value}`);
-
   if (shouldBeRequired && !(value)) {
     return SimpleSchema.ErrorTypes.REQUIRED;
   }
@@ -102,7 +100,8 @@ Recipes.schema = new SimpleSchema({
     label: 'The url of the image of the recipe',
     optional: true,
   },
-  thumbnailUrl: {
+  imageId: { type: String, label: 'The id of the image', optional: true },
+  thumbNailUrl: {
     type: String,
     label: 'The url of the thumbnail image of the recipe',
     optional: true,

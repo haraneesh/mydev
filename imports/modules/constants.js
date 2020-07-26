@@ -35,11 +35,17 @@ const FoodGroups = {
 FoodGroups.names = Object.keys(FoodGroups).map(cat => FoodGroups[cat].name);
 FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].displayName);
 
+const DietaryPreferences = {
+  vegan: { name: 'vegan', display_value: 'Vegan' },
+  vegetarian: { name: 'vegetarian', display_value: 'Vegetarian' },
+  nonVeg: { name: 'nonVeg', display_value: 'Non Vegetarian' },
+};
+DietaryPreferences.names = Object.keys(DietaryPreferences).map(cat => DietaryPreferences[cat].name);
+DietaryPreferences.displayNames = Object.keys(DietaryPreferences).map(cat => DietaryPreferences[cat].displayName);
 
 // This for organizing tabs in the order screen
 // const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners'];
-
 
 /*
 Saved - customer saved the current selection, with the intent to resume.
@@ -379,6 +385,7 @@ const constants = {
   DifficultyLevels,
   FoodTypes,
   FoodGroups,
+  DietaryPreferences,
   FeedBackTypes,
   MessageStatus,
   MessageTypes,

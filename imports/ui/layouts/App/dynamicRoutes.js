@@ -1,4 +1,5 @@
 import Loadable from 'react-loadable';
+import { lazy } from 'react';
 import Loading from '../../components/Loading/Loading';
 
 function SuvaiLoadable(opts) {
@@ -9,33 +10,45 @@ function SuvaiLoadable(opts) {
 
 /* admin */
 // import { ProductsAdmin } from '../pages/products-admin';
+export const dProductsAdmin = lazy(() => import('../../pages/ProductsAdmin/ProductsAdmin'));
+/*
 export const dProductsAdmin = SuvaiLoadable({
   loader: () => import('../../pages/ProductsAdmin/ProductsAdmin'),
 });
+*/
 
-export const dZohoSyncUp = SuvaiLoadable({
+export const dZohoSyncUp = lazy(() => import('../../pages/Admin/ZohoSyncUp'));
+/* export const dZohoSyncUp = SuvaiLoadable({
   loader: () => import('../../pages/Admin/ZohoSyncUp'),
-});
+}); */
 
 /* productLists */
 // import { ProductLists } from '../pages/productLists/ProductLists';
-export const dProductLists = SuvaiLoadable({
+export const dProductLists = lazy(() => import('../../pages/ProductLists/ProductLists'));
+
+/*export const dProductLists = SuvaiLoadable({
   loader: () => import('../../pages/ProductLists/ProductLists'),
-});
+});*/
 
 // import { AllOrders } from '../pages/admin/AllOrders';
+export const dAllOrders = lazy(() => import('../../pages/Admin/AllOrdersNew'));
+/*
 export const dAllOrders = SuvaiLoadable({
   loader: () => import('../../pages/Admin/AllOrdersNew'),
 });
+*/
 
 // import ViewProductListDetails from '../containers/productLists/ViewProductListDetails';
 export const dViewProductListDetails = SuvaiLoadable({
   loader: () => import('../../containers/ProductLists/ViewProductListDetails'),
 });
 
+export const dMyWallet = lazy(() => import('../../pages/Wallet/MyWallet'));
+
+/*
 export const dMyWallet = SuvaiLoadable({
   loader: () => import('../../pages/Wallet/MyWallet'),
-});
+}); */
 
 
 /* Invitations */
@@ -68,30 +81,18 @@ export const dEditSupplier = SuvaiLoadable({
 
 
 /* Recipes */
-export const dRecipesHome = SuvaiLoadable({
-  loader: () => import('../../pages/Recipes/RecipesHome'),
-});
-// import Recipes from '../pages/recipes/Recipes';
-export const dRecipes = SuvaiLoadable({
-  loader: () => import('../../pages/Recipes/Recipes'),
-});
+export const dRecipesHome = lazy(() => import('../../pages/Recipes/RecipesHome'));
 
-// import NewRecipe from '../pages/recipes/NewRecipe';
-export const dNewRecipe = SuvaiLoadable({
-  loader: () => import('../../pages/Recipes/NewRecipe'),
-});
+export const dRecipes = lazy(() => import('../../pages/Recipes/Recipes'));
 
-//import EditRecipe from '../containers/recipes/EditRecipe' 
-//import dEditRecipe from '../../pages/Recipes/EditRecipe';
+export const dNewRecipe = lazy(() => import('../../pages/Recipes/NewRecipe'));
 
-/*export const dEditRecipe = SuvaiLoadable({
-  loader: () => import('../../containers/Recipes/EditRecipe'),
-});*/
+export const dEditRecipe = lazy(() => import('../../pages/Recipes/EditRecipe'));
 
-// import ViewRecipe from '../containers/recipes/ViewRecipe';
-export const dViewRecipe = SuvaiLoadable({
+export const dViewRecipe = lazy(() => import('../../pages/Recipes/ViewRecipe'));
+/* export const dViewRecipe = SuvaiLoadable({
   loader: () => import('../../containers/Recipes/ViewRecipe'),
-});
+}); */
 
 /* specials */
 // import ListSpecials from '../containers/specials/ListPublishedSpecials';

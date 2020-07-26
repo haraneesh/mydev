@@ -69,8 +69,7 @@ const PlaceNewOrderWrapper = props => (props.loading ? (<Loading />) :
   (<PlaceNewOrder {...props} />));
 
 PlaceNewOrder.propTypes = {
-  loading: PropTypes.bool.isRequired,
-  loggedInUser: PropTypes.object.loggedInUser,
+  loggedInUser: PropTypes.object.isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   productListId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

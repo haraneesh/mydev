@@ -12,7 +12,7 @@ const updatePassword = (userId, newPassword) => {
   }
 };
 
-const updateUser = (userId, { emailAddress, profile }) => {
+const updateUser = (userId, { emailAddress, profile, settings }) => {
   try {
     const user = Meteor.users.findOne({ _id: userId });
     const presentEmailAddress = user && user.emails && user.emails[0].address;
@@ -24,6 +24,7 @@ const updateUser = (userId, { emailAddress, profile }) => {
           user.emails[0].verified : false,
         updatedAt: new Date(),
         profile,
+        settings,
       },
     });
   } catch (exception) {

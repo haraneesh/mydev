@@ -25,6 +25,12 @@ export const editUserProfile = new ValidatedMethod({
     'profile.name.last': String,
     'profile.whMobilePhone': String,
     'profile.deliveryAddress': String,
+    settings: Object,
+    'settings.dietPreference': {
+      type: String,
+      optional: true,
+      allowedValues: constants.DietaryPreferences.names,
+    },
   }).validator(),
   run(profile) {
     return editProfile({ userId: this.userId, profile })

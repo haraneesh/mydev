@@ -24,6 +24,8 @@ export default class ProfileUpdate extends React.Component {
       case 'update':
         hookUpValidation(this._updateUserProfile);
         break;
+      default:
+        break;
     }
   }
 

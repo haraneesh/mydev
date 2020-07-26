@@ -6,8 +6,8 @@ import SimpleSchema from 'simpl-schema';
 const Ingredients = new Mongo.Collection('Ingredients');
 
 if (Meteor.isServer) {
-  // Ingredients._ensureIndex({ name: 1 });
-  Ingredients._ensureIndex({ name: 'text', description: 'text' }, { unique: true });
+  Ingredients.rawCollection().createIndex({ name: 1 }, { unique: true });
+  Ingredients.rawCollection().createIndex({ name: 'text', description: 'text' }, { unique: true });
 }
 
 Ingredients.allow({

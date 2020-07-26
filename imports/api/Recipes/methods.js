@@ -1,5 +1,7 @@
 import SimpleSchema from 'simpl-schema';
+import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import Recipes from './Recipes';
 import Media from '../Media/Media';
@@ -60,7 +62,8 @@ const recipePublishSchema = new SimpleSchema({
     type: String,
     label: 'Ingredient Unit',
   },
-  imageUrl: { type: String },
+  imageUrl: { type: String, label: 'Image URL' },
+  imageId: { type: String, label: 'Image Id' },
   commentIds: {
     type: Array,
     label: 'The list of comments attached to the recipe.',
@@ -127,59 +130,12 @@ export const removeRecipe = new ValidatedMethod({
   },
 });
 
-export const updateRecipePhoto = (mediaId, recipeId) => {
-  const recipe = Recipes.findOne({ _id: recipeId });
-  const media = Media.findOne({ _id: mediaId });
-  const fsObj = new FS.File(media);
-  recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name, brokenIsFine: true });
-  recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name, brokenIsFine: true });
-  recipe.mediaId = mediaId;
-  Recipes.upsert({ _id: recipe._id }, { $set: recipe });
-};
-
-export const updateRecipePhoto1 = new ValidatedMethod({
-  name: 'recipes.updateRecipePhoto',
-  validate: new SimpleSchema({
-    recipeId: { type: String },
-    mediaId: { type: String },
-  }).validator(),
-  run({ mediaId, recipeId }) {
-    const recipe = Recipes.findOne({ _id: recipeId });
-
-    if (Meteor.isServer) {
-      const media = Media.findOne({ _id: mediaId });
-      const fsObj = new FS.File(media);
-      //  media.on('stored', Meteor.bindEnvironment((fileObj, storename) => {
-      //  if (storename === constants.MediaStores.Originals.name) {
-      recipe.thumbnailUrl = fsObj.url({ store: constants.MediaStores.Thumbnails.name, brokenIsFine: true });
-      recipe.imageUrl = fsObj.url({ store: constants.MediaStores.Originals.name, brokenIsFine: true }); // brokenIsFine: true
-      recipe.mediaId = mediaId;
-      _upsertRecipe(recipe);
-      // }
-      // }));
-    }
-  },
-});
-
-export const removeRecipePhoto = new ValidatedMethod({
-  name: 'recipes.removeRecipePhoto',
-  validate: new SimpleSchema({
-    recipeId: { type: String },
-  }).validator(),
-  run({ recipeId }) {
-    const recipe = Recipes.findOne({ _id: recipeId });
-    if (Meteor.isServer) {
-      Media.findOne({ _id: recipe.mediaId }).remove();
-    }
-    recipe.thumbnailUrl = null;
-    recipe.imageUrl = null;
-    recipe.mediaId = null;
-    _upsertRecipe(recipe);
-    // this._awsRemoveFile(recipe);
-  },
-});
-
 Meteor.methods({
+  'recipes.updateImageUrl': function updateImageUrl(params) {
+    check(params, { recipeId: String, imageUrl: String, thumbNailUrl: String, imageId: String });
+    const { recipeId, imageUrl, thumbNailUrl, imageId } = params;
+    return Recipes.update({ _id: recipeId }, { $set: { imageUrl, imageId, thumbNailUrl } });
+  },
   'recipes.countByCategory': function countByCategory() {
     try {
       if (Meteor.isServer) {
@@ -208,8 +164,8 @@ rateLimit({
     upsertRecipeDraft,
     upsertRecipePublish,
     removeRecipe,
-    removeRecipePhoto,
     'recipes.countByCategory',
+    'recipes.updateImageUrl',
   ],
   limit: 5,
   timeRange: 1000,

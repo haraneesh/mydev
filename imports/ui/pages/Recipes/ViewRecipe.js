@@ -1,8 +1,10 @@
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, Button, Panel, Row, Col } from 'react-bootstrap';
 import { Editor, convertFromRaw, EditorState } from 'draft-js';
 import { Bert } from 'meteor/themeteorchef:bert';
+import Recipes from '../../../api/Recipes/Recipes';
 import constants from '../../../modules/constants';
 import { removeRecipe } from '../../../api/Recipes/methods';
 import Comments from '../../containers/Comments/getComments';
@@ -12,7 +14,7 @@ import { insertToUserAndPosts } from '../../../api/UserAndPosts/methods';
 
 import './ViewRecipe.scss';
 
-export default class ViewRecipe extends React.Component {
+class ViewRecipe extends React.Component {
   componentDidMount() {
     const recipe = this.props.recipe;
     const loggedInUser = this.props.loggedInUserId;
@@ -112,3 +114,38 @@ ViewRecipe.propTypes = {
   history: PropTypes.object.isRequired,
   loggedInUserId: PropTypes.string.isRequired,
 };
+
+export default withTracker((args) => {
+  // const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
+  const subscription = Meteor.subscribe('recipes.view', args.match.params._id);
+
+  const recipe = Recipes.findOne({ _id: args.match.params._id });
+
+  return {
+    loading: !subscription.ready(),
+    recipe,
+    history: args.history,
+    loggedInUserId: args.loggedInUserId,
+    loggedInUser: args.loggedInUser,
+  };
+})(ViewRecipe);
+
+/*
+import { Meteor } from 'meteor/meteor';
+import { composeWithTracker } from 'react-komposer';
+import Recipes from '../../../api/Recipes/Recipes';
+import ViewRecipe from '../../pages/Recipes/ViewRecipe';
+import Loading from '../../components/Loading/Loading';
+
+const composer = (args, onData) => {
+  const subscription = Meteor.subscribe('recipes.view', args.match.params._id);
+
+  if (subscription.ready()) {
+    const recipe = Recipes.findOne();
+    onData(null, { recipe, history:args.history });
+  }
+};
+
+export default composeWithTracker(composer, Loading)(ViewRecipe);
+*/
+

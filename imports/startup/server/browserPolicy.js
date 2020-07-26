@@ -13,8 +13,9 @@ BrowserPolicy.content.allowOriginForAll('www.google.com');
 // Razor Pay
 BrowserPolicy.content.allowOriginForAll('checkout.razorpay.com');
 BrowserPolicy.content.allowOriginForAll('api.razorpay.com');
-// Google Storage
+// Storage
 BrowserPolicy.content.allowOriginForAll('storage.googleapis.com');
+BrowserPolicy.content.allowOriginForAll('res.cloudinary.com');
 // Analytics
 BrowserPolicy.content.allowOriginForAll('www.google-analytics.com');
 BrowserPolicy.content.allowOriginForAll('cdn.mxpnl.com');
@@ -27,4 +28,4 @@ BrowserPolicy.content.allowOriginForAll('https://maxcdn.bootstrapcdn.com/');
 // BrowserPolicy.content.allowOriginForAll("c1.staticflickr.com");
 // Linking videos
 BrowserPolicy.content.allowOriginForAll('player.vimeo.com');
-//BrowserPolicy.content.allowOriginForAll('blob:');
+

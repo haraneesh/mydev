@@ -14,7 +14,7 @@ const Navigation = props => (
         <span
           id="backIcon"
           className="visible-xs-inline"
-          style={{ marginTop: '18px', marginLeft: '10px', float: 'left', fontSize: '1.25em', display: 'block' }}
+          style={{ marginTop: '18px', marginLeft: '10px', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block' }}
         >
           <a onClick={() => { props.history.goBack(); }} href="#">
             <i className="fa fa-arrow-left" style={{ color: '#522E23' }} />
