@@ -9,19 +9,22 @@ const ControlStates = {
 };
 
 const DifficultyLevels = ['Easy', 'Moderate', 'Hard'];
-const FoodTypes = {
+const RecipeCat = {
   breakfast: { name: 'breakfast', displayName: 'BreakFast' },
-  curry: { name: 'curry', displayName: 'Curry' },
-  grain: { name: 'grain', displayName: 'Good Grain' },
-  side: { name: 'side', displayName: 'Sides' },
-  snack: { name: 'snack', displayName: 'Snacks' },
-  chutney: { name: 'chutney', displayName: 'Chutney' },
+  plantmilk: { name: 'plantmilk', displayName: 'Plant Milk' },
+  beverage: { name: 'beverage', displayName: 'Beverages / Smoothies' },
+  salad: { name: 'salad', displayName: 'Salads' },
+  side: { name: 'side', displayName: 'Sides / Snack' },
+  soup: { name: 'soup', displayName: 'Soups' },
+  chutney: { name: 'chutney', displayName: 'Chutney / Sauce' },
+  maincourse: { name: 'maincourse', displayName: 'Main Course' },
+  dessert: { name: 'dessert', displayName: 'Desserts' },
   diabetic: { name: 'diabetic', displayName: 'Diabetic Friendly' },
   pregnancy: { name: 'pregnancy', displayName: 'Healthy Pregnancy' },
 };
 
-FoodTypes.names = Object.keys(FoodTypes).map(cat => FoodTypes[cat].name);
-FoodTypes.displayNames = Object.keys(FoodTypes).map(cat => FoodTypes[cat].displayName);
+RecipeCat.names = Object.keys(RecipeCat).map((cat) => RecipeCat[cat].name);
+RecipeCat.displayNames = Object.keys(RecipeCat).map((cat) => RecipeCat[cat].displayName);
 
 const FoodGroups = {
   greens: { name: 'greens', displayName: 'Greens' },
@@ -32,16 +35,16 @@ const FoodGroups = {
   digestive: { name: 'digestive', displayName: 'Digestive' },
 };
 
-FoodGroups.names = Object.keys(FoodGroups).map(cat => FoodGroups[cat].name);
-FoodGroups.displayNames = Object.keys(FoodGroups).map(cat => FoodGroups[cat].displayName);
+FoodGroups.names = Object.keys(FoodGroups).map((cat) => FoodGroups[cat].name);
+FoodGroups.displayNames = Object.keys(FoodGroups).map((cat) => FoodGroups[cat].displayName);
 
 const DietaryPreferences = {
   vegan: { name: 'vegan', display_value: 'Vegan' },
   vegetarian: { name: 'vegetarian', display_value: 'Vegetarian' },
   nonVeg: { name: 'nonVeg', display_value: 'Non Vegetarian' },
 };
-DietaryPreferences.names = Object.keys(DietaryPreferences).map(cat => DietaryPreferences[cat].name);
-DietaryPreferences.displayNames = Object.keys(DietaryPreferences).map(cat => DietaryPreferences[cat].displayName);
+DietaryPreferences.names = Object.keys(DietaryPreferences).map((cat) => DietaryPreferences[cat].name);
+DietaryPreferences.displayNames = Object.keys(DietaryPreferences).map((cat) => DietaryPreferences[cat].displayName);
 
 // This for organizing tabs in the order screen
 // const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
@@ -85,7 +88,8 @@ const OrderStatus = {
   Processing: {
     name: 'Processing',
     display_value: 'Processing',
-    label: 'warning' },
+    label: 'warning',
+  },
   Awaiting_Fulfillment: {
     name: 'Awaiting_Fulfillment',
     display_value: 'Packing',
@@ -182,7 +186,7 @@ const UnitOfRecipes = {
   },
 };
 
-UnitOfRecipes.names = Object.keys(UnitOfRecipes).map(cat => UnitOfRecipes[cat].name);
+UnitOfRecipes.names = Object.keys(UnitOfRecipes).map((cat) => UnitOfRecipes[cat].name);
 
 const ProductListStatus = {
   Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
@@ -212,6 +216,7 @@ const PublishStatus = {
   Draft: { name: 'Draft', display_value: 'Draft' },
   Published: { name: 'Published', display_value: 'Published' },
 };
+PublishStatus.allowedValues = [PublishStatus.Draft.name, PublishStatus.Published.name];
 
 const PostTypes = {
   Recipe: { name: 'Recipe', display_value: 'Recipe' },
@@ -243,7 +248,6 @@ const MessageStatus = {
   },
 };
 
-
 const OrderReceivedType = {
   whatsApp: {
     name: 'whatsApp',
@@ -255,8 +259,7 @@ const OrderReceivedType = {
   },
 };
 
-OrderReceivedType.allowedValues =
-  Object.keys(OrderReceivedType).map(typ => OrderReceivedType[typ].name);
+OrderReceivedType.allowedValues = Object.keys(OrderReceivedType).map((typ) => OrderReceivedType[typ].name);
 
 MessageStatus.allowedValues = _.reduce(MessageStatus, (arr, ticketStatus) => {
   arr.push(ticketStatus.name);
@@ -383,7 +386,7 @@ const constants = {
   RichEditorToolbarConfig,
   InfiniteScroll,
   DifficultyLevels,
-  FoodTypes,
+  RecipeCat,
   FoodGroups,
   DietaryPreferences,
   FeedBackTypes,

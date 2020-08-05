@@ -4,11 +4,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { FormGroup, FormControl, Button, ButtonToolbar, Row, Col } from 'react-bootstrap';
+import {
+  FormGroup, FormControl, Button, ButtonToolbar, Row, Col,
+} from 'react-bootstrap';
 import RecipeRTE from './RecipeRTE/RecipeRTE';
 import { upsertRecipeDraft, upsertRecipePublish, removeRecipe } from '../../../api/Recipes/methods';
 import IngredientSelector from './IngredientSelector';
-import ImageUploader from '../ImageUpload/ImageUpload';
+import ImageUploader, { RecipeImageViewHero } from '../ImageUpload/ImageUpload';
 import constants from '../../../modules/constants';
 
 const createIngredientsHash = (ingredients) => {
@@ -19,17 +21,22 @@ const createIngredientsHash = (ingredients) => {
   return ingredientsHash;
 };
 
-
 // export default class RecipeEditor extends React.Component {
 const RecipeEditor = ({ recipe, history }) => {
   const [imageProps, setImageProps] = useState(
-    { imageId: (recipe && recipe.imageId) ? recipe.imageId : null,
-      imageUrl: (recipe && recipe.imageUrl) ? recipe.imageUrl : null },
+    {
+      imageId: (recipe && recipe.imageId) ? recipe.imageId : null,
+      imageUrl: (recipe && recipe.imageUrl) ? recipe.imageUrl : null,
+    },
   );
 
-  const ingredientListRef = useRef((recipe && recipe.ingredient) ? createIngredientsHash(recipe.ingredient) : {});
+  const ingredientListRef = useRef((recipe && recipe.ingredients) ? createIngredientsHash(recipe.ingredients) : {});
 
-  //const recipeUrl = (recipe && recipe.imageUrl) ? recipe.imageUrl : '';
+  // const recipeUrl = (recipe && recipe.imageUrl) ? recipe.imageUrl : '';
+
+  function ingredientListUpdate(ingredientList) {
+    ingredientListRef.current = { ...ingredientList };
+  }
 
   function ingredientListOnChange(ingredientId, ingredient) {
     ingredientListRef.current[ingredientId] = ingredient;
@@ -41,7 +48,7 @@ const RecipeEditor = ({ recipe, history }) => {
       if (error) {
         Bert.alert(error.message, 'danger');
       } else if (!silentUpdate) {
-        const insertedId = msg.insertedId;
+        const { insertedId } = msg;
         const message = 'Changes to Recipe have been Saved!';
         Bert.alert(message, 'success');
         if (updPublishStatus === constants.PublishStatus.Published.name) {
@@ -78,7 +85,6 @@ const RecipeEditor = ({ recipe, history }) => {
     }
   }
 
-
   function retMultiSelectedValueInArr(options) {
     const result = [];
 
@@ -95,7 +101,9 @@ const RecipeEditor = ({ recipe, history }) => {
   }
 
   function changeImage({ imageUrl, thumbNailUrl, imageId }) {
-    Meteor.call('recipes.updateImageUrl', ({ recipeId: recipe._id, imageUrl, thumbNailUrl, imageId }), (error, msg) => {
+    Meteor.call('recipes.updateImageUrl', ({
+      recipeId: recipe._id, imageUrl, thumbNailUrl, imageId,
+    }), (error, msg) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
@@ -113,19 +121,18 @@ const RecipeEditor = ({ recipe, history }) => {
     rteContent.current = value;
   }
 
-
   function saveOrUpdateRecipe(event, updPublishStatus) {
     const updRecipe = {
       _id: recipe ? recipe._id : '',
       title: document.querySelector('[name="title"]').value.trim(),
       description: rteContent.current,
-      ingredients: Object.keys(ingredientListRef.current).map(ingredientId => ingredientListRef.current[ingredientId]),
+      ingredients: Object.keys(ingredientListRef.current).map((ingredientId) => ingredientListRef.current[ingredientId]),
       imageUrl: imageProps.imageUrl,
       imageId: imageProps.imageId,
       prepTimeInMins: parseFloat(document.querySelector('[name="prepTimeInMins"]').value.trim()),
       cookingTimeInMins: parseFloat(document.querySelector('[name="cookingTimeInMins"]').value.trim()),
       serves: parseFloat(document.querySelector('[name="serves"]').value.trim()),
-      typeOfFood: retMultiSelectedValueInArr(document.querySelector('[name="typeOfFood"]').children),
+      recipeCategory: retMultiSelectedValueInArr(document.querySelector('[name="recipeCategory"]').children),
       cookingLevel: document.querySelector('[name="cookingLevel"]').value.trim(),
     };
 
@@ -133,125 +140,128 @@ const RecipeEditor = ({ recipe, history }) => {
   }
 
   if (recipe) {
-    return (<form onSubmit={event => event.preventDefault()}>
-      <FormGroup>
-        <h4>Title</h4>
-        <FormControl
-          type="text"
-          name="title"
-          defaultValue={recipe && recipe.title}
-          placeholder="Title of the recipe"
-          required
-        />
-
-      </FormGroup>
-
-      <FormGroup>
-        <h4>Banner Image</h4>
-        {imageProps.imageUrl && (<img src={imageProps.imageUrl} style={{maxWidth:'100%'}} />) }
-        <ImageUploader onChange={changeImage} folder={'recipes'} imageId={recipe.imageId} />
-        {/* } <ImageUploader
-            imageUrl={(recipe) ? recipe.imageUrl : ''}
-            updateImageUrl={this.updateImageUrl}
-            imageNameOnServer={(recipe) ? recipe.title.replace(/\s+/g, '-') : ''}
-            id={(recipe) ? recipe._id : ''}
-    /> */}
-      </FormGroup>
-      <FormGroup>
-        <h4>Ingredients</h4>
-        <IngredientSelector
-          controlName="IngredientSelector"
-          ingredients={recipe && recipe.ingredients}
-          onChange={ingredientListOnChange}
-        />
-      </FormGroup>
-      <Row>
-        <Col xs={6} sm={3} className="rowRightSpacing">
-          <h4>Prep Time in Mins</h4>
+    return (
+      <form onSubmit={(event) => event.preventDefault()}>
+        <FormGroup>
+          <h4>Title</h4>
           <FormControl
             type="text"
-            name="prepTimeInMins"
-            defaultValue={recipe && recipe.prepTimeInMins}
-            placeholder="0"
+            name="title"
+            defaultValue={recipe && recipe.title}
+            placeholder="Title of the recipe"
             required
           />
-        </Col>
-        <Col xs={6} sm={3}>
-          <h4>Cooking Time in Mins</h4>
-          <FormControl
-            type="text"
-            name="cookingTimeInMins"
-            defaultValue={recipe && recipe.cookingTimeInMins}
-            placeholder="1"
-            required
+        </FormGroup>
+
+        <FormGroup>
+          <h4>Banner Image</h4>
+          {imageProps.imageId && (<RecipeImageViewHero cloudImageId={imageProps.imageId} />) }
+          <ImageUploader onChange={changeImage} folder="recipes" imageId={imageProps.imageId} />
+        </FormGroup>
+        <FormGroup>
+          <h4>Ingredients</h4>
+          <IngredientSelector
+            controlName="IngredientSelector"
+            ingredients={recipe && recipe.ingredients}
+            updateIngredientList={ingredientListUpdate}
+            onChange={ingredientListOnChange}
           />
-        </Col>
-        <Col xs={6} sm={3} className="rowRightSpacing">
-          <h4>Cooking Level</h4>
-          <FormControl
-            name="cookingLevel"
+        </FormGroup>
+        <Row>
+          <Col xs={6} sm={3} className="rowRightSpacing">
+            <h4>Prep Time in Mins</h4>
+            <FormControl
+              type="text"
+              name="prepTimeInMins"
+              defaultValue={recipe && recipe.prepTimeInMins}
+              placeholder="0"
+              required
+            />
+          </Col>
+          <Col xs={6} sm={3}>
+            <h4>Cooking Time in Mins</h4>
+            <FormControl
+              type="text"
+              name="cookingTimeInMins"
+              defaultValue={recipe && recipe.cookingTimeInMins}
+              placeholder="1"
+              required
+            />
+          </Col>
+          <Col xs={6} sm={3} className="rowRightSpacing">
+            <h4>Cooking Level</h4>
+            <FormControl
+              name="cookingLevel"
             // onChange={onChange}
-            componentClass="select"
-            required
-            defaultValue={recipe && recipe.level}
-          >
-            { constants.DifficultyLevels.map(selectValue => (
-              <option value={selectValue} key={`option-${selectValue}`} > { selectValue } </option>
-            ))
-            }
-          </FormControl>
-        </Col>
-        <Col xs={6} sm={3}>
-          <h4>Serves </h4>
-          <FormControl
-            type="text"
-            name="serves"
-            defaultValue={recipe && recipe.serves}
-            placeholder="4"
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <h4>Food Type</h4>
-          <FormControl
-            style={{ height: '170px' }}
-            name="typeOfFood"
-            componentClass="select"
-            multiple
-            required
-          >
-            { constants.FoodTypes.names.map(name => (
-              <option
-                value={name}
-                key={`option-${name}`}
-                selected={recipe.typeOfFood && recipe.typeOfFood.includes(name)}
-              > { constants.FoodTypes[name].displayName } </option>
-            ))
-            }
-          </FormControl>
-        </Col>
-      </Row>
-      <FormGroup>
-        <h4>Instructions</h4>
-        <RecipeRTE description={recipe.description} rteValueUpdate={rteValueUpdate} />
+              componentClass="select"
+              required
+              defaultValue={recipe && recipe.level}
+            >
+              { constants.DifficultyLevels.map((selectValue) => (
+                <option value={selectValue} key={`option-${selectValue}`}>
+                  {' '}
+                  { selectValue }
+                  {' '}
+                </option>
+              ))}
+            </FormControl>
+          </Col>
+          <Col xs={6} sm={3}>
+            <h4>Serves </h4>
+            <FormControl
+              type="text"
+              name="serves"
+              defaultValue={recipe && recipe.serves}
+              placeholder="4"
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12}>
+            <h4>Food Type</h4>
+            <FormControl
+              style={{ height: '170px' }}
+              name="recipeCategory"
+              componentClass="select"
+              multiple
+              required
+            >
+              { constants.RecipeCat.names.map((name) => (
+                <option
+                  value={name}
+                  key={`option-${name}`}
+                  selected={recipe.recipeCategory && recipe.recipeCategory.includes(name)}
+                >
+                  {' '}
+                  { constants.RecipeCat[name].displayName }
+                  {' '}
 
-      </FormGroup>
-      <ButtonToolbar >
-        <Button bsSize="small" type="submit" bsStyle="primary" onClick={event => saveOrUpdateRecipe(event, constants.PublishStatus.Published.name)}>
-          Save and Publish
-        </Button>
-        <Button bsSize="small" type="submit" onClick={event => saveOrUpdateRecipe(event, constants.PublishStatus.Draft.name)}>
-          Save as Draft
-        </Button>
-        <Button bsSize="small" type="submit" onClick={cancelSaveRecipe}>
-          Cancel Edit
-        </Button>
+                </option>
+              ))}
+            </FormControl>
+          </Col>
+        </Row>
+        <FormGroup>
+          <h4>Instructions</h4>
+          <RecipeRTE description={recipe.description} rteValueUpdate={rteValueUpdate} />
 
-        <Button bsSize="small" className="pull-right" onClick={deleteRecipe}>Delete Recipe</Button>
-      </ButtonToolbar>
+        </FormGroup>
+        <ButtonToolbar>
+          <Button bsSize="small" type="submit" bsStyle="primary" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Published.name)}>
+            Save and Publish
+          </Button>
+          <Button bsSize="small" type="submit" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Draft.name)}>
+            Save as Draft
+          </Button>
+          <Button bsSize="small" type="submit" onClick={cancelSaveRecipe}>
+            Cancel Edit
+          </Button>
 
-    </form>);
+          <Button bsSize="small" className="pull-right" onClick={deleteRecipe}>Delete Recipe</Button>
+        </ButtonToolbar>
+
+      </form>
+    );
   }
 
   return (

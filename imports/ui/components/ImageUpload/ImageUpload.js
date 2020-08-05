@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Meteor } from 'meteor/meteor';
 import { useDropzone } from 'react-dropzone';
 import { Cloudinary } from 'meteor/socialize:cloudinary';
 
-const ImageField = ({ onChange, folder, imageId, allowedFormats, overwrite, format }) => {
+import { Image, Placeholder, Transformation } from 'cloudinary-react';
+
+const ImageField = ({
+  onChange, folder, imageId, allowedFormats, overwrite, format,
+}) => {
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     multiple: false,
@@ -18,20 +23,20 @@ const ImageField = ({ onChange, folder, imageId, allowedFormats, overwrite, form
       reader.readAsDataURL(acceptedFiles[0]);
       reader.onload = () => {
         if (reader.result) {
-          const config = { options: {
-            folder,
-            public_id: imageId,
-            overwrite, // only 1 image per recipe
-            format,
-            allowed_formats: allowedFormats,
-            // transformation:['fl_progressive.progressive:semi', 'q_auto:best', 't_media_lib_thumb'],
-          } };
+          const config = {
+            options: {
+              folder,
+              public_id: imageId,
+              overwrite, // only 1 image per recipe
+              format,
+              allowed_formats: allowedFormats,
+            },
+          };
           const image = Cloudinary.uploadFile(reader.result, config);
           image.then((val) => {
             const { public_id } = val;
             const url = Cloudinary.url(public_id,
-              { quality: 'auto:best', flags: 'progressive.progressive:semi', format: val.format },
-            ).replace('http://', 'https://');
+              { quality: 'auto:best', flags: 'progressive.progressive:semi', format: val.format }).replace('http://', 'https://');
             const urlArr = public_id.split('/');
             onChange({
               imageUrl: url,
@@ -43,7 +48,7 @@ const ImageField = ({ onChange, folder, imageId, allowedFormats, overwrite, form
       };
     },
   });
-  
+
   return (
     <div className="field form-group">
       <div
@@ -56,7 +61,6 @@ const ImageField = ({ onChange, folder, imageId, allowedFormats, overwrite, form
     </div>
   );
 };
-
 
 ImageField.defaultProps = {
   imageId: null,
@@ -75,3 +79,52 @@ ImageField.propTypes = {
 };
 
 export default ImageField;
+
+export const RecipeImageViewThumbnail = ({ cloudImageId }) => (
+  <Image
+    secure="true"
+    loading="lazy"
+    cloudName={Meteor.settings.public.cloudinary.cloudName}
+    publicId={`recipes/${cloudImageId}`}
+    height="200"
+    crop="scale"
+    style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+  >
+    <Placeholder type="predominant" />
+    <Transformation quality="auto" fetchFormat="auto" />
+  </Image>
+);
+
+export const RecipeImageViewHero = ({ cloudImageId }) => (
+  <Image
+    secure="true"
+    loading="lazy"
+    cloudName={Meteor.settings.public.cloudinary.cloudName}
+    publicId={`recipes/${cloudImageId}`}
+    crop="scale"
+    style={{
+      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
+    }}
+  >
+    <Placeholder type="predominant" />
+    <Transformation quality="auto:best" fetchFormat="auto" />
+    <Transformation flags="progressive.progressive:semi" />
+  </Image>
+);
+
+export const RecipeCategoryImage = ({ cloudImageId }) => (
+  <Image
+    secure="true"
+    loading="lazy"
+    cloudName={Meteor.settings.public.cloudinary.cloudName}
+    publicId={`recipes/${cloudImageId}`}
+    crop="scale"
+    style={{
+      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
+    }}
+  >
+    <Placeholder type="predominant" />
+    <Transformation quality="auto:best" fetchFormat="auto" />
+    <Transformation flags="progressive.progressive:semi" />
+  </Image>
+);

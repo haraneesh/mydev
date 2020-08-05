@@ -180,13 +180,13 @@ export const ShowNutritionSummary = ({ ingredients }) => {
   );
 };
 
-const ShowRecipeTags = (typeOfFood, width) => (
+const ShowRecipeTags = (recipeCategory, width) => (
   <Col xs={width}>
     <Row className="text-muted">
       <small> TYPE </small>
     </Row>
     <Row>
-      {typeOfFood}
+      {recipeCategory}
     </Row>
   </Col>
 );
@@ -204,9 +204,9 @@ const DisplayEffortSummaryCell = (iconName, value, width) => (
 
 export const ShowEffortSummary = ({ cookingLevel, prepTimeInMins, cookingTimeInMins, serves }) => (
   <div className="effortRow">
-    { /* ShowRecipeTags(typeOfFood, 3) */ }
+    { /* ShowRecipeTags(recipeCategory, 3) */ }
 
-    { /* DisplayEffortSummaryCell('cutlery', typeOfFood, 3) */ }
+    { /* DisplayEffortSummaryCell('cutlery', recipeCategory, 3) */ }
     { DisplayEffortSummaryCell('time', `${prepTimeInMins} Mins`, 3) }
     { DisplayEffortSummaryCell('fire', `${cookingTimeInMins} Mins`, 3) }
     { DisplayEffortSummaryCell('user', `${serves} Pers`, 3) }

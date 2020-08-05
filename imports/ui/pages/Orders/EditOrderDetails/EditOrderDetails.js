@@ -124,7 +124,6 @@ EditOrderDetails.propTypes = {
 const EditOrderDetailsWrapper = props => (props.loading ? (<Loading />) :
   (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />));
 
-
 export default withTracker((args) => {
   const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
 

@@ -3,7 +3,6 @@ import { check } from 'meteor/check';
 import Recipes from '../Recipes';
 import constants from '../../../modules/constants';
 
-
 Meteor.publish('recipes.list1', () => Recipes.find());
 
 /*
@@ -21,10 +20,10 @@ Meteor.publish('foo', (options) => {
 
 Meteor.publish('recipes.list', (options) => {
   // check(options, { limit: Number, sort: Match.ObjectIncluding({ createdAt: Number }) });
-  check(options, { limit: Number, typeOfFood: String, sort: { createdAt: Number } });
-  const { limit = constants.InfiniteScroll.DefaultLimit, typeOfFood, sort } = options;
+  check(options, { limit: Number, recipeCategory: String, sort: { createdAt: Number } });
+  const { limit = constants.InfiniteScroll.DefaultLimit, recipeCategory, sort } = options;
   return Recipes.find({
-    typeOfFood,
+    recipeCategory: { $in: recipeCategory },
   }, {
     sort,
     limit,

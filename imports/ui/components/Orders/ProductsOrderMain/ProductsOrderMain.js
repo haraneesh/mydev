@@ -138,25 +138,22 @@ const ProductsOrderMain = (props) => {
 
   const displayProductsByTypeStandardView = (
     productGroups,
-    isMobile) => {
-
-    return (
-      <div className="productOrderList">
+    isMobile) => (
+    <div className="productOrderList">
         {isMobile && (
-          <ProductsOrderMobile
-            productGroups={productGroups}
-            productsArray={productsArray}
-            orderId={orderId}
-            orderStatus={orderStatus}
-            comments={comments}
-            totalBillAmount={cartState.cart.totalBillAmount}
-            dateValue={dateValue}
-            history={history}
-          />)
-        }
+        <ProductsOrderMobile
+          productGroups={productGroups}
+          productsArray={productsArray}
+          orderId={orderId}
+          orderStatus={orderStatus}
+          comments={comments}
+          totalBillAmount={cartState.cart.totalBillAmount}
+          dateValue={dateValue}
+          history={history}
+        />)
+      }
       </div>
-    );
-  };
+  );
 
   const displayOrderFooter = isMobile => (<OrderFooter
     totalBillAmount={cartState.cart.totalBillAmount}
@@ -196,9 +193,9 @@ const ProductsOrderMain = (props) => {
       </Row>
     </Panel>
       :
-      <Alert bsStyle="info">
-        Every day, List of available fresh items and their prices will be updated by 11 AM. Please wait for the message in the group.
-     </Alert>
+    <Alert bsStyle="info">
+      Every day, List of available fresh items and their prices will be updated by 11 AM. Please wait for the message in the group.
+    </Alert>
   );
 
   // Grouping product categories by tabs

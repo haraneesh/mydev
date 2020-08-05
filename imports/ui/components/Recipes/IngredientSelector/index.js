@@ -4,8 +4,20 @@ import { Panel } from 'react-bootstrap';
 import AddIngredient from '../../Ingredients/AddIngredient/AddIngredient';
 import IngredientItem from '../IngredientItem/index';
 
-const IngredientSelector = ({ ingredients, controlName, onChange }) => {
-  const [ingredientList, setIngredientList] = useState({});
+const IngredientSelector = ({
+  ingredients, controlName, updateIngredientList, onChange,
+}) => {
+  const [ingredientList, setIngredientList] = useState({ ingListHash: {}, ingListSortedArray: [] });
+
+  const sortAndSetIngredientsByDisplayOrder = (ingListHash) => {
+    const ingListArray = Object.keys(ingListHash).map((value) => (ingListHash[value]));
+
+    const ingListSortedArray = ingListArray.sort((a, b) => parseFloat(a.displayOrder) - parseFloat(b.displayOrder));
+    setIngredientList({
+      ingListHash,
+      ingListSortedArray,
+    });
+  };
 
   useEffect(() => {
     const ingredientListTemp = {};
@@ -13,25 +25,21 @@ const IngredientSelector = ({ ingredients, controlName, onChange }) => {
       ingredientListTemp[ingredient._id] = ingredient;
     });
 
-    setIngredientList(ingredientListTemp);
+    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
   }, []);
 
   const removeIngredient = (ingredient /* ingredient */) => {
     const ingredientListTemp = { ...ingredientList };
     delete ingredientListTemp[ingredient._id];
-    setIngredientList(ingredientListTemp);
+    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
+    updateIngredientList(ingredientListTemp);
   };
 
   const addIngredient = (ingredient /* ingredient */) => {
     const ingredientListTemp = { ...ingredientList };
     ingredientListTemp[ingredient._id] = ingredient;
-    setIngredientList(ingredientListTemp);
-  };
-
-  const displayNameChange = (ingredientId, displayName) => {
-    const ingredientListTemp = { ...ingredientList };
-    ingredientList[ingredientId].displayName = displayName;
-    setIngredientList(ingredientListTemp);
+    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
+    updateIngredientList(ingredientListTemp);
   };
 
   return (
@@ -40,13 +48,14 @@ const IngredientSelector = ({ ingredients, controlName, onChange }) => {
         addIngredient={addIngredient}
       />
       {
-        Object.keys(ingredientList).map((value, index) =>
-          (<IngredientItem
-            ingredient={ingredientList[value]}
+        ingredientList.ingListSortedArray.map((value, index) => (
+          <IngredientItem
+            ingredient={value}
             key={index}
             removeIngredient={removeIngredient}
             onChange={onChange}
-          />))
+          />
+        ))
       }
     </Panel>
   );
@@ -54,12 +63,12 @@ const IngredientSelector = ({ ingredients, controlName, onChange }) => {
 
 IngredientSelector.defaultProps = {
   ingredients: [],
-  onChange: null,
 };
 
 IngredientSelector.propTypes = {
   ingredients: PropTypes.array,
-  onChange: PropTypes.func,
+  onChange: PropTypes.func.isRequired,
+  updateIngredientList: PropTypes.func.isRequired,
   controlName: PropTypes.string.isRequired,
 };
 

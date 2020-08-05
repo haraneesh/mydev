@@ -90,6 +90,8 @@ export const dNewRecipe = lazy(() => import('../../pages/Recipes/NewRecipe'));
 export const dEditRecipe = lazy(() => import('../../pages/Recipes/EditRecipe'));
 
 export const dViewRecipe = lazy(() => import('../../pages/Recipes/ViewRecipe'));
+
+export const dRecipesByCategory = lazy(() => import('../../pages/Recipes/RecipesByCategory'));
 /* export const dViewRecipe = SuvaiLoadable({
   loader: () => import('../../containers/Recipes/ViewRecipe'),
 }); */

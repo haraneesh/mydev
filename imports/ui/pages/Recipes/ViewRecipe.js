@@ -1,24 +1,24 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, Button, Panel, Row, Col } from 'react-bootstrap';
-import { Editor, convertFromRaw, EditorState } from 'draft-js';
+import { Editor, EditorState } from 'draft-js';
+import { stateFromHTML } from 'draft-js-import-html';
+import { Button, Panel, Col } from 'react-bootstrap';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
 import Recipes from '../../../api/Recipes/Recipes';
 import constants from '../../../modules/constants';
 import { removeRecipe } from '../../../api/Recipes/methods';
+import Loading from '../../components/Loading/Loading';
 import Comments from '../../containers/Comments/getComments';
-import { ShowNutritionSummary, ShowEffortSummary } from '../../components/Recipes/recipeHelpers';
-
-import { insertToUserAndPosts } from '../../../api/UserAndPosts/methods';
-
-import './ViewRecipe.scss';
+import NotFound from '../Miscellaneous/NotFound/NotFound';
+import { RecipeImageViewHero } from '../../components/ImageUpload/ImageUpload';
 
 class ViewRecipe extends React.Component {
   componentDidMount() {
-    const recipe = this.props.recipe;
+    const { recipe } = this.props;
     const loggedInUser = this.props.loggedInUserId;
-    if (recipe.owner === loggedInUser) {
+    if (recipe && recipe.owner === loggedInUser) {
       if (recipe.publishStatus === constants.PublishStatus.Draft.name) {
         this.props.history.push(`/recipes/${recipe._id}/edit`);
       }
@@ -48,60 +48,68 @@ class ViewRecipe extends React.Component {
   }
 
   render() {
-    const recipe = this.props.recipe;
+    const { recipe } = this.props;
     const loggedUserId = this.props.loggedInUserId;
     const isOwner = (recipe.owner === loggedUserId);
+    const editorState = EditorState.createWithContent(stateFromHTML(recipe.description));
 
     if (recipe.publishStatus !== constants.PublishStatus.Draft.name) {
-      const contentState = convertFromRaw(recipe.description);
-      const editorState = EditorState.createWithContent(contentState);
-
       return (
         <div className="ViewRecipe">
           <div className="page-header clearfix">
-            <h3 className="pull-left">{recipe.title}</h3>
-            <ButtonToolbar className="pull-right">
+            <h3 className="text-center col-xs-12">{recipe.title}</h3>
+            <Col xs={12} className="buttonRowSpacing">
               {isOwner && <Button bsSize="small" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
-            </ButtonToolbar>
+            </Col>
           </div>
-          
-          {recipe.imageUrl && <Panel> <div className="view-recipe-image" style={{ backgroundImage: `url('${recipe.imageUrl}')` }} /> </Panel>}
-          
+
+          {recipe.imageId && (
           <Panel>
-            <Row className="text-center">
-              { ShowEffortSummary(recipe) }
-            </Row>
+            <RecipeImageViewHero cloudImageId={recipe.imageId} />
           </Panel>
+          )}
+
+          <Panel style={{ padding: '1rem' }}>
+            <Col xs={3} style={{ marginBottom: '1rem' }}>Serves:</Col>
+            <Col xs={3} style={{ marginBottom: '1rem' }}>{recipe.serves}</Col>
+
+            <Col xs={3} style={{ marginBottom: '1rem' }}>Level:</Col>
+            <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingLevel}`}</Col>
+
+            <Col xs={3} style={{ marginBottom: '1rem' }}>Prep time:</Col>
+            <Col xs={3} style={{ marginBottom: '1rem' }}>{(recipe.prepTimeInMins > 0) ? `${recipe.prepTimeInMins} mins` : 'No'}</Col>
+
+            <Col xs={3} style={{ marginBottom: '1rem' }}>Cook time:</Col>
+            <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingTimeInMins} mins`}</Col>
+          </Panel>
+
           <Panel className="ingredientsView">
-            <h4>Ingredients</h4>
+            <h4 style={{ padding: '0 1rem' }}>Ingredients</h4>
             <Col xs={12}>
               <ol>
-                {recipe.ingredients.map((ing, index) => (<li key={`ingredient-${index}`}>
-                  {
-                    (ing.displayName) ? ing.displayName : `${ing.selectedWeight.Amount} ${ing.selectedWeight.Msre_Desc} ${ing.Long_Desc}`
-                   }
-                </li>
-                 ))}
+                {recipe.ingredients.map((ing, index) => (
+                  <li key={`ingredient-${index}`} style={{ paddingTop: '3px' }}>
+                    {`${ing.name} ${ing.measure} ${ing.unit}`}
+                  </li>
+                ))}
               </ol>
             </Col>
           </Panel>
+
           <Panel>
-            <h4>Instructions</h4>
+            <h4 style={{ padding: '0 1rem' }}>Instructions</h4>
             <div className="panel-body">
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>
           </Panel>
-          {/*
+
           <Panel>
-            <h4> Nutrition </h4>
-            <Row className="text-center">
-              { ShowNutritionSummary(recipe) }
-            </Row>
-          </Panel>
-          */}
-          <Panel>
-            <h4>Responses</h4>
-            <Comments postId={recipe._id} postType={constants.PostTypes.Recipe.name} loggedUserId={loggedUserId} />
+            <h4 style={{ padding: '0 1rem' }}>Responses</h4>
+            <Comments
+              postId={recipe._id}
+              postType={constants.PostTypes.Recipe.name}
+              loggedUserId={loggedUserId}
+            />
           </Panel>
         </div>
       );
@@ -114,6 +122,9 @@ ViewRecipe.propTypes = {
   history: PropTypes.object.isRequired,
   loggedInUserId: PropTypes.string.isRequired,
 };
+
+const ViewRecipeWrapper = (props) => (props.loading ? (<Loading />)
+  : (props.recipe) ? (<ViewRecipe {...props} />) : (<NotFound />));
 
 export default withTracker((args) => {
   // const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
@@ -128,7 +139,7 @@ export default withTracker((args) => {
     loggedInUserId: args.loggedInUserId,
     loggedInUser: args.loggedInUser,
   };
-})(ViewRecipe);
+})(ViewRecipeWrapper);
 
 /*
 import { Meteor } from 'meteor/meteor';
@@ -148,4 +159,3 @@ const composer = (args, onData) => {
 
 export default composeWithTracker(composer, Loading)(ViewRecipe);
 */
-

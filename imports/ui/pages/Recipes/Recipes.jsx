@@ -87,7 +87,7 @@ export default withTracker(({ match }) => {
   const subscription =
     Meteor.subscribe('recipes.list', {
       sort: { createdAt: constants.Sort.DESCENDING },
-      typeOfFood: match.params.category,
+      recipeCategory: match.params.category,
       limit: limit.get(),
     },
   );

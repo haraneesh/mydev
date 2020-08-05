@@ -1,9 +1,11 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Helmet } from 'react-helmet';
+import { ThemeProvider } from 'styled-components';
 import { Grid } from 'react-bootstrap';
 // import DocumentTitle from 'react-document-title';
 import Navigation from '../components/Navigation/Navigation';
+import GlobalStyle from './GlobalStyle';
 
 const trackPageViews = (analytics, userId, pageName) => {
   if (Meteor.isProduction && analytics && userId) {
@@ -36,11 +38,13 @@ export const RecipeLayout = props =>
   (
     <div>
       <Helmet>
-        <style>{'body { background-color: red; }'}</style>
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
-      <Navigation showEasyNav={false} {...props} />
-      <Grid>{props.children}</Grid>
+      <ThemeProvider theme={{}}>
+        <GlobalStyle />
+        <Navigation showEasyNav={false} {...props} />
+        <Grid className="recipesApp">{props.children}</Grid>
+      </ThemeProvider>
     </div>
   )
 ;

@@ -19,16 +19,6 @@ Recipes.deny({
   remove: () => true,
 });
 
-function isMandatoryIfStatusIsPublished() {
-  const value = this.value;
-  const publishStatus = this.field('publishStatus').value;
-  const shouldBeRequired = (publishStatus === constants.PublishStatus.Published.name);
-
-  if (shouldBeRequired && !(value)) {
-    return SimpleSchema.ErrorTypes.REQUIRED;
-  }
-}
-
 Recipes.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the recipe', optional: true },
   title: {
@@ -39,7 +29,6 @@ Recipes.schema = new SimpleSchema({
     type: Array,
     label: 'The list of ingredients attached to the recipe.',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
   'ingredients.$': {
     type: Object,
@@ -62,6 +51,10 @@ Recipes.schema = new SimpleSchema({
     type: String,
     label: 'Ingredient Unit',
   },
+  'ingredients.$.displayOrder': {
+    type: Number,
+    label: 'Ingredient Display Order',
+  },
   commentIds: {
     type: Array,
     label: 'The list of comments attached to the recipe.',
@@ -75,25 +68,27 @@ Recipes.schema = new SimpleSchema({
     label: 'The recipe goes here.',
     blackbox: true,
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
   serves: {
     type: Number,
     label: 'Serves how many people',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
   prepTimeInMins: {
     type: Number,
     label: 'Time to prepare this recipe',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
   cookingTimeInMins: {
     type: Number,
     label: 'Time to cook this recipe',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
+  },
+  cookingLevel: {
+    type: String,
+    label: 'Cooking Level',
+    allowedValues: constants.DifficultyLevels,
+    optional: true,
   },
   imageUrl: {
     type: String,
@@ -106,40 +101,26 @@ Recipes.schema = new SimpleSchema({
     label: 'The url of the thumbnail image of the recipe',
     optional: true,
   },
-  typeOfFood: {
+  recipeCategory: {
     type: Array,
     label: 'The type of Food',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
-  'typeOfFood.$': {
+  'recipeCategory.$': {
     type: String,
-    allowedValues: constants.FoodTypes.names,
-  },
-  cookingLevel: {
-    type: String,
-    label: 'Cooking Level',
-    allowedValues: constants.DifficultyLevels,
-    optional: true,
-    custom: isMandatoryIfStatusIsPublished,
-  },
-  mediaId: {
-    type: String,
-    label: 'Saves Id of the image/media',
-    optional: true,
+    allowedValues: constants.RecipeCat.names,
   },
   owner: {
     type: String,
     label: 'The person who created the post',
     optional: true,
-    custom: isMandatoryIfStatusIsPublished,
   },
   createdAt: {
     type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -172,14 +153,9 @@ Recipes.schema = new SimpleSchema({
   },
 });
 
-Recipes.schema.messageBox.messages({
-  en: {
-    errrrrrrrr: 'For {{value.displayName}} - Amount has to be greater than 0 ',
-  },
-});
-
 if (Meteor.isServer) {
-  Recipes._ensureIndex({ owner: 1 });
+  Recipes.rawCollection().createIndex({ owner: 1 });
+  Recipes.rawCollection().createIndex({ recipeCategory: 1, publishStatus: 1 });
 }
 
 Recipes.attachSchema(Recipes.schema);

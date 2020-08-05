@@ -72,6 +72,7 @@ import {
   dNewRecipe,
   dEditRecipe,
   dViewRecipe,
+  dRecipesByCategory,
   dSuppliers,
   dNewSupplier,
   dViewSupplier,
@@ -142,7 +143,8 @@ const App = props => (
 
             {/* Recipes */}
             <Authenticated exact routeName="Recipes Home" layout={RecipeLayout} path="/recipes" component={dRecipesHome} {...props} />
-            <Authenticated exact routeName="View Recipes By Category" layout={RecipeLayout} path="/recipes/foodtype/:category" component={dRecipes} {...props} />
+            <Authenticated exact routeName="View Recipes by Category" layout={RecipeLayout} path="/recipes/bycategory/:category" component={dRecipesByCategory} {...props} />
+            <Authenticated exact routeName="View Recipes by Tag" layout={RecipeLayout} path="/recipes/bytag/:tag" component={dRecipesByCategory} {...props} />
             <AdminAuthenticated exact routeName="New Recipe" layout={RecipeLayout} path="/recipes/new" component={dNewRecipe} {...props} />
             <AdminAuthenticated exact routeName="Edit Recipe" layout={RecipeLayout} path="/recipes/:_id/edit" component={dEditRecipe} {...props} />
             <Authenticated routeName="View Recipe" layout={RecipeLayout} path="/recipes/:_id" component={dViewRecipe} {...props} />

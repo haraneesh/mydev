@@ -98,7 +98,7 @@ const Menu = (props) => {
           <span className={`icon-bar bottom-bar ${menuVisible}`} />
         </Button>
       </div>
-      <div className="menu">
+      <div className="menu" style={{ display: (isMenuVisible) ? 'block' : 'none' }}>
         <div className={menuVisible + props.alignment} style={{ zIndex: 1100 }}>
           {props.children}
         </div>

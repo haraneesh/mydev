@@ -4,7 +4,6 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import Recipes from './Recipes';
-import Media from '../Media/Media';
 import rateLimit from '../../modules/rate-limit.js';
 import constants from '../../modules/constants';
 import handleMethodException from '../../modules/handle-method-exception';
@@ -54,6 +53,10 @@ const recipePublishSchema = new SimpleSchema({
     type: Number,
     label: 'Ingredient Measure',
   },
+  'ingredients.$.displayOrder': {
+    type: Number,
+    label: 'Ingredient Display Order',
+  },
   'ingredients.$.name': {
     type: String,
     label: 'Ingredient Name',
@@ -84,13 +87,13 @@ const recipePublishSchema = new SimpleSchema({
     type: Number,
     label: 'Time to cook this recipe',
   },
-  typeOfFood: {
+  recipeCategory: {
     type: Array,
     label: 'The type of Food',
   },
-  'typeOfFood.$': {
+  'recipeCategory.$': {
     type: String,
-    allowedValues: constants.FoodTypes.names,
+    allowedValues: constants.RecipeCat.names,
   },
   cookingLevel: {
     type: String,
@@ -123,7 +126,7 @@ export const removeRecipe = new ValidatedMethod({
   }).validator(),
   run({ recipeId }) {
     const recipe = Recipes.findOne({ _id: recipeId });
-    Media.remove({ _id: recipe.mediaId });
+    //Media.remove({ _id: recipe.mediaId });
     Recipes.remove({
       $and: [{ owner: Meteor.userId() }, { _id: recipe._id }],
     });
@@ -132,20 +135,43 @@ export const removeRecipe = new ValidatedMethod({
 
 Meteor.methods({
   'recipes.updateImageUrl': function updateImageUrl(params) {
-    check(params, { recipeId: String, imageUrl: String, thumbNailUrl: String, imageId: String });
-    const { recipeId, imageUrl, thumbNailUrl, imageId } = params;
+    check(params, {
+      recipeId: String, imageUrl: String, thumbNailUrl: String, imageId: String,
+    });
+    const {
+      recipeId, imageUrl, thumbNailUrl, imageId,
+    } = params;
     return Recipes.update({ _id: recipeId }, { $set: { imageUrl, imageId, thumbNailUrl } });
+  },
+  'recipes.byCategoryTag': function getRecipesByCat(params) {
+    check(params,
+      {
+        catName: String, pageNumber: Number, pageCount: Number, isCategory: Boolean,
+      });
+
+    const selectQuery = (params.catName === 'All')
+      ? { publishStatus: constants.PublishStatus.Published.name }
+      : {
+        $and: [{ recipeCategory: params.catName },
+          { publishStatus: constants.PublishStatus.Published.name }],
+      };
+
+    return Recipes.find(selectQuery, {
+      sort: { updatedAt: -1 },
+      skip: params.pageNumber * params.pageCount,
+      limit: params.pageCount,
+    }).fetch();
   },
   'recipes.countByCategory': function countByCategory() {
     try {
       if (Meteor.isServer) {
         return Recipes.aggregate([{
-          $unwind: '$typeOfFood',
+          $unwind: '$recipeCategory',
         },
         {
           $group: {
             _id: {
-              typeOfFood: '$typeOfFood',
+              recipeCategory: '$recipeCategory',
             },
             count: { $sum: 1 },
           },
@@ -158,7 +184,6 @@ Meteor.methods({
   },
 });
 
-
 rateLimit({
   methods: [
     upsertRecipeDraft,
@@ -166,6 +191,7 @@ rateLimit({
     removeRecipe,
     'recipes.countByCategory',
     'recipes.updateImageUrl',
+    'recipes.byCategoryTag',
   ],
   limit: 5,
   timeRange: 1000,

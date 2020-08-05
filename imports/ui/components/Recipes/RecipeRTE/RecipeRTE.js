@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RichTextEditor, { EditorValue } from 'react-rte';
 import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
-import {stateToHTML} from 'draft-js-export-html';
-import {stateFromHTML} from 'draft-js-import-html';
-
+import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 
 export default class RecipeRTE extends React.Component {
   constructor(props, context) {
@@ -16,18 +15,18 @@ export default class RecipeRTE extends React.Component {
   }
 
   onRichTextEditorChange(value) {
-   // let editorState = value.getEditorState();
-   // let contentState = editorState.getCurrentContent();
-   this.props.rteValueUpdate(stateToHTML(value.getEditorState().getCurrentContent()));
+    // let editorState = value.getEditorState();
+    // let contentState = editorState.getCurrentContent();
+    this.props.rteValueUpdate(stateToHTML(value.getEditorState().getCurrentContent()));
     this.setState({ value });
   }
 
   initialize(description) {
     let editorValue;
     if (description) {
-      //const contentState = convertFromRaw(description);
-      //const editorState = EditorState.createWithContent(contentState);
-      //editorValue = new EditorValue(editorState);
+      // const contentState = convertFromRaw(description);
+      // const editorState = EditorState.createWithContent(contentState);
+      // editorValue = new EditorValue(editorState);
 
       editorValue = EditorValue.createFromState(EditorState.createWithContent(stateFromHTML(description)));
     }

@@ -52,4 +52,3 @@ const composer = (args, onData) => {
 
 export default composeWithTracker(composer, Loading)(EditRecipe);
 */
-
