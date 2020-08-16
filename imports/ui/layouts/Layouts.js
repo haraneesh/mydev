@@ -5,6 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { Grid } from 'react-bootstrap';
 // import DocumentTitle from 'react-document-title';
 import Navigation from '../components/Navigation/Navigation';
+import ToolBar from '../components/ToolBar/ToolBar';
 import GlobalStyle from './GlobalStyle';
 
 const trackPageViews = (analytics, userId, pageName) => {
@@ -20,7 +21,7 @@ const trackPageViews = (analytics, userId, pageName) => {
   }
 };
 
-export const OrderLayout = props =>
+export const OrderLayout = (props) =>
   // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   (
     <div>
@@ -29,11 +30,10 @@ export const OrderLayout = props =>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
       <Grid>{props.children}</Grid>
+      <ToolBar {...props}/>
     </div>
-  )
-;
-
-export const RecipeLayout = props =>
+  );
+export const RecipeLayout = (props) =>
   // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   (
     <div>
@@ -45,11 +45,10 @@ export const RecipeLayout = props =>
         <Navigation showEasyNav={false} {...props} />
         <Grid className="recipesApp">{props.children}</Grid>
       </ThemeProvider>
+      <ToolBar {...props}/>
     </div>
-  )
-;
-
-export const MainLayout = props =>
+  );
+export const MainLayout = (props) =>
   // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   (
     <div>
@@ -58,7 +57,6 @@ export const MainLayout = props =>
       </Helmet>
       <Navigation showEasyNav {...props} />
       <Grid>{props.children}</Grid>
+      <ToolBar {...props}/>
     </div>
-  )
-;
-
+  );

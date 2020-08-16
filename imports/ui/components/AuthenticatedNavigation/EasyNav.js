@@ -2,21 +2,20 @@ import React from 'react';
 import { Nav, Glyphicon } from 'react-bootstrap';
 import { NavLink, Link } from 'react-router-dom';
 
-
 import './EasyNav.scss';
 
-export const EasyNavNarrowScreen = props => (
+export const EasyNavNarrowScreen = (props) => (
   <ul className="sec-menu-bar visible-sm visible-xs">
-    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
+    <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to="/neworder/selectbasket"> Place Order </Link>
     </li>
-    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
+    <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to="/baskets">Baskets</Link>
     </li>
-    <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
+    {/* <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> Message Us</Link>
     </li>
-    {/*
+
     <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
         <Glyphicon glyph="comment" /> Give Feedback
@@ -25,8 +24,8 @@ export const EasyNavNarrowScreen = props => (
   </ul>
 );
 
-export const EasyNavWideScreen = props => (
-  <Nav className="hidden-xs hidden-sm wide-menu-bar" >
+export const EasyNavWideScreen = (props) => (
+  <Nav className="hidden-xs hidden-sm wide-menu-bar">
     <li>
       <NavLink to="/neworder/selectbasket"> Place Order</NavLink>
     </li>
@@ -37,10 +36,7 @@ export const EasyNavWideScreen = props => (
       <NavLink to="/healthprinciples"> Health </NavLink>
     </li>
     <li>
-      <NavLink to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> <Glyphicon glyph="comment" className="highlightMenu" /> Message Us </NavLink>
-      {/* } <a href="https://docs.google.com/forms/d/1IrtpOWphX8mVs8U25QoFhmQgJD_YFw0K7By-9Qw0tKw/" target="_blank">
-        <Glyphicon glyph="comment" /> Give Feedback
-</a> */}
+      <NavLink to="/baskets"> Baskets </NavLink>
     </li>
   </Nav>
 );

@@ -23,21 +23,24 @@ const Authenticated = ({ layout: Layout, roles, authenticated, component, ...res
 );
 */
 
-const Authenticated = ({ layout: Layout, roles, authenticated, component: Component, ...rest }) => (
+const Authenticated = ({
+  layout: Layout, roles, authenticated, component: Component, ...rest
+}) => (
   <Route
     {...rest}
-    render={props => (
-      authenticated ?
-        (<Layout
-          {...props}
-          isAdmin={roles.indexOf('admin') !== -1}
-          authenticated
-          {...rest}
-        >
-          <Component {...props} authenticated {...rest} roles={roles} />
-        </Layout>)
-        :
-        (<Redirect to="/about" />)
+    render={(props) => (
+      authenticated
+        ? (
+          <Layout
+            {...props}
+            isAdmin={roles.indexOf('admin') !== -1}
+            authenticated
+            {...rest}
+          >
+            <Component {...props} authenticated {...rest} roles={roles} />
+          </Layout>
+        )
+        : (<Redirect to="/about" />)
     )}
   />
 );

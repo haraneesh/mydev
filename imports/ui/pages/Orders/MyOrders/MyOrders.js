@@ -9,7 +9,9 @@ import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
 import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
-const MyOrders = ({ history, loading, loggedInUser, orders, emailVerified, loggedInUserId, emailAddress }) => (!loading ? (
+const MyOrders = ({
+  history, loading, loggedInUser, orders, emailVerified, loggedInUserId, emailAddress,
+}) => (!loading ? (
   <Row>
     <Col xs={12}>
       <WelcomeMessage loggedInUser={loggedInUser} />

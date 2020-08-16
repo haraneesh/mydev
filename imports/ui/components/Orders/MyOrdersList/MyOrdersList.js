@@ -3,7 +3,9 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { ListGroup, ListGroupItem, Alert, Tabs, Tab } from 'react-bootstrap';
+import {
+  ListGroup, ListGroupItem, Alert, Tabs, Tab,
+} from 'react-bootstrap';
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
@@ -121,8 +123,8 @@ export default class MyOrderList extends React.Component {
       return false;
     });
 
-    if (!lastDate || (!latestOrder.receivedFeedBack &&
-        getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
+    if (!lastDate || (!latestOrder.receivedFeedBack
+        && getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
     ) {
       return latestOrder._id;
     }

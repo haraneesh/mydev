@@ -9,9 +9,8 @@
 .alert {
   padding: $alert-padding;
   margin-bottom: $line-height-computed;
-  border: 1px solid transparent;
-  border-radius: $alert-border-radius;
-  border-left-width: 5px;
+  border: 0px solid transparent;
+  border-bottom-width: 3px;
 
   // Headings for larger alerts
   h4 {
@@ -62,7 +61,7 @@
 }
 
 .alert-info {
-  @include alert-variant($alert-info-bg, $alert-info-border, $alert-info-text);
+  @include alert-variant($alert-info-bg, $alert-info-bg, $alert-info-text);
 }
 
 .alert-warning {

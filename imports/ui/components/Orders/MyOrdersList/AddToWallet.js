@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Row, Col, Panel } from 'react-bootstrap';
+import {
+  Button, Row, Col, Panel,
+} from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
+import { useStore, GlobalStores } from '../../../stores/GlobalStore';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
 const displayWalletSummary = (amountInWalletInRs) => {
@@ -18,19 +21,31 @@ const displayWalletSummary = (amountInWalletInRs) => {
 
   return (
     <div>
-      <h4 className={textClassName}> {`${formatMoney(amountInWalletInRs, accountSettings)}`} </h4>
+      <h4 className={textClassName}>
+        {' '}
+        {`${formatMoney(amountInWalletInRs, accountSettings)}`}
+        {' '}
+      </h4>
     </div>
   );
 };
 
+const updateGlobalStore = (walletBalanceInRs, numberOfAwaitingPayments) => {
+  const [currentValue, setPaymentNotification] = useStore(GlobalStores.paymentNotification.name);
+  if ((currentValue !== numberOfAwaitingPayments) && (walletBalanceInRs < 0)) {
+    setPaymentNotification(numberOfAwaitingPayments);
+  }
+};
 
 const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
   const walletBalanceInRs = calculateWalletBalanceInRs(userWallet);
+  updateGlobalStore(walletBalanceInRs, numberOfAwaitingPayments);
+
   return (
     <Panel>
       <Row>
         <Col xs={6} sm={5}>
-          <h4>Wallet Balance</h4>
+          <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
         </Col>
         <Col xs={6} sm={4} className="text-right-xs">
           {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (<h4> -- </h4>)}
@@ -39,11 +54,6 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
           <Button bsStyle="primary" onClick={() => { history.push('/mywallet'); }}>
             {(walletBalanceInRs > 0) ? 'Add To Wallet' : 'Pay Now'}
           </Button>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          {numberOfAwaitingPayments > 2 && walletBalanceInRs < 0 && (<p className="text-danger">  Did you know you can pay online, now? </p>)}
         </Col>
       </Row>
     </Panel>

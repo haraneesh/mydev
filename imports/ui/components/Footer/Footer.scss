@@ -13,15 +13,17 @@ body {
 }
 
 .Footer {
- position: absolute;
+  position: absolute;
   bottom: 0px;
   width: 100%;
   /* Set the fixed height of the footer here */
   //height: 3.1em;
 
-  background-color: $navbar-default-bg;
-  font-size:$font-size-small;
-  padding: 15px 5px 0px;
+  .container{
+    background-color: $navbar-default-bg;
+    font-size:$font-size-small;
+    padding: 15px 5px 0px;
+  }
 
   /*padding-bottom: 0px;
   width: 100%;

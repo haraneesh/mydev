@@ -145,10 +145,10 @@ class AcceptPay extends React.Component {
         {this.state.paymentInProcess && (<Loading />)}
         <Panel>
           <Row>
-            <Col xs={7} sm={6} className="text-right">
-              <h4>Wallet Balance</h4>
+            <Col xs={6} sm={5} className="text-right">
+              <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
             </Col>
-            <Col xs={5} sm={6} className="text-left">
+            <Col xs={6} sm={7} className="text-left">
               <h4 className={this.state.balanceAmountClass}>
                 {`${formatMoney(this.state.netAmountInWalletInRs, accountSettings)}`}
               </h4>

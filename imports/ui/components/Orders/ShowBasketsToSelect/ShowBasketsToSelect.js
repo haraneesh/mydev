@@ -45,8 +45,7 @@ const ShowBasketsToSelect = ({ history, basketLists, onBasketSelect, onEmptyCart
           ))}
         </Col>
       </div>
-
-    </Row >
+    </Row>
   );
 };
 

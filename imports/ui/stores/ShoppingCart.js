@@ -49,7 +49,7 @@ const initializeCart = () => {
 };
 
 const getActiveCart = (cartState) => {
-  const activeCartId = cartState.activeCartId;
+  const { activeCartId } = cartState;
   return cartState.carts[activeCartId];
 };
 
@@ -74,9 +74,9 @@ const cartReducer = (currentState, action) => {
     }
     case cartActions.setActiveCart: {
       const newActiveCartId = action.payload.activeCartId;
-      const selectedProducts = action.payload.selectedProducts;
-      const comments = action.payload.comments;
-      const basketId = action.payload.basketId;
+      const { selectedProducts } = action.payload;
+      const { comments } = action.payload;
+      const { basketId } = action.payload;
       newState.activeCartId = newActiveCartId;
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(selectedProducts);
       newState.carts[newActiveCartId] = {
@@ -99,7 +99,7 @@ const cartReducer = (currentState, action) => {
       break;
     }
     case cartActions.updateCart: {
-      const product = action.payload.product;
+      const { product } = action.payload;
       const productsInCart = { ...currentState.carts[cartId].productsInCart };
       const basketId = currentState.carts[cartId].basketId || action.payload.basketId;
       productsInCart[product._id] = product;
@@ -113,7 +113,7 @@ const cartReducer = (currentState, action) => {
         countOfItems,
         lastUpdateDate: new Date(),
         comments: currentState.carts[cartId].comments,
-        basketId: basketId,
+        basketId,
       };
       break;
     }
@@ -132,7 +132,6 @@ const cartReducer = (currentState, action) => {
   }
   return newState;
 };
-
 
 // Context Provider
 const CartStateContext = React.createContext();

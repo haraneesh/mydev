@@ -17,15 +17,19 @@ import constants from '../../../../modules/constants';
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
-const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser, addItemsFromCart }) => {
+const EditOrderDetails = ({
+  selectedOrder, history, loggedInUserId, loggedInUser, addItemsFromCart,
+}) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const [order] = useState(selectedOrder);
   const currentActiveCartId = cartState.activeCartId;
-  const editOrder = (order.order_status === constants.OrderStatus.Pending.name ||
-    order.order_status === constants.OrderStatus.Saved.name);
+  const editOrder = (order.order_status === constants.OrderStatus.Pending.name
+    || order.order_status === constants.OrderStatus.Saved.name);
 
-  const updateCart = ({ orderId, products, comments, basketId }) => {
+  const updateCart = ({
+    orderId, products, comments, basketId,
+  }) => {
     switch (true) {
       case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
         cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: orderId } });
@@ -37,7 +41,12 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
         orderedProducts.forEach((product) => {
           selectedProducts[product._id] = product;
         });
-        cartDispatch({ type: cartActions.setActiveCart, payload: { activeCartId: orderId, selectedProducts, comments, basketId } });
+        cartDispatch({
+          type: cartActions.setActiveCart,
+          payload: {
+            activeCartId: orderId, selectedProducts, comments, basketId,
+          },
+        });
         break;
       }
       default: {
@@ -57,7 +66,9 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
           if (error) {
             Bert.alert(error.reason, 'danger');
           } else {
-            updateCart({ orderId: order._id, products: order.products, comments: order.comments, basketId: order.basketId || '' });
+            updateCart({
+              orderId: order._id, products: order.products, comments: order.comments, basketId: order.basketId || '',
+            });
             setProductList(prdList);
             setIsLoading(false);
           }
@@ -65,25 +76,26 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
     } else {
       setIsLoading(false);
     }
-  }
-  , []);
-
+  },
+  []);
 
   switch (true) {
     case (editOrder): {
-      return !isProductListLoading ?
-        (<ProductsOrderMain
-          productList={productList}
-          orderId={order._id || ''}
-          products={getProductUnitPrice(Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name), productList.products)}
-          productListId={(order.productOrderListId) ? order.productOrderListId : ''}
-          orderCustomerId={order.customer_details._id}
-          orderStatus={order.order_status}
-          comments={order.comments}
-          history={history}
-          addItemsFromCart={addItemsFromCart}
-          loggedInUser={loggedInUser}
-        />) : <Loading />;
+      return !isProductListLoading
+        ? (
+          <ProductsOrderMain
+            productList={productList}
+            orderId={order._id || ''}
+            products={getProductUnitPrice(Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name), productList.products)}
+            productListId={(order.productOrderListId) ? order.productOrderListId : ''}
+            orderCustomerId={order.customer_details._id}
+            orderStatus={order.order_status}
+            comments={order.comments}
+            history={history}
+            addItemsFromCart={addItemsFromCart}
+            loggedInUser={loggedInUser}
+          />
+        ) : <Loading />;
     }
     case ('invoices' in order && order.invoices !== null && order.invoices.length > 0): {
       return (
@@ -101,13 +113,14 @@ const EditOrderDetails = ({ selectedOrder, history, loggedInUserId, loggedInUser
       );
     }
     default: {
-      return (<div>
-        <ViewOrderDetails order={order} history={history} />
-        <Panel>
-          <h4>Responses</h4>
-          <Comments postId={order._id} postType={constants.PostTypes.Order.name} loggedUserId={loggedInUserId} />
-        </Panel>
-      </div>
+      return (
+        <div>
+          <ViewOrderDetails order={order} history={history} />
+          <Panel>
+            <h4>Responses</h4>
+            <Comments postId={order._id} postType={constants.PostTypes.Order.name} loggedUserId={loggedInUserId} />
+          </Panel>
+        </div>
       );
     }
   }
@@ -121,8 +134,8 @@ EditOrderDetails.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const EditOrderDetailsWrapper = props => (props.loading ? (<Loading />) :
-  (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />));
+const EditOrderDetailsWrapper = (props) => (props.loading ? (<Loading />)
+  : (props.selectedOrder) ? (<EditOrderDetails {...props} />) : (<NotFound />));
 
 export default withTracker((args) => {
   const subscription = Meteor.subscribe('orders.orderDetails', args.match.params._id);
