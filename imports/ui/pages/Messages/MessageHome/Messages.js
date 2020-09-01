@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import MessageEditor from '../../../components/Messages/MessageEditor';
 import MessageView from '../../../components/Messages/MessageView';
 
 import constants from '../../../../modules/constants';
+
 
 const Messages = ({ loading, messages, history }) => {
   const [editMessage, setEditMessage] = useState('');
@@ -25,26 +26,36 @@ const Messages = ({ loading, messages, history }) => {
     <div className="Messages">
       <div className="page-header clearfix">
         <h3>Messages</h3>
-        {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
+        {/* <Link className="btn btn-success pull-right"
+        to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
       <MessageEditor history={history} />
-      {messages.length ?
-        messages.map(msg => (<p key={msg._id}>
-          {
-            (editMessage === msg._id) ?
-              (<MessageEditor
-                history={history}
-                existingMessage={msg}
-                showOpen
-                onsuccessFullUpdate={handleMessageUpdate}
-              />
-              ) :
-              (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
+      {messages.length
+        ? messages.map((msg) => (
+          <p key={msg._id}>
+            {
+            (editMessage === msg._id)
+              ? (
+                <MessageEditor
+                  history={history}
+                  existingMessage={msg}
+                  showOpen
+                  onsuccessFullUpdate={handleMessageUpdate}
+                />
+              )
+              : (
+                <MessageView
+                  existingMessage={msg}
+                  history={history}
+                  handleEditMessage={handleEditMessage}
+                />
+              )
           }
-        </p>
+          </p>
         )) : <Alert bsStyle="warning">No messages yet!</Alert>}
-    </div>)
+    </div>
+  )
     : (<Loading />);
 };
 
@@ -59,6 +70,7 @@ export default withTracker((args) => {
   return {
     history: args.history,
     loading: !subscription.ready(),
-    messages: MessagesCollection.find({}, { sort: { updatedAt: constants.Sort.DESCENDING } }).fetch(),
+    messages: MessagesCollection.find({},
+      { sort: { updatedAt: constants.Sort.DESCENDING } }).fetch(),
   };
 })(Messages);

@@ -68,6 +68,7 @@ Messages.schema = new SimpleSchema({
     type: String,
     label: 'The body of the message.',
   },
+  imageId: { type: String, label: 'The id of the image', optional: true },
   onBehalf: { type: Object, optional: true },
   'onBehalf.postedByUserId': { type: String },
   'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
@@ -82,18 +83,18 @@ Messages.schema = new SimpleSchema({
     allowedValues: constants.MessageTypes.allowedValues,
   },
   createdAt: {
-    type: String,
+    type: Date,
     label: 'The date this message was created.',
     autoValue() {
-      if (this.isInsert) return (new Date()).toISOString();
+      if (this.isInsert) return (new Date());
     },
     optional: true,
   },
   updatedAt: {
-    type: String,
+    type: Date,
     label: 'The date this message was last updated.',
     autoValue() {
-      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
+      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date());
     },
     optional: true,
   },

@@ -1,8 +1,14 @@
-import React from 'react';
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { withTracker } from 'meteor/react-meteor-data';
 import Icon from '../Icon/Icon';
 import './ToolBar.scss';
+
+import { dMessages } from '../../layouts/App/dynamicRoutes';
 
 import { useStore, GlobalStores } from '../../stores/GlobalStore';
 
@@ -13,6 +19,12 @@ const fontProps = {
   textAlign: 'center',
   display: 'none',
 };
+
+const reactVar = new ReactiveVar(
+  {
+    lastFetchDateTime: new Date(),
+  },
+);
 
 const hideBottom = -70;
 let bottom = hideBottom;
@@ -42,10 +54,34 @@ function bringUp() {
   intervalID = setInterval(show, 20);
 }
 
-const ToolBar = ({ history, authenticated, isAdmin }) => {
+const PreLoad = [dMessages];
+
+const ToolBar = ({
+  history, countOfUnreadNotifications, authenticated, isAdmin, globalStatuses, appName,
+}) => {
+  const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
+
+  useEffect(() => {
+    PreLoad.forEach((component) => {
+      component.preload();
+    });
+  }, PreLoad);
+
   let lastScrollTop = 0;
   const cartState = useCartState();
   const totalProductsInCount = cartState.newCartCountOfItems;
+
+  useEffect(() => {
+    if (appName !== 'messages') {
+      const reactVarTemp = reactVar.get();
+      if (reactVarTemp.lastFetchDateTime.toUTCString()
+    !== globalStatuses.lastVisitedMessageApp.toUTCString()) {
+        reactVar.set({
+          lastFetchDateTime: globalStatuses.lastVisitedMessageApp,
+        });
+      }
+    }
+  });
 
   // element should be replaced with the actual target element on
   // which you have applied scroll, use window in case of no target element.
@@ -78,8 +114,6 @@ const ToolBar = ({ history, authenticated, isAdmin }) => {
     }
   }
 
-  const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
-
   return (
     authenticated && (
     <div id="toolBar" className="toolBar container text-center">
@@ -87,6 +121,11 @@ const ToolBar = ({ history, authenticated, isAdmin }) => {
         <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
           <Icon icon="comment" />
           <span style={fontProps}>Message</span>
+          {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
+          <b className="alertMenu shoppingCartBubble">
+            {countOfUnreadNotifications}
+          </b>
+          )}
         </Button>
       </div>
       {/* <div className="box box2">
@@ -115,7 +154,7 @@ const ToolBar = ({ history, authenticated, isAdmin }) => {
       <div className="box box5">
         <Button bsStyle="link" onClick={() => { history.push('/mywallet'); }}>
           <Icon icon="rupee-sign" />
-          {(numberOfAwaitingPayments > 0) && (
+          { (numberOfAwaitingPayments > 0) && (
           <b className="alertMenu alertBubble">
             .
           </b>
@@ -127,10 +166,24 @@ const ToolBar = ({ history, authenticated, isAdmin }) => {
     ));
 };
 
-ToolBar.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
-  history: PropTypes.bool.isRequired,
-  authenticated: PropTypes.bool.isRequired,
+ToolBar.defaultProps = {
+  countOfUnreadNotifications: 0,
 };
 
-export default ToolBar;
+ToolBar.propTypes = {
+  history: PropTypes.bool.isRequired,
+  countOfUnreadNotifications: PropTypes.bool,
+};
+
+const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
+
+export default withTracker((args) => {
+  const reactVarTemp = reactVar.get();
+
+  const subscription = Meteor.subscribe('messages.notifications', reactVarTemp.lastFetchDateTime.toUTCString());
+  return {
+    history: args.history,
+    loading: !subscription.ready(),
+    countOfUnreadNotifications: CountOfMessages.find({}).fetch().length,
+  };
+})(ToolBar);

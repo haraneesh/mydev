@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { FormGroup, Button, Panel, Col } from 'react-bootstrap';
+import {
+  FormGroup, Button, Panel, Col,
+} from 'react-bootstrap';
 
 import './Message.scss';
 
@@ -63,13 +65,15 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
           </div>
         </Col>
         <Col xs={5} className="text-right">
-          {(isEdit) && (<button
+          {(isEdit) && (
+          <Button
             className="btn btn-xs btn-info"
             style={{ float: 'right' }}
             onClick={() => { onsuccessFullUpdate(); }}
           >
             cancel
-          </button>)}
+          </Button>
+          )}
         </Col>
         <FormGroup>
           <textarea
@@ -86,7 +90,8 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
           {isEdit ? 'Update' : 'Reply'}
         </Button>
       </Panel>
-    </div>);
+    </div>
+  );
 };
 
 MessageCommentEditor.defaultProps = {

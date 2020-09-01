@@ -7,13 +7,12 @@ import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Bert } from 'meteor/themeteorchef:bert';
-import Pagination from "react-js-pagination";
+import Pagination from 'react-js-pagination';
 import { Row, Col } from 'react-bootstrap';
 import constants from '../../../modules/constants';
 import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
 import { Orders } from '../../../api/Orders/Orders';
-
 
 const FIRSTPAGE = 1;
 const NUMBEROFROWS = 100;
@@ -32,15 +31,15 @@ class AllOrders extends React.Component {
     this.colSortDirs = { date: SortTypes.DESC };
     this.state = {
       total: -1,
-    }
+    };
     autoBind(this);
   }
 
   handlePageChange(pageNumber) {
-    let prevValue = reactVar.get();
+    const prevValue = reactVar.get();
     reactVar.set({
       ...prevValue,
-      currentPage: pageNumber
+      currentPage: pageNumber,
     });
   }
 
@@ -86,7 +85,7 @@ class AllOrders extends React.Component {
       [columnKey]: sortDir,
     };
 
-    let prevValue = reactVar.get();
+    const prevValue = reactVar.get();
     reactVar.set({
       ...prevValue,
       currentPage: FIRSTPAGE,
@@ -115,12 +114,12 @@ class AllOrders extends React.Component {
     const { isWholeSale } = reactVar.get();
     return (
       <div className="panel panel-body form-group form-inline" style={{ textAlign: 'center' }}>
-        <label class="radio-inline form-inline" for="retail" style={{ borderWidth: '0px' }}>
-          <input type="radio" id="retail" name="orderView" value="retail" onClick={this.onRadioClick} checked={(!isWholeSale) ? "checked" : ""} />
+        <label className="radio-inline form-inline" htmlFor="retail" style={{ borderWidth: '0px' }}>
+          <input type="radio" id="retail" name="orderView" value="retail" onClick={this.onRadioClick} checked={(!isWholeSale) ? 'checked' : ''} />
           Retail Orders
         </label>
-        <label class="radio-inline form-control" for="whSale" style={{ borderWidth: '0px' }}>
-          <input type="radio" id="whSale" name="orderView" value="whSale" onClick={this.onRadioClick} checked={(!!isWholeSale) ? "checked" : ""} />
+        <label className="radio-inline form-control" htmlFor="whSale" style={{ borderWidth: '0px' }}>
+          <input type="radio" id="whSale" name="orderView" value="whSale" onClick={this.onRadioClick} checked={(isWholeSale) ? 'checked' : ''} />
           WholeSale Orders
         </label>
       </div>
@@ -129,7 +128,7 @@ class AllOrders extends React.Component {
 
   render() {
     const { orders, history } = this.props;
-    let { currentPage, limit, isWholeSale } = reactVar.get();
+    const { currentPage, limit, isWholeSale } = reactVar.get();
     return (
 
       <div className="AllOrders">
@@ -169,23 +168,23 @@ AllOrders.propTypes = {
 };
 
 export default withTracker((args) => {
-  const { currentPage, limit, sortBy, isWholeSale } = reactVar.get();
+  const {
+    currentPage, limit, sortBy, isWholeSale,
+  } = reactVar.get();
 
   const skip = (currentPage * limit) - limit;
   const subscriptionsReady = [
     Meteor.subscribe('orders.list', {
-      isWholeSale: isWholeSale,
+      isWholeSale,
       sort: sortBy,
-      limit: limit,
-      skip: skip,
-    },
-    )].every(subscription => subscription.ready());
+      limit,
+      skip,
+    })].every((subscription) => subscription.ready());
 
   const cursor = Orders.find({}, { sort: sortBy });
 
   return {
     orders: cursor && cursor.fetch(),
-    currentPage: currentPage,
+    currentPage,
   };
-
 })(AllOrders);

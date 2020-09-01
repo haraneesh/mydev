@@ -138,7 +138,7 @@ export function useStore(identifier) {
 }
 
 export const GlobalStores = {
-  messageNotification: { name: 'messageNotification', initValue: false },
+  messageNotification: { name: 'messageNotification', initValue: new Date() },
   paymentNotification: { name: 'paymentNotification', initValue: 0 },
 
 };

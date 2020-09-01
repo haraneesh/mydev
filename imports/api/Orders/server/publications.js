@@ -4,7 +4,6 @@ import { check, Match } from 'meteor/check';
 import { Orders } from '../Orders';
 import constants from '../../../modules/constants';
 
-
 Meteor.publish('orders.list', function ordersList(options) {
   check(options, {
     isWholeSale: Boolean,
@@ -20,11 +19,13 @@ Meteor.publish('orders.list', function ordersList(options) {
   });
 
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    const { limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip, isWholeSale } = options;
+    const {
+      limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip, isWholeSale,
+    } = options;
 
-    let customerRoles = [constants.Roles.customer.name, constants.Roles.admin.name]
+    let customerRoles = [constants.Roles.customer.name, constants.Roles.admin.name];
     if (isWholeSale) {
-      customerRoles = [constants.Roles.shopOwner.name]
+      customerRoles = [constants.Roles.shopOwner.name];
     }
 
     return [Orders.find({ 'customer_details.role': { $in: customerRoles } }, {
@@ -35,7 +36,6 @@ Meteor.publish('orders.list', function ordersList(options) {
   }
   return [];
 });
-
 
 Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);
@@ -51,7 +51,11 @@ Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
 });
 
 Meteor.publish('orders.mylist', function ordersMylist() {
-  return Orders.find({ 'customer_details._id': this.userId });
+  return Orders.find({ 'customer_details._id': this.userId },
+    {
+      sort: { createdAt: constants.Sort.DESCENDING },
+      limit: 50,
+    });
 });
 
 Meteor.publish('orders.orderDetails', function orderDetails(id) {

@@ -2,10 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'react-bootstrap';
-import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
-import { withTracker } from 'meteor/react-meteor-data';
-import { Roles } from 'meteor/alanning:roles';
-import Analytics from 'analytics-node';
+import { Switch, Redirect } from 'react-router-dom';
 import Authenticated from '../../components/Routes/Authenticated';
 import AdminAuthenticated from '../../components/Routes/AdminAuthenticated';
 import PlaceOrderAuthenticated from '../../components/Routes/PlaceOrderAuthenticated';
@@ -108,10 +105,8 @@ import { CartProvider } from '../../stores/ShoppingCart';
 
 import Loading from '../../components/Loading/Loading';
 
-const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
-
 const App = (props) => (
-  <Router>
+  <>
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
@@ -186,9 +181,9 @@ const App = (props) => (
               {/* Product */}
               <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
 
-              <Authenticated routeName="Messages" exact path="/messages" layout={MainLayout} component={dMessages} {...props} />
-              <Authenticated routeName="Edit message" exact path="/messages/:_id/edit" layout={MainLayout} component={dEditMessage} {...props} />
-              <AdminAuthenticated routeName="Messages Admin" exact path="/messagesAdmin" layout={MainLayout} component={dAdminAllMessages} {...props} />
+              <Authenticated appName="messages" routeName="Messages" exact path="/messages" layout={MainLayout} component={dMessages} {...props} />
+              <Authenticated appName="messages" routeName="Edit message" exact path="/messages/:_id/edit" layout={MainLayout} component={dEditMessage} {...props} />
+              <AdminAuthenticated appName="messages" routeName="Messages Admin" exact path="/messagesAdmin" layout={MainLayout} component={dAdminAllMessages} {...props} />
 
               {/* Admin */
             /* ProductLists */}
@@ -234,40 +229,11 @@ const App = (props) => (
         </div>
       </Suspense>
     ) : ''}
-  </Router>
+  </>
 );
 
 App.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
-const getUserName = (name) => ({
-  string: name,
-  object: `${name.first} ${name.last}`,
-}[typeof name]);
-
-export default withTracker(() => {
-  const loggingIn = Meteor.loggingIn();
-  const user = Meteor.user();
-  const userId = Meteor.userId();
-  const loading = !Roles.subscription.ready();
-  const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
-  const emailAddress = user && user.emails && user.emails[0].address;
-  const emailVerified = user && user.emails && user.emails[0].verified;
-  const userSettings = user && user.settings && user.settings;
-
-  return {
-    loading,
-    loggingIn,
-    authenticated: !loggingIn && !!userId,
-    name,
-    emailAddress,
-    emailVerified,
-    date: new Date(),
-    roles: !loading && Roles.getRolesForUser(userId),
-    loggedInUserId: userId,
-    loggedInUser: user,
-    userSettings,
-    analytics,
-  };
-})(App);
+export default App;

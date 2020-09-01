@@ -2,7 +2,9 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Roles } from 'meteor/alanning:roles';
-import { FormGroup, InputGroup, FormControl, Row, Col, Panel } from 'react-bootstrap';
+import {
+  FormGroup, InputGroup, FormControl, Row, Col, Panel,
+} from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { formatMoney } from 'accounting-js';
 import Loading from '../../Loading/Loading';
@@ -12,7 +14,6 @@ import validate from '../../../../modules/validate';
 import RazorPayButton from '../RazorPay/RazorPayButton';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
-
 const OtherPayMentOptions = () => (
   <Panel>
     <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
@@ -21,7 +22,9 @@ const OtherPayMentOptions = () => (
     </div>
     <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
       <h3>
-        <small> UPI:</small> <b>suvai@icici</b>
+        <small> UPI:</small>
+        {' '}
+        <b>suvai@icici</b>
       </h3>
     </Col>
 
@@ -129,12 +132,10 @@ class AcceptPay extends React.Component {
             paymentInProcess: false,
           });
         } else {
-          const confirmation =
-            'Your Wallet has been updated successfully!';
+          const confirmation = 'Your Wallet has been updated successfully!';
           Bert.alert(confirmation, 'success');
         }
-      },
-    );
+      });
   }
 
   render() {
@@ -158,18 +159,19 @@ class AcceptPay extends React.Component {
 
         <OtherPayMentOptions />
 
-        { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && <Panel>
+        { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
+        <Panel>
 
           <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
             <small className="text-uppercase">Pay On Suvai </small>
           </div>
 
           <form
-            ref={form => (this.form = form)}
-            onSubmit={event => event.preventDefault()}
+            ref={(form) => (this.form = form)}
+            onSubmit={(event) => event.preventDefault()}
           >
             <FormGroup>
-              <Col xs={12} sm={9} style={{ marginBottom: '1rem' }}>
+              <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="rowRightSpacing">
                 <InputGroup>
                   <InputGroup.Addon>Rs.</InputGroup.Addon>
                   <FormControl
@@ -181,7 +183,7 @@ class AcceptPay extends React.Component {
                   />
                 </InputGroup>
               </Col>
-              <Col xs={12} sm={3}>
+              <Col xs={12} sm={3} className="text-right-xs">
                 <RazorPayButton
                   buttonText={(this.state.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
                   paymentDetails={{
@@ -201,7 +203,8 @@ class AcceptPay extends React.Component {
               </Col>
             </FormGroup>
           </form>
-        </Panel>}
+        </Panel>
+        )}
       </div>
     );
   }

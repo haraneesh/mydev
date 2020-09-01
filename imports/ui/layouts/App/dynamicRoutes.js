@@ -8,6 +8,12 @@ function SuvaiLoadable(opts) {
   }, opts));
 }
 
+const ReactLazyPreload = importStatement => {
+  const Component = lazy(importStatement);
+  Component.preload = importStatement;
+  return Component;
+};
+
 /* admin */
 // import { ProductsAdmin } from '../pages/products-admin';
 export const dProductsAdmin = lazy(() => import('../../pages/ProductsAdmin/ProductsAdmin'));
@@ -167,12 +173,23 @@ export const dCreateBasket = SuvaiLoadable({
 });
 
 // Messages
+export const dMessages = ReactLazyPreload(() => import('../../pages/Messages/MessageHome/Messages'));
+
+/*
 export const dMessages = SuvaiLoadable({
   loader: () => import('../../pages/Messages/MessageHome/Messages'),
-});
+});*/
+
+export const dEditMessage = lazy(() => import('../../pages/Messages/EditMessage/EditMessage'));
+
+/*
 export const dEditMessage = SuvaiLoadable({
   loader: () => import('../../pages/Messages/EditMessage/EditMessage'),
-});
+});*/
+
+export const dAdminAllMessages = lazy(() => import('../../pages/Messages/AdminAllMessages/AdminAllMessages'));
+
+/*
 export const dAdminAllMessages = SuvaiLoadable({
   loader: () => import('../../pages/Messages/AdminAllMessages/AdminAllMessages'),
-});
+}); */

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import App from '../../ui/layouts/App/App';
+import Root from '../../ui/layouts/App/Root';
 // import * as serviceWorker from './serviceWorker';
 
 import '../../ui/stylesheets/application.scss';
@@ -21,7 +21,7 @@ Meteor.startup(() => {
   console.log(`window.location.href ${window.location.href}`);
   console.log(`process.env.PUBLIC_URL ${process.env.PUBLIC_URL}`); */
 
-  return render(<App />, document.getElementById('react-root'));
+  return render(<Root />, document.getElementById('react-root'));
 });
 
 // Meteor.startup(() => render(<App />, document.getElementById('react-root')));

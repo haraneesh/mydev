@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
@@ -24,6 +25,7 @@ Meteor.methods({
       messageType: String,
       message: String,
       messageStatus: Match.Maybe(String),
+      imageId: Match.Maybe(String),
       onBehalf: Match.Maybe({
         onBehalfUserId: Match.Maybe(String),
         orderReceivedAs: Match.Maybe(String),
@@ -36,10 +38,12 @@ Meteor.methods({
       const userObj = (isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId) ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
         : commentFunctions.getUser(this.userId);
 
-      const message = { ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0 };
+      const message = {
+        ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0,
+      };
       delete message.onBehalf;
 
-      //message.to = validateTo(msg.to, isAdmin);
+      // message.to = validateTo(msg.to, isAdmin);
       message.to = constants.Roles.admin.name;
 
       if (isAdmin && msg.onBehalf) {
@@ -62,6 +66,7 @@ Meteor.methods({
       messageType: String,
       message: String,
       messageStatus: String,
+      imageId: Match.Maybe(String),
     });
 
     try {
@@ -109,7 +114,8 @@ Meteor.methods({
         ...options,
         owner: this.userId,
         commentStatus: constants.CommentTypes.Approved.name,
-        postType: constants.PostTypes.Messages.name };
+        postType: constants.PostTypes.Messages.name,
+      };
 
       commentFunctions.commentInsert(cmt);
       const commentCount = commentFunctions.getComments(options.postId).length;
@@ -136,7 +142,8 @@ Meteor.methods({
           ...options,
           owner: message.owner,
           commentStatus: constants.CommentTypes.Approved.name,
-          postType: constants.PostTypes.Messages.name };
+          postType: constants.PostTypes.Messages.name,
+        };
 
         commentFunctions.commentUpdate(cmt);
       }
@@ -154,11 +161,17 @@ Meteor.methods({
     try {
       commentFunctions.commentDelete(options.commentId);
       const commentsForPost = commentFunctions.getComments(options.postId);
-      const commentIds = commentsForPost.map(comment => comment._id);
+      const commentIds = commentsForPost.map((comment) => comment._id);
       return Messages.update({ _id: options.postId }, { $set: { commentIds } });
     } catch (exception) {
       handleMethodException(exception);
     }
+  },
+  'messages.updateLastVisitedDate': function messageAppLastVisitedDate() {
+    Meteor.users.update(
+      { _id: this.userId },
+      { $set: { 'globalStatuses.lastVisitedMessageApp': new Date() } },
+    );
   },
 });
 

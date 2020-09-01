@@ -2,13 +2,22 @@ import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { Row, Alert, Button } from 'react-bootstrap';
 import MessagesCollection from '../../../../api/Messages/Messages';
 import Loading from '../../../components/Loading/Loading';
 import MessageEditor from '../../../components/Messages/MessageEditor';
 import MessageView from '../../../components/Messages/MessageView';
 
 import constants from '../../../../modules/constants';
+
+const pageLength = 10;
+const reactVar = new ReactiveVar(
+  {
+    pageNumber: 1,
+  },
+);
+
 
 const MessagesAdmin = ({ loading, messages, history }) => {
   const [editMessage, setEditMessage] = useState('');
@@ -24,6 +33,13 @@ const MessagesAdmin = ({ loading, messages, history }) => {
 
   const onFilterSelect = (e) => {
     setFilterSelected(e.target.value);
+  };
+
+  const bringNextBatch = () => {
+    const rVar = reactVar.get();
+    reactVar.set({
+      pageNumber: rVar.pageNumber + 1,
+    });
   };
 
   return !loading ? (
@@ -45,30 +61,37 @@ const MessagesAdmin = ({ loading, messages, history }) => {
         </select>
       </div>
 
-
-      {messages.length ?
-        messages.map((msg) => {
-          if (msg.messageType === filterSelected || filterSelected === 'all') {
-            return (
-              <div style={{ marginBottom: '1rem' }} key={msg._id}>
-                {
-                  (editMessage === msg._id) ?
-                    (<MessageEditor
-                      history={history}
-                      existingMessage={msg}
-                      showOpen
-                      onsuccessFullUpdate={handleMessageUpdate}
-                      isAdmin
-                    />
-                    ) :
-                    (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
+      {messages.length
+        ? (
+          <>
+            {messages.map((msg) => {
+              if (msg.messageType === filterSelected || filterSelected === 'all') {
+                return (
+                  <div style={{ marginBottom: '1rem' }} key={msg._id}>
+                    {
+                  (editMessage === msg._id)
+                    ? (
+                      <MessageEditor
+                        history={history}
+                        existingMessage={msg}
+                        showOpen
+                        onsuccessFullUpdate={handleMessageUpdate}
+                        isAdmin
+                      />
+                    )
+                    : (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
                 }
-              </div>
-            );
-          }
-        },
+                  </div>
+                );
+              }
+            })}
+            <Row className="text-center">
+              <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
+            </Row>
+          </>
         ) : <Alert bsStyle="warning">No messages yet!</Alert>}
-    </div>)
+    </div>
+  )
     : (<Loading />);
 };
 
@@ -79,10 +102,13 @@ MessagesAdmin.propTypes = {
 };
 
 export default withTracker((args) => {
-  const subscription = Meteor.subscribe('messages.all');
+  const rVar = reactVar.get();
+  const subscription = Meteor.subscribe('messages.all', { limit: pageLength, skip: (rVar.pageNumber - 1) * pageLength });
   return {
     history: args.history,
     loading: !subscription.ready(),
-    messages: MessagesCollection.find({}, { sort: { updatedAt: constants.Sort.DESCENDING } }).fetch(),
+    messages: MessagesCollection.find({}, {
+      sort: { updatedAt: constants.Sort.DESCENDING },
+    }).fetch(),
   };
 })(MessagesAdmin);

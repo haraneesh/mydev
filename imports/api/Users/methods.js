@@ -4,10 +4,10 @@ import { check } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import editProfile from './edit-profile';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
 import { Emitter, Events } from '../events';
@@ -34,14 +34,14 @@ export const editUserProfile = new ValidatedMethod({
   }).validator(),
   run(profile) {
     return editProfile({ userId: this.userId, profile })
-      .then(response => response)
+      .then((response) => response)
       .catch((exception) => {
         handleMethodException(exception);
       });
   },
 });
 
-const createZohoContact = usr => ({
+const createZohoContact = (usr) => ({
   contact_name: usr.username,
   billing_address: {
     street: usr.profile.deliveryAddress,
@@ -62,8 +62,8 @@ export const findUser = new ValidatedMethod({
   }).validator(),
   run(user) {
     if (
-      Meteor.isServer &&
-      Roles.userIsInRole(this.userId, constants.Roles.admin.name)
+      Meteor.isServer
+      && Roles.userIsInRole(this.userId, constants.Roles.admin.name)
     ) {
       const u = Meteor.users.findOne({ username: user.mobileNumber });
       if (u) {
@@ -174,8 +174,8 @@ export const adminUpdateUser = new ValidatedMethod({
     delete user.role;
 
     if (
-      Meteor.isServer &&
-      Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
+      Meteor.isServer
+      && Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
     ) {
       const cuser = Meteor.users.findOne({ _id: user._id });
 
@@ -261,7 +261,7 @@ Meteor.methods({
   },
   'users.sendVerificationEmail': function usersSendVerificationEmail(emailAddress) {
     check(emailAddress, String);
-    const userId = this.userId;
+    const { userId } = this;
     Meteor.users.update({ _id: userId }, {
       $set: {
         'emails.0.address': emailAddress,
@@ -273,6 +273,13 @@ Meteor.methods({
   },
   'users.visitedPlaceNewOrder': function lastVisitedPlaceNewOrder() {
     try {
+      const { userId } = this;
+      const updateDate = new Date();
+      Meteor.users.update({ _id: userId }, {
+        $set: {
+          'globalStatuses.lastVisitedPlaceNewOrder': updateDate,
+        },
+      });
       Emitter.emit(Events.NAV_PLACEORDER_LANDING, { userId: this.userId });
     } catch (exception) {
       handleMethodException(exception);

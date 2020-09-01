@@ -38,7 +38,9 @@ const renderMessage = (msg, match, history) => (msg ? (
   </div>
 ) : <NotFound />);
 
-const ViewMessage = ({ loading, msg, match, history }) => (
+const ViewMessage = ({
+  loading, msg, match, history,
+}) => (
   !loading ? renderMessage(msg, match, history) : <Loading />
 );
 

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import UserSignUps from '../UserSignUps';
 import { retWalletAndSyncIfNecessary } from '../../ZohoSyncUps/zohoContactsMethods';
@@ -11,6 +12,18 @@ Meteor.publish('users.editProfile', function usersProfile() {
       settings: 1,
     },
   });
+});
+
+// Server
+Meteor.publish('users.userData', function userData() {
+  if (this.userId) {
+    return Meteor.users.find({ _id: this.userId }, {
+      fields: {
+        emails: 1, profile: 1, settings: 1, wallet: 1, globalStatuses: 1,
+      },
+    });
+  }
+  this.ready();
 });
 
 Meteor.publish('users.userWallet', function user() {
