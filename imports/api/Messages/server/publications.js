@@ -8,14 +8,23 @@ const userQuery = (userId) => (
   { $or: [{ owner: userId }, { to: userId }, { to: 'ALL' }] }
 );
 
-Meteor.publish('messages', function messages() {
-  return Messages.find(userQuery(this.userId), { sort: { updatedAt: constants.Sort.DESCENDING } });
+Meteor.publish('messages', function messages(args) {
+  check(args, { limit: Number });
+  return Messages.find(userQuery(this.userId),
+    {
+      sort: { updatedAt: constants.Sort.DESCENDING },
+      limit: args.limit,
+    });
 });
 
 Meteor.publish('messages.all', function messagesAll(args) {
-  check(args, { limit: Number, skip: Number });
+  check(args, { limit: Number });
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    return Messages.find({}, { sort: { updatedAt: constants.Sort.DESCENDING }, limit: args.limit, skip: args.skip });
+    return Messages.find({},
+      {
+        sort: { updatedAt: constants.Sort.DESCENDING },
+        limit: args.limit,
+      });
   }
 });
 

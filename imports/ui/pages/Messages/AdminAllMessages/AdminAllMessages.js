@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {
+  useState, useRef, useLayoutEffect,
+} from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
@@ -11,17 +13,19 @@ import MessageView from '../../../components/Messages/MessageView';
 
 import constants from '../../../../modules/constants';
 
-const pageLength = 10;
+const PAGE_LENGTH_SIZE = 10;
 const reactVar = new ReactiveVar(
   {
     pageNumber: 1,
   },
 );
 
-
 const MessagesAdmin = ({ loading, messages, history }) => {
   const [editMessage, setEditMessage] = useState('');
   const [filterSelected, setFilterSelected] = useState('all');
+
+  const scrollToYAfterLoad = useRef(0);
+  const pageNumberBeforeRefresh = useRef(reactVar.get().pageNumber);
 
   const handleEditMessage = (id) => {
     setEditMessage(id);
@@ -42,8 +46,20 @@ const MessagesAdmin = ({ loading, messages, history }) => {
     });
   };
 
-  return !loading ? (
+  useLayoutEffect(() => {
+    if (loading) {
+      scrollToYAfterLoad.current = window.scrollY;
+    } else {
+      if (pageNumberBeforeRefresh.current !== reactVar.get().pageNumber) {
+        window.scrollTo(0, scrollToYAfterLoad.current);
+      }
+      pageNumberBeforeRefresh.current = reactVar.get().pageNumber;
+    }
+  });
+
+  return (
     <div className="Messages">
+      {loading && (<Loading />)}
       <div className="page-header clearfix">
         <h3>Admin Messages</h3>
         {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
@@ -79,7 +95,13 @@ const MessagesAdmin = ({ loading, messages, history }) => {
                         isAdmin
                       />
                     )
-                    : (<MessageView existingMessage={msg} history={history} handleEditMessage={handleEditMessage} />)
+                    : (
+                      <MessageView
+                        existingMessage={msg}
+                        history={history}
+                        handleEditMessage={handleEditMessage}
+                      />
+                    )
                 }
                   </div>
                 );
@@ -91,8 +113,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
           </>
         ) : <Alert bsStyle="warning">No messages yet!</Alert>}
     </div>
-  )
-    : (<Loading />);
+  );
 };
 
 MessagesAdmin.propTypes = {
@@ -103,7 +124,12 @@ MessagesAdmin.propTypes = {
 
 export default withTracker((args) => {
   const rVar = reactVar.get();
-  const subscription = Meteor.subscribe('messages.all', { limit: pageLength, skip: (rVar.pageNumber - 1) * pageLength });
+  const subscription = Meteor.subscribe('messages.all', {
+    // limit: PAGE_LENGTH_SIZE ,
+    limit: rVar.pageNumber * PAGE_LENGTH_SIZE,
+    // skip: (rVar.pageNumber - 1) * PAGE_LENGTH_SIZE,
+
+  });
   return {
     history: args.history,
     loading: !subscription.ready(),

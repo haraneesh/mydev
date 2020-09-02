@@ -54,7 +54,7 @@ const MessageView = ({
         <Row>
           <Col xs={6} className="text-left text-muted" style={{ padding: '10px 0px 0px 5px' }}>
 
-            <Button className="btn btn-sm btn-default" onClick={() => { history.push(`/messages/${_id}/edit`); }}>
+            <Button bsStyle="link" className="btn btn-sm" onClick={() => { history.push(`/messages/${_id}/edit`); }}>
               {(commentCount && commentCount > 0)
                 ? commentCount
                 : 'No' }

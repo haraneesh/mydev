@@ -74,8 +74,9 @@ const ToolBar = ({
   useEffect(() => {
     if (appName !== 'messages') {
       const reactVarTemp = reactVar.get();
-      if (reactVarTemp.lastFetchDateTime.toUTCString()
-    !== globalStatuses.lastVisitedMessageApp.toUTCString()) {
+      if (globalStatuses
+        && (reactVarTemp.lastFetchDateTime.toUTCString()
+        !== globalStatuses.lastVisitedMessageApp.toUTCString())) {
         reactVar.set({
           lastFetchDateTime: globalStatuses.lastVisitedMessageApp,
         });

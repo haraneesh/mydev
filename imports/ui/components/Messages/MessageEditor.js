@@ -191,16 +191,7 @@ const MessageEditor = ({
             )}
 
             <FormGroup>
-              <Col xs={1} style={{ minWidth: '3em' }} className="text-center">
-                <Button
-                  bsStyle="link"
-                  onClick={() => { setShowCamera(!showCamera); }}
-                  style={{ paddingLeft: '0px', marginLeft: '0px', fontSize: '2em' }}
-                >
-                  <Icon icon="camera" />
-                </Button>
-              </Col>
-              <Col xs={10}>
+              <Col xs={12}>
                 {!showCamera && (
                 <textarea
                   className="form-control"
@@ -222,25 +213,39 @@ const MessageEditor = ({
 
               </Col>
 
-              <Col xs={12} className="text-right" style={{ paddingTop: '0.5em' }}>
-                {(message && message._id) && (
+              <Row>
+                <Col xs={2} style={{ minWidth: '3em' }} className="text-center">
+                  <Button
+                    bsStyle="link"
+                    onClick={() => { setShowCamera(!showCamera); }}
+                    style={{
+                      paddingLeft: '0px', paddingTop: '0px', marginLeft: '0px', fontSize: '2em',
+                    }}
+                  >
+                    <Icon icon="camera" />
+                  </Button>
+                </Col>
+                <Col xs={10} className="text-right" style={{ paddingTop: '0.5em' }}>
+                  {(message && message._id) && (
                   <Button
                     className="btn-default btn-sm"
                     onClick={() => { handleRemove(message._id, message.imageId); }}
                   >
                     Delete
                   </Button>
-                )}
+                  )}
 
-                <Button
-                  type="submit"
-                  bsStyle="primary btn-sm"
-                  style={{ marginLeft: '5px' }}
-                  onClick={handleSubmit}
-                >
-                  {message && message._id ? 'Update' : 'Send Message'}
-                </Button>
-              </Col>
+                  <Button
+                    type="submit"
+                    bsStyle="primary btn-sm"
+                    style={{ marginLeft: '5px' }}
+                    onClick={handleSubmit}
+                  >
+                    {message && message._id ? 'Update' : 'Send Message'}
+                  </Button>
+                </Col>
+              </Row>
+
             </FormGroup>
 
           </Panel>
