@@ -122,7 +122,13 @@ const createNewUser = (user) => {
       Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
     } */
     assignUserRole(userId, user.role);
-    Meteor.users.update({ username: cuser.username }, { $set: { wallet, updatedAt: new Date() } });
+    Meteor.users.update({ username: cuser.username }, {
+      $set: {
+        wallet,
+        updatedAt: new Date(),
+        'globalStatuses.lastVisitedMessageApp': new Date(),
+      },
+    });
     return Meteor.users.findOne({ username: cuser.username });
   }
 
@@ -244,7 +250,13 @@ Meteor.methods({
       password: String,
     });
 
-    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, Phone number: ${user.profile.whMobilePhone} has signed up. Please approve in the app.`, 'New user signup');
+    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
+    First Name: ${user.profile.name.first}
+    Last Name:  ${user.profile.name.last}
+    Phone number: ${user.profile.whMobilePhone} 
+    deliveryAddress: ${user.profile.deliveryAddress}
+    has signed up. Please approve in the app.`,
+    'New user signup');
     return UserSignUps.insert(user);
   },
   'users.approveSignUp': function usersApproveSignUp(userSignUpId, status) {

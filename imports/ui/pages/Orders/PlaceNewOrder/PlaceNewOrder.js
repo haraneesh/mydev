@@ -36,7 +36,7 @@ const PlaceNewOrder = ({
       }
     });
 
-    Bert.alert(`${productCount} products were added to cart from basket.`,'success');
+    Bert.alert(`${productCount} products were added to cart from basket.`, 'success');
   };
 
   useEffect(() => {
@@ -97,14 +97,20 @@ PlaceNewOrder.propTypes = {
 export default withTracker((args) => {
   // const recSubscription = Meteor.subscribe('recommendations.view');
 
-  const prdSubscription = Meteor.subscribe('productOrderList.view', args.date);
+  const prdSubscription = Meteor.subscribe('productOrderList.view');
 
   // const recommendations = RecommendationsCollection.find().fetch();
 
   const productList = ProductLists.findOne();
   const prds = (productList) ? productList.products : [];
   const productListId = (productList) ? productList._id : '';
-  const products = getProductUnitPrice(Roles.userIsInRole(args.loggedInUserId, constants.Roles.shopOwner.name), prds);
+  const products = getProductUnitPrice(
+    Roles.userIsInRole(
+      args.loggedInUserId,
+      constants.Roles.shopOwner.name,
+    ),
+    prds,
+  );
 
   return {
     // loading: !recSubscription.ready() || !prdSubscription.ready(),

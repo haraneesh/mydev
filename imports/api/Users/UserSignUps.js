@@ -43,8 +43,6 @@ UserSignUps.schema = new SimpleSchema({
   'profile.deliveryAddress': { type: String, label: 'Delivery Address' },
   password: { type: String, label: 'Password' },
   status: { type: String, label: 'Status of the sign up request', optional: true },
-  globalStatuses: { type: Object },
-  'globalStatuses.lastVisitedMessageApp': { type: Date, optional: new Date(2020, 1, 1) },
   /* settings: { type: Object },
   'settings.emailVerified': { type: Object },
   'settings.emailVerified.status': { type: Boolean, label: 'Email Verification'}, */

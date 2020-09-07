@@ -111,7 +111,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
               <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
             </Row>
           </>
-        ) : <Alert bsStyle="warning">No messages yet!</Alert>}
+        ) : !loading && (<Alert bsStyle="warning">No messages yet!</Alert>)}
     </div>
   );
 };
