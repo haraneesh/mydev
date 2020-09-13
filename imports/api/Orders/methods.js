@@ -10,7 +10,7 @@ import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
 import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
-import { Emitter, Events } from '../events';
+import { Emitter, Events } from '../Events/events';
 
 const calculateOrderTotal = (order, productListId, userId) => {
   // Get Product List for cost
@@ -40,7 +40,6 @@ const calculateOrderTotal = (order, productListId, userId) => {
 
     const quantity = prd.quantity ? prd.quantity : 0;
 
-
     if (isShopOwner) {
       if (product.sourceSuppliers && product.sourceSuppliers.length > 0) {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
@@ -60,7 +59,6 @@ const calculateOrderTotal = (order, productListId, userId) => {
   return totalBillAmount;
 };
 
-
 const removePreviousOrderedQuantity = (existingOrder) => {
   const productListId = existingOrder.productOrderListId;
 
@@ -69,7 +67,8 @@ const removePreviousOrderedQuantity = (existingOrder) => {
   existingOrder.products.forEach((product) => {
     ProductLists.update(
       { _id: productListId, 'products._id': product._id },
-      { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } });
+      { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } },
+    );
   });
 };
 
@@ -79,13 +78,14 @@ const addNewOrderedQuantity = (order) => {
   order.products.forEach((product) => {
     ProductLists.update(
       { _id: productListId, 'products._id': product._id },
-      { $inc: { 'products.$.totQuantityOrdered': product.quantity } });
+      { $inc: { 'products.$.totQuantityOrdered': product.quantity } },
+    );
   });
 };
 
 const addUpdateOrder = (order) => {
   const isUpdate = !!order._id;
-  const loggedInUserId = order.loggedInUserId;
+  const { loggedInUserId } = order;
   if (isUpdate) {
     // delete order.customer_details
     // delete order.productOrderListId
@@ -181,7 +181,6 @@ export const removeOrder = new ValidatedMethod({
   },
 });
 
-
 export const updateMyOrderStatus = new ValidatedMethod({
   name: 'orders.updateMyOrderStatus',
   validate: new SimpleSchema({
@@ -231,7 +230,6 @@ export const updateExpectedDeliveryDate = new ValidatedMethod({
     );
   },
 });
-
 
 export const updateOrderStatus = new ValidatedMethod({
   name: 'orders.updateOrderStatus',
@@ -291,12 +289,12 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
   run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        const selectQuery = (isWholeSale) ?
-          [
+        const selectQuery = (isWholeSale)
+          ? [
             { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
-          ] :
-          [
+          ]
+          : [
             { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
           ];
@@ -343,12 +341,12 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
   run({ isWholeSale }) {
     if (Meteor.isServer) {
       if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        const selectQuery = (isWholeSale) ?
-          [
+        const selectQuery = (isWholeSale)
+          ? [
             { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
-          ] :
-          [
+          ]
+          : [
             { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
           ];
@@ -399,12 +397,11 @@ Meteor.methods({
     try {
       if (Meteor.isServer) {
         if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-          const selectQuery =
-            [
-              // { order_status: 'Awaiting_Fulfillment' },
-              { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
-              { _id: { $in: options.orderIds } },
-            ];
+          const selectQuery = [
+            // { order_status: 'Awaiting_Fulfillment' },
+            { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
+            { _id: { $in: options.orderIds } },
+          ];
 
           const id = (!options.includeBuyer) ? {
             productSKU: '$products.sku',

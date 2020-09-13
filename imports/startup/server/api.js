@@ -6,6 +6,7 @@ import '../../api/OAuth/methods';
 import '../../api/Messages/methods';
 import '../../api/Messages/server/publications';
 
+import '../../api/Users/Users'; // to create index
 import '../../api/Users/methods';
 import '../../api/Users/server/publications';
 

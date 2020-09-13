@@ -13,7 +13,7 @@ import { updateSyncAndReturn, retResponse } from './zohoCommon';
 import { getUserOrdersAndInvoicesFromZoho } from './zohoOrdersMethods';
 import handleMethodException from '../../modules/handle-method-exception';
 
-const createZohoBooksContact = usr => ({
+const createZohoBooksContact = (usr) => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
   customer_sub_type: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
   // gst_treatment: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
@@ -39,9 +39,9 @@ const createZohoBooksContact = usr => ({
 const _syncUsersWithZoho = (usr, successResp, errorResp) => {
   const user = usr;
   const zhContact = createZohoBooksContact(user);
-  const r = (user.zh_contact_id) ?
-    zh.updateRecord('contacts', user.zh_contact_id, zhContact) :
-    zh.createRecord('contacts', zhContact);
+  const r = (user.zh_contact_id)
+    ? zh.updateRecord('contacts', user.zh_contact_id, zhContact)
+    : zh.createRecord('contacts', zhContact);
   if (r.code === 0 /* Success */) {
     Meteor.users.update({ _id: user._id }, { $set: { zh_contact_id: r.contact.contact_id } });
     successResp.push(retResponse(r));
@@ -84,7 +84,7 @@ export const updateUserWallet = (user) => {
   let newWallet;
 
   if (zhContactResponse.code === 0) {
-    const contact = zhContactResponse.contact;
+    const { contact } = zhContactResponse;
     newWallet = {
       unused_retainer_payments_InPaise: contact.unused_retainer_payments * 100,
       unused_credits_receivable_amount_InPaise: contact.unused_credits_receivable_amount * 100,
@@ -114,8 +114,8 @@ export function retWalletAndSyncIfNecessary(userId) {
 
   const userSyncedWithZoho = user && user.zh_contact_id;
   if (Meteor.isServer && userSyncedWithZoho) {
-    const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync) ?
-      user.wallet.lastZohoSync : new Date('1/1/2000');
+    const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync)
+      ? user.wallet.lastZohoSync : new Date('1/1/2000');
     const now = moment(new Date()); // todays date
     const end = moment(lastWalletSyncDate);
     const duration = moment.duration(now.diff(end));
@@ -150,7 +150,9 @@ export const getUserWallet = new ValidatedMethod({
   },
 });
 
-const sendMessage = ({ user, generatedDate, startDate, endDate, emailAddress }) => {
+const sendMessage = ({
+  user, generatedDate, startDate, endDate, emailAddress,
+}) => {
   const zhStartDate = moment(startDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
   const zhEndDate = moment(endDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
   const zhGeneratedDate = moment(generatedDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
@@ -164,7 +166,8 @@ const sendMessage = ({ user, generatedDate, startDate, endDate, emailAddress }) 
     submodule: 'statements/email',
     getParamsWithPost: {
       start_date: zhStartDate,
-      end_date: zhEndDate },
+      end_date: zhEndDate,
+    },
     params: {
       send_from_org_email_id: false,
       to_mail_ids: [emailAddress],
@@ -238,7 +241,9 @@ Meteor.methods({
             break;
         }
 
-        const zohoResponse = sendMessage({ user, generatedDate: today, startDate, endDate, emailAddress: user.emails[0].address });
+        const zohoResponse = sendMessage({
+          user, generatedDate: today, startDate, endDate, emailAddress: user.emails[0].address,
+        });
 
         if (zohoResponse.code !== 0) {
           handleMethodException(zohoResponse, zohoResponse.code);
@@ -282,10 +287,8 @@ Meteor.methods({
   },
 });
 
-
 rateLimit({
   methods: ['customer.getStatement', 'customer.sendStatement', bulkSyncUsersZoho, getUserWallet],
   limit: 5,
   timeRange: 1000,
 });
-

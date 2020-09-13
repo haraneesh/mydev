@@ -1,12 +1,12 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Roles } from 'meteor/alanning:roles';
 import {
   FormGroup, InputGroup, FormControl, Row, Col, Panel,
 } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import { formatMoney } from 'accounting-js';
+import { Roles } from 'meteor/alanning:roles';
 import Loading from '../../Loading/Loading';
 import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';

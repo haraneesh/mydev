@@ -1,11 +1,11 @@
 import $ from 'jquery';
-import { Roles } from 'meteor/alanning:roles';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar,
 } from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { Roles } from 'meteor/alanning:roles';
 import Product from '../Product';
 import { isLoggedInUserAdmin } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';

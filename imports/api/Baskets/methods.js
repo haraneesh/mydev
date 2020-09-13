@@ -17,19 +17,18 @@ Meteor.methods({
         handleMethodException(exception);
       }
     } else {
-      new Meteor.Error(403, 'Access Denied');
+      throw new Meteor.Error(403, 'Access Denied');
     }
   },
   'baskets.getAll': function basketsGetAll() {
-
     if (Meteor.isServer) {
       try {
-        return Baskets.find({ $or: [{ owner: this.userId }, { isOwnerAdmin: true }] }, { sort: { name: 1 } }).fetch()
+        return Baskets.find({ $or: [{ owner: this.userId }, { isOwnerAdmin: true }] }, { sort: { name: 1 } }).fetch();
       } catch (exception) {
         handleMethodException(exception);
       }
     } else {
-      new Meteor.Error(403, 'Access Denied');
+      throw new Meteor.Error(403, 'Access Denied');
     }
   },
   'baskets.insert': function basketsInsert(basket) {
@@ -39,7 +38,7 @@ Meteor.methods({
       products: [{
         _id: String,
         quantity: Number,
-      }]
+      }],
     });
 
     if (Meteor.isServer) {
@@ -58,7 +57,7 @@ Meteor.methods({
       products: [{
         _id: String,
         quantity: Number,
-      }]
+      }],
     });
 
     try {
@@ -66,7 +65,6 @@ Meteor.methods({
 
       if (Meteor.isServer && !Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         try {
-
           if (savedBasket.owner !== this.userId) {
             throw new Meteor.Error('111', 'Basket was created by a different user');
           }

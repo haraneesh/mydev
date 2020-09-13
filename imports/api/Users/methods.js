@@ -10,7 +10,7 @@ import rateLimit from '../../modules/rate-limit';
 import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
-import { Emitter, Events } from '../events';
+import { Emitter, Events } from '../Events/events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 
 export const editUserProfile = new ValidatedMethod({
@@ -33,11 +33,8 @@ export const editUserProfile = new ValidatedMethod({
     },
   }).validator(),
   run(profile) {
-    return editProfile({ userId: this.userId, profile })
-      .then((response) => response)
-      .catch((exception) => {
-        handleMethodException(exception);
-      });
+    editProfile({ userId: this.userId, user: profile });
+    Emitter.emit(Events.USER_PROFILE_UPDATED, { userId: this.userId, user: profile });
   },
 });
 
@@ -91,7 +88,8 @@ const assignUserRole = (userId, selectedRole) => {
       break;
   }
 };
-const createNewUser = (user) => {
+// used by supplier method to create supplier user
+export const createNewUser = (user) => {
   const cuser = {
     username: user.username,
     email: user.email,

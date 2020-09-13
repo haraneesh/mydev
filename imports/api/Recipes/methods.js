@@ -126,7 +126,7 @@ export const removeRecipe = new ValidatedMethod({
   }).validator(),
   run({ recipeId }) {
     const recipe = Recipes.findOne({ _id: recipeId });
-    //Media.remove({ _id: recipe.mediaId });
+    // Media.remove({ _id: recipe.mediaId });
     Recipes.remove({
       $and: [{ owner: Meteor.userId() }, { _id: recipe._id }],
     });

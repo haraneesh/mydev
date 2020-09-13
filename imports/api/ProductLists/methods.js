@@ -5,11 +5,10 @@ import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import ProductLists from './ProductLists';
 import Suppliers from '../Suppliers/Suppliers';
-import Products from '../../api/Products/Products';
+import Products from '../Products/Products';
 import rateLimit from '../../modules/rate-limit';
 import constants from '../../modules/constants';
 import handleMethodException from '../../modules/handle-method-exception';
-
 
 const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   const newOrderableProducts = [];
@@ -19,8 +18,8 @@ const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   products.forEach((product) => {
     const key = product._id;
     const prod = { ...product };
-    prod.totQuantityOrdered = (currentProductHash && currentProductHash[key] && currentProductHash[key].totQuantityOrdered) ?
-      currentProductHash[key].totQuantityOrdered : 0;
+    prod.totQuantityOrdered = (currentProductHash && currentProductHash[key] && currentProductHash[key].totQuantityOrdered)
+      ? currentProductHash[key].totQuantityOrdered : 0;
 
     const newSupplierArray = [];
 
@@ -122,7 +121,6 @@ export const updateProductListWithOrderId = new ValidatedMethod({
       ProductLists.update( { _id:productListId }, { $addToSet:{ order_ids:orderId } })
   },
 }) */
-
 
 rateLimit({
   methods: [

@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
+import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
 // import 'moment-timezone';
-import { formatMoney } from 'accounting-js';
 import constants from './constants';
 import { accountSettings, dateSettings } from './settings';
 
@@ -11,11 +11,11 @@ export function isCustomer(userId) {
 }
 
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
-  if (!isShopOwnerPrice) return productsArray.filter(product => product.availableToOrder === true);
+  if (!isShopOwnerPrice) return productsArray.filter((product) => product.availableToOrder === true);
 
   const products = [];
 
-  productsArray.filter(product => product.availableToOrderWH === true).forEach((product) => {
+  productsArray.filter((product) => product.availableToOrderWH === true).forEach((product) => {
     const prd = product;
     if (prd.sourceSuppliers && prd.sourceSuppliers.length > 0) {
       prd.unitprice = prd.wSaleBaseUnitPrice * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
@@ -57,10 +57,10 @@ export function getDisplayDateTitle(startDateObj, EndDateObj) {
 
 export function getProductListStatus(activeStartDateTime, activeEndDateTime) {
   const today = moment().local();
-  const productListStatus = today.isAfter(activeEndDateTime) ?
-    constants.ProductListStatus.Expired.name
-    : today.isBefore(activeStartDateTime) ?
-      constants.ProductListStatus.Future.name
+  const productListStatus = today.isAfter(activeEndDateTime)
+    ? constants.ProductListStatus.Expired.name
+    : today.isBefore(activeStartDateTime)
+      ? constants.ProductListStatus.Future.name
       : constants.ProductListStatus.Active_Now.name;
 
   return productListStatus;
@@ -90,7 +90,7 @@ export const extractNumber = (x, base) => {
   return parsed;
 };
 
-export const extractString = x => x.replace(/[^a-zA-Z]/g, '');
+export const extractString = (x) => x.replace(/[^a-zA-Z]/g, '');
 
 export const padWhiteSpace = (pad, str, padLeft) => {
   if (typeof str === 'undefined') { return pad; }

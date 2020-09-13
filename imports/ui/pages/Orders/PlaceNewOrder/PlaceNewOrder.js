@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Alert } from 'react-bootstrap';
+import { Roles } from 'meteor/alanning:roles';
 import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
 import ProductLists from '../../../../api/ProductLists/ProductLists';
 import { getProductUnitPrice } from '../../../../modules/helpers';

@@ -8,7 +8,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import Icon from '../Icon/Icon';
 import './ToolBar.scss';
 
-import { dMessages } from '../../layouts/App/dynamicRoutes';
+import { dMessages } from '../../apps/dynamicRoutes';
 
 import { useStore, GlobalStores } from '../../stores/GlobalStore';
 

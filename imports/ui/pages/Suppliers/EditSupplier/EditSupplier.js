@@ -5,17 +5,25 @@ import { Meteor } from 'meteor/meteor';
 import Suppliers from '../../../../api/Suppliers/Suppliers';
 import SupplierEditor from '../../../components/SupplierEditor/SupplierEditor';
 import NotFound from '../../Miscellaneous/NotFound/NotFound';
+import Loading from '../../../components/Loading/Loading';
 
-const EditSupplier = ({ supp, history }) => (supp ? (
-  <div className="EditSupplier">
-    <h3 className="page-header">{`Editing "${supp.name}"`}</h3>
-    <SupplierEditor supp={supp} history={history} />
-  </div>
-) : <NotFound />);
+const EditSupplier = ({ supp, loading, history }) => {
+  if (loading) {
+    return (<Loading />);
+  }
+
+  return (supp ? (
+    <div className="EditSupplier">
+      <h3 className="page-header">{`Editing "${supp.name}"`}</h3>
+      <SupplierEditor supp={supp} history={history} />
+    </div>
+  ) : <NotFound />);
+};
 
 EditSupplier.propTypes = {
   supp: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  loading: PropTypes.object.isRequired,
 };
 
 export default createContainer(({ match }) => {

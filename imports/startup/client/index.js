@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import Root from '../../ui/layouts/App/Root';
+import Root from '../../ui/apps/Root';
 // import * as serviceWorker from './serviceWorker';
 
 import '../../ui/stylesheets/application.scss';
@@ -13,7 +13,7 @@ Bert.defaults.type = 'default';
 Meteor.startup(() => {
   if ('serviceWorker' in navigator) {
     // const serviceWorkerUrl = (process.env.NODE_ENV === 'production') ? 'https://nammasuvai.com/sw.js' : '/sw.js';
-    navigator.serviceWorker.register(`${window.location.origin}/sw.js`).then().catch(err => console.log('ServiceWorker registration failed: ', err));
+    navigator.serviceWorker.register(`${window.location.origin}/sw.js`).then().catch((err) => console.log('ServiceWorker registration failed: ', err));
   }
   /* serviceWorker.register();
 

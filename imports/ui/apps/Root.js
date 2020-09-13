@@ -1,12 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import {
   BrowserRouter as Router, useHistory,
 } from 'react-router-dom';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import Analytics from 'analytics-node';
+import Security from '../../modules/both/security';
 import App from './App';
+import SupplierApp from './SupplierApp';
+import Loading from '../components/Loading/Loading';
 
 const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
@@ -18,6 +22,7 @@ const getUserName = (name) => ({
 const RootWithRouter = (props) => {
   const history = useHistory();
   const currentRoute = useRef();
+  const { loggedInUserId } = props;
 
   useEffect(() => {
     history.listen((location) => {
@@ -32,14 +37,29 @@ const RootWithRouter = (props) => {
     });
   }, [history]);
 
-  return (<App {...props} />);
+  switch (true) {
+    case loggedInUserId && Security.checkBoolUserIsSupplier(loggedInUserId):
+      return (<SupplierApp {...props} />);
+    default:
+      return (<App {...props} />);
+  }
 };
 
-const Root = (props) => (
-  <Router>
-    <RootWithRouter {...props} />
-  </Router>
-);
+RootWithRouter.propTypes = {
+  loggedInUserId: PropTypes.string.isRequired,
+};
+
+const Root = (props) => {
+  if (props.loading) {
+    return (<Loading />);
+  }
+
+  return (
+    <Router>
+      <RootWithRouter {...props} />
+    </Router>
+  );
+};
 
 export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
@@ -63,9 +83,9 @@ export default withTracker(() => {
     emailAddress,
     emailVerified,
     date: new Date(),
-    roles: !loading && Roles.getRolesForUser(userId),
     loggedInUserId: userId,
     loggedInUser: user,
+    roles: !loading && Roles.getRolesForUser(userId),
     userSettings,
     globalStatuses,
     analytics,

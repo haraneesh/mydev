@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
@@ -37,6 +37,10 @@ export const SupplierSchemaDefObject = {
       if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
     },
   },
+  userId: {
+    type: String,
+    label: 'Linked User Id',
+  },
   name: {
     type: String,
     label: 'The name of the supplier.',
@@ -55,8 +59,18 @@ export const SupplierSchemaDefObject = {
   },
   zohoOrganizationId: {
     type: String,
-    label: 'Zoho Organization Id for the supplier.'
+    label: 'Zoho Organization Id for the supplier.',
   },
+  user: { type: Object },
+  'user.username': { type: String },
+  'user.email': { type: String },
+  'user.profile': { type: Object },
+  'user.profile.salutation': { type: String },
+  'user.profile.name': { type: Object },
+  'user.profile.name.last': { type: String },
+  'user.profile.name.first': { type: String },
+  'user.profile.whMobilePhone': { type: String },
+  'user.profile.deliveryAddress': { type: String },
 };
 
 Suppliers.schema = new SimpleSchema(SupplierSchemaDefObject, {

@@ -1,14 +1,13 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-
-let action;
+import handleMethodException from '../../modules/handle-method-exception';
 
 const updatePassword = (userId, newPassword) => {
   try {
     Accounts.setPassword(userId, newPassword, { logout: false });
   } catch (exception) {
-    action.reject(`[editProfile.updatePassword] ${exception}`);
+    handleMethodException(exception);
   }
 };
 
@@ -19,31 +18,36 @@ const updateUser = (userId, { emailAddress, profile, settings }) => {
 
     Meteor.users.update(userId, {
       $set: {
+        username: profile.whMobilePhone,
         'emails.0.address': emailAddress,
-        'emails.0.verified': (presentEmailAddress && presentEmailAddress === emailAddress) ?
-          user.emails[0].verified : false,
+        'emails.0.verified': (presentEmailAddress && presentEmailAddress === emailAddress)
+          ? user.emails[0].verified : false,
         updatedAt: new Date(),
         profile,
-        settings,
       },
     });
+
+    if (settings) {
+      Meteor.users.update(userId, {
+        $set: {
+          settings,
+        },
+      });
+    }
   } catch (exception) {
-    action.reject(`[editProfile.updateUser] ${exception}`);
+    handleMethodException(exception);
   }
 };
 
-const editProfile = ({ userId, profile }, promise) => {
+const editProfile = ({ userId, user }) => {
   try {
-    action = promise;
-    updateUser(userId, profile);
-    if (profile.password) updatePassword(userId, profile.password);
-
-    action.resolve();
+    updateUser(userId, user);
+    if (user.password && Object.keys(user.password).length !== 0) {
+      updatePassword(userId, user.password);
+    }
   } catch (exception) {
-    action.reject(`[editProfile.handler] ${exception}`);
+    handleMethodException(exception);
   }
 };
 
-export default options =>
-  new Promise((resolve, reject) =>
-    editProfile(options, { resolve, reject }));
+export default editProfile;

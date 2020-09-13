@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import SimpleSchema from 'simpl-schema';
-import constants from '../../modules/constants';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import constants from '../../modules/constants';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit.js';
@@ -22,7 +22,7 @@ export const insertProduct = new ValidatedMethod({
     "vendor_details.id" : {  type:Number, decimal:true },
     "vendor_details.slug" : { type:String  },
     "vendor_details.name" : { type:String  },
-  }).validator(),*/
+  }).validator(), */
   validate: Products.schema.omit('createdAt', 'updatedAt').validator(),
   run(product) {
     try {
@@ -54,7 +54,6 @@ export const updateProductSKU = new ValidatedMethod({
     Products.update(_id, { $set: update });
   },
 });
-
 
 export const updateProductUnitPrice = new ValidatedMethod({
   name: 'products.unitprice.update',
@@ -137,7 +136,7 @@ export const upsertProduct = new ValidatedMethod({
     const product = prod;
     const id = product._id;
     delete product._id;
-    const unitsForSelection = product.unitsForSelection;
+    const { unitsForSelection } = product;
     product.unitsForSelection = (unitsForSelection) ? unitsForSelection.replace(/\s+/g, '') : '0,1,2,3,4,5,6,7,8,9,10';
     if (Meteor.isServer) {
       if ((product.unitsForSelection.split(',').every(isNumber))) {
@@ -167,7 +166,6 @@ Meteor.methods({
     }
   },
   'products.bulkUpdatePrices': async function bulkUpdateProductPrices(productPricesArray) {
-
     try {
       check(productPricesArray,
         [{
@@ -175,24 +173,21 @@ Meteor.methods({
           name: String,
           unitprice: String,
           wSaleBaseUnitPrice: String,
-        }]
-      );
+        }]);
     } catch (exception) {
       handleMethodException(exception);
     }
 
-
-    if (/*Meteor.isServer && */ Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    if (/* Meteor.isServer && */ Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       try {
-        let bulk = Products.rawCollection().initializeOrderedBulkOp();
+        const bulk = Products.rawCollection().initializeOrderedBulkOp();
 
         productPricesArray.forEach((row) => {
           bulk.find({ _id: row._id }).update({ $set: { unitprice: row.unitprice, wSaleBaseUnitPrice: row.wSaleBaseUnitPrice } });
-        })
+        });
 
         const bulkWriteResult = await bulk.execute();
         return bulkWriteResult;
-
       } catch (exception) {
         handleMethodException(exception);
       }

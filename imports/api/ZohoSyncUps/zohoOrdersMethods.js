@@ -7,10 +7,12 @@ import { Orders } from '../Orders/Orders';
 import constants from '../../modules/constants';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
-import { updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate } from './zohoCommon';
+import {
+  updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate,
+} from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
 import handleMethodException from '../../modules/handle-method-exception';
-//import orderCommon from '../../modules/both/orderCommon';
+// import orderCommon from '../../modules/both/orderCommon';
 
 // TODO May have to be a seperate table
 const _productTypeToZohoGroupIdMap = {
@@ -19,7 +21,7 @@ const _productTypeToZohoGroupIdMap = {
   Batter: '702207000000066029',
 };
 
-const _getZohoGroupId = type => _productTypeToZohoGroupIdMap[type];
+const _getZohoGroupId = (type) => _productTypeToZohoGroupIdMap[type];
 
 // Sales Order - draft, open, invoiced, partially_invoiced, void and overdue
 
@@ -33,15 +35,13 @@ const _orderStatusToZohoSalesOrderStatus = {
   Shipped: { zh_status: 'invoiced' },
 };
 
-const _getZohoSalesOrderStatus = status => _orderStatusToZohoSalesOrderStatus[status].zh_status;
+const _getZohoSalesOrderStatus = (status) => _orderStatusToZohoSalesOrderStatus[status].zh_status;
 
-
-const _getZohoUserIdFromUserId = userId =>
+const _getZohoUserIdFromUserId = (userId) =>
   // mongo collections have only meteor ids
   Meteor.users.findOne({ _id: userId }, { zh_contact_id: 1 }).zh_contact_id || '';
 
-const _getZohoItemIdFromProductId = productId =>
-  Products.findOne({ _id: productId }, { zh_item_id: 1 }).zh_item_id || '';
+const _getZohoItemIdFromProductId = (productId) => Products.findOne({ _id: productId }, { zh_item_id: 1 }).zh_item_id || '';
 
 const _createZohoSalesOrder = (order) => {
   const zhSalesOrder = {
@@ -67,20 +67,19 @@ const _createZohoSalesOrder = (order) => {
   return zhSalesOrder;
 };
 
-
 const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
   const zhSalesOrder = _createZohoSalesOrder(order);
 
   let r = {};
   if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
-    r = (order.zh_salesorder_id) ?
-      zh.updateRecord('deliverychallans', order.zh_salesorder_id, zhSalesOrder) :
-      zh.createRecord('deliverychallans', zhSalesOrder);
+    r = (order.zh_salesorder_id)
+      ? zh.updateRecord('deliverychallans', order.zh_salesorder_id, zhSalesOrder)
+      : zh.createRecord('deliverychallans', zhSalesOrder);
   } else {
-    r = (order.zh_salesorder_id) ?
-      zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder) :
-      zh.createRecord('salesorders', zhSalesOrder);
+    r = (order.zh_salesorder_id)
+      ? zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder)
+      : zh.createRecord('salesorders', zhSalesOrder);
   }
 
   if (r.code === 0 /* Success */) {
@@ -128,7 +127,7 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
     if (Meteor.isServer) {
       const query = {
         order_status: constants.OrderStatus.Processing.name,
-        //expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
+        // expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
       };
       const orders = Orders.find(query).fetch(); // change to get products updated after sync date
 
@@ -151,9 +150,8 @@ const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
 
   if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
     dcOrSo = 'deliverychallan';
-    //r = zh.getRecordById('deliverychallans', order.zh_salesorder_id);
+    // r = zh.getRecordById('deliverychallans', order.zh_salesorder_id);
     getInvoices = true;
-
   } else {
     dcOrSo = 'salesorder';
     r = zh.getRecordById('salesorders', order.zh_salesorder_id);
@@ -244,7 +242,6 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
     return updateSyncAndReturn('invoices', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
   },
 });
-
 
 rateLimit({
   methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho],

@@ -2,7 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import {
+  Row, Col, FormGroup, ControlLabel, Button,
+} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -16,7 +18,6 @@ import './Profile.scss';
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-
     this.getUserType = this.getUserType.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.renderOAuthUser = this.renderOAuthUser.bind(this);
@@ -139,7 +140,9 @@ class Profile extends React.Component {
       },
     };
 
-    if (this.confirmPassword.value) profile.password = Accounts._hashPassword(this.confirmPassword.value);
+    if (this.confirmPassword.value) {
+      profile.password = Accounts._hashPassword(this.confirmPassword.value);
+    }
 
     Meteor.call('users.editUserProfile', profile, (error) => {
       if (error) {
@@ -151,147 +154,150 @@ class Profile extends React.Component {
   }
 
   renderOAuthUser(loading, user) {
-    return !loading ? (<div className="OAuthProfile">
-      {Object.keys(user.services).map(service => (
-        <div key={service} className={`LoggedInWith ${service}`}>
-          <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
-          <p>{`You're logged in with ${service} using the email address ${user.services[service].email}.`}</p>
-        </div>
-      ))}
-    </div>) : <div />;
+    return !loading ? (
+      <div className="OAuthProfile">
+        {Object.keys(user.services).map((service) => (
+          <div key={service} className={`LoggedInWith ${service}`}>
+            <div className="ServiceIcon"><i className={`fa fa-${service === 'facebook' ? 'facebook-official' : service}`} /></div>
+            <p>{`You're logged in with ${service} using the email address ${user.services[service].email}.`}</p>
+          </div>
+        ))}
+      </div>
+    ) : <div />;
   }
 
   renderPasswordUser(loading, user) {
-    return !loading ? (<div>
-      <FormGroup>
-        <ControlLabel>Salutation</ControlLabel>
-        <select
-          name="salutation"
-          ref={salutation => (this.salutation = salutation)}
-          className="form-control"
-          defaultValue={(user.profile.salutation) ? user.profile.salutation : ''}
-        >
-          <option value="Mrs.">Mrs</option>
-          <option value="Mr.">Mr</option>
-          <option value="Miss"> Miss</option>
-        </select>
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>First Name</ControlLabel>
-        <input
-          type="text"
-          name="firstName"
-          defaultValue={user.profile.name.first}
-          ref={firstName => (this.firstName = firstName)}
-          className="form-control"
-        />
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>Last Name</ControlLabel>
-        <input
-          type="text"
-          name="lastName"
-          defaultValue={user.profile.name.last}
-          ref={lastName => (this.lastName = lastName)}
-          className="form-control"
-        />
-      </FormGroup>
-      <FormGroup>
+    return !loading ? (
+      <div>
+        <FormGroup>
+          <ControlLabel>Salutation</ControlLabel>
+          <select
+            name="salutation"
+            ref={(salutation) => (this.salutation = salutation)}
+            className="form-control"
+            defaultValue={(user.profile.salutation) ? user.profile.salutation : ''}
+          >
+            <option value="Mrs.">Mrs</option>
+            <option value="Mr.">Mr</option>
+            <option value="Miss"> Miss</option>
+          </select>
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>First Name</ControlLabel>
+          <input
+            type="text"
+            name="firstName"
+            defaultValue={user.profile.name.first}
+            ref={(firstName) => (this.firstName = firstName)}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Last Name</ControlLabel>
+          <input
+            type="text"
+            name="lastName"
+            defaultValue={user.profile.name.last}
+            ref={(lastName) => (this.lastName = lastName)}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Row>
+            <Col xs={6}>
+              <ControlLabel>Email Address</ControlLabel>
+            </Col>
+            <Col xs={6} className="text-right" style={{ top: '-0.5rem' }}>
+              {!user.emails[0].verified
+                ? (<Button className="btn-warning btn-sm" onClick={this.handleVerifyEmail}>Verify Email</Button>)
+                : (<span className="text-default">Verified</span>)}
+            </Col>
+          </Row>
+          <input
+            type="email"
+            name="emailAddress"
+            defaultValue={user.emails[0].address}
+            ref={(emailAddress) => (this.emailAddress = emailAddress)}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Mobile Number</ControlLabel>
+          <input
+            type="text"
+            ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
+            name="whMobilePhone"
+            placeholder="10 digit number example, 8787989897"
+            defaultValue={user.profile.whMobilePhone}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Dietary Preference</ControlLabel>
+          <select
+            name="dietPreference"
+            ref={(dietPreference) => (this.dietPreference = dietPreference)}
+            className="form-control"
+            defaultValue={(user.settings && user.settings.dietPreference) ? user.settings.dietPreference : ''}
+          >
+            <option value="" key="notselected" />
+            {constants.DietaryPreferences.names.map((name) => (
+              <option value={name} key={name}>
+                {constants.DietaryPreferences[name].display_value}
+              </option>
+            ))}
+          </select>
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Delivery Address</ControlLabel>
+          <textarea
+            ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
+            name="deliveryAddress"
+            placeholder="Complete address to deliver at, including Landmark, Pincode."
+            rows="6"
+            defaultValue={user.profile.deliveryAddress}
+            className="form-control"
+          />
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>New Password</ControlLabel>
+          <input
+            id="newPassword"
+            type="password"
+            name="newPassword"
+            ref={(newPassword) => (this.newPassword = newPassword)}
+            className="form-control"
+          />
+        </FormGroup>
+        <InputHint>
+          <ul className="col-xs-6">
+            <li>One Lowercase character</li>
+            <li>One Uppercase character</li>
+            <li>One Number</li>
+          </ul>
+          <ul className="col-xs-6">
+            <li>One Special character</li>
+            <li>6 characters minimum</li>
+          </ul>
+        </InputHint>
         <Row>
-          <Col xs={6}>
-            <ControlLabel>Email Address</ControlLabel>
-          </Col>
-          <Col xs={6} className="text-right" style={{ top: '-0.5rem' }}>
-            {!user.emails[0].verified ?
-              (<Button className="btn-warning btn-sm" onClick={this.handleVerifyEmail}>Verify Email</Button>) :
-              (<span className="text-default">Verified</span>)
-            }
+          <Col xs={12}>
+            <FormGroup>
+              <ControlLabel>Confirm New Password</ControlLabel>
+              <input
+                type="password"
+                name="confirmPassword"
+                ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
+                className="form-control"
+              />
+            </FormGroup>
           </Col>
         </Row>
-        <input
-          type="email"
-          name="emailAddress"
-          defaultValue={user.emails[0].address}
-          ref={emailAddress => (this.emailAddress = emailAddress)}
-          className="form-control"
-        />
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>Mobile Number</ControlLabel>
-        <input
-          type="text"
-          ref={whMobilePhone => (this.whMobilePhone = whMobilePhone)}
-          name="whMobilePhone"
-          placeholder="10 digit number example, 8787989897"
-          defaultValue={user.profile.whMobilePhone}
-          className="form-control"
-        />
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>Dietary Preference</ControlLabel>
-        <select
-          name="dietPreference"
-          ref={dietPreference => (this.dietPreference = dietPreference)}
-          className="form-control"
-          defaultValue={(user.settings && user.settings.dietPreference) ? user.settings.dietPreference : ''}
-        >
-          <option value="" key="notselected" />
-          {constants.DietaryPreferences.names.map(name => (<option value={name} key={name}>
-            {constants.DietaryPreferences[name].display_value}
-          </option>
-          ),
-          )}
-        </select>
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>Delivery Address</ControlLabel>
-        <textarea
-          ref={deliveryAddress => (this.deliveryAddress = deliveryAddress)}
-          name="deliveryAddress"
-          placeholder="Complete address to deliver at, including Landmark, Pincode."
-          rows="6"
-          defaultValue={user.profile.deliveryAddress}
-          className="form-control"
-        />
-      </FormGroup>
-      <FormGroup>
-        <ControlLabel>New Password</ControlLabel>
-        <input
-          id="newPassword"
-          type="password"
-          name="newPassword"
-          ref={newPassword => (this.newPassword = newPassword)}
-          className="form-control"
-        />
-      </FormGroup>
-      <InputHint>
-        <ul className="col-xs-6">
-          <li>One Lowercase character</li>
-          <li>One Uppercase character</li>
-          <li>One Number</li>
-        </ul>
-        <ul className="col-xs-6">
-          <li>One Special character</li>
-          <li>6 characters minimum</li>
-        </ul>
-      </InputHint>
-      <Row>
-        <Col xs={12}>
-          <FormGroup>
-            <ControlLabel>Confirm New Password</ControlLabel>
-            <input
-              type="password"
-              name="confirmPassword"
-              ref={confirmPassword => (this.confirmPassword = confirmPassword)}
-              className="form-control"
-            />
-          </FormGroup>
-        </Col>
-      </Row>
-      <div>
-        <Button type="submit" bsStyle="primary">Save Profile</Button>
+        <div>
+          <Button type="submit" bsStyle="primary">Save Profile</Button>
+        </div>
       </div>
-    </div>) : <div />;
+    ) : <div />;
   }
 
   renderProfileForm(loading, user) {
@@ -303,16 +309,18 @@ class Profile extends React.Component {
 
   render() {
     const { loading, user } = this.props;
-    return (<div className="Profile">
-      <Row>
-        <Col xs={12} sm={9} md={6}>
-          <h3 className="page-header">Edit Profile</h3>
-          <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-            {this.renderProfileForm(loading, user)}
-          </form>
-        </Col>
-      </Row>
-    </div>);
+    return (
+      <div className="Profile">
+        <Row>
+          <Col xs={12} sm={9} md={6}>
+            <h3 className="page-header">Edit Profile</h3>
+            <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
+              {this.renderProfileForm(loading, user)}
+            </form>
+          </Col>
+        </Row>
+      </div>
+    );
   }
 }
 

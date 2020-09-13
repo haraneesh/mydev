@@ -3,58 +3,58 @@ import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'react-bootstrap';
 import { Switch, Redirect } from 'react-router-dom';
-import Authenticated from '../../components/Routes/Authenticated';
-import AdminAuthenticated from '../../components/Routes/AdminAuthenticated';
-import PlaceOrderAuthenticated from '../../components/Routes/PlaceOrderAuthenticated';
-import NotAuthenticated from '../../components/Routes/NotAuthenticated';
-import Public from '../../components/Routes/Public';
+import Authenticated from '../components/Routes/Authenticated';
+import AdminAuthenticated from '../components/Routes/AdminAuthenticated';
+import PlaceOrderAuthenticated from '../components/Routes/PlaceOrderAuthenticated';
+import NotAuthenticated from '../components/Routes/NotAuthenticated';
+import Public from '../components/Routes/Public';
 /*
-import Documents from '../../pages/Documents/DocumentHome/Documents';
-import NewDocument from '../../pages/Documents/NewDocument/NewDocument';
-import ViewDocument from '../../pages/Documents/ViewDocument/ViewDocument';
-import EditDocument from '../../pages/Documents/EditDocument/EditDocument';
-import Index from '../../pages/Miscellaneous/Index/Index';
+import Documents from '../pages/Documents/DocumentHome/Documents';
+import NewDocument from '../pages/Documents/NewDocument/NewDocument';
+import ViewDocument from '../pages/Documents/ViewDocument/ViewDocument';
+import EditDocument from '../pages/Documents/EditDocument/EditDocument';
+import Index from '../pages/Miscellaneous/Index/Index';
 */
 
-import Footer from '../../components/Footer/Footer';
-import Terms from '../../pages/Miscellaneous/Terms/Terms';
-import Refund from '../../pages/Miscellaneous/Refund/Refund';
-import Privacy from '../../pages/Miscellaneous/Privacy/Privacy';
-import Signup from '../../pages/Miscellaneous/Signup/Signup';
-import Login from '../../pages/Miscellaneous/Login/Login';
-import Logout from '../../pages/Miscellaneous/Logout/Logout';
-import VerifyEmail from '../../pages/Miscellaneous/VerifyEmail';
-import RecoverPassword from '../../pages/Miscellaneous/RecoverPassword/RecoverPassword';
-import ResetPassword from '../../pages/Miscellaneous/ResetPassword/ResetPassword';
-import Profile from '../../pages/Miscellaneous/Profile/Profile';
-import About from '../../pages/Miscellaneous/About/About';
+import Footer from '../components/Footer/Footer';
+import Terms from '../pages/Miscellaneous/Terms/Terms';
+import Refund from '../pages/Miscellaneous/Refund/Refund';
+import Privacy from '../pages/Miscellaneous/Privacy/Privacy';
+import Signup from '../pages/Miscellaneous/Signup/Signup';
+import Login from '../pages/Miscellaneous/Login/Login';
+import Logout from '../pages/Miscellaneous/Logout/Logout';
+import VerifyEmail from '../pages/Miscellaneous/VerifyEmail';
+import RecoverPassword from '../pages/Miscellaneous/RecoverPassword/RecoverPassword';
+import ResetPassword from '../pages/Miscellaneous/ResetPassword/ResetPassword';
+import Profile from '../pages/Miscellaneous/Profile/Profile';
+import About from '../pages/Miscellaneous/About/About';
 
 /* order */
-// import PlaceOrder from '../../pages/Orders/PlaceOrder/PlaceOrder';
-import PlaceOrder from '../../pages/Orders/PlaceNewOrder/PlaceNewOrder';
-import SelectBasket from '../../pages/Orders/PlaceNewOrder/SelectBasket';
+// import PlaceOrder from '../pages/Orders/PlaceOrder/PlaceOrder';
+import PlaceOrder from '../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+import SelectBasket from '../pages/Orders/PlaceNewOrder/SelectBasket';
 
-import MyOrders from '../../pages/Orders/MyOrders/MyOrders';
-// import EditOrderDetails from '../../containers/Orders/EditOrder';
-import EditOrderDetails from '../../pages/Orders/EditOrderDetails/EditOrderDetails';
+import MyOrders from '../pages/Orders/MyOrders/MyOrders';
+// import EditOrderDetails from '../containers/Orders/EditOrder';
+import EditOrderDetails from '../pages/Orders/EditOrderDetails/EditOrderDetails';
 
-import Cart from '../../pages/Cart/CartHome';
-import SuccessOrderPlaced from '../../pages/Cart/SuccessOrderPlaced';
+import Cart from '../pages/Cart/CartHome';
+import SuccessOrderPlaced from '../pages/Cart/SuccessOrderPlaced';
 /* layout */
-import { OrderLayout, RecipeLayout, MainLayout } from '../Layouts';
+import { OrderLayout, RecipeLayout, MainLayout } from '../layouts/Layouts';
 
-import ReconcileInventoryList from '../../pages/ReconcileInventory/ReconcileInventoryList';
+import ReconcileInventoryList from '../pages/ReconcileInventory/ReconcileInventoryList';
 
 /*
-import dBaskets from '../../pages/Baskets/Baskets';
+import dBaskets from '../pages/Baskets/Baskets';
 
-import dViewBasket from '../../pages/Baskets/ViewBasket';
+import dViewBasket from '../pages/Baskets/ViewBasket';
 
-import dEditBasket from '../../pages/Baskets/EditBasket';
+import dEditBasket from '../pages/Baskets/EditBasket';
 
-import dNewBasket from '../../pages/Baskets/NewBasket';
+import dNewBasket from '../pages/Baskets/NewBasket';
 
-import dCreateBasket from '../../pages/Baskets/CreateBasket'; */
+import dCreateBasket from '../pages/Baskets/CreateBasket'; */
 
 /* Dynamic Components */
 import {
@@ -97,13 +97,13 @@ import {
 }
   from './dynamicRoutes';
 
-import VerifyEmailAlert from '../../components/VerifyEmailAlert';
+import VerifyEmailAlert from '../components/VerifyEmailAlert';
 
-import dMyWallet from '../../pages/Wallet/MyWallet';
+import dMyWallet from '../pages/Wallet/MyWallet';
 
-import { CartProvider } from '../../stores/ShoppingCart';
+import { CartProvider } from '../stores/ShoppingCart';
 
-import Loading from '../../components/Loading/Loading';
+import Loading from '../components/Loading/Loading';
 
 const App = (props) => (
   <>

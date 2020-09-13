@@ -1,44 +1,52 @@
 import React from 'react';
-import { Row, Col, FormGroup, Panel, Checkbox, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import '../../../modules/validate'
-import constants from '../../../modules/constants'
-import { Roles } from 'meteor/alanning:roles'
+import {
+  Row, Col, FormGroup, Panel, Checkbox, ControlLabel, FormControl, Button,
+} from 'react-bootstrap';
+import '../../../modules/validate';
+import { Roles } from 'meteor/alanning:roles';
+import constants from '../../../modules/constants';
 
-export const findUserForm = (callBack) => {
-  return (
-    <Row>
-      <Col xs={12} sm={6}>
-        <FormGroup>
-          <ControlLabel>User's Phone number</ControlLabel>
-          <FormControl
-            type="text"
-            ref="mobileNumber"
-            name="mobileNumber"
-            placeholder="User's mobile phone number"
-          />
-        </FormGroup>
-        <Button type="button" bsStyle="default" onClick={callBack}>Find User</Button>
-      </Col>
-    </Row>
-  )
-}
+export const findUserForm = (callBack) => (
+  <Row>
+    <Col xs={12} sm={6}>
+      <FormGroup>
+        <ControlLabel>User's Phone number</ControlLabel>
+        <FormControl
+          type="text"
+          ref="mobileNumber"
+          name="mobileNumber"
+          placeholder="User's mobile phone number"
+        />
+      </FormGroup>
+      <Button type="button" bsStyle="default" onClick={callBack}>Find User</Button>
+    </Col>
+  </Row>
+);
 
-
-export const userProfileForm = (user) => {
-  return (<div className="updateProfile">
-    <h4> {(user) ? "Edit User Info" : "Add New User"} </h4>
-    <form onSubmit={(event) => { event.preventDefault() }} key={(user) ? user.username : "new"}
+export const userProfileForm = (user) => (
+  <div className="updateProfile">
+    <h4>
+      {' '}
+      {(user) ? 'Edit User Info' : 'Add New User'}
+      {' '}
+    </h4>
+    <form
+      onSubmit={(event) => { event.preventDefault(); }}
+      key={(user) ? user.username : 'new'}
       name="updateProfileForm"
-      className="userProfileForm">
+      className="userProfileForm"
+    >
       <Panel>
         <Row>
           <Col xs={12} sm={8}>
             <FormGroup>
               <ControlLabel>Salutation</ControlLabel>
-              <select name="salutation"
-                ref={salutation => (this.salutation = salutation)}
+              <select
+                name="salutation"
+                ref={(salutation) => (this.salutation = salutation)}
                 className="form-control"
-                defaultValue={(user && user.profile.salutation) ? user.profile.salutation : ""}>
+                defaultValue={(user && user.profile.salutation) ? user.profile.salutation : ''}
+              >
                 <option value="Mrs.">Mrs</option>
                 <option value="Mr.">Mr</option>
                 <option value="Miss"> Miss</option>
@@ -51,7 +59,7 @@ export const userProfileForm = (user) => {
                 ref="firstName"
                 name="firstName"
                 placeholder="First Name"
-                defaultValue={(user) ? user.profile.name.first : ""}
+                defaultValue={(user) ? user.profile.name.first : ''}
               />
             </FormGroup>
             <FormGroup>
@@ -61,7 +69,7 @@ export const userProfileForm = (user) => {
                 ref="lastName"
                 name="lastName"
                 placeholder="Last Name"
-                defaultValue={(user) ? user.profile.name.last : ""}
+                defaultValue={(user) ? user.profile.name.last : ''}
               />
             </FormGroup>
             <FormGroup>
@@ -71,7 +79,7 @@ export const userProfileForm = (user) => {
                 ref="emailAddress"
                 name="emailAddress"
                 placeholder="Email Address"
-                defaultValue={(user) ? user.emails[0].address : ""}
+                defaultValue={(user) ? user.emails[0].address : ''}
               />
             </FormGroup>
             <FormGroup>
@@ -81,7 +89,7 @@ export const userProfileForm = (user) => {
                 ref="whMobilePhone"
                 name="whMobilePhone"
                 placeholder="10 digit number example, 8787989897"
-                defaultValue={(user) ? user.profile.whMobilePhone : ""}
+                defaultValue={(user) ? user.profile.whMobilePhone : ''}
               />
             </FormGroup>
             <FormGroup>
@@ -92,7 +100,7 @@ export const userProfileForm = (user) => {
                 name="deliveryAddress"
                 placeholder="Complete address to deliver at, including Landmark, Pincode."
                 rows="6"
-                defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ""}
+                defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ''}
               />
             </FormGroup>
             <FormGroup>
@@ -106,27 +114,32 @@ export const userProfileForm = (user) => {
             </FormGroup>
             <FormGroup>
               <ControlLabel>User Role</ControlLabel>
-              <select className='form-control' id="idUserRole" name="userRole"
-                defaultValue={(user && user.roles && user.roles[0]) ? user.roles[0] : constants.Roles.customer.name}>
+              <select
+                className="form-control"
+                id="idUserRole"
+                name="userRole"
+                defaultValue={(user && user.roles && user.roles[0]) ? user.roles[0] : constants.Roles.customer.name}
+              >
                 <option value={`${constants.Roles.admin.name}`}>{constants.Roles.admin.display_value}</option>
                 <option value={`${constants.Roles.shopOwner.name}`}>{constants.Roles.shopOwner.display_value}</option>
-                <option value={`${constants.Roles.supplier.name}`}>{constants.Roles.supplier.display_value}</option>
                 <option value={`${constants.Roles.customer.name}`}>{constants.Roles.customer.display_value}</option>
               </select>
             </FormGroup>
           </Col>
         </Row>
-        <Button type="submit" bsStyle="primary"> {(user) ? "Update Profile" : "Add New User"} </Button>
+        <Button type="submit" bsStyle="primary">
+          {' '}
+          {(user) ? 'Update Profile' : 'Add New User'}
+          {' '}
+        </Button>
       </Panel>
     </form>
 
   </div>
-  )
-}
-
+);
 
 export const getUserData = () => {
-  const password = document.querySelector('[name="password"]').value
+  const password = document.querySelector('[name="password"]').value;
 
   return ({
     username: document.querySelector('input[name="whMobilePhone"]').value,
@@ -141,13 +154,13 @@ export const getUserData = () => {
       deliveryAddress: document.querySelector('[name="deliveryAddress"]').value,
       salutation: document.querySelector('[name="salutation"]').selectedOptions[0].value,
     },
-    //isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked
+    // isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked
     role: document.querySelector('[name="userRole"]').value,
   });
-}
+};
 
 export const hookUpValidation = (callBack) => {
-  $(".userProfileForm").validate({
+  $('.userProfileForm').validate({
     rules: {
       firstName: {
         required: true,
@@ -169,7 +182,7 @@ export const hookUpValidation = (callBack) => {
       },
       deliveryAddress: {
         required: true,
-      }
+      },
     },
     messages: {
       firstName: {
@@ -188,13 +201,12 @@ export const hookUpValidation = (callBack) => {
       },
       whMobilePhone: {
         required: 'Need your mobile number.',
-        indiaMobilePhone: 'Is this a valid India mobile number?'
+        indiaMobilePhone: 'Is this a valid India mobile number?',
       },
       deliveryAddress: {
-        required: 'Need your delivery address.'
-      }
+        required: 'Need your delivery address.',
+      },
     },
-    submitHandler: function () { callBack() }
+    submitHandler() { callBack(); },
   });
-}
-
+};

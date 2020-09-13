@@ -30,7 +30,7 @@ export const OrderLayout = (props) =>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
       <Grid>{props.children}</Grid>
-      <ToolBar {...props}/>
+      <ToolBar {...props} />
     </div>
   );
 export const RecipeLayout = (props) =>
@@ -45,7 +45,7 @@ export const RecipeLayout = (props) =>
         <Navigation showEasyNav={false} {...props} />
         <Grid className="recipesApp">{props.children}</Grid>
       </ThemeProvider>
-      <ToolBar {...props}/>
+      <ToolBar {...props} />
     </div>
   );
 export const MainLayout = (props) =>
@@ -57,6 +57,6 @@ export const MainLayout = (props) =>
       </Helmet>
       <Navigation showEasyNav {...props} />
       <Grid>{props.children}</Grid>
-      <ToolBar {...props}/>
+      <ToolBar {...props} />
     </div>
   );

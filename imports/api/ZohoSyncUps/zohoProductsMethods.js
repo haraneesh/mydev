@@ -8,7 +8,7 @@ import ZohoSyncUps, { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
 
 // zoho refers to them as items
-const _createZohoItem = product => ({
+const _createZohoItem = (product) => ({
   // group_id: _getZohoGroupId(product.type),
   name: product.name, // mandatory
   description: product.description || '',
@@ -24,9 +24,9 @@ const _createZohoItem = product => ({
 const syncProductWithZoho = (prd, successResp, errorResp) => {
   const product = prd;
   const zhItem = _createZohoItem(product);
-  const r = (product.zh_item_id) ?
-          zh.updateRecord('items', product.zh_item_id, zhItem) :
-          zh.createRecord('items', zhItem);
+  const r = (product.zh_item_id)
+    ? zh.updateRecord('items', product.zh_item_id, zhItem)
+    : zh.createRecord('items', zhItem);
   if (r.code === 0 /* Success */) {
     product.zh_item_id = r.item.item_id;
     Products.update({ _id: product._id }, { $set: product });
@@ -52,10 +52,12 @@ export const bulkSyncProductsZoho = new ValidatedMethod({
     const errorResp = [];
     if (Meteor.isServer) {
       const syncDT = ZohoSyncUps.findOne({ syncEntity: syncUpConstants.products }).syncDateTime;
-      const query = { $or: [
-               { zh_item_id: { $exists: false } },
-               { updatedAt: { $gte: syncDT } },
-      ] };
+      const query = {
+        $or: [
+          { zh_item_id: { $exists: false } },
+          { updatedAt: { $gte: syncDT } },
+        ],
+      };
       const products = Products.find(query).fetch(); // change to get products updated after sync date
       products.forEach((prd) => {
         syncProductWithZoho(prd, successResp, errorResp);
@@ -71,4 +73,3 @@ rateLimit({
   limit: 5,
   timeRange: 1000,
 });
-
