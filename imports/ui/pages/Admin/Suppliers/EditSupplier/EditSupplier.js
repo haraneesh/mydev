@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
-import Suppliers from '../../../../api/Suppliers/Suppliers';
-import SupplierEditor from '../../../components/SupplierEditor/SupplierEditor';
-import NotFound from '../../Miscellaneous/NotFound/NotFound';
-import Loading from '../../../components/Loading/Loading';
+import Suppliers from '../../../../../api/Suppliers/Suppliers';
+import SupplierEditor from '../../../../components/SupplierEditor/SupplierEditor';
+import NotFound from '../../../Miscellaneous/NotFound/NotFound';
+import Loading from '../../../../components/Loading/Loading';
 
 const EditSupplier = ({ supp, loading, history }) => {
   if (loading) {

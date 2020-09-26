@@ -6,8 +6,12 @@ import { dateSettings } from '../../../modules/settings';
 
 import './Message.scss';
 
-const MessageCommentView = ({ comment, handleEditComment, isAdmin, loggedInUserId }) => {
-  const { updatedAt, description, _id, ownerName, owner } = comment;
+const MessageCommentView = ({
+  comment, handleEditComment, isAdmin, loggedInUserId,
+}) => {
+  const {
+    updatedAt, description, _id, ownerName, owner,
+  } = comment;
   const isLoggedInUserCommentOwner = (owner === loggedInUserId);
   return (
     <div key={_id}>
@@ -19,7 +23,9 @@ const MessageCommentView = ({ comment, handleEditComment, isAdmin, loggedInUserI
             </div>
           </Col>
           <Col xs={5} style={{ textAlign: 'right' }}>
-            <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small> &nbsp;
+            <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small>
+            {' '}
+&nbsp;
             {(isLoggedInUserCommentOwner || isAdmin) && (<button className="btn btn-info btn-xs" id={`id-${_id}`} onClick={() => { handleEditComment(_id); }}>edit</button>)}
           </Col>
         </Row>
@@ -32,7 +38,8 @@ const MessageCommentView = ({ comment, handleEditComment, isAdmin, loggedInUserI
           <Col xs={12} className="text-right" style={{ paddingBottom: '1.5em' }} />
         </Row>
       </div>
-    </div>);
+    </div>
+  );
 };
 
 MessageCommentView.propTypes = {

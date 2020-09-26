@@ -4,7 +4,7 @@ const accountSettings = {
 
 const dateSettings = {
   format: 'dddd, D MMM YYYY',
-  shortFormat: 'dddd, D MMM',
+  shortFormat: 'ddd, D MMM',
   zhPayDateFormat: 'YYYY-MM-DD',
   dayWithoutTime: 'DD-MM-YYYY',
   timeZone: 'Asia/Kolkata',

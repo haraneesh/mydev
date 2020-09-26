@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox } from 'react-bootstrap';
+import {
+  Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox,
+} from 'react-bootstrap';
 import { Bert } from 'meteor/themeteorchef:bert';
 import AttachIngredient from './AttachIngredient';
 import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
@@ -38,7 +40,9 @@ export const ProductTableHeader = () => (
  </thead>
 */
 
-function FieldGroup({ controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, choiceValues, displayControlName = false, ...props }) {
+function FieldGroup({
+  controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, choiceValues, displayControlName = false, ...props
+}) {
   const values = choiceValues && choiceValues.slice();
   if (values) {
     values.unshift(constants.SELECT_EMPTY_VALUE);
@@ -58,8 +62,7 @@ function FieldGroup({ controlType, controlLabel, controlName, updateValue, defau
           <option value={optionValue._id ? optionValue._id : optionValue} key={`prd-${index}`}>
             {optionValue.name ? optionValue.name : optionValue}
           </option>
-        ))
-        }
+        ))}
       </FormControl>
     </FormGroup>
   );
@@ -69,32 +72,18 @@ export default class Product extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    const { product, suppliers } = this.props;
     this.state = {
-      product: Object.assign({}, this.props.product),
+      product: { ...product },
       open: false,
-      supplierHash: this.retSupplierHash(this.props.suppliers),
+      supplierHash: this.retSupplierHash(suppliers),
     };
 
     this.handleProductUpsert = this.handleProductUpsert.bind(this);
     this.handleRemoveProduct = this.handleRemoveProduct.bind(this);
     this.handleChangeInAssocIngredient = this.handleChangeInAssocIngredient.bind(this);
     this.updateImageUrl = this.updateImageUrl.bind(this);
-  }
-
-  // Life cycle function which will check if the props are updated
-  /* UNSAFE_componentWillReceiveProps(nextProps) {
-     if (this.props.prodId !== nextProps.prodId) {
-       this.setState({
-         product: Object.assign({}, nextProps.product),
-       });
-     }
-   } */
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    /*  if (nextProps.propId !== prevState.product._id) {
-        return { product: Object.assign({}, nextProps.product) };
-      }
-      else return null; */
+    this.removeDeletedSourceSuppliers = this.removeDeletedSourceSuppliers.bind(this);
   }
 
   retSupplierHash(suppliers /* _id, name */) {
@@ -139,14 +128,14 @@ export default class Product extends React.Component {
         break;
       case 'sourceSuppliers':
         valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? [{
-          ...supplierHash[selectedValue]
+          ...supplierHash[selectedValue],
         }] : null;
         break;
       default: valueToUpdate = selectedValue;
         break;
     }
 
-    const currentValue = (product[field]) ? product[field] : "";
+    const currentValue = (product[field]) ? product[field] : '';
 
     if (valueToUpdate !== currentValue.toString()) {
       product[field] = valueToUpdate;
@@ -156,27 +145,45 @@ export default class Product extends React.Component {
   }
 
   updateImageUrl(url) {
-    const product = this.state.product;
+    const { product } = this.state;
     product.image_path = url;
     this.setState({ product });
     this.updateDatabase();
   }
 
   handleChangeInAssocIngredient(ingredient) {
-    const product = this.state.product;
+    const { product } = this.state;
     product.associatedIngredient = ingredient;
     this.setState({ product });
     this.updateDatabase();
   }
 
+  removeDeletedSourceSuppliers(suppliers) {
+    const newSuppliers = [];
+    if (suppliers) {
+      const { supplierHash } = this.state;
+      suppliers.forEach((s) => {
+        if (s && s._id) {
+          const supp = supplierHash[s._id];
+          if (supp) {
+            newSuppliers.push(s);
+          }
+        }
+      });
+    }
+    return newSuppliers;
+  }
+
   updateDatabase() {
     const confirmation = 'Product updated!';
-    const upsert = Object.assign({}, this.state.product);
+    const upsert = { ...this.state.product };
     upsert.unitprice = parseFloat(upsert.unitprice);
     upsert.wSaleBaseUnitPrice = parseFloat(upsert.wSaleBaseUnitPrice);
     upsert.maxUnitsAvailableToOrder = parseFloat(upsert.maxUnitsAvailableToOrder);
-    //upsert.displayOrder = parseFloat(upsert.displayOrder);
+    // upsert.displayOrder = parseFloat(upsert.displayOrder);
     delete upsert.displayOrder;
+
+    upsert.sourceSuppliers = this.removeDeletedSourceSuppliers(upsert.sourceSuppliers);
 
     upsertProduct.call(upsert, (error) => {
       if (error) {
@@ -189,7 +196,7 @@ export default class Product extends React.Component {
   }
 
   render() {
-    const product = this.props.product;
+    const { product } = this.props;
     return (
       <ListGroupItem>
         <Row>
@@ -240,8 +247,8 @@ export default class Product extends React.Component {
               controlName="wSaleBaseUnitPrice"
               updateValue={this.handleProductUpsert}
               defaultValue={product.wSaleBaseUnitPrice}
-              //defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
-              //choiceValues={this.props.suppliers}
+              // defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
+              // choiceValues={this.props.suppliers}
               help
             />
           </Col>
@@ -258,10 +265,10 @@ export default class Product extends React.Component {
               checked={this.state.product.displayAsSpecial}
               onChange={this.handleProductUpsert}
             >
-              {/*Display this as special? */}
+              {/* Display this as special? */}
             </Checkbox>
           </Col>
-          <Col xs={1} >
+          <Col xs={1}>
             <Button
               bsStyle="link"
               bsSize="small"
@@ -283,8 +290,8 @@ export default class Product extends React.Component {
                   controlName="maxUnitsAvailableToOrder"
                   displayControlName="true"
                   updateValue={this.handleProductUpsert}
-                  defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0) ?
-                    product.maxUnitsAvailableToOrder : ''}
+                  defaultValue={(product.maxUnitsAvailableToOrder && product.maxUnitsAvailableToOrder > 0)
+                    ? product.maxUnitsAvailableToOrder : ''}
                   help
                 />
               </Col>
@@ -299,7 +306,7 @@ export default class Product extends React.Component {
                   product.displayOrder : ''}
                 help
               />
-                </Col> 
+                </Col>
             <Col xs={3}>
                <FieldGroup
                 controlType="select"
@@ -374,8 +381,9 @@ export default class Product extends React.Component {
             <Row>
               <Col xs={1} />
               <Col xs={6}>
-                <ControlLabel>Associated with Ingredient:
-                <strong>
+                <ControlLabel>
+                  Associated with Ingredient:
+                  <strong>
                     {product.associatedIngredient ? ` ${product.associatedIngredient.Long_Desc}` : ''}
                   </strong>
                 </ControlLabel>
@@ -425,18 +433,21 @@ export default class Product extends React.Component {
                 />
               </Col>
               <Col xs={2}>
-                <ControlLabel>&nbsp;</ControlLabel><br />
+                <ControlLabel>&nbsp;</ControlLabel>
+                <br />
                 <Button
                   bsSize="small"
                   name={product._id}
                   onClick={this.handleRemoveProduct}
-                > Delete Product
-              </Button>
+                >
+                  {' '}
+                  Delete Product
+                </Button>
               </Col>
             </Row>
           </Panel>
         )}
-      </ListGroupItem >
+      </ListGroupItem>
     );
   }
 }

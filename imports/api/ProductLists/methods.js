@@ -18,15 +18,20 @@ const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   products.forEach((product) => {
     const key = product._id;
     const prod = { ...product };
-    prod.totQuantityOrdered = (currentProductHash && currentProductHash[key] && currentProductHash[key].totQuantityOrdered)
-      ? currentProductHash[key].totQuantityOrdered : 0;
+    prod.totQuantityOrdered = (
+      currentProductHash
+      && currentProductHash[key]
+      && currentProductHash[key].totQuantityOrdered
+    ) ? currentProductHash[key].totQuantityOrdered : 0;
 
     const newSupplierArray = [];
 
     if (product.sourceSuppliers) {
       product.sourceSuppliers.map((supplier) => {
         const currSupplier = Suppliers.findOne({ _id: supplier._id });
-        newSupplierArray.push(currSupplier);
+        if (currSupplier) {
+          newSupplierArray.push(currSupplier);
+        }
       });
       prod.sourceSuppliers = newSupplierArray;
     }

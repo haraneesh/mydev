@@ -7,22 +7,26 @@ import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigati
 
 import './Navigation.scss';
 
-const Navigation = props => (
+const Navigation = (props) => (
   <Navbar>
     <Navbar.Header>
-      {props.authenticated &&
+      {props.authenticated
+        && (
         <span
           id="backIcon"
           className="visible-xs-inline"
-          style={{ marginTop: '18px', marginLeft: '10px', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block' }}
+          style={{
+            marginTop: '18px', marginLeft: '10px', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block',
+          }}
         >
           <a onClick={() => { props.history.goBack(); }} href="#">
             <i className="fa fa-arrow-left" style={{ color: '#522E23' }} />
           </a>
-        </span>}
+        </span>
+        )}
 
       <Navbar.Brand>
-        <a onClick={() => { props.history.push('/'); }} style={{marginLeft: '1rem'}}>
+        <a onClick={() => { props.history.push('/'); }} style={{ marginLeft: '1rem' }}>
           <img
             className="brand-logo"
             src="/logo.png"

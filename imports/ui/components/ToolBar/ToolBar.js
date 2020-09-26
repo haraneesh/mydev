@@ -26,40 +26,40 @@ const reactVar = new ReactiveVar(
   },
 );
 
-const hideBottom = -70;
-let bottom = hideBottom;
-let intervalID = 0;
-
-function show() {
-  const toolBar = document.getElementById('toolBar');
-  document.getElementById('toolBar').style.display = 'flex';
-  bottom = parseInt(toolBar.style.bottom, 10);
-  if (bottom < 0) {
-    bottom += 10;
-    toolBar.style.bottom = `${bottom}px`;
-  } else {
-    clearInterval(intervalID);
-  }
-}
-
-function reset() {
-  clearInterval(intervalID);
-  bottom = hideBottom;
-  document.getElementById('toolBar').style.display = 'none';
-  document.getElementById('toolBar').style.bottom = `${bottom}px`;
-}
-
-function bringUp() {
-  clearInterval(intervalID);
-  intervalID = setInterval(show, 20);
-}
-
 const PreLoad = [dMessages];
 
 const ToolBar = ({
   history, countOfUnreadNotifications, authenticated, isAdmin, globalStatuses, appName,
 }) => {
   const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
+
+  const hideBottom = -70;
+  let bottom = hideBottom;
+  let intervalID = 0;
+
+  function show() {
+    const toolBar = document.getElementById('toolBar');
+    document.getElementById('toolBar').style.display = 'flex';
+    bottom = parseInt(toolBar.style.bottom, 10);
+    if (bottom < 0) {
+      bottom += 10;
+      toolBar.style.bottom = `${bottom}px`;
+    } else {
+      clearInterval(intervalID);
+    }
+  }
+
+  function reset() {
+    clearInterval(intervalID);
+    bottom = hideBottom;
+    document.getElementById('toolBar').style.display = 'none';
+    document.getElementById('toolBar').style.bottom = `${bottom}px`;
+  }
+
+  function bringUp() {
+    clearInterval(intervalID);
+    intervalID = setInterval(show, 20);
+  }
 
   useEffect(() => {
     PreLoad.forEach((component) => {

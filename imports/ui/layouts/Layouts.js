@@ -48,6 +48,7 @@ export const RecipeLayout = (props) =>
       <ToolBar {...props} />
     </div>
   );
+
 export const MainLayout = (props) =>
   // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
   (
@@ -60,3 +61,16 @@ export const MainLayout = (props) =>
       <ToolBar {...props} />
     </div>
   );
+
+export const SupplierLayout = (props) => (
+  <div>
+    <Helmet>
+      <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+    </Helmet>
+    <ThemeProvider theme={{}}>
+      <GlobalStyle />
+      <Navigation showEasyNav={false} {...props} />
+      <Grid className="supplierApp">{props.children}</Grid>
+    </ThemeProvider>
+  </div>
+);

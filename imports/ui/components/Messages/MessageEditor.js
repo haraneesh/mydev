@@ -214,12 +214,12 @@ const MessageEditor = ({
               </Col>
 
               <Row>
-                <Col xs={2} style={{ minWidth: '3em' }} className="text-center">
+                <Col xs={2} style={{ minWidth: '3em' }}>
                   <Button
                     bsStyle="link"
                     onClick={() => { setShowCamera(!showCamera); }}
                     style={{
-                      paddingLeft: '0px', paddingTop: '0px', marginLeft: '0px', fontSize: '2em',
+                      paddingTop: '0px', marginLeft: '0px', fontSize: '2em',
                     }}
                   >
                     <Icon icon="camera" />

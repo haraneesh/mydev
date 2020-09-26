@@ -4,9 +4,9 @@ import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import Suppliers from '../../../../api/Suppliers/Suppliers';
-import NotFound from '../../Miscellaneous/NotFound/NotFound';
-import Loading from '../../../components/Loading/Loading';
+import Suppliers from '../../../../../api/Suppliers/Suppliers';
+import NotFound from '../../../Miscellaneous/NotFound/NotFound';
+import Loading from '../../../../components/Loading/Loading';
 
 const handleRemove = (supplierId, history) => {
   if (confirm('Are you sure? This is permanent!')) {
@@ -39,9 +39,11 @@ const renderSupplier = (supp, match, history) => (supp ? (
       <div className="panel-body">
         <div className="col-xs-6">
           Margin:
-          </div>
+        </div>
         <div className="col-xs-6">
-          {supp && supp.marginPercentage} %
+          {supp && supp.marginPercentage}
+          {' '}
+          %
         </div>
       </div>
     </section>
@@ -69,18 +71,20 @@ const renderSupplier = (supp, match, history) => (supp ? (
     <section className="panel panel-default">
       <div className="panel-body">
         <div className="col-xs-12">
-          Description: <br />
+          Description:
+          {' '}
+          <br />
           {supp && supp.description}
         </div>
       </div>
     </section>
 
-
-
   </div>
 ) : <NotFound />);
 
-const ViewSupplier = ({ loading, supp, match, history }) => (
+const ViewSupplier = ({
+  loading, supp, match, history,
+}) => (
   !loading ? renderSupplier(supp, match, history) : <Loading />
 );
 

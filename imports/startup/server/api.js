@@ -24,9 +24,7 @@ import '../../api/Invitations/server/publications';
 
 import '../../api/Products/methods';
 import '../../api/Products/server/publications';
-
-import '../../api/Suppliers/methods';
-import '../../api/Suppliers/server/publications';
+import '../../api/Products/hooks';
 
 import '../../api/ProductLists/methods';
 import '../../api/ProductLists/server/publications';
@@ -34,6 +32,13 @@ import '../../api/ProductLists/server/publications';
 // import '../../api/Orders/jobs';
 import '../../api/Orders/methods';
 import '../../api/Orders/server/publications';
+import '../../api/Orders/hooks';
+
+import '../../api/Suppliers/methods';
+import '../../api/Suppliers/server/publications';
+
+import '../../api/SupplierOrders/server/publications';
+import '../../api/SupplierOrders/events';
 
 import '../../api/Recommendations/methods';
 import '../../api/Recommendations/server/publications';

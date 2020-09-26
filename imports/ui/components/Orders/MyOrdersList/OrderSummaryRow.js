@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Label, Glyphicon } from 'react-bootstrap';
+import {
+  Row, Col, Label, Glyphicon,
+} from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
 import orderCommon from '../../../../modules/both/orderCommon';
@@ -19,8 +21,8 @@ const showPendingInvoiceAmount = (invoiceTotals, walletBalance) => {
 };
 
 const getDisplayOrderStatus = (order_status, walletBalance) => {
-  if (walletBalance >= 0 &&
-    constants.OrderStatus[order_status].name === constants.OrderStatus.Awaiting_Payment.name) {
+  if (walletBalance >= 0
+    && constants.OrderStatus[order_status].name === constants.OrderStatus.Awaiting_Payment.name) {
     return constants.OrderStatus.Completed.name;
   }
 
@@ -28,8 +30,8 @@ const getDisplayOrderStatus = (order_status, walletBalance) => {
 };
 
 const OrderSummaryRow = ({
-    orderDate, orderAmount, userWallet,
-    invoices, order_status,
+  orderDate, orderAmount, userWallet,
+  invoices, order_status,
 }) => {
   const orderDateDisplay = getDisplayShortDate(orderDate);
   const walletBalance = calculateWalletBalanceInRs(userWallet);
@@ -65,18 +67,19 @@ const OrderSummaryRow = ({
               {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
                 <div>
                   <span className="text-muted">Pending: </span>
-                </div>) : (<div />)}
+                </div>
+              ) : (<div />)}
             </Col>
             <Col xs={12} sm={9} md={8} className="remLeftRightPad">
               {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
-                  ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
+                ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
               ) : (<div />)}
             </Col>
           </Col>
         </Col>
       </Col>
 
-      <Col xs={1} className="addSpace" >
+      <Col xs={1} className="addSpace">
         <span className="text-muted">
           <Glyphicon glyph="chevron-right" bsSize="large" />
         </span>

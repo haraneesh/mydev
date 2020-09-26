@@ -23,10 +23,14 @@ class ProductSearch extends React.Component {
   }
 
   informProductUnavailability() {
-    return (<Col xs={12}>
-      <p>
-        Oops! We are not able to find what you are looking for. You could try a different spelling or browse for it in the lists below.
-      </p> </Col>);
+    return (
+      <Col xs={12}>
+        <p>
+          Oops! We are not able to find what you are looking for.
+          You could try a different spelling or browse for it in the lists below.
+        </p>
+      </Col>
+    );
   }
 
   clear() {
@@ -37,8 +41,8 @@ class ProductSearch extends React.Component {
 
   render() {
     const { searchString } = this.state;
-    const searchResults = (searchString !== '' && searchString.length > 2) ?
-        (this.props.getProductsMatchingSearch(searchString, 8)) : '';
+    const searchResults = (searchString !== '' && searchString.length > 2)
+      ? (this.props.getProductsMatchingSearch(searchString, 8)) : '';
 
     return (
       <div className="productOrderSearch">
@@ -52,13 +56,14 @@ class ProductSearch extends React.Component {
                   placeholder="Search & Order"
                   value={this.state.searchString}
                   onChange={this.onsearchStringChange}
-                  ref={searchBox => (this.searchBox = searchBox)}
+                  ref={(searchBox) => (this.searchBox = searchBox)}
                 />
                 <span className="input-group-addon">
                   <Glyphicon glyph="remove" onClick={this.clear} />
                 </span>
               </div>
-            )}
+            )
+}
         >
           { searchString !== '' && searchResults }
           { searchResults && searchResults.length === 0 && this.informProductUnavailability()}

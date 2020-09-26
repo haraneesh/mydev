@@ -42,7 +42,8 @@ const calculateOrderTotal = (order, productListId, userId) => {
 
     if (isShopOwner) {
       if (product.sourceSuppliers && product.sourceSuppliers.length > 0) {
-        totalBillAmount += quantity * product.wSaleBaseUnitPrice * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
+        totalBillAmount += quantity * product.wSaleBaseUnitPrice
+          * (1 + (product.sourceSuppliers[0].marginPercentage / 100));
       } else {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice;
       }
@@ -132,8 +133,6 @@ const addUpdateOrder = (order) => {
   if (response.insertedId) {
     ProductLists.update({ _id: order.productOrderListId },
       { $addToSet: { order_ids: response.insertedId } });
-
-    Emitter.emit(Events.ORDER_CREATED, { userId: loggedInUserId });
   }
   return response;
 };

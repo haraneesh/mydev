@@ -31,15 +31,21 @@ UserEvents.schema = new SimpleSchema({
     type: String,
     label: 'The user for whom the event was logged.',
   },
+  doc: {
+    type: Object,
+    label: 'Document shared by the emitter',
+    blackbox: true,
+    optional: true,
+  },
   createdAt: {
     type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },

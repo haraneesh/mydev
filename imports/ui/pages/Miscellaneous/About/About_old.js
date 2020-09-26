@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Panel, Col, Button } from 'react-bootstrap';
+import {
+  Row, Panel, Col, Button,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ContactUs from '../../../components/ContactUs/ContactUs';
 
 import './About.scss';
 
 class About extends React.Component {
-
   componentDidMount() {
-   // $('body').attr('class', 'about-body');
+    // $('body').attr('class', 'about-body');
     const bodyClassList = document.getElementsByTagName('body')[0].classList;
     bodyClassList.add('about-body');
 
@@ -25,6 +26,7 @@ class About extends React.Component {
     // const htmlClassList = document.getElementsByTagName('html')[0].classList;
     // htmlClassList.remove('aboutHtml');
   }
+
   render() {
     // <img className = "about_to_lt" src="about/to_lt.jpg"/>
     // <img className = "about_to_rt" src="about/to_rt.jpg"/>
@@ -35,7 +37,7 @@ class About extends React.Component {
         <Panel className="about-page">
           <Row className="about-section text-left">
             <Col sm={6} className="about-getOrganic text-center">
-              <h3> Best Organic & Wholesome</h3>
+              <h3> Authentic Organic & Wholesome</h3>
               <h4> Vegetables, Fruits, Groceries and products delivered home, in Chennai </h4>
               <p>100% Food - No Pesticides, No Artificial Colors, No Fillers, Non-toxic and sustainable</p>
 
@@ -57,11 +59,11 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-								Eating Natural
+                    Eating Natural
                   </h4>
                   <p>
-								Our vegetables and farm made produce have no chemical pesticides, artificial
-					  			colouring agents and additives.
+                    Our vegetables and farm made produce have no chemical pesticides, artificial
+                    colouring agents and additives.
                   </p>
                 </Col>
               </Row>
@@ -73,11 +75,11 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-								Eating Right
+                    Eating Right
                   </h4>
                   <p>
-							We can help in creating a custom Basket for you that ensures that your family eats the
-							macro and micro nutrients necessary for your family's well being.
+                    We can help in creating a custom Basket for you that ensures that your family eats the
+                    macro and micro nutrients necessary for your family's well being.
                   </p>
                 </Col>
               </Row>
@@ -89,17 +91,20 @@ class About extends React.Component {
                 </Col>
                 <Col className="describe_service" xs={12}>
                   <h4 className="name_service">
-							Eating Fresh
+                    Eating Fresh
                   </h4>
                   <p>
-							Some nutrients in fruits and vegetables start to decay right after picking.
-                      Eating fresh ensures that you get the full nutrition from food.
+                    Some nutrients in fruits and vegetables start to decay right after picking.
+                    Eating fresh ensures that you get the full nutrition from food.
                   </p>
                 </Col>
               </Row>
             </Col>
             <Col xs={12}>
-              <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link>
+              <h4>
+                You can learn more about us from
+                {' '}
+                <Link className="visionLink" to="/vision">our vision</Link>
               </h4>
             </Col>
           </Row>
@@ -107,7 +112,16 @@ class About extends React.Component {
         <Panel>
           <Row className="text-center">
             <Col xs={12}>
-              <h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h3> Create your Basket</h3>
+              <h4>
+                <span className="text-danger">
+                  {' '}
+                  <strong> New! </strong>
+                  {' '}
+                </span>
+                {' '}
+              </h4>
+              {' '}
+              <h3> Create your Basket</h3>
               <p>Create custom basket according to your liking, health goals and tips on balanced diet. We will remember your choices and ship a basket based on your preferred cycle. </p>
               <p>No more hassle of remembering to order and having to decide what is good for your family every week. </p>
             </Col>
@@ -116,7 +130,17 @@ class About extends React.Component {
 
         <Panel>
           <div className="text-center">
-            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+919361032849" className="text-primary">+91 9361032849</a> </p></h4>
+            <h4>
+              {' '}
+              <p>
+                {' '}
+                To Join the community, do send us a Whatsapp Message at
+                <br />
+                {' '}
+                <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
+                {' '}
+              </p>
+            </h4>
           </div>
         </Panel>
         <ContactUs />

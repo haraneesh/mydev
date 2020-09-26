@@ -27,17 +27,12 @@ productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a par
 const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 
 Orders.schema = new SimpleSchema({
-  sourceSupplierId: {
-    type: String,
-    label: 'Source supplier id',
-    optional: true,
-  },
   createdAt: {
     type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -86,7 +81,7 @@ Orders.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return `INV-${Random.id()}`;
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: `INV-${Random.id()}` };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -97,7 +92,9 @@ Orders.schema = new SimpleSchema({
   'onBehalf.postUserId': { type: String },
   'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   receivedFeedBack: { type: Boolean, label: 'Received customer feedback on the Order', optional: true },
-  zh_sales_type: { type: String, label: 'Zoho Sales Type', allowedValues: ['salesorder', 'deliverychallan'], optional: true },
+  zh_sales_type: {
+    type: String, label: 'Zoho Sales Type', allowedValues: ['salesorder', 'deliverychallan'], optional: true,
+  },
   zh_salesorder_id: { type: String, label: 'Corresponding Zoho Sales Order Id', optional: true },
   zh_salesorder_number: { type: String, label: 'Corresponding Zoho Sales Order Number', optional: true },
   zh_salesorder_status: { type: String, label: 'Corresponding Zoho Sales Order Status', optional: true },

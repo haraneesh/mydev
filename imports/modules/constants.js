@@ -93,7 +93,7 @@ const OrderStatus = {
   Awaiting_Fulfillment: {
     name: 'Awaiting_Fulfillment',
     display_value: 'Packing',
-    label: 'primary',
+    label: 'logo-yellow',
   },
   Awaiting_Payment: {
     name: 'Awaiting_Payment',
@@ -103,7 +103,7 @@ const OrderStatus = {
   Completed: {
     name: 'Completed',
     display_value: 'Completed',
-    label: 'primary',
+    label: 'success',
   },
   Cancelled: {
     name: 'Cancelled',

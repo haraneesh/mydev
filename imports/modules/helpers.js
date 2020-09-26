@@ -11,14 +11,20 @@ export function isCustomer(userId) {
 }
 
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
-  if (!isShopOwnerPrice) return productsArray.filter((product) => product.availableToOrder === true);
+  if (!isShopOwnerPrice) {
+    return productsArray.filter((product) => product.availableToOrder === true);
+  }
 
   const products = [];
 
   productsArray.filter((product) => product.availableToOrderWH === true).forEach((product) => {
     const prd = product;
-    if (prd.sourceSuppliers && prd.sourceSuppliers.length > 0) {
-      prd.unitprice = prd.wSaleBaseUnitPrice * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
+
+    if (prd.sourceSuppliers
+      && prd.sourceSuppliers.length > 0
+      && prd.sourceSuppliers[0].marginPercentage) {
+      prd.unitprice = prd.wSaleBaseUnitPrice
+      * (1 + (prd.sourceSuppliers[0].marginPercentage / 100));
     } else {
       prd.unitprice = prd.wSaleBaseUnitPrice;
     }
@@ -27,7 +33,6 @@ export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
       products.push(prd);
     }
   });
-
   return products;
 }
 

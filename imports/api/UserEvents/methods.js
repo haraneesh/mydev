@@ -29,12 +29,3 @@ Emitter.on(Events.NAV_PLACEORDER_LANDING, ({ userId }) => {
     },
   );
 });
-
-Emitter.on(Events.ORDER_CREATED, ({ userId }) => {
-  UserEvents.insert(
-    {
-      eventType: Events.ORDER_CREATED,
-      owner: userId,
-    },
-  );
-});

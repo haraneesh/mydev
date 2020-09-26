@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SupplierEditor from '../../../components/SupplierEditor/SupplierEditor';
+import SupplierEditor from '../../../../components/SupplierEditor/SupplierEditor';
 
 const NewSupplier = ({ history }) => (
   <div className="NewSupplier">

@@ -27,6 +27,7 @@ class About extends React.Component {
     // const htmlClassList = document.getElementsByTagName('html')[0].classList;
     // htmlClassList.remove('aboutHtml');
   }
+
   render() {
     // <img className = "about_to_lt" src="about/to_lt.jpg"/>
     // <img className = "about_to_rt" src="about/to_rt.jpg"/>
@@ -40,7 +41,7 @@ class About extends React.Component {
               <img src="about/1.jpg" width="100%" alt="food" />
             </Col>
             <Col sm={6} className="about-getOrganic text-center">
-              <h3> Organic & Natural</h3>
+              <h3> Authentic Organic & Natural</h3>
               <h4> produce delivered home, in Chennai </h4>
               <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
@@ -83,16 +84,24 @@ class About extends React.Component {
             <h3 className="page-header no-margin-no-padding"> Why Us</h3>
 
             <Col sm={3}>
-              <h3 className="dt-align">4+ Years</h3> <p> promoting organic produce</p>
+              <h3 className="dt-align">4+ Years</h3>
+              {' '}
+              <p> promoting organic produce</p>
             </Col>
             <Col sm={3}>
-              <h3 className="dt-align">8+ Years</h3> <p> Organic farmers network</p>
+              <h3 className="dt-align">8+ Years</h3>
+              {' '}
+              <p> Organic farmers network</p>
             </Col>
             <Col sm={3}>
-              <h3 className="dt-align">300+ families</h3> <p> as members</p>
+              <h3 className="dt-align">300+ families</h3>
+              {' '}
+              <p> as members</p>
             </Col>
             <Col sm={3}>
-              <h3 className="dt-align">2 times</h3> <p> a week delivery</p>
+              <h3 className="dt-align">2 times</h3>
+              {' '}
+              <p> a week delivery</p>
             </Col>
 
           </div>
@@ -101,7 +110,11 @@ class About extends React.Component {
         <Panel>
           <div>
             <Col xs={12} sm={12} className="page-header text-center no-padding">
-              <h3> <span> Our Belief - Eating Healthy Is </span> </h3>
+              <h3>
+                {' '}
+                <span> Our Belief - Eating Healthy Is </span>
+                {' '}
+              </h3>
             </Col>
             {/*
 			<Col xs={12} sm={6} className="text-center no-padding">
@@ -133,7 +146,7 @@ class About extends React.Component {
                   <h4 className="name_service">
                     Eating Natural
                   </h4>
-                  <p >
+                  <p>
                     Our vegetables and farm made produce have no chemical pesticides, no artificial
                     colouring agents and no unnecessary additives.
                   </p>
@@ -171,7 +184,10 @@ class About extends React.Component {
               </div>
             </Col>
             <Col xs={12}>
-              <h4>You can learn more about us from <Link className="visionLink" to={'/vision'}>our vision</Link>
+              <h4>
+                You can learn more about us from
+                {' '}
+                <Link className="visionLink" to="/vision">our vision</Link>
               </h4>
             </Col>
           </section>
@@ -282,7 +298,6 @@ class About extends React.Component {
 		</div>
 	</Panel>
 
-
         <Panel>
           <div>
             <Col xs={12} sm={12} className="page-header text-center no-padding">
@@ -335,7 +350,17 @@ class About extends React.Component {
 
         <Panel>
           <Col xs={12} className="text-center">
-            <h4> <p> To Join the community, do send us a Whatsapp Message at <br /> <a href="tel:+917397459010" className="text-primary">+91 7397459010</a> </p></h4>
+            <h4>
+              {' '}
+              <p>
+                {' '}
+                To Join the community, do send us a Whatsapp Message at
+                <br />
+                {' '}
+                <a href="tel:+917397459010" className="text-primary">+91 7397459010</a>
+                {' '}
+              </p>
+            </h4>
           </Col>
         </Panel>
 

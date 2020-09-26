@@ -25,6 +25,13 @@ export default class Security {
     }
   }
 
+  static checkBoolUserIsShopOwner(userId) {
+    if (!this.hasRole(userId, constants.Roles.shopOwner.name)) {
+      return false;
+    }
+    return true;
+  }
+
   static checkBoolUserIsSupplier(userId) {
     if (!this.hasRole(userId, constants.Roles.supplier.name)) {
       return false;
