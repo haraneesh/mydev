@@ -41,7 +41,7 @@ class About extends React.Component {
               <img src="about/1.jpg" width="100%" alt="food" />
             </Col>
             <Col sm={6} className="about-getOrganic text-center">
-              <h3> Authentic Organic & Natural</h3>
+              <h3> Organic & Natural</h3>
               <h4> produce delivered home, in Chennai </h4>
               <p>No Pesticides, No Artificial Colors, No Fillers, Non-toxic and Sustainable</p>
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
