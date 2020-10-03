@@ -49,11 +49,6 @@ const DropDownStyles = styled.div`
 `;
 
 const TabViewStyles = styled.div`
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 0;
-    z-index: var(--stick-zIndex);
-
     margin-top:1rem;
     margin-bottom:1rem;
 

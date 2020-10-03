@@ -20,26 +20,26 @@ const IngredientSelector = ({
   };
 
   useEffect(() => {
-    const ingredientListTemp = {};
+    const ingListHash = {};
     ingredients.forEach((ingredient) => {
-      ingredientListTemp[ingredient._id] = ingredient;
+      ingListHash[ingredient._id] = ingredient;
     });
 
-    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
+    sortAndSetIngredientsByDisplayOrder(ingListHash);
   }, []);
 
   const removeIngredient = (ingredient /* ingredient */) => {
-    const ingredientListTemp = { ...ingredientList };
-    delete ingredientListTemp[ingredient._id];
-    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
-    updateIngredientList(ingredientListTemp);
+    const ingListHash = { ...ingredientList.ingListHash };
+    delete ingListHash[ingredient._id];
+    sortAndSetIngredientsByDisplayOrder(ingListHash);
+    updateIngredientList(ingListHash);
   };
 
   const addIngredient = (ingredient /* ingredient */) => {
-    const ingredientListTemp = { ...ingredientList };
-    ingredientListTemp[ingredient._id] = ingredient;
-    sortAndSetIngredientsByDisplayOrder(ingredientListTemp);
-    updateIngredientList(ingredientListTemp);
+    const ingListHash = { ...ingredientList.ingListHash };
+    ingListHash[ingredient._id] = ingredient;
+    sortAndSetIngredientsByDisplayOrder(ingListHash);
+    updateIngredientList(ingListHash);
   };
 
   return (

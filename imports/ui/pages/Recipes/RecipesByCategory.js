@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Bert } from 'meteor/themeteorchef:bert';
-import { Panel, Row, Col, Button } from 'react-bootstrap';
+import {
+  Panel, Row, Col, Button,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import DropDownMenu from '../../components/DropDownMenu/DropDownMenu';
 import Loading from '../../components/Loading/Loading';
@@ -12,7 +14,7 @@ import { RecipeImageViewThumbnail } from '../../components/ImageUpload/ImageUplo
 import './RecipesHome.scss';
 
 const recipeImageSection = (cloudImageId, classname) => (
-  <Col xs={12} sm={6} className={classname} style={{ backgroundColor: 'beige' }}>
+  <Col xs={12} sm={6} className={classname} style={{ backgroundColor: '#f0f0f0' }}>
     <RecipeImageViewThumbnail cloudImageId={cloudImageId} />
   </Col>
 );
@@ -122,7 +124,7 @@ function RecipesByCategory(args) {
       <DropDownMenu
         title={RecipeCat[categoryTag].displayName}
         menuItems={RecipeCat}
-        menuItemKeys={RecipeCat.names}
+        menuItemKeys={RecipeCat.viewNames}
         history={history}
         initializeNewCategory={initializeNewCategory}
         selectedItemKey={RecipeCat[categoryTag].name}

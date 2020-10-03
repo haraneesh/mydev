@@ -50,7 +50,7 @@ const recipePublishSchema = new SimpleSchema({
     label: 'Ingredient Id',
   },
   'ingredients.$.measure': {
-    type: Number,
+    type: String,
     label: 'Ingredient Measure',
   },
   'ingredients.$.displayOrder': {

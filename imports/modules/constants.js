@@ -25,6 +25,7 @@ const RecipeCat = {
 
 RecipeCat.names = Object.keys(RecipeCat).map((cat) => RecipeCat[cat].name);
 RecipeCat.displayNames = Object.keys(RecipeCat).map((cat) => RecipeCat[cat].displayName);
+RecipeCat.viewNames = ['breakfast', 'plantmilk', 'beverage'];
 
 const FoodGroups = {
   greens: { name: 'greens', displayName: 'Greens' },

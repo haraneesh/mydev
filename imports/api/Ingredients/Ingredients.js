@@ -7,7 +7,7 @@ const Ingredients = new Mongo.Collection('Ingredients');
 
 if (Meteor.isServer) {
   Ingredients.rawCollection().createIndex({ name: 1 }, { unique: true });
-  Ingredients.rawCollection().createIndex({ name: 'text', description: 'text' }, { unique: true });
+  Ingredients.rawCollection().createIndex({ name: 'text', description: 'text' });
 }
 
 Ingredients.allow({
@@ -31,11 +31,12 @@ Ingredients.schema = new SimpleSchema({
     type: String,
     label: 'Product Id',
   },
-  createdAt: { type: Date,
+  createdAt: {
+    type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -54,6 +55,5 @@ Ingredients.schema = new SimpleSchema({
     optional: true,
   },
 });
-
 
 export default Ingredients;

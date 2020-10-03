@@ -129,12 +129,12 @@ const ToolBar = ({
           )}
         </Button>
       </div>
-      {/* <div className="box box2">
+      <div className="box box2">
         <Button bsStyle="link" onClick={() => { history.push('/recipes'); }}>
           <Icon icon="utensils" />
           <span style={fontProps}>Recipes</span>
         </Button>
-    </div> */}
+      </div>
       <div className="box box3">
         <Button bsStyle="link" onClick={() => { history.push('/'); }}>
           <Icon icon="home" type="glyph" />

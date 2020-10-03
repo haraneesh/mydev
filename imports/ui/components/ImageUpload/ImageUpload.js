@@ -103,7 +103,7 @@ export const RecipeImageViewHero = ({ cloudImageId }) => (
     publicId={`recipes/${cloudImageId}`}
     crop="scale"
     style={{
-      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
+      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%', height: '20em',
     }}
   >
     <Placeholder type="predominant" />

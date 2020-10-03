@@ -89,7 +89,7 @@ class ViewRecipe extends React.Component {
               <ol>
                 {recipe.ingredients.map((ing, index) => (
                   <li key={`ingredient-${index}`} style={{ paddingTop: '3px' }}>
-                    {`${ing.name} ${ing.measure} ${ing.unit}`}
+                    {`${ing.measure} ${ing.unit} ${constants.UnitOfRecipes[ing.name].display_name}`}
                   </li>
                 ))}
               </ol>
@@ -98,7 +98,7 @@ class ViewRecipe extends React.Component {
 
           <Panel>
             <h4 style={{ padding: '0 1rem' }}>Instructions</h4>
-            <div className="panel-body">
+            <div className="panel-body" style={{ paddingLeft: '1.5em' }}>
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>
           </Panel>

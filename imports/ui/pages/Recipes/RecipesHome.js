@@ -23,7 +23,7 @@ const catNameSection = (name, displayName, recipeCount, index) => (
   <Col xs={12} sm={4} className="text-center">
     <div className={`catName catName${index}`}>
       <h4>{displayName.toUpperCase()}</h4>
-      <h4><small>{`${(recipeCount) || 0} recipes`}</small></h4>
+      {/* <h4><small>{`${(recipeCount) || 0} recipes`}</small></h4> */}
     </div>
   </Col>
 );
@@ -62,7 +62,7 @@ const RecipesHome = ({ history }) => {
 
   const isAdmin = isLoggedInUserAdmin();
   const { RecipeCat } = constants;
-  const recipeCatNames = constants.RecipeCat.names;
+  const recipeCatNames = constants.RecipeCat.viewNames;
 
   return (!isLoading ? (
     <div className="RecipesHome">
@@ -83,8 +83,7 @@ const RecipesHome = ({ history }) => {
         </Col>
       </Row>
       {
-        recipeCatNames.map((name, index) => 
-          (recipeHomeCategoryRow(name, RecipeCat[name].displayName, recipeCounts[name], index)))
+        recipeCatNames.map((name, index) => (recipeHomeCategoryRow(name, RecipeCat[name].displayName, recipeCounts[name], index)))
       }
     </div>
   ) : <Loading />);
@@ -93,6 +92,5 @@ const RecipesHome = ({ history }) => {
 RecipesHome.propTypes = {
   history: PropTypes.object.isRequired,
 };
-
 
 export default RecipesHome;

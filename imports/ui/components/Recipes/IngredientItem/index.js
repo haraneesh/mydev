@@ -31,7 +31,8 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
     const displayOrderEntered = parseFloat(inputDisplayOrder.current.value);
 
     ingredientTemp.unit = inputIngUnit.current.value;
-    ingredientTemp.measure = parseFloat(inputIngMeasure.current.value);
+    // ingredientTemp.measure = parseFloat(inputIngMeasure.current.value);
+    ingredientTemp.measure = inputIngMeasure.current.value;
     ingredientTemp.displayOrder = (displayOrderEntered) || 0;
 
     if (ingredientTemp.unit !== '' && ingredientTemp.measure !== '') {
@@ -66,7 +67,6 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
         <Col xs={5} className="rowRightSpacing">
           <ControlLabel>Quantity</ControlLabel>
           <input
-            type="number"
             className="form-control"
             ref={inputIngMeasure}
           // onClick={amountOfIng}
