@@ -72,7 +72,7 @@ const ToolBar = ({
   const totalProductsInCount = cartState.newCartCountOfItems;
 
   useEffect(() => {
-    if (appName !== 'messages') {
+    /* if (appName !== 'messages') {
       const reactVarTemp = reactVar.get();
       if (globalStatuses && globalStatuses.lastVisitedMessageApp
         && (reactVarTemp.lastFetchDateTime.toUTCString()
@@ -81,7 +81,7 @@ const ToolBar = ({
           lastFetchDateTime: globalStatuses.lastVisitedMessageApp,
         });
       }
-    }
+    } */
   });
 
   // element should be replaced with the actual target element on
@@ -176,7 +176,14 @@ ToolBar.propTypes = {
   countOfUnreadNotifications: PropTypes.bool,
 };
 
-const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
+export default withTracker((args) => ({
+  history: args.history,
+  loading: false,
+  countOfUnreadNotifications: 0,
+}))(ToolBar);
+
+/*
+ const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
 
 export default withTracker((args) => {
   const reactVarTemp = reactVar.get();
@@ -187,4 +194,4 @@ export default withTracker((args) => {
     loading: !subscription.ready(),
     countOfUnreadNotifications: CountOfMessages.find({}).fetch().length,
   };
-})(ToolBar);
+})(ToolBar); */

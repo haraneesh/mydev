@@ -24,7 +24,7 @@ const GlobalStyle = createGlobalStyle`
     --brand-danger:          #EF0905;
     --brand-logo-yellow:     #FFB800;
 
-    --stick-zIndex: 999999;
+    --stick-zIndex: 1000;
   }
 
   body{

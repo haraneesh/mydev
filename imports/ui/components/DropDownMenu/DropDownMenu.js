@@ -67,8 +67,8 @@ const DropDownMenu = ({
     ? (
       <DropDownStyles>
         <DropdownButton
-          bsStyle="info"
-          title={`Show ${title} `}
+          bsStyle="default"
+          title={`${title} `}
           id="dropdown-basic"
         >
           {

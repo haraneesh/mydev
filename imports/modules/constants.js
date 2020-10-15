@@ -161,13 +161,17 @@ const DaysFromTodayForward = {
 };
 
 const UnitOfRecipes = {
+  Nos: {
+    name: 'Nos',
+    display_value: '',
+  },
   TeaSpoons: {
     name: 'TeaSpoons',
-    display_value: 'tea spoons',
+    display_value: 'tea spoon',
   },
   Cups: {
     name: 'Cups',
-    display_value: 'cups',
+    display_value: 'cup',
   },
   Ml: {
     name: 'Ml',
@@ -183,7 +187,7 @@ const UnitOfRecipes = {
   },
   Grams: {
     name: 'Grams',
-    display_value: 'grams',
+    display_value: 'gram',
   },
 };
 

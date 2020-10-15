@@ -89,7 +89,7 @@ class ViewRecipe extends React.Component {
               <ol>
                 {recipe.ingredients.map((ing, index) => (
                   <li key={`ingredient-${index}`} style={{ paddingTop: '3px' }}>
-                    {`${ing.measure} ${ing.unit} ${constants.UnitOfRecipes[ing.name].display_name}`}
+                    {`${ing.measure} ${constants.UnitOfRecipes[ing.unit].display_value} ${ing.name}`}
                   </li>
                 ))}
               </ol>

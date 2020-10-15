@@ -88,7 +88,7 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
             {
             constants.UnitOfRecipes.names.map((name) => (
               <option value={name} key={name}>
-                { constants.UnitOfRecipes[name].display_value }
+                { name }
               </option>
             ))
           }
