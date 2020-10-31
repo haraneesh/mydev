@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
-import { Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab } from 'react-bootstrap';
+import {
+  Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab,
+} from 'react-bootstrap';
 import Product, { ProductTableHeader } from './Product';
 import { upsertProductList } from '../../../api/ProductLists/methods';
 
@@ -78,7 +80,7 @@ class ListAllProducts extends React.Component {
 
   publishProductList() {
     if (this.state.showEndDateError) {
-      Bert.alert('Your dates are not quiet right, do correct them and publish', 'danger');
+      toast.error('Your dates are not quiet right, do correct them and publish');
       return;
     }
 
@@ -90,10 +92,10 @@ class ListAllProducts extends React.Component {
 
     Meteor.call('productLists.upsert', params, (error) => {
       if (error) {
-        Bert.alert(error.reason || error.message, 'danger');
+        toast.error(error.reason || error.message);
       } else {
         const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
-        Bert.alert(successMsg, 'success');
+        toast.success(successMsg);
       }
     });
   }
@@ -126,7 +128,7 @@ class ListAllProducts extends React.Component {
         </Row>
         <Row>
           <Col xs={12}>
-            <Button bsStyle="primary" onClick={this.publishProductList}> Publish Product List </Button>
+            <Button bsStyle="primary" onClick={() => { this.publishProductList(); }}> Publish Product List </Button>
           </Col>
         </Row>
       </ListGroupItem>
@@ -140,30 +142,32 @@ class ListAllProducts extends React.Component {
   render() {
     let sectionCount = 0;
     const productsDisplay = [];
-    const productRows = this.state.productRows;
+    const { productRows } = this.state;
     const productKeys = Object.keys(productRows);
-    const selectedHeaderKey = this.state.selectedHeaderKey;
+    const { selectedHeaderKey } = this.state;
 
     return (
-      productKeys.length > 0 ?
-        <ListGroup className="product-list">
-          {productKeys.forEach((key) => {
-            sectionCount++;
-            productsDisplay.push(
-              <Tab eventKey={sectionCount} title={key}>
-                {(sectionCount === selectedHeaderKey) && productRows[key]}
-              </Tab>);
-          })}
+      productKeys.length > 0
+        ? (
+          <ListGroup className="product-list">
+            {productKeys.forEach((key) => {
+              sectionCount++;
+              productsDisplay.push(
+                <Tab eventKey={sectionCount} title={key}>
+                  {(sectionCount === selectedHeaderKey) && productRows[key]}
+                </Tab>,
+              );
+            })}
 
-          <Tabs animation={false} id="adminProductList" activeKey={selectedHeaderKey} onSelect={this.tabOnClick}>
-            {productsDisplay}
-          </Tabs>
+            <Tabs animation={false} id="adminProductList" activeKey={selectedHeaderKey} onSelect={this.tabOnClick}>
+              {productsDisplay}
+            </Tabs>
 
-          <hr />
-          {this.publishSection()}
-        </ListGroup>
-        :
-        <Alert bsStyle="info">The product list is empty. You can add products by typing in the name of the product in the above box.</Alert>
+            <hr />
+            {this.publishSection()}
+          </ListGroup>
+        )
+        : <Alert bsStyle="info">The product list is empty. You can add products by typing in the name of the product in the above box.</Alert>
     );
   }
 }

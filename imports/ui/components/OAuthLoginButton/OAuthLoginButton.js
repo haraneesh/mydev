@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
 
 import './OAuthLoginButton.scss';
@@ -31,9 +31,13 @@ const handleLogin = (service, callback) => {
 };
 
 const serviceLabel = {
-  facebook: <span><Icon icon="facebook-official" /> Log In with Facebook</span>,
-  //github: <span><Icon icon="github" /> Log In with GitHub</span>,
-  //google: <span><Icon icon="google" /> Log In with Google</span>,
+  facebook: <span>
+    <Icon icon="facebook-official" />
+    {' '}
+    Log In with Facebook
+            </span>,
+  // github: <span><Icon icon="github" /> Log In with GitHub</span>,
+  // google: <span><Icon icon="google" /> Log In with Google</span>,
 };
 
 const OAuthLoginButton = ({ service, callback }) => (
@@ -48,7 +52,9 @@ const OAuthLoginButton = ({ service, callback }) => (
 
 OAuthLoginButton.defaultProps = {
   callback: (error) => {
-    if (error) Bert.alert(error.message, 'danger');
+    if (error) {
+      toast.error(error.message);
+    }
   },
 };
 

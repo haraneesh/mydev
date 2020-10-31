@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Panel, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
 import Loading from '../../components/Loading/Loading';
 import UserSignUps from '../../../api/Users/UserSignUps';
@@ -19,48 +19,60 @@ class ApproveSignUps extends React.Component {
 
     Meteor.call('users.approveSignUp', usr._id, status, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else if (status === 'Approve') {
-        Bert.alert(approveSuccessMessage, 'success');
+        toast.success(approveSuccessMessage);
       } else {
-        Bert.alert(rejectSuccessMessage, 'success');
+        toast.success(rejectSuccessMessage);
       }
-    },
-);
+    });
   }
 
   render() {
-    const loading = this.props.loading;
-    const userSignUps = this.props.userSignUps;
+    const { loading } = this.props;
+    const { userSignUps } = this.props;
 
-    return (!loading ? <div className="ShowUserSignUps">
-      <div className="page-header clearfix">
-        <h3 className="pull-left">Users Requested to Join Suvai</h3>
+    return (!loading ? (
+      <div className="ShowUserSignUps">
+        <div className="page-header clearfix">
+          <h3 className="pull-left">Users Requested to Join Suvai</h3>
+        </div>
+
+        { userSignUps.map((user) => (
+          <Panel className="user">
+            <Col xs={12}>
+              Name:
+              <strong>{`${user.profile.name.first} ${user.profile.name.last}`}</strong>
+            </Col>
+            <Col xs={12}>
+              Created At:
+              <strong>{user.createdAt}</strong>
+            </Col>
+            <Col xs={12}>
+              Phone Number:
+              {' '}
+              <strong>{user.profile.whMobilePhone}</strong>
+            </Col>
+            <Col xs={12}>
+              Email:
+              {' '}
+              <strong>{user.email}</strong>
+            </Col>
+            <Col xs={12}>
+              Delivery Address:
+              {' '}
+              <strong>{user.profile.deliveryAddress}</strong>
+            </Col>
+            <Col xs={12}>
+              <Button bsStyle="primary" onClick={() => { this.handleSubmit(user, 'Approve'); }}> Approve </Button>
+              {' '}
+&nbsp;
+              <Button onClick={() => { this.handleSubmit(user, 'Reject'); }}> Reject </Button>
+            </Col>
+          </Panel>
+        ))}
       </div>
-
-      { userSignUps.map(user => (
-        <Panel className="user" >
-          <Col xs={12}>Name: <strong>{`${user.profile.name.first} ${user.profile.name.last}`}</strong></Col>
-          <Col xs={12}>Created At: <strong>{user.createdAt}</strong>
-          </Col>
-          <Col xs={12}>
-            Phone Number: <strong>{user.profile.whMobilePhone}</strong>
-          </Col>
-          <Col xs={12}>
-            Email: <strong>{user.email}</strong>
-          </Col>
-          <Col xs={12}>
-            Delivery Address: <strong>{user.profile.deliveryAddress}</strong>
-          </Col>
-          <Col xs={12}>
-            <Button bsStyle="primary" onClick={() => { this.handleSubmit(user, 'Approve'); }}> Approve </Button> &nbsp;
-            <Button onClick={() => { this.handleSubmit(user, 'Reject'); }}> Reject </Button>
-          </Col>
-        </Panel>
-        ),
-      )
-      }
-    </div> : <Loading />);
+    ) : <Loading />);
   }
 }
 
@@ -77,4 +89,3 @@ export default withTracker((args) => {
     userSignUps: UserSignUps.find({}).fetch(),
   };
 })(ApproveSignUps);
-

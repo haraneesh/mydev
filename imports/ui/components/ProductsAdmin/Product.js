@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox,
 } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import AttachIngredient from './AttachIngredient';
 import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
 import constants from '../../../modules/constants';
@@ -101,9 +101,9 @@ export default class Product extends React.Component {
         _id: productId,
       }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert('Product removed!', 'info');
+          toast.success('Product removed!', 'info');
         }
       });
     }
@@ -188,9 +188,9 @@ export default class Product extends React.Component {
     upsertProduct.call(upsert, (error) => {
       if (error) {
         const errReason = (error.reason) ? error.reason : error.message;
-        Bert.alert(errReason, 'danger');
+        toast.error(errReason);
       } else {
-        Bert.alert(confirmation, 'info');
+        toast.success(confirmation, 'info');
       }
     });
   }

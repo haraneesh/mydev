@@ -78,9 +78,12 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        // user not authorized. do not publish secrets
+      // user not authorized. do not publish secrets
         handleMethodException('Access denied', 401);
       }
+
+      console.log('------------');
+      console.log(`1 ${new Date()}`);
 
       const startDate = params.activeStartDateTime;
       const endDate = params.activeEndDateTime;
@@ -95,13 +98,15 @@ Meteor.methods({
         }
         orderableProducts = updateWithTotQuantityOrdered(orderableProducts);
       } else {
+        console.log(`ID ${productListsId}`);
         const currentProductList = ProductLists.findOne({ _id: productListsId });
         const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
           map[obj._id] = obj;
           return map;
         }, {});
-
+        console.log(`2 ${new Date()}`);
         orderableProducts = updateWithTotQuantityOrdered(orderableProducts, currentProductHashMap);
+        console.log(`3 ${new Date()}`);
       }
 
       const productList = {
@@ -110,7 +115,10 @@ Meteor.methods({
         products: orderableProducts,
       };
 
-      ProductLists.upsert({ _id: productListsId }, { $set: productList });
+      // ProductLists.upsert({ _id: productListsId }, { $set: productList });
+      console.log(`Product List ${JSON.stringify(productList)}`);
+      ProductLists.insert(productList);
+      console.log(`4 ${new Date()}`);
     }
   },
 });

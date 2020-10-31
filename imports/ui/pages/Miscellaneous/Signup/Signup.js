@@ -1,9 +1,11 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Panel, Row, Col, FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import {
+  Panel, Row, Col, FormGroup, ControlLabel, Button,
+} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
@@ -108,18 +110,18 @@ class Signup extends React.Component {
     if (match.params.token) {
       acceptInvitation.call({ user, token: match.params.token }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
+          toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
           history.push('/');
         }
       });
     } else {
       Meteor.call('users.signUp', user, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert(`Welcome ${this.firstName.value} ${this.lastName.value}!`, 'success');
+          toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
           this.setState({
             signUpRequestSent: true,
           });
@@ -131,11 +133,12 @@ class Signup extends React.Component {
   render() {
     const { signUpRequestSent } = this.state;
 
-    return (!signUpRequestSent ? (<div className="Signup">
-      <div>
-        <Col xs={12} sm={6} md={5} lg={4}>
-          <h3 className="page-header">Sign Up</h3>
-          { /* <Row>
+    return (!signUpRequestSent ? (
+      <div className="Signup">
+        <div>
+          <Col xs={12} sm={6} md={5} lg={4}>
+            <h3 className="page-header">Sign Up</h3>
+            { /* <Row>
             <Col xs={12}>
               <OAuthLoginButtons
                 services={['facebook']}
@@ -146,89 +149,94 @@ class Signup extends React.Component {
               />
             </Col>
           </Row> */ }
-          <form ref={form => (this.form = form)} onSubmit={event => event.preventDefault()}>
-            <Row>
-              <Col xs={6}>
-                <FormGroup>
-                  <ControlLabel>First Name</ControlLabel>
-                  <input
-                    type="text"
-                    name="firstName"
-                    ref={firstName => (this.firstName = firstName)}
-                    className="form-control"
-                  />
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
-                <FormGroup>
-                  <ControlLabel>Last Name</ControlLabel>
-                  <input
-                    type="text"
-                    name="lastName"
-                    ref={lastName => (this.lastName = lastName)}
-                    className="form-control"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <FormGroup>
-              <ControlLabel>Email Address</ControlLabel>
-              <input
-                type="email"
-                name="emailAddress"
-                ref={emailAddress => (this.emailAddress = emailAddress)}
-                className="form-control"
-              />
-            </FormGroup>
+            <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
+              <Row>
+                <Col xs={6}>
+                  <FormGroup>
+                    <ControlLabel>First Name</ControlLabel>
+                    <input
+                      type="text"
+                      name="firstName"
+                      ref={(firstName) => (this.firstName = firstName)}
+                      className="form-control"
+                    />
+                  </FormGroup>
+                </Col>
+                <Col xs={6}>
+                  <FormGroup>
+                    <ControlLabel>Last Name</ControlLabel>
+                    <input
+                      type="text"
+                      name="lastName"
+                      ref={(lastName) => (this.lastName = lastName)}
+                      className="form-control"
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <FormGroup>
+                <ControlLabel>Email Address</ControlLabel>
+                <input
+                  type="email"
+                  name="emailAddress"
+                  ref={(emailAddress) => (this.emailAddress = emailAddress)}
+                  className="form-control"
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <ControlLabel>Mobile Number</ControlLabel>
-              <input
-                type="text"
-                ref={whMobilePhone => (this.whMobilePhone = whMobilePhone)}
-                name="whMobilePhone"
-                placeholder="10 digit number example, 8787989897"
-                className="form-control"
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Delivery Address</ControlLabel>
-              <textarea
-                ref={deliveryAddress => (this.deliveryAddress = deliveryAddress)}
-                name="deliveryAddress"
-                placeholder="Complete address to deliver at, including Landmark, Pincode."
-                rows="6"
-                className="form-control"
-              />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Password</ControlLabel>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                ref={password => (this.password = password)}
-                className="form-control"
-              />
-              <InputHint>Use at least six characters.</InputHint>
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>Confirm Password</ControlLabel>
-              <input
-                type="password"
-                name="confirmPassword"
-                ref={confirmPassword => (this.confirmPassword = confirmPassword)}
-                className="form-control"
-              />
-            </FormGroup>
-            <Button type="submit" bsStyle="primary">Sign Up</Button>
-            <AccountPageFooter>
-              <p>Already have an account? <Link to="/login" className="login-singup">Log In</Link>.</p>
-            </AccountPageFooter>
-          </form>
-        </Col>
+              <FormGroup>
+                <ControlLabel>Mobile Number</ControlLabel>
+                <input
+                  type="text"
+                  ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
+                  name="whMobilePhone"
+                  placeholder="10 digit number example, 8787989897"
+                  className="form-control"
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Delivery Address</ControlLabel>
+                <textarea
+                  ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
+                  name="deliveryAddress"
+                  placeholder="Complete address to deliver at, including Landmark, Pincode."
+                  rows="6"
+                  className="form-control"
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Password</ControlLabel>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  ref={(password) => (this.password = password)}
+                  className="form-control"
+                />
+                <InputHint>Use at least six characters.</InputHint>
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Confirm Password</ControlLabel>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
+                  className="form-control"
+                />
+              </FormGroup>
+              <Button type="submit" bsStyle="primary">Sign Up</Button>
+              <AccountPageFooter>
+                <p>
+                  Already have an account?
+                  <Link to="/login" className="login-singup">Log In</Link>
+                  .
+                </p>
+              </AccountPageFooter>
+            </form>
+          </Col>
+        </div>
       </div>
-    </div>) : (
+    ) : (
       <Panel style={{ marginTop: '1.5em' }}>
         <Row className="text-center">
           <Col xs={12}>

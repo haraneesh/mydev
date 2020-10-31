@@ -1,8 +1,10 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Button, Row, Table, Col, Panel, Glyphicon } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import {
+  Button, Row, Table, Col, Panel, Glyphicon,
+} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
 import './ListCreditNotes.scss';
@@ -24,36 +26,36 @@ class ListCreditNotes extends React.Component {
     Meteor.call('creditNotes.getCreditNotes',
       (error, creditNotes) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          // toast.error(error.reason);
+          toast.error(error.reason);
         } else {
           this.setState({
             creditNotes,
             isCreditNotesLoading: false,
           });
         }
-      },
-    );
+      });
   }
 
   fetchCreditNote(creditNoteId) {
     Meteor.call('creditNotes.getCreditNote', creditNoteId,
       (error, creditNote) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          // toast.error(error.reason);
+          toast.error(error.reason);
         } else {
           this.setState({
             creditNoteDetail: creditNote,
           });
         }
-      },
-    );
+      });
   }
 
   refundDetails(creditNoteDetail) {
     return (
       <section className="refund-section">
         {
-          creditNoteDetail.line_items.map(item => (
+          creditNoteDetail.line_items.map((item) => (
             <Row className="refund-item">
               <Col xs={8}>{item.name}</Col>
               <Col xs={4}>{getFormattedMoney(item.item_total)}</Col>
@@ -65,8 +67,8 @@ class ListCreditNotes extends React.Component {
   }
 
   render() {
-    const creditNotes = this.state.creditNotes;
-    const creditNoteDetail = this.state.creditNoteDetail;
+    const { creditNotes } = this.state;
+    const { creditNoteDetail } = this.state;
     return !this.state.isCreditNotesLoading ? (
       <Panel>
 
@@ -74,7 +76,8 @@ class ListCreditNotes extends React.Component {
                     <Button type="button" onClick={this.fetchCreditNotes}>Show Refunds</Button>
                 </Row>
                 */}
-        {creditNotes.length > 0 && (<Col xs={12}>
+        {creditNotes.length > 0 && (
+        <Col xs={12}>
           <Row className="refund-heading">
             <Col xs={5}><b>Refund Date</b></Col>
             <Col xs={5}><b>Refund Amount</b></Col>
@@ -102,7 +105,13 @@ class ListCreditNotes extends React.Component {
         </Col>
         )}
       </Panel>
-    ) : (<Panel> <button className="btn btn-sm btn-default" onClick={this.fetchCreditNotes}> Fetch Refund History </button> </Panel>);
+    ) : (
+      <Panel>
+        {' '}
+        <button className="btn btn-sm btn-default" onClick={this.fetchCreditNotes}> Fetch Refund History </button>
+        {' '}
+      </Panel>
+    );
   }
 }
 

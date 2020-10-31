@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   FormGroup, FormControl, Button, ButtonToolbar, Row, Col,
 } from 'react-bootstrap';
@@ -46,11 +46,11 @@ const RecipeEditor = ({ recipe, history }) => {
     const upsertRecipe = (updPublishStatus === constants.PublishStatus.Published.name) ? upsertRecipePublish : upsertRecipeDraft;
     upsertRecipe.call(updRecipe, (error, msg) => {
       if (error) {
-        Bert.alert(error.message, 'danger');
+        toast.error(error.message);
       } else if (!silentUpdate) {
         const { insertedId } = msg;
         const message = 'Changes to Recipe have been Saved!';
-        Bert.alert(message, 'success');
+        toast.success(message);
         if (updPublishStatus === constants.PublishStatus.Published.name) {
           history.push('/recipes');
         } else {
@@ -76,9 +76,9 @@ const RecipeEditor = ({ recipe, history }) => {
     if (confirm('Are you sure, you want to delete the recipe? This is permanent!')) {
       removeRecipe.call({ recipeId: recipe._id }, (err) => {
         if (err) {
-          Bert.alert(err.reason, 'danger');
+          toast.error(err.reason);
         } else {
-          Bert.alert('Recipe deleted!', 'success');
+          toast.success('Recipe deleted!');
           history.push('/recipes/');
         }
       });
@@ -105,7 +105,7 @@ const RecipeEditor = ({ recipe, history }) => {
       recipeId: recipe._id, imageUrl, thumbNailUrl, imageId,
     }), (error, msg) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         setImageProps({
           imageUrl,

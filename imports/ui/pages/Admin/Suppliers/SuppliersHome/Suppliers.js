@@ -6,7 +6,7 @@ import {
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import SuppliersCollection from '../../../../../api/Suppliers/Suppliers';
 import Loading from '../../../../components/Loading/Loading';
 
@@ -16,9 +16,9 @@ const handleRemove = (supplierId) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('suppliers.remove', supplierId, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Supplier deleted!', 'success');
+        toast.success('Supplier deleted!');
       }
     });
   }

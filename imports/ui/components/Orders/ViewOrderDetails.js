@@ -1,5 +1,7 @@
 import React from 'react';
-import { Row, Col, Label, Pager, Panel } from 'react-bootstrap';
+import {
+  Row, Col, Label, Pager, Panel,
+} from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import moment from 'moment';
 import 'moment-timezone';
@@ -22,7 +24,7 @@ class ViewOrderDetails extends React.Component {
   }
 
   render() {
-    const order = this.props.order;
+    const { order } = this.props;
     return (
       <div className="ViewOrderDetails ">
         <div className="page-header">
@@ -51,14 +53,22 @@ class ViewOrderDetails extends React.Component {
               <ViewOrderProducts products={order.products} />
             </div>
             <div>
-              <Col xs={12}> <strong> Comments </strong></Col>
-              <Col xs={12}> {order.comments} </Col>
+              <Col xs={12}>
+                {' '}
+                <strong> Comments </strong>
+              </Col>
+              <Col xs={12}>
+                {' '}
+                {order.comments}
+                {' '}
+              </Col>
             </div>
           </div>
           <div className="panel-footer">
             <Row>
               <Col xs={12} className="text-right">
-                Amount:<strong>
+                Amount:
+                <strong>
                   {'  '}
                   {formatMoney(order.total_bill_amount, accountSettings)}
                   {' '}

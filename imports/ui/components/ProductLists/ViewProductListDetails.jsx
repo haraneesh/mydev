@@ -1,10 +1,13 @@
 import React from 'react';
-import { Row, Col, Label, Pager, Panel } from 'react-bootstrap';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import {
+  Row, Col, Label, Pager, Panel,
+  ButtonToolbar, Button,
+} from 'react-bootstrap';
+
+import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers';
 import { removeProductList } from '../../../api/ProductLists/methods';
-import { Bert } from 'meteor/themeteorchef:bert';
-import PropTypes from 'prop-types';
 import constants from '../../../modules/constants';
 
 function FieldGroup({ label, value }) {
@@ -25,9 +28,15 @@ const ViewProductListProducts = ({ products }) => (
   <div className="view-product-list-details">
     <h4> Products </h4>
     {
-      products.map(product => (
+      products.map((product) => (
         <Col xs={12} key={product._id}>
-          <p className="lead" ><strong> { product.name } </strong></p>
+          <p className="lead">
+            <strong>
+              {' '}
+              { product.name }
+              {' '}
+            </strong>
+          </p>
           <FieldGroup label="SKU" value={product.sku} />
           <FieldGroup label="Unit of Sale" value={product.unitOfSale} />
           <FieldGroup label="Unit Price" value={product.unitprice} />
@@ -36,14 +45,12 @@ const ViewProductListProducts = ({ products }) => (
           <FieldGroup label="Max Orderable Units" value={product.maxUnitsAvailableToOrder} />
           <FieldGroup label="Total Units Ordered" value={product.totQuantityOrdered} />
         </Col>
-        ),
-      )
+      ))
     }
   </div>
 );
 
 class ViewProductListDetails extends React.Component {
-
   constructor(props, context) {
     super(props, context);
 
@@ -53,14 +60,13 @@ class ViewProductListDetails extends React.Component {
     this.state = { productList: this.props.productList };
   }
 
-
   handleRemove(_id) {
     if (confirm('Are you sure about deleting this Product List? This is permanent!')) {
       removeProductList.call({ _id }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert('Product List deleted!', 'success');
+          toast.success('Product List deleted!');
           this.props.history.push('/productLists');
         }
       });
@@ -73,10 +79,11 @@ class ViewProductListDetails extends React.Component {
 
   displayDeleteProductListButton(productListStatus, productListId) {
     if (productListStatus != constants.ProductListStatus.Expired.name) {
-      return (<ButtonToolbar className="pull-right">
-        <Button bsSize="small" onClick={() => this.handleEdit(productListId)} className="btn-primary">Edit</Button>
-        <Button bsSize="small" onClick={() => this.handleRemove(productListId)} className="btn">Delete</Button>
-      </ButtonToolbar>
+      return (
+        <ButtonToolbar className="pull-right">
+          <Button bsSize="small" onClick={() => this.handleEdit(productListId)} className="btn-primary">Edit</Button>
+          <Button bsSize="small" onClick={() => this.handleRemove(productListId)} className="btn">Delete</Button>
+        </ButtonToolbar>
       );
     }
   }
@@ -87,7 +94,7 @@ class ViewProductListDetails extends React.Component {
   }
 
   render() {
-    const productList = this.props.productList;
+    const { productList } = this.props;
     const productListStatus = getProductListStatus(productList.activeStartDateTime, productList.activeEndDateTime);
     return (
       <div className="ViewProductListDetails ">

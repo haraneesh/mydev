@@ -1,14 +1,19 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast, Slide } from 'react-toastify';
 import Root from '../../ui/apps/Root';
 // import * as serviceWorker from './serviceWorker';
 
 import '../../ui/stylesheets/application.scss';
 
-Bert.defaults.style = 'growl-top-left';
-Bert.defaults.type = 'default';
+toast.configure({
+  position: toast.POSITION.TOP_CENTER,
+  autoClose: 3000,
+  pauseOnHover: true,
+  transition: Slide,
+  hideProgressBar: true,
+});
 
 Meteor.startup(() => {
   if ('serviceWorker' in navigator) {

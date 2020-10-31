@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   Panel, Row, Col, Button,
 } from 'react-bootstrap';
@@ -48,7 +48,7 @@ const RecipesHome = ({ history }) => {
   useEffect(() => {
     Meteor.call('recipes.countByCategory', (error, success) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         const rcpCounts = [];
         success.forEach((row) => {

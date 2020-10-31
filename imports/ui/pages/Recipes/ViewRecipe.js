@@ -5,7 +5,7 @@ import { Editor, EditorState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
 import { Button, Panel, Col } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Recipes from '../../../api/Recipes/Recipes';
 import constants from '../../../modules/constants';
 import { removeRecipe } from '../../../api/Recipes/methods';
@@ -38,9 +38,9 @@ class ViewRecipe extends React.Component {
     if (confirm('Are you sure, you want to delete the recipe? This is permanent!')) {
       removeRecipe.call({ recipeId: _id }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert('Recipe deleted!', 'success');
+          toast.success('Recipe deleted!');
           this.props.history.push('/recipes');
         }
       });

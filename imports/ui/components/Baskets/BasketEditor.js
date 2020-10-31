@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
 import { Col, Button } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import constants from '../../../modules/constants';
 import { ListProducts, createProductHash } from './BasketCommon';
 
@@ -34,7 +34,9 @@ const getDeletedProductsHash = (allProductsArray, productsHashInBasket) => {
   };
 };
 
-const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => {
+const BasketEditor = ({
+  history, basketDetails, allProducts, loggedInUser,
+}) => {
   const refName = useRef();
   const refDescription = useRef();
   const allProductHash = createProductHash(allProducts);
@@ -78,10 +80,10 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
     if (validateBasket(basket)) {
       Meteor.call(methodToCall, basket, (error, succ) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           const confirmation = basketDetails._id ? 'Basket is updated' : 'New Basket was created';
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
           history.goBack();
         }
       });
@@ -90,12 +92,12 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
 
   const validateBasket = ({ name, products }) => {
     if (name.length <= 0) {
-      Bert.alert('A basket name is mandatory', 'warning');
+      toast.warn('A basket name is mandatory');
       return false;
     }
 
     if (products.length <= 0) {
-      Bert.alert('Please select some products to include in Basket', 'warning');
+      toast.warn('Please select some products to include in Basket');
       return false;
     }
     return true;
@@ -106,8 +108,13 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
       <h3 className="page-header">{basketDetails._id ? 'Update Basket' : 'New Basket'}</h3>
       <div className="panel panel-default">
         <section className="panel-body">
-          <Col xs={12} style={{ display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px' }}>
-            <Col xs={5} >
+          <Col
+            xs={12}
+            style={{
+              display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px',
+            }}
+          >
+            <Col xs={5}>
               <p className="noMarginNoPadding">Name</p>
             </Col>
             <Col xs={8} className="noMarginNoPadding">
@@ -121,8 +128,13 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
               />
             </Col>
           </Col>
-          <Col xs={12} style={{ display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px' }}>
-            <Col xs={5} >
+          <Col
+            xs={12}
+            style={{
+              display: 'flex', alignItems: 'center', paddingLeft: '10px', marginBottom: '10px',
+            }}
+          >
+            <Col xs={5}>
               <p className="noMarginNoPadding">Description</p>
             </Col>
             <Col xs={8} className="noMarginNoPadding">
@@ -151,7 +163,10 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
           </Col>
         </section>
       </div>
-      <div style={{ position: 'fixed', bottom: '0px', backgroundColor: '#fff', width: '100%', zIndex: '9999', left: '-2px' }} >
+      <div style={{
+        position: 'fixed', bottom: '0px', backgroundColor: '#fff', width: '100%', zIndex: '9999', left: '-2px',
+      }}
+      >
         <Col xsOffset={1} xs={10} smOffset={3} sm={6}>
           <Button
             className="btn-block btn-primary"
@@ -163,7 +178,7 @@ const BasketEditor = ({ history, basketDetails, allProducts, loggedInUser }) => 
           </Button>
         </Col>
       </div>
-    </div >
+    </div>
   );
 };
 

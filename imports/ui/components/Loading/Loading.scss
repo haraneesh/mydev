@@ -8,6 +8,7 @@
   top: 0px;
   left: 0px;
   animation: moverLeft 2s ease infinite;
+  z-index: 999;
 }
 
 @-webkit-keyframes moverLeft {

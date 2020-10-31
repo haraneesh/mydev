@@ -1,10 +1,9 @@
-import $ from 'jquery';
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar,
 } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { Roles } from 'meteor/alanning:roles';
 import Product from '../Product';
 import { isLoggedInUserAdmin } from '../../../../modules/helpers';
@@ -55,9 +54,9 @@ const ProductsOrderMain = (props) => {
       updateMyOrderStatus.call(order, (error) => {
         const confirmation = 'This Order has been cancelled.';
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
           history.push('/');
         }
       });
@@ -96,9 +95,9 @@ const ProductsOrderMain = (props) => {
     upsertOrder.call(order, (error) => {
       const confirmation = 'Your Order has been placed';
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert(confirmation, 'success');
+        toast.success(confirmation);
         cartDispatch({ type: cartActions.emptyCart });
         history.push('/');
       }

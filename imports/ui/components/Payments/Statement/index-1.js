@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import { Row, Table, Col, Panel } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { pdfjs, Document, Page } from 'react-pdf';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
@@ -52,7 +52,7 @@ const ShowStatement = () => {
     }, (error, xlsFile) => {
       setIsLoading(false);
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         // let strToByteArr = stringToBytes(xlsFile);
         // setPdfFile(new Uint8Array(xlsFile));

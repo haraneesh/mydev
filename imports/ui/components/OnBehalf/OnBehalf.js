@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { Col } from 'react-bootstrap';
 import constants from '../../../modules/constants';
 
@@ -15,12 +15,13 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
       const mobileNumber = current.value;
       Meteor.call('users.find', { mobileNumber }, (error, user) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          // toast.error(error.reason);
+          toast.error(error.reason);
         } else {
-          if (!user){
-            Bert.alert('No user was found','warning');
+          if (!user) {
+            toast.warn('No user was found');
             return;
-          } 
+          }
           const onBehalfUserTemp = { ...onBehalfUser };
           onBehalfUserTemp.user = user;
           setOnBehalfUser(onBehalfUserTemp);
@@ -49,7 +50,12 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
       <Col xs={8} sm={6} style={{ paddingRight: '0px' }}>
         <input id="onBehalfUserId" className="form-control" placeholder="user phone number" ref={refOnBehalfMemberPhone} />
         { onBehalfUser.user.profile && (
-          <h4><b>{`${onBehalfUser.user.profile.name.first} ${onBehalfUser.user.profile.name.last}`} </b></h4>
+          <h4>
+            <b>
+              {`${onBehalfUser.user.profile.name.first} ${onBehalfUser.user.profile.name.last}`}
+              {' '}
+            </b>
+          </h4>
         )}
 
         {(!onBehalfUser.user.profile && showMandatoryFields) && <span className="text-danger"> Find the user who placed the order </span>}
@@ -64,7 +70,7 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
       <Col xs={8} sm={6} style={{ paddingRight: '0px' }}>
         <select id="onBehalfReceived" name="onBehalfReceivedType" className="form-control" onChange={onOrderReceivedTypeChange}>
           <option value="" />
-          {constants.OrderReceivedType.allowedValues.map(typ => (
+          {constants.OrderReceivedType.allowedValues.map((typ) => (
             <option key={typ} value={typ}>{constants.OrderReceivedType[typ].display_value}</option>
           ))}
         </select>
@@ -89,4 +95,3 @@ OnBehalf.propTypes = {
 };
 
 export default OnBehalf;
-

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { Panel } from 'react-bootstrap';
 import ViewOrderDetails from '../../../components/Orders/ViewOrderDetails';
 import ViewInvoicedOrderDetails from '../../../components/Orders/ViewInvoicedOrderDetails';
@@ -64,7 +64,7 @@ const EditOrderDetails = ({
       Meteor.call('getProductList.view', productListId,
         (error, prdList) => {
           if (error) {
-            Bert.alert(error.reason, 'danger');
+            toast.error(error.reason);
           } else {
             updateCart({
               orderId: order._id, products: order.products, comments: order.comments, basketId: order.basketId || '',

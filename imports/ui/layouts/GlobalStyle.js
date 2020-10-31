@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components';
-import { lighten, darken } from 'polished';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -9,12 +8,12 @@ const GlobalStyle = createGlobalStyle`
     --github: var(--gray-dark);
 
     --gray-base:              #493934; // #151515 ;
-    --gray-darker:            ${darken(0.05, '#493934')};
-    --gray-dark:              ${darken(0.15, '#493934')};
-    --gray:                   ${lighten(0.35, '#493934')};
-    --gray-light:             ${lighten(0.45, '#493934')};
-    --gray-lighter:           ${lighten(0.55, '#493934')};
-    --gray-lightText:        #fff ;
+    --gray-darker:            #453631; 
+    --gray-dark:              #3e302c; 
+    --gray:                   #97776d 
+    --gray-light:             #a78c83;
+    --gray-lighter:           #b7a19a;
+    --gray-lightText:         #fff ;
     
     --brand-primary:         #e47277; 
     --brand-default:         #522E23; 
@@ -51,7 +50,7 @@ const GlobalStyle = createGlobalStyle`
   .btn-primary.active.focus, .open > .btn-primary.dropdown-toggle:hover, 
   .open > .btn-primary.dropdown-toggle:focus, 
   .open > .btn-primary.dropdown-toggle.focus {
-    background-color:  ${darken(0.05, '#e47277')};
+    background-color: #e47277;
   }
 
   .btn-success, .btn-success:active:hover, 

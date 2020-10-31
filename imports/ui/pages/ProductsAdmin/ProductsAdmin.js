@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Row, Col } from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import InsertProduct from '../../components/ProductsAdmin/InsertProduct';
 import UploadPrices from '../../components/ProductsAdmin/UploadPrices';
 import ListAllProducts from '../../components/ProductsAdmin/ListAllProducts';
@@ -17,7 +17,7 @@ const ProductsAdmin = (args) => {
     setIsLoadingSuppliers(true);
     Meteor.call('suppliers.list', (error, supplierss) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         setSuppliers(supplierss);
       }

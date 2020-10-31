@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import { Row, Table, Col, Panel } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
 const ListPayments = () => {
@@ -14,7 +14,7 @@ const ListPayments = () => {
       (error, paymentss) => {
         setIsLoading(false);
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           setPayments(paymentss);
         }

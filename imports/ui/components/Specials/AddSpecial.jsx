@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Button, FormGroup, FormControl } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { upsertSpecialDraft } from '../../../api/Specials/methods';
 import constants from '../../../modules/constants';
 
@@ -11,7 +11,7 @@ const addNewSpecial = () => {
   };
   upsertSpecialDraft.call(special, (error, msg) => {
     if (error) {
-      Bert.alert(error.reason, 'danger');
+      toast.error(error.reason);
     }
   });
 };

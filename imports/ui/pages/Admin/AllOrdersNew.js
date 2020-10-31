@@ -6,7 +6,7 @@ import autoBind from 'react-autobind';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Pagination from 'react-js-pagination';
 import { Row, Col } from 'react-bootstrap';
 import constants from '../../../modules/constants';
@@ -52,7 +52,7 @@ class AllOrders extends React.Component {
   fetchOrderCount(search) {
     Meteor.call('admin.fetchOrderCount', (error, response) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         this.setState({ ...response });
       }

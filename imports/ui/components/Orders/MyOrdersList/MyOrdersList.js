@@ -2,7 +2,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   ListGroup, ListGroupItem, Alert, Tabs, Tab,
 } from 'react-bootstrap';
@@ -40,7 +40,8 @@ export default class MyOrderList extends React.Component {
   checkAndSyncUserWallet() {
     Meteor.call('users.getUserWallet', {}, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // toast.error(error.reason);
+        toast.error(error.reason);
       }
     });
   }
@@ -70,9 +71,9 @@ export default class MyOrderList extends React.Component {
 
     Meteor.call(methodToCall, fB, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Thank you for your feedback', 'success');
+        toast.success('Thank you for your feedback');
       }
     });
   }
@@ -97,9 +98,9 @@ export default class MyOrderList extends React.Component {
 
     Meteor.call(methodToCall, fB, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Thank you for your feedback', 'success');
+        toast.success('Thank you for your feedback');
       }
     });
   }

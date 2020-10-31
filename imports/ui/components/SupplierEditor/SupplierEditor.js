@@ -7,7 +7,7 @@ import {
   FormGroup, FormControl, ControlLabel, Button,
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import validate from '../../../modules/validate';
 
 class SupplierEditor extends React.Component {
@@ -109,11 +109,11 @@ class SupplierEditor extends React.Component {
 
     Meteor.call(methodToCall, supp, (error, supplierId) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         const confirmation = existingSupplier ? 'Supplier updated!' : 'Supplier added!';
         this.form.reset();
-        Bert.alert(confirmation, 'success');
+        toast.success(confirmation);
         history.push(`/suppliers/${supplierId}`);
       }
     });

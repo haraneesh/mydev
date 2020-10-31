@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   Panel, Row, Col, Button,
 } from 'react-bootstrap';
@@ -75,7 +75,7 @@ function RecipesByCategory(args) {
       isCategory: RecipeCat.names.indexOf(categoryTag) > -1,
     }), (error, dataList) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         const tempdisplayList = [...displayList];
         showLoadMoreButton = dataList.count > 0;

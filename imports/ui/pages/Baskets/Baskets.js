@@ -6,7 +6,7 @@ import {
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import BasketsCollection from '../../../api/Baskets/Baskets';
 import Loading from '../../components/Loading/Loading';
 
@@ -14,9 +14,9 @@ const handleRemove = (basketId) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('baskets.remove', basketId, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Basket deleted!', 'success');
+        toast.success('Basket deleted!');
       }
     });
   }

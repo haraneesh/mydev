@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Alert } from 'react-bootstrap';
 import { Roles } from 'meteor/alanning:roles';
@@ -36,7 +36,7 @@ const PlaceNewOrder = ({
       }
     });
 
-    Bert.alert(`${productCount} products were added to cart from basket.`, 'success');
+    toast.success(`${productCount} products were added to cart from basket.`);
   };
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const PlaceNewOrder = ({
       Meteor.call('baskets.getOne', basketId,
         (error, basketDetails) => {
           if (error) {
-            Bert.alert(error.reason, 'danger');
+            toast.error(error.reason);
           } else {
             updateNewCart(basketDetails.products, products, basketId);
             setIsLoading(false);

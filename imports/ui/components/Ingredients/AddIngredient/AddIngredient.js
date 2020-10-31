@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Glyphicon, Button } from 'react-bootstrap';
+import {
+  Row, Col, Glyphicon, Button,
+} from 'react-bootstrap';
 import autoBind from 'react-autobind';
 import Autosuggest from 'react-autosuggest';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 
 import './AddIngredient.scss';
 
@@ -60,7 +62,8 @@ export default class AddIngredient extends React.Component {
     this.lastRequestId = setTimeout(() => {
       Meteor.call('ingredients.find', { searchString: value }, (error, result) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          // toast.error(error.reason);
+          toast.error(error.reason);
         } else {
           this.setState({
             suggestions: result,
@@ -73,7 +76,8 @@ export default class AddIngredient extends React.Component {
   addIngredient() {
     Meteor.call('ingredients.add', { ingredientName: this.state.value }, (error, result) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // toast.error(error.reason);
+        toast.error(error.reason);
       } else {
         this.setState({
           value: '',
@@ -91,23 +95,25 @@ export default class AddIngredient extends React.Component {
       onChange: this.onChange,
     };
 
-    return (<Row>
-      <Col xs={10}>
-        <Autosuggest
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={this.getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          inputProps={inputProps}
-        />
-      </Col>
-      <Col xs={2} className="text-center" style={{ paddingTop: '0.7rem' }}>
-        <Button bsSize="xsmall" onClick={this.addIngredient}>
-          <i className="fa fa-plus" />
-        </Button>
-      </Col>
-    </Row>);
+    return (
+      <Row>
+        <Col xs={10}>
+          <Autosuggest
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+            getSuggestionValue={this.getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+          />
+        </Col>
+        <Col xs={2} className="text-center" style={{ paddingTop: '0.7rem' }}>
+          <Button bsSize="xsmall" onClick={this.addIngredient}>
+            <i className="fa fa-plus" />
+          </Button>
+        </Col>
+      </Row>
+    );
   }
 }
 

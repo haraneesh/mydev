@@ -1,14 +1,15 @@
 import React from 'react';
 import {
-  Panel, Col, FormGroup, ControlLabel, Button,
+  Col, FormGroup, ControlLabel, Button,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
+
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
-import validate from '../../../../modules/validate';
+import { formValid, formValChange } from '../../../../modules/validate';
 
 const showPasswordButtonPositions = {
   position: 'absolute',
@@ -18,56 +19,54 @@ const showPasswordButtonPositions = {
   float: 'right',
 };
 
+const defaultState = {
+  isError: {
+    whMobilePhone: '',
+    password: '',
+  },
+  showPassword: false,
+};
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showPassword: false,
-    };
+    this.state = { ...defaultState };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.switchPasswordBox = this.switchPasswordBox.bind(this);
+    this.validateForm = this.validateForm.bind(this);
+    this.onValueChange = this.onValueChange.bind(this);
   }
 
-  componentDidMount() {
-    const component = this;
-
-    validate(component.form, {
-      rules: {
-        mobilePhone: {
-          required: true,
-          indiaMobilePhone: true,
-        },
-        password: {
-          required: true,
-        },
-      },
-      messages: {
-        mobilePhone: {
-          required: 'Need your mobile number.',
-          indiaMobilePhone: 'Is this a valid India mobile number?',
-        },
-        password: {
-          required: 'Need a password here.',
-        },
-      },
-      submitHandler() { component.handleSubmit(); },
-    });
+  onValueChange(e) {
+    e.preventDefault();
+    const { isError } = this.state;
+    const newState = formValChange(e, { ...isError });
+    this.setState(newState);
   }
 
   handleSubmit() {
-    const username = { username: this.mobilePhone.value };
+    const username = { username: this.whMobilePhone.value };
     const password = this.password.value;
 
     Meteor.loginWithPassword(username, password, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'warning');
+        toast.warn(error.reason);
       } else {
-        Bert.alert(`Welcome ${getLoggedInUserDisplayUserName()}`, 'success');
-        this.setState({
-          loggedIn: true,
-        });
+        toast.success(`Welcome ${getLoggedInUserDisplayUserName()}`);
       }
     });
+  }
+
+  validateForm(e) {
+    e.preventDefault();
+
+    const { isError } = this.state;
+
+    if (formValid({ isError })) {
+      this.handleSubmit();
+    } else {
+      this.setState({ isError });
+    }
   }
 
   switchPasswordBox() {
@@ -75,22 +74,27 @@ class Login extends React.Component {
   }
 
   render() {
+    const { isError } = this.state;
     return (
       <div className="Login Absolute-Center is-Responsive">
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Log In</h3>
-          <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
-            <FormGroup>
+          <form onSubmit={this.validateForm}>
+            <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
               <ControlLabel>Mobile Number</ControlLabel>
               <input
                 type="text"
-                name="mobilePhone"
-                ref={(mobilePhone) => (this.mobilePhone = mobilePhone)}
+                name="whMobilePhone"
+                ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
                 className="form-control"
                 placeholder="10 digit number example, 8787989897"
+                onBlur={this.onValueChange}
               />
+              {isError.whMobilePhone.length > 0 && (
+              <span className="control-label">{isError.whMobilePhone}</span>
+              )}
             </FormGroup>
-            <FormGroup style={{ position: 'relative' }}>
+            <FormGroup validationState={isError.password.length > 0 ? 'error' : ''} style={{ position: 'relative' }}>
               <ControlLabel className="clearfix">
                 <span className="pull-left">Password</span>
                 <Link className="pull-right" to="/recover-password">Forgot password?</Link>
@@ -101,10 +105,14 @@ class Login extends React.Component {
                 ref={(password) => (this.password = password)}
                 className="form-control"
                 placeholder="Password"
+                onBlur={this.onValueChange}
               />
               <Button className="btn-xs btn-info" onClick={this.switchPasswordBox} style={showPasswordButtonPositions}>
                 {this.state.showPassword ? 'Hide' : 'Show'}
               </Button>
+              {isError.password.length > 0 && (
+              <span className="control-label">{isError.password}</span>
+              )}
             </FormGroup>
             <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
             <AccountPageFooter>

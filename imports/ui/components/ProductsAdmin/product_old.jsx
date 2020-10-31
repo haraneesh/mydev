@@ -27,9 +27,9 @@ const handleUpdateProductName = (productId, event) => {
       update: { name },
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.rror(error.reason)
       } else {
-        Bert.alert('Name updated!', 'success')
+        toast.success('Name updated!')
       }
     })
   }
@@ -44,9 +44,9 @@ const handleUpdateProductUnitPrice = (productId, event) => {
       update: { unitprice },
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.error(error.reason)
       } else {
-        Bert.alert('Price updated!', 'success')
+        toast.success('Price updated!')
       }
     })
   }
@@ -60,9 +60,9 @@ const handleUpdateProductDescription = (productId, event) => {
       update: { description },
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.error(error.reason)
       } else {
-        Bert.alert('Description updated!', 'success')
+        toast.success('Description updated!')
       }
     })
   }
@@ -76,9 +76,9 @@ const handleUpdateProductSKU = (productId, event) => {
       update: { sku },
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.error(error.reason)
       } else {
-        Bert.alert('Sku updated!', 'success')
+        toast.success('Sku updated!')
       }
     })
   }
@@ -92,9 +92,9 @@ const handleUpdateProductType = (productId, event) =>{
         update:{type}
     }, (error) =>{
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.error(error.reason)
       } else {
-        Bert.alert('Type updated!', 'success')
+        toast.success('Type updated!')
       }
     })
   }
@@ -111,9 +111,9 @@ function handleRemoveProduct (productId, event) {
       _id: productId,
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger')
+        toast.error(error.reason)
       } else {
-        Bert.alert('Product removed!', 'success')
+        toast.success('Product removed!')
       }
     })
   }
@@ -183,10 +183,10 @@ function handleRemoveProduct (productId, event) {
 
       upsertProduct.call(upsert, (error, { insertedId }) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           component.documentEditorForm.reset();
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
           }
       });
   }

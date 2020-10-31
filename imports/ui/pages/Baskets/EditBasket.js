@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Products from '../../../api/Products/Products';
 import BasketEditor from '../../components/Baskets/BasketEditor';
 import Loading from '../../components/Loading/Loading';
@@ -17,7 +17,7 @@ const renderBasket = ({ products, basketId, history, loggedInUser }) => {
       Meteor.call('baskets.getOne', basketId,
         (error, existingBasket) => {
           if (error) {
-            Bert.alert(error.reason, 'danger');
+            toast.error(error.reason);
           } else {
             setBasket(existingBasket);
             setIsBasketLoading(false);

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Panel, Row, Col, Button } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import {
+  Panel, Row, Col, Button,
+} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
 import Loading from '../../../components/Loading/Loading';
 
@@ -21,14 +23,14 @@ export default class ReportsHome extends React.Component {
     if (!this.state.loading) {
       Meteor.call('reports.generateDaysSummary', (error, success) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           const rowsDetails = Object.values(success);
           if (rowsDetails.length > 0) {
             createDaysSummaryReport(rowsDetails);
           } else {
             const message = 'There are no orders in Awaiting Fullfilment status';
-            Bert.alert(message, 'default');
+            toast.success(message, 'default');
           }
         }
         this.setState({

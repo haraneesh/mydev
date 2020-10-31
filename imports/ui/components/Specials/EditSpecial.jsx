@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Button, ButtonToolbar, Panel, Row, Col } from 'react-bootstrap';
+import {
+  FormGroup, Button, ButtonToolbar, Panel, Row, Col,
+} from 'react-bootstrap';
 import RichTextEditor, { EditorValue } from 'react-rte';
 import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import constants from '../../../modules/constants';
 import { upsertSpecialDraft, upsertSpecialPublish, removeSpecial } from '../../../api/Specials/methods';
 import FieldGroup from '../Common/FieldGroup';
-
 
 export default class EditSpecial extends React.Component {
   constructor(props, context) {
@@ -28,8 +29,12 @@ export default class EditSpecial extends React.Component {
       editorValue = new EditorValue(editorState);
     }
 
-    const { _id, title, description, imageUrl, displayOrder, colorTheme } = special;
-    this.special = { _id, title, description, imageUrl, displayOrder, colorTheme };
+    const {
+      _id, title, description, imageUrl, displayOrder, colorTheme,
+    } = special;
+    this.special = {
+      _id, title, description, imageUrl, displayOrder, colorTheme,
+    };
 
     this.state = {
       value: (editorValue) || RichTextEditor.createEmptyValue(),
@@ -49,9 +54,9 @@ export default class EditSpecial extends React.Component {
     if (confirm('Are you sure, you want to delete this special announcement? This is permanent!')) {
       removeSpecial.call({ specialId: this.props.special._id }, (err) => {
         if (err) {
-          Bert.alert(err.reason, 'danger');
+          toast.error(err.reason);
         } else {
-          Bert.alert('Special Announcement has been deleted!', 'success');
+          toast.success('Special Announcement has been deleted!');
         }
       });
     }
@@ -66,14 +71,14 @@ export default class EditSpecial extends React.Component {
   }
 
   updateSpecial(special, publishStatus) {
-    const upsertSpecial = (publishStatus === constants.PublishStatus.Published.name) ?
-      upsertSpecialPublish : upsertSpecialDraft;
+    const upsertSpecial = (publishStatus === constants.PublishStatus.Published.name)
+      ? upsertSpecialPublish : upsertSpecialDraft;
     upsertSpecial.call(special, (error, msg) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         const message = `Changes to Special Announcement ${this.props.special.title} have been Saved!`;
-        Bert.alert(message, 'success');
+        toast.success(message);
       }
     });
   }
@@ -87,9 +92,13 @@ export default class EditSpecial extends React.Component {
           <Panel className="card">
             <Row>
               <Col xs={12}>
-                <h4 className={`label ${label}`}>Status {special.publishStatus}</h4>
+                <h4 className={`label ${label}`}>
+                  Status
+                  {' '}
+                  {special.publishStatus}
+                </h4>
               </Col>
-              <Col sm={6} >
+              <Col sm={6}>
                 <FormGroup>
                   <FieldGroup
                     controlType="text"
@@ -103,7 +112,7 @@ export default class EditSpecial extends React.Component {
                 <div className="view-specials-image" style={{ backgroundImage: `url('${special.imageUrl}')` }} />
 
               </Col>
-              <Col sm={6} >
+              <Col sm={6}>
                 <Row>
                   <Col sm={12}>
 
@@ -154,12 +163,12 @@ export default class EditSpecial extends React.Component {
               </Col>
             </Row>
 
-            <ButtonToolbar >
-              <Button bsSize="small" className="pull-right" type="submit" bsStyle="primary" onClick={event => this.saveOrUpdateSpecial(event, constants.PublishStatus.Published.name)}>
+            <ButtonToolbar>
+              <Button bsSize="small" className="pull-right" type="submit" bsStyle="primary" onClick={(event) => this.saveOrUpdateSpecial(event, constants.PublishStatus.Published.name)}>
                 Save and Publish
               </Button>
 
-              <Button bsSize="small" className="pull-right" type="submit" onClick={event => this.saveOrUpdateSpecial(event, constants.PublishStatus.Draft.name)}>
+              <Button bsSize="small" className="pull-right" type="submit" onClick={(event) => this.saveOrUpdateSpecial(event, constants.PublishStatus.Draft.name)}>
                 Save as Draft
               </Button>
 

@@ -1,9 +1,8 @@
 import React from 'react';
 import {
-  Row, Col, FormGroup, Panel, Checkbox, ControlLabel, FormControl, Button,
+  Row, Col, FormGroup, Panel, ControlLabel, FormControl, Button,
 } from 'react-bootstrap';
-import '../../../modules/validate';
-import { Roles } from 'meteor/alanning:roles';
+import { formValid } from '../../../modules/validate';
 import constants from '../../../modules/constants';
 
 export const findUserForm = (callBack) => (
@@ -13,7 +12,6 @@ export const findUserForm = (callBack) => (
         <ControlLabel>User's Phone number</ControlLabel>
         <FormControl
           type="text"
-          ref="mobileNumber"
           name="mobileNumber"
           placeholder="User's mobile phone number"
         />
@@ -23,7 +21,14 @@ export const findUserForm = (callBack) => (
   </Row>
 );
 
-export const userProfileForm = (user) => (
+const validateForm = (e, isError, callBack) => {
+  e.preventDefault();
+  if (formValid({ isError })) {
+    callBack();
+  }
+};
+
+export const userProfileForm = (user, isError, onValueChange, callBack) => (
   <div className="updateProfile">
     <h4>
       {' '}
@@ -31,7 +36,7 @@ export const userProfileForm = (user) => (
       {' '}
     </h4>
     <form
-      onSubmit={(event) => { event.preventDefault(); }}
+      onSubmit={(event) => { validateForm(event, isError, callBack); }}
       key={(user) ? user.username : 'new'}
       name="updateProfileForm"
       className="userProfileForm"
@@ -43,7 +48,6 @@ export const userProfileForm = (user) => (
               <ControlLabel>Salutation</ControlLabel>
               <select
                 name="salutation"
-                ref={(salutation) => (this.salutation = salutation)}
                 className="form-control"
                 defaultValue={(user && user.profile.salutation) ? user.profile.salutation : ''}
               >
@@ -52,65 +56,83 @@ export const userProfileForm = (user) => (
                 <option value="Miss"> Miss</option>
               </select>
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
               <ControlLabel>First Name</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 type="text"
-                ref="firstName"
                 name="firstName"
                 placeholder="First Name"
                 defaultValue={(user) ? user.profile.name.first : ''}
               />
+              {isError.firstName.length > 0 && (
+              <span className="control-label">{isError.firstName}</span>
+              )}
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
               <ControlLabel>Last Name</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 type="text"
-                ref="lastName"
                 name="lastName"
                 placeholder="Last Name"
                 defaultValue={(user) ? user.profile.name.last : ''}
               />
+              {isError.lastName.length > 0 && (
+              <span className="control-label">{isError.lastName}</span>
+              )}
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
               <ControlLabel>Email Address</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 type="text"
-                ref="emailAddress"
                 name="emailAddress"
                 placeholder="Email Address"
                 defaultValue={(user) ? user.emails[0].address : ''}
               />
+              {isError.emailAddress.length > 0 && (
+              <span className="control-label">{isError.emailAddress}</span>
+              )}
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
               <ControlLabel>Mobile Number</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 type="text"
-                ref="whMobilePhone"
                 name="whMobilePhone"
                 placeholder="10 digit number example, 8787989897"
                 defaultValue={(user) ? user.profile.whMobilePhone : ''}
               />
+              {isError.whMobilePhone.length > 0 && (
+              <span className="control-label">{isError.whMobilePhone}</span>
+              )}
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
               <ControlLabel>Delivery Address</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 componentClass="textarea"
-                ref="deliveryAddress"
                 name="deliveryAddress"
                 placeholder="Complete address to deliver at, including Landmark, Pincode."
                 rows="6"
                 defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ''}
               />
+              {isError.deliveryAddress.length > 0 && (
+              <span className="control-label">{isError.deliveryAddress}</span>
+              )}
             </FormGroup>
-            <FormGroup>
+            <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
               <ControlLabel>Password</ControlLabel>
               <FormControl
+                onBlur={onValueChange}
                 type="password"
-                ref="password"
                 name="password"
                 placeholder="Password"
               />
+              {isError.password.length > 0 && (
+              <span className="control-label">{isError.password}</span>
+              )}
             </FormGroup>
             <FormGroup>
               <ControlLabel>User Role</ControlLabel>
@@ -118,11 +140,19 @@ export const userProfileForm = (user) => (
                 className="form-control"
                 id="idUserRole"
                 name="userRole"
-                defaultValue={(user && user.roles && user.roles[0]) ? user.roles[0] : constants.Roles.customer.name}
+                defaultValue={(user && user.roles && user.roles[0])
+                  ? user.roles[0]
+                  : constants.Roles.customer.name}
               >
-                <option value={`${constants.Roles.admin.name}`}>{constants.Roles.admin.display_value}</option>
-                <option value={`${constants.Roles.shopOwner.name}`}>{constants.Roles.shopOwner.display_value}</option>
-                <option value={`${constants.Roles.customer.name}`}>{constants.Roles.customer.display_value}</option>
+                <option value={`${constants.Roles.admin.name}`}>
+                  {constants.Roles.admin.display_value}
+                </option>
+                <option value={`${constants.Roles.shopOwner.name}`}>
+                  {constants.Roles.shopOwner.display_value}
+                </option>
+                <option value={`${constants.Roles.customer.name}`}>
+                  {constants.Roles.customer.display_value}
+                </option>
               </select>
             </FormGroup>
           </Col>
@@ -156,57 +186,5 @@ export const getUserData = () => {
     },
     // isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked
     role: document.querySelector('[name="userRole"]').value,
-  });
-};
-
-export const hookUpValidation = (callBack) => {
-  $('.userProfileForm').validate({
-    rules: {
-      firstName: {
-        required: true,
-      },
-      lastName: {
-        required: true,
-      },
-      emailAddress: {
-        required: true,
-        email: true,
-      },
-      password: {
-        required: false,
-        minlength: 6,
-      },
-      whMobilePhone: {
-        required: true,
-        indiaMobilePhone: true,
-      },
-      deliveryAddress: {
-        required: true,
-      },
-    },
-    messages: {
-      firstName: {
-        required: 'First name?',
-      },
-      lastName: {
-        required: 'Last name?',
-      },
-      emailAddress: {
-        required: 'Need an email address here.',
-        email: 'Is this email address legit?',
-      },
-      password: {
-        required: 'Need a password here.',
-        minlength: 'Use at least six characters, please.',
-      },
-      whMobilePhone: {
-        required: 'Need your mobile number.',
-        indiaMobilePhone: 'Is this a valid India mobile number?',
-      },
-      deliveryAddress: {
-        required: 'Need your delivery address.',
-      },
-    },
-    submitHandler() { callBack(); },
   });
 };

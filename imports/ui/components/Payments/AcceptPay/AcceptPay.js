@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import {
   FormGroup, InputGroup, FormControl, Row, Col, Panel,
 } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
 import Loading from '../../Loading/Loading';
 import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';
-import validate from '../../../../modules/validate';
+import { formValChange, formValid } from '../../../../modules/validate';
 import RazorPayButton from '../RazorPay/RazorPayButton';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
@@ -47,28 +47,6 @@ class AcceptPay extends React.Component {
     this.paymentResponseSuccess = this.paymentResponseSuccess.bind(this);
   }
 
-  componentDidMount() {
-    const component = this;
-
-    validate(component.form, {
-      rules: {
-        amountToChargeInRs: {
-          required: true,
-          isMoneyInRupees: true,
-        },
-      },
-      messages: {
-        amountToChargeInRs: {
-          required: 'Amount to add cannot be empty.',
-          isMoneyInRupees: 'Amount can only be in one of these formats (12345 or 1234.56).',
-        },
-      },
-      submitHandler() {
-        component.handleSubmit();
-      },
-    });
-  }
-
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.userWallet !== this.props.userWallet) {
       this.setState(this.prepareState(nextProps.userWallet));
@@ -96,21 +74,26 @@ class AcceptPay extends React.Component {
       balanceAmountClass,
       paymentInProcess: false,
       netAmountInWalletInRs,
+      isError: {
+        amountToChargeInRs: '',
+      },
     };
   }
 
   amountToChargeOnChange(event) {
-    // event.preventDefault();
+    const { isError } = this.state;
+    const newErrorState = formValChange(event, { ...isError });
+
     this.setState({
       amountToChargeInRs: event.target.value,
+      isError: newErrorState.isError,
     });
   }
 
   paymentResponseSuccess(paymentSuccessMsg) {
     if (!paymentSuccessMsg.razorpay_payment_id) {
-      Bert.alert(
+      toast.error(
         'We were unable to process your payment at this time. Please try a little later.',
-        'danger',
       );
       return;
     }
@@ -126,20 +109,21 @@ class AcceptPay extends React.Component {
       },
       (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
 
           this.setState({
             paymentInProcess: false,
           });
         } else {
           const confirmation = 'Your Wallet has been updated successfully!';
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
         }
       });
   }
 
   render() {
     const { loggedInUser } = this.props;
+    const { isError } = this.state;
 
     return (
       <div>
@@ -167,10 +151,9 @@ class AcceptPay extends React.Component {
           </div>
 
           <form
-            ref={(form) => (this.form = form)}
             onSubmit={(event) => event.preventDefault()}
           >
-            <FormGroup>
+            <FormGroup validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
               <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="rowRightSpacing">
                 <InputGroup>
                   <InputGroup.Addon>Rs.</InputGroup.Addon>
@@ -182,6 +165,9 @@ class AcceptPay extends React.Component {
                     onChange={this.amountToChargeOnChange}
                   />
                 </InputGroup>
+                {isError.amountToChargeInRs.length > 0 && (
+                <span className="control-label">{isError.amountToChargeInRs}</span>
+                )}
               </Col>
               <Col xs={12} sm={3} className="text-right-xs">
                 <RazorPayButton

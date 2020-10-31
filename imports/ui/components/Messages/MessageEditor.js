@@ -6,7 +6,7 @@ import {
   FormGroup, Button, Panel, Col, Row,
 } from 'react-bootstrap';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
 import uploadImage, { deleteImage, MessageImageViewHero } from './MessageImageUpload';
 import constants from '../../../modules/constants';
@@ -21,9 +21,9 @@ const handleRemove = async (messageId, imageId) => {
 
     Meteor.call('messages.remove', messageId, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Message deleted!', 'success');
+        toast.success('Message deleted!');
       }
     });
   }
@@ -90,10 +90,11 @@ const MessageEditor = ({
 
     Meteor.call(methodToCall, msg, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // toast.error(error.reason);
+        toast.error(error.reason);
       } else {
         const confirmation = message ? 'Message updated!' : 'Message added!';
-        Bert.alert(confirmation, 'success');
+        toast.success(confirmation);
         activateControl(false);
       }
     });

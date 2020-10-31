@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
-import { FormGroup, FormControl, Button, ButtonToolbar } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import {
+  FormGroup, FormControl, Button, ButtonToolbar,
+} from 'react-bootstrap';
 import { upsertComment } from '../../../api/Comments/methods';
 
 const saveComment = (postId, postType, userId, commentId, commentAddBoxName, onSave) => {
@@ -17,10 +19,10 @@ const saveComment = (postId, postType, userId, commentId, commentAddBoxName, onS
 
   upsertComment.call(comment, (error, succ) => {
     if (error) {
-      Bert.alert(error.reason, 'danger');
+      toast.error(error.reason);
     } else {
       const message = succ.insertedId ? 'Added Comment' : 'Updated Comment';
-      Bert.alert(message, 'success');
+      toast.success(message);
       if (onSave) {
         onSave('Update');
       }
@@ -28,9 +30,11 @@ const saveComment = (postId, postType, userId, commentId, commentAddBoxName, onS
   });
 };
 
-const CommentWrite = ({ postId, postType, loggedUserId, expandedComment, onSave }) => {
+const CommentWrite = ({
+  postId, postType, loggedUserId, expandedComment, onSave,
+}) => {
   const value = expandedComment ? expandedComment.description : '';
-  const cancelButton = onSave ? (<Button bsSize="small" onClick={() => onSave('cancel')} > Cancel </Button>) : '';
+  const cancelButton = onSave ? (<Button bsSize="small" onClick={() => onSave('cancel')}> Cancel </Button>) : '';
   const saveButtonText = onSave ? 'Update' : 'Post';
   const commentId = expandedComment ? expandedComment._id : '';
   const commentAddBoxName = `commentAddBox_${commentId}`;
@@ -44,14 +48,19 @@ const CommentWrite = ({ postId, postType, loggedUserId, expandedComment, onSave 
         placeholder="Write a response ..."
         defaultValue={value}
       />
-        <ButtonToolbar >
+      <ButtonToolbar>
         <Button
           bsSize="small"
           className="btn-primary"
           onClick={() => saveComment(postId, postType, loggedUserId, commentId, commentAddBoxName, onSave)}
-        > { saveButtonText } </Button>
+        >
+          {' '}
+          { saveButtonText }
+          {' '}
+
+        </Button>
         { cancelButton }
-      </ButtonToolbar >
+      </ButtonToolbar>
     </FormGroup>
   );
 };
@@ -69,4 +78,3 @@ CommentWrite.propTypes = {
 };
 
 export default CommentWrite;
-

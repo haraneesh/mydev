@@ -1,7 +1,9 @@
 import React from 'react';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
+import {
+  Button, FormGroup, ControlLabel, FormControl, Col, Row,
+} from 'react-bootstrap';
 import { sendInvitation } from '../../../api/Invitations/methods';
-import { Button, FormGroup, ControlLabel, FormControl, Col, Row } from 'react-bootstrap';
 
 const validateSendInvitationForm = (onSuccess) => {
   $('form[name="form-send-Invitation"]').validate({
@@ -34,26 +36,22 @@ export default class SendInvitation extends React.Component {
     this.sendInvitation = this.sendInvitation.bind(this);
   }
 
-  componentDidMount() {
-    setTimeout(() => { $('input[name="name"]').focus(); }, 0);
-  }
-
   handleSubmit(event) {
     validateSendInvitationForm(this.sendInvitation);
   }
 
   sendInvitation() {
     const invitation = {
-      name: $('input[name="name"]').val(),
-      email: $('input[name="email"]').val(),
+      name: document.querySelector('input[name="name"]').value,
+      email: document.querySelector('input[name="email"]').value,
     };
 
     sendInvitation.call(invitation, (error, success) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         const message = `${invitation.name} has been invited!`;
-        Bert.alert(message, 'success');
+        toast.success(message);
         this.props.history.push('/invitations');
       }
     });
@@ -95,4 +93,3 @@ export default class SendInvitation extends React.Component {
     );
   }
 }
-

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { Table, Button, Alert } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { getDayWithoutTime } from '../../../modules/helpers';
 import ProductRow from './ProductRow';
 
@@ -30,27 +30,26 @@ export default class ReconcileInventoryMain extends React.Component {
     };
 
     if (inactiveProducts.length > 0) {
-      Bert.alert(`Following ${inactiveProducts } are not active in Zoho!`, 'danger');
+      toast.error(`Following ${inactiveProducts} are not active in Zoho!`);
     }
 
     Meteor.call('reconcileInventory.upsert', doc, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Created a record.', 'success');
+        toast.success('Created a record.');
       }
     });
   }
 
   onValueChange(event) {
-    if (event.target.value === ''){
+    if (event.target.value === '') {
       return;
     }
     const zohoItemId = event.target.name;
     const physicalInventory = parseFloat(event.target.value);
     const { ItemHash } = this.state;
-    ItemHash[zohoItemId].differenceQty =
-      this.calcDifferenceQty(ItemHash[zohoItemId].stock_on_hand, physicalInventory);
+    ItemHash[zohoItemId].differenceQty = this.calcDifferenceQty(ItemHash[zohoItemId].stock_on_hand, physicalInventory);
     ItemHash[zohoItemId].physicalInventory = physicalInventory;
     this.setState({
       ItemHash,
@@ -62,7 +61,7 @@ export default class ReconcileInventoryMain extends React.Component {
   getItemsFromZoho() {
     Meteor.call('products.getItemsFromZoho', (error, activeZohoItems) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         this.setState({
           ItemHash: this.returnItemsHash(activeZohoItems),
@@ -72,7 +71,7 @@ export default class ReconcileInventoryMain extends React.Component {
   }
 
   createProductRecordsForSaving() {
-    const ItemHash = this.state.ItemHash;
+    const { ItemHash } = this.state;
     let inactiveProducts = '';
     const productArray = this.props.products.reduce((map, prd) => {
       const key = prd.zh_item_id;
@@ -104,21 +103,21 @@ export default class ReconcileInventoryMain extends React.Component {
     return listArray.reduce((map, listItem) => {
       map[listItem.item_id] = listItem;
       map[listItem.item_id].physicalInventory = 0;
-      map[listItem.item_id].differenceQty =
-        this.calcDifferenceQty(listItem.stock_on_hand, 0);
+      map[listItem.item_id].differenceQty = this.calcDifferenceQty(listItem.stock_on_hand, 0);
       return map;
     }, []);
   }
 
-  calcDifferenceQty(stockOnHand, physicalInventory){
-    return Math.round((physicalInventory - stockOnHand) * 100) / 100;  
+  calcDifferenceQty(stockOnHand, physicalInventory) {
+    return Math.round((physicalInventory - stockOnHand) * 100) / 100;
   }
 
   render() {
     const { products } = this.props;
-    const ItemHash = this.state.ItemHash;
+    const { ItemHash } = this.state;
     return (
-        products.length ? <div>
+      products.length ? (
+        <div>
           <Table responsive>
             <thead>
               <tr>
@@ -153,7 +152,8 @@ export default class ReconcileInventoryMain extends React.Component {
             </tbody>
           </Table>
           <Button bsSize="small" onClick={this.onReconcileButtonClick}>Save</Button>
-        </div> : <Alert bsStyle="warning">No products are active!</Alert>
+        </div>
+      ) : <Alert bsStyle="warning">No products are active!</Alert>
     );
   }
 }

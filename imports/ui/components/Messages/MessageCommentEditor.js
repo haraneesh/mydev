@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   FormGroup, Button, Panel, Col,
 } from 'react-bootstrap';
@@ -14,9 +14,9 @@ const handleRemove = (commentId, postId) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('messages.removeComment', { commentId, postId }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Comment deleted!', 'success');
+        toast.success('Comment delete');
       }
     });
   }
@@ -39,10 +39,11 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
 
     Meteor.call(methodToCall, msg, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // toast.error(error.reason);
+        toast.error(error.reason);
       } else {
         const confirmation = comment ? 'Comments updated!' : 'Comments added!';
-        Bert.alert(confirmation, 'success');
+        toast.success(confirmation);
         setComment({ ...comment, description: '' });
         if (onsuccessFullUpdate) {
           onsuccessFullUpdate();

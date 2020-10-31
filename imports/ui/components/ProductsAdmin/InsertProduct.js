@@ -1,11 +1,13 @@
 import React from 'react';
-import { FormGroup, FormControl, Button, Col, Row } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import {
+  FormGroup, FormControl, Button, Col, Row,
+} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import { insertProduct } from '../../../api/Products/methods';
 import constants from '../../../modules/constants';
 
 const handleInsertProduct = (event) => {
-  const target = event.target;
+  const { target } = event;
   const name = document.querySelector('[name="productName"]').value;
   if (name !== '') {
     const unitprice = 0;
@@ -14,14 +16,14 @@ const handleInsertProduct = (event) => {
     const unitOfSale = '1Kg';
     const description = '';
     const image_path = '/blank_image.png';
-    const type = constants.ProductType[0]; //New
+    const type = constants.ProductType[0]; // New
     const availableToOrder = false;
     const availableToOrderWH = false;
     const maxUnitsAvailableToOrder = 99999;
     const vendor_details = {
-      'id': 1,
-      'slug': 'healthy-farm-foods',
-      'name': 'Healthy Farm Foods',
+      id: 1,
+      slug: 'healthy-farm-foods',
+      name: 'Healthy Farm Foods',
     };
 
     insertProduct.call({
@@ -39,13 +41,13 @@ const handleInsertProduct = (event) => {
       vendor_details,
     }, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Product has been added!', 'success');
+        toast.success('Product has been added!');
       }
     });
   } else {
-    Bert.alert('Type in a Product Name.', 'info');
+    toast.info('Type in a Product Name.');
   }
 };
 
@@ -59,7 +61,11 @@ const InsertProduct = () => (
           name="productName"
         />
       </Col>
-      <Col xs={3} > <Button onClick={handleInsertProduct} bsStyle="primary"> Add Product </Button> </Col>
+      <Col xs={3}>
+        {' '}
+        <Button onClick={handleInsertProduct} bsStyle="primary"> Add Product </Button>
+        {' '}
+      </Col>
     </Row>
   </FormGroup>
 );

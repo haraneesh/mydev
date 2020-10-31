@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
 import { ButtonToolbar, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Products from '../../../api/Products/Products';
 import { createProductHash } from '../../components/Baskets/BasketCommon';
 import { displayUnitOfSale } from '../../../modules/helpers';
@@ -13,9 +13,9 @@ const handleRemove = (basketId, history) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('baskets.remove', basketId, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Basket deleted!', 'success');
+        toast.success('Basket deleted!');
         history.push('/baskets');
       }
     });
@@ -32,7 +32,7 @@ const renderBasket = ({ products, basketId, history }) => {
       Meteor.call('baskets.getOne', basketId,
         (error, existingBasket) => {
           if (error) {
-            Bert.alert(error.reason, 'danger');
+            toast.error(error.reason);
           } else {
             setBasket(existingBasket);
             setIsBasketLoading(false);

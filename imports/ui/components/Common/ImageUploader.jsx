@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { Button, FormControl } from 'react-bootstrap';
 import constants from '../../../modules/constants';
 import { removeRecipePhoto, updateRecipePhoto } from '../../../api/Recipes/methods';
@@ -49,7 +49,7 @@ export default class ImageUploader extends React.Component {
 
     Media.insert(fsFile, (err, fileObj) => {
       if (err) {
-        Bert.alert(err.message, 'danger');
+        toast.error(err.message);
       } else {
         // Inserted record in to Media. But wait for the upload to complete
       }
@@ -61,7 +61,7 @@ export default class ImageUploader extends React.Component {
     if (confirm('Are you sure, you want to delete this image and add a new one? Deletion is permanent.')) {
       removeRecipePhoto.call({ recipeId: id }, (error, msg) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         }
       });
     }
@@ -80,8 +80,7 @@ export default class ImageUploader extends React.Component {
           <div className="view-recipe-image" style={recipeImage}>
             <Button
               bsSize="small"
-              onClick={event =>
-                this._changePhoto(event, _prop.id)}
+              onClick={(event) => this._changePhoto(event, _prop.id)}
             >
               Change Photo
             </Button>
@@ -107,7 +106,7 @@ export default class ImageUploader extends React.Component {
                 </span>
                 <FormControl
                   type="file"
-                  onChange={event => this._fileUpload(event)}
+                  onChange={(event) => this._fileUpload(event)}
                 />
               </label>
             </div>

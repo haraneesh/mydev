@@ -1,10 +1,13 @@
+// eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, SplitButton, MenuItem, Button, ButtonToolbar } from 'react-bootstrap';
+import {
+  Row, SplitButton, MenuItem, Button, ButtonToolbar,
+} from 'react-bootstrap';
 import autoBind from 'react-autobind/lib/autoBind';
 import { Table, Column } from 'fixed-data-table-2';
 import Dimensions from 'react-dimensions';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import {
   DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
   TextCell, DateCell,
@@ -22,22 +25,29 @@ import generateOPLByProductType from '../../../reports/client/GenerateOPLByProdu
 import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
 import exportPackingPOsAsCSV from '../../../reports/client/GenerateWholeSalePackingPOs';
 
-const UpdateStatusButtons = ({ title, statuses, onSelectCallBack, ignoreStatuses }) => {
+const UpdateStatusButtons = ({
+  title, statuses, onSelectCallBack, ignoreStatuses,
+}) => {
   const rows = [];
   _.each(statuses, (value, key) => {
     if (!ignoreStatuses[key]) {
-      rows.push(<MenuItem eventKey={value.name} onSelect={onSelectCallBack} >
-        {`to ${value.display_value}`} </MenuItem>);
+      rows.push(<MenuItem eventKey={value.name} onSelect={onSelectCallBack}>
+        {`to ${value.display_value}`}
+        {' '}
+
+      </MenuItem>);
     }
   });
   return (
-    <SplitButton bsSize="small" title={title} key="split-button-status-change" id={'split-button-basic-status'}>
+    <SplitButton bsSize="small" title={title} key="split-button-status-change" id="split-button-basic-status">
       {rows}
     </SplitButton>
   );
 };
 
-const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack }) => (
+const OrderTable = ({
+  dataList, dynamicWidth, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack,
+}) => (
   <Table
     rowHeight={50}
     headerHeight={50}
@@ -49,14 +59,14 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
     <Column
       columnKey="selected"
       // header = { <Cell>Selected</Cell> }
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.selected}
         >
           Selected
         </SortHeaderCell>
-      }
+      )}
       cell={<RowSelectedCell data={dataList} onChecked={onChecked} />}
       flexGrow={1}
       width={50}
@@ -67,67 +77,67 @@ const OrderTable = ({ dataList, dynamicWidth, onChecked, colSortDirs, onRowClick
       flexGrow={2}
       width={50}
       // header = { <Cell>Status</Cell> }
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.status}
         >
           Status
         </SortHeaderCell>
-      }
+      )}
     />
     <Column
       columnKey="name"
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.name}
         >
           Name
         </SortHeaderCell>
-      }
+      )}
       cell={<TextCell data={dataList} />}
       width={100}
       flexGrow={3}
     />
     <Column
       columnKey="whMobileNum"
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.whMobileNum}
         >
           Mobile Number
         </SortHeaderCell>
-      }
+      )}
       cell={<TextCell data={dataList} />}
       width={100}
       flexGrow={2}
     />
     <Column
       columnKey="date"
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.date}
         >
           Delivery Date
         </SortHeaderCell>
-      }
+      )}
       cell={<DateCell data={dataList} />}
       width={100}
       flexGrow={3}
     />
     <Column
       columnKey="amount"
-      header={
+      header={(
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.amount}
         >
           Bill Amount
         </SortHeaderCell>
-      }
+      )}
       cell={<AmountCell data={dataList} />}
       width={100}
       flexGrow={2}
@@ -151,7 +161,6 @@ class DataListWrapper {
     );
   }
 }
-
 
 class ManageAllOrders extends React.Component {
   constructor(props) {
@@ -201,8 +210,8 @@ class ManageAllOrders extends React.Component {
   groupSelectedRowsInUI(columnKey, sortDir) {
     const sortIndexes = this._defaultSortIndexes.slice();
     sortIndexes.sort((indexA, indexB) => {
-      let valueA,
-        valueB;
+      let valueA;
+      let valueB;
 
       const orderIdA = this._dataList.getObjectAt(indexA).id;
       const orderIdB = this._dataList.getObjectAt(indexB).id;
@@ -235,7 +244,9 @@ class ManageAllOrders extends React.Component {
 
   getTableDataList(orders) {
     const orderList = [];
-    orders.map(({ _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details }) => {
+    orders.map(({
+      _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details,
+    }) => {
       orderList.push(
         {
           id: _id,
@@ -256,14 +267,13 @@ class ManageAllOrders extends React.Component {
     this.selectedOrderIds = new Set();
   }
 
-
   handleGenerateOPL() {
     getProductQuantityForOrderAwaitingFullFillment.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         generateOPL(aggr, this.props.isWholeSale);
-        Bert.alert(this.reportPopupAllowMsg, 'info');
+        toast.info(this.reportPopupAllowMsg);
       }
     });
   }
@@ -271,10 +281,10 @@ class ManageAllOrders extends React.Component {
   handleGenerateOPLNew() {
     getProductQuantityForOrderAwaitingFullFillmentNEW.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         generateOPLByProductType(aggr, this.props.isWholeSale);
-        Bert.alert(this.reportPopupAllowMsg, 'info');
+        toast.info(this.reportPopupAllowMsg);
       }
     });
   }
@@ -283,10 +293,10 @@ class ManageAllOrders extends React.Component {
     const orderIds = [...this.selectedOrderIds];
     getOrders.call({ orderIds }, (error, orders) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         generateOrderBills(orders);
-        Bert.alert(this.reportPopupAllowMsg, 'info');
+        toast.info(this.reportPopupAllowMsg);
       }
     });
   }
@@ -295,13 +305,12 @@ class ManageAllOrders extends React.Component {
     const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
     Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: false }, (error, poDetails) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         exportPOsAsCSV(poDetails);
-        Bert.alert('PO Details Downloaded', 'success');
+        toast.success('PO Details Downloaded');
       }
     });
-
   }
 
   handleGeneratePackingPOs() {
@@ -309,13 +318,12 @@ class ManageAllOrders extends React.Component {
 
     Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: true }, (error, poDetails) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         exportPackingPOsAsCSV(poDetails);
-        Bert.alert('PO Details Downloaded', 'success');
+        toast.success('PO Details Downloaded');
       }
     });
-
   }
 
   handleRowClick(e, rowIndex) {
@@ -372,20 +380,19 @@ class ManageAllOrders extends React.Component {
 
   handleDeliveryDateUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
-      Bert.alert(`Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`,
-        'danger');
+      toast.error(`Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`);
     } else {
       const orderIds = [...this.selectedOrderIds];
       const incrementDeliveryDateBy = constants.DaysFromTodayForward[eventKey].increment;
       updateExpectedDeliveryDate.call({ orderIds, incrementDeliveryDateBy }, (error) => {
         const confirmation = `Delivery date of selected order(s) have been updated to ${
           constants.DaysFromTodayForward[eventKey].display_value
-          } successfully!`;
+        } successfully!`;
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           this.resetSelectedOrderIds();
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
         }
       });
     }
@@ -393,20 +400,19 @@ class ManageAllOrders extends React.Component {
 
   handleStatusUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
-      Bert.alert(`Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`,
-        'danger');
+      toast.error(`Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`);
     } else {
       const orderIds = [...this.selectedOrderIds];
       const updateToStatus = constants.OrderStatus[eventKey].name;
       updateOrderStatus.call({ orderIds, updateToStatus }, (error) => {
         const confirmation = `Status of selected order(s) have been updated to ${
           constants.OrderStatus[eventKey].display_value
-          } successfully!`;
+        } successfully!`;
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           this.resetSelectedOrderIds();
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
         }
       });
     }
@@ -416,67 +422,79 @@ class ManageAllOrders extends React.Component {
     return (
       <div>
         <Row>
-          <ButtonToolbar >
+          <ButtonToolbar>
 
             <UpdateStatusButtons
-              title={'Update Status'}
+              title="Update Status"
               statuses={constants.OrderStatus}
               onSelectCallBack={this.handleStatusUpdate}
               ignoreStatuses={{ Saved: constants.OrderStatus.Saved }}
             />
             <UpdateStatusButtons
-              title={'Change Delivery Date'}
+              title="Change Delivery Date"
               statuses={constants.DaysFromTodayForward}
               onSelectCallBack={this.handleDeliveryDateUpdate}
               ignoreStatuses={{}}
             />
-            {!this.props.isWholeSale && (<Button
+            {!this.props.isWholeSale && (
+            <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateBills}
             >
               Generate Bills
-            </Button>)}
+            </Button>
+            )}
 
-            {!this.props.isWholeSale && (<Button
+            {!this.props.isWholeSale && (
+            <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPL}
             >
               Generate OPL
-            </Button>)}
+            </Button>
+            )}
 
-            {!this.props.isWholeSale && (<Button
+            {!this.props.isWholeSale && (
+            <Button
               bsStyle="default"
               bsSize="small"
               onClick={this.handleGenerateOPLNew}
             >
               Generate OPL New
-            </Button>)}
+            </Button>
+            )}
 
-            {!!this.props.isWholeSale && (<Button
+            {!!this.props.isWholeSale && (
+            <Button
               bsStyle="success"
               bsSize="small"
               onClick={this.handleGeneratePackingPOs}
             >
               Export Packing POs
-            </Button>)}
+            </Button>
+            )}
 
-            {!!this.props.isWholeSale && (<Button
+            {!!this.props.isWholeSale && (
+            <Button
               bsStyle="success"
               bsSize="small"
               onClick={this.handleGeneratePOsAsCSV}
             >
               Export POs
-            </Button>)}
+            </Button>
+            )}
 
-            {!this.props.isWholeSale && (<Button
+            {!this.props.isWholeSale && (
+            <Button
               bsStyle="default"
               bsSize="small"
               href="/reconcileInventory"
             >
               Daily Inventory Update
-            </Button>)}
+            </Button>
+            )}
 
           </ButtonToolbar>
         </Row>

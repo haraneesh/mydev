@@ -1,9 +1,12 @@
 import React from 'react';
-import { Row, Col, FormGroup, Dropdown, MenuItem, Glyphicon } from 'react-bootstrap';
+import {
+  Row, Col, FormGroup, Dropdown, MenuItem, Glyphicon,
+} from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 import CommentWrite from './CommentWrite';
 import constants from '../../../modules/constants';
 import { removeComment } from '../../../api/Comments/methods';
-import PropTypes from 'prop-types';
 
 export default class CommentView extends React.Component {
   constructor(props, context) {
@@ -43,9 +46,9 @@ export default class CommentView extends React.Component {
         _id: expandedComment._id,
       }, (error) => {
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
-          Bert.alert('Removed comment', 'success');
+          toast.success('Removed comment');
         }
       });
     }
@@ -57,14 +60,18 @@ export default class CommentView extends React.Component {
     const addDeleteOptions = (
       <Dropdown id="comment-edit" pullRight>
         <Dropdown.Toggle noCaret bsStyle="link no-margin-no-padding">
-          <small> <Glyphicon glyph="option-vertical" className="text-muted" /> </small>
+          <small>
+            {' '}
+            <Glyphicon glyph="option-vertical" className="text-muted" />
+            {' '}
+          </small>
         </Dropdown.Toggle>
         <Dropdown.Menu className="comment-dropdown">
-          <MenuItem eventKey="1" onClick={this.handleEditComment} >Edit Comment</MenuItem>
-          <MenuItem eventKey="2" onClick={this.handleDeleteComment} >Delete Comment</MenuItem>
+          <MenuItem eventKey="1" onClick={this.handleEditComment}>Edit Comment</MenuItem>
+          <MenuItem eventKey="2" onClick={this.handleDeleteComment}>Delete Comment</MenuItem>
         </Dropdown.Menu>
       </Dropdown>
-      );
+    );
 
     if (this.state.mode === constants.ControlStates.view) {
       return (
@@ -79,7 +86,11 @@ export default class CommentView extends React.Component {
           </Row>
           <Row>
             <Col xs={12}>
-              <p className="text-left" > { expandedComment.description } </p>
+              <p className="text-left">
+                {' '}
+                { expandedComment.description }
+                {' '}
+              </p>
             </Col>
           </Row>
         </FormGroup>

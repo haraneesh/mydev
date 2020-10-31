@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Loading from '../../../components/Loading/Loading';
 import dailySummary from '../../../../reports/client/GenerateOPL';
 
@@ -21,16 +21,16 @@ export default class ReportDaysSummary extends React.Component {
   generateReport() {
     Meteor.call('reports.generateDaySummary', (error, dailySummaryData) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         dailySummary(dailySummaryData);
-        this.setState({ loading: false});
+        this.setState({ loading: false });
       }
     });
   }
 
   render() {
-    const loading = this.state.loading;
+    const { loading } = this.state;
     return (!loading ? (
       <div> Done </div>
     ) : <Loading />);

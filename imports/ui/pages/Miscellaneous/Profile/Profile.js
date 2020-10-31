@@ -7,102 +7,55 @@ import {
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { createContainer } from 'meteor/react-meteor-data';
 import InputHint from '../../../components/InputHint/InputHint';
-import validate from '../../../../modules/validate';
+import { formValChange, formValid } from '../../../../modules/validate';
 import constants from '../../../../modules/constants';
 
 import './Profile.scss';
 
+const defaultState = {
+  user: {},
+  isError: {
+    emailAddress: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    whMobilePhone: '',
+    deliveryAddress: '',
+    newPassword: '',
+    confirmPassword: '',
+    dietPreference: '',
+  },
+};
+
 class Profile extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = { ...defaultState };
+
     this.getUserType = this.getUserType.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.validateForm = this.validateForm.bind(this);
     this.renderOAuthUser = this.renderOAuthUser.bind(this);
     this.renderPasswordUser = this.renderPasswordUser.bind(this);
     this.renderProfileForm = this.renderProfileForm.bind(this);
     this.handleVerifyEmail = this.handleVerifyEmail.bind(this);
+    this.onValueChange = this.onValueChange.bind(this);
   }
 
-  componentDidMount() {
-    const component = this;
-
-    validate(component.form, {
-      rules: {
-        salutation: {
-          required: true,
-        },
-        firstName: {
-          required: true,
-        },
-        lastName: {
-          required: true,
-        },
-        emailAddress: {
-          required: true,
-          email: true,
-        },
-        whMobilePhone: {
-          required: true,
-          indiaMobilePhone: true,
-        },
-        deliveryAddress: {
-          required: true,
-        },
-        newPassword: {
-          required() {
-            // Only required if newPassword field has a value.
-            return component.confirmPassword.value.length > 0;
-          },
-          minlength: 6,
-        },
-        confirmPassword: {
-          required() {
-            return (component.newPassword.value.length > 0);
-          },
-          minlength: 6,
-          equalTo: '#newPassword',
-        },
-        dietPreference: {
-          required: true,
-        },
-      },
-      messages: {
-        salutation: {
-          required: 'How would you like us to address you (Miss, Mrs or Mr)?',
-        },
-        firstName: {
-          required: 'What\'s your first name?',
-        },
-        lastName: {
-          required: 'What\'s your last name?',
-        },
-        emailAddress: {
-          required: 'Need an email address here.',
-          email: 'Is this email address correct?',
-        },
-        newPassword: {
-          required: 'Need your new password if changing.',
-        },
-        dietPreference: {
-          required: 'What is your product preference?',
-        },
-        confirmPassword: {
-          required: 'The new password and confirm password are not matching, please try again.',
-          equalTo: 'The new password and confirm password are not matching, please try again.',
-        },
-        whMobilePhone: {
-          required: 'Need your mobile number.',
-          indiaMobilePhone: 'Is this a valid India mobile number?',
-        },
-        deliveryAddress: {
-          required: 'Need your delivery address.',
-        },
-      },
-      submitHandler() { component.handleSubmit(); },
-    });
+  onValueChange(e) {
+    e.preventDefault();
+    const { isError } = this.state;
+    const newState = formValChange(e,
+      { ...isError },
+      {
+        newPassword: document.querySelector('[name="newPassword"]').value,
+        confirmPassword: document.querySelector('[name="confirmPassword"]').value,
+      });
+    this.setState(newState);
   }
 
   getUserType(user) {
@@ -116,11 +69,31 @@ class Profile extends React.Component {
     const emailAddress = this.emailAddress.value;
     Meteor.call('users.sendVerificationEmail', emailAddress, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('A verification email has been sent. Please check your email.', 'success');
+        toast.success('A verification email has been sent. Please check your email.');
       }
     });
+  }
+
+  validateForm(e) {
+    e.preventDefault();
+
+    const { isError } = this.state;
+
+    if (this.dietPreference.selectedOptions[0].value === '') {
+      isError.dietPreference = 'dietary preference is mandatory';
+    }
+
+    if (this.confirmPassword.value !== this.newPassword.value) {
+      isError.confirmPassword = 'two passwords do not match, please check';
+    }
+
+    if (formValid({ isError })) {
+      this.handleSubmit();
+    } else {
+      this.setState({ isError });
+    }
   }
 
   handleSubmit() {
@@ -146,9 +119,9 @@ class Profile extends React.Component {
 
     Meteor.call('users.editUserProfile', profile, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Profile updated!', 'success');
+        toast.success('Profile updated!');
       }
     });
   }
@@ -167,6 +140,7 @@ class Profile extends React.Component {
   }
 
   renderPasswordUser(loading, user) {
+    const { isError } = this.state;
     return !loading ? (
       <div>
         <FormGroup>
@@ -182,27 +156,35 @@ class Profile extends React.Component {
             <option value="Miss"> Miss</option>
           </select>
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
           <ControlLabel>First Name</ControlLabel>
           <input
             type="text"
             name="firstName"
+            onBlur={this.onValueChange}
             defaultValue={user.profile.name.first}
             ref={(firstName) => (this.firstName = firstName)}
             className="form-control"
           />
+          {isError.firstName.length > 0 && (
+          <span className="control-label">{isError.firstName}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
           <ControlLabel>Last Name</ControlLabel>
           <input
             type="text"
             name="lastName"
             defaultValue={user.profile.name.last}
+            onBlur={this.onValueChange}
             ref={(lastName) => (this.lastName = lastName)}
             className="form-control"
           />
+          {isError.lastName.length > 0 && (
+          <span className="control-label">{isError.lastName}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
           <Row>
             <Col xs={6}>
               <ControlLabel>Email Address</ControlLabel>
@@ -217,25 +199,34 @@ class Profile extends React.Component {
             type="email"
             name="emailAddress"
             defaultValue={user.emails[0].address}
+            onBlur={this.onValueChange}
             ref={(emailAddress) => (this.emailAddress = emailAddress)}
             className="form-control"
           />
+          {isError.emailAddress.length > 0 && (
+          <span className="control-label">{isError.emailAddress}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
           <ControlLabel>Mobile Number</ControlLabel>
           <input
             type="text"
             ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
             name="whMobilePhone"
+            onBlur={this.onValueChange}
             placeholder="10 digit number example, 8787989897"
             defaultValue={user.profile.whMobilePhone}
             className="form-control"
           />
+          {isError.whMobilePhone.length > 0 && (
+          <span className="control-label">{isError.whMobilePhone}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.dietPreference.length > 0 ? 'error' : ''}>
           <ControlLabel>Dietary Preference</ControlLabel>
           <select
             name="dietPreference"
+            onChange={this.onValueChange}
             ref={(dietPreference) => (this.dietPreference = dietPreference)}
             className="form-control"
             defaultValue={(user.settings && user.settings.dietPreference) ? user.settings.dietPreference : ''}
@@ -247,8 +238,11 @@ class Profile extends React.Component {
               </option>
             ))}
           </select>
+          {isError.dietPreference.length > 0 && (
+          <span className="control-label">{isError.dietPreference}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
           <ControlLabel>Delivery Address</ControlLabel>
           <textarea
             ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
@@ -257,9 +251,13 @@ class Profile extends React.Component {
             rows="6"
             defaultValue={user.profile.deliveryAddress}
             className="form-control"
+            onBlur={this.onValueChange}
           />
+          {isError.deliveryAddress.length > 0 && (
+          <span className="control-label">{isError.deliveryAddress}</span>
+          )}
         </FormGroup>
-        <FormGroup>
+        <FormGroup validationState={isError.newPassword.length > 0 ? 'error' : ''}>
           <ControlLabel>New Password</ControlLabel>
           <input
             id="newPassword"
@@ -267,34 +265,41 @@ class Profile extends React.Component {
             name="newPassword"
             ref={(newPassword) => (this.newPassword = newPassword)}
             className="form-control"
+            onChange={this.onValueChange}
           />
+          {isError.newPassword.length > 0 && (
+          <span className="control-label">{isError.newPassword}</span>
+          )}
         </FormGroup>
         <InputHint>
           <ul className="col-xs-6">
-            <li>One Lowercase character</li>
-            <li>One Uppercase character</li>
-            <li>One Number</li>
-          </ul>
-          <ul className="col-xs-6">
-            <li>One Special character</li>
-            <li>6 characters minimum</li>
+            <p>6 characters minimum</p>
           </ul>
         </InputHint>
         <Row>
           <Col xs={12}>
-            <FormGroup>
+            <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
               <ControlLabel>Confirm New Password</ControlLabel>
               <input
                 type="password"
                 name="confirmPassword"
                 ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
                 className="form-control"
+                onChange={this.onValueChange}
               />
+              {isError.confirmPassword.length > 0 && (
+              <span className="control-label">{isError.confirmPassword}</span>
+              )}
             </FormGroup>
           </Col>
         </Row>
         <div>
-          <Button type="submit" bsStyle="primary">Save Profile</Button>
+          <Button
+            type="submit"
+            bsStyle="primary"
+          >
+            Save Profile
+          </Button>
         </div>
       </div>
     ) : <div />;
@@ -314,7 +319,7 @@ class Profile extends React.Component {
         <Row>
           <Col xs={12} sm={9} md={6}>
             <h3 className="page-header">Edit Profile</h3>
-            <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
+            <form onSubmit={this.validateForm}>
               {this.renderProfileForm(loading, user)}
             </form>
           </Col>

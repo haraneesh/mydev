@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Alert } from 'react-bootstrap';
 import { Accounts } from 'meteor/accounts-base';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 
 class VerifyEmail extends React.Component {
   state = { error: null };
@@ -11,14 +11,14 @@ class VerifyEmail extends React.Component {
     const { match, history } = this.props;
     Accounts.verifyEmail(match.params.token, (error) => {
       if (error) {
-        // Bert.alert(error.reason, 'danger');
+        // toast.error(error.reason);
         this.setState({ error: `${error.reason}.` });
         setTimeout(() => {
           history.push('/profile');
         }, 5500);
       } else {
         setTimeout(() => {
-          Bert.alert('All set, thanks!', 'success');
+          toast.success('All set, thanks!');
           history.push('/profile');
         }, 1500);
       }
@@ -34,10 +34,17 @@ class VerifyEmail extends React.Component {
             <h3 className="page-header">Verifying Email Address</h3>
             <div className="VerifyEmail">
               <Alert bsStyle={!error ? 'info' : 'danger'}>
-                {!error ?
-                  'Verifying...' :
-                  (<div> {`${error} You will be redirected automatically.`}
-                    <br /> <p> Please try again. </p></div>)}
+                {!error
+                  ? 'Verifying...'
+                  : (
+                    <div>
+                      {' '}
+                      {`${error} You will be redirected automatically.`}
+                      <br />
+                      {' '}
+                      <p> Please try again. </p>
+                    </div>
+                  )}
               </Alert>
             </div>
           </Col>

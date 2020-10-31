@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, Tabs, Tab } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import {
+  Row, Col, Button, Tabs, Tab,
+} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import Loading from '../Loading/Loading';
 
-const _displayResults = results => results.map((result, index) => (
-  <li key={`zhSync-${index}`}><span className="badge">{result.code}</span>{` ${result.message}`}</li>
+const _displayResults = (results) => results.map((result, index) => (
+  <li key={`zhSync-${index}`}>
+    <span className="badge">{result.code}</span>
+    {` ${result.message}`}
+  </li>
 ));
 
 export default class ZohoSync extends React.Component {
@@ -14,8 +19,8 @@ export default class ZohoSync extends React.Component {
     this.state = {
       isSyncingHappening: false,
       syncStatus: 'success',
-      //successResult: [],
-      //errorResult: [],
+      // successResult: [],
+      // errorResult: [],
     };
 
     this._errorResult = [];
@@ -28,10 +33,10 @@ export default class ZohoSync extends React.Component {
     this.props.syncFunction.call(args, (err, result) => {
       const syncObj = { isSyncingHappening: false };
       if (err) {
-        Bert.alert(err.reason, 'danger');
+        toast.error(err.reason);
         syncObj.syncStatus = 'error';
       } else {
-        Bert.alert('Sync Up Complete!', 'success');
+        toast.success('Sync Up Complete!');
         syncObj.syncStatus = 'success';
         this._errorResult = result.error;
         this._successResult = result.success;
@@ -48,34 +53,43 @@ export default class ZohoSync extends React.Component {
         {this.state.isSyncingHappening && (<Loading />)}
         <Row>
           <Col sm={1}>
-            <h4>{this.props.orderSequence}.</h4>
+            <h4>
+              {this.props.orderSequence}
+              .
+            </h4>
           </Col>
           <Col sm={6}>
             <Button type="submit" onClick={this.handleSyncClick}>
               {this.props.syncName}
             </Button>
           </Col>
-          <Col sm={5} >
-            <p> {this.props.syncDescription} </p>
+          <Col sm={5}>
+            <p>
+              {' '}
+              {this.props.syncDescription}
+              {' '}
+            </p>
           </Col>
         </Row>
-        {(this._errorResult.length > 0 || this._successResult.length > 0) && (<Row>
+        {(this._errorResult.length > 0 || this._successResult.length > 0) && (
+        <Row>
           <Col xs={1} />
           <Col xs={11}>
             <Tabs defaultActiveKey={1} id="syncUpTabs">
-              <Tab eventKey={1} title="Success" >
+              <Tab eventKey={1} title="Success">
                 <ol>
                   {_displayResults(this._successResult)}
                 </ol>
               </Tab>
-              <Tab eventKey={2} title="Errors" >
+              <Tab eventKey={2} title="Errors">
                 <ol>
                   {_displayResults(this._errorResult)}
                 </ol>
               </Tab>
             </Tabs>
           </Col>
-        </Row>)}
+        </Row>
+        )}
       </div>
     );
   }

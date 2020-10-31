@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Panel, PanelGroup, Button } from 'react-bootstrap';
-import Product from '../Orders/Product';
+import {
+  Row, Col, Panel, PanelGroup, Button,
+} from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
+import Product from '../Orders/Product';
 import { accountSettings } from '../../../modules/settings';
 import constants from '../../../modules/constants';
-import { displayProductsByType } from '../../components/Orders/ProductsOrderCommon/ProductsOrderCommon';
+import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
 const displayWithDivider = (displayArray, displayText) => (
   displayArray && displayArray.length > 0 && (
@@ -19,8 +21,11 @@ const displayWithDivider = (displayArray, displayText) => (
     </div>
   ));
 
-export const ListProducts = ({ products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner }) => {
-  const { productVegetables,
+export const ListProducts = ({
+  products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner,
+}) => {
+  const {
+    productVegetables,
     productFruits,
     productDhals,
     productGrains,
@@ -30,7 +35,9 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     productHygiene,
     productSweetners,
     productsNoCategory,
-  } = displayProductsByType({ products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity });
+  } = displayProductsByType({
+    products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity,
+  });
 
   const chosenButDeleted = [];
   Object.keys(deletedProducts).map((key, index) => {
@@ -53,9 +60,15 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
     <PanelGroup className="order-details-products">
       <Panel>
         <Row>
-          <Col xs={7} sm={9}> <strong> Name </strong></Col>
+          <Col xs={7} sm={9}>
+            {' '}
+            <strong> Name </strong>
+          </Col>
           {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-          <Col xs={5} sm={3} className="text-left"> <strong> Value </strong></Col>
+          <Col xs={5} sm={3} className="text-left">
+            {' '}
+            <strong> Value </strong>
+          </Col>
         </Row>
       </Panel>
       {displayWithDivider(productVegetables, 'Vegetables')}
@@ -74,13 +87,21 @@ export const ListProducts = ({ products, deletedProducts, updateProductQuantity,
   );
 };
 
-export const ListProducts1 = ({ products, deletedProducts, updateProductQuantity, isMobile, isAdmin }) => (
+export const ListProducts1 = ({
+  products, deletedProducts, updateProductQuantity, isMobile, isAdmin,
+}) => (
   <PanelGroup className="order-details-products">
     <Panel>
       <Row>
-        <Col xs={7} sm={9}> <strong> Name </strong></Col>
+        <Col xs={7} sm={9}>
+          {' '}
+          <strong> Name </strong>
+        </Col>
         {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} sm={3} className="text-left"> <strong> Value </strong></Col>
+        <Col xs={5} sm={3} className="text-left">
+          {' '}
+          <strong> Value </strong>
+        </Col>
       </Row>
     </Panel>
     {Object.keys(products).map((key, index) => {
@@ -124,18 +145,24 @@ ListProducts.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
 };
 
-export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, submitButtonName }) => (
+export const OrderFooter = ({
+  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting,
+}) => (
   <div className="orderFooter">
     <Col sm={8} xs={12}>
-      <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>{'Total '}
+      <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
+        {'Total '}
         <strong>
           {
             formatMoney(totalBillAmount, accountSettings)
-          } &nbsp;
+          }
+          {' '}
+&nbsp;
         </strong>
       </h4>
     </Col>
     <Col className="text-right-not-xs" sm={4} xs={12}>
+      {(!showWaiting) && (
       <Button
         bsStyle="primary"
         style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
@@ -145,6 +172,19 @@ export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, 
       >
         {submitButtonName}
       </Button>
+      )}
+
+      {(showWaiting) && (
+      <Button
+        bsStyle="primary"
+        style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
+        disabled
+        className="btn-block"
+      >
+        Order Being Placed ...
+      </Button>
+      )}
+
     </Col>
   </div>
 );
@@ -152,6 +192,7 @@ export const OrderFooter = ({ history, orderId, totalBillAmount, onButtonClick, 
 OrderFooter.defaultProps = {
   onSecondButtonClick: {},
   orderId: '',
+  showWaiting: false,
 };
 
 OrderFooter.propTypes = {
@@ -163,6 +204,7 @@ OrderFooter.propTypes = {
   isMainProductListPage: PropTypes.bool.isRequired,
   history: PropTypes.object.isRequired,
   orderId: PropTypes.string,
+  showWaiting: PropTypes.bool,
 };
 
 export const OrderComment = ({ refComment, onCommentChange, comments }) => (
@@ -170,7 +212,9 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
     <Row>
       <Col sm={3}>
         <h4 className="text-right-not-xs">
-          <strong>Comments</strong> &nbsp;
+          <strong>Comments</strong>
+          {' '}
+&nbsp;
         </h4>
       </Col>
       <Col sm={9}>

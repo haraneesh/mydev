@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Panel, Button } from 'react-bootstrap';
-import { Bert } from 'meteor/themeteorchef:bert';
+import {
+  Row, Col, Panel, Button,
+} from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
@@ -10,7 +12,9 @@ import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
 
-const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
+const CartDetails = ({
+  history, orderId, loggedInUser, roles,
+}) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
@@ -18,6 +22,7 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
   const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {} });
+  const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
@@ -42,8 +47,8 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
   const updateProductQuantity = (e) => {
     const productId = e.target.name;
     const quantity = parseFloat(e.target.value);
-    const product = cartState.cart.productsInCart[productId] ?
-      cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
+    const product = cartState.cart.productsInCart[productId]
+      ? cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
     product.quantity = quantity;
     delete product.removedDuringCheckout;
     updateDeletedProducts(quantity, productId, product);
@@ -59,13 +64,12 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
 
   const handleOrderSubmit = () => {
     if (onBehalfUser.isNecessary && !(
-      constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs) &&
-        'profile' in onBehalfUser.user)
+      constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs)
+        && 'profile' in onBehalfUser.user)
     ) {
       setOnBehalfUserInfoError(true);
       return;
     }
-
 
     if (loggedInUser) {
       const products = [];
@@ -90,20 +94,20 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
         };
       }
 
-
+      setOrderUpdated(true);
       upsertOrder.call(order, (error, order) => {
         const confirmation = 'Your Order has been placed';
         if (error) {
-          Bert.alert(error.reason, 'danger');
+          toast.error(error.reason);
         } else {
           cartDispatch({ type: cartActions.orderFlowComplete });
-          Bert.alert(confirmation, 'success');
+          toast.success(confirmation);
           history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
         }
+        setOrderUpdated(false);
       });
     } else {
       // Sign up
-
 
     }
   };
@@ -147,12 +151,12 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
       return (
         <Row>
           <Col xs={12}>
-            <h3 className="page-header">{'Your Cart'}</h3>
+            <h3 className="page-header">Your Cart</h3>
           </Col>
           <Col xs={12}>
             <Panel>
               <h4> Cart is Empty! </h4>
-              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { history.push('/neworder/selectbasket'); }}>Add Items</Button>
+              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { history.push('/neworder/selectbasket'); }}> Add Items</Button>
             </Panel>
           </Col>
         </Row>
@@ -167,24 +171,46 @@ const CartDetails = ({ history, orderId, loggedInUser, roles }) => {
 
           <Col xs={12}>
             <Panel>
-              <ListProducts products={cartState.cart.productsInCart} deletedProducts={deletedProducts.cart} updateProductQuantity={updateProductQuantity} isMobile isAdmin={isLoggedInUserAdmin()} isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)} />
+              <ListProducts
+                products={cartState.cart.productsInCart}
+                deletedProducts={deletedProducts.cart}
+                updateProductQuantity={updateProductQuantity}
+                isMobile
+                isAdmin={isLoggedInUserAdmin()}
+                isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
+              />
               <Row>
                 <Col xs={6} className="text-left">
-                  <Button style={{ marginBottom: '2.5em', marginLeft: '.5em' }} onClick={() => { clearCart(); }}>Clear Cart</Button>
+                  <Button
+                    style={{ marginBottom: '2.5em', marginLeft: '.5em' }}
+                    onClick={() => { clearCart(); }}
+                  >
+                    Clear Cart
+                  </Button>
                 </Col>
                 <Col xs={6} className="text-right">
-                  <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { handleAddItems(); }}>Add Items</Button>
+                  <Button
+                    style={{ marginBottom: '2.5em', marginRight: '.5em' }}
+                    onClick={() => { handleAddItems(); }}
+                  >
+                    <i className="fa fa-plus" />
+                    {' Add Items'}
+                  </Button>
                 </Col>
               </Row>
               <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
-              {onBehalfUser.isNecessary && (<OnBehalf
+              {onBehalfUser.isNecessary && (
+              <OnBehalf
                 onSelectedChange={onSelectedChange}
                 showMandatoryFields={onBehalfUserInfoError}
-              />)}
+              />
+              )}
+              {(isOrderBeingUpdated) && <Loading />}
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}
                 submitButtonName={orderId ? 'Update Order' : 'Place Order'}
+                showWaiting={isOrderBeingUpdated}
                 history={history}
                 orderId={orderId}
               />

@@ -39,9 +39,9 @@ email@2.0.0
 underscore@1.0.10
 sakulstra:aggregate
 standard-minifier-css@1.6.1
-themeteorchef:bert
 mdg:validated-method
 meteorhacks:picker
 socialize:cloudinary
 fourseven:scss
 matb33:collection-hooks
+#jquery@3.0.0! # meteor chef dependency can be reduced

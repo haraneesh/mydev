@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import Suppliers from '../../../../../api/Suppliers/Suppliers';
 import NotFound from '../../../Miscellaneous/NotFound/NotFound';
 import Loading from '../../../../components/Loading/Loading';
@@ -12,9 +12,9 @@ const handleRemove = (supplierId, history) => {
   if (confirm('Are you sure? This is permanent!')) {
     Meteor.call('suppliers.remove', supplierId, (error) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
-        Bert.alert('Supplier deleted!', 'success');
+        toast.success('Supplier deleted!');
         history.push('/suppliers');
       }
     });

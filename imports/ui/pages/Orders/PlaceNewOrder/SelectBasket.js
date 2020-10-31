@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import ShowBasketsToSelect from '../../../components/Orders/ShowBasketsToSelect/ShowBasketsToSelect';
 import Loading from '../../../components/Loading/Loading';
 import { useCartState } from '../../../stores/ShoppingCart';
@@ -18,7 +18,7 @@ const SelectBasket = ({ history }) => {
       Meteor.call('baskets.getAll',
         (error, basketLists) => {
           if (error) {
-            Bert.alert(error.reason, 'danger');
+            toast.error(error.reason);
           } else if (basketLists.length > 0) {
             setBasketList(basketLists);
             setIsLoading(false);

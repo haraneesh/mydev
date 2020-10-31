@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Bert } from 'meteor/themeteorchef:bert';
+import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import MessageComments from '../../../components/Messages/MessageComments';
@@ -11,7 +11,9 @@ import NotFound from '../../Miscellaneous/NotFound/NotFound';
 import constants from '../../../../modules/constants';
 import CommentsCollection from '../../../../api/Comments/Comments';
 
-const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) => {
+const EditMessage = ({
+  comments, messageId, history, roles, loggedInUserId,
+}) => {
   const [loadingMessage, setLoadingMessage] = useState(true);
   const [messageEdit, setMessageEdit] = useState(true);
 
@@ -22,7 +24,7 @@ const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) =>
     setLoadingMessage(true);
     Meteor.call('message.detail', messageId, (error, msg) => {
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        toast.error(error.reason);
       } else {
         setMessage(msg);
       }
@@ -46,7 +48,8 @@ const EditMessage = ({ comments, messageId, history, roles, loggedInUserId }) =>
         {(!loadingMessage && isEditMode) && (<MessageEditor existingMessage={message} history={history} isAdmin onsuccessFullUpdate={handleEditMessage} />) }
         {(!loadingMessage && !isEditMode) && (<MessageView existingMessage={message} editMessagePage isAdmin loggedInUserId={loggedInUserId} handleEditMessage={handleEditMessage} />)}
         {(!loadingMessage) && (<MessageComments isAdmin={isAdmin} loggedInUserId={loggedInUserId} existingMessage={message} messageComments={comments} history={history} />)}
-      </div>);
+      </div>
+    );
   }
 
   return (<NotFound />);
@@ -59,7 +62,6 @@ EditMessage.propTypes = {
   loggedInUserId: PropTypes.bool.isRequired,
   roles: PropTypes.array.isRequired,
 };
-
 
 export default withTracker((args) => {
   const { match, roles, loggedInUserId } = args;
