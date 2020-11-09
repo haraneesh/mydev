@@ -110,11 +110,34 @@ const App = (props) => (
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
-          {/* props.authenticated && (<Alert bsStyle="danger" style={{ color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center' }}>
-        <small> Due to Mandate on Quarantine and rapidly changing situation, Suvai will have to suspend deliveries till <span style={{ color: '#EF0905' }}>31st March.</span>
-        </small> <br />
-        <small> Hope your are sufficiently stocked and are safe at home. </small>
-        </Alert>) */}
+          {props.authenticated && (
+          <Alert
+            bsStyle="danger"
+            style={{
+              color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center',
+            }}
+          >
+            <small>
+              {' '}
+              Wishing you and your family a very happy Diwali!
+            </small>
+            <br />
+            <small>
+              Please note, There will not be any deliveries on Friday
+              <span style={{ color: '#EF0905' }}>
+                {' '}
+                13th
+                {' '}
+              </span>
+              and Saturday
+              <span style={{ color: '#EF0905' }}>
+                {' '}
+                14th.
+                {' '}
+              </span>
+            </small>
+          </Alert>
+          )}
           {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}

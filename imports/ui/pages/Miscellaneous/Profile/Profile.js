@@ -3,13 +3,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, FormGroup, ControlLabel, Button,
+  Row, Col, FormGroup, label, Button,
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
 import { createContainer } from 'meteor/react-meteor-data';
-import InputHint from '../../../components/InputHint/InputHint';
 import { formValChange, formValid } from '../../../../modules/validate';
 import constants from '../../../../modules/constants';
 
@@ -144,7 +143,7 @@ class Profile extends React.Component {
     return !loading ? (
       <div>
         <FormGroup>
-          <ControlLabel>Salutation</ControlLabel>
+          <label>Salutation</label>
           <select
             name="salutation"
             ref={(salutation) => (this.salutation = salutation)}
@@ -157,7 +156,7 @@ class Profile extends React.Component {
           </select>
         </FormGroup>
         <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
-          <ControlLabel>First Name</ControlLabel>
+          <label>First Name</label>
           <input
             type="text"
             name="firstName"
@@ -171,7 +170,7 @@ class Profile extends React.Component {
           )}
         </FormGroup>
         <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
-          <ControlLabel>Last Name</ControlLabel>
+          <label>Last Name</label>
           <input
             type="text"
             name="lastName"
@@ -187,7 +186,7 @@ class Profile extends React.Component {
         <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
           <Row>
             <Col xs={6}>
-              <ControlLabel>Email Address</ControlLabel>
+              <label>Email Address</label>
             </Col>
             <Col xs={6} className="text-right" style={{ top: '-0.5rem' }}>
               {!user.emails[0].verified
@@ -208,7 +207,7 @@ class Profile extends React.Component {
           )}
         </FormGroup>
         <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-          <ControlLabel>Mobile Number</ControlLabel>
+          <label>Mobile Number</label>
           <input
             type="text"
             ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
@@ -223,7 +222,7 @@ class Profile extends React.Component {
           )}
         </FormGroup>
         <FormGroup validationState={isError.dietPreference.length > 0 ? 'error' : ''}>
-          <ControlLabel>Dietary Preference</ControlLabel>
+          <label>Dietary Preference</label>
           <select
             name="dietPreference"
             onChange={this.onValueChange}
@@ -243,7 +242,7 @@ class Profile extends React.Component {
           )}
         </FormGroup>
         <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
-          <ControlLabel>Delivery Address</ControlLabel>
+          <label>Delivery Address</label>
           <textarea
             ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
             name="deliveryAddress"
@@ -258,7 +257,7 @@ class Profile extends React.Component {
           )}
         </FormGroup>
         <FormGroup validationState={isError.newPassword.length > 0 ? 'error' : ''}>
-          <ControlLabel>New Password</ControlLabel>
+          <label>New Password</label>
           <input
             id="newPassword"
             type="password"
@@ -271,15 +270,10 @@ class Profile extends React.Component {
           <span className="control-label">{isError.newPassword}</span>
           )}
         </FormGroup>
-        <InputHint>
-          <ul className="col-xs-6">
-            <p>6 characters minimum</p>
-          </ul>
-        </InputHint>
         <Row>
           <Col xs={12}>
             <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
-              <ControlLabel>Confirm New Password</ControlLabel>
+              <label>Confirm New Password</label>
               <input
                 type="password"
                 name="confirmPassword"

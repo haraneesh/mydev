@@ -81,7 +81,7 @@ class Login extends React.Component {
           <h3 className="page-header">Log In</h3>
           <form onSubmit={this.validateForm}>
             <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-              <ControlLabel>Mobile Number</ControlLabel>
+              <label>Mobile Number</label>
               <input
                 type="text"
                 name="whMobilePhone"
@@ -95,10 +95,10 @@ class Login extends React.Component {
               )}
             </FormGroup>
             <FormGroup validationState={isError.password.length > 0 ? 'error' : ''} style={{ position: 'relative' }}>
-              <ControlLabel className="clearfix">
+              <label className="clearfix">
                 <span className="pull-left">Password</span>
                 <Link className="pull-right" to="/recover-password">Forgot password?</Link>
-              </ControlLabel>
+              </label>
               <input
                 type={(this.state.showPassword ? 'text' : 'password')}
                 name="password"
@@ -107,7 +107,11 @@ class Login extends React.Component {
                 placeholder="Password"
                 onBlur={this.onValueChange}
               />
-              <Button className="btn-xs btn-info" onClick={this.switchPasswordBox} style={showPasswordButtonPositions}>
+              <Button
+                className="btn-xs btn-info"
+                onClick={this.switchPasswordBox}
+                style={showPasswordButtonPositions}
+              >
                 {this.state.showPassword ? 'Hide' : 'Show'}
               </Button>
               {isError.password.length > 0 && (

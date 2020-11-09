@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, FormGroup, Panel, ControlLabel, FormControl, Button,
+  Row, Col, FormGroup, Panel, label, FormControl, Button,
 } from 'react-bootstrap';
 import { formValid } from '../../../modules/validate';
 import constants from '../../../modules/constants';
@@ -9,7 +9,7 @@ export const findUserForm = (callBack) => (
   <Row>
     <Col xs={12} sm={6}>
       <FormGroup>
-        <ControlLabel>User's Phone number</ControlLabel>
+        <label>User's Phone number</label>
         <FormControl
           type="text"
           name="mobileNumber"
@@ -45,7 +45,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
         <Row>
           <Col xs={12} sm={8}>
             <FormGroup>
-              <ControlLabel>Salutation</ControlLabel>
+              <label>Salutation</label>
               <select
                 name="salutation"
                 className="form-control"
@@ -57,7 +57,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               </select>
             </FormGroup>
             <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
-              <ControlLabel>First Name</ControlLabel>
+              <label>First Name</label>
               <FormControl
                 onBlur={onValueChange}
                 type="text"
@@ -70,7 +70,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
-              <ControlLabel>Last Name</ControlLabel>
+              <label>Last Name</label>
               <FormControl
                 onBlur={onValueChange}
                 type="text"
@@ -83,7 +83,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
-              <ControlLabel>Email Address</ControlLabel>
+              <label>Email Address</label>
               <FormControl
                 onBlur={onValueChange}
                 type="text"
@@ -96,7 +96,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-              <ControlLabel>Mobile Number</ControlLabel>
+              <label>Mobile Number</label>
               <FormControl
                 onBlur={onValueChange}
                 type="text"
@@ -109,7 +109,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
-              <ControlLabel>Delivery Address</ControlLabel>
+              <label>Delivery Address</label>
               <FormControl
                 onBlur={onValueChange}
                 componentClass="textarea"
@@ -123,7 +123,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
-              <ControlLabel>Password</ControlLabel>
+              <label>Password</label>
               <FormControl
                 onBlur={onValueChange}
                 type="password"
@@ -135,7 +135,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               )}
             </FormGroup>
             <FormGroup>
-              <ControlLabel>User Role</ControlLabel>
+              <label>User Role</label>
               <select
                 className="form-control"
                 id="idUserRole"

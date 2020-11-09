@@ -39,13 +39,16 @@ const ToolBar = ({
 
   function show() {
     const toolBar = document.getElementById('toolBar');
-    document.getElementById('toolBar').style.display = 'flex';
-    bottom = parseInt(toolBar.style.bottom, 10);
-    if (bottom < 0) {
-      bottom += 10;
-      toolBar.style.bottom = `${bottom}px`;
-    } else {
-      clearInterval(intervalID);
+    if (toolBar !== null) {
+      toolBar.style.display = 'flex';
+
+      bottom = parseInt(toolBar.style.bottom, 10);
+      if (bottom < 0) {
+        bottom += 10;
+        toolBar.style.bottom = `${bottom}px`;
+      } else {
+        clearInterval(intervalID);
+      }
     }
   }
 

@@ -42,6 +42,7 @@ class ListAllProducts extends React.Component {
       showEndDateError: false,
       productRows: createProductRows({ products: props.products, suppliers: props.suppliers }),
       selectedHeaderKey: 1,
+      isPublishingProductList: false,
     };
 
     this.productListId = this.props.productListId;
@@ -90,6 +91,9 @@ class ListAllProducts extends React.Component {
       _id: this.productListId,
     };
 
+    this.setState({
+      isPublishingProductList: true,
+    });
     Meteor.call('productLists.upsert', params, (error) => {
       if (error) {
         toast.error(error.reason || error.message);
@@ -97,10 +101,12 @@ class ListAllProducts extends React.Component {
         const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
         toast.success(successMsg);
       }
+      this.setState({ isPublishingProductList: false });
     });
   }
 
   publishSection() {
+    const { showEndDateError, isPublishingProductList } = this.state;
     return (
       <ListGroupItem className="publishSection">
         <h3> Publish Product List for Users to order </h3>
@@ -122,13 +128,32 @@ class ListAllProducts extends React.Component {
             <ControlLabel> Active end date </ControlLabel>
           </Col>
           <Col xs={6}>
-            <Datetime closeOnSelect isValidDate={this.checkIsValidDate} onChange={this.checkValidEndDate} />
-            {this.state.showEndDateError && <Alert bsStyle="danger"> End date and time should be greater than start date. </Alert>}
+            <Datetime
+              closeOnSelect
+              isValidDate={this.checkIsValidDate}
+              onChange={this.checkValidEndDate}
+            />
+            {showEndDateError && (
+            <Alert bsStyle="danger">
+              End date and time should be greater than start date.
+            </Alert>
+            )}
           </Col>
         </Row>
         <Row>
           <Col xs={12}>
-            <Button bsStyle="primary" onClick={() => { this.publishProductList(); }}> Publish Product List </Button>
+            { !isPublishingProductList && (
+            <Button bsStyle="primary" onClick={() => { this.publishProductList(); }}>
+              Publish Product List
+            </Button>
+            )}
+            {
+              !!isPublishingProductList && (
+                <Button bsStyle="primary" disabled>
+                  Product List is being Published ...
+                </Button>
+              )
+            }
           </Col>
         </Row>
       </ListGroupItem>
@@ -151,7 +176,7 @@ class ListAllProducts extends React.Component {
         ? (
           <ListGroup className="product-list">
             {productKeys.forEach((key) => {
-              sectionCount++;
+              sectionCount += 1;
               productsDisplay.push(
                 <Tab eventKey={sectionCount} title={key}>
                   {(sectionCount === selectedHeaderKey) && productRows[key]}
@@ -159,7 +184,12 @@ class ListAllProducts extends React.Component {
               );
             })}
 
-            <Tabs animation={false} id="adminProductList" activeKey={selectedHeaderKey} onSelect={this.tabOnClick}>
+            <Tabs
+              animation={false}
+              id="adminProductList"
+              activeKey={selectedHeaderKey}
+              onSelect={this.tabOnClick}
+            >
               {productsDisplay}
             </Tabs>
 
@@ -167,7 +197,12 @@ class ListAllProducts extends React.Component {
             {this.publishSection()}
           </ListGroup>
         )
-        : <Alert bsStyle="info">The product list is empty. You can add products by typing in the name of the product in the above box.</Alert>
+        : (
+          <Alert bsStyle="info">
+            The product list is empty.
+            You can add products by typing in the name of the product in the above box.
+          </Alert>
+        )
     );
   }
 }

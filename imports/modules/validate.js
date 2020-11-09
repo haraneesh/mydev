@@ -32,6 +32,12 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         : 'two passwords do not match, please check';
       break;
 
+    case name === 'name':
+      isError.name = value.length < 1
+        ? 'first name should be atleast 4 characters long'
+        : '';
+      break;
+
     case name === 'firstName':
       isError.firstName = value.length < 1
         ? 'first name should be atleast 4 characters long'

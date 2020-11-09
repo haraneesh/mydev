@@ -82,31 +82,33 @@ Meteor.methods({
         handleMethodException('Access denied', 401);
       }
 
-      console.log('------------');
-      console.log(`1 ${new Date()}`);
-
       const startDate = params.activeStartDateTime;
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
-      let orderableProducts = Products.find({ $or: [{ availableToOrder: true }, { availableToOrderWH: true }] }, { sort: { type: 1, /* category: 1, displayOrder: 1, */ name: 1 } }).fetch();
+
+      let orderableProducts = Products.find(
+        { $or: [{ availableToOrder: true }, { availableToOrderWH: true }] },
+        { sort: { type: 1, /* category: 1, displayOrder: 1, */ name: 1 } },
+      ).fetch();
+
       if (!productListsId) {
         const overlappingProductList = ProductLists.findOne(
-          { $and: [{ activeStartDateTime: { $lte: endDate } }, { activeEndDateTime: { $gte: startDate } }] },
+          {
+            $and: [{ activeStartDateTime: { $lte: endDate } },
+              { activeEndDateTime: { $gte: startDate } }],
+          },
         );
         if (overlappingProductList) {
           handleMethodException(' Another Product List is active during this period. Product List was not created.', 417);
         }
         orderableProducts = updateWithTotQuantityOrdered(orderableProducts);
       } else {
-        console.log(`ID ${productListsId}`);
         const currentProductList = ProductLists.findOne({ _id: productListsId });
         const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
           map[obj._id] = obj;
           return map;
         }, {});
-        console.log(`2 ${new Date()}`);
         orderableProducts = updateWithTotQuantityOrdered(orderableProducts, currentProductHashMap);
-        console.log(`3 ${new Date()}`);
       }
 
       const productList = {
@@ -115,10 +117,7 @@ Meteor.methods({
         products: orderableProducts,
       };
 
-      // ProductLists.upsert({ _id: productListsId }, { $set: productList });
-      console.log(`Product List ${JSON.stringify(productList)}`);
-      ProductLists.insert(productList);
-      console.log(`4 ${new Date()}`);
+      ProductLists.upsert({ _id: productListsId }, { $set: productList });
     }
   },
 });

@@ -6,21 +6,26 @@ import { dateSettings } from '../../modules/settings';
 
 class AggregateSupplierOrderCSV {
     static createDisplayRows = (orders) => {
-      const sparseList = {};
+      const sparseProductOrderList = {};
       const productRows = {};
+      const orderRows = {};
+
       orders.forEach((order) => {
-        if (!sparseList[order._id]) {
-          sparseList[order._id] = {
+        if (!orderRows[order._id]) {
+          orderRows[order._id] = {
             _id: order._id,
-            customer_details: order.customer_details,
-            order_status: order.order_status,
+            customerDetails: order.customer_details,
+            orderStatus: order.order_status,
             createdAt: order.createdAt,
           };
         }
 
         order.products.forEach((product) => {
-          if (!sparseList[order._id][product._id]) {
-            sparseList[order._id][product._id] = {
+          if (!sparseProductOrderList[product._id]) {
+            sparseProductOrderList[product._id] = [];
+          }
+          if (!sparseProductOrderList[product._id][order._id]) {
+            sparseProductOrderList[product._id][order._id] = {
               quantity: product.quantity,
               unitOfSale: product.unitOfSale,
             };
@@ -34,7 +39,8 @@ class AggregateSupplierOrderCSV {
       });
 
       return {
-        sparseList,
+        orderRows,
+        sparseProductOrderList,
         productRows,
       };
     }
@@ -44,23 +50,30 @@ class AggregateSupplierOrderCSV {
     const today = new Date();
     const SOdate = getDisplayDate(today, dateSettings.timeZone);
 
-    const { sparseList, productRows } = this.createDisplayRows(suppOrders);
+    const {
+      orderRows,
+      sparseProductOrderList,
+      productRows,
+    } = this.createDisplayRows(suppOrders);
 
-    const rowNames = Object.keys(productRows).reduce((agg, productId) => {
-      const productRow = productRows[productId];
-      return `${agg},${productRow.name}`;
-    }, 'Shop Name, Order Status, Order Date');
+    const orderRowIds = Object.keys(orderRows);
 
-    csv.push(rowNames);
+    let row1 = 'Product Name';
+    orderRowIds.forEach((orderId) => {
+      const { customerDetails } = orderRows[orderId];
+      row1 = `${row1},${customerDetails.name}`;
+    }, 'Product Name');
 
-    Object.keys(sparseList).forEach((orderId) => {
-      const order = sparseList[orderId];
-      let row = `${order.customer_details.name},${constants.OrderStatus[order.order_status].display_value},${getDayWithoutTime(order.createdAt, dateSettings.timeZone)}`;
+    csv.push(row1);
 
-      Object.keys(productRows).forEach((productId) => {
+    Object.keys(productRows).forEach((productId) => {
+      // const productRow = sparseProductOrderList[productId];
+      // let row = `${order.customer_details.name},${constants.OrderStatus[order.order_status].display_value},${getDayWithoutTime(order.createdAt, dateSettings.timeZone)}`;
+      let row = `${productRows[productId].name}`;
+      orderRowIds.forEach((orderId) => {
         row += ',';
-        if (sparseList[order._id][productId]) {
-          const product = sparseList[order._id][productId];
+        if (sparseProductOrderList[productId][orderId]) {
+          const product = sparseProductOrderList[productId][orderId];
           row += displayUnitOfSale(product.quantity, product.unitOfSale);
         }
       });

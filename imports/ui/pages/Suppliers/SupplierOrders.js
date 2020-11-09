@@ -90,7 +90,7 @@ const SupplierOrders = ({
       }
       {(showLoadMore) && (
       <Row style={{ marginTop: '2em' }}>
-        <Button onClick={() => { bringNextBatch(); }}>
+        <Button className="btn-sm" onClick={() => { bringNextBatch(); }}>
           Load More
         </Button>
       </Row>
