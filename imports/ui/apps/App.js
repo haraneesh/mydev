@@ -105,36 +105,39 @@ import { CartProvider } from '../stores/ShoppingCart';
 
 import Loading from '../components/Loading/Loading';
 
+const highLightText = (textToHighLight) => (
+  <span style={{ color: '#EF0905' }}>
+    {` ${textToHighLight} `}
+  </span>
+
+);
+
 const App = (props) => (
   <>
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
-          {props.authenticated && (
+          {/* props.authenticated && (
           <Alert
             bsStyle="danger"
             style={{
-              color: '#3a2d29', margin: '0px', padding: '10px 5px', borderBottom: '5px solid #FF6D00', borderLeftWidth: '0px', textAlign: 'center',
+              color: '#3a2d29',
+              margin: '0px',
+              padding: '10px 5px',
+              borderBottom: '5px solid #FF6D00',
+              borderLeftWidth: '0px',
+              textAlign: 'center',
             }}
           >
             <small>
-              {' '}
               Wishing you and your family a very happy Diwali!
             </small>
             <br />
             <small>
-              Please note, There will not be any deliveries on Friday
-              <span style={{ color: '#EF0905' }}>
-                {' '}
-                13th
-                {' '}
-              </span>
-              and Saturday
-              <span style={{ color: '#EF0905' }}>
-                {' '}
-                14th.
-                {' '}
-              </span>
+              Please note, There will
+              {highLightText('not')}
+              be any deliveries on Saturday
+              {highLightText('14th')}
             </small>
           </Alert>
           )}

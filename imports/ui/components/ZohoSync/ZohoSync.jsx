@@ -48,6 +48,7 @@ export default class ZohoSync extends React.Component {
   }
 
   render() {
+    const { disabled } = this.props;
     return (
       <div className="ZohoSyncUp">
         {this.state.isSyncingHappening && (<Loading />)}
@@ -59,7 +60,7 @@ export default class ZohoSync extends React.Component {
             </h4>
           </Col>
           <Col sm={6}>
-            <Button type="submit" onClick={this.handleSyncClick}>
+            <Button type="submit" onClick={this.handleSyncClick} disabled={disabled}>
               {this.props.syncName}
             </Button>
           </Col>
@@ -95,10 +96,15 @@ export default class ZohoSync extends React.Component {
   }
 }
 
+ZohoSync.defaultProps = {
+  disabled: false,
+};
+
 ZohoSync.propTypes = {
   orderSequence: PropTypes.number.isRequired,
   syncFunction: PropTypes.func.isRequired,
   syncName: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
   syncDescription: PropTypes.string,
   syncArgs: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };

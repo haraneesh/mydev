@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
+import { check } from 'meteor/check';
 import rateLimit from '../../modules/rate-limit';
 import Products from '../Products/Products';
 import { Orders } from '../Orders/Orders';
@@ -227,6 +228,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
           { order_status: { $ne: constants.OrderStatus.Completed.name } },
           { order_status: { $ne: constants.OrderStatus.Pending.name } },
           { order_status: { $ne: constants.OrderStatus.Processing.name } },
+          { order_status: { $ne: constants.OrderStatus.Awaiting_Payment.name } },
         ],
       };
       const orders = Orders.find(query).fetch();
@@ -243,8 +245,36 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
   },
 });
 
+export const syncOfflinePaymentDetails = new ValidatedMethod({
+  name: 'orders.syncOfflinePaymentDetails',
+  validate() { },
+  run() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      handleMethodException('Access denied', 403);
+    }
+    const nowDate = new Date();
+    const successResp = [];
+    const errorResp = [];
+    if (Meteor.isServer) {
+      const query = {
+        order_status: constants.OrderStatus.Awaiting_Payment.name,
+      };
+      const orders = Orders.find(query).fetch();
+      orders.forEach((ord) => {
+        if (ord.zh_salesorder_id) {
+          const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+          if (getInvoices && ord.zh_salesorder_number) {
+            processInvoicesFromZoho(ord, successResp, errorResp);
+          }
+        }
+      });
+    }
+    return updateSyncAndReturn('invoicesPayment', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
+  },
+});
+
 rateLimit({
-  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho],
+  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails],
   limit: 5,
   timeRange: 1000,
 });

@@ -55,8 +55,11 @@ const ToolBar = ({
   function reset() {
     clearInterval(intervalID);
     bottom = hideBottom;
-    document.getElementById('toolBar').style.display = 'none';
-    document.getElementById('toolBar').style.bottom = `${bottom}px`;
+    const toolBar = document.getElementById('toolBar');
+    if (toolBar !== null) {
+      toolBar.style.display = 'none';
+      toolBar.style.bottom = `${bottom}px`;
+    }
   }
 
   function bringUp() {
