@@ -28,6 +28,7 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         : '';
 
       isError.confirmPassword = (fieldValues.confirmPassword === fieldValues.newPassword)
+      || (fieldValues.confirmPassword === fieldValues.password)
         ? ''
         : 'two passwords do not match, please check';
       break;

@@ -28,6 +28,7 @@ import '../../api/Products/hooks';
 
 import '../../api/ProductLists/methods';
 import '../../api/ProductLists/server/publications';
+// import '../../api/ProductLists/productListJobs';
 
 // import '../../api/Orders/jobs';
 import '../../api/Orders/methods';

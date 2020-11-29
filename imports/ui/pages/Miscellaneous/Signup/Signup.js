@@ -9,84 +9,51 @@ import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
+import { formValChange, formValid } from '../../../../modules/validate';
 import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
-import validate from '../../../../modules/validate';
+
+const defaultState = {
+  signUpRequestSent: false,
+  isError: {
+    emailAddress: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    whMobilePhone: '',
+    deliveryAddress: '',
+    confirmPassword: '',
+  },
+};
 
 class Signup extends React.Component {
   constructor(props) {
     super(props);
+    this.onValueChange = this.onValueChange.bind(this);
+    this.validateForm = this.validateForm.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {
-      signUpRequestSent: false,
-    };
+    this.state = { ...defaultState };
   }
 
-  componentDidMount() {
-    const component = this;
+  onValueChange(e) {
+    e.preventDefault();
+    const { isError } = this.state;
+    const newState = formValChange(e,
+      { ...isError },
+      {
+        password: document.querySelector('[name="password"]').value,
+        confirmPassword: document.querySelector('[name="confirmPassword"]').value,
+      });
+    this.setState(newState);
+  }
 
-    validate(component.form, {
-      rules: {
-        firstName: {
-          required: true,
-        },
-        lastName: {
-          required: true,
-        },
-        emailAddress: {
-          required: true,
-          email: true,
-        },
-        whMobilePhone: {
-          required: true,
-          indiaMobilePhone: true,
-        },
-        deliveryAddress: {
-          required: true,
-        },
-        password: {
-          required() {
-            // Only required if password field has a value.
-            return component.confirmPassword.value.length > 0;
-          },
-          minlength: 6,
-        },
-        confirmPassword: {
-          required() {
-            return (component.password.value.length > 0);
-          },
-          minlength: 6,
-          equalTo: '#password',
-        },
-      },
-      messages: {
-        firstName: {
-          required: 'What\'s your first name?',
-        },
-        lastName: {
-          required: 'What\'s your last name?',
-        },
-        emailAddress: {
-          required: 'Need an email address here.',
-          email: 'Is this email address correct?',
-        },
-        password: {
-          required: 'Enter a new password, please.',
-          minlength: 'Use at least six characters, please.',
-        },
-        confirmPassword: {
-          required: 'Repeat your new password, please.',
-          equalTo: 'The password and confirm password are not matching, please try again.',
-        },
-        whMobilePhone: {
-          required: 'Need your mobile number.',
-          indiaMobilePhone: 'Is this a valid India mobile number?',
-        },
-        deliveryAddress: {
-          required: 'Need your delivery address.',
-        },
-      },
-      submitHandler() { component.handleSubmit(); },
-    });
+  validateForm(e) {
+    e.preventDefault();
+    const { isError } = this.state;
+    if (formValid({ isError })) {
+      this.handleSubmit();
+    } else {
+      this.setState({ isError });
+    }
   }
 
   handleSubmit() {
@@ -132,7 +99,7 @@ class Signup extends React.Component {
 
   render() {
     const { signUpRequestSent } = this.state;
-
+    const { isError } = this.state;
     return (!signUpRequestSent ? (
       <div className="Signup">
         <div>
@@ -149,42 +116,45 @@ class Signup extends React.Component {
               />
             </Col>
           </Row> */ }
-            <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
+            <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
               <Row>
                 <Col xs={6}>
-                  <FormGroup>
+                  <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
                     <ControlLabel>First Name</ControlLabel>
                     <input
                       type="text"
                       name="firstName"
                       ref={(firstName) => (this.firstName = firstName)}
+                      onBlur={this.onValueChange}
                       className="form-control"
                     />
                   </FormGroup>
                 </Col>
                 <Col xs={6}>
-                  <FormGroup>
+                  <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
                     <ControlLabel>Last Name</ControlLabel>
                     <input
                       type="text"
                       name="lastName"
                       ref={(lastName) => (this.lastName = lastName)}
+                      onBlur={this.onValueChange}
                       className="form-control"
                     />
                   </FormGroup>
                 </Col>
               </Row>
-              <FormGroup>
+              <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
                 <ControlLabel>Email Address</ControlLabel>
                 <input
                   type="email"
                   name="emailAddress"
                   ref={(emailAddress) => (this.emailAddress = emailAddress)}
+                  onBlur={this.onValueChange}
                   className="form-control"
                 />
               </FormGroup>
 
-              <FormGroup>
+              <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
                 <ControlLabel>Mobile Number</ControlLabel>
                 <input
                   type="text"
@@ -192,9 +162,10 @@ class Signup extends React.Component {
                   name="whMobilePhone"
                   placeholder="10 digit number example, 8787989897"
                   className="form-control"
+                  onBlur={this.onValueChange}
                 />
               </FormGroup>
-              <FormGroup>
+              <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
                 <ControlLabel>Delivery Address</ControlLabel>
                 <textarea
                   ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
@@ -202,9 +173,10 @@ class Signup extends React.Component {
                   placeholder="Complete address to deliver at, including Landmark, Pincode."
                   rows="6"
                   className="form-control"
+                  onBlur={this.onValueChange}
                 />
               </FormGroup>
-              <FormGroup>
+              <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
                 <ControlLabel>Password</ControlLabel>
                 <input
                   id="password"
@@ -212,17 +184,25 @@ class Signup extends React.Component {
                   name="password"
                   ref={(password) => (this.password = password)}
                   className="form-control"
+                  onBlur={this.onValueChange}
                 />
                 <InputHint>Use at least six characters.</InputHint>
+                {isError.password.length > 0 && (
+                <span className="control-label">{isError.password}</span>
+                )}
               </FormGroup>
-              <FormGroup>
+              <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
                 <ControlLabel>Confirm Password</ControlLabel>
                 <input
                   type="password"
                   name="confirmPassword"
                   ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
                   className="form-control"
+                  onBlur={this.onValueChange}
                 />
+                {isError.confirmPassword.length > 0 && (
+                <span className="control-label">{isError.confirmPassword}</span>
+                )}
               </FormGroup>
               <Button type="submit" bsStyle="primary">Sign Up</Button>
               <AccountPageFooter>

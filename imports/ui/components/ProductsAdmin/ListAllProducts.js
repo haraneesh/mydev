@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
@@ -45,7 +44,6 @@ class ListAllProducts extends React.Component {
       isPublishingProductList: false,
     };
 
-    this.productListId = this.props.productListId;
     this.publishProductList = this.publishProductList.bind(this);
     this.checkValidStartDate = this.checkValidStartDate.bind(this);
     this.checkValidEndDate = this.checkValidEndDate.bind(this);
@@ -88,15 +86,20 @@ class ListAllProducts extends React.Component {
     const params = {
       activeStartDateTime: new Date(this.state.activeStartDate),
       activeEndDateTime: new Date(this.state.activeEndDate),
-      _id: this.productListId,
+      _id: this.props.productListId,
     };
 
     this.setState({
       isPublishingProductList: true,
     });
-    Meteor.call('productLists.upsert', params, (error) => {
+
+    upsertProductList.call(params, (error) => {
       if (error) {
-        toast.error(error.reason || error.message);
+        if (error.error === 'invocation-failed') {
+          toast.success('Update is running in the background. Product List will be updated.');
+        } else {
+          toast.error(error.reason || error.message);
+        }
       } else {
         const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
         toast.success(successMsg);

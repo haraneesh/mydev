@@ -20,7 +20,6 @@ ProductLists.deny({
   remove: () => true,
 });
 
-
 const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
 productsSchemaDefObject.totQuantityOrdered = {
   type: Number,
@@ -38,10 +37,10 @@ ProductLists.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },
