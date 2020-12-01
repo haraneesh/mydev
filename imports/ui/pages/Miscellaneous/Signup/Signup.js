@@ -119,7 +119,10 @@ class Signup extends React.Component {
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
               <Row>
                 <Col xs={6}>
-                  <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
+                  <FormGroup
+                    validationState={isError.firstName.length > 0 ? 'error' : ''}
+                    style={{ paddingRight: '1px' }}
+                  >
                     <ControlLabel>First Name</ControlLabel>
                     <input
                       type="text"
@@ -131,7 +134,10 @@ class Signup extends React.Component {
                   </FormGroup>
                 </Col>
                 <Col xs={6}>
-                  <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
+                  <FormGroup
+                    validationState={isError.lastName.length > 0 ? 'error' : ''}
+                    style={{ paddingLeft: '1px' }}
+                  >
                     <ControlLabel>Last Name</ControlLabel>
                     <input
                       type="text"
