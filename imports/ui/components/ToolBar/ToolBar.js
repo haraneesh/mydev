@@ -121,56 +121,58 @@ const ToolBar = ({
     }
   }
 
-  return (
-    authenticated && (
-    <div id="toolBar" className="toolBar container text-center">
-      <div className="box box1">
-        <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
-          <Icon icon="comment" />
-          <span style={fontProps}>Message</span>
-          {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
-          <b className="alertMenu shoppingCartBubble">
-            {countOfUnreadNotifications}
-          </b>
-          )}
-        </Button>
+  if (authenticated) {
+    return (
+      <div id="toolBar" className="toolBar container text-center">
+        <div className="box box1">
+          <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
+            <Icon icon="comment" />
+            <span style={fontProps}>Message</span>
+            {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
+            <b className="alertMenu shoppingCartBubble">
+              {countOfUnreadNotifications}
+            </b>
+            )}
+          </Button>
+        </div>
+        <div className="box box2">
+          <Button bsStyle="link" onClick={() => { history.push('/recipes'); }}>
+            <Icon icon="utensils" />
+            <span style={fontProps}>Recipes</span>
+          </Button>
+        </div>
+        <div className="box box3">
+          <Button bsStyle="link" onClick={() => { history.push('/'); }}>
+            <Icon icon="home" type="glyph" />
+            <span style={fontProps}>Home</span>
+          </Button>
+        </div>
+        <div className="box box4">
+          <Button bsStyle="link" onClick={onCartIconClick}>
+            <Icon icon="shopping-basket" />
+            {(totalProductsInCount > 0) && (
+            <b className="alertMenu shoppingCartBubble">
+              {totalProductsInCount}
+            </b>
+            )}
+            <span style={fontProps}>Cart</span>
+          </Button>
+        </div>
+        <div className="box box5">
+          <Button bsStyle="link" onClick={() => { history.push('/mywallet'); }}>
+            <Icon icon="rupee-sign" />
+            { (numberOfAwaitingPayments > 0) && (
+            <b className="alertMenu alertBubble">
+              .
+            </b>
+            )}
+            <span style={fontProps}>Wallet</span>
+          </Button>
+        </div>
       </div>
-      <div className="box box2">
-        <Button bsStyle="link" onClick={() => { history.push('/recipes'); }}>
-          <Icon icon="utensils" />
-          <span style={fontProps}>Recipes</span>
-        </Button>
-      </div>
-      <div className="box box3">
-        <Button bsStyle="link" onClick={() => { history.push('/'); }}>
-          <Icon icon="home" type="glyph" />
-          <span style={fontProps}>Home</span>
-        </Button>
-      </div>
-      <div className="box box4">
-        <Button bsStyle="link" onClick={onCartIconClick}>
-          <Icon icon="shopping-basket" />
-          {(totalProductsInCount > 0) && (
-          <b className="alertMenu shoppingCartBubble">
-            {totalProductsInCount}
-          </b>
-          )}
-          <span style={fontProps}>Cart</span>
-        </Button>
-      </div>
-      <div className="box box5">
-        <Button bsStyle="link" onClick={() => { history.push('/mywallet'); }}>
-          <Icon icon="rupee-sign" />
-          { (numberOfAwaitingPayments > 0) && (
-          <b className="alertMenu alertBubble">
-            .
-          </b>
-          )}
-          <span style={fontProps}>Wallet</span>
-        </Button>
-      </div>
-    </div>
-    ));
+    );
+  }
+  return (<div />);
 };
 
 ToolBar.defaultProps = {

@@ -130,17 +130,18 @@ const App = (props) => (
             }}
           >
             <small>
-              Wishing you and your family a very happy Diwali!
+              Wish your family safe and healthy 2021!
             </small>
             <br />
             <small>
-              Please note, There will
+              Please note, there will
               {highLightText('not')}
-              be any deliveries on Saturday
-              {highLightText('14th')}
+              be any deliveries on Friday
+              {highLightText('1st')}
+              .
             </small>
           </Alert>
-          )}
+          ) */}
           {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}

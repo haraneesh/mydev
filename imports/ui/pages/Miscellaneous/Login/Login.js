@@ -46,7 +46,7 @@ class Login extends React.Component {
 
   handleSubmit() {
     const username = { username: this.whMobilePhone.value };
-    const password = this.password.value;
+    const password = document.getElementsByName('password')[0].value;
 
     Meteor.loginWithPassword(username, password, (error) => {
       if (error) {
@@ -102,7 +102,6 @@ class Login extends React.Component {
               <input
                 type={(this.state.showPassword ? 'text' : 'password')}
                 name="password"
-                ref={(password) => (this.password = password)}
                 className="form-control"
                 placeholder="Password"
                 onBlur={this.onValueChange}

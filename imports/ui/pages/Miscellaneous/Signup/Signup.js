@@ -63,7 +63,7 @@ class Signup extends React.Component {
     const user = {
       username: this.whMobilePhone.value,
       email: this.emailAddress.value,
-      password: this.password.value,
+      password: document.querySelector('[name="password"]').value, // this.password.value,
       profile: {
         name: {
           first: this.firstName.value,
@@ -188,7 +188,7 @@ class Signup extends React.Component {
                   id="password"
                   type="password"
                   name="password"
-                  ref={(password) => (this.password = password)}
+                  // ref={(password) => (this.password = password)}
                   className="form-control"
                   onBlur={this.onValueChange}
                 />

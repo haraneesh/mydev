@@ -5,7 +5,10 @@ import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
 
 class VerifyEmail extends React.Component {
-  state = { error: null };
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
 
   componentDidMount() {
     const { match, history } = this.props;
