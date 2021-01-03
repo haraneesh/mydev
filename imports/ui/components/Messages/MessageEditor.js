@@ -30,13 +30,14 @@ const handleRemove = async (messageId, imageId) => {
 };
 
 const MessageEditor = ({
-  existingMessage, showOpen, onsuccessFullUpdate, isAdmin,
+  existingMessage, showOpen, onsuccessFullUpdate, isAdmin, doNotShowClose,
 }) => {
   const [showSelectMTypeMsg, setShowSelectMTypeMsg] = useState(false);
   const [isActive, setActive] = useState(!!(existingMessage._id) || showOpen);
   const [message, setMessage] = useState(existingMessage);
   const [showCamera, setShowCamera] = useState(false);
   const [imageDataUri, setImageDataUri] = useState('');
+  const msgId = (message && message._id) ? `${message._id}` : 'new';
 
   const activateControl = (activate) => {
     setActive(activate);
@@ -103,6 +104,7 @@ const MessageEditor = ({
   const handleOnMessageTypeSelect = (e) => {
     const newMessage = { ...message, messageType: e.target.value };
     setMessage(newMessage);
+    setShowSelectMTypeMsg(false);
   };
 
   const handleMessageUpdate = (e) => {
@@ -119,13 +121,46 @@ const MessageEditor = ({
     setShowCamera(false);
   };
 
-  return !isActive ? (<p><input type="text" className="form-control" rows="1" onClick={() => { activateControl(true); }} placeholder="Tap to send a message." /></p>)
+  const getImageAttachment = (fileId) => {
+    setShowCamera(false);
+    document.getElementById(fileId).click();
+  };
+
+  const handleImageFileSelect = (fileId) => {
+    const fileUploadControl = document.getElementById(fileId);
+
+    const file = fileUploadControl.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageDataUri(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return !isActive
+    ? (
+      <p>
+        <input
+          type="text"
+          className="form-control"
+          rows="1"
+          onClick={() => { activateControl(true); }}
+          placeholder="Tap to send a message."
+        />
+      </p>
+    )
     : (
       <p>
         <form onSubmit={(e) => e.preventDefault()}>
           <Panel>
             <FormGroup id="msgTypes">
-              <Row className="panel-heading" style={{ padding: '0px', marginBottom: '7px', marginTop: '-5px' }}>
+              {(!doNotShowClose) && (
+              <Row
+                className="panel-heading"
+                style={{ padding: '0px', marginBottom: '7px', marginTop: '-5px' }}
+              >
                 <Col xs={11}>
                   <span className="text-info">
                     {message.ownerName}
@@ -134,27 +169,36 @@ const MessageEditor = ({
                 <Col xs={1} className="text-right">
                   <Button
                     className="btn btn-xs btn-link"
-                    style={{ float: 'right', fontSize: '1.5em' }}
+                    style={{ float: 'right', fontSize: '1.25em', lineHeight: '1' }}
                     onClick={() => { activateControl(false); }}
                   >
-                    <Icon icon="times" />
+                    <Icon className="text-info" icon="times" />
                   </Button>
                 </Col>
               </Row>
-              {
+              )}
+
+              <fieldset id={message && message._id ? message._id : 'new'}>
+                {
             constants.MessageTypes.allowedValues.map((value, index) => {
               const item = constants.MessageTypes[value];
+              const isChecked = message.messageType === item.name;
+              const radioId = `${msgId}_${index}`;
               return (
                 <div key={`key-${value}`}>
                   <input
                     type="radio"
                     name="messageTypeRadios"
-                    id={index}
+                    id={radioId}
                     value={item.name}
-                    checked={message.messageType === item.name}
+                    checked={isChecked}
                     onChange={handleOnMessageTypeSelect}
                   />
-                  <label htmlFor={index}>
+                  <label
+                    htmlFor={radioId}
+                    style={{ display: 'contents' }}
+                    className={(isChecked) ? 'text-default' : 'text-muted'}
+                  >
                     <i className={item.iconClass} style={{ minWidth: '2em' }} />
                     {item.display_value}
                   </label>
@@ -162,7 +206,12 @@ const MessageEditor = ({
               );
             })
           }
-              {(showSelectMTypeMsg) && (<label id="msgTypes-error" className="alert-warning" htmlFor="msgTypes">Please select message type.</label>) }
+              </fieldset>
+              {(showSelectMTypeMsg) && (
+              <label id="msgTypes-error" className="alert-warning" htmlFor="msgTypes">
+                To whom do you wish to share?
+              </label>
+              ) }
             </FormGroup>
 
             {isAdmin && message.messageType === constants.MessageTypes.Issue.name && (
@@ -200,7 +249,7 @@ const MessageEditor = ({
                   rows="4"
                   defaultValue={message && message.message}
                   onChange={handleMessageUpdate}
-                  placeholder="Today is your day. Let us know how Suvai can help you."
+                  placeholder="Today is your day. What is on your mind?"
                 />
                 )}
                 {showCamera && (
@@ -215,18 +264,36 @@ const MessageEditor = ({
               </Col>
 
               <Row>
-                <Col xs={2} style={{ minWidth: '3em' }}>
+                <Col xs={4} style={{ minWidth: '3em' }}>
                   <Button
                     bsStyle="link"
                     onClick={() => { setShowCamera(!showCamera); }}
                     style={{
-                      paddingTop: '0px', marginLeft: '0px', fontSize: '2em',
+                      paddingTop: '0px', marginLeft: '0px', fontSize: '1.7em',
                     }}
                   >
                     <Icon icon="camera" />
                   </Button>
+                  <Button
+                    bsStyle="link"
+                    onClick={() => { getImageAttachment(`${msgId}_filename`); }}
+                    style={{
+                      paddingTop: '5px', marginLeft: '0px', fontSize: '1.4em',
+                    }}
+                  >
+                    <Icon icon="paperclip" />
+                    <input
+                      type="file"
+                      id={`${msgId}_filename`}
+                      onChange={() => {
+                        handleImageFileSelect(`${msgId}_filename`);
+                      }}
+                      accept=".jpg,.jpeg,.png"
+                      style={{ display: 'none' }}
+                    />
+                  </Button>
                 </Col>
-                <Col xs={10} className="text-right" style={{ paddingTop: '0.5em' }}>
+                <Col xs={8} className="text-right" style={{ paddingTop: '0.5em' }}>
                   {(message && message._id) && (
                   <Button
                     className="btn-default btn-sm"
@@ -242,7 +309,7 @@ const MessageEditor = ({
                     style={{ marginLeft: '5px' }}
                     onClick={handleSubmit}
                   >
-                    {message && message._id ? 'Update' : 'Send Message'}
+                    {message && message._id ? 'Update' : 'Share'}
                   </Button>
                 </Col>
               </Row>
@@ -260,11 +327,13 @@ MessageEditor.defaultProps = {
   showOpen: false,
   onsuccessFullUpdate: undefined,
   isAdmin: false,
+  doNotShowClose: false,
 };
 
 MessageEditor.propTypes = {
   existingMessage: PropTypes.object,
   showOpen: PropTypes.bool,
+  doNotShowClose: PropTypes.bool,
   isAdmin: PropTypes.bool,
   onsuccessFullUpdate: PropTypes.func,
 };

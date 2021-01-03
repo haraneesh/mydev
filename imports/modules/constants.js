@@ -161,8 +161,8 @@ const DaysFromTodayForward = {
 };
 
 const UnitOfRecipes = {
-  Nos: {
-    name: 'Nos',
+  Nums: {
+    name: 'Nums',
     display_value: '',
   },
   TeaSpoons: {
@@ -272,13 +272,7 @@ MessageStatus.allowedValues = _.reduce(MessageStatus, (arr, ticketStatus) => {
 }, []);
 
 const MessageTypes = {
-  Message: {
-    name: 'Message',
-    display_value: 'Enquiry, Share',
-    label: 'info',
-    iconClass: 'fas fa-comment',
-  },
-  Suggestion: {
+  /* Suggestion: {
     name: 'Suggestion',
     display_value: 'Suggestion, Idea',
     label: 'success',
@@ -289,12 +283,18 @@ const MessageTypes = {
     display_value: 'Appreciation',
     label: 'success',
     iconClass: 'fas fa-heart',
-  },
+  }, */
   Issue: {
     name: 'Issue',
-    display_value: 'Urgent - Issue, Quality, Payments',
+    display_value: 'Suvai Admin ( Issue, Quality, Payments )',
     label: 'danger',
     iconClass: 'fas fa-hourglass-end',
+  },
+  Message: {
+    name: 'Message',
+    display_value: 'Suvai Community',
+    label: 'info',
+    iconClass: 'fas fa-comment',
   },
 };
 

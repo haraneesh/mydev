@@ -4,13 +4,13 @@ import { Roles } from 'meteor/alanning:roles';
 import constants from '../../../modules/constants';
 import Messages from '../Messages';
 
-const userQuery = (userId) => (
-  { $or: [{ owner: userId }, { to: userId }, { to: 'ALL' }] }
+const customerUserQuery = (userId) => (
+  { $or: [{ owner: userId }, { to: userId }, { to: constants.Roles.customer.name }] }
 );
 
-Meteor.publish('messages', function messages(args) {
+Meteor.publish('messages.customer', function messages(args) {
   check(args, { limit: Number });
-  return Messages.find(userQuery(this.userId),
+  return Messages.find(customerUserQuery(this.userId),
     {
       sort: { updatedAt: constants.Sort.DESCENDING },
       limit: args.limit,
@@ -37,7 +37,7 @@ Meteor.publish('messages.notifications', function searchSeries(lastFetchDateTime
   check(lastFetchDateTime, String);
 
   const { userId } = this;
-  const isAdmin = Roles.userIsInRole(userId, ['admin']);
+  const isAdmin = Roles.userIsInRole(userId, [constants.Roles.admin.name]);
   /*
   const usr = Meteor.users.find(userId, {
     fields: {
@@ -58,7 +58,7 @@ Meteor.publish('messages.notifications', function searchSeries(lastFetchDateTime
 
   const unReadUserQuery = {
     $and: [
-      userQuery(userId),
+      customerUserQuery(userId),
       { updatedAt: { $gt: new Date(lastFetchDateTime) } },
     ],
   };

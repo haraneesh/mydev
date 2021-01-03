@@ -22,6 +22,7 @@ const reactVar = new ReactiveVar(
 
 const Messages = ({ loading, messages, history }) => {
   const [editMessage, setEditMessage] = useState('');
+  const [filterSelected, setFilterSelected] = useState('none');
 
   const scrollToYAfterLoad = useRef(0);
   const pageNumberBeforeRefresh = useRef(reactVar.get().pageNumber);
@@ -41,6 +42,10 @@ const Messages = ({ loading, messages, history }) => {
     });
   };
 
+  const onFilterSelect = (e) => {
+    setFilterSelected(e.target.value);
+  };
+
   useLayoutEffect(() => {
     if (loading) {
       scrollToYAfterLoad.current = window.scrollY;
@@ -52,6 +57,13 @@ const Messages = ({ loading, messages, history }) => {
     }
   });
 
+  const doesMsgMatchFilter = (msg) => {
+    if (filterSelected === 'my' && (msg.to !== constants.Roles.customer.name)) {
+      return true;
+    }
+    return false;
+  };
+
   return !loading ? (
     <div className="Messages">
       <div className="page-header clearfix">
@@ -60,33 +72,45 @@ const Messages = ({ loading, messages, history }) => {
         to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
-      <MessageEditor history={history} />
+      <MessageEditor history={history} showOpen doNotShowClose />
+
+      <div className="panel-heading" style={{ padding: '0.5rem 0.5rem' }}>
+        <select className="form-control" name="filter" id="idFilter" onChange={onFilterSelect}>
+          <option value="none">All</option>
+          <option value="my">My messages</option>
+
+        </select>
+      </div>
+
       {messages.length
         ? (
           <>
-            {' '}
-            {messages.map((msg) => (
-              <p key={msg._id}>
-                {
-            (editMessage === msg._id)
-              ? (
-                <MessageEditor
-                  history={history}
-                  existingMessage={msg}
-                  showOpen
-                  onsuccessFullUpdate={handleMessageUpdate}
-                />
-              )
-              : (
-                <MessageView
-                  existingMessage={msg}
-                  history={history}
-                  handleEditMessage={handleEditMessage}
-                />
-              )
-          }
-              </p>
-            ))}
+            {messages.map((msg) => {
+              if (filterSelected === 'none' || doesMsgMatchFilter(msg)) {
+                return (
+                  <p key={msg._id}>
+                    {
+                  (editMessage === msg._id)
+                    ? (
+                      <MessageEditor
+                        history={history}
+                        existingMessage={msg}
+                        showOpen
+                        onsuccessFullUpdate={handleMessageUpdate}
+                      />
+                    )
+                    : (
+                      <MessageView
+                        existingMessage={msg}
+                        history={history}
+                        handleEditMessage={handleEditMessage}
+                      />
+                    )
+                }
+                  </p>
+                );
+              }
+            })}
 
             <Row className="text-center">
               <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
@@ -107,7 +131,7 @@ Messages.propTypes = {
 
 export default withTracker((args) => {
   const rVar = reactVar.get();
-  const subscription = Meteor.subscribe('messages', {
+  const subscription = Meteor.subscribe('messages.customer', {
     limit: rVar.pageNumber * PAGE_LENGTH_SIZE,
   });
 

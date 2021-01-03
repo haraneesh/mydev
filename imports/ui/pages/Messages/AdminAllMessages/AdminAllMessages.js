@@ -22,7 +22,7 @@ const reactVar = new ReactiveVar(
 
 const MessagesAdmin = ({ loading, messages, history }) => {
   const [editMessage, setEditMessage] = useState('');
-  const [filterSelected, setFilterSelected] = useState('all');
+  const [filterSelected, setFilterSelected] = useState('none');
 
   const scrollToYAfterLoad = useRef(0);
   const pageNumberBeforeRefresh = useRef(reactVar.get().pageNumber);
@@ -57,6 +57,13 @@ const MessagesAdmin = ({ loading, messages, history }) => {
     }
   });
 
+  const doesMsgMatchFilter = (msg) => {
+    if (filterSelected === 'my' && (msg.ownerRole === 'admin' || msg.to === 'admin')) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div className="Messages">
       {loading && (<Loading />)}
@@ -65,15 +72,13 @@ const MessagesAdmin = ({ loading, messages, history }) => {
         {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
-      <MessageEditor history={history} isAdmin />
+      <MessageEditor history={history} isAdmin showOpen doNotShowClose />
 
       <div className="panel-heading" style={{ padding: '0.5rem 0.5rem' }}>
         <select className="form-control" name="filter" id="idFilter" onChange={onFilterSelect}>
-          <option value="all">All</option>
-          <option value={constants.MessageTypes.Issue.name}>{constants.MessageTypes.Issue.display_value}</option>
-          <option value={constants.MessageTypes.Appreciation.name}>{constants.MessageTypes.Appreciation.display_value}</option>
-          <option value={constants.MessageTypes.Message.name}>{constants.MessageTypes.Message.display_value}</option>
-          <option value={constants.MessageTypes.Suggestion.name}>{constants.MessageTypes.Suggestion.display_value}</option>
+          <option value="none">All</option>
+          <option value="my">My messages</option>
+
         </select>
       </div>
 
@@ -81,28 +86,28 @@ const MessagesAdmin = ({ loading, messages, history }) => {
         ? (
           <>
             {messages.map((msg) => {
-              if (msg.messageType === filterSelected || filterSelected === 'all') {
+              if (filterSelected === 'none' || doesMsgMatchFilter(msg)) {
                 return (
                   <div style={{ marginBottom: '1rem' }} key={msg._id}>
                     {
-                  (editMessage === msg._id)
-                    ? (
-                      <MessageEditor
-                        history={history}
-                        existingMessage={msg}
-                        showOpen
-                        onsuccessFullUpdate={handleMessageUpdate}
-                        isAdmin
-                      />
-                    )
-                    : (
-                      <MessageView
-                        existingMessage={msg}
-                        history={history}
-                        handleEditMessage={handleEditMessage}
-                      />
-                    )
-                }
+                      (editMessage === msg._id)
+                        ? (
+                          <MessageEditor
+                            history={history}
+                            existingMessage={msg}
+                            showOpen
+                            onsuccessFullUpdate={handleMessageUpdate}
+                            isAdmin
+                          />
+                        )
+                        : (
+                          <MessageView
+                            existingMessage={msg}
+                            history={history}
+                            handleEditMessage={handleEditMessage}
+                          />
+                        )
+                  }
                   </div>
                 );
               }

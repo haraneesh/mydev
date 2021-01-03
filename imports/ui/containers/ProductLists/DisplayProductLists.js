@@ -2,7 +2,7 @@ import { composeWithTracker } from 'react-komposer';
 import { Meteor } from 'meteor/meteor';
 import DisplayProductLists from '../../components/ProductLists/ProductLists';
 import ProductLists from '../../../api/ProductLists/ProductLists';
-import { Loading } from '../../components/Loading/Loading';
+import { Loading } from '../components/Loading/Loading';
 import constants from '../../../modules/constants';
 
 const composer = (params, onData) => {

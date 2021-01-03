@@ -8,10 +8,10 @@ import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 
-const validateTo = (to, isAdmin) => {
+const messageTo = (messageType) => {
   switch (true) {
-    case (isAdmin || to !== 'ALL'):
-      return to;
+    case (constants.MessageTypes.Message.name === messageType):
+      return constants.Roles.customer.name; // visible to all customers
     default:
       return constants.Roles.admin.name;
   }
@@ -35,7 +35,8 @@ Meteor.methods({
 
     try {
       const isAdmin = Roles.userIsInRole(this.userId, constants.Roles.admin.name);
-      const userObj = (isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId) ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
+      const userObj = (isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId)
+        ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
         : commentFunctions.getUser(this.userId);
 
       const message = {
@@ -44,7 +45,10 @@ Meteor.methods({
       delete message.onBehalf;
 
       // message.to = validateTo(msg.to, isAdmin);
-      message.to = constants.Roles.admin.name;
+
+      message.to = messageTo(msg.messageType);
+      // ? constants.Roles.customer.name // visible to all customers
+      // : constants.Roles.admin.name;
 
       if (isAdmin && msg.onBehalf) {
         message.onBehalf = {
@@ -74,9 +78,12 @@ Meteor.methods({
       // const userObj = commentFunctions.getUser(this.userId);
       const message = { ...msg };
 
+      /*
       if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         message.to = constants.Roles.admin.name;
-      }
+      } */
+
+      message.to = messageTo(msg.messageType);
 
       Messages.update(messageId, { $set: message });
       return messageId;

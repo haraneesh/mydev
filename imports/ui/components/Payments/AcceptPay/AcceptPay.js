@@ -30,7 +30,7 @@ const OtherPayMentOptions = () => (
 
     <Row>
       <Col xs={12} className="text-center">
-        <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png" />
+        <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v1" />
       </Col>
     </Row>
   </Panel>
