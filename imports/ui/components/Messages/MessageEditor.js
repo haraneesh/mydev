@@ -38,6 +38,7 @@ const MessageEditor = ({
   const [showCamera, setShowCamera] = useState(false);
   const [imageDataUri, setImageDataUri] = useState('');
   const msgId = (message && message._id) ? `${message._id}` : 'new';
+  const fileUploadId = `${msgId}_filename`;
 
   const activateControl = (activate) => {
     setActive(activate);
@@ -260,11 +261,10 @@ const MessageEditor = ({
                   imageType={IMAGE_TYPES.JPG}
                 />
                 )}
-
               </Col>
 
               <Row>
-                <Col xs={4} style={{ minWidth: '3em' }}>
+                <Col xs={5}>
                   <Button
                     bsStyle="link"
                     onClick={() => { setShowCamera(!showCamera); }}
@@ -276,7 +276,7 @@ const MessageEditor = ({
                   </Button>
                   <Button
                     bsStyle="link"
-                    onClick={() => { getImageAttachment(`${msgId}_filename`); }}
+                    onClick={() => { getImageAttachment(fileUploadId); }}
                     style={{
                       paddingTop: '5px', marginLeft: '0px', fontSize: '1.4em',
                     }}
@@ -284,16 +284,17 @@ const MessageEditor = ({
                     <Icon icon="paperclip" />
                     <input
                       type="file"
-                      id={`${msgId}_filename`}
+                      id={fileUploadId}
                       onChange={() => {
-                        handleImageFileSelect(`${msgId}_filename`);
+                        handleImageFileSelect(fileUploadId);
                       }}
                       accept=".jpg,.jpeg,.png"
                       style={{ display: 'none' }}
                     />
                   </Button>
+
                 </Col>
-                <Col xs={8} className="text-right" style={{ paddingTop: '0.5em' }}>
+                <Col xs={7} className="text-right" style={{ paddingTop: '0.5em' }}>
                   {(message && message._id) && (
                   <Button
                     className="btn-default btn-sm"

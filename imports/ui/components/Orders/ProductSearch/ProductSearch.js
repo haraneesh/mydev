@@ -1,5 +1,6 @@
 import React from 'react';
-import { Panel, Col, Glyphicon } from 'react-bootstrap';
+import { Meteor } from 'meteor/meteor';
+import { Col, Glyphicon } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import './ProductSearch.scss';
@@ -12,6 +13,7 @@ class ProductSearch extends React.Component {
     };
     this.onsearchStringChange = this.onsearchStringChange.bind(this);
     this.clear = this.clear.bind(this);
+    this.onLostFocus = this.onLostFocus.bind(this);
   }
 
   onsearchStringChange() {
@@ -19,6 +21,23 @@ class ProductSearch extends React.Component {
 
     this.setState({
       searchString: searchValue,
+    });
+  }
+
+  onLostFocus(e) {
+    e.preventDefault();
+    this.saveSearchString();
+  }
+
+  saveSearchString() {
+    const { searchString } = this.state;
+    Meteor.call('search.captureSearchString', searchString);
+  }
+
+  clear() {
+    this.saveSearchString();
+    this.setState({
+      searchString: '',
     });
   }
 
@@ -33,12 +52,6 @@ class ProductSearch extends React.Component {
     );
   }
 
-  clear() {
-    this.setState({
-      searchString: '',
-    });
-  }
-
   render() {
     const { searchString } = this.state;
     const searchResults = (searchString !== '' && searchString.length > 2)
@@ -46,28 +59,32 @@ class ProductSearch extends React.Component {
 
     return (
       <div className="productOrderSearch">
-        <Panel
-          header={
-            (
-              <div className="input-group productSearchInp">
-                <input
-                  className="form-control"
-                  type="text"
-                  placeholder="Search & Order"
-                  value={this.state.searchString}
-                  onChange={this.onsearchStringChange}
-                  ref={(searchBox) => (this.searchBox = searchBox)}
-                />
-                <span className="input-group-addon">
-                  <Glyphicon glyph="remove" onClick={this.clear} />
-                </span>
-              </div>
-            )
-}
-        >
-          { searchString !== '' && searchResults }
-          { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
-        </Panel>
+        <div className="panel panel-default" style={{ marginBottom: '0px' }}>
+          <div className="panel-heading">
+            <div className="input-group productSearchInp">
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Search & Order"
+                value={this.state.searchString}
+                onChange={this.onsearchStringChange}
+                onBlur={this.onLostFocus}
+                ref={(searchBox) => (this.searchBox = searchBox)}
+              />
+              <span className="input-group-addon">
+                <Glyphicon glyph="remove" onClick={this.clear} />
+              </span>
+            </div>
+          </div>
+          {searchString !== '' && (
+          <div className="panel-body">
+            { searchResults }
+            { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
+
+          </div>
+          )}
+        </div>
+
       </div>
     );
   }

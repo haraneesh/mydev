@@ -20,7 +20,9 @@ const reactVar = new ReactiveVar(
   },
 );
 
-const MessagesAdmin = ({ loading, messages, history }) => {
+const MessagesAdmin = ({
+  loading, messages, history, loggedInUserId,
+}) => {
   const [editMessage, setEditMessage] = useState('');
   const [filterSelected, setFilterSelected] = useState('none');
 
@@ -35,8 +37,8 @@ const MessagesAdmin = ({ loading, messages, history }) => {
     setEditMessage('');
   };
 
-  const onFilterSelect = (e) => {
-    setFilterSelected(e.target.value);
+  const onFilterSelect = (filterState) => {
+    setFilterSelected(filterState);
   };
 
   const bringNextBatch = () => {
@@ -74,13 +76,24 @@ const MessagesAdmin = ({ loading, messages, history }) => {
 
       <MessageEditor history={history} isAdmin showOpen doNotShowClose />
 
-      <div className="panel-heading" style={{ padding: '0.5rem 0.5rem' }}>
-        <select className="form-control" name="filter" id="idFilter" onChange={onFilterSelect}>
-          <option value="none">All</option>
-          <option value="my">My messages</option>
-
-        </select>
-      </div>
+      <ul className="nav nav-pills">
+        <li role="presentation" className={(filterSelected === 'none') ? 'active' : ''}>
+          <button
+            type="button"
+            onClick={() => { onFilterSelect('none'); }}
+          >
+            All
+          </button>
+        </li>
+        <li className={(filterSelected === 'my') ? 'active' : ''}>
+          <button
+            type="button"
+            onClick={() => { onFilterSelect('my'); }}
+          >
+            My
+          </button>
+        </li>
+      </ul>
 
       {messages.length
         ? (
@@ -104,7 +117,9 @@ const MessagesAdmin = ({ loading, messages, history }) => {
                           <MessageView
                             existingMessage={msg}
                             history={history}
+                            loggedInUserId={loggedInUserId}
                             handleEditMessage={handleEditMessage}
+                            isAdmin
                           />
                         )
                   }
@@ -123,6 +138,7 @@ const MessagesAdmin = ({ loading, messages, history }) => {
 
 MessagesAdmin.propTypes = {
   loading: PropTypes.bool.isRequired,
+  loggedInUserId: PropTypes.string.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
   history: PropTypes.object.isRequired,
 };
@@ -137,9 +153,10 @@ export default withTracker((args) => {
   });
   return {
     history: args.history,
+    loggedInUserId: args.loggedInUserId,
     loading: !subscription.ready(),
     messages: MessagesCollection.find({}, {
-      sort: { updatedAt: constants.Sort.DESCENDING },
+      sort: { createdAt: constants.Sort.DESCENDING },
     }).fetch(),
   };
 })(MessagesAdmin);

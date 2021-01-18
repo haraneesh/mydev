@@ -117,7 +117,7 @@ const App = (props) => (
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
-          {/* props.authenticated && (
+          { /* props.authenticated && (
           <Alert
             bsStyle="danger"
             style={{
@@ -130,18 +130,22 @@ const App = (props) => (
             }}
           >
             <small>
-              Wish your family safe and healthy 2021!
+              Wish you and your family a very Happy Pongal!
             </small>
             <br />
             <small>
               Please note, there will
               {highLightText('not')}
-              be any deliveries on Friday
-              {highLightText('1st')}
-              .
+              be any deliveries from Thursday
+              {highLightText('14th')}
+              {' '}
+              till
+              Monday
+              {highLightText('18th')}
+              . Deliveries will start on Tuesday.
             </small>
           </Alert>
-          ) */}
+          ) */ }
           {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}

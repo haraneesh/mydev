@@ -19,3 +19,11 @@
 .highlightMenu{
     color: $brand-primary;
 }
+
+.wide-menu-bar {
+    margin-left: 2em !important;
+}
+
+.wide-menu-bar > li > a {
+    margin: 1em 0.5em;
+}

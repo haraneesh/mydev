@@ -157,7 +157,7 @@ export const OrderFooter = ({
             formatMoney(totalBillAmount, accountSettings)
           }
           {' '}
-&nbsp;
+          &nbsp;
         </strong>
       </h4>
     </Col>
@@ -181,7 +181,7 @@ export const OrderFooter = ({
         disabled
         className="btn-block"
       >
-        Order Being Placed ...
+        {submitButtonName}
       </Button>
       )}
 

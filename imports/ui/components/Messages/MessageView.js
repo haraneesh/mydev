@@ -1,22 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Row, Col, Label, Button } from 'react-bootstrap';
+import {
+  Row, Col, Label,
+} from 'react-bootstrap';
 import * as timeago from 'timeago.js';
+import { toast } from 'react-toastify';
+import Icon from '../Icon/Icon';
 import constants from '../../../modules/constants';
 import { dateSettings } from '../../../modules/settings';
+
 import { MessageImageViewHero } from './MessageImageUpload';
 
 import './Message.scss';
 
 const MessageView = ({
-  existingMessage, handleEditMessage, editMessagePage, isAdmin, loggedInUserId, history,
+  existingMessage, handleEditMessage, editMessagePage, isAdmin, history, loggedInUserId,
 }) => {
   const {
-    messageStatus, updatedAt, messageType, message, ownerName, commentCount, _id,
+    messageStatus,
+    updatedAt,
+    messageType,
+    message,
+    owner,
+    ownerName,
+    commentCount,
+    _id,
+    likeMemberId,
   } = existingMessage;
-  const canEditMsg = (isAdmin || loggedInUserId === message.owner);
+
+  const canEditMsg = (isAdmin || loggedInUserId === owner);
   const isClosed = constants.MessageStatus.Closed.name === messageStatus;
   const isIssue = constants.MessageTypes.Issue.name === messageType;
+  const [userLikes, setUserLikes] = useState(likeMemberId);
+
+  const updateLikeClick = (messageId) => {
+    Meteor.call('messages.updateLike', messageId, (error, usersWhoLiked) => {
+      if (error) {
+        toast.error(error.reason);
+      } else {
+        setUserLikes(usersWhoLiked);
+      }
+    });
+  };
+
   return (
     <div className="messageView" key={_id}>
       <div className="list-group-item">
@@ -52,20 +79,32 @@ const MessageView = ({
         </Row>
         {(!editMessagePage) && (
         <Row>
-          <Col xs={6} className="text-left text-muted" style={{ padding: '10px 0px 0px 5px' }}>
+          <Col xs={6} className="text-left" style={{ padding: '10px 0px 0px 5px' }}>
 
-            <Button bsStyle="link" className="btn btn-sm" onClick={() => { history.push(`/messages/${_id}/edit`); }}>
-              {(commentCount && commentCount > 0)
-                ? commentCount
-                : 'No' }
-              {' '}
-              replies
-            </Button>
+            <button
+              type="button"
+              style={{ background: 'transparent', border: 'none', outline: '0' }}
+              onClick={() => { history.push(`/messages/${_id}/edit`); }}
+            >
+              <Icon icon="comment" />
+              {(commentCount && commentCount > 0) ? ` ${commentCount}` : ' 0'}
+            </button>
+
+            <button
+              type="button"
+              style={{ background: 'transparent', border: 'none', outline: '0' }}
+              onClick={() => { updateLikeClick(_id); }}
+            >
+              <span className={(userLikes.indexOf(loggedInUserId) > -1) ? 'text-primary' : 'text-default'}>
+                <Icon icon="heart" />
+              </span>
+              {(userLikes) ? ` ${userLikes.length}` : ' 0'}
+            </button>
 
           </Col>
           <Col xs={6} className="text-right" style={{ padding: '10px 5px 0px 0px' }}>
 
-            {(!isClosed && !!canEditMsg) && (
+            {((!isClosed && !!canEditMsg) || isAdmin) && (
             <button
               type="button"
               className="btn btn-default btn-sm"
@@ -96,6 +135,7 @@ const MessageView = ({
 };
 
 MessageView.defaultProps = {
+  loggedInUserId: Meteor.user()._id,
   editMessagePage: false,
   isAdmin: false,
 };
@@ -104,7 +144,7 @@ MessageView.propTypes = {
   history: PropTypes.object.isRequired,
   existingMessage: PropTypes.object.isRequired,
   handleEditMessage: PropTypes.func.isRequired,
-  loggedInUserId: PropTypes.string.isRequired,
+  loggedInUserId: PropTypes.string,
   isAdmin: PropTypes.bool,
   editMessagePage: PropTypes.bool,
 };

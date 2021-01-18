@@ -1,0 +1,47 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+
+.menu-item {
+    padding: 0 40px;
+    margin: 5px 10px;
+    user-select: none;
+    cursor: pointer;
+    border:none;
+  }
+
+  .arrow {
+    font-size: 3em;
+  }
+
+  .arrow-disabled{
+    color: $gray-lighter;
+  }
+
+  @media (min-width: $screen-xs-min){
+  .slideProductItem > .col-sm-6 {
+    width: 100%;
+    }
+  }
+
+  .menu-item-wrapper{
+   max-width: 20em;
+   // margin-top: -1.5em;
+  }
+  
+  .scroll-menu-arrow {
+    padding: 20px;
+    cursor: pointer;
+  }
+
+  .slideProductItem {
+    h4 {
+      font-size: medium;
+    }
+    p {
+      display:none;
+    }
+    .btn-block{
+      width: auto;
+    min-width: 0;
+    display: table;
+    }
+  }

@@ -20,7 +20,9 @@ const reactVar = new ReactiveVar(
   },
 );
 
-const Messages = ({ loading, messages, history }) => {
+const Messages = ({
+  loading, messages, history, loggedInUserId,
+}) => {
   const [editMessage, setEditMessage] = useState('');
   const [filterSelected, setFilterSelected] = useState('none');
 
@@ -42,8 +44,8 @@ const Messages = ({ loading, messages, history }) => {
     });
   };
 
-  const onFilterSelect = (e) => {
-    setFilterSelected(e.target.value);
+  const onFilterSelect = (filterState) => {
+    setFilterSelected(filterState);
   };
 
   useLayoutEffect(() => {
@@ -68,19 +70,28 @@ const Messages = ({ loading, messages, history }) => {
     <div className="Messages">
       <div className="page-header clearfix">
         <h3>Messages</h3>
-        {/* <Link className="btn btn-success pull-right"
-        to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
       <MessageEditor history={history} showOpen doNotShowClose />
 
-      <div className="panel-heading" style={{ padding: '0.5rem 0.5rem' }}>
-        <select className="form-control" name="filter" id="idFilter" onChange={onFilterSelect}>
-          <option value="none">All</option>
-          <option value="my">My messages</option>
-
-        </select>
-      </div>
+      <ul className="nav nav-pills">
+        <li role="presentation" className={(filterSelected === 'none') ? 'active' : ''}>
+          <button
+            type="button"
+            onClick={() => { onFilterSelect('none'); }}
+          >
+            All
+          </button>
+        </li>
+        <li className={(filterSelected === 'my') ? 'active' : ''}>
+          <button
+            type="button"
+            onClick={() => { onFilterSelect('my'); }}
+          >
+            My
+          </button>
+        </li>
+      </ul>
 
       {messages.length
         ? (
@@ -104,6 +115,7 @@ const Messages = ({ loading, messages, history }) => {
                         existingMessage={msg}
                         history={history}
                         handleEditMessage={handleEditMessage}
+                        loggedInUserId={loggedInUserId}
                       />
                     )
                 }
@@ -127,6 +139,7 @@ Messages.propTypes = {
   loading: PropTypes.bool.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
   history: PropTypes.object.isRequired,
+  loggedInUserId: PropTypes.string.isRequired,
 };
 
 export default withTracker((args) => {
@@ -137,8 +150,9 @@ export default withTracker((args) => {
 
   return {
     history: args.history,
+    loggedInUserId: args.loggedInUserId,
     loading: !subscription.ready(),
     messages: MessagesCollection.find({},
-      { sort: { updatedAt: constants.Sort.DESCENDING } }).fetch(),
+      { sort: { createdAt: constants.Sort.DESCENDING } }).fetch(),
   };
 })(Messages);

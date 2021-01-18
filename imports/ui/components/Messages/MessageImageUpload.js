@@ -32,6 +32,29 @@ export const MessageImageViewHero = ({ cloudImageId }) => (
       maxWidth: '100%',
       borderRadius: '10px',
       marginBottom: '5px',
+      minHeight: '17.5em',
+    }}
+  >
+    <Placeholder type="predominant" />
+    <Transformation quality="auto:best" fetchFormat="auto" />
+    <Transformation flags="progressive.progressive:semi" />
+  </Image>
+);
+
+export const MessageImageViewHeroExpand = ({ cloudImageId }) => (
+  <Image
+    secure="true"
+    loading="lazy"
+    cloudName={Meteor.settings.public.cloudinary.cloudName}
+    publicId={cloudImageId}
+    crop="scale"
+    style={{
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      display: 'block',
+      borderRadius: '10px',
+      marginBottom: '5px',
+      minHeight: '100%',
     }}
   >
     <Placeholder type="predominant" />

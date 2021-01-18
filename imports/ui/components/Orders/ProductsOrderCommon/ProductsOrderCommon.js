@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Button, FormControl, PanelGroup } from 'react-bootstrap';
+import {
+  Row, Col, Button, FormControl, PanelGroup,
+} from 'react-bootstrap';
 import Product from '../Product';
 import constants from '../../../../modules/constants';
 
-export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick }) => (
+export const OrderFooter = ({
+  isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick,
+}) => (
   <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
     {/* <Col className="text-left-not-xs" sm={4} xs={12}>
        } <Button
@@ -23,7 +27,9 @@ export const OrderFooter = ({ isMobile, totalBillAmount, onButtonClick, submitBu
         disabled={totalBillAmount <= 0}
         onClick={onButtonClick}
         className="btn-block"
-      > {submitButtonName}
+      >
+        {' '}
+        {submitButtonName}
       </Button>
     </Col>
   </Row>
@@ -41,18 +47,27 @@ OrderFooter.propTypes = {
   submitButtonName: PropTypes.string.isRequired,
 };
 
-
-export const DisplayCategoryHeader = ({ clName, title, onclick, isOpen, tabHash }) => (
+export const DisplayCategoryHeader = ({
+  clName, title, onclick, isOpen, tabHash,
+}) => (
 
   <Row onClick={onclick} className="productCatHead">
     <Col xs={3} sm={2} className={`productCat_${clName}`} />
     <Col xs={7} sm={9} className="prodCatTitle">
-      <p style={{ marginBottom: '0px' }}> <span style={{ verticalAlign: 'middle' }}> {title} </span> </p>
+      <p style={{ marginBottom: '0px' }}>
+        {' '}
+        <span style={{ verticalAlign: 'middle' }}>
+          {' '}
+          {title}
+          {' '}
+        </span>
+        {' '}
+      </p>
     </Col>
     <Col xs={2} sm={1} className="prodCatPlus text-center">
       <span className="text-default">
-        {!!isOpen && (<b style={{ fontSize: '1.5em' }} > - </b>)}
-        {!isOpen && (<b style={{ fontSize: '1.5em' }} > + </b>)}
+        {!!isOpen && (<b style={{ fontSize: '1.5em' }}> - </b>)}
+        {!isOpen && (<b style={{ fontSize: '1.5em' }}> + </b>)}
         {
           (tabHash.orderedItemCount > 0)
             && (<span className="notifyCount text-center">{tabHash.orderedItemCount}</span>)
@@ -110,7 +125,9 @@ const incrementMetaWithOrderCount = (productGroupMetaHash, productType, product)
   return metaHash;
 };
 
-export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket }) {
+export function displayProductsByType({
+  products, isMobile, isAdmin, isShopOwner, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket,
+}) {
   let productGroupMetaHash = {};
   // Grouping product categories by tabs
   const productVegetables = [];
@@ -140,6 +157,7 @@ export function displayProductsByType({ products, isMobile, isAdmin, isShopOwner
       productSpecials.push(
         <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );
+
       productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, 'productSpecials', product);
     }
 

@@ -19,6 +19,8 @@ import '../../api/Ingredients/methods';
 
 import '../../api/UserAndPosts/methods';
 
+import '../../api/Search/methods';
+
 import '../../api/Invitations/methods';
 import '../../api/Invitations/server/publications';
 

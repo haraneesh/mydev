@@ -2,11 +2,12 @@
 // add measures to ingredients
 // import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import Ingredients from '../Ingredients/Ingredients';
 // import Products from '../Products/Products';
 // import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 import { Orders } from '../Orders/Orders';
-import { Roles } from 'meteor/alanning:roles';
+import Messages from '../Messages/Messages';
 // import constants from '../../modules/constants';
 
 /*
@@ -64,7 +65,6 @@ cusers.forEach((u) => {
   }
 }); */
 
-
 /*
 const cusers = Meteor.users.find({}).fetch();
 
@@ -82,6 +82,8 @@ cusers.forEach((u) => {
     expectedDeliveryDate: new Date(2017, 1, 1),
   },
 }, { multi: true }); */
+
+Messages.update({ likeMemberId: { $exists: false } }, { $set: { likeMemberId: [] } }, { multi: true });
 
 // Products.update({ wSaleBaseUnitPrice: { $exists: false } }, { $set: { wSaleBaseUnitPrice: 0 } }, { multi: true });
 // Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });

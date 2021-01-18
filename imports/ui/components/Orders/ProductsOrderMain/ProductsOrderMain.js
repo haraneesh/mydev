@@ -6,6 +6,7 @@ import {
 import { toast } from 'react-toastify';
 import { Roles } from 'meteor/alanning:roles';
 import Product from '../Product';
+import ProductListView from '../ProductsSlideView/ProductsSlideView';
 import { isLoggedInUserAdmin } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import ProductSearch from '../ProductSearch/ProductSearch';
@@ -146,6 +147,12 @@ const ProductsOrderMain = (props) => {
     isMobile,
   ) => (
     <div className="productOrderList">
+      <ProductListView
+        menuList={productGroups.productSpecials}
+        changeProductQuantity={changeProductQuantity}
+        isAdmin={isAdmin}
+        isShopOwner={isShopOwner}
+      />
       {isMobile && (
       <ProductsOrderMobile
         productGroups={productGroups}

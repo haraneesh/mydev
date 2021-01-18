@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, Panel, Button,
+  Row, Col, Panel, Button, Alert,
 } from 'react-bootstrap';
+import { Roles } from 'meteor/alanning:roles';
 import { toast } from 'react-toastify';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
@@ -11,6 +13,13 @@ import OnBehalf from '../OnBehalf/OnBehalf';
 import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
+
+const isOrderAmountGreaterThanMinimum = (orderAmt) => {
+  if (Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt) {
+    return true;
+  }
+  return false;
+};
 
 const CartDetails = ({
   history, orderId, loggedInUser, roles,
@@ -21,7 +30,9 @@ const CartDetails = ({
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
-  const [onBehalfUser, setOnBehalfUser] = useState({ isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {} });
+  const [onBehalfUser, setOnBehalfUser] = useState({
+    isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {},
+  });
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
@@ -206,11 +217,23 @@ const CartDetails = ({
               />
               )}
               {(isOrderBeingUpdated) && <Loading />}
+              {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
+              <Alert>
+                {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
+              </Alert>
+              )}
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}
-                submitButtonName={orderId ? 'Update Order' : 'Place Order'}
-                showWaiting={isOrderBeingUpdated}
+                submitButtonName={
+                    isOrderBeingUpdated ? 'Order Being Placed ...'
+                      : orderId ? 'Update Order'
+                        : 'Place Order'
+                }
+                showWaiting={
+                  isOrderBeingUpdated
+                  || !(isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount))
+                }
                 history={history}
                 orderId={orderId}
               />

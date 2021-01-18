@@ -45,7 +45,7 @@ Meteor.methods({
       delete message.onBehalf;
 
       // message.to = validateTo(msg.to, isAdmin);
-
+      message.likeMemberId = [];
       message.to = messageTo(msg.messageType);
       // ? constants.Roles.customer.name // visible to all customers
       // : constants.Roles.admin.name;
@@ -105,6 +105,28 @@ Meteor.methods({
 
     try {
       return Messages.remove(messageId);
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+  'messages.updateLike': function messagesRemove(messageId) {
+    check(messageId, String);
+
+    try {
+      const { userId } = this;
+      const message = Messages.findOne({ _id: messageId });
+      const updatedLikeMemberId = (message.likeMemberId) ? message.likeMemberId : [];
+
+      const memberIdLocation = updatedLikeMemberId.indexOf(userId);
+
+      if (memberIdLocation !== -1) {
+        updatedLikeMemberId.splice(memberIdLocation, 1);
+      } else {
+        updatedLikeMemberId.push(userId);
+      }
+
+      Messages.update({ _id: messageId }, { $set: { likeMemberId: updatedLikeMemberId } });
+      return updatedLikeMemberId;
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -188,6 +210,7 @@ rateLimit({
     'messages.update',
     'message.detail',
     'messages.remove',
+    'messages.updateLike',
     'messages.addComment',
     'messages.updateComment',
     'messages.removeComment',

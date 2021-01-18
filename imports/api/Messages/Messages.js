@@ -3,9 +3,9 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
+import { number } from 'prop-types';
 import Comments from '../Comments/Comments';
 import constants from '../../modules/constants';
-import { number } from 'prop-types';
 
 const Messages = new Mongo.Collection('Messages');
 
@@ -20,7 +20,6 @@ Messages.deny({
   update: () => true,
   remove: () => true,
 });
-
 
 if (Meteor.isServer) {
   Messages._ensureIndex({ to: 1 });
@@ -64,6 +63,8 @@ Messages.schema = new SimpleSchema({
     label: 'The count of unread comments',
     optional: true,
   },
+  likeMemberId: { type: Array, label: 'List of members who have liked this message.' },
+  'likeMemberId.$': { type: String },
   message: {
     type: String,
     label: 'The body of the message.',

@@ -77,17 +77,22 @@ hr {
   border-top: 2px dashed $brand-default;
 }
 
-@media (max-width: 767px) {
-  .nav > li > a {
-    padding: 10px 4px;
-  }
+
+.nav > li > a, .nav > li > button  {
+  padding: 10px 4px;
+  border: none;
+  background-color: transparent; 
+  min-width: 6rem;
 }
+
 
 .nav > li > a:hover, .nav > li > a:focus {
     background-color: transparent; 
 }
 
-.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus, 
+.nav-pills > li.active > button, .nav-pills > li.active > button:hover, .nav-pills > li.active > button:focus 
+{
     background-color: #fff;
     color: $gray-base;
     border-bottom: 3px solid $brand-primary;
@@ -98,7 +103,7 @@ hr {
     outline-width: 0;
 }
 
-.nav-pills > li > a {
+.nav-pills > li > a, .nav-pills > li > button {
     border-radius: 3px;
     outline: none;
     outline-width: 0;
