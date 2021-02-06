@@ -29,6 +29,7 @@ const ProductsOrderMain = (props) => {
   const isShopOwner = (isAdmin && orderCustomerId)
     ? Roles.userIsInRole(orderCustomerId, constants.Roles.shopOwner.name)
     : Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name);
+  const isRetailCustomer = !isAdmin && !isShopOwner;
 
   useEffect(() => {
     if (cartState.cart && cartState.cart.productsInCart) {
@@ -147,12 +148,14 @@ const ProductsOrderMain = (props) => {
     isMobile,
   ) => (
     <div className="productOrderList">
+      {(isRetailCustomer) && (
       <ProductListView
         menuList={productGroups.productSpecials}
         changeProductQuantity={changeProductQuantity}
         isAdmin={isAdmin}
         isShopOwner={isShopOwner}
       />
+      )}
       {isMobile && (
       <ProductsOrderMobile
         productGroups={productGroups}

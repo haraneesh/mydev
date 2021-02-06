@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Col, Button } from 'react-bootstrap';
 import { Roles } from 'meteor/alanning:roles';
@@ -26,6 +27,18 @@ const SuccessRow = ({ heading, text, iconName }) => (
     </div>
   </div>
 );
+
+const RegiterInvitation = () => {
+  Meteor.call('invitation.getInvitation', (error, getJoinLink) => {
+    if (error) {
+      const msg = encodeURI(`${Meteor.settings.public.MessageInvitation}`);
+      window.open(`https://wa.me/?text=${msg}`);
+    } else {
+      const msg = encodeURI(`${Meteor.settings.public.MessageInvitation} ${getJoinLink}`);
+      window.open(`https://wa.me/?text=${msg}`);
+    }
+  });
+};
 
 const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
   const { profile } = loggedInUser;
@@ -55,10 +68,27 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
             {` ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)},`}
           </h4>
           <h4 className="text-success">Thank you for Ordering on Suvai.</h4>
+
+          {(Meteor.settings.public.ShowInviteButton) && (
+            <div>
+              <p>
+                Let us do more good, together. Help us spread the word.
+              </p>
+              <Button
+                bsStyle="primary"
+                onClick={() => {
+                  RegiterInvitation();
+                }}
+              >
+                Invite A Friend
+              </Button>
+            </div>
+          )}
         </section>
+
         <section className="panel-body">
           <p> Next time, You can save on time by prefilling cart with this order. </p>
-          <Button bsStyle="primary" onClick={() => { history.push(`/createBasket/${orderId}`); }}>Save Order To Prefill </Button>
+          <Button bsStyle="default" onClick={() => { history.push(`/createBasket/${orderId}`); }}>Save Order To Prefill </Button>
         </section>
 
         {!Roles.userIsInRole(loggedInUser._id, constants.Roles.shopOwner.name) && (

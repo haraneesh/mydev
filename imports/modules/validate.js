@@ -52,7 +52,7 @@ export const formValChange = (e, isErrorState, fieldValues) => {
     case name === 'whMobilePhone':
       isError.whMobilePhone = indiaMobilePhoneRegExp.test(value)
         ? ''
-        : 'India mobile number seems invalid';
+        : 'India mobile number appears to be invalid';
       break;
     case name === 'deliveryAddress':
       isError.deliveryAddress = value.length < 1

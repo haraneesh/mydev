@@ -83,7 +83,8 @@ cusers.forEach((u) => {
   },
 }, { multi: true }); */
 
-Messages.update({ likeMemberId: { $exists: false } }, { $set: { likeMemberId: [] } }, { multi: true });
+// Messages.update({ likeMemberId: { $exists: false } }, { $set: { likeMemberId: [] } }, { multi: true });
+// Messages.update({ messageType: 'Suggestion' }, { $set: { messageType: 'Message' } }, { multi: true });
 
 // Products.update({ wSaleBaseUnitPrice: { $exists: false } }, { $set: { wSaleBaseUnitPrice: 0 } }, { multi: true });
 // Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });

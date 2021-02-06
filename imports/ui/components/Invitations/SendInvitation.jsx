@@ -1,95 +1,64 @@
-import React from 'react';
+import { Meteor } from 'meteor/meteor';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   Button, FormGroup, ControlLabel, FormControl, Col, Row,
 } from 'react-bootstrap';
-import { sendInvitation } from '../../../api/Invitations/methods';
+import { formValChange, formValid } from '../../../modules/validate';
 
-const validateSendInvitationForm = (onSuccess) => {
-  $('form[name="form-send-Invitation"]').validate({
-    rules: {
-      name: {
-        required: true,
-      },
-      email: {
-        required: true,
-        email: true,
-      },
-    },
-    messages: {
-      name: {
-        required: 'Please enter the name of the invitee',
-      },
-      email: {
-        required: 'Please enter a valid email id.',
-        email: 'An email address must be in the format of name@domain.com',
-      },
-    },
-    submitHandler() { onSuccess(); },
+export default function SendInvitation() {
+  const [isError, setIsError] = useState({
+    whMobilePhone: '',
   });
-};
 
-export default class SendInvitation extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.sendInvitation = this.sendInvitation.bind(this);
-  }
-
-  handleSubmit(event) {
-    validateSendInvitationForm(this.sendInvitation);
-  }
-
-  sendInvitation() {
-    const invitation = {
-      name: document.querySelector('input[name="name"]').value,
-      email: document.querySelector('input[name="email"]').value,
-    };
-
-    sendInvitation.call(invitation, (error, success) => {
+  function sendInvitation(phoneNumber) {
+    Meteor.call('invitation.getInvitation', phoneNumber, (error, getJoinLink) => {
       if (error) {
         toast.error(error.reason);
       } else {
-        const message = `${invitation.name} has been invited!`;
-        toast.success(message);
-        this.props.history.push('/invitations');
+        const msg = encodeURI(`${Meteor.settings.public.MessageInvitation} ${getJoinLink}`);
+        window.open(`https://wa.me/91${phoneNumber}?text=${msg}`);
       }
     });
   }
 
-  render() {
-    return (
-      <div className="send-invitation">
-        <Row>
-          <Col xs={12} sm={6} md={4}>
-            <form
-              name="form-send-Invitation"
-              className="form-send-invitation"
-              onSubmit={(event) => { event.preventDefault(); }}
-            >
-              <FormGroup>
-                <ControlLabel>Name</ControlLabel>
-                <FormControl
-                  type="text"
-                  ref="name"
-                  name="name"
-                  placeholder="Divya Kumari"
-                />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel> Email </ControlLabel>
-                <FormControl
-                  type="email"
-                  ref="email"
-                  name="email"
-                  placeholder="divyaKumari@gmail.com"
-                />
-              </FormGroup>
-              <Button type="submit" bsStyle="primary" onClick={this.handleSubmit}>Invite</Button>
-            </form>
-          </Col>
-        </Row>
-      </div>
-    );
+  function handleSubmit(event) {
+    event.preventDefault();
+    const phoneNumber = document.querySelector('input[name="whMobilePhone"]').value;
+
+    const newErrorState = formValChange({ target: { name: 'whMobilePhone', value: phoneNumber } }, isError);
+    setIsError(newErrorState.isError);
+
+    if (formValid({ ...newErrorState })) {
+      sendInvitation(phoneNumber);
+    }
   }
+
+  return (
+    <div className="send-invitation">
+      <Row>
+        <Col xs={12} sm={6} md={4}>
+          <form
+            name="form-send-Invitation"
+            className="form-send-invitation"
+            onSubmit={(event) => { event.preventDefault(); }}
+          >
+            <FormGroup>
+              <ControlLabel> Phone Number </ControlLabel>
+              <FormControl
+                type="tel"
+                name="whMobilePhone"
+                placeholder="9889899888"
+                pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+              />
+              {isError.whMobilePhone.length > 0 && (
+              <span className="control-label">{isError.whMobilePhone}</span>
+              )}
+            </FormGroup>
+            <Button type="submit" bsStyle="primary" onClick={handleSubmit}> Invite </Button>
+          </form>
+        </Col>
+      </Row>
+    </div>
+  );
 }

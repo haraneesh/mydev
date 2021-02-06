@@ -115,7 +115,14 @@ export const upsertProductList = new ValidatedMethod({
         orderableProducts, currentProductHashMap,
       );
 
-      return ProductLists.update({ _id: productListsId }, { $set: productList });
+      const { products } = productList;
+      productList.products = [];
+
+      ProductLists.update({ _id: productListsId }, { $set: productList });
+
+      products.forEach((prod) => {
+        ProductLists.update({ _id: productListsId }, { $push: { products: prod } });
+      });
 
       /* Meteor.defer(() => {
         console.log(`start ${new Date()}`);

@@ -22,10 +22,16 @@ const InvitationsSchema = new SimpleSchema({
     type: String,
     label: 'User id of the user who sent the invitation',
   },
+  receiverPhoneNumber: {
+    type: String,
+    label: 'Attempted phone number of the receiver',
+    optional: true,
+  },
   email: {
     type: String,
     label: 'Email to send invitation to.',
     regEx: SimpleSchema.RegEx.Email,
+    optional: true,
   },
   token: {
     type: String,
@@ -35,11 +41,12 @@ const InvitationsSchema = new SimpleSchema({
     type: String,
     label: 'Role to apply to the user.',
   },
-  createdAt: { type: Date,
+  createdAt: {
+    type: Date,
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value

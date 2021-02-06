@@ -157,7 +157,7 @@ export const dCreateBasket = SuvaiLoadable({
 });
 
 // Messages
-export const dMessages = ReactLazyPreload(() => import('../pages/Messages/MessageHome/Messages'));
+export const dMessages = lazy(() => import('../pages/Messages/MessageHome/Messages'));
 
 /*
 export const dMessages = SuvaiLoadable({

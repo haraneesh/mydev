@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { NavLink } from 'react-router-dom';
-import { Panel, Row, Col, Button } from 'react-bootstrap';
+import {
+  Panel, Row, Col, Button,
+} from 'react-bootstrap';
 import AdminNav from './AdminNav';
 import Menu from './Menu';
 
@@ -16,10 +18,11 @@ const SideMenu = (props) => (
     <Panel className="menu-panel">
       <Row>
         <div className="container">
-          {props.isAdmin && (<Col xs={12} sm={6}>
-            {<AdminNav {...props} />}
-          </Col>)
-          }
+          {props.isAdmin && (
+          <Col xs={12} sm={6}>
+            <AdminNav {...props} />
+          </Col>
+          )}
           <Col xs={12} sm={6}>
             <ul>
               {/*
@@ -37,7 +40,7 @@ const SideMenu = (props) => (
                 <NavLink to="/profile">My Profile</NavLink>
               </li>
               <li>
-                <NavLink to="/invitations">Invite Friends</NavLink>
+                <NavLink to="/invitations/new">Invite Friends</NavLink>
               </li>
               <br />
               <li>

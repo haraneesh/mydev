@@ -67,12 +67,6 @@ const ToolBar = ({
     intervalID = setInterval(show, 20);
   }
 
-  useEffect(() => {
-    PreLoad.forEach((component) => {
-      component.preload();
-    });
-  }, PreLoad);
-
   let lastScrollTop = 0;
   const cartState = useCartState();
   const totalProductsInCount = cartState.newCartCountOfItems;

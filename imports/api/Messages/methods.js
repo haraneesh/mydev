@@ -7,6 +7,7 @@ import commentFunctions from '../Comments/commentFunctions';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
+import msgUsers from './msgConstants';
 
 const messageTo = (messageType) => {
   switch (true) {
@@ -131,6 +132,22 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+  'messages.addLikes': function addLikes(options) {
+    check(options, {
+      messageId: String,
+      howManyLikes: Number,
+    });
+
+    const numLikesToAdd = options.howManyLikes > 20 ? 20 : options.howManyLikes;
+
+    for (let i = 0; i < numLikesToAdd; i += 1) {
+      const updatedLikeMemberId = msgUsers[i].username;
+      Messages.update(
+        { _id: options.messageId },
+        { $addToSet: { likeMemberId: updatedLikeMemberId } },
+      );
+    }
+  },
   'messages.addComment': function messagesAddComment(options) {
     check(options, {
       postId: String,
@@ -166,7 +183,8 @@ Meteor.methods({
     try {
       const message = Messages.find({ _id: options.postId }).fetch()[0];
 
-      if (message.owner === this.userId || Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      if (message.owner === this.userId
+        || Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         const cmt = {
           ...options,
           owner: message.owner,
@@ -211,6 +229,7 @@ rateLimit({
     'message.detail',
     'messages.remove',
     'messages.updateLike',
+    'messages.addLikes',
     'messages.addComment',
     'messages.updateComment',
     'messages.removeComment',

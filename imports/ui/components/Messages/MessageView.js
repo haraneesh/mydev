@@ -44,6 +44,15 @@ const MessageView = ({
     });
   };
 
+  const addLikeClicks = (messageId) => {
+    const howManyLikes = Number(prompt('How Many Likes? (number)'));
+    Meteor.call('messages.addLikes', { messageId, howManyLikes }, (error) => {
+      if (error) {
+        toast.error(error.reason);
+      }
+    });
+  };
+
   return (
     <div className="messageView" key={_id}>
       <div className="list-group-item">
@@ -100,6 +109,18 @@ const MessageView = ({
               </span>
               {(userLikes) ? ` ${userLikes.length}` : ' 0'}
             </button>
+
+            {isAdmin && (
+            <button
+              type="button"
+              style={{ background: 'transparent', border: 'none', outline: '0' }}
+              onClick={() => { addLikeClicks(_id); }}
+            >
+              <span>
+                <Icon icon="plus-square" />
+              </span>
+            </button>
+            )}
 
           </Col>
           <Col xs={6} className="text-right" style={{ padding: '10px 5px 0px 0px' }}>

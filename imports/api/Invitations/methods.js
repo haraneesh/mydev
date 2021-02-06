@@ -3,10 +3,48 @@ import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
 import { Meteor } from 'meteor/meteor';
 import { Email } from 'meteor/email';
+import { check, Match } from 'meteor/check';
 import rateLimit from '../../modules/rate-limit';
+import handleMethodException from '../../modules/handle-method-exception';
 import constants from '../../modules/constants';
 import Invitations from './Invitations';
 import InvitationTemplate from './invitation_template';
+
+Meteor.methods({
+  'invitation.getInvitation': function invitationCreate(phoneNumber) {
+    check(phoneNumber, Match.Maybe(String));
+    try {
+      let invitation;
+
+      if (phoneNumber) {
+        invitation = Invitations.findOne(
+          {
+            $and: [
+              { receiverPhoneNumber: phoneNumber },
+              { invitation_status: constants.InvitationStatus.Sent.name },
+            ],
+          },
+        );
+      }
+
+      if (!invitation) {
+        invitation = {};
+        invitation.sentUserId = Meteor.userId();
+        invitation.token = Random.hexString(16);
+        invitation.role = 'member';
+        invitation.receivedUserId = '';
+        invitation.receiverPhoneNumber = phoneNumber;
+        invitation.invitation_status = constants.InvitationStatus.Sent.name;
+
+        Invitations.insert(invitation);
+      }
+      const { domain } = Meteor.settings.private;
+      return `http://${domain}/invitations/${invitation.token}`;
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+});
 
 export const sendInvitation = new ValidatedMethod({
   name: 'invitations.send',
@@ -21,7 +59,7 @@ export const sendInvitation = new ValidatedMethod({
     invitation.receivedUserId = '';
     invitation.invitation_status = constants.InvitationStatus.Sent.name;
 
-      /* let query
+    /* let query
         switch (true){
           case (Roles.userIsInRole(loggedInUserId, ['admin']) || !(invitation._id)):
              query = { _id: invitation._id }
@@ -41,12 +79,12 @@ export const sendInvitation = new ValidatedMethod({
       this.unblock();
       sendEmail(invitation.email, email, `${fromName} has Invited you to Suvai Community`);
     }
-    return Invitations.insert(invitation);
+    Invitations.insert(invitation);
   },
 });
 
-let prepareEmail = (token, name, fromName) => {
-  const domain = Meteor.settings.private.domain;
+const prepareEmail = (token, name, fromName) => {
+  const { domain } = Meteor.settings.private;
   const url = `http://${domain}/invitations/${token}`;
 
   // SSR.compileTemplate('invitation', Assets.getText('email/templates/invitation.html'));
@@ -56,7 +94,7 @@ let prepareEmail = (token, name, fromName) => {
   return html;
 };
 
-let sendEmail = (email, content, subject) => {
+const sendEmail = (email, content, subject) => {
   Email.send({
     to: email,
     from: `Suvai ${Meteor.settings.private.fromInvitationEmail}`,
@@ -76,11 +114,10 @@ const _createUser = (user) => {
 const _getInvitation = (token) => {
   const invitation = Invitations.findOne({
     $and: [
-            { token }, // token
-            { invitation_status: constants.InvitationStatus.Sent.name }, //constants.InvitationStatus.Sent.name
+      { token }, // token
+      { invitation_status: constants.InvitationStatus.Sent.name }, // constants.InvitationStatus.Sent.name
     ],
-  },
-    );
+  });
 
   if (invitation) {
     return invitation;
@@ -88,10 +125,11 @@ const _getInvitation = (token) => {
 };
 
 const _updateInvitation = (token, userId) => {
-  Invitations.update({ token }, { $set: {
-    invitation_status: constants.InvitationStatus.Accepted.name,
-    receivedUserId: userId,
-  },
+  Invitations.update({ token }, {
+    $set: {
+      invitation_status: constants.InvitationStatus.Accepted.name,
+      receivedUserId: userId,
+    },
   });
 };
 
@@ -116,7 +154,6 @@ export const acceptInvitation = new ValidatedMethod({
   },
 });
 
-
 export const removeInvitation = new ValidatedMethod({
   name: 'invitations.remove',
   validate: new SimpleSchema({
@@ -126,18 +163,20 @@ export const removeInvitation = new ValidatedMethod({
     let query;
     switch (true) {
       case Roles.userIsInRole(this.userId, ['admin']):
-        query = { $and: [
-                            { _id },
-                            { invitation_status: constants.InvitationStatus.Sent.name },
-        ],
+        query = {
+          $and: [
+            { _id },
+            { invitation_status: constants.InvitationStatus.Sent.name },
+          ],
         };
         break;
       default:
-        query = { $and: [
-                            { _id },
-                            { sentUserId: Meteor.userId() },
-                            { invitation_status: constants.InvitationStatus.Sent.name },
-        ],
+        query = {
+          $and: [
+            { _id },
+            { sentUserId: Meteor.userId() },
+            { invitation_status: constants.InvitationStatus.Sent.name },
+          ],
         };
         break;
     }
@@ -147,6 +186,7 @@ export const removeInvitation = new ValidatedMethod({
 
 rateLimit({
   methods: [
+    'invitation.getInvitation',
     sendInvitation,
     removeInvitation,
     acceptInvitation,
