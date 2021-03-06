@@ -25,26 +25,29 @@ const ProductsAdmin = (args) => {
     });
   }, []);
 
-
   return isLoadingSuppliers ? (<Loading />) : (<ProductsAdminSub history={args.history} productListId={args.match.params._id} suppliers={suppliers} />);
 };
 
 export default ProductsAdmin;
 
-const ProductsAdminDetail = ({ loading, products, suppliers, productListId, history }) => (
-  !loading ? (<Row>
-    <Col xs={12}>
-      <h3 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h3>
-      <InsertProduct history={history} />
-      <UploadPrices products={products} history={history} />
-      <ListAllProducts
-        products={products}
-        suppliers={suppliers}
-        productListId={productListId}
-        history={history}
-      />
-    </Col>
-  </Row>) : (<Loading />)
+const ProductsAdminDetail = ({
+  loading, products, suppliers, productListId, history,
+}) => (
+  !loading ? (
+    <Row>
+      <Col xs={12}>
+        <h3 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h3>
+        <InsertProduct history={history} />
+        <UploadPrices products={products} history={history} />
+        <ListAllProducts
+          products={products}
+          suppliers={suppliers}
+          productListId={productListId}
+          history={history}
+        />
+      </Col>
+    </Row>
+  ) : (<Loading />)
 );
 
 const ProductsAdminSub = withTracker(({ history, productListId, suppliers }) => {
@@ -58,4 +61,3 @@ const ProductsAdminSub = withTracker(({ history, productListId, suppliers }) => 
     history,
   };
 })(ProductsAdminDetail);
-

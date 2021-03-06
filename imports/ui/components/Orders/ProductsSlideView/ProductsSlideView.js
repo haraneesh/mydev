@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ScrollMenu from 'react-horizontal-scrolling-menu';
+import ItemsCarousel from 'react-items-carousel';
 import Product from '../Product';
 import Icon from '../../Icon/Icon';
 import './ProductSlideView.scss';
+import { isDeviceMobile } from '../../../../modules/helpers';
 
 // All items component
 // Important! add unique key
 export const Menu = ({
   menuList, changeProductQuantity, isAdmin, isShopOwner,
 }) => menuList.filter((el) => el.props.product).map((el) => (
+
   <Product
     key={`prdSlideView-${el.props.product._id}`}
     updateProductQuantity={changeProductQuantity}
     product={el.props.product}
     isAdmin={isAdmin}
     isShopOwner={isShopOwner}
-    productClass="slideProductItem"
+    productClass="sliderProduct"
+    sliderView
   />
+
 ));
 
 const ArrowLeft = (<Icon className="arrow" icon="angle-left" />);
@@ -27,6 +31,9 @@ export default function ProductSlideView({
   menuList, changeProductQuantity, isAdmin, isShopOwner,
 }) {
   // const [selected, setSelected] = useState('item1');
+
+  const [activeItemIndex, setActiveItemIndex] = useState(0);
+
   const menuItems = Menu({
     menuList, changeProductQuantity, isAdmin, isShopOwner,
   });
@@ -34,28 +41,21 @@ export default function ProductSlideView({
   return (
     <div className="App">
 
-      <ScrollMenu
-        data={menuItems}
-        arrowLeft={ArrowLeft}
-        arrowRight={ArrowRight}
-        // selected={selected}
-        // onSelect={onSelect}
-        alignCenter
-        clickWhenDrag={false}
-        dragging
-        hideArrows
-        hideSingleArrow
-        itemsCount={menuItems.length}
-        scrollToSelected={false}
-        translate="translate3d(0px, 0px, 0px)"
-        transition={0.4}
-        wheel={false}
-        showList
-        inertiascrolling={false}
-        slowdownFactor={0.25}
-        arrowDisabledClass="arrow-disabled"
-      />
+      <ItemsCarousel
+        requestToChangeActive={setActiveItemIndex}
+        activeItemIndex={activeItemIndex}
+        numberOfCards={isDeviceMobile() ? 1 : 2}
+        gutter={15}
+        leftChevron={ArrowLeft}
+        rightChevron={ArrowRight}
+        chevronWidth={40}
+        alwaysShowChevrons
+        showSlither
+      >
+        {menuItems}
+      </ItemsCarousel>
     </div>
+
   );
 }
 

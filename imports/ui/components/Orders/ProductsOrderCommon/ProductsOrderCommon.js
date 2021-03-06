@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Row, Col, Button, FormControl, PanelGroup,
 } from 'react-bootstrap';
+import { isDeviceMobile } from '../../../../modules/helpers';
 import Product from '../Product';
 import constants from '../../../../modules/constants';
 
@@ -158,6 +159,20 @@ export function displayProductsByType({
         <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );
 
+      if (!(isAdmin || isShopOwner)) {
+        if (isDeviceMobile() && productSpecials.length % 3 === 2) {
+          productSpecials.push(
+            <div className="clearfix nextRow" />,
+          );
+        }
+
+        if (!isDeviceMobile() && productSpecials.length % 5 === 4) {
+          productSpecials.push(
+            <div className="clearfix nextRow" />,
+          );
+        }
+      }
+
       productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, 'productSpecials', product);
     }
 
@@ -219,12 +234,28 @@ export function displayProductsByType({
     }
 
     tempProductList.push(
-      <Product isMobile={isMobile} key={tempKey} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
+      <Product
+        isMobile={isMobile}
+        key={tempKey}
+        updateProductQuantity={updateProductQuantity}
+        product={product}
+        isAdmin={isAdmin || isShopOwner}
+        checkout={checkout}
+        isBasket={isBasket}
+      />,
     );
-    if (!(isAdmin || isShopOwner) && tempProductList.length % 3 === 2) {
-      tempProductList.push(
-        <div className="clearfix hidden-xs" style={{ marginBottom: '5rem' }} />,
-      );
+    if (!(isAdmin || isShopOwner)) {
+      if (isDeviceMobile() && tempProductList.length % 3 === 2) {
+        tempProductList.push(
+          <div className="clearfix nextRow" />,
+        );
+      }
+
+      if (!isDeviceMobile() && tempProductList.length % 5 === 4) {
+        tempProductList.push(
+          <div className="clearfix nextRow" />,
+        );
+      }
     }
     productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, tempType, product);
   });

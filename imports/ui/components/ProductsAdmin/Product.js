@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox,
+  Modal, Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import AttachIngredient from './AttachIngredient';
+import ProductDetails from './ProductDetails';
 import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
 import constants from '../../../modules/constants';
 import { retMultiSelectValueInArr } from '../../../modules/helpers';
@@ -77,6 +78,7 @@ export default class Product extends React.Component {
       product: { ...product },
       open: false,
       supplierHash: this.retSupplierHash(suppliers),
+      showDetails: false,
     };
 
     this.handleProductUpsert = this.handleProductUpsert.bind(this);
@@ -84,6 +86,33 @@ export default class Product extends React.Component {
     this.handleChangeInAssocIngredient = this.handleChangeInAssocIngredient.bind(this);
     this.updateImageUrl = this.updateImageUrl.bind(this);
     this.removeDeletedSourceSuppliers = this.removeDeletedSourceSuppliers.bind(this);
+    this.launchProductDetails = this.launchProductDetails.bind(this);
+  }
+
+  showDetailsPage(showDetails) {
+    this.setState({ showDetails });
+  }
+
+  launchProductDetails({ productId, productName, showDetails }) {
+    return (
+      <Modal show={showDetails} className="modalProductDetails">
+        <Modal.Header>
+          <Modal.Title>
+            {productName}
+            <Button bsStyle="link" style={{ float: 'right' }} onClick={() => { this.showDetailsPage(false); }}>x</Button>
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Row>
+            <ProductDetails
+              productId={productId}
+              closeFunction={() => { this.showDetailsPage(false); }}
+            />
+          </Row>
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   retSupplierHash(suppliers /* _id, name */) {
@@ -96,7 +125,10 @@ export default class Product extends React.Component {
   handleRemoveProduct(event) {
     event.preventDefault();
     const productId = event.target.name;
-    if (confirm(`Do you want to remove the product ${this.props.product.name}? This is permanent!`)) {
+    if (
+      confirm(
+        `Do you want to remove the product ${this.props.product.name}? This is permanent!`,
+      )) {
       removeProduct.call({
         _id: productId,
       }, (error) => {
@@ -122,6 +154,8 @@ export default class Product extends React.Component {
       case 'availableToOrderWH': valueToUpdate = !product.availableToOrderWH;
         break;
       case 'displayAsSpecial': valueToUpdate = !product.displayAsSpecial;
+        break;
+      case 'frequentlyOrdered': valueToUpdate = !product.frequentlyOrdered;
         break;
       case 'associatedFoodGroups':
         valueToUpdate = retMultiSelectValueInArr(event.target.selectedOptions);
@@ -381,6 +415,29 @@ export default class Product extends React.Component {
             <Row>
               <Col xs={1} />
               <Col xs={6}>
+                <Checkbox
+                  name="frequentlyOrdered"
+                  checked={this.state.product.frequentlyOrdered}
+                  onChange={this.handleProductUpsert}
+                >
+                  Frequently Ordered
+                </Checkbox>
+              </Col>
+              <Col xs={5}>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="Units For Selection"
+                  controlName="unitsForSelection"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.unitsForSelection}
+                  help
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1} />
+              <Col xs={5}>
                 <ControlLabel>
                   Associated with Ingredient:
                   <strong>
@@ -392,6 +449,38 @@ export default class Product extends React.Component {
                   ingredient={product.associatedIngredient}
                 />
               </Col>
+              <Col xs={3}>
+                <FieldGroup
+                  controlType="select"
+                  controlLabel="Suppliers"
+                  controlName="sourceSuppliers"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={
+                    this.props.product.sourceSuppliers
+                    && this.props.product.sourceSuppliers.length > 0
+                      ? this.props.product.sourceSuppliers[0]._id : ''
+                  }
+                  choiceValues={this.props.suppliers}
+                  help
+                />
+              </Col>
+              <Col xs={2}>
+                <ControlLabel>&nbsp;</ControlLabel>
+                <br />
+                <Button
+                  bsSize="small"
+                  name={product._id}
+                  onClick={this.handleRemoveProduct}
+                  style={{ marginLeft: '5px' }}
+                >
+                  {' '}
+                  Delete Product
+                </Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={1} />
               <Col xs={5}>
                 <FieldGroup
                   style={{ height: '170px' }}
@@ -406,42 +495,30 @@ export default class Product extends React.Component {
                   help
                 />
               </Col>
-            </Row>
-            <Row>
-              <Col xs={1} />
-              <Col xs={5}>
-                <FieldGroup
-                  controlType="text"
-                  controlLabel="Units For Selection"
-                  controlName="unitsForSelection"
-                  displayControlName="true"
-                  updateValue={this.handleProductUpsert}
-                  defaultValue={product.unitsForSelection}
-                  help
-                />
-              </Col>
+
+              {this.launchProductDetails(
+                {
+                  productId: product._id,
+                  productName: product.name,
+                  showDetails: this.state.showDetails,
+                },
+              )}
+
               <Col xs={3}>
-                <FieldGroup
-                  controlType="select"
-                  controlLabel="Suppliers"
-                  controlName="sourceSuppliers"
-                  displayControlName="true"
-                  updateValue={this.handleProductUpsert}
-                  defaultValue={this.props.product.sourceSuppliers && this.props.product.sourceSuppliers.length > 0 ? this.props.product.sourceSuppliers[0]._id : ''}
-                  choiceValues={this.props.suppliers}
-                  help
-                />
-              </Col>
-              <Col xs={2}>
-                <ControlLabel>&nbsp;</ControlLabel>
-                <br />
                 <Button
-                  bsSize="small"
-                  name={product._id}
-                  onClick={this.handleRemoveProduct}
+                  className="btn-info btn-sm"
+                  style={{
+                    top: '12em',
+                    marginLeft: '1rem',
+                    position: 'relative',
+                  }}
+                  onClick={
+                  () => {
+                    this.showDetailsPage(true);
+                  }
+                }
                 >
-                  {' '}
-                  Delete Product
+                  Edit Product Detail
                 </Button>
               </Col>
             </Row>

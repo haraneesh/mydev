@@ -8,6 +8,7 @@ import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit.js';
 import Products from './Products';
+import ProductDetails from '../ProductDetails/ProductDetails';
 
 export const insertProduct = new ValidatedMethod({
   name: 'products.insert',
@@ -154,6 +155,7 @@ export const removeProduct = new ValidatedMethod({
   }).validator(),
   run({ _id }) {
     Products.remove(_id);
+    ProductDetails.remove({ productId: _id });
   },
 });
 

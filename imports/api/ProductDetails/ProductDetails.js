@@ -1,28 +1,31 @@
 /* eslint-disable consistent-return */
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-const Specials = new Mongo.Collection('Specials');
-export default Specials;
+const ProductDetails = new Mongo.Collection('ProductDetails');
+export default ProductDetails;
 
-Specials.allow({
+ProductDetails.allow({
   insert: () => false,
   update: () => false,
   remove: () => false,
 });
 
-Specials.deny({
+ProductDetails.deny({
   insert: () => true,
   update: () => true,
   remove: () => true,
 });
 
-Specials.schema = new SimpleSchema({
+ProductDetails.schema = new SimpleSchema({
   _id: { type: String, label: 'The default _id of the supplier', optional: true },
   title: {
     type: String,
     label: 'The title of the special announcement.',
+    optional: true,
   },
+  productId: { type: String, label: 'The id of the product whose details are saved here' },
   description: {
     type: String,
     label: 'The recipe goes here.',
@@ -31,17 +34,6 @@ Specials.schema = new SimpleSchema({
   imageUrl: {
     type: String,
     label: 'The url of the image of the special announcement',
-    optional: true,
-  },
-  displayOrder: {
-    type: Number,
-    label: 'The url of the image in the special announcement',
-    optional: true,
-    min: 0,
-  },
-  colorTheme: {
-    type: String,
-    label: 'The color theme for the special announcement',
     optional: true,
   },
   createdAt: {
@@ -56,15 +48,6 @@ Specials.schema = new SimpleSchema({
     },
     optional: true,
   },
-  viewCount: {
-    type: Date,
-    autoValue() {
-      if (this.isInsert) {
-        return 0;
-      }
-    },
-    optional: true,
-  },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   updatedAt: {
@@ -76,10 +59,10 @@ Specials.schema = new SimpleSchema({
     },
     optional: true,
   },
-  publishStatus: {
-    type: String,
-    label: 'Publish Status',
-  },
 });
 
-Specials.attachSchema(Specials.schema);
+if (Meteor.isServer) {
+  ProductDetails._ensureIndex({ productId: 1 });
+}
+
+ProductDetails.attachSchema(ProductDetails.schema);

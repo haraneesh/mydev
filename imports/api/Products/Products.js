@@ -20,7 +20,7 @@ Products.deny({
 });
 
 const supplierSchemaDefObject = _.clone(SupplierSchemaDefObject);
-const SupplierSchema = new SimpleSchema(supplierSchemaDefObject)
+const SupplierSchema = new SimpleSchema(supplierSchemaDefObject);
 
 export const ProductSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
@@ -36,14 +36,18 @@ export const ProductSchemaDefObject = {
     optional: true,
   },
   description: { type: String, label: 'The description of the product.', optional: true },
+  hasDetails: { type: Boolean, label: 'Does the product have details', optional: true },
   image_path: { type: String, label: 'The image path of the product.', optional: true },
   type: { type: String, label: 'The type of the product.' },
   category: { type: String, label: 'The category of the product.', optional: true },
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
   availableToOrderWH: { type: Boolean, label: 'Is product availableToOrderWH?', optional: true },
-  maxUnitsAvailableToOrder: { type: Number, min: 0, defaultValue: 0, label: 'Max Units Available to order', optional: true },
+  maxUnitsAvailableToOrder: {
+    type: Number, min: 0, defaultValue: 0, label: 'Max Units Available to order', optional: true,
+  },
   displayAsSpecial: { type: Boolean, label: 'Is this a special product?', optional: true },
-  //displayOrder: { type: Number, defaultValue: 0, label: 'Order to display in.', optional: true },
+  frequentlyOrdered: { type: Boolean, label: 'Is this frequently ordered product?', optional: true },
+  // displayOrder: { type: Number, defaultValue: 0, label: 'Order to display in.', optional: true },
   vendor_details: { type: Object },
   'vendor_details.id': { type: Number, label: 'The vendor details of the product.' },
   'vendor_details.slug': { type: String, label: 'The vendor slug of the product.' },
@@ -104,4 +108,3 @@ if (Meteor.isServer) {
 }
 
 Products.attachSchema(Products.schema);
-

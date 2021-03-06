@@ -83,7 +83,11 @@ export const upsertProductList = new ValidatedMethod({
 
       const orderableProducts = Products.find(
         { $or: [{ availableToOrder: true }, { availableToOrderWH: true }] },
-        { sort: { type: 1, /* category: 1, displayOrder: 1, */ name: 1 } },
+        {
+          sort: {
+            type: 1, category: 1, /* displayOrder: 1, */ name: 1,
+          },
+        },
       ).fetch();
 
       const productList = {

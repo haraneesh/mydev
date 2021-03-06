@@ -1,33 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Panel, PanelGroup, Button } from 'react-bootstrap';
-import Product from '../Orders/Product';
-import { displayProductsByType } from '../../components/Orders/ProductsOrderCommon/ProductsOrderCommon';
-
+import { PanelGroup } from 'react-bootstrap';
+import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
 export const createProductHash = (productArray) => {
   const productsHash = {};
-  productArray.forEach(product => {
+  productArray.forEach((product) => {
     productsHash[product._id] = product;
   });
   return productsHash;
-}
+};
 
 const displayWithDivider = (displayArray, displayText) => (
   displayArray.length > 0 && (
     <div className="panel panel-default" style={{ borderBottomWidth: '0px' }}>
-      {displayText &&
-        (<div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+      {displayText
+        && (
+        <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
           <small className="text-uppercase">{displayText}</small>
-        </div>)
-      }
+        </div>
+        )}
       <div className="panel-body">
         {displayArray}
       </div>
     </div>
   ));
 
-export const ListProducts = ({ products, productsNotInBasket, updateProductQuantity, isMobile, isAdmin, isShopOwner }) => (
+export const ListProducts = ({
+  products, productsNotInBasket, updateProductQuantity, isMobile, isAdmin, isShopOwner,
+}) => (
   <div>
     <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
       <h4 className="text-uppercase">Products Added to Basket</h4>
@@ -56,8 +57,11 @@ export const ListProducts = ({ products, productsNotInBasket, updateProductQuant
   </div>
 );
 
-const DisplayProdRows = ({ products, updateProductQuantity, isMobile, isAdmin, isShopOwner }) => {
-  const { productVegetables,
+const DisplayProdRows = ({
+  products, updateProductQuantity, isMobile, isAdmin, isShopOwner,
+}) => {
+  const {
+    productVegetables,
     productFruits,
     productDhals,
     productGrains,
@@ -66,12 +70,13 @@ const DisplayProdRows = ({ products, updateProductQuantity, isMobile, isAdmin, i
     productPrepared,
     productHygiene,
     productSweetners,
-  } = displayProductsByType({ products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity, isBasket: true });
-
+  } = displayProductsByType({
+    products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity, isBasket: true,
+  });
 
   return (
     <PanelGroup className="order-details-products">
-      {/*<Panel>
+      {/* <Panel>
       <Row>
         <Col xs={7} sm={9}> <strong> Name </strong></Col>
         <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col>
@@ -89,5 +94,5 @@ const DisplayProdRows = ({ products, updateProductQuantity, isMobile, isAdmin, i
       {displayWithDivider(productSweetners, 'Sweetners')}
       {displayWithDivider(productHygiene, 'Personal & General Hygiene')}
     </PanelGroup>
-  )
-}
+  );
+};

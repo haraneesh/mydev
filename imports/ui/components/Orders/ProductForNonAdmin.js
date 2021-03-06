@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Row, Col, FormControl, Panel, Button, Glyphicon } from 'react-bootstrap';
+import {
+  Row, Col, FormControl, Panel, Button, Glyphicon,
+} from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 import { accountSettings } from '../../../modules/settings';
@@ -20,11 +22,13 @@ const QuantitySelectorWithPrice = ({
       const value = parseFloat(selectValue);
       const cost = formatMoney(value * unitprice, accountSettings);
       return (
-        <option value={value} key={`option-${index}`} > {`${displayUnitOfSale(selectValue, unit)} ${cost}`} </option>
+        <option value={value} key={`option-${index}`}>
+          {' '}
+          {`${displayUnitOfSale(selectValue, unit)} ${cost}`}
+          {' '}
+        </option>
       );
-    },
-    )
-    }
+    })}
   </FormControl>
 );
 
@@ -40,9 +44,12 @@ const QuantitySelector = ({
     <Col xs={10} className="no-padding">
       <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
         {values.map((selectValue, index) => (
-          <option value={parseFloat(selectValue)} key={`option-${index}`} > {displayUnitOfSale(selectValue, unit)} </option>
-        ))
-        }
+          <option value={parseFloat(selectValue)} key={`option-${index}`}>
+            {' '}
+            {displayUnitOfSale(selectValue, unit)}
+            {' '}
+          </option>
+        ))}
       </FormControl>
     </Col>
     <Col xs={2} className="no-padding">
@@ -55,17 +62,29 @@ const QuantitySelector = ({
   </div>
 );
 
-const ProductName = ({ name, description, quantitySelected, maxUnitsAvailableToOrder, totQuantityOrdered, previousOrdQty }) => (
+const ProductName = ({
+  name,
+  description,
+  quantitySelected,
+  maxUnitsAvailableToOrder,
+  totQuantityOrdered,
+  previousOrdQty,
+  sliderView,
+}) => (
   <div className="productNameDesc">
     <h4 className="product-name"><strong>{name}</strong></h4>
-    {(quantitySelected > 0) && <InformProductUnavailability
-      maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-      excessQtyOrdered={
+    {/* (quantitySelected > 0) && (
+      (!sliderView && (
+      <InformProductUnavailability
+        maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+        excessQtyOrdered={
         calcExcessQtyOrdered(maxUnitsAvailableToOrder,
           totQuantityOrdered, previousOrdQty, quantitySelected)
       }
-    />}
-    <p><small>{description}</small></p>
+      />
+      ))
+    ) */}
+    {!sliderView && !!description && <p><small>{description}</small></p>}
   </div>
 );
 
@@ -81,9 +100,11 @@ const AddToCart = ({
   const target = { name: controlName, value: 0 };
   if (quantitySelected === 0) {
     target.value = parseFloat(values[1]);
-    return (<div className="addToCart text-center-xs">
-      <Button className="btn-block btn-success" name={controlName} onClick={() => { onChange({ target }); }}> Add To Cart</Button>
-    </div>);
+    return (
+      <div className="addToCart text-center-xs">
+        <Button className="btn-block btn-success" name={controlName} onClick={() => { onChange({ target }); }}> Add To Cart</Button>
+      </div>
+    );
   }
 
   /*
@@ -92,15 +113,17 @@ const AddToCart = ({
   </div>);
   */
 
-  return (<QuantitySelector
-    onChange={onChange}
-    unit={unit}
-    unitprice={unitprice}
-    controlName={controlName}
-    quantitySelected={quantitySelected}
-    values={values}
-    maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-  />);
+  return (
+    <QuantitySelector
+      onChange={onChange}
+      unit={unit}
+      unitprice={unitprice}
+      controlName={controlName}
+      quantitySelected={quantitySelected}
+      values={values}
+      maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+    />
+  );
 };
 
 const ProductForNonAdmin = ({
@@ -120,20 +143,24 @@ const ProductForNonAdmin = ({
   checkout,
   isBasket,
   removedDuringCheckout,
+  sliderView,
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
   const lowestOrdQty = unitsForSelectionArray.length > 0 ? unitsForSelectionArray[firstNonZeroOrderQty] : 0;
   const lowestOrdQtyPrice = unitprice * lowestOrdQty;
 
-  const prodNameDesc = (<ProductName
-    name={name}
-    description={description}
-    quantitySelected={quantitySelected}
-    maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-    totQuantityOrdered={totQuantityOrdered}
-    previousOrdQty={previousOrdQty}
-  />);
+  const prodNameDesc = (
+    <ProductName
+      name={name}
+      description={description}
+      quantitySelected={quantitySelected}
+      maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+      totQuantityOrdered={totQuantityOrdered}
+      previousOrdQty={previousOrdQty}
+      sliderView
+    />
+  );
   const imagePath = Meteor.settings.public.Product_Images + image;
   const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
 
@@ -142,16 +169,24 @@ const ProductForNonAdmin = ({
       <Panel>
         <Row>
           <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
-            { removedDuringCheckout ? (<s> {name} </s>) : name }
+            { removedDuringCheckout ? (
+              <s>
+                {' '}
+                {name}
+                {' '}
+              </s>
+            ) : name }
           </Col>
           <Col xs={6} sm={3} style={{ paddingLeft: '10px' }}>
             <Col xs={12} className="no-padding">
-              {!isBasket && (<Col xs={12} className="no-padding">
+              {!isBasket && (
+              <Col xs={12} className="no-padding">
                 {formatMoney(
                   unitprice * quantitySelected,
                   accountSettings,
                 )}
-              </Col>)}
+              </Col>
+              )}
               <QuantitySelector
                 onChange={onChange}
                 unit={unit}
@@ -168,20 +203,59 @@ const ProductForNonAdmin = ({
     );
   }
 
+  if (sliderView) {
+    return (
+      <Col xs={12} className="product-item">
+        <Col xs={4} className="item-image-container">
+          {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
+        </Col>
+
+        <Col xs={8}>
+          <Row>
+            <Col xs={12}>
+              {prodNameDesc}
+            </Col>
+            <Col xs={12}>
+              <h4>
+                {' '}
+                {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
+                {' '}
+              </h4>
+            </Col>
+            <AddToCart
+              onChange={onChange}
+              unit={unit}
+              unitprice={unitprice}
+              controlName={productId}
+              quantitySelected={quantitySelected}
+              values={unitsForSelectionArray}
+              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            />
+          </Row>
+        </Col>
+
+      </Col>
+    );
+  }
+
   return (
-    <Col xs={12} sm={6} className="no-padding product-item">
-      <Col xs={12} sm={4} smOffset={0}>
-        {!!image && imageRow}
+    <Col xs={6} sm={3} className="product-item">
+      <Col xs={12} className="item-image-container">
+        {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
       </Col>
 
-      <Col xs={12} sm={8}>
+      <Col xs={12}>
         <Row>
           <Col xs={12}>
             {prodNameDesc}
           </Col>
 
           <Col xs={12}>
-            <h4> {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`} </h4>
+            <h4>
+              {' '}
+              {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
+              {' '}
+            </h4>
           </Col>
 
           <Col xs={12}>

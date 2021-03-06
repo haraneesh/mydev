@@ -10,6 +10,10 @@ export function isCustomer(userId) {
   return Roles.userIsInRole(userId, constants.Roles.customer.name);
 }
 
+export function isDeviceMobile() {
+  return window.screen.width < constants.ScreenWidths.ipad.width;
+}
+
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
   if (!isShopOwnerPrice) {
     return productsArray.filter((product) => product.availableToOrder === true);

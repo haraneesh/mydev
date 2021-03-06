@@ -12,18 +12,16 @@
     font-size: 3em;
   }
 
-  .arrow-disabled{
+  .arrow-disabled {
     color: $gray-lighter;
   }
 
-  @media (min-width: $screen-xs-min){
-  .slideProductItem > .col-sm-6 {
-    width: 100%;
-    }
+  .item-slider-view {
+    display: none;
   }
 
   .menu-item-wrapper{
-   max-width: 20em;
+    max-width: 20em;
    // margin-top: -1.5em;
   }
   
@@ -32,16 +30,3 @@
     cursor: pointer;
   }
 
-  .slideProductItem {
-    h4 {
-      font-size: medium;
-    }
-    p {
-      display:none;
-    }
-    .btn-block{
-      width: auto;
-    min-width: 0;
-    display: table;
-    }
-  }

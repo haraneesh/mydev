@@ -31,7 +31,9 @@ class ProductSearch extends React.Component {
 
   saveSearchString() {
     const { searchString } = this.state;
-    Meteor.call('search.captureSearchString', searchString);
+    if (searchString) {
+      Meteor.call('search.captureSearchString', searchString);
+    }
   }
 
   clear() {

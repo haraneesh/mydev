@@ -1,5 +1,7 @@
 import React from 'react';
-import { Row, Col, Button, FormGroup, FormControl } from 'react-bootstrap';
+import {
+  Row, Col, Button, FormGroup, FormControl,
+} from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { upsertSpecialDraft } from '../../../api/Specials/methods';
 import constants from '../../../modules/constants';
@@ -31,6 +33,6 @@ const AddSpecial = () => (
       </Col>
     </Row>
   </FormGroup>
- );
+);
 
 export default AddSpecial;
