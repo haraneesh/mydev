@@ -1,0 +1,22 @@
+@import "../../../stylesheets/bootstrap/bootstrap/variables";
+
+.slider{
+    .flickity-button {
+        color: $gray-darker;
+        background: #fff;
+    }
+    
+    .flickity-prev-next-button.previous{
+        left: -5px !important;
+    }
+
+    .flickity-prev-next-button.next{
+        right: -5px !important;
+    }
+
+    .flickity-prev-next-button {
+        width: 3em !important; 
+        height: 100% !important;
+        border-radius: 0%;
+    }
+}

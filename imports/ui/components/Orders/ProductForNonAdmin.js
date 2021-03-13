@@ -222,18 +222,19 @@ const ProductForNonAdmin = ({
                 {' '}
               </h4>
             </Col>
-            <AddToCart
-              onChange={onChange}
-              unit={unit}
-              unitprice={unitprice}
-              controlName={productId}
-              quantitySelected={quantitySelected}
-              values={unitsForSelectionArray}
-              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-            />
+            <Col xs={9} sm={12}>
+              <AddToCart
+                onChange={onChange}
+                unit={unit}
+                unitprice={unitprice}
+                controlName={productId}
+                quantitySelected={quantitySelected}
+                values={unitsForSelectionArray}
+                maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+              />
+            </Col>
           </Row>
         </Col>
-
       </Col>
     );
   }

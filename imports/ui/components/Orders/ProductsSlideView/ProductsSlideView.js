@@ -1,45 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import ItemsCarousel from 'react-items-carousel';
 import Product from '../Product';
-import Icon from '../../Icon/Icon';
+import Slider from './Slider';
 import './ProductSlideView.scss';
-import { isDeviceMobile } from '../../../../modules/helpers';
 
 // All items component
 // Important! add unique key
-export const Menu = ({
-  menuList, changeProductQuantity, isAdmin, isShopOwner,
-}) => menuList.filter((el) => el.props.product).map((el) => (
 
-  <Product
-    key={`prdSlideView-${el.props.product._id}`}
-    updateProductQuantity={changeProductQuantity}
-    product={el.props.product}
-    isAdmin={isAdmin}
-    isShopOwner={isShopOwner}
-    productClass="sliderProduct"
-    sliderView
-  />
+/*
+    <div className="main-carousel" data-flickity='{ "cellAlign": "left", "contain": true }'>
 
-));
-
-const ArrowLeft = (<Icon className="arrow" icon="angle-left" />);
-const ArrowRight = (<Icon className="arrow" icon="angle-right" />);
-
-export default function ProductSlideView({
-  menuList, changeProductQuantity, isAdmin, isShopOwner,
-}) {
-  // const [selected, setSelected] = useState('item1');
-
-  const [activeItemIndex, setActiveItemIndex] = useState(0);
-
-  const menuItems = Menu({
-    menuList, changeProductQuantity, isAdmin, isShopOwner,
-  });
-
-  return (
-    <div className="App">
+      {menuItems}
 
       <ItemsCarousel
         requestToChangeActive={setActiveItemIndex}
@@ -54,6 +25,50 @@ export default function ProductSlideView({
       >
         {menuItems}
       </ItemsCarousel>
+
+    </div>
+*/
+
+export const Menu = ({
+  menuList, changeProductQuantity, isAdmin, isShopOwner,
+}) => menuList.filter((el) => el.props.product).map((el) => (
+
+  <div className="carousel-cell" style={{ width: '300px', margin: '0 1em 0 0' }} key={`carSlideView-${el.props.product._id}`}>
+    <Product
+      key={`prdSlideView-${el.props.product._id}`}
+      updateProductQuantity={changeProductQuantity}
+      product={el.props.product}
+      isAdmin={isAdmin}
+      isShopOwner={isShopOwner}
+      productClass="sliderProduct"
+      sliderView
+    />
+  </div>
+
+));
+
+export default function ProductSlideView({
+  menuList, changeProductQuantity, isAdmin, isShopOwner,
+}) {
+  const menuItems = Menu({
+    menuList, changeProductQuantity, isAdmin, isShopOwner,
+  });
+
+  return (
+
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }} />
+      <Slider
+        options={{
+          initialIndex: 0,
+          accessibility: true,
+          contain: true,
+          pageDots: false,
+        }}
+      >
+        {menuItems}
+      </Slider>
+
     </div>
 
   );

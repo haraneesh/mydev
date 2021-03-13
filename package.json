@@ -23,6 +23,7 @@
     "core-js": "^2.6.11",
     "event-emitter": "^0.3.5",
     "fixed-data-table-2": "^1.1.1",
+    "flickity": "^2.2.2",
     "meteor-node-stubs": "^1.0.0",
     "moment": "^2.25.3",
     "moment-timezone": "^0.5.28",
