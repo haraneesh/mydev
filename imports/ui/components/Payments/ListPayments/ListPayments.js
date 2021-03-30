@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
-import { Row, Table, Col, Panel } from 'react-bootstrap';
+import {
+  Row, Table, Col, Panel,
+} from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
@@ -18,15 +20,15 @@ const ListPayments = () => {
         } else {
           setPayments(paymentss);
         }
-      },
-    );
+      });
   };
 
   return !isPaymentstLoading ? (
     <Panel>
       <Col xs={12}>
         <Row>
-          {payments.length > 0 && (<Table>
+          {payments.length > 0 && (
+          <Table>
             <thead>
               <tr>
                 <th>Date</th>
@@ -36,7 +38,7 @@ const ListPayments = () => {
             </thead>
             <tbody>
               {
-                payments.map(payment => (
+                payments.map((payment) => (
                   <tr key={payment.invoice_numbers}>
                     <td>{getDayWithoutTime(new Date(payment.date))}</td>
                     <td>{getFormattedMoney(payment.amount)}</td>
@@ -45,12 +47,19 @@ const ListPayments = () => {
                 ))
               }
             </tbody>
-          </Table>)}
+          </Table>
+          )}
         </Row>
       </Col>
     </Panel>
 
-  ) : (<Panel> <button className="btn btn-sm btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button> </Panel>);
+  ) : (
+    <Panel>
+      {' '}
+      <button className="btn btn-sm btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button>
+      {' '}
+    </Panel>
+  );
 };
 
 export default ListPayments;

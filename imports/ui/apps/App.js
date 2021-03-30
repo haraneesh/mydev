@@ -208,7 +208,6 @@ const App = (props) => (
 
               {/* Accept Payment */}
               <Authenticated exact routeName="My Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />
-
               {/* Product */}
               <AdminAuthenticated exact routeName="View Products Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
 

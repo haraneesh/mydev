@@ -11,7 +11,9 @@ import Loading from '../../Loading/Loading';
 import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';
 import { formValChange, formValid } from '../../../../modules/validate';
-import RazorPayButton from '../RazorPay/RazorPayButton';
+// import PayTMButton from '../RazorPay/PayTMButton';
+import PayTMButton from '../PayTM/PayTMButton';
+
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
 const OtherPayMentOptions = () => (
@@ -170,15 +172,16 @@ class AcceptPay extends React.Component {
                 )}
               </Col>
               <Col xs={12} sm={3} className="text-right-xs">
-                <RazorPayButton
+                <PayTMButton
                   buttonText={(this.state.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
                   paymentDetails={{
-                    moneyToChargeInPaise: this.state.amountToChargeInRs * 100,
+                    moneyToChargeInRs: this.state.amountToChargeInRs,
                     description: 'Add to Wallet',
                     prefill: {
-                      name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
+                      firstName: loggedInUser.profile.name.first,
+                      lastName: loggedInUser.profile.name.last,
                       email: loggedInUser.emails[0].address,
-                      contact: loggedInUser.profile.whMobilePhone,
+                      mobile: loggedInUser.profile.whMobilePhone,
                     },
                     notes: {
                       address: loggedInUser.profile.deliveryAddress,

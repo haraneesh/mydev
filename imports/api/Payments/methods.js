@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import Razorpay from 'razorpay';
 import Payments from './Payments';
+import './paytm-methods';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
 import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
 import rateLimit from '../../modules/rate-limit';
@@ -55,25 +56,23 @@ Razor Pay
 
 */
 Meteor.methods({
-  'payments.getPayments': function getPayments(){
+  'payments.getPayments': function getPayments() {
     try {
-      if (Meteor.isServer){
+      if (Meteor.isServer) {
         const query = { _id: this.userId };
         const user = Meteor.users.find(query).fetch();
 
-        if (user[0].zh_contact_id){
+        if (user[0].zh_contact_id) {
           const r = zohoPayments.getCustomerPayments(user[0].zh_contact_id);
 
           if (r.code !== 0) {
             handleMethodException(r, r.code);
           }
-        return r.customerpayments;
-      } else {
+          return r.customerpayments;
+        }
         return [];
       }
-      }
-    }
-    catch (exception){
+    } catch (exception) {
       handleMethodException(exception);
     }
   },
@@ -105,13 +104,13 @@ Meteor.methods({
 
         const zhResponse = zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id,
-          paymentAmountInPaise: paymentResponse.amount, //amountAfterFeeTax,
+          paymentAmountInPaise: paymentResponse.amount, // amountAfterFeeTax,
           paymentMode: paymentResponse.method,
           razorPaymentId: inputParams.razorpay_payment_id,
           paymentDescription: `Paid via RazorPay, id ${inputParams.razorpay_payment_id} 
-            fee: ${ paymentResponse.fee } 
-            tax: ${ paymentResponse.tax }
-            ${ paymentResponse.description } 
+            fee: ${paymentResponse.fee} 
+            tax: ${paymentResponse.tax}
+            ${paymentResponse.description} 
             `,
           zoho_fund_deposit_account_id: Meteor.settings.private.Razor.zoho_fund_deposit_account_id,
         });
@@ -129,7 +128,6 @@ Meteor.methods({
         if (zhResponse.code !== 0) {
           handleMethodException(zhResponse, zhResponse.code);
         }
-
 
         const zhContactResponse = updateUserWallet(paidUser);
 

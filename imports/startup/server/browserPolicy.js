@@ -10,6 +10,11 @@ BrowserPolicy.content.allowOriginForAll('use.fontawesome.com');
 // BrowserPolicy.content.allowOriginForAll("allfont.net");
 // Google Maps
 BrowserPolicy.content.allowOriginForAll('www.google.com');
+// Pay TM
+BrowserPolicy.content.allowOriginForAll('securegw-stage.paytm.in');
+BrowserPolicy.content.allowOriginForAll('securegw.paytm.in');
+BrowserPolicy.content.allowOriginForAll('*.paytm.in');
+
 // Razor Pay
 BrowserPolicy.content.allowOriginForAll('checkout.razorpay.com');
 BrowserPolicy.content.allowOriginForAll('api.razorpay.com');

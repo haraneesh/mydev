@@ -68,8 +68,8 @@ class RazorPayButton extends React.Component {
         {this.props.buttonText}
       </Button>
     ) : (
-        <div />
-      );
+      <div />
+    );
   }
 }
 
