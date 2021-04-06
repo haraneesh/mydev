@@ -2,16 +2,26 @@ import { Meteor } from 'meteor/meteor';
 
 const loadCheckOutPayTM = (callback) => {
   const { hostName, merchantId } = Meteor.settings.public.PayTM;
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = `https://${hostName}/merchantpgpui/checkoutjs/merchants/${merchantId}.js`;
-  script.async = false;
-  script.id = 'payTMScript';
-  document.body.appendChild(script);
 
-  script.onload = () => {
-    if (callback) callback();
-  };
+  const SCRIPTID = 'payTMScript1234';
+  const isScriptExist = document.getElementById(SCRIPTID);
+
+  if (!isScriptExist) {
+    const scriptElement = document.createElement('script');
+    scriptElement.type = 'application/javascript';
+    scriptElement.src = `https://${hostName}/merchantpgpui/checkoutjs/merchants/${merchantId}.js`;
+    scriptElement.async = true;
+    scriptElement.id = SCRIPTID;
+    scriptElement.onload = () => {
+      callback();
+    };
+    scriptElement.onerror = (error) => {
+      console.error('PayTM Checkout', error);
+    };
+    document.body.appendChild(scriptElement);
+  }
+
+  if (isScriptExist && callback) callback();
 };
 
 export default loadCheckOutPayTM;

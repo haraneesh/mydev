@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import Loading from '../../Loading/Loading';
@@ -17,6 +17,10 @@ function PayTMButton({
     console.log('eventName => ', eventName);
     console.log('data => ', data);
   }
+
+  useEffect(() => {
+    loadCheckOutPayTM(() => { console.log('loaded'); });
+  }, []);
 
   function transactionStatus(paymentStatus) {
     if (window.Paytm && window.Paytm.CheckoutJS) {
@@ -57,43 +61,40 @@ function PayTMButton({
     });
 
     if (window.Paytm && window.Paytm.CheckoutJS) {
-      window.Paytm.CheckoutJS.onLoad(() => {
       // initialize configuration using init method
-        window.Paytm.CheckoutJS.init(config).then(() => {
+      window.Paytm.CheckoutJS.init(config).then(() => {
         // after successfully updating configuration, invoke JS Checkout
-          window.Paytm.CheckoutJS.invoke();
-          setIsLoading(false);
-        }).catch((error) => {
-          console.log('error => ', error);
-          setIsLoading(false);
-        });
+        window.Paytm.CheckoutJS.invoke();
+        setIsLoading(false);
+      }).catch((error) => {
+        console.log('error => ', error);
+        setIsLoading(false);
       });
     }
   }
 
   function initiateTransaction() {
     setIsLoading(true);
-    loadCheckOutPayTM(() => {
-      const amount = paymentDetails.moneyToChargeInRs.toString();
-      const transactionObject = {
-        amount,
-        mobile: paymentDetails.prefill.mobile,
-        firstName: paymentDetails.prefill.firstName,
-        lastName: paymentDetails.prefill.lastName,
-      };
-      Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
-        if (result && result.status === 'S') {
-          showPayScreen({
-            txToken: result.txToken,
-            amount,
-            suvaiTransactionId: result.suvaiTransactionId,
-          });
-        } else if (result && result.status === 'F') {
-          toast.error(result.errorMsg);
-        } else if (error) {
-          toast.error(error.reason);
-        }
-      });
+
+    const amount = paymentDetails.moneyToChargeInRs.toString();
+    const transactionObject = {
+      amount,
+      mobile: paymentDetails.prefill.mobile,
+      firstName: paymentDetails.prefill.firstName,
+      lastName: paymentDetails.prefill.lastName,
+    };
+    Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
+      if (result && result.status === 'S') {
+        showPayScreen({
+          txToken: result.txToken,
+          amount,
+          suvaiTransactionId: result.suvaiTransactionId,
+        });
+      } else if (result && result.status === 'F') {
+        toast.error(result.errorMsg);
+      } else if (error) {
+        toast.error(error.reason);
+      }
     });
   }
 

@@ -36,7 +36,7 @@ const OrderSummaryRow = ({
   const orderDateDisplay = getDisplayShortDate(orderDate);
   const walletBalance = calculateWalletBalanceInRs(userWallet);
   const invoiceTotals = orderCommon.getInvoiceTotals(invoices);
-  const displayOrderStatus = getDisplayOrderStatus(order_status, walletBalance);
+  const displayOrderStatus = order_status; // getDisplayOrderStatus(order_status, walletBalance);
 
   return (
     <Row>
