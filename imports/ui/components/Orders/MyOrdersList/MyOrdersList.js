@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import {
-  ListGroup, ListGroupItem, Alert, Tabs, Tab,
+  ListGroup, ListGroupItem, Alert, Tabs, Tab, Panel, Button,
 } from 'react-bootstrap';
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
@@ -34,7 +34,7 @@ export default class MyOrderList extends React.Component {
   }
 
   componentDidMount() {
-    this.checkAndSyncUserWallet();
+    // this.checkAndSyncUserWallet();
   }
 
   checkAndSyncUserWallet() {
@@ -179,6 +179,25 @@ export default class MyOrderList extends React.Component {
 
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
+            <div xs={12} className="panel panel-body text-right" style={{ marginBottom: '0px' }}>
+              <button
+                type="button"
+                className="btn text-primary"
+                style={{ background: '#fff' }}
+                onClick={() => { this.props.myOrderViewFilter('Active'); }}
+              >
+                Active
+              </button>
+              /
+              <button
+                type="button"
+                className="btn"
+                style={{ background: '#fff' }}
+                onClick={() => { this.props.myOrderViewFilter('All'); }}
+              >
+                All
+              </button>
+            </div>
             {
               orders.length > 0 ? (
                 <div>
@@ -225,6 +244,7 @@ MyOrderList.propTypes = {
   history: PropTypes.object.isRequired,
   emailVerified: PropTypes.bool.isRequired,
   emailAddress: PropTypes.string.isRequired,
+  myOrderViewFilter: PropTypes.func.isRequired,
 };
 
 MyOrderList.defaultProps = {

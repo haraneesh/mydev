@@ -1,6 +1,8 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import UserSignUps from '../UserSignUps';
+import { getPendingOrderDues } from '../../Orders/methods';
+
 import { retWalletAndSyncIfNecessary } from '../../ZohoSyncUps/zohoContactsMethods';
 
 Meteor.publish('users.editProfile', function usersProfile() {
@@ -33,9 +35,18 @@ Meteor.publish('users.userWallet', function user() {
     console.log(error);
   }
 
+  /* const pendingOrderSummary = getPendingOrderDues(this.userId);
+
+  Meteor.users.update({ _id: this.userId }, {
+    $set: {
+      pendingOrderSummary,
+    },
+  }); */
+
   return Meteor.users.find(this.userId, {
     fields: {
       wallet: 1,
+      pendingOrderSummary: 1,
     },
   });
 });

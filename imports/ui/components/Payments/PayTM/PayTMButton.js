@@ -1,23 +1,16 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import Loading from '../../Loading/Loading';
+import Spinner from '../../Common/Spinner/Spinner';
 import CONFIG from './config';
 import loadCheckOutPayTM from './loadCheckOutPayTM';
 
 function PayTMButton({
-  buttonText, paymentDetails, paymentResponseSuccess,
+  buttonText, paymentDetails, paymentResponseSuccess, showOptionsWithFee,
 }) {
-  const [isWaitingForToken, setIsWaitingForToken] = useState(false);
-  const [isScriptLoading, setIsScriptLoading] = useState(true);
-
-  useEffect(() => {
-    setIsScriptLoading(true);
-    loadCheckOutPayTM(() => {
-      setIsScriptLoading(false);
-    });
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   function notifyMerchantHandler(eventName, data) {
     console.log('notifyMerchant handler function called');
@@ -26,11 +19,13 @@ function PayTMButton({
   }
 
   function transactionStatus(paymentStatus) {
-    console.log('paymentStatus => ', paymentStatus);
-
     if (window.Paytm && window.Paytm.CheckoutJS) {
       // after successfully updating configuration, invoke JS Checkout
       window.Paytm.CheckoutJS.close();
+    }
+    if (paymentStatus.STATUS === 'TXN_FAILURE') {
+      toast.error(paymentStatus.RESPMSG);
+      return;
     }
 
     const transactionDetails = {
@@ -45,79 +40,85 @@ function PayTMButton({
     };
 
     Meteor.call('payment.paytm.completeTransaction', transactionDetails, (error, result) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        toast.success('Payment has been successfully processed');
-      }
+      paymentResponseSuccess(error, result);
     });
   }
 
-  function showPayScreen({ txToken, amount, suvaiTransactionId }) {
+  function showPayScreen({
+    txToken, amount, suvaiTransactionId,
+  }) {
     const config = CONFIG({
       txToken,
       amount,
       suvaiTransactionId,
       callBackNotifyMerchant: notifyMerchantHandler,
       callBackTransactionStatus: transactionStatus,
+      showOptionsWithFee,
     });
 
     if (window.Paytm && window.Paytm.CheckoutJS) {
+      window.Paytm.CheckoutJS.onLoad(() => {
       // initialize configuration using init method
-      window.Paytm.CheckoutJS.init(config).then(() => {
+        window.Paytm.CheckoutJS.init(config).then(() => {
         // after successfully updating configuration, invoke JS Checkout
-        window.Paytm.CheckoutJS.invoke();
-      }).catch((error) => {
-        console.log('error => ', error);
+          window.Paytm.CheckoutJS.invoke();
+          setIsLoading(false);
+        }).catch((error) => {
+          console.log('error => ', error);
+          setIsLoading(false);
+        });
       });
     }
   }
 
   function initiateTransaction() {
-    setIsWaitingForToken(true);
-    const amount = paymentDetails.moneyToChargeInRs.toString();
-    const transactionObject = {
-      amount,
-      mobile: paymentDetails.prefill.mobile,
-      firstName: paymentDetails.prefill.firstName,
-      lastName: paymentDetails.prefill.lastName,
-    };
-    Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
-      if (result && result.status === 'S') {
-        showPayScreen({
-          txToken: result.txToken,
-          amount,
-          suvaiTransactionId: result.suvaiTransactionId,
-        });
-      } else if (result && result.status === 'F') {
-        toast.error(result.errorMsg);
-      } else if (error) {
-        toast.error(error.reason);
-      }
-
-      setIsWaitingForToken(false);
+    setIsLoading(true);
+    loadCheckOutPayTM(() => {
+      const amount = paymentDetails.moneyToChargeInRs.toString();
+      const transactionObject = {
+        amount,
+        mobile: paymentDetails.prefill.mobile,
+        firstName: paymentDetails.prefill.firstName,
+        lastName: paymentDetails.prefill.lastName,
+      };
+      Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
+        if (result && result.status === 'S') {
+          showPayScreen({
+            txToken: result.txToken,
+            amount,
+            suvaiTransactionId: result.suvaiTransactionId,
+          });
+        } else if (result && result.status === 'F') {
+          toast.error(result.errorMsg);
+        } else if (error) {
+          toast.error(error.reason);
+        }
+      });
     });
   }
 
   return (
     <div>
-      {!!isWaitingForToken && (<Loading />)}
-      {!isScriptLoading && (
+      {(isLoading) && (<Loading />)}
+
       <button
         type="button"
-        className="btn btn-sm btn-default"
+        className={`btn btn-sm ${!showOptionsWithFee ? 'btn-primary' : 'btn-default'}`}
         onClick={initiateTransaction}
+        disabled={!!isLoading}
       >
+        {(isLoading) && <Spinner />}
         {buttonText}
       </button>
-      )}
+
     </div>
 
   );
 }
 
 PayTMButton.defaultProps = {
-  buttonText: 'Add Money',
+  buttonText: 'Pay Now',
+  showOptionsWithFee: true,
   paymentDetails: {
     moneyToChargeInRs: 0,
     description: '',
@@ -130,9 +131,10 @@ PayTMButton.defaultProps = {
 };
 
 PayTMButton.propTypes = {
-  paymentDetails: PropTypes.object.isRequired,
+  paymentDetails: PropTypes.object,
   paymentResponseSuccess: PropTypes.func.isRequired,
   buttonText: PropTypes.string,
+  showOptionsWithFee: PropTypes.bool,
 };
 
 export default PayTMButton;

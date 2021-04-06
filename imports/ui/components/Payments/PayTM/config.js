@@ -3,12 +3,11 @@ import { Meteor } from 'meteor/meteor';
 const CONFIG = ({
   txToken, amount,
   suvaiTransactionId,
-  showFeeOptions = true,
+  showOptionsWithFee = true,
   callBackNotifyMerchant,
   callBackTransactionStatus,
 }) => {
   const { merchantId, merchantName } = Meteor.settings.public.PayTM;
-  const { AppURL } = Meteor.settings.public;
 
   const NOFEE = ['UPI'];
   const WITHFEE = ['NB', 'CARD'];
@@ -42,7 +41,7 @@ const CONFIG = ({
     merchant: {
       mid: merchantId,
       name: merchantName,
-      logo: `${AppURL}/logo.png`,
+      logo: '/logo.png',
       redirect: false,
     },
     handler: {
@@ -58,7 +57,7 @@ const CONFIG = ({
     payMode: {
       labels: {},
       filter: {
-        exclude: (!showFeeOptions) ? WITHFEE : NOFEE,
+        exclude: (!showOptionsWithFee) ? WITHFEE : NOFEE,
       },
       order: [
         'UPI',

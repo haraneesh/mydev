@@ -39,6 +39,7 @@ Meteor.publish('orders.list', function ordersList(options) {
 
 Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);
+
   if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
     return Orders.find({ order_status: { $in: orderStatuses } });
   }
@@ -47,6 +48,10 @@ Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
       { order_status: { $in: orderStatuses } },
       { 'customer_details._id': this.userId },
     ],
+  },
+  {
+    sort: { createdAt: constants.Sort.DESCENDING },
+    limit: 250,
   });
 });
 

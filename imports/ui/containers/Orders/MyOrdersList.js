@@ -7,7 +7,6 @@ import constants from '../../../modules/constants';
 
 const composer = (params, onData) => {
   const subscription = Meteor.subscribe('orders.mylist');
-
   if (subscription.ready()) {
     const orders = Orders.find(
       {},
@@ -20,6 +19,5 @@ const composer = (params, onData) => {
     });
   }
 };
-
 
 export default composeWithTracker(composer, Loading)(MyOrderList);

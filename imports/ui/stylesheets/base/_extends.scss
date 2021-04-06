@@ -128,7 +128,11 @@ hr {
     text-transform: uppercase;
     //font-weight:500;
     //letter-spacing:1px;
-    letter-spacing: 0.1rem
+    letter-spacing: 0.1rem;
+}
+
+.btn-link{
+  color: none;
 }
 
 div:focus,

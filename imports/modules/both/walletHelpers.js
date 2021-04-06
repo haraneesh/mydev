@@ -1,5 +1,11 @@
-export const calculateWalletBalanceInRs = wallet => {
+export const isWalletUndefined = (wallet) => {
+  if (wallet && wallet.hasOwnProperty('unused_credits_receivable_amount_InPaise')) {
+    return false;
+  }
+  return true;
+};
 
+export const calculateWalletBalanceInRs = (wallet) => {
   if (!isWalletUndefined(wallet)) {
     return (
       (wallet.unused_retainer_payments_InPaise + wallet.unused_credits_receivable_amount_InPaise)
@@ -8,12 +14,4 @@ export const calculateWalletBalanceInRs = wallet => {
   }
 
   return 0;
-
-}
-
-export const isWalletUndefined = wallet => {
-  if (wallet && wallet.hasOwnProperty('unused_credits_receivable_amount_InPaise')) {
-    return false;
-  }
-  return true;
-}
+};

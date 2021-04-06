@@ -1,4 +1,4 @@
-Thanks for using Suvai Organics!
+Thanks for being a patron of Suvai Organics!
 
 By using the Services, you agree to be bound by these Terms and acknowledge our [Privacy Policy](https://nammasuvai.com/pages/privacy "Privacy Policy"), which explains how we collect, use, and share information.
 
@@ -38,14 +38,20 @@ The trademarks, names, logos, video, photos, music and service marks (collective
 
 External links may be provided for your convenience, but they are beyond the control of the Website Owner and no representation is made as to their content. Use or reliance on any external links and the content thereon provided is at your own risk. When visiting external links you must refer to that external websites terms and conditions of use. No hypertext links shall be created from any website controlled by you or otherwise to this website without the express prior written permission of the Website Owner. Please contact us at info. if you would like to link to this website or would like to request a link to your website.
 
-9. Refund and Returns
+9. Cancellations, Returns and Returns
 
 Quality of our products is of the utmost importance to us. We do everything possible to ensure that you get high quality products. In the rare event that you find our products in poor quality, we will refunded them in full subject to the following terms.
 
+#### Cancellation
+Customers can initiate a cancellation at any time before the order is processed. Subsequent cancellations will be treated as returns. For orders which were paid ahead, once cancellation is approved, within 5 days the amount would be reflected in customer's bank account.
+
 #### Returns
 
-Our policy lasts 2 days for perishables (Fruits and Vegetables) and 7 days for all other items. If the return period has been exceeded, unfortunately we can’t offer you a refund or exchange.
 To be eligible for a return or exchange, please send us a photo or the item and the sales bill and we will get in touch with you to process the return or exchange.
+
+We accept returns within 2 days of delivering them for perishables (Fruits and Vegetables) and 7 days for all other items. If the return period has been exceeded, unfortunately we can’t offer you a refund or exchange.
+
+Refund is approved within 1 day. For orders which were paid ahead, once the refund is processed, within 5 days amount would be reflected in customer's bank account.
 
 #### Refunds
 

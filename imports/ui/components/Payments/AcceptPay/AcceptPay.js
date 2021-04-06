@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import {
@@ -8,148 +8,148 @@ import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
 import Loading from '../../Loading/Loading';
+import { formValChange, formValid } from '../../../../modules/validate';
 import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';
-import { formValChange, formValid } from '../../../../modules/validate';
-// import PayTMButton from '../RazorPay/PayTMButton';
 import PayTMButton from '../PayTM/PayTMButton';
 
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 
-const OtherPayMentOptions = () => (
-  <Panel>
-    <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-      <small className="text-uppercase">Pay By Apps</small>
-      <p> Will reflect in 2 days on suvai</p>
-    </div>
-    <Col xs={12} style={{ margin: '1em 0em' }} className="text-center">
-      <h3>
-        <small> UPI:</small>
-        {' '}
-        <b>suvai@icici</b>
-      </h3>
-    </Col>
+function calculateGateWayFee(amount) {
+  return (amount * 0.02);
+}
 
-    <Row>
-      <Col xs={12} className="text-center">
-        <img style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v1" />
-      </Col>
-    </Row>
-  </Panel>
-);
+function prepareState(wallet) {
+  let balanceAmountClass = '';
 
-class AcceptPay extends React.Component {
-  constructor(props) {
-    super(props);
-    const { userWallet } = this.props;
+  const netAmountInWalletInRs = calculateWalletBalanceInRs(wallet);
 
-    this.state = this.prepareState(userWallet);
-
-    this.amountToChargeOnChange = this.amountToChargeOnChange.bind(this);
-    this.paymentResponseSuccess = this.paymentResponseSuccess.bind(this);
+  switch (true) {
+    case (netAmountInWalletInRs > 0):
+      balanceAmountClass = 'text-success';
+      break;
+    case (netAmountInWalletInRs < 0):
+      balanceAmountClass = 'text-danger';
+      break;
+    default:
+      balanceAmountClass = '';
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.userWallet !== this.props.userWallet) {
-      this.setState(this.prepareState(nextProps.userWallet));
-    }
-  }
+  const amtToChrg = ((netAmountInWalletInRs < 0) ? (-1 * netAmountInWalletInRs) : 500);
 
-  prepareState(wallet) {
-    let balanceAmountClass = '';
+  return {
+    amountToChargeInRs: amtToChrg,
+    balanceAmountClass,
+    netAmountInWalletInRs,
+    gateWayFee: calculateGateWayFee(amtToChrg),
+    isError: {
+      amountToChargeInRs: '',
+    },
+  };
+}
 
-    const netAmountInWalletInRs = calculateWalletBalanceInRs(wallet);
+function AcceptPay({ userWallet, loggedInUser }) {
+  const [walletState, setWalletState] = useState(prepareState(userWallet));
 
-    switch (true) {
-      case (netAmountInWalletInRs > 0):
-        balanceAmountClass = 'text-success';
-        break;
-      case (netAmountInWalletInRs < 0):
-        balanceAmountClass = 'text-danger';
-        break;
-      default:
-        balanceAmountClass = '';
-    }
-
-    return {
-      amountToChargeInRs: ((netAmountInWalletInRs < 0) ? (-1 * netAmountInWalletInRs) : 500),
-      balanceAmountClass,
-      paymentInProcess: false,
-      netAmountInWalletInRs,
-      isError: {
-        amountToChargeInRs: '',
-      },
-    };
-  }
-
-  amountToChargeOnChange(event) {
-    const { isError } = this.state;
+  function amountToChargeOnChange(event) {
+    const { isError } = walletState;
     const newErrorState = formValChange(event, { ...isError });
 
-    this.setState({
-      amountToChargeInRs: event.target.value,
-      isError: newErrorState.isError,
-    });
+    const newWalletState = { ...walletState };
+
+    newWalletState.amountToChargeInRs = event.target.value;
+    newWalletState.isError = newErrorState.isError;
+    newWalletState.gateWayFee = calculateGateWayFee(event.target.value);
+
+    setWalletState(newWalletState);
   }
 
-  paymentResponseSuccess(paymentSuccessMsg) {
-    if (!paymentSuccessMsg.razorpay_payment_id) {
-      toast.error(
-        'We were unable to process your payment at this time. Please try a little later.',
-      );
-      return;
+  function paymentResponseSuccess(error, result) {
+    if (error) {
+      toast.error(error.reason);
+    } else {
+      toast.success('Payment has been successfully processed');
     }
-
-    this.setState({
-      paymentInProcess: true,
-    });
-
-    Meteor.call('payment.insert',
-      {
-        razorpay_payment_id: paymentSuccessMsg.razorpay_payment_id,
-        amountChargedInPaise: this.state.amountToChargeInRs * 100,
-      },
-      (error) => {
-        if (error) {
-          toast.error(error.reason);
-
-          this.setState({
-            paymentInProcess: false,
-          });
-        } else {
-          const confirmation = 'Your Wallet has been updated successfully!';
-          toast.success(confirmation);
-        }
-      });
   }
 
-  render() {
-    const { loggedInUser } = this.props;
-    const { isError } = this.state;
+  const { isError } = walletState;
 
-    return (
-      <div>
-        {this.state.paymentInProcess && (<Loading />)}
-        <Panel>
-          <Row>
-            <Col xs={6} sm={5} className="text-right">
-              <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
+  return (
+    <div>
+
+      {walletState.paymentInProcess && (<Loading />)}
+      <Panel>
+        <Row>
+          <Col xs={6} sm={5} className="text-right">
+            <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
+          </Col>
+          <Col xs={6} sm={7} className="text-left">
+            <h4 className={walletState.balanceAmountClass}>
+              {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
+            </h4>
+          </Col>
+        </Row>
+      </Panel>
+
+      <Panel>
+
+        <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+          <small className="text-uppercase">Pay With UPI - 0 Fee </small>
+        </div>
+
+        <form
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <FormGroup validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+            <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="rowRightSpacing">
+              <InputGroup>
+                <InputGroup.Addon>Rs.</InputGroup.Addon>
+                <FormControl
+                  type="number"
+                  name="amountToChargeInRs"
+                  value={walletState.amountToChargeInRs}
+                  placeholder="500"
+                  onChange={amountToChargeOnChange}
+                />
+              </InputGroup>
+              {isError.amountToChargeInRs.length > 0 && (
+                <span className="control-label">{isError.amountToChargeInRs}</span>
+              )}
             </Col>
-            <Col xs={6} sm={7} className="text-left">
-              <h4 className={this.state.balanceAmountClass}>
-                {`${formatMoney(this.state.netAmountInWalletInRs, accountSettings)}`}
-              </h4>
+            <Col xs={12} sm={3} className="text-right-xs">
+              <PayTMButton
+                buttonText={(walletState.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
+                showOptionsWithFee={false}
+                paymentDetails={{
+                  moneyToChargeInRs: walletState.amountToChargeInRs,
+                  description: 'Add to Wallet',
+                  prefill: {
+                    firstName: loggedInUser.profile.name.first,
+                    lastName: loggedInUser.profile.name.last,
+                    email: loggedInUser.emails[0].address,
+                    mobile: loggedInUser.profile.whMobilePhone,
+                  },
+                  notes: {
+                    address: loggedInUser.profile.deliveryAddress,
+                  },
+                }}
+                paymentResponseSuccess={paymentResponseSuccess}
+              />
             </Col>
-          </Row>
-        </Panel>
+          </FormGroup>
+        </form>
+        <Row>
+          <Col xs={12} className="text-center">
+            <img alt="UPI options" style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v1" />
+          </Col>
+        </Row>
+      </Panel>
 
-        <OtherPayMentOptions />
-
-        { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
+      { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
         <Panel>
 
           <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-            <small className="text-uppercase">Pay On Suvai </small>
+            <small className="text-uppercase">Pay via NetBanking / Cards </small>
           </div>
 
           <form
@@ -162,20 +162,27 @@ class AcceptPay extends React.Component {
                   <FormControl
                     type="number"
                     name="amountToChargeInRs"
-                    value={this.state.amountToChargeInRs}
+                    value={walletState.amountToChargeInRs}
                     placeholder="500"
-                    onChange={this.amountToChargeOnChange}
+                    onChange={amountToChargeOnChange}
                   />
                 </InputGroup>
+                <p>
+                  <small>
+                    Gateway Fee
+                    {`: ${formatMoney(walletState.gateWayFee, accountSettings)}, extra`}
+                  </small>
+                </p>
                 {isError.amountToChargeInRs.length > 0 && (
                 <span className="control-label">{isError.amountToChargeInRs}</span>
                 )}
               </Col>
               <Col xs={12} sm={3} className="text-right-xs">
                 <PayTMButton
-                  buttonText={(this.state.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
+                  buttonText={(walletState.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
+                  showOptionsWithFee
                   paymentDetails={{
-                    moneyToChargeInRs: this.state.amountToChargeInRs,
+                    moneyToChargeInRs: walletState.amountToChargeInRs + walletState.gateWayFee,
                     description: 'Add to Wallet',
                     prefill: {
                       firstName: loggedInUser.profile.name.first,
@@ -187,16 +194,20 @@ class AcceptPay extends React.Component {
                       address: loggedInUser.profile.deliveryAddress,
                     },
                   }}
-                  paymentResponseSuccess={this.paymentResponseSuccess}
+                  paymentResponseSuccess={paymentResponseSuccess}
                 />
               </Col>
             </FormGroup>
           </form>
+          <Row>
+            <Col xs={12} className="text-center">
+              <img alt="Banks and Cards" style={{ maxWidth: '300px', width: '100%' }} src="/about/banks.png?v1" />
+            </Col>
+          </Row>
         </Panel>
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
 
 AcceptPay.defaultProps = {

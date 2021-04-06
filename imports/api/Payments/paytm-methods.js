@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { check } from 'meteor/check';
-import PaytmChecksum from 'paytmChecksum';
-import { string } from 'prop-types';
+import PaytmChecksum from './PaytmChecksum';
 import Payments from './Payments';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
 import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';

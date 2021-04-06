@@ -12,6 +12,28 @@ import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
 import { Emitter, Events } from '../Events/events';
 
+export const getPendingOrderDues = (usrId) => {
+  const pendingOrders = Orders.find(
+    {
+      $and: [
+        { 'customer_details._id': usrId },
+        { order_status: constants.OrderStatus.Pending.name },
+      ],
+    }, {
+      fields: {
+        total_bill_amount: 1,
+      },
+    },
+  ).fetch();
+
+  const pendingDuesTotal = pendingOrders.reduce((sum, pendingOrd) => sum + pendingOrd.total_bill_amount, 0);
+
+  return {
+    pendingDuesTotal,
+    pendingOrderCount: pendingOrders.length,
+  };
+};
+
 const calculateOrderTotal = (order, productListId, userId) => {
   // Get Product List for cost
   // Get Order for list of items

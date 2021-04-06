@@ -12,7 +12,7 @@ const displayWalletSummary = (amountInWalletInRs) => {
   let textClassName = '';
 
   if (amountInWalletInRs > 0) {
-    textClassName = 'text-primary';
+    textClassName = 'text-success';
   }
 
   if (amountInWalletInRs < 0) {
