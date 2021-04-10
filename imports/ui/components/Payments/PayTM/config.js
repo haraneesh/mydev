@@ -9,7 +9,7 @@ const CONFIG = ({
 }) => {
   const { merchantId, merchantName } = Meteor.settings.public.PayTM;
 
-  const NOFEE = ['UPI'];
+  const NOFEE = ['UPI', 'CARD'];
   const WITHFEE = ['NB', 'CARD'];
 
   return {
@@ -17,7 +17,7 @@ const CONFIG = ({
       bodyBackgroundColor: '#fafafb',
       bodyColor: '',
       themeBackgroundColor: '#522E23',
-      themeColor: '#ffffff',
+      themeColor: '',
       headerBackgroundColor: '#ffffff',
       headerColor: '#493934',
       errorColor: '',
@@ -55,7 +55,10 @@ const CONFIG = ({
     mapClientMessage: {},
     labels: {},
     payMode: {
-      labels: {},
+      labels: {
+        CARD: (!showOptionsWithFee) ? 'DEBIT CARD' : 'CREDIT CARD',
+        UPI: 'UPI - BHIM Pay, Google Pay, Phone Pe, Amazon Pay, AXIS, HDFC, ICICI, Others Banks',
+      },
       filter: {
         exclude: (!showOptionsWithFee) ? WITHFEE : NOFEE,
       },

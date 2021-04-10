@@ -94,7 +94,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
       <Panel>
 
         <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-          <small className="text-uppercase">Pay With UPI - 0 Fee </small>
+          <div>UPI or Debit card - 0 fee </div>
         </div>
 
         <form
@@ -139,8 +139,8 @@ function AcceptPay({ userWallet, loggedInUser }) {
           </FormGroup>
         </form>
         <Row>
-          <Col xs={12} className="text-center">
-            <img alt="UPI options" style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v1" />
+          <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
+            <img alt="UPI options" style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v4" />
           </Col>
         </Row>
       </Panel>
@@ -149,7 +149,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
         <Panel>
 
           <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-            <small className="text-uppercase">Pay via NetBanking / Cards </small>
+            <div>NetBanking or Credit Card - 2% transaction fee </div>
           </div>
 
           <form
@@ -200,7 +200,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
             </FormGroup>
           </form>
           <Row>
-            <Col xs={12} className="text-center">
+            <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
               <img alt="Banks and Cards" style={{ maxWidth: '300px', width: '100%' }} src="/about/banks.png?v1" />
             </Col>
           </Row>
