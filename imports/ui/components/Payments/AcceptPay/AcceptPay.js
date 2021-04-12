@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
 import Loading from '../../Loading/Loading';
-import { formValChange, formValid } from '../../../../modules/validate';
+import { formValChange } from '../../../../modules/validate';
 import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';
 import PayTMButton from '../PayTM/PayTMButton';
@@ -138,11 +138,11 @@ function AcceptPay({ userWallet, loggedInUser }) {
             </Col>
           </FormGroup>
         </form>
-        <Row>
+        {/* } <Row>
           <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
             <img alt="UPI options" style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v4" />
           </Col>
-        </Row>
+              </Row> */}
       </Panel>
 
       { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
@@ -169,7 +169,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                 </InputGroup>
                 <p>
                   <small>
-                    Gateway Fee
+                    Transaction Fee
                     {`: ${formatMoney(walletState.gateWayFee, accountSettings)}, extra`}
                   </small>
                 </p>
@@ -199,11 +199,12 @@ function AcceptPay({ userWallet, loggedInUser }) {
               </Col>
             </FormGroup>
           </form>
+          {/*
           <Row>
             <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
               <img alt="Banks and Cards" style={{ maxWidth: '300px', width: '100%' }} src="/about/banks.png?v1" />
             </Col>
-          </Row>
+          </Row> */}
         </Panel>
       )}
     </div>

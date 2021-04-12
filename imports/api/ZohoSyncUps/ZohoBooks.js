@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
+import ZohoAuthenticate from './ZohoAuthentication';
 
 const _callType = {
   POST: 'POST',
@@ -9,32 +10,43 @@ const _callType = {
 
 };
 
-const getConnectionInfo = (authToken, organizationId) => ({
-  authtoken: authToken,
-  organization_id: organizationId,
-});
-
 const setAPICall = () => ({
-  authtoken: Meteor.settings.private.zoho_authtoken,
   organization_id: Meteor.settings.private.zoho_organization_id,
 });
 
-const callAPI = (requestType, endpoint, params, connectionInfo, getParamsWithPost) => {
+const callAPI = (
+  requestType,
+  endpoint,
+  params,
+  connectionInfo,
+  getParamsWithPost,
+) => {
   const args = {};
+  const accessToken = ZohoAuthenticate.getToken();
+  console.log(`Access Token ${JSON.stringify(accessToken)}`);
+
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
   args.params = (connectionInfo) || setAPICall();
+
+  args.headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    Authorization: `Zoho-oauthtoken ${accessToken}`,
+  };
 
   if (params) {
     switch (true) {
       case (requestType === _callType.POST):
-        // args.params.JSONString = JSON.stringify(params);
-        args.params = Object.assign(args.params, { JSONString: JSON.stringify(params) }, getParamsWithPost);
+        args.params = Object.assign(
+          args.params,
+          { JSONString: JSON.stringify(params) },
+          getParamsWithPost,
+        );
         break;
       case (requestType === _callType.PUT):
         args.params.JSONString = JSON.stringify(params);
         break;
-      default: // get
-        args.params = Object.assign({}, args.params, params);
+      default:
+        args.params = { ...args.params, ...params };
         break;
     }
   }
@@ -43,8 +55,8 @@ const callAPI = (requestType, endpoint, params, connectionInfo, getParamsWithPos
   if (Meteor.isDevelopment) {
     console.log('---------------Call Url-----------------------');
     console.log(callUrl);
-    console.log('---------------Params-----------------------');
-    console.log(args.params);
+    console.log('---------------Args-----------------------');
+    console.log(args);
   }
 
   try {
@@ -105,12 +117,16 @@ const getRecordById = (module, id, connectionInfo) => {
   return callAPI(_callType.GET, endpoint, connectionInfo);
 };
 
-const getRecordByIdAndParams = ({ module, id, submodule, params, connectionInfo }) => {
+const getRecordByIdAndParams = ({
+  module, id, submodule, params, connectionInfo,
+}) => {
   const endpoint = (submodule) ? `${module}/${id}/${submodule}` : `${module}/${id}`;
   return callAPI(_callType.GET, endpoint, params, connectionInfo);
 };
 
-const postRecordByIdAndParams = ({ module, id, submodule, params, connectionInfo, getParamsWithPost }) => {
+const postRecordByIdAndParams = ({
+  module, id, submodule, params, connectionInfo, getParamsWithPost,
+}) => {
   const endpoint = (submodule) ? `${module}/${id}/${submodule}` : `${module}/${id}`;
   return callAPI(_callType.POST, endpoint, params, connectionInfo, getParamsWithPost);
 };
@@ -119,7 +135,6 @@ const deleteRecord = (module, id, connectionInfo) => {
   const endpoint = `${module}/${id}`;
   return callAPI(_callType.DELETE, endpoint, connectionInfo);
 };
-
 
 export default {
   createRecord,
@@ -130,5 +145,4 @@ export default {
   getRecordByIdAndParams,
   getRecordById,
   getRecordsByParams,
-  getConnectionInfo,
 };

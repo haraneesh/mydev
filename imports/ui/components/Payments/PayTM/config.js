@@ -9,8 +9,8 @@ const CONFIG = ({
 }) => {
   const { merchantId, merchantName } = Meteor.settings.public.PayTM;
 
-  const NOFEE = ['UPI', 'CARD'];
-  const WITHFEE = ['NB', 'CARD'];
+  const NOFEE = ['UPI'];
+  const WITHFEE = ['NB'];
 
   return {
     style: {
@@ -56,8 +56,8 @@ const CONFIG = ({
     labels: {},
     payMode: {
       labels: {
-        CARD: (!showOptionsWithFee) ? 'DEBIT CARD' : 'CREDIT CARD',
         UPI: 'UPI - BHIM Pay, Google Pay, Phone Pe, Amazon Pay, AXIS, HDFC, ICICI, Others Banks',
+        CARD: (!showOptionsWithFee) ? 'Debit Card' : 'Credit Card',
       },
       filter: {
         exclude: (!showOptionsWithFee) ? WITHFEE : NOFEE,
