@@ -72,6 +72,11 @@ function AcceptPay({ userWallet, loggedInUser }) {
     }
   }
 
+  function calculateTotalAmountWithGatewayFee(wallet) {
+    const { amountToChargeInRs, gateWayFee } = wallet;
+    return (parseFloat(amountToChargeInRs) + parseFloat(gateWayFee)).toString();
+  }
+
   const { isError } = walletState;
 
   return (
@@ -182,7 +187,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                   buttonText={(walletState.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
                   showOptionsWithFee
                   paymentDetails={{
-                    moneyToChargeInRs: walletState.amountToChargeInRs + walletState.gateWayFee,
+                    moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),
                     description: 'Add to Wallet',
                     prefill: {
                       firstName: loggedInUser.profile.name.first,

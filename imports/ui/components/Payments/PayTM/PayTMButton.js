@@ -77,6 +77,9 @@ function PayTMButton({
     setIsLoading(true);
 
     const amount = paymentDetails.moneyToChargeInRs.toString();
+
+    console.log(`Initiate Transaction ${amount}`);
+
     const transactionObject = {
       amount,
       mobile: paymentDetails.prefill.mobile,
