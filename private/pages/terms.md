@@ -55,7 +55,7 @@ Refund is approved within 1 day. For orders which were paid ahead, once the refu
 
 #### Refunds
 
-If you haven’t received a refund yet, first check your bank account again. Then contact your credit card company, it may take some time before your refund is officially posted. Next contact your bank. There is often some processing time before a refund is posted. If you’ve done all of this and you still have not received your refund yet, please contact us at    [community@nammasuvai.com].
+If you haven’t received a refund yet, first check your bank account again. Then contact your credit card company, it may take some time before your refund is officially posted. Next contact your bank. There is often some processing time before a refund is posted. If you’ve done all of this and you still have not received your refund yet, please contact us at    [hi@nammasuvai.com].
 
 10. Disclaimer of Liability
 

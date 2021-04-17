@@ -99,7 +99,12 @@ function AcceptPay({ userWallet, loggedInUser }) {
       <Panel>
 
         <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-          <div>UPI or Debit card - 0 fee </div>
+          <div>
+            UPI or Debit card -
+            {' '}
+            <span className="underline">No fee</span>
+            {' '}
+          </div>
         </div>
 
         <form

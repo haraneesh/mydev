@@ -33,7 +33,7 @@ const ContactUs = () => (
           </address>
           <address>
             <strong>E-Mail</strong> <br />
-            <a href="mailto:#">community@nammasuvai.com</a>
+            <a href="mailto:#">hi@nammasuvai.com</a>
           </address>
         </Col>
       </div>

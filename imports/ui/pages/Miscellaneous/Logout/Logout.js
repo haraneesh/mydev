@@ -9,7 +9,7 @@ const Logout = () => (
       src="https://nammasuvai.com/logo.png"
       alt="Namma Suvai"
     />
-    <h1>Foods that love you back</h1>
+    <h1>Eat Healthy, Live Healthy</h1>
     <p>{'Don\'t forget to like and follow Namma Suvai on facebook.'}</p>
     <ul className="FollowUsElsewhere">
       <li><a href="https://www.facebook.com/NammaSuvai/"><Icon icon="facebook-official" /></a></li>

@@ -14,8 +14,12 @@ const Footer = () => (
 
     <Grid>
       <p className="pull-left">
-        &copy; {copyrightYear()} Suvai Organics
-        <span className="hidden-xs"> | Foods that love you back </span>
+        &copy;
+        {' '}
+        {copyrightYear()}
+        {' '}
+        Suvai Organics
+        <span className="hidden-xs"> | Eat Healthy, Live Healthy</span>
       </p>
       <ul className="pull-right">
         <li>
