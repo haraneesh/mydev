@@ -21,7 +21,8 @@ class ZohoAuthentication {
 
     if (tokenObject
       && tokenObject.access_token
-      && tokenObject.access_token.expireDate > Date.now()) {
+      && tokenObject.expireDate
+      && tokenObject.expireDate > Date.now()) {
       return tokenObject.access_token;
     }
 

@@ -80,4 +80,6 @@ import '../../api/ZohoSyncUps/zohoContactsMethods';
 import '../../api/ZohoSyncUps/zohoProductsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';
 
+import '../../api/Settings/methods';
+
 import '../../api/UpdateScripts/UpdateScript';

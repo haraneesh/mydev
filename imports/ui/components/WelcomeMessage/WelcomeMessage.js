@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Button } from 'react-bootstrap';
-import constants from '../../../modules/constants';
 
 class WelcomeMessage extends React.Component {
   constructor(props, context) {

@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import ZohoAuthenticate from './ZohoAuthentication';
 
 const _callType = {
   POST: 'POST',
@@ -10,42 +9,32 @@ const _callType = {
 
 };
 
+const getConnectionInfo = (authToken, organizationId) => ({
+  authtoken: authToken,
+  organization_id: organizationId,
+});
+
 const setAPICall = () => ({
+  authtoken: Meteor.settings.private.zoho_authtoken,
   organization_id: Meteor.settings.private.zoho_organization_id,
 });
 
-const callAPI = (
-  requestType,
-  endpoint,
-  params,
-  connectionInfo,
-  getParamsWithPost,
-) => {
+const callAPI = (requestType, endpoint, params, connectionInfo, getParamsWithPost) => {
   const args = {};
-  const accessToken = ZohoAuthenticate.getToken();
-  console.log(`Access Token ${JSON.stringify(accessToken)}`);
-
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
   args.params = (connectionInfo) || setAPICall();
-
-  args.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    Authorization: `Zoho-oauthtoken ${accessToken}`,
-  };
 
   if (params) {
     switch (true) {
       case (requestType === _callType.POST):
-        args.params = Object.assign(
-          args.params,
+        args.params = Object.assign(args.params,
           { JSONString: JSON.stringify(params) },
-          getParamsWithPost,
-        );
+          getParamsWithPost);
         break;
       case (requestType === _callType.PUT):
         args.params.JSONString = JSON.stringify(params);
         break;
-      default:
+      default: // get
         args.params = { ...args.params, ...params };
         break;
     }
@@ -55,8 +44,8 @@ const callAPI = (
   if (Meteor.isDevelopment) {
     console.log('---------------Call Url-----------------------');
     console.log(callUrl);
-    console.log('---------------Args-----------------------');
-    console.log(args);
+    console.log('---------------Params-----------------------');
+    console.log(args.params);
   }
 
   try {
@@ -145,4 +134,5 @@ export default {
   getRecordByIdAndParams,
   getRecordById,
   getRecordsByParams,
+  getConnectionInfo,
 };

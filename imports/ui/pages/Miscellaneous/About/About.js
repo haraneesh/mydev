@@ -6,6 +6,7 @@ import { Panel, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ContactUs from '../../../components/ContactUs/ContactUs';
 import Testimonials from '../../../components/Testimonials/Testimonials';
+import HomePageSlider from '../../../components/HomePageSlider/HomePageSlider';
 
 import './About.scss';
 
@@ -61,13 +62,18 @@ class About extends React.Component {
 
         <Panel>
           <section className="text-center">
+            <HomePageSlider />
+          </section>
+        </Panel>
+
+        <Panel>
+          <section className="text-center">
             <div
               className="video"
               style={{
                 position: 'relative',
-                paddingBottom: '56.25%' /* 16:9 */,
                 paddingTop: 25,
-                height: 0,
+                height: '25em',
               }}
             >
               <iframe
@@ -77,7 +83,7 @@ class About extends React.Component {
                   top: 0,
                   left: 0,
                   width: '100%',
-                  height: '100%',
+                  height: '25em',
                 }}
                 src="https://www.youtube.com/embed/KLpGnPyJcKE"
                 frameBorder="0"
@@ -384,7 +390,7 @@ class About extends React.Component {
                 To Join the community, do send us a Whatsapp Message at
                 <br />
                 {' '}
-                <a href="tel:+917397459010" className="text-primary">+91 7397459010</a>
+                <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
                 {' '}
               </p>
             </h4>
