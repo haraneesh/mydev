@@ -9,8 +9,8 @@ const CONFIG = ({
 }) => {
   const { merchantId, merchantName } = Meteor.settings.public.PayTM;
 
-  const NOFEE = ['UPI'];
-  const WITHFEE = ['NB'];
+  const NOFEE = ['UPI', 'DEBIT_CARD'];
+  const WITHFEE = ['NB', 'CREDIT_CARD'];
 
   return {
     style: {

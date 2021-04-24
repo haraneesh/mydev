@@ -41,6 +41,7 @@ Meteor.methods({
 
         if (Meteor.isDevelopment) {
           console.log(zhResponse);
+          console.log(paymentStatus);
         }
 
         const paymentId = Payments.insert({
@@ -86,7 +87,11 @@ Meteor.methods({
       mobile: String,
       firstName: String,
       lastName: String,
+      showOptionsWithFee: Boolean,
     });
+
+    console.log(params);
+
     if (Meteor.isServer) {
       try {
       // make initiate call
@@ -120,6 +125,9 @@ Meteor.methods({
             firstName: params.firstName,
             lastName: params.lastName,
           },
+          enablePaymentMode: (!params.showOptionsWithFee)
+            ? ['UPI', 'DEBIT_CARD']
+            : ['NET_BANKING', 'CREDIT_CARD'],
         };
 
         const checksum = await PaytmChecksum.generateSignature(

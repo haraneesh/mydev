@@ -4,7 +4,7 @@ import { Accounts } from 'meteor/accounts-base';
 const name = 'Suvai';
 const email = '<hi@nammasuvai.com>';
 const from = `${name} ${email}`;
-const emailTemplates = Accounts.emailTemplates;
+const emailTemplates = { Accounts };
 
 emailTemplates.siteName = name;
 emailTemplates.from = from;
@@ -36,4 +36,3 @@ emailTemplates.verifyEmail = {
     If you feel something is wrong, please contact our support team: ${email}.`;
   },
 };
-

@@ -2,7 +2,7 @@ export const formValChange = (e, isErrorState, fieldValues) => {
   const { name, value } = e.target;
   const indiaMobilePhoneRegExp = RegExp(/^[6789]\d{9}$/);
   const isEmailAddressRegExp = RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-  const isMoneyInRupees = RegExp(/^(?:\d+|\d{1,2},(?:\d{2},)*\d{3})(?:\.\d{2})?$/);
+  const isMoneyInRupees = RegExp(/^\d+(\.\d{1,2})?$/); //    (?:\d+|\d{1,2},(?:\d{2},)*\d{3})(?:\.\d{2})?$/
 
   const isError = { ...isErrorState };
 

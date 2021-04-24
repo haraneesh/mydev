@@ -67,7 +67,7 @@ function PayTMButton({
         window.Paytm.CheckoutJS.invoke();
         setIsLoading(false);
       }).catch((error) => {
-        console.log('error => ', error);
+        console.log('PayTM Button error: ', error);
         setIsLoading(false);
       });
     }
@@ -78,13 +78,12 @@ function PayTMButton({
 
     const amount = paymentDetails.moneyToChargeInRs.toString();
 
-    console.log(`Initiate Transaction ${amount}`);
-
     const transactionObject = {
       amount,
       mobile: paymentDetails.prefill.mobile,
       firstName: paymentDetails.prefill.firstName,
       lastName: paymentDetails.prefill.lastName,
+      showOptionsWithFee,
     };
     Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
       if (result && result.status === 'S') {

@@ -1,4 +1,4 @@
-import EventEmitter from 'event-emitter';
+import EventEmitter from 'events';
 
 const Emitter = new EventEmitter();
 const Events = {

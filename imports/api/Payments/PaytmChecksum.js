@@ -14,7 +14,7 @@ class PaytmChecksum {
     try {
       decrypted += decipher.final('binary');
     } catch (e) {
-      console.log(e);
+      console.log(`PayTm Checksum: ${e}`);
     }
     return decrypted;
   }

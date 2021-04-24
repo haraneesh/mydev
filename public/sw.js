@@ -1,5 +1,19 @@
 const HTMLToCache = '/';
-const version = 'MSW V0.5';
+const version = 'MSW V0.3';
+
+function removeHash(element) {
+  if (typeof element === 'string') return element.split('?hash=')[0];
+}
+
+function hasHash(element) {
+  if (typeof element === 'string') return /\?hash=.*/.test(element);
+}
+
+function hasSameHash(firstUrl, secondUrl) {
+  if (typeof firstUrl === 'string' && typeof secondUrl === 'string') {
+    return /\?hash=(.*)/.exec(firstUrl)[1] === /\?hash=(.*)/.exec(secondUrl)[1];
+  }
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(version).then((cache) => {
@@ -46,11 +60,15 @@ self.addEventListener('fetch', (event) => {
         } else {
         // Delete old version of a file
           if (hasHash(event.request.url)) {
-            caches.open(version).then((cache) => cache.keys().then((keys) => keys.forEach((asset) => {
-              if (new RegExp(removeHash(event.request.url)).test(removeHash(asset.url))) {
-                cache.delete(asset);
-              }
-            })));
+            caches.open(version).then(
+              (cache) => cache.keys().then(
+                (keys) => keys.forEach((asset) => {
+                  if (new RegExp(removeHash(event.request.url)).test(removeHash(asset.url))) {
+                    cache.delete(asset);
+                  }
+                }),
+              ),
+            );
           }
 
           caches.open(version).then((cache) => cache.put(event.request, clonedResponse));
@@ -70,20 +88,6 @@ self.addEventListener('fetch', (event) => {
     }),
   );
 });
-
-function removeHash(element) {
-  if (typeof element === 'string') return element.split('?hash=')[0];
-}
-
-function hasHash(element) {
-  if (typeof element === 'string') return /\?hash=.*/.test(element);
-}
-
-function hasSameHash(firstUrl, secondUrl) {
-  if (typeof firstUrl === 'string' && typeof secondUrl === 'string') {
-    return /\?hash=(.*)/.exec(firstUrl)[1] === /\?hash=(.*)/.exec(secondUrl)[1];
-  }
-}
 
 // Service worker created by Ilan Schemoul alias NitroBAY as a specific Service Worker for Meteor
 // Please see https://github.com/NitroBAY/meteor-service-worker for the official project source

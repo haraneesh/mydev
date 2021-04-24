@@ -23,7 +23,6 @@ const callAPI = (
 ) => {
   const args = {};
   const accessToken = ZohoAuthenticate.getToken();
-  console.log(`Access Token ${JSON.stringify(accessToken)}`);
 
   const apiBaseUrl = 'https://books.zoho.com/api/v3';
   args.params = (connectionInfo) || setAPICall();
@@ -54,6 +53,7 @@ const callAPI = (
   const callUrl = `${apiBaseUrl}/${endpoint}`;
   if (Meteor.isDevelopment) {
     console.log('---------------Call Url-----------------------');
+    console.log(`Access Token ${JSON.stringify(accessToken)}`);
     console.log(callUrl);
     console.log('---------------Args-----------------------');
     console.log(args);

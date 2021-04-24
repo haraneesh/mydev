@@ -142,7 +142,10 @@ Meteor.methods({
         );
 
         if (zhContactResponse.zohoResponse.code !== 0) {
-          handleMethodException(zhContactResponse.zohoResponse, zhContactResponse.zohoResponse.code);
+          handleMethodException(
+            zhContactResponse.zohoResponse,
+            zhContactResponse.zohoResponse.code,
+          );
         }
       }
       return {

@@ -74,7 +74,10 @@ function AcceptPay({ userWallet, loggedInUser }) {
 
   function calculateTotalAmountWithGatewayFee(wallet) {
     const { amountToChargeInRs, gateWayFee } = wallet;
-    return (parseFloat(amountToChargeInRs) + parseFloat(gateWayFee)).toString();
+    const amtToCharge = Math.ceil(
+      (parseFloat(amountToChargeInRs) + parseFloat(gateWayFee)) * 100,
+    ) / 100;
+    return (amtToCharge).toString();
   }
 
   const { isError } = walletState;
