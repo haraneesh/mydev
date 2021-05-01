@@ -33,7 +33,6 @@ reywood:publish-composite
 #cfs:access-point
 #cfs:graphicsmagick
 http@1.4.2
-browser-policy@1.1.0
 perak:joins
 email@2.0.0
 underscore@1.0.10

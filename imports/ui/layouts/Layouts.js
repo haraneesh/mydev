@@ -3,27 +3,28 @@ import { Meteor } from 'meteor/meteor';
 import { Helmet } from 'react-helmet';
 import { ThemeProvider } from 'styled-components';
 import { Grid } from 'react-bootstrap';
-// import DocumentTitle from 'react-document-title';
 import Navigation from '../components/Navigation/Navigation';
 import ToolBar from '../components/ToolBar/ToolBar';
+import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';
 import GlobalStyle from './GlobalStyle';
 
-const trackPageViews = (analytics, userId, pageName) => {
-  if (Meteor.isProduction && analytics && userId) {
-    analytics.page({
-      type: 'page',
-      userId,
-      name: pageName,
-      properties: {
-        title: pageName,
+const trackPageViews = ({ loggedInUser, loggedInUserId, routeName }) => {
+  if (Meteor.isProduction && loggedInUserId) {
+    SuvaiAnalytics.analyticsFunctions.initialize(loggedInUser, loggedInUserId);
+    SuvaiAnalytics.analyticsFunctions.logEvent(
+      {
+        event: SuvaiAnalytics.Events.NAVIGATE_PAGE,
+        eventProperties: {
+          routeName,
+        },
       },
-    });
+    );
   }
 };
 
-export const OrderLayout = (props) =>
-  // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
-  (
+export const OrderLayout = (props) => {
+  trackPageViews(props);
+  return (
     <div>
       <Helmet>
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
@@ -33,9 +34,11 @@ export const OrderLayout = (props) =>
       <ToolBar {...props} />
     </div>
   );
-export const RecipeLayout = (props) =>
-  // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
-  (
+};
+
+export const RecipeLayout = (props) => {
+  trackPageViews(props.loggedInUserId, props.routeName);
+  return (
     <div>
       <Helmet>
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
@@ -48,10 +51,11 @@ export const RecipeLayout = (props) =>
       <ToolBar {...props} />
     </div>
   );
+};
 
-export const MainLayout = (props) =>
-  // trackPageViews(props.analytics, props.loggedInUserId, props.routeName);
-  (
+export const MainLayout = (props) => {
+  trackPageViews(props);
+  return (
     <div>
       <Helmet>
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
@@ -61,16 +65,20 @@ export const MainLayout = (props) =>
       <ToolBar {...props} />
     </div>
   );
+};
 
-export const SupplierLayout = (props) => (
-  <div>
-    <Helmet>
-      <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
-    </Helmet>
-    <ThemeProvider theme={{}}>
-      <GlobalStyle />
-      <Navigation showEasyNav={false} {...props} />
-      <Grid className="supplierApp">{props.children}</Grid>
-    </ThemeProvider>
-  </div>
-);
+export const SupplierLayout = (props) => {
+  trackPageViews(props);
+  return (
+    <div>
+      <Helmet>
+        <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+      </Helmet>
+      <ThemeProvider theme={{}}>
+        <GlobalStyle />
+        <Navigation showEasyNav={false} {...props} />
+        <Grid className="supplierApp">{props.children}</Grid>
+      </ThemeProvider>
+    </div>
+  );
+};

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Col, FormGroup, ControlLabel, Button,
+  Col, FormGroup, Button,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
@@ -80,7 +80,7 @@ class Login extends React.Component {
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Log In</h3>
           <form onSubmit={this.validateForm}>
-            <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+            <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
               <label>Mobile Number</label>
               <input
                 type="text"
@@ -94,7 +94,7 @@ class Login extends React.Component {
               <span className="control-label">{isError.whMobilePhone}</span>
               )}
             </FormGroup>
-            <FormGroup validationState={isError.password.length > 0 ? 'error' : ''} style={{ position: 'relative' }}>
+            <FormGroup validationState={isError.password.length > 0 ? 'error' : null} style={{ position: 'relative' }}>
               <label className="clearfix">
                 <span className="pull-left">Password</span>
                 <Link className="pull-right" to="/recover-password">Forgot password?</Link>

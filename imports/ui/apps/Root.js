@@ -6,13 +6,10 @@ import {
 } from 'react-router-dom';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
-import Analytics from 'analytics-node';
 import Security from '../../modules/both/security';
 import App from './App';
 import SupplierApp from './SupplierApp';
 import Loading from '../components/Loading/Loading';
-
-const analytics = new Analytics(Meteor.settings.public.analyticsSettings.segmentIo.writeKey);
 
 const getUserName = (name) => ({
   string: name,
@@ -88,6 +85,5 @@ export default withTracker(() => {
     roles: !loading && Roles.getRolesForUser(userId),
     userSettings,
     globalStatuses,
-    analytics,
   };
 })(Root);

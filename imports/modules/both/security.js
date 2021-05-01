@@ -39,6 +39,13 @@ export default class Security {
     return true;
   }
 
+  static checkBoolUserIsAdmin(userId) {
+    if (!this.hasRole(userId, constants.Roles.admin.name)) {
+      return false;
+    }
+    return true;
+  }
+
   static checkRole(userId, role) {
     if (!this.hasRole(userId, role)) {
       throw new Meteor.Error('not-authorized');

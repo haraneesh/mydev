@@ -53,15 +53,21 @@ Object.keys(WebApp.clientPrograms).forEach((arch) => {
 const runtimeConfigScript = `__meteor_runtime_config__ = JSON.parse(decodeURIComponent("${encodeURIComponent(JSON.stringify(runtimeConfig))}"))`;
 const runtimeConfigHash = crypto.createHash('sha256').update(runtimeConfigScript).digest('base64');
 
+const options = {
+  directives: {
+    defaultSrc: [self].concat(allowedOrigins),
+    scriptSrc: [self, unsafeEval, `'sha256-${runtimeConfigHash}'`].concat(allowedOrigins),
+    connectSrc: connectSrc.concat(allowedOrigins), // ['*']
+    imgSrc: [self].concat(allowedOrigins),
+    styleSrc: [self, unsafeInline].concat(allowedOrigins),
+    fontSrc: [self].concat(allowedOrigins),
+  },
+};
+
+if (Meteor.isDevelopment) {
+  options.directives.scriptSrc = [self, unsafeEval, unsafeInline].concat(allowedOrigins);
+}
+
 WebApp.connectHandlers.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: [self].concat(allowedOrigins),
-      scriptSrc: [self, unsafeEval, `'sha256-${runtimeConfigHash}'`].concat(allowedOrigins),
-      connectSrc: connectSrc.concat(allowedOrigins), // ['*']
-      imgSrc: [self].concat(allowedOrigins),
-      styleSrc: [self, unsafeInline].concat(allowedOrigins),
-      fontSrc: [self].concat(allowedOrigins),
-    },
-  }),
+  helmet.contentSecurityPolicy(options),
 );
