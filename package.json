@@ -21,7 +21,7 @@
     "cloudinary-react": "^1.6.6",
     "commonmark": "^0.27.0",
     "core-js": "^2.6.11",
-    "event-emitter": "^1.0.0",
+    "event-emitter": "^0.3.5",
     "fixed-data-table-2": "^1.1.1",
     "flickity": "^2.2.2",
     "helmet": "^4.5.0",

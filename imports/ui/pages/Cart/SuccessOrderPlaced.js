@@ -10,7 +10,7 @@ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const SuccessRow = ({ heading, text, iconName }) => (
   <div className="text-left">
     <div className="panel-body" style={{ display: 'flex', alignItems: 'center' }}>
-      <Col xs={3} className="text-right" style={{ paddingLeft: '0px' }}>
+      <Col xs={3} className="text-right" style={{ paddingRight: '10px' }}>
         <img style={{ maxHeight: '4em' }} src={`/success/${iconName}.png`} alt="" />
       </Col>
       <Col xs={9} style={{ paddingRight: '0px' }}>

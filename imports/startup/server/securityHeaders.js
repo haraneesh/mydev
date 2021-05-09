@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import helmet from 'helmet';
 
 const self = '\'self\'';
+const data = 'data:';
 const unsafeEval = '\'unsafe-eval\'';
 const unsafeInline = '\'unsafe-inline\'';
 const { allowedOrigins } = Meteor.settings.private;
@@ -56,17 +57,23 @@ const runtimeConfigHash = crypto.createHash('sha256').update(runtimeConfigScript
 const options = {
   directives: {
     defaultSrc: [self].concat(allowedOrigins),
-    scriptSrc: [self, unsafeEval, `'sha256-${runtimeConfigHash}'`].concat(allowedOrigins),
+    // scriptSrc: [self, unsafeEval, `'sha256-${runtimeConfigHash}'`].concat(allowedOrigins),
     connectSrc: connectSrc.concat(allowedOrigins), // ['*']
-    imgSrc: [self].concat(allowedOrigins),
+    imgSrc: [self, data, 'blob:'].concat(allowedOrigins),
     styleSrc: [self, unsafeInline].concat(allowedOrigins),
-    fontSrc: [self].concat(allowedOrigins),
+    fontSrc: [self, data].concat(allowedOrigins),
+    manifestSrc: [self],
+  },
+  strictTransportSecurity: {
+    maxAge: 15552000,
+    includeSubDomains: true,
+    preload: true,
   },
 };
 
-if (Meteor.isDevelopment) {
-  options.directives.scriptSrc = [self, unsafeEval, unsafeInline].concat(allowedOrigins);
-}
+// if (Meteor.isDevelopment) {
+options.directives.scriptSrc = [self, unsafeEval, unsafeInline].concat(allowedOrigins);
+// }
 
 WebApp.connectHandlers.use(
   helmet.contentSecurityPolicy(options),

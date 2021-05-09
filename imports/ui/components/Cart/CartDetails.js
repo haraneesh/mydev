@@ -15,7 +15,10 @@ import { cartActions, useCartState, useCartDispatch } from '../../stores/Shoppin
 import Loading from '../Loading/Loading';
 
 const isOrderAmountGreaterThanMinimum = (orderAmt) => {
-  if (Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt) {
+  if (
+    Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt
+      && !isLoggedInUserAdmin()
+  ) {
     return true;
   }
   return false;
