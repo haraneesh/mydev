@@ -21,6 +21,7 @@ import Terms from '../pages/Miscellaneous/Terms/Terms';
 import Refund from '../pages/Miscellaneous/Refund/Refund';
 import Privacy from '../pages/Miscellaneous/Privacy/Privacy';
 import Signup from '../pages/Miscellaneous/Signup/Signup';
+import ShowInterest from '../pages/Miscellaneous/ShowInterest/ShowInterest';
 import Login from '../pages/Miscellaneous/Login/Login';
 import Logout from '../pages/Miscellaneous/Logout/Logout';
 import VerifyEmail from '../pages/Miscellaneous/VerifyEmail';
@@ -96,6 +97,8 @@ import {
   dZohoSyncUp,
 }
   from './dynamicRoutes';
+
+import RouteNames from './RouteNames';
 
 import VerifyEmailAlert from '../components/VerifyEmailAlert';
 
@@ -228,7 +231,7 @@ const App = (props) => (
               {/* Zoho Sync */}
               <AdminAuthenticated exact routeName="Zoho Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
               {/* end admin */}
-              <NotAuthenticated routeName="Signup" layout={MainLayout} path="/signup" component={Signup} {...props} />
+              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={Signup} {...props} />
               <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
               <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
               <AdminAuthenticated exact routeName="Approve Sign Ups" layout={MainLayout} path="/approveSignUps" component={dApproveUserSignUps} {...props} />
@@ -244,6 +247,8 @@ const App = (props) => (
               <Public exact routeName="Vision" layout={MainLayout} path="/vision" component={dVision} {...props} />
               <Public exact routeName="Health Principles" layout={MainLayout} path="/healthprinciples" component={dHealthPrinciples} {...props} />
               <Public exact routeName="Health Principles FAQ" layout={MainLayout} path="/healthfaq" component={dHealthFAQ} {...props} />
+              { /* Ad */ }
+              <Public exact routeName={RouteNames.ADINTEREST} layout={MainLayout} path="/interest/:adType" component={ShowInterest} {...props} />
               { /* Admin Reports */}
               <AdminAuthenticated exact routeName="Reports Home" layout={MainLayout} path="/reports" component={dReportsHome} {...props} />
 

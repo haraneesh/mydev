@@ -7,11 +7,11 @@ const Public = (args) => {
   return (
     <Route
       {...rest}
-      render={props => (
-        <Layout {...props} {...rest} >
+      render={(props) => (
+        <Layout {...props} {...rest}>
           <Component {...props} {...rest} />
-        </Layout>)
-      }
+        </Layout>
+      )}
     />
   );
 };

@@ -6,19 +6,59 @@ import { Grid } from 'react-bootstrap';
 import Navigation from '../components/Navigation/Navigation';
 import ToolBar from '../components/ToolBar/ToolBar';
 import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';
+import RouteNames from '../apps/RouteNames';
 import GlobalStyle from './GlobalStyle';
 
-const trackPageViews = ({ loggedInUser, loggedInUserId, routeName }) => {
-  if (Meteor.isProduction && loggedInUserId) {
-    SuvaiAnalytics.analyticsFunctions.initialize(loggedInUser, loggedInUserId);
-    SuvaiAnalytics.analyticsFunctions.logEvent(
-      {
-        event: SuvaiAnalytics.Events.NAVIGATE_PAGE,
-        eventProperties: {
-          routeName,
-        },
-      },
-    );
+const trackPageViews = ({
+  loggedInUser, routeName, match,
+}) => {
+  if (Meteor.isProduction) {
+    switch (true) {
+      case !!loggedInUser:
+        SuvaiAnalytics.analyticsFunctions.initialize(loggedInUser);
+        SuvaiAnalytics.analyticsFunctions.logEvent(
+          {
+            event: SuvaiAnalytics.Events.NAVIGATE_PAGE,
+            eventProperties: {
+              routeName,
+            },
+          },
+        );
+        break;
+      case (!loggedInUser && routeName === RouteNames.ADINTEREST): {
+        const adType = (match.params.adType) ? match.params.adType : null;
+        const eventName = (adType && SuvaiAnalytics.Events[adType])
+          ? SuvaiAnalytics.Events[adType]
+          : SuvaiAnalytics.Events.ADREFERRAL_PAGE;
+
+        SuvaiAnalytics.analyticsFunctions.initializeNotLoggedIn();
+        SuvaiAnalytics.analyticsFunctions.logEventNotLoggedIn(
+          {
+            event: eventName,
+            eventProperties: {
+              routeName,
+              params: match.params,
+            },
+          },
+        );
+        break;
+      }
+      case (!loggedInUser && routeName === RouteNames.SIGNUP): {
+        SuvaiAnalytics.analyticsFunctions.initializeNotLoggedIn();
+        SuvaiAnalytics.analyticsFunctions.logEventNotLoggedIn(
+          {
+            event: SuvaiAnalytics.Events.NAVIGATE_SIGNUP_PAGE,
+            eventProperties: {
+              routeName,
+              params: match.params,
+            },
+          },
+        );
+        break;
+      }
+      default:
+        break;
+    }
   }
 };
 

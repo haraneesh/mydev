@@ -16,14 +16,30 @@ class analyticsFunctions {
       }
     }
 
+    static initializeNotLoggedIn() {
+      amplitude.getInstance().init(this.analyticsApiKey, null, { includeReferrer: true });
+      amplitude.getInstance().setUserProperties({
+        instance: (Meteor.isProduction) ? 'P' : 'D',
+      });
+    }
+
+    static logEventNotLoggedIn({ event, eventProperties }) {
+      const eventName = (Meteor.isProduction) ? event : `Dev_${event}`;
+      if (eventProperties) {
+        amplitude.getInstance().logEvent(eventName, eventProperties);
+      } else {
+        amplitude.getInstance().logEvent(eventName);
+      }
+    }
+
     static logEvent({ event, eventProperties }) {
       const userId = Meteor.userId();
+      const eventName = (Meteor.isProduction) ? event : `Dev_${event}`;
       if (!Security.checkBoolUserIsAdmin(userId)) {
         if (eventProperties) {
-          amplitude.getInstance().logEvent(event, eventProperties);
-          console.log(this.analyticsApiKey);
+          amplitude.getInstance().logEvent(eventName, eventProperties);
         } else {
-          amplitude.getInstance().logEvent(event);
+          amplitude.getInstance().logEvent(eventName);
         }
       }
     }

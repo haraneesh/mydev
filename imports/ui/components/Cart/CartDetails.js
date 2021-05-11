@@ -17,7 +17,7 @@ import Loading from '../Loading/Loading';
 const isOrderAmountGreaterThanMinimum = (orderAmt) => {
   if (
     Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt
-      && !isLoggedInUserAdmin()
+      || isLoggedInUserAdmin()
   ) {
     return true;
   }
