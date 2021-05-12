@@ -54,7 +54,7 @@
     "react-rte": "^0.16.1",
     "react-toastify": "^6.0.9",
     "request": "^2.88.2",
-    "simpl-schema": "^0.3.2",
+    "simpl-schema": "^1.10.2",
     "styled-components": "^5.1.1",
     "timeago.js": "^4.0.2",
     "xml": "^1.0.1"
