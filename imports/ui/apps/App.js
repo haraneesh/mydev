@@ -1,7 +1,5 @@
-import { Meteor } from 'meteor/meteor';
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
 import { Switch, Redirect } from 'react-router-dom';
 import Authenticated from '../components/Routes/Authenticated';
 import AdminAuthenticated from '../components/Routes/AdminAuthenticated';
@@ -46,6 +44,8 @@ import { OrderLayout, RecipeLayout, MainLayout } from '../layouts/Layouts';
 
 import ReconcileInventoryList from '../pages/ReconcileInventory/ReconcileInventoryList';
 
+import RecipesHome from '../pages/Recipes/RecipesHome';
+
 /*
 import dBaskets from '../pages/Baskets/Baskets';
 
@@ -64,7 +64,6 @@ import {
   dViewProductListDetails,
   dInvitations,
   dNewInvitation,
-  dRecipesHome,
   dRecipes,
   dNewRecipe,
   dEditRecipe,
@@ -108,47 +107,14 @@ import { CartProvider } from '../stores/ShoppingCart';
 
 import Loading from '../components/Loading/Loading';
 
-const highLightText = (textToHighLight) => (
-  <span style={{ color: '#EF0905' }}>
-    {` ${textToHighLight} `}
-  </span>
-
-);
+import ReturnAlerts from '../components/Alerts/ReturnAlerts';
 
 const App = (props) => (
   <>
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
-          { /* props.authenticated && (
-          <Alert
-            bsStyle="danger"
-            style={{
-              color: '#3a2d29',
-              margin: '0px',
-              padding: '10px 5px',
-              borderBottom: '5px solid #FF6D00',
-              borderLeftWidth: '0px',
-              textAlign: 'center',
-            }}
-          >
-            <small>
-              Wish you and your family a very Happy Pongal!
-            </small>
-            <br />
-            <small>
-              Please note, there will
-              {highLightText('not')}
-              be any deliveries from Thursday
-              {highLightText('14th')}
-              {' '}
-              till
-              Monday
-              {highLightText('18th')}
-              . Deliveries will start on Tuesday.
-            </small>
-          </Alert>
-          ) */ }
+          { props.authenticated && (<ReturnAlerts />) }
           {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}
@@ -170,7 +136,7 @@ const App = (props) => (
               <AdminAuthenticated exact routeName="Update Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
 
               {/* Recipes */}
-              <Authenticated exact routeName="Recipes Home" layout={RecipeLayout} path="/recipes" component={dRecipesHome} {...props} />
+              <Authenticated exact routeName="Recipes Home" layout={RecipeLayout} path="/recipes" component={RecipesHome} {...props} />
               <Authenticated exact routeName="View Recipes by Category" layout={RecipeLayout} path="/recipes/bycategory/:category" component={dRecipesByCategory} {...props} />
               <Authenticated exact routeName="View Recipes by Tag" layout={RecipeLayout} path="/recipes/bytag/:tag" component={dRecipesByCategory} {...props} />
               <AdminAuthenticated exact routeName="New Recipe" layout={RecipeLayout} path="/recipes/new" component={dNewRecipe} {...props} />
