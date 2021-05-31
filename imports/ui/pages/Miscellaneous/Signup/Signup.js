@@ -101,7 +101,7 @@ class Signup extends React.Component {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
     return (!signUpRequestSent ? (
-      <div className="Signup">
+      <div className="Signup col-sm-offset-1">
         <div>
           <Col xs={12} sm={6} md={5} lg={4}>
             <h3 className="page-header">Sign Up</h3>
@@ -212,11 +212,13 @@ class Signup extends React.Component {
               </FormGroup>
               <Button type="submit" bsStyle="primary">Sign Up</Button>
               <AccountPageFooter>
-                <p>
-                  Already have an account?
-                  <Link to="/login" className="login-singup">Log In</Link>
-                  .
-                </p>
+                <div className="panel text-center" style={{ marginBottom: '0px', padding: '12.5px' }}>
+                  <span>
+                    {'Already have an account? '}
+                    <a href="/login" className="login-signup">Log In</a>
+                  </span>
+                </div>
+
               </AccountPageFooter>
             </form>
           </Col>

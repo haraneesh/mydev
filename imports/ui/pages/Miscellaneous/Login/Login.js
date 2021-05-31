@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Col, FormGroup, Button,
+  Col, FormGroup, Button, Panel,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
@@ -12,11 +12,12 @@ import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
 import { formValid, formValChange } from '../../../../modules/validate';
 
 const showPasswordButtonPositions = {
-  position: 'absolute',
-  top: '31px',
-  padding: '5px',
-  right: '5px',
+  position: 'relative',
+  top: '-44px',
+  padding: '9px',
+  right: '10px',
   float: 'right',
+  fontSize: '75%',
 };
 
 const defaultState = {
@@ -76,12 +77,12 @@ class Login extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="Login Absolute-Center is-Responsive">
+      <div className="Login Absolute-Center is-Responsive col-sm-offset-1">
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Log In</h3>
           <form onSubmit={this.validateForm}>
             <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
-              <label>Mobile Number</label>
+              <label className="control-label">Mobile Number</label>
               <input
                 type="text"
                 name="whMobilePhone"
@@ -91,11 +92,11 @@ class Login extends React.Component {
                 onBlur={this.onValueChange}
               />
               {isError.whMobilePhone.length > 0 && (
-              <span className="control-label">{isError.whMobilePhone}</span>
+                <span className="control-label">{isError.whMobilePhone}</span>
               )}
             </FormGroup>
             <FormGroup validationState={isError.password.length > 0 ? 'error' : null} style={{ position: 'relative' }}>
-              <label className="clearfix">
+              <label className="clearfix control-label">
                 <span className="pull-left">Password</span>
                 <Link className="pull-right" to="/recover-password">Forgot password?</Link>
               </label>
@@ -114,7 +115,7 @@ class Login extends React.Component {
                 {this.state.showPassword ? 'Hide' : 'Show'}
               </Button>
               {isError.password.length > 0 && (
-              <span className="control-label">{isError.password}</span>
+                <span className="control-label">{isError.password}</span>
               )}
             </FormGroup>
             <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
@@ -122,7 +123,7 @@ class Login extends React.Component {
               <div className="panel text-center" style={{ marginBottom: '0px', padding: '12.5px' }}>
                 <span>
                   {'Not a member yet? '}
-                  <a href="/signup" className="login-singup">Join</a>
+                  <a href="/signup" className="login-signup">Join</a>
                 </span>
               </div>
             </AccountPageFooter>

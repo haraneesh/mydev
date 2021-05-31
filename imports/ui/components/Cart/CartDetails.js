@@ -225,6 +225,17 @@ const CartDetails = ({
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
               </Alert>
               )}
+
+              {(Meteor.settings.public.ShowReturnBottles) && (
+              <div className="row well">
+                <p>
+                  Let's Reduce, Renew and Recycle.
+                  <br />
+                  Please return oil bottles and crates to the delivery person.
+                </p>
+              </div>
+              )}
+
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}

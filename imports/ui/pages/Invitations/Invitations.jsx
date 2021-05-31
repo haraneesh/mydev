@@ -3,7 +3,7 @@ import { Row, Col, Button } from 'react-bootstrap';
 import InvitationList from '../../containers/Invitations/InvitationList';
 
 const Invitations = ({ history }) => (
-  <div className="Invitations">
+  <div className="Invitations col-sm-offset-1">
     <Row>
       <Col xs={12}>
         <div className="page-header clearfix">
@@ -12,7 +12,10 @@ const Invitations = ({ history }) => (
             bsStyle="primary"
             className="pull-right"
             href="/invitations/new"
-          >Send Invitation</Button>
+          >
+            Send Invitation
+
+          </Button>
         </div>
         <InvitationList history={history} />
       </Col>

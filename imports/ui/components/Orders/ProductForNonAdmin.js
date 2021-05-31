@@ -72,7 +72,7 @@ const ProductName = ({
   sliderView,
 }) => (
   <div className="productNameDesc">
-    <h4 className="product-name"><strong>{name}</strong></h4>
+    <p className="product-name"><strong>{name}</strong></p>
     {/* (quantitySelected > 0) && (
       (!sliderView && (
       <InformProductUnavailability
@@ -216,11 +216,11 @@ const ProductForNonAdmin = ({
               {prodNameDesc}
             </Col>
             <Col xs={12}>
-              <h4>
+              <p>
                 {' '}
                 {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
                 {' '}
-              </h4>
+              </p>
             </Col>
             <Col xs={9} sm={12}>
               <AddToCart
@@ -252,11 +252,11 @@ const ProductForNonAdmin = ({
           </Col>
 
           <Col xs={12}>
-            <h4>
+            <p>
               {' '}
               {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
               {' '}
-            </h4>
+            </p>
           </Col>
 
           <Col xs={12}>

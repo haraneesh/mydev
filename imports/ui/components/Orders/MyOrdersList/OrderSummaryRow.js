@@ -47,7 +47,7 @@ const OrderSummaryRow = ({
           </Label>
         </Col>
         <Col xs={12} sm={6} md={3} className="remLeftRightPad addSpace">
-          <strong>{orderDateDisplay}</strong>
+          {orderDateDisplay}
         </Col>
 
         <Col xs={12} md={6} className="addSpace">

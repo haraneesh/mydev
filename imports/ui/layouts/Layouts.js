@@ -70,7 +70,7 @@ export const OrderLayout = (props) => {
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
-      <Grid>{props.children}</Grid>
+      <Grid fluid="true">{props.children}</Grid>
       <ToolBar {...props} />
     </div>
   );
@@ -86,7 +86,7 @@ export const RecipeLayout = (props) => {
       <ThemeProvider theme={{}}>
         <GlobalStyle />
         <Navigation showEasyNav={false} {...props} />
-        <Grid className="recipesApp">{props.children}</Grid>
+        <Grid fluid="true" className="recipesApp">{props.children}</Grid>
       </ThemeProvider>
       <ToolBar {...props} />
     </div>
@@ -101,7 +101,7 @@ export const MainLayout = (props) => {
         <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav {...props} />
-      <Grid>{props.children}</Grid>
+      <Grid fluid="true">{props.children}</Grid>
       <ToolBar {...props} />
     </div>
   );

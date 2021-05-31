@@ -72,8 +72,6 @@ export const dViewSupplier = lazy(() => import('../pages/Admin/Suppliers/ViewSup
 export const dEditSupplier = lazy(() => import('../pages/Admin/Suppliers/EditSupplier/EditSupplier'));
 
 /* Recipes */
-export const dRecipesHome = lazy(() => import('../pages/Recipes/RecipesHome'));
-
 export const dRecipes = lazy(() => import('../pages/Recipes/Recipes'));
 
 export const dNewRecipe = lazy(() => import('../pages/Recipes/NewRecipe'));

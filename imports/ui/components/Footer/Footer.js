@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid } from 'react-bootstrap';
 
 import './Footer.scss';
 
@@ -12,7 +12,7 @@ const copyrightYear = () => {
 const Footer = () => (
   <div className="Footer">
 
-    <Grid>
+    <Grid fluid="true">
       <p className="pull-left">
         &copy;
         {' '}

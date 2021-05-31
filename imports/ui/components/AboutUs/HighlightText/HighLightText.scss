@@ -1,0 +1,25 @@
+@import '../../../../ui/stylesheets/bootstrap/bootstrap/variables';
+
+.heading-text{
+    align-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    position: relative;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+
+    h7, .h7{
+        color: #fff;
+        position: absolute;
+        padding-bottom: 5px;
+        padding-right: 5px;
+    }
+}
+
+.heading-highlight{
+    width: 50%;
+    color:$brand-success;
+    fill: currentcolor;
+    margin-left:5rem;
+}

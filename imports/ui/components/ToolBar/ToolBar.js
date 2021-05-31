@@ -117,7 +117,7 @@ const ToolBar = ({
 
   if (authenticated) {
     return (
-      <div id="toolBar" className="toolBar container text-center">
+      <div id="toolBar" className="toolBar container-fluid text-center">
         <div className="box box1">
           <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
             <Icon icon="comment" />

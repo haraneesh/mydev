@@ -70,26 +70,28 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
           <h4 className="text-success">Thank you for Ordering on Suvai.</h4>
 
           {(Meteor.settings.public.ShowInviteButton) && (
-            <div>
-              <p>
-                Let us do more good, together. Help us spread the word.
-              </p>
-              <Button
-                bsStyle="primary"
-                onClick={() => {
-                  RegiterInvitation();
-                }}
-              >
-                Invite A Friend
-              </Button>
-            </div>
+          <div>
+            <p>
+              Let us do more good, together. Help us spread the word.
+            </p>
+            <Button
+              bsStyle="primary"
+              onClick={() => {
+                RegiterInvitation();
+              }}
+            >
+              Invite A Friend
+            </Button>
+          </div>
           )}
         </section>
 
+        {/*
         <section className="panel-body">
           <p> Next time, You can save on time by prefilling cart with this order. </p>
           <Button bsStyle="default" onClick={() => { history.push(`/createBasket/${orderId}`); }}>Save Order To Prefill </Button>
         </section>
+        */}
 
         {!Roles.userIsInRole(loggedInUser._id, constants.Roles.shopOwner.name) && (
           <section className="panel-body">

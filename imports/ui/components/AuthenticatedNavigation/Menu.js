@@ -39,7 +39,7 @@ const Menu = (props) => {
       <span
         id="profileIcon"
         style={{
-          marginTop: '18px', marginRight: '15px', float: 'left', fontSize: '1.25em', display: 'block',
+          marginTop: '2.4rem', marginRight: '15px', float: 'left', fontSize: '1.25em', display: 'block',
         }}
       >
         <a onClick={() => { props.history.push('/profile'); }} href="#">
@@ -47,7 +47,7 @@ const Menu = (props) => {
         </a>
       </span>
       <div className="menu-expand-button">
-        <Button type="button" bsStyle="link" className="" onClick={show}>
+        <Button type="button" bsStyle="link" onClick={show}>
           <span className={`icon-bar top-bar ${menuVisible}`} />
           <span className={`icon-bar middle-bar ${menuVisible}`} />
           <span className={`icon-bar bottom-bar ${menuVisible}`} />

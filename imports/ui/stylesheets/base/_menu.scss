@@ -41,7 +41,7 @@
 
 .menu-expand-button{
   float:right;
-  margin-top: 17px;
+  margin-top: 2.5rem;
 }
 
 .menu-panel{
@@ -84,17 +84,16 @@
 
 .menu ul{
   padding-left: 0px;
-  margin-bottom:2.5em;
-
+  margin-bottom: 2.5em;
 }
 
 .menu ul li{
-  margin-bottom: 5px;
+  margin-bottom: 0px;
 }
 
 .menu li a {
-    padding-top:    10px;
-    padding-bottom: 10px;
+    padding-top:    0px;
+    padding-bottom: 0px;
     line-height: $line-height-computed;
     outline: none;
     outline-width: 0;

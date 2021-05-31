@@ -8,7 +8,6 @@ import { accountSettings } from '../../../modules/settings';
 import { extractNumber, extractString } from '../../../modules/helpers';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 
-
 class ProductForAdmin extends React.Component {
   constructor(props, context) {
     super(props, context);
@@ -62,7 +61,7 @@ class ProductForAdmin extends React.Component {
     return (
       <Col sm={12} className="no-padding product-item">
         <Col sm={!isBasket ? 5 : 8}>
-          <h4 className="product-name"><strong>{`${name} ${unit}`}</strong></h4>
+          <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>
           {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             excessQtyOrdered={
@@ -71,7 +70,7 @@ class ProductForAdmin extends React.Component {
                 previousOrdQty,
                 this.state.quantitySelected)
               }
-            /> 
+            />
             <p><small>{description}</small></p> */}
         </Col>
 
@@ -80,7 +79,7 @@ class ProductForAdmin extends React.Component {
             <input
               type="number"
               name={productId}
-              ref={productWeight => (this.productWeight = productWeight)}
+              ref={(productWeight) => (this.productWeight = productWeight)}
               className="form-control"
               value={extractNumber(unit) * this.state.quantitySelected}
               onChange={this.handleWeightChange}
@@ -90,11 +89,13 @@ class ProductForAdmin extends React.Component {
         </Col>
         {!isBasket && (
           <Col sm={4} className="text-right-not-xs">
-            <h4>{formatMoney(unitprice, accountSettings)}
+            <h4>
+              {formatMoney(unitprice, accountSettings)}
               <span className="text-muted">{` ${'x'} `}</span>
               {this.state.quantitySelected}
             </h4>
-          </Col>)}
+          </Col>
+        )}
       </Col>
     );
   }

@@ -309,7 +309,7 @@ class Profile extends React.Component {
   render() {
     const { loading, user } = this.props;
     return (
-      <div className="Profile">
+      <div className="Profile col-sm-offset-1">
         <Row>
           <Col xs={12} sm={9} md={6}>
             <h3 className="page-header">Edit Profile</h3>

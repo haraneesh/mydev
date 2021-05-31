@@ -16,16 +16,22 @@ $gray-light:             lighten($gray-base, 45%) !default;
 $gray-lighter:           lighten($gray-base, 55%) !default;
 $gray-lightText:        #fff !default;
  
-$brand-primary:         #e04a06 !default; //#00A024 #e04a06 Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C #69af07 ##77d91A #00A024
+$brand-primary:         #e04a06 !default; // #00A024 Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C #69af07 ##77d91A #00A024
 $brand-default:         #522E23 !default; // Secondary #6F5F5C #3E1F0C #00A732
-$brand-success:         #1F7738 !default; // #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
+$brand-success:         #1F7738 !default; // #1F7738 #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
 $brand-info:            #976A4B !default; //#92B955
 $brand-warning:         #FF8A00 !default; //#EBBB1E #E86D00 #FF6D00
 $brand-danger:          #A2082C !default; //#EA3128
 $brand-logo-yellow:     #FFB800 !default; //#FDC123
 
-$body-font: 'Mulish';
-$heading-font: 'Montserrat';
+$font-family-sans-serif:  "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
+$font-family-serif:        "Times New Roman", Times, serif !default;
+//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
+$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
+$font-family-base:        $font-family-sans-serif !default;
+
+$heading-font: 'Encode Sans Semi Expanded';
+$body-font: 'Nunito';
 
 //== Scaffolding
 //
@@ -48,22 +54,16 @@ $link-hover-decoration: none !default;
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:  "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
-$font-family-serif:        "Times New Roman", Times, serif !default;
-//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
-$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
-$font-family-base:        $font-family-sans-serif !default;
-
 $font-size-base:          16px !default;
 $font-size-large:         ceil(($font-size-base * 1.10)) !default; // ~22px
-$font-size-small:         ceil(($font-size-base * 0.80)) !default; // ~12px
+$font-size-small:         ceil(($font-size-base * 0.90)) !default; // ~12px
 
 $font-size-h1:            floor(($font-size-base * 2)) !default; // ~32px
 $font-size-h2:            floor(($font-size-base * 1.8)) !default; // ~30px
 $font-size-h3:            ceil(($font-size-base * 1.5)) !default; // ~24px
 $font-size-h4:            ceil(($font-size-base * 1.25)) !default; // ~18px
 $font-size-h5:            $font-size-base !default;
-$font-size-h6:            ceil(($font-size-base * 0.85)) !default; // ~12px
+$font-size-h6:            $font-size-h4; //ceil(($font-size-base * 0.85)) !default; // ~12px
 
 // v4
 
@@ -76,12 +76,12 @@ $h2-font-size:                $font-size-base-v4 * 2 !default;
 $h3-font-size:                $font-size-base-v4 * 1.75 !default;
 $h4-font-size:                $font-size-base-v4 * 1.5 !default;
 $h5-font-size:                $font-size-base-v4 * 1.25 !default;
-$h6-font-size:                $font-size-base-v4 !default;
+$h6-font-size:                $h4-font-size !default;
 
 // v4 end
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        1.4 !default; // 20/14 1.428571429
+$line-height-base:        2 !default; // 20/14 1.428571429
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-computed:    floor(($font-size-base * $line-height-base)) !default; // ~20px
 
@@ -377,7 +377,7 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 //** Number of columns in the grid.
 $grid-columns:              12 !default;
 //** Padding between columns. Gets divided in half for the left and right.
-$grid-gutter-width:         30px !default;
+$grid-gutter-width:         40px !default;
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.
 $grid-float-breakpoint:     $screen-sm-min !default;
@@ -410,7 +410,7 @@ $container-lg:                 $container-large-desktop !default;
 //##
 
 // Basics of a navbar
-$navbar-height:                    75px !default;
+$navbar-height:                    82px !default;
 $navbar-margin-bottom:             $line-height-computed !default;
 $navbar-border-radius:             0px !default;
 $navbar-padding-horizontal:        floor(($grid-gutter-width / 2)) !default;

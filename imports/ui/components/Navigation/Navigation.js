@@ -8,7 +8,7 @@ import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigati
 import './Navigation.scss';
 
 const Navigation = (props) => (
-  <Navbar>
+  <Navbar fluid="true">
     <Navbar.Header>
       {props.authenticated
         && (
@@ -16,7 +16,7 @@ const Navigation = (props) => (
           id="backIcon"
           className="visible-xs-inline"
           style={{
-            marginTop: '18px', marginLeft: '10px', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block',
+            marginTop: '18px', marginLeft: '2.5rem', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block',
           }}
         >
           <a onClick={() => { props.history.goBack(); }} href="#">
@@ -26,7 +26,7 @@ const Navigation = (props) => (
         )}
 
       <Navbar.Brand>
-        <a onClick={() => { props.history.push('/'); }} style={{ marginLeft: '1rem' }}>
+        <a onClick={() => { props.history.push('/'); }} style={{ marginLeft: '2rem' }}>
           <img
             className="brand-logo"
             src="/logo.png"

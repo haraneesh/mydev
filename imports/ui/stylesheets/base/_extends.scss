@@ -13,8 +13,9 @@
 }
 
 body{
-  font-size:$font-size-base;
+  font-size: $font-size-base;
   text-rendering: optimizeLegibility;
+  letter-spacing: 0.25px;
 }
 
 label.error{
@@ -24,6 +25,10 @@ label.error{
 .container, .navbar-brand {
   padding-right:2px;
   padding-left: 2px;
+}
+
+h6, .h6{
+  font-weight:600;
 }
 
 .container > .navbar-header, .row {
@@ -58,20 +63,17 @@ section.panel-body {
   border-top: 1px solid #E4DFDB;
 }
 
-h1, h2, h3, .h1, .h2, .h3, .panel-heading{
+h1, h2, h3, h7, .h1, .h2, .h3, .h7{
   font-family: $heading-font;
   //text-shadow: 0px 1px 0px rgba(255,255,255,0.6);
   margin-top:0px;
   margin-bottom:0px;
 }
 
-h3, .h3 {
-  font-weight: 600;
+h3, .h3, h7, .h7 {
+  font-weight: 500;
 }
 
-h4, .h4, .panel-heading {
-  letter-spacing:0.25px;
-}
 
 hr {
   border-top: 2px dashed $brand-default;
@@ -120,15 +122,14 @@ hr {
 
 .brand-logo {
     position: relative;
-    top: -20px;
+    top: -10px;
     height:3em;
 }
 
 .btn{
+    //font-family: $heading-font;
     text-transform: uppercase;
-    //font-weight:500;
-    //letter-spacing:1px;
-    letter-spacing: 0.1rem;
+    letter-spacing: 1px;
 }
 
 .btn-link{
@@ -161,8 +162,7 @@ div:focus,
 }
 
 .underline {
-  padding-bottom: 2px;
-  border-bottom: 2px solid $brand-logo-yellow;
+  border-bottom: 2px solid $brand-warning;
 }
 
 // Effects =================================================================

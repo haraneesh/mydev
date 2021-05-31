@@ -2,9 +2,16 @@ import React from 'react';
 import { Alert } from 'react-bootstrap';
 
 const NotFound = () => (
-  <div className="NotFound page-header">
+  <div className="NotFound page-header col-sm-offset-1">
     <Alert bsStyle="danger">
-      <p><strong>Error [404]</strong>: {window.location.pathname} does not exist.</p>
+      <p>
+        <strong>Error [404]</strong>
+        :
+        {' '}
+        {window.location.pathname}
+        {' '}
+        does not exist.
+      </p>
     </Alert>
   </div>
 );

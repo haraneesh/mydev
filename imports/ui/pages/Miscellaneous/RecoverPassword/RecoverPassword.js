@@ -55,7 +55,7 @@ class RecoverPassword extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="RecoverPassword">
+      <div className="RecoverPassword col-sm-offset-1">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
             <h3 className="page-header">Recover Password</h3>
