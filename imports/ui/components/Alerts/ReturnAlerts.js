@@ -23,11 +23,9 @@ function ReturnAlerts() {
       }}
     >
       <small>
-        Let's Reduce, Renew and Recycle.
-        <br />
-        Please return
+        Gentle reminder, please return
         {' '}
-        {highLightText('oil bottles')}
+        {highLightText('glass oil bottles')}
         {' '}
         and
         {' '}

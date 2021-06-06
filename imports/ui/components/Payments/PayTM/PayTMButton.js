@@ -106,7 +106,7 @@ function PayTMButton({
 
       <button
         type="button"
-        className={`btn btn-sm ${!showOptionsWithFee ? 'btn-primary' : 'btn-default'}`}
+        className={`btn ${!showOptionsWithFee ? 'btn-primary' : 'btn-default'}`}
         onClick={initiateTransaction}
         disabled={!!isLoading}
       >

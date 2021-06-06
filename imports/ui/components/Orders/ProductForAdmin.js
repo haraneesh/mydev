@@ -89,11 +89,11 @@ class ProductForAdmin extends React.Component {
         </Col>
         {!isBasket && (
           <Col sm={4} className="text-right-not-xs">
-            <h4>
+            <p>
               {formatMoney(unitprice, accountSettings)}
               <span className="text-muted">{` ${'x'} `}</span>
               {this.state.quantitySelected}
-            </h4>
+            </p>
           </Col>
         )}
       </Col>

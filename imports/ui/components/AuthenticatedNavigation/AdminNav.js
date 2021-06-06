@@ -27,9 +27,10 @@ const AdminNav = (props) => {
           <li>
             <NavLink to="/suppliers">Manage Suppliers</NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink to="/baskets"> Manage Baskets</NavLink>
           </li>
+         */}
           <li>
             <NavLink to="/specials/edit">Manage Specials</NavLink>
           </li>

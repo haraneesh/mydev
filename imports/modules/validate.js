@@ -6,24 +6,26 @@ export const formValChange = (e, isErrorState, fieldValues) => {
 
   const isError = { ...isErrorState };
 
+  const trimmedVal = value.trim();
+
   switch (true) {
     case name === 'amountToChargeInRs':
-      isError[name] = isMoneyInRupees.test(value)
+      isError[name] = isMoneyInRupees.test(trimmedVal)
         ? ''
         : 'amount can only be in one of these formats (1234 or 1234.56)';
       break;
     case name === 'emailAddress':
-      isError.emailAddress = isEmailAddressRegExp.test(value)
+      isError.emailAddress = isEmailAddressRegExp.test(trimmedVal)
         ? ''
         : 'email address seems invalid';
       break;
     case name === 'password':
-      isError[name] = (value.length > 0 && value.length < 6)
+      isError[name] = (trimmedVal.length > 0 && trimmedVal.length < 6)
         ? 'atleast 6 characters required'
         : '';
       break;
     case name === 'newPassword' || name === 'confirmPassword':
-      isError[name] = (value.length > 0 && value.length < 6)
+      isError[name] = (trimmedVal.length > 0 && trimmedVal.length < 6)
         ? 'atleast 6 characters required'
         : '';
 
@@ -34,33 +36,33 @@ export const formValChange = (e, isErrorState, fieldValues) => {
       break;
 
     case name === 'name':
-      isError.name = value.length < 1
+      isError.name = trimmedVal.length < 1
         ? 'first name should be atleast 4 characters long'
         : '';
       break;
 
     case name === 'firstName':
-      isError.firstName = value.length < 1
+      isError.firstName = trimmedVal.length < 1
         ? 'first name should be atleast 4 characters long'
         : '';
       break;
     case name === 'lastName':
-      isError.lastName = value.length < 1
+      isError.lastName = trimmedVal.length < 1
         ? 'last name should be atleast 4 characters long'
         : '';
       break;
     case name === 'whMobilePhone':
-      isError.whMobilePhone = indiaMobilePhoneRegExp.test(value)
+      isError.whMobilePhone = indiaMobilePhoneRegExp.test(trimmedVal)
         ? ''
         : 'India mobile number appears to be invalid';
       break;
     case name === 'deliveryAddress':
-      isError.deliveryAddress = value.length < 1
+      isError.deliveryAddress = trimmedVal.length < 1
         ? 'delivery address is required'
         : '';
       break;
     case name === 'dietPreference':
-      isError.dietPreference = value.length < 1
+      isError.dietPreference = trimmedVal.length < 1
         ? 'dietary preference is mandatory'
         : '';
       break;

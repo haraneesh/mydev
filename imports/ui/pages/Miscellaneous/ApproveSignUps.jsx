@@ -33,7 +33,7 @@ class ApproveSignUps extends React.Component {
     const { userSignUps } = this.props;
 
     return (!loading ? (
-      <div className="ShowUserSignUps">
+      <div className="ShowUserSignUps col-sm-offset-1">
         <div className="page-header clearfix">
           <h3 className="pull-left">Users Requested to Join Suvai</h3>
         </div>

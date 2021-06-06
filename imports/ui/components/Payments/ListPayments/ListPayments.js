@@ -56,7 +56,7 @@ const ListPayments = () => {
   ) : (
     <Panel>
       {' '}
-      <button className="btn btn-sm btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button>
+      <button className="btn btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button>
       {' '}
     </Panel>
   );

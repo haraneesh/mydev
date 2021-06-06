@@ -18,20 +18,21 @@ $gray-lightText:        #fff !default;
  
 $brand-primary:         #e04a06 !default; // #00A024 Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C #69af07 ##77d91A #00A024
 $brand-default:         #522E23 !default; // Secondary #6F5F5C #3E1F0C #00A732
-$brand-success:         #1F7738 !default; // #1F7738 #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
+$brand-success:         #1F7738 !default; // #1F7738 #547a37 #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
 $brand-info:            #976A4B !default; //#92B955
 $brand-warning:         #FF8A00 !default; //#EBBB1E #E86D00 #FF6D00
 $brand-danger:          #A2082C !default; //#EA3128
 $brand-logo-yellow:     #FFB800 !default; //#FDC123
 
-$font-family-sans-serif:  "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
+$heading-font: 'Encode Sans Semi Expanded';
+$body-font: 'Nunito';
+
+
+$font-family-sans-serif:  $body-font, "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
 $font-family-serif:        "Times New Roman", Times, serif !default;
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;
-
-$heading-font: 'Encode Sans Semi Expanded';
-$body-font: 'Nunito';
 
 //== Scaffolding
 //
@@ -81,14 +82,14 @@ $h6-font-size:                $h4-font-size !default;
 // v4 end
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        2 !default; // 20/14 1.428571429
+$line-height-base:        1.75 !default; // 20/14 1.428571429
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-computed:    floor(($font-size-base * $line-height-base)) !default; // ~20px
 
 //** By default, this inherits from the `<body>`.
 $headings-font-family:    inherit !default;
 $headings-font-weight:    500 !default;
-$headings-line-height:    1.1666666 !default;
+$headings-line-height:    1.666666 !default;
 $headings-color:         $gray-darker !default;
 
 
@@ -146,7 +147,7 @@ $padding-xs-vertical:       2px !default;
 $padding-xs-horizontal:     5px !default;
 
 $line-height-large:         1.3333333 !default; // extra decimals for Win 8.1 Chrome
-$line-height-small:         1.5 !default;
+$line-height-small:         1.3333333 !default;
 
 $border-radius-base:        0.3em !default;
 $border-radius-large:       0.4em !default;
@@ -191,7 +192,7 @@ $table-border-color:            #E4DFDB !default; // #dCdAcA
 //
 //## For each of Bootstrap's buttons, define text, background and border color.
 
-$btn-font-weight:                normal !default;
+$btn-font-weight:                600 !default;
 
 $btn-default-color:              #fff !default;
 $btn-default-bg:                 $brand-default !default;

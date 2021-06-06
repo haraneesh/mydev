@@ -13,9 +13,9 @@ import { formValid, formValChange } from '../../../../modules/validate';
 
 const showPasswordButtonPositions = {
   position: 'relative',
-  top: '-44px',
-  padding: '9px',
-  right: '10px',
+  top: '-45px',
+  padding: '10px',
+  right: '7px',
   float: 'right',
   fontSize: '75%',
 };
@@ -46,8 +46,8 @@ class Login extends React.Component {
   }
 
   handleSubmit() {
-    const username = { username: this.whMobilePhone.value };
-    const password = document.getElementsByName('password')[0].value;
+    const username = { username: this.whMobilePhone.value.trim() };
+    const password = document.getElementsByName('password')[0].value.trim();
 
     Meteor.loginWithPassword(username, password, (error) => {
       if (error) {
@@ -120,7 +120,7 @@ class Login extends React.Component {
             </FormGroup>
             <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
             <AccountPageFooter>
-              <div className="panel text-center" style={{ marginBottom: '0px', padding: '12.5px' }}>
+              <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>
                 <span>
                   {'Not a member yet? '}
                   <a href="/signup" className="login-signup">Join</a>

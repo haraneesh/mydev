@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
 
-const ShowBasketsToSelect = ({ history, basketLists, onBasketSelect, onEmptyCartSelect }) => {
+const ShowBasketsToSelect = ({
+  history, basketLists, onBasketSelect, onEmptyCartSelect,
+}) => {
   const handleSelectPrefillBasket = (basketId) => {
     history.push(`/neworder/${basketId}`);
   };
@@ -26,7 +28,7 @@ const ShowBasketsToSelect = ({ history, basketLists, onBasketSelect, onEmptyCart
           <h5> Pick a Basket to Prefill </h5>
         </div>
         <Col xs={12} className="panel panel-default">
-          {basketLists.map(element => (
+          {basketLists.map((element) => (
             <div key={`${element.name} ${element._id}`} className="panel-body">
               <div>
                 <Col xs={8}><p>{element.name}</p></Col>

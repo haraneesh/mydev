@@ -99,15 +99,15 @@ function HomePageSlider() {
       </h2>
       <div className="carousel panel-body">
         <div className="carousel-cell">
-          <img src="about/feedingx640.jpg?v1" alt="Feeding a baby" />
+          <img src="about/feedingx640.jpg?v5" alt="Feeding a baby" />
           <h7> Kids deserve the best </h7>
         </div>
         <div className="carousel-cell">
-          <img src="about/exercisex640.jpg?v1" alt="Exercise" />
+          <img src="about/exercisex640.jpg?v5" alt="Exercise" />
           <h7> Take charge of your health </h7>
         </div>
         <div className="carousel-cell">
-          <img src="about/grandparentx640.jpg?v1" alt="Grandparent" />
+          <img src="about/grandparentx640.jpg?v5" alt="Grandparent" />
           <h7> Happy family is a healthy family </h7>
         </div>
         {/* <div className="carousel-cell">

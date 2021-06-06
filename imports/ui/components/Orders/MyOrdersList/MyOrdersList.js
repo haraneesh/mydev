@@ -213,7 +213,9 @@ export default class MyOrderList extends React.Component {
 
                 </div>
               ) : (
-                <Alert bsStyle="info">You are yet to place an order.</Alert>
+                <Alert bsStyle="info">
+                  You will find details of orders you place here.
+                </Alert>
               )
             }
           </Tab>

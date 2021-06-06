@@ -7,10 +7,11 @@ import './EasyNav.scss';
 export const EasyNavNarrowScreen = (props) => (
   <ul className="sec-menu-bar visible-sm visible-xs">
     <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to="/neworder/selectbasket"> Place Order </Link>
+      {/* <Link to="/neworder/selectbasket"> Place Order </Link> */}
+      <Link to="/neworder"> Place Order </Link>
     </li>
     <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
-      <Link to="/baskets">Baskets</Link>
+      <Link to="/mywallet">My Wallet</Link>
     </li>
     {/* <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>
       <Link to={(props.isAdmin) ? '/messagesadmin' : '/messages'}> Message Us</Link>
@@ -27,7 +28,8 @@ export const EasyNavNarrowScreen = (props) => (
 export const EasyNavWideScreen = (props) => (
   <Nav className="hidden-xs hidden-sm wide-menu-bar">
     <li>
-      <NavLink to="/neworder/selectbasket"> Place Order</NavLink>
+      { /* <NavLink to="/neworder/selectbasket"> Place Order</NavLink> */}
+      <Link to="/neworder"> Place Order </Link>
     </li>
     <li>
       <NavLink exact to="/"> My Orders</NavLink>
@@ -36,7 +38,7 @@ export const EasyNavWideScreen = (props) => (
       <NavLink to="/healthprinciples"> Health </NavLink>
     </li>
     <li>
-      <NavLink to="/baskets"> Baskets </NavLink>
+      <NavLink to="/mywallet"> My Wallet </NavLink>
     </li>
   </Nav>
 );

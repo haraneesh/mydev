@@ -101,14 +101,12 @@ function AcceptPay({ userWallet, loggedInUser }) {
 
       <Panel>
 
-        <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
-          <div>
-            UPI or Debit card -
-            {' '}
-            <span className="underline">No fee</span>
-            {' '}
-          </div>
-        </div>
+        <h6 className="panel-heading">
+          UPI or Debit card -
+          {' '}
+          <span className="underline">No fee</span>
+          {' '}
+        </h6>
 
         <form
           onSubmit={(event) => event.preventDefault()}
@@ -161,9 +159,9 @@ function AcceptPay({ userWallet, loggedInUser }) {
       { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
         <Panel>
 
-          <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+          <h6 className="panel-heading">
             <div>NetBanking or Credit Card - 2% transaction fee </div>
-          </div>
+          </h6>
 
           <form
             onSubmit={(event) => event.preventDefault()}

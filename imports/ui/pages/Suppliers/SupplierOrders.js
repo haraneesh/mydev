@@ -69,7 +69,7 @@ const SupplierOrders = ({
           >
             <Row>
               <Col xs={11}>
-                <Col xs={6} sm={6} md={3} className="remLeftRightPad addSpace">
+                <Col xs={6} sm={6} md={3} className="remLeftRightPad">
                   <Label bsStyle={constants.OrderStatus[suppOrder.order_status].label}>
                     {constants.OrderStatus[suppOrder.order_status].display_value}
                   </Label>
@@ -79,7 +79,7 @@ const SupplierOrders = ({
                 </Col>
                 <Col xs={12}>{suppOrder.customer_details.name}</Col>
               </Col>
-              <Col xs={1} className="addSpace">
+              <Col xs={1}>
                 <span className="text-muted" style={{ paddingLeft: '1rem', lineHeight: '4rem' }}>
                   <Glyphicon glyph="chevron-right" bsSize="large" />
                 </span>

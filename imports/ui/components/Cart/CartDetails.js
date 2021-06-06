@@ -231,7 +231,7 @@ const CartDetails = ({
                 <p>
                   Let's Reduce, Renew and Recycle.
                   <br />
-                  Please return oil bottles and crates to the delivery person.
+                  Please return glass oil bottles and crates to the delivery person.
                 </p>
               </div>
               )}

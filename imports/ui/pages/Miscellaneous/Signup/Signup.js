@@ -212,7 +212,7 @@ class Signup extends React.Component {
               </FormGroup>
               <Button type="submit" bsStyle="primary">Sign Up</Button>
               <AccountPageFooter>
-                <div className="panel text-center" style={{ marginBottom: '0px', padding: '12.5px' }}>
+                <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>
                   <span>
                     {'Already have an account? '}
                     <a href="/login" className="login-signup">Log In</a>

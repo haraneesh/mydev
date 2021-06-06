@@ -25,14 +25,6 @@ const SideMenu = (props) => (
           )}
           <Col xs={12} sm={6}>
             <ul>
-              {/*
-              <li>
-                <NavLink to="/order"> Place Order</NavLink>
-              </li>
-              <li>
-                <NavLink to="/specials"> Specials </NavLink>
-              </li>
-              */}
               <li>
                 <NavLink to="/">My Orders</NavLink>
               </li>

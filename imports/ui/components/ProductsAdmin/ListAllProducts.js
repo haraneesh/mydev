@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import {
-  Alert, Button, Col, Row, ListGroupItem, ListGroup, ControlLabel, HelpBlock, Tabs, Tab,
+  Alert, Button, Col, Row, Panel, ListGroup, ControlLabel, HelpBlock, Tabs, Tab,
 } from 'react-bootstrap';
 import Product, { ProductTableHeader } from './Product';
 import { upsertProductList } from '../../../api/ProductLists/methods';
@@ -111,7 +111,7 @@ class ListAllProducts extends React.Component {
   publishSection() {
     const { showEndDateError, isPublishingProductList } = this.state;
     return (
-      <ListGroupItem className="publishSection">
+      <Panel>
         <h3> Publish Product List for Users to order </h3>
         <HelpBlock bsStyle="info">Select dates during which this product list will be available for the users to order</HelpBlock>
         <Row>
@@ -159,7 +159,7 @@ class ListAllProducts extends React.Component {
             }
           </Col>
         </Row>
-      </ListGroupItem>
+      </Panel>
     );
   }
 
