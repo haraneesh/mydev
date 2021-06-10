@@ -80,9 +80,10 @@ class ProductSearch extends React.Component {
           </div>
           {searchString !== '' && (
           <div className="panel-body">
-            { searchResults }
-            { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
-
+            <div className="row">
+              { searchResults }
+              { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
+            </div>
           </div>
           )}
         </div>

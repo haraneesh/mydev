@@ -108,7 +108,9 @@ export default class ProductsOrderMobile extends React.Component {
 )}
                 expanded={(this.state.panelToFocus === 'spcl-header')}
               >
-                {(this.state.panelToFocus === 'spcl-header') && productSpecials}
+                <div className="row">
+                  {(this.state.panelToFocus === 'spcl-header') && productSpecials}
+                </div>
               </Panel>
             </div>
           )}
@@ -128,7 +130,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'veg-header')}
               eventKey="3"
             >
-              {(this.state.panelToFocus === 'veg-header') && productVegetables}
+              <div className="row">
+                {(this.state.panelToFocus === 'veg-header') && productVegetables}
+              </div>
             </Panel>
           </div>
           )}
@@ -148,7 +152,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'fruits-header')}
               eventKey="4"
             >
-              {(this.state.panelToFocus === 'fruits-header') && productFruits}
+              <div className="row">
+                {(this.state.panelToFocus === 'fruits-header') && productFruits}
+              </div>
             </Panel>
           </div>
           )}
@@ -169,7 +175,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'grain-header')}
               eventKey="5"
             >
-              {(this.state.panelToFocus === 'grain-header') && productGrains}
+              <div className="row">
+                {(this.state.panelToFocus === 'grain-header') && productGrains}
+              </div>
             </Panel>
           </div>
           )}
@@ -189,7 +197,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'dhals-header')}
               eventKey="6"
             >
-              {(this.state.panelToFocus === 'dhals-header') && productDhals}
+              <div className="row">
+                {(this.state.panelToFocus === 'dhals-header') && productDhals}
+              </div>
             </Panel>
           </div>
           )}
@@ -209,7 +219,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'spices-header')}
               eventKey="7"
             >
-              {(this.state.panelToFocus === 'spices-header') && productSpices}
+              <div className="row">
+                {(this.state.panelToFocus === 'spices-header') && productSpices}
+              </div>
             </Panel>
           </div>
           )}
@@ -229,7 +241,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'oils-header')}
               eventKey="8"
             >
-              {(this.state.panelToFocus === 'oils-header') && productOils}
+              <div className="row">
+                {(this.state.panelToFocus === 'oils-header') && productOils}
+              </div>
             </Panel>
           </div>
           )}
@@ -249,7 +263,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'swt-header')}
               eventKey="10"
             >
-              {(this.state.panelToFocus === 'swt-header') && productSweetners}
+              <div className="row">
+                {(this.state.panelToFocus === 'swt-header') && productSweetners}
+              </div>
             </Panel>
           </div>
           )}
@@ -269,7 +285,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'prepared-header')}
               eventKey="9"
             >
-              {(this.state.panelToFocus === 'prepared-header') && productPrepared}
+              <div className="row">
+                {(this.state.panelToFocus === 'prepared-header') && productPrepared}
+              </div>
             </Panel>
           </div>
           )}
@@ -289,7 +307,9 @@ export default class ProductsOrderMobile extends React.Component {
               expanded={(this.state.panelToFocus === 'hyg-header')}
               eventKey="10"
             >
-              {(this.state.panelToFocus === 'hyg-header') && productHygiene}
+              <div className="row">
+                {(this.state.panelToFocus === 'hyg-header') && productHygiene}
+              </div>
             </Panel>
           </div>
           )}

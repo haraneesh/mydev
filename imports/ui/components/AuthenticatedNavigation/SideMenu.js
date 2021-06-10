@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { NavLink } from 'react-router-dom';
 import {
-  Panel, Row, Col, Button,
+  Panel, Col, Button,
 } from 'react-bootstrap';
 import AdminNav from './AdminNav';
 import Menu from './Menu';
@@ -16,8 +16,8 @@ const handleLogout = (props) => {
 const SideMenu = (props) => (
   <Menu alignment="right" {...props}>
     <Panel className="menu-panel">
-      <Row>
-        <div className="container">
+      <div className="offset-1">
+        <div className="container row">
           {props.isAdmin && (
           <Col xs={12} sm={6}>
             <AdminNav {...props} />
@@ -53,7 +53,7 @@ const SideMenu = (props) => (
             </ul>
           </Col>
         </div>
-      </Row>
+      </div>
     </Panel>
   </Menu>
 );

@@ -41,28 +41,25 @@ class ViewOrderDetails extends React.Component {
           </Row>
         </div>
         <Panel>
-          <div>
+          <Row>
             <Col xs={12}>
               <Label bsStyle={constants.OrderStatus[order.order_status].label}>
                 {constants.OrderStatus[order.order_status].display_value}
               </Label>
             </Col>
-          </div>
+          </Row>
           <div className="orderDetails panel-body">
             <div>
               <ViewOrderProducts products={order.products} />
             </div>
-            <div>
+            <Row>
               <Col xs={12}>
-                {' '}
                 <strong> Comments </strong>
               </Col>
               <Col xs={12}>
-                {' '}
                 {order.comments}
-                {' '}
               </Col>
-            </div>
+            </Row>
           </div>
           <div className="panel-footer">
             <Row>

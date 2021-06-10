@@ -55,7 +55,7 @@ class RecoverPassword extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="RecoverPassword col-sm-offset-1">
+      <div className="RecoverPassword offset-sm-1">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
             <h3 className="page-header">Recover Password</h3>
@@ -76,8 +76,8 @@ class RecoverPassword extends React.Component {
               <Button type="submit" bsStyle="primary">Recover Password</Button>
               <AccountPageFooter>
                 <p>
-                  Remember your password?
-                  <Link to="/login">Log In</Link>
+                  {'Remember your password? '}
+                  <Link to="/login" className="login-signup">Log In</Link>
                   .
                 </p>
               </AccountPageFooter>

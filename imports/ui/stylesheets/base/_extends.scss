@@ -130,6 +130,7 @@ hr {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 75%;
+    font-weight: 700 !important;
 }
 
 .btn-link{
@@ -191,6 +192,20 @@ div:focus,
     opacity: .2;
     transition: 0s;
   }
+}
+
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.flexcolumn {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
 }
 
 // Paper Radio, Checkbox

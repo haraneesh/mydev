@@ -228,10 +228,14 @@ const CartDetails = ({
 
               {(Meteor.settings.public.ShowReturnBottles) && (
               <div className="row well">
-                <p>
+                <p className="offset-sm-1">
                   Let's Reduce, Renew and Recycle.
                   <br />
-                  Please return glass oil bottles and crates to the delivery person.
+                  Please return
+                  <span style={{ color: '#EF0905' }}>
+                    {' all glass '}
+                  </span>
+                  bottles and crates to the delivery person.
                 </p>
               </div>
               )}

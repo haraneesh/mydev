@@ -40,7 +40,7 @@ const QuantitySelector = ({
   controlName,
   quantitySelected,
 }) => (
-  <div>
+  <div className="row">
     <Col xs={10} className="no-padding">
       <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
         {values.map((selectValue, index) => (
@@ -147,7 +147,8 @@ const ProductForNonAdmin = ({
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
-  const lowestOrdQty = unitsForSelectionArray.length > 0 ? unitsForSelectionArray[firstNonZeroOrderQty] : 0;
+  const lowestOrdQty = unitsForSelectionArray.length > 0
+    ? unitsForSelectionArray[firstNonZeroOrderQty] : 0;
   const lowestOrdQtyPrice = unitprice * lowestOrdQty;
 
   const prodNameDesc = (
@@ -177,7 +178,7 @@ const ProductForNonAdmin = ({
               </s>
             ) : name }
           </Col>
-          <Col xs={6} sm={3} style={{ paddingLeft: '10px' }}>
+          <div className="col" style={{ paddingLeft: '10px' }}>
             <Col xs={12} className="no-padding">
               {!isBasket && (
               <Col xs={12} className="no-padding">
@@ -197,7 +198,7 @@ const ProductForNonAdmin = ({
                 maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
               />
             </Col>
-          </Col>
+          </div>
         </Row>
       </Panel>
     );
@@ -205,7 +206,7 @@ const ProductForNonAdmin = ({
 
   if (sliderView) {
     return (
-      <Col xs={12} className="product-item">
+      <div className="product-item">
         <Col xs={4} className="item-image-container">
           {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
         </Col>
@@ -235,12 +236,12 @@ const ProductForNonAdmin = ({
             </Col>
           </Row>
         </Col>
-      </Col>
+      </div>
     );
   }
 
   return (
-    <Col xs={6} sm={3} className="product-item">
+    <Row className="product-item">
       <Col xs={12} className="item-image-container">
         {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
       </Col>
@@ -282,7 +283,7 @@ const ProductForNonAdmin = ({
         </Row>
       </Col>
 
-    </Col>
+    </Row>
   );
 };
 

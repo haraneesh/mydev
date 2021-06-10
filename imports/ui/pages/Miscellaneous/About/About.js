@@ -2,7 +2,9 @@
 /* eslint-disable no-tabs */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Panel, Col, Button } from 'react-bootstrap';
+import {
+  Panel, Row, Col, Button,
+} from 'react-bootstrap';
 import OurPromise from '../../../components/AboutUs/OurPromise/OurPromise';
 import ContactUs from '../../../components/AboutUs/ContactUs/ContactUs';
 import Testimonials from '../../../components/AboutUs/Testimonials/Testimonials';
@@ -15,22 +17,6 @@ import { relativeTimeRounding } from 'moment';
 // class About extends React.Component {
 
 const About = () => {
-  let activeVideo = 0;
-
-  function reloadVideo(e) {
-    const myvids = [
-      '/new/1.mp4',
-      '/new/2.mp4',
-    ];
-    const myvid = document.getElementById('myvideo');
-
-    // update the new active video index
-    activeVideo = (activeVideo + 1) % myvids.length;
-
-    // update the video source and play
-    myvid.src = myvids[activeVideo];
-    myvid.play();
-  }
   useEffect(() => {
     // console.log("Here, useEffect act as componentDidMount")
     const bodyClassList = document.getElementsByTagName('body')[0].classList;
@@ -42,17 +28,14 @@ const About = () => {
     };
   }, []);
 
-  return ( // <img className = "about_to_lt" src="about/to_lt.jpg"/>
-  // <img className = "about_to_rt" src="about/to_rt.jpg"/>
-  // <img className = "about_bo_lt" src="about/bo_lt.jpg"/>
-  // <img className = "about_bo_rt" src="about/bo_rt.jpg"/>
+  return (
 
     <div className="about-page">
       <section>
         <Panel>
-          <div className="about-section text-left card">
-            <Col sm={6} xs={12}>
-              <img src="new/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
+          <div className="about-section text-left row d-flex align-items-center">
+            <Col sm={6} xs={12} className="d-flex justify-content-center">
+              <img src="about/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
             </Col>
             <Col sm={6} xs={12} className="about-getOrganic text-center">
               <h1> Fresh </h1>
@@ -78,58 +61,52 @@ const About = () => {
       <Panel>
         <div className="text-center bodyCursText">
           <h2 className="page-header no-margin-no-padding"> Why Us</h2>
-
-          <Col sm={3}>
-            <h1 className="dt-align">6+ Years</h1>
-            {' '}
-            <p> promoting organic produce</p>
-          </Col>
-          <Col sm={3}>
-            <h1 className="dt-align">9+ Years</h1>
-            {' '}
-            <p> Organic farmers network</p>
-          </Col>
-          <Col sm={3}>
-            <h1 className="dt-align">1000+ families</h1>
-            {' '}
-            <p> as members</p>
-          </Col>
-          <Col sm={3}>
-            <h1 className="dt-align">5 days</h1>
-            {' '}
-            <p> a week delivery</p>
-          </Col>
-
+          <Row>
+            <Col sm={3}>
+              <h1 className="dt-align">6+ Years</h1>
+              {' '}
+              <p> promoting organic produce</p>
+            </Col>
+            <Col sm={3}>
+              <h1 className="dt-align">9+ Years</h1>
+              {' '}
+              <p> Organic farmers network</p>
+            </Col>
+            <Col sm={3}>
+              <h1 className="dt-align">1000+ families</h1>
+              {' '}
+              <p> as members</p>
+            </Col>
+            <Col sm={3}>
+              <h1 className="dt-align">5 days</h1>
+              {' '}
+              <p> a week delivery</p>
+            </Col>
+          </Row>
         </div>
       </Panel>
 
       <Panel>
-        <section className="text-left text-center-xs card" style={{ height: '20%' }}>
-          <Col sm={6}>
+        <section className="text-left text-center-xs row" style={{ height: '20%' }}>
+          <Col sm={5} className="d-flex align-items-center justify-content-center">
             <h2>
-              Our journey from the
+              Our journey, from the
               <br />
               person behind Suvai
             </h2>
           </Col>
-          <Col sm={6} className="panel-body">
+          <Col sm={7} className="panel-body">
             <div
               className="video"
-              style={{
-                position: 'relative',
-                paddingTop: 25,
-                height: '25em',
-              }}
             >
               <iframe
                 title="Success Story Of Divya Pamuru, Namma Suvai"
                 style={{
-                  position: 'absolute',
+                  position: 'relative',
                   top: 0,
                   left: 0,
                   width: '100%',
-                  height: '25em',
-                  border: '1px solid #fff',
+                  height: '20em',
                   borderRadius: '10px',
                 }}
                 src="https://www.youtube.com/embed/KLpGnPyJcKE"

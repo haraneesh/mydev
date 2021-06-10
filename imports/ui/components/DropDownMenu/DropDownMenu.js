@@ -67,7 +67,7 @@ const DropDownMenu = ({
     ? (
       <DropDownStyles>
         <DropdownButton
-          bsStyle="default"
+          bsStyle="primary"
           title={`${title} `}
           id="dropdown-basic"
         >
@@ -87,8 +87,8 @@ const DropDownMenu = ({
       </DropDownStyles>
     ) : (
       <TabViewStyles>
-        <Row className="text-center">
-          <h3>
+        <Row className="d-flex justify-content-center">
+          <h4>
             {menuItemKeys.map((el) => (
               <Button
                 bsStyle="link"
@@ -99,7 +99,7 @@ const DropDownMenu = ({
                 {menuItems[el].displayName}
               </Button>
             ))}
-          </h3>
+          </h4>
         </Row>
       </TabViewStyles>
     )

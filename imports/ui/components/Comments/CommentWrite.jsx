@@ -48,15 +48,14 @@ const CommentWrite = ({
         placeholder="Write a response ..."
         defaultValue={value}
       />
-      <ButtonToolbar>
+      <ButtonToolbar style={{ marginTop: '1em' }}>
         <Button
           bsSize="small"
           className="btn-primary"
           onClick={() => saveComment(postId, postType, loggedUserId, commentId, commentAddBoxName, onSave)}
         >
-          {' '}
+
           { saveButtonText }
-          {' '}
 
         </Button>
         { cancelButton }

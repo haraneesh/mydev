@@ -1,6 +1,10 @@
 @import '../../stylesheets/bootstrap/bootstrap/variables';
 
 .EditOrderDetails  {
+    .flickity-slider{
+        margin: 0px 3em;
+    }
+
     .product-item {
         padding: 1em 1em;
     }
@@ -38,6 +42,11 @@
         border-bottom: 1px solid $table-border-color;
         padding: 1em 0em;
     }
+
+    .sliderProduct {
+        max-width: 100% !important;
+    }
+
     @media (max-width: $screen-xs-min) {
 
         .product-item{

@@ -61,7 +61,7 @@ class ResetPassword extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="ResetPassword col-sm-offset-1">
+      <div className="ResetPassword offset-sm-1">
         <Row>
           <Col xs={12} sm={6} md={4}>
             <h3 className="page-header">Reset Password</h3>

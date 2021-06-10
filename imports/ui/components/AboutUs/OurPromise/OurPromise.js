@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import './OurPromise.scss';
 
@@ -14,70 +14,71 @@ function OurPromise() {
         <br />
         That's why our food has
       </h7>
-      <Col xs={12} sm={8} className="flex-container-center text-center panel-body">
-        <div style={{ alignSelf: 'center', listStyleType: 'none', textAlign: 'left' }}>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Pesticides
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Preservatives
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Artificial Colors
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Artificial Flavor Enhancers
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Artificial Sweetners
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Refined flour (Maida, White flour)
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Refined Sugar
-            </p>
-          </h7>
-          <h7>
-            <p>
-              <span className="underline">No</span>
-              {' '}
-              Hydrogenated and Unhealthy Oils
-            </p>
-          </h7>
-        </div>
-      </Col>
-      <Col xs={12} sm={4} className="flex-container-center text-center">
-        <img src="about/foodPlate.jpg" alt="Food Plate" />
-      </Col>
-
+      <Row>
+        <Col xs={12} sm={8} className="flex-container-center text-center panel-body">
+          <div style={{ alignSelf: 'center', listStyleType: 'none', textAlign: 'left' }}>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Pesticides
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Preservatives
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Artificial Colors
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Artificial Flavor Enhancers
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Artificial Sweetners
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Refined flour (Maida, White flour)
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Refined Sugar
+              </p>
+            </h7>
+            <h7>
+              <p>
+                <span className="underline">No</span>
+                {' '}
+                Hydrogenated and Unhealthy Oils
+              </p>
+            </h7>
+          </div>
+        </Col>
+        <Col xs={12} sm={4} className="flex-container-center text-center">
+          <img src="about/foodPlate.jpg" alt="Food Plate" />
+        </Col>
+      </Row>
       {/*
         <Col xs={12} sm={6} className="text-center no-padding">
           <div className="heading-text">

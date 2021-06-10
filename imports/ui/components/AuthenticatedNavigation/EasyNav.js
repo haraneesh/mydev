@@ -1,11 +1,11 @@
 import React from 'react';
-import { Nav, Glyphicon } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import { NavLink, Link } from 'react-router-dom';
 
 import './EasyNav.scss';
 
 export const EasyNavNarrowScreen = (props) => (
-  <ul className="sec-menu-bar visible-sm visible-xs">
+  <ul className="sec-menu-bar d-sm-none row">
     <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
       {/* <Link to="/neworder/selectbasket"> Place Order </Link> */}
       <Link to="/neworder"> Place Order </Link>
@@ -26,7 +26,7 @@ export const EasyNavNarrowScreen = (props) => (
 );
 
 export const EasyNavWideScreen = (props) => (
-  <Nav className="hidden-xs hidden-sm wide-menu-bar">
+  <Nav className="d-none d-md-block wide-menu-bar">
     <li>
       { /* <NavLink to="/neworder/selectbasket"> Place Order</NavLink> */}
       <Link to="/neworder"> Place Order </Link>

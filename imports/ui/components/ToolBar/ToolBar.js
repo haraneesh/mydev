@@ -103,7 +103,8 @@ const ToolBar = ({
     if (totalProductsInCount > 0) {
       history.push('/cart');
     } else {
-      history.push('/neworder/selectbasket');
+      history.push('/neworder');
+      // history.push('/neworder/selectbasket');
     }
   }
 
@@ -117,7 +118,7 @@ const ToolBar = ({
 
   if (authenticated) {
     return (
-      <div id="toolBar" className="toolBar container-fluid text-center">
+      <div id="toolBar" className="toolBar text-center">
         <div className="box box1">
           <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
             <Icon icon="comment" />

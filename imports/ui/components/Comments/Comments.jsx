@@ -6,9 +6,7 @@ import PropTypes from 'prop-types';
 import CommentView from './CommentView';
 import CommentWrite from './CommentWrite';
 
-
 export default class Comments extends React.Component {
-
   getUserHashObject(users) {
     const userHash = {};
     users.forEach((user, index) => {
@@ -26,7 +24,9 @@ export default class Comments extends React.Component {
   }
 
   render() {
-    const { postId, postType, loggedUserId, comments, commentUsers } = this.props;
+    const {
+      postId, postType, loggedUserId, comments, commentUsers,
+    } = this.props;
     this.commentUserHash = this.getUserHashObject(commentUsers);
     const commentViews = comments.map(function (comment, index) {
       const commentOwner = this.commentUserHash[comment.owner];
@@ -35,7 +35,7 @@ export default class Comments extends React.Component {
       return <CommentView expandedComment={expandedComment} loggedUserId={loggedUserId} key={`comment-${index}`} />;
     }, this);
     return (
-      <div>
+      <div style={{ padding: '1em' }}>
         <CommentWrite postId={postId} postType={postType} loggedUserId={loggedUserId} />
         { commentViews }
       </div>

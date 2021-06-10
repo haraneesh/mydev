@@ -192,6 +192,7 @@ class ListAllProducts extends React.Component {
               id="adminProductList"
               activeKey={selectedHeaderKey}
               onSelect={this.tabOnClick}
+              style={{ textAlign: 'center' }}
             >
               {productsDisplay}
             </Tabs>

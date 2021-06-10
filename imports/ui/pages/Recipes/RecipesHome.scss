@@ -5,12 +5,8 @@
         color:$gray-base;
     }    
 
-    .rowCategory {
-        height:10em;
-    }
-
-    .catName{
-        padding:27% 0;
+    .rowCategory img {
+        height:15em;
     }
 
     @media (max-width: $screen-xs-max) {

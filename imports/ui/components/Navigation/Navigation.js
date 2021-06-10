@@ -14,9 +14,8 @@ const Navigation = (props) => (
         && (
         <span
           id="backIcon"
-          className="visible-xs-inline"
           style={{
-            marginTop: '26px', marginLeft: '2.5rem', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block',
+            marginTop: '20px', marginLeft: '2.5rem', marginRight: '5px', float: 'left', fontSize: '1.25em', display: 'block',
           }}
         >
           <a onClick={() => { props.history.goBack(); }} href="#">

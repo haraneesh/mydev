@@ -60,7 +60,7 @@ Recipes.schema = new SimpleSchema({
     label: 'The list of comments attached to the recipe.',
     optional: true,
   },
-  'commentsIds.$': {
+  'commentIds.$': {
     type: String,
   },
   description: {

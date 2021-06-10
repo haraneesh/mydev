@@ -34,98 +34,6 @@ export const insertProduct = new ValidatedMethod({
   },
 });
 
-export const updateProductName = new ValidatedMethod({
-  name: 'products.name.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.name': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateProductSKU = new ValidatedMethod({
-  name: 'products.sku.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.sku': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateProductUnitPrice = new ValidatedMethod({
-  name: 'products.unitprice.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.unitprice': { type: Number, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateProductwSaleBaseUnitPrice = new ValidatedMethod({
-  name: 'products.wSaleBaseUnitPrice.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.wSaleBaseUnitPrice': { type: Number, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateUnitForSelection = new ValidatedMethod({
-  name: 'products.unitsForSelection.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.unitsForSelection': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    if (Meteor.isServer) {
-      if (update.unitsForSelection.split(',').every(_IsNumber)) {
-        Products.update(_id, { $set: update });
-      }
-    }
-  },
-});
-
-export const updateProductDescription = new ValidatedMethod({
-  name: 'products.description.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.description': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateProductType = new ValidatedMethod({
-  name: 'products.type.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.type': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
-export const updateProductImagePath = new ValidatedMethod({
-  name: 'products.image_path.update',
-  validate: new SimpleSchema({
-    _id: { type: String },
-    'update.image_path': { type: String, optional: true },
-  }).validator(),
-  run({ _id, update }) {
-    Products.update(_id, { $set: update });
-  },
-});
-
 function isNumber(value) {
   return !isNaN(value);
 }
@@ -201,12 +109,6 @@ rateLimit({
   methods: [
     insertProduct,
     upsertProduct,
-    updateProductName,
-    updateProductType,
-    updateProductUnitPrice,
-    updateProductwSaleBaseUnitPrice,
-    updateProductDescription,
-    updateProductSKU,
     removeProduct,
     'products.getItemsFromZoho',
     'products.bulkUpdatePrices',

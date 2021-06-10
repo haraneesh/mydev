@@ -3,7 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor, EditorState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
-import { Button, Panel, Col } from 'react-bootstrap';
+import {
+  Button, Panel, Row, Col,
+} from 'react-bootstrap';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
 import Recipes from '../../../api/Recipes/Recipes';
@@ -70,17 +72,19 @@ class ViewRecipe extends React.Component {
           )}
 
           <Panel style={{ padding: '1rem' }}>
-            <Col xs={3} style={{ marginBottom: '1rem' }}>Serves:</Col>
-            <Col xs={3} style={{ marginBottom: '1rem' }}>{recipe.serves}</Col>
+            <Row>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>Serves:</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>{recipe.serves}</Col>
 
-            <Col xs={3} style={{ marginBottom: '1rem' }}>Level:</Col>
-            <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingLevel}`}</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>Level:</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingLevel}`}</Col>
 
-            <Col xs={3} style={{ marginBottom: '1rem' }}>Prep time:</Col>
-            <Col xs={3} style={{ marginBottom: '1rem' }}>{(recipe.prepTimeInMins > 0) ? `${recipe.prepTimeInMins} mins` : 'No'}</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>Prep time:</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>{(recipe.prepTimeInMins > 0) ? `${recipe.prepTimeInMins} mins` : 'No'}</Col>
 
-            <Col xs={3} style={{ marginBottom: '1rem' }}>Cook time:</Col>
-            <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingTimeInMins} mins`}</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>Cook time:</Col>
+              <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingTimeInMins} mins`}</Col>
+            </Row>
           </Panel>
 
           <Panel className="ingredientsView">

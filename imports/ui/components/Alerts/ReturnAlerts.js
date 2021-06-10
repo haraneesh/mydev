@@ -25,7 +25,7 @@ function ReturnAlerts() {
       <small>
         Gentle reminder, please return
         {' '}
-        {highLightText('glass oil bottles')}
+        {highLightText('all glass bottles')}
         {' '}
         and
         {' '}

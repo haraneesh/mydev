@@ -1,16 +1,14 @@
 import React from 'react';
-import { Nav, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './PublicNavigation.scss';
 
 const PublicNavigation = (props) => (
-  <div className="publicNavigation pull-right">
-    <Col xs={6} className="text-center">
-     { (props.routeName !== "About") ?  (<Link to="/about">About Us</Link>) : (<Link to="/login">Log In</Link>) }
-    </Col>
-    <Col xs={6} className="text-center">
-      <Link to="/vision">Our Vision</Link>
+  <div className="publicNavigation row pull-right">
+    <Col xs={12} className="text-center row">
+      { (props.routeName !== 'About') ? (<Link className="col-7" to="/about">About Us</Link>) : (<Link className="col-7" to="/login">Log In</Link>) }
+      <Link className="col-5" to="/vision">Our Vision</Link>
     </Col>
     {/* } <li>
       <NavLink to="/login">Log In</NavLink>

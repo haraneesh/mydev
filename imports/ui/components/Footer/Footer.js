@@ -13,28 +13,27 @@ const Footer = () => (
   <div className="Footer">
 
     <Grid fluid="true">
-      <p className="pull-left">
-        &copy;
-        {' '}
-        {copyrightYear()}
-        {' '}
-        Suvai Organics
-        <span className="hidden-xs"> | Eat Healthy, Live Healthy</span>
-      </p>
-      <ul className="pull-right">
-        <li>
-          <Link to="pages/terms">
+
+      <div className="row">
+        <div className="col-xs-7 col-sm-8 text-left">
+          &copy;
+          {' '}
+          {copyrightYear()}
+          {' '}
+          Suvai Organics
+          <span className="d-sm-inline d-none"> | Eat Healthy, Live Healthy</span>
+        </div>
+        <div className="col-xs-5 col-sm-4 text-right">
+          <Link to="pages/terms" style={{ paddingRight: '15px' }}>
             Terms
-            <span className="hidden-xs"> of Service</span>
+            <span className="d-sm-inline d-none"> of Service</span>
           </Link>
-        </li>
-        <li>
           <Link to="/pages/privacy">
             Privacy
-            <span className="hidden-xs"> Policy</span>
+            <span className="d-sm-inline d-none"> Policy</span>
           </Link>
-        </li>
-      </ul>
+        </div>
+      </div>
     </Grid>
   </div>
 );

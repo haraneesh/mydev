@@ -45,7 +45,7 @@ class WelcomeMessage extends React.Component {
               ,
             </strong>
             {' '}
-            <br className="visible-xs-block" />
+            <br className="d-xs-block d-sm-none" />
             {` ${(profile.salutation) ? profile.salutation : ''} ${profile.name.first} ${profile.name.last}`}
           </p>
         </Alert>

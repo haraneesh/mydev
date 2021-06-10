@@ -13,9 +13,9 @@ import { formValid, formValChange } from '../../../../modules/validate';
 
 const showPasswordButtonPositions = {
   position: 'relative',
-  top: '-45px',
+  top: '-41px',
   padding: '10px',
-  right: '7px',
+  right: '6px',
   float: 'right',
   fontSize: '75%',
 };
@@ -77,7 +77,7 @@ class Login extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="Login Absolute-Center is-Responsive col-sm-offset-1">
+      <div className="Login Absolute-Center is-Responsive offset-sm-1">
         <Col xs={12} sm={6} md={5} lg={4}>
           <h3 className="page-header">Log In</h3>
           <form onSubmit={this.validateForm}>

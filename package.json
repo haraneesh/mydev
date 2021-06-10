@@ -33,7 +33,7 @@
     "prop-types": "^15.7.2",
     "razorpay": "^2.0.6",
     "react": "^16.13.1",
-    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-addons-pure-render-mixin": "^15.6.3",
     "react-autobind": "^1.0.6",
     "react-autosuggest": "^9.4.3",
     "react-bootstrap": "^0.31.5",
@@ -54,7 +54,7 @@
     "react-rte": "^0.16.1",
     "react-toastify": "^6.0.9",
     "request": "^2.88.2",
-    "simpl-schema": "^0.3.2",
+    "simpl-schema": "^1.12.0",
     "styled-components": "^5.1.1",
     "timeago.js": "^4.0.2",
     "xml": "^1.0.1"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  ListGroup, Alert, Row, Col, Panel, Button, ButtonToolbar,
+  ListGroup, Alert, Row, Col, Panel, Button,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { Roles } from 'meteor/alanning:roles';
@@ -66,10 +66,11 @@ const ProductsOrderMain = (props) => {
   };
 
   const displayToolBar = (orderStatus) => (
-    <ButtonToolbar className="pull-right">
+    <div className="text-center">
       {(orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button bsSize="small" onClick={handleCancel}>Cancel Order</Button>)}
+      {' '}
       {(isAdmin) && (<Button bsSize="small" onClick={handlePrintProductList}>Print Order List</Button>)}
-    </ButtonToolbar>
+    </div>
   );
 
   const handlePrintProductList = () => {
@@ -238,11 +239,12 @@ const ProductsOrderMain = (props) => {
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
-          <h3 className="page-header">
-            {' '}
-            {formHeading}
+          <div className="page-header">
+            <h3>
+              {formHeading}
+            </h3>
             {displayToolBar(orderStatus)}
-          </h3>
+          </div>
           {displayProductsAndSubmit(isMobile, productGroups)}
         </Col>
       </Row>

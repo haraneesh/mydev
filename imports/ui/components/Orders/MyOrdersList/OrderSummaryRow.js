@@ -41,42 +41,48 @@ const OrderSummaryRow = ({
   return (
     <Row>
       <Col xs={11}>
-        <Col xs={12} sm={6} md={3} className="remLeftRightPad">
-          <Label bsStyle={constants.OrderStatus[displayOrderStatus].label}>
-            {constants.OrderStatus[displayOrderStatus].display_value}
-          </Label>
-        </Col>
-        <Col xs={12} sm={6} md={3} className="remLeftRightPad">
-          {orderDateDisplay}
-        </Col>
-
-        <Col xs={12} md={6}>
-          <Col xs={6} className="remLeftRightPad">
-            <Col xs={12} sm={3} md={4} className="remLeftRightPad">
-              <span className="text-muted">Amount: </span>
-            </Col>
-            <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-              {invoiceTotals
-                ? formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)
-                : formatMoney(orderAmount, accountSettings)}
-            </Col>
+        <Row>
+          <Col xs={12} sm={6} md={3} className="remLeftRightPad">
+            <Label bsStyle={constants.OrderStatus[displayOrderStatus].label}>
+              {constants.OrderStatus[displayOrderStatus].display_value}
+            </Label>
+          </Col>
+          <Col xs={12} sm={6} md={3} className="remLeftRightPad">
+            {orderDateDisplay}
           </Col>
 
-          <Col xs={6} className="remLeftRightPad">
-            <Col xs={12} sm={3} md={4} className="remLeftRightPad">
-              {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
-                <div>
-                  <span className="text-muted">Pending: </span>
-                </div>
-              ) : (<div />)}
-            </Col>
-            <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-              {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
-                ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
-              ) : (<div />)}
-            </Col>
+          <Col xs={12} md={6}>
+            <Row>
+              <Col xs={6} className="remLeftRightPad row">
+                <Col xs={12} sm={3} md={4} className="remLeftRightPad">
+                  <span className="text-muted">Amount: </span>
+                </Col>
+                <Col xs={12} sm={9} md={8} className="remLeftRightPad">
+                  {invoiceTotals
+                    ? formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)
+                    : formatMoney(orderAmount, accountSettings)}
+                </Col>
+              </Col>
+
+              <Col xs={6} className="remLeftRightPad">
+                <Row>
+                  <Col xs={12} sm={3} md={4} className="remLeftRightPad">
+                    {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
+                      <div>
+                        <span className="text-muted">Pending: </span>
+                      </div>
+                    ) : (<div />)}
+                  </Col>
+                  <Col xs={12} sm={9} md={8} className="remLeftRightPad">
+                    {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
+                      ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
+                    ) : (<div />)}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </Col>
-        </Col>
+        </Row>
       </Col>
 
       <Col xs={1}>

@@ -6,7 +6,6 @@ import {
 import { formatMoney } from 'accounting-js';
 import Product from '../Orders/Product';
 import { accountSettings } from '../../../modules/settings';
-import constants from '../../../modules/constants';
 import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
 const displayWithDivider = (displayArray, displayText) => (
@@ -148,7 +147,7 @@ ListProducts.propTypes = {
 export const OrderFooter = ({
   history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting,
 }) => (
-  <div className="orderFooter">
+  <div className="orderFooter row">
     <Col sm={8} xs={12}>
       <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
         {'Total '}
@@ -161,11 +160,11 @@ export const OrderFooter = ({
         </strong>
       </h4>
     </Col>
-    <Col className="text-right-not-xs" sm={4} xs={12}>
+    <Col className="text-right-not-xs  d-flex align-items-center" sm={4} xs={12}>
       {(!showWaiting) && (
       <Button
         bsStyle="primary"
-        style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
+        style={{ marginLeft: '0.5em' }}
         disabled={totalBillAmount <= 0}
         onClick={() => { onButtonClick({ history, orderId }); }}
         className="btn-block"

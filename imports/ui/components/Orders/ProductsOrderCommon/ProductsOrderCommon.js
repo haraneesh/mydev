@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, Button, FormControl, PanelGroup,
+  Row, Col, Button, FormControl, PanelGroup, Panel,
 } from 'react-bootstrap';
 import { isDeviceMobile } from '../../../../modules/helpers';
 import Product from '../Product';
@@ -10,7 +10,7 @@ import constants from '../../../../modules/constants';
 export const OrderFooter = ({
   isMobile, totalBillAmount, onButtonClick, submitButtonName, onSecondButtonClick,
 }) => (
-  <Row style={{ marginTop: isMobile ? '0em' : '2.5em' }}>
+  <div style={{ marginBottom: '1em' }}>
     {/* <Col className="text-left-not-xs" sm={4} xs={12}>
        } <Button
             bsStyle="default"
@@ -22,7 +22,7 @@ export const OrderFooter = ({
           </Button>
     </Col> */}
 
-    <Col sm={6} smOffset={3} xs={10} xsOffset={1}>
+    <div className="offset-1 col-xs-10 offset-sm-3 col-sm-6">
       <Button
         bsStyle="primary"
         disabled={totalBillAmount <= 0}
@@ -32,8 +32,8 @@ export const OrderFooter = ({
         {' '}
         {submitButtonName}
       </Button>
-    </Col>
-  </Row>
+    </div>
+  </div>
 );
 
 OrderFooter.defaultProps = {

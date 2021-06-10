@@ -101,7 +101,7 @@ class Signup extends React.Component {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
     return (!signUpRequestSent ? (
-      <div className="Signup col-sm-offset-1">
+      <div className="Signup offset-sm-1">
         <div>
           <Col xs={12} sm={6} md={5} lg={4}>
             <h3 className="page-header">Sign Up</h3>

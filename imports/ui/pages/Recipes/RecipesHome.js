@@ -20,7 +20,7 @@ const catImageSection = (name, classname) => (
 );
 
 const catNameSection = (name, displayName, recipeCount, index) => (
-  <Col xs={12} sm={4} className="text-center">
+  <Col xs={12} sm={4} className="d-flex align-items-center justify-content-center">
     <div className={`catName catName${index}`}>
       <h4>{displayName.toUpperCase()}</h4>
       {/* <h4><small>{`${(recipeCount) || 0} recipes`}</small></h4> */}
@@ -30,14 +30,14 @@ const catNameSection = (name, displayName, recipeCount, index) => (
 
 const recipeHomeCategoryRow = (name, displayName, recipeCount, index) => (
   <Panel>
-    <Row className="rowCategory">
+    <div className="rowCategory">
       <Link to={`/recipes/bycategory/${name}`}>
-        <div className={`recipe${name}`}>
+        <Row className={`recipe${name}`}>
           {catImageSection(name, (index % 2 === 0) ? 'pull-right' : 'pull-left')}
           {catNameSection(name, displayName, recipeCount, index % 4)}
-        </div>
+        </Row>
       </Link>
-    </Row>
+    </div>
   </Panel>
 );
 
@@ -68,7 +68,7 @@ const RecipesHome = ({ history }) => {
     <div className="RecipesHome">
       <Row>
         <Col xs={12}>
-          <div className="page-header clearfix">
+          <div className="page-header clearfix row">
             <h3 className={isAdmin ? 'col-xs-8' : 'col-xs-12'}>Recipes</h3>
             { isAdmin && (
             <Button

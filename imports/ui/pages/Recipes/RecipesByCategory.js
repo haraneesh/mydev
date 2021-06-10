@@ -14,7 +14,7 @@ import { RecipeImageViewThumbnail } from '../../components/ImageUpload/ImageUplo
 import './RecipesHome.scss';
 
 const recipeImageSection = (cloudImageId, classname) => (
-  <Col xs={12} sm={6} className={classname} style={{ backgroundColor: '#f0f0f0' }}>
+  <Col xs={12} sm={6} className={classname}>
     <RecipeImageViewThumbnail cloudImageId={cloudImageId} />
   </Col>
 );
@@ -44,14 +44,14 @@ const recipeDetailsSection = (recipe) => (
 function listRecipes(recipe) {
   return (
     <Panel>
-      <Row className="rowCategory">
+      <div className="rowCategory">
         <Link to={`/recipes/${recipe._id}`}>
-          <div className={`recipe${recipe.title}`}>
+          <Row className={`recipe${recipe.title}`}>
             {recipeImageSection(recipe.imageId, 'pull-left')}
             {recipeDetailsSection(recipe)}
-          </div>
+          </Row>
         </Link>
-      </Row>
+      </div>
     </Panel>
   );
 }
@@ -102,8 +102,8 @@ function RecipesByCategory(args) {
       { isAdmin && (
       <Row>
         <Col xs={12}>
-          <div className="page-header clearfix">
-            <h3 className={isAdmin ? 'col-xs-8' : 'col-xs-12'}>
+          <div className="page-header row">
+            <h3 className="col-xs-8">
               {
                 RecipeCat[categoryTag].displayName
             }

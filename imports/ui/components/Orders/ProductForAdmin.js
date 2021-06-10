@@ -59,7 +59,7 @@ class ProductForAdmin extends React.Component {
     } = this.props;
 
     return (
-      <Col sm={12} className="no-padding product-item">
+      <Row className="no-padding product-item">
         <Col sm={!isBasket ? 5 : 8}>
           <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>
           {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
@@ -96,7 +96,7 @@ class ProductForAdmin extends React.Component {
             </p>
           </Col>
         )}
-      </Col>
+      </Row>
     );
   }
 }
