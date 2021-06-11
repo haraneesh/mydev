@@ -88,34 +88,18 @@ export const RecipeImageViewThumbnail = ({ cloudImageId }) => (
     publicId={`recipes/${cloudImageId}`}
     height="200"
     crop="scale"
-    style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+    style={{
+      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
+    }}
   >
     <Placeholder type="predominant" />
-    <Transformation quality="auto" fetchFormat="auto" />
+    <Transformation flags="progressive.progressive:semi" quality="auto:best" />
   </Image>
 );
 
 export const RecipeImageViewHero = ({ cloudImageId }) => (
   <Image
     secure="true"
-    loading="lazy"
-    cloudName={Meteor.settings.public.cloudinary.cloudName}
-    publicId={`recipes/${cloudImageId}`}
-    crop="scale"
-    style={{
-      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%', height: '20em',
-    }}
-  >
-    <Placeholder type="predominant" />
-    <Transformation quality="auto:best" fetchFormat="auto" />
-    <Transformation flags="progressive.progressive:semi" />
-  </Image>
-);
-
-export const RecipeCategoryImage = ({ cloudImageId }) => (
-  <Image
-    secure="true"
-    loading="lazy"
     cloudName={Meteor.settings.public.cloudinary.cloudName}
     publicId={`recipes/${cloudImageId}`}
     crop="scale"
@@ -123,8 +107,20 @@ export const RecipeCategoryImage = ({ cloudImageId }) => (
       marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
     }}
   >
-    <Placeholder type="predominant" />
-    <Transformation quality="auto:best" fetchFormat="auto" />
-    <Transformation flags="progressive.progressive:semi" />
+    <Transformation flags="progressive.progressive:semi" quality="auto:best" />
+  </Image>
+);
+
+export const RecipeCategoryImage = ({ cloudImageId }) => (
+  <Image
+    secure="true"
+    cloudName={Meteor.settings.public.cloudinary.cloudName}
+    publicId={`recipes/${cloudImageId}`}
+    crop="scale"
+    style={{
+      marginLeft: 'auto', marginRight: 'auto', display: 'block', maxWidth: '100%',
+    }}
+  >
+    <Transformation flags="progressive.progressive:semi" quality="auto:best" />
   </Image>
 );
