@@ -103,19 +103,19 @@ function RecipesByCategory(args) {
       <Row>
         <Col xs={12}>
           <div className="page-header row">
-            <h3 className="col-xs-8">
+            <h3 className="col-xs-9">
               {
                 RecipeCat[categoryTag].displayName
             }
             </h3>
-
-            <Button
-              bsStyle="primary"
-              className="col-xs-3"
-              onClick={() => { history.push('/recipes/new'); }}
-            >
-              New
-            </Button>
+            <Col xs={3} className="text-left">
+              <Button
+                bsStyle="primary"
+                onClick={() => { history.push('/recipes/new'); }}
+              >
+                New
+              </Button>
+            </Col>
 
           </div>
         </Col>

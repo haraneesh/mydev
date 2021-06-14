@@ -88,12 +88,12 @@ function AcceptPay({ userWallet, loggedInUser }) {
       {walletState.paymentInProcess && (<Loading />)}
       <Panel>
         <Row>
-          <Col xs={6} sm={5} className="text-right">
-            <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
-          </Col>
-          <Col xs={6} sm={7} className="text-left">
-            <h4 className={walletState.balanceAmountClass}>
-              {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
+          <Col xs={12} className="text-center">
+            <h4>
+              {`Wallet Balance${' '}`}
+              <span className={walletState.balanceAmountClass}>
+                {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
+              </span>
             </h4>
           </Col>
         </Row>

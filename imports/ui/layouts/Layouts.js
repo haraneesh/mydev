@@ -16,9 +16,10 @@ const trackPageViews = ({
     switch (true) {
       case !!loggedInUser:
         SuvaiAnalytics.analyticsFunctions.initialize(loggedInUser);
+
         SuvaiAnalytics.analyticsFunctions.logEvent(
           {
-            event: SuvaiAnalytics.Events.NAVIGATE_PAGE,
+            event: routeName,
             eventProperties: {
               routeName,
             },
@@ -47,7 +48,7 @@ const trackPageViews = ({
         SuvaiAnalytics.analyticsFunctions.initializeNotLoggedIn();
         SuvaiAnalytics.analyticsFunctions.logEventNotLoggedIn(
           {
-            event: SuvaiAnalytics.Events.NAVIGATE_SIGNUP_PAGE,
+            event: routeName,
             eventProperties: {
               routeName,
               params: match.params,

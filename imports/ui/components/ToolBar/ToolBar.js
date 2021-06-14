@@ -157,9 +157,7 @@ const ToolBar = ({
           <Button bsStyle="link" onClick={() => { history.push('/mywallet'); }}>
             <Icon icon="rupee-sign" />
             { (numberOfAwaitingPayments > 0) && (
-            <b className="alertMenu alertBubble">
-              .
-            </b>
+            <b className="alertMenu alertBubble"> </b>
             )}
             <span style={fontProps}>Wallet</span>
           </Button>

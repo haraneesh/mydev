@@ -127,9 +127,9 @@ const MessagesAdmin = ({
                 );
               }
             })}
-            <Row className="text-center">
+            <div className="text-center col-12">
               <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
-            </Row>
+            </div>
           </>
         ) : !loading && (<Alert bsStyle="warning">No messages yet!</Alert>)}
     </div>

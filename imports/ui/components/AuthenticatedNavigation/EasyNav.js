@@ -6,11 +6,11 @@ import './EasyNav.scss';
 
 export const EasyNavNarrowScreen = (props) => (
   <ul className="sec-menu-bar d-sm-none row">
-    <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
+    <li className="col-xs-6 text-center">
       {/* <Link to="/neworder/selectbasket"> Place Order </Link> */}
       <Link to="/neworder"> Place Order </Link>
     </li>
-    <li className="col-xs-6 text-center" style={{ padding: '0px 0px 10px' }}>
+    <li className="col-xs-6 text-center">
       <Link to="/mywallet">My Wallet</Link>
     </li>
     {/* <li className="col-xs-4 text-center" style={{ padding: '0px 0px 10px' }}>

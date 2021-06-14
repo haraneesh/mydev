@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
-  BrowserRouter as Router, useHistory,
+  BrowserRouter, useHistory,
 } from 'react-router-dom';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
@@ -30,7 +30,6 @@ const RootWithRouter = (props) => {
       ) {
         Meteor.call('messages.updateLastVisitedDate');
       }
-      currentRoute.current = location.pathname;
     });
   }, [history]);
 
@@ -52,9 +51,9 @@ const Root = (props) => {
   }
 
   return (
-    <Router>
+    <BrowserRouter>
       <RootWithRouter {...props} />
-    </Router>
+    </BrowserRouter>
   );
 };
 

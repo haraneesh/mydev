@@ -35,7 +35,6 @@ export const MessageImageViewHero = ({ cloudImageId }) => (
       minHeight: '17.5em',
     }}
   >
-    <Placeholder type="predominant" />
     <Transformation quality="auto:best" fetchFormat="auto" />
     <Transformation flags="progressive.progressive:semi" />
   </Image>
@@ -57,7 +56,6 @@ export const MessageImageViewHeroExpand = ({ cloudImageId }) => (
       minHeight: '100%',
     }}
   >
-    <Placeholder type="predominant" />
     <Transformation quality="auto:best" fetchFormat="auto" />
     <Transformation flags="progressive.progressive:semi" />
   </Image>

@@ -124,9 +124,9 @@ const Messages = ({
               }
             })}
 
-            <Row className="text-center">
+            <div className="text-center col-12">
               <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
-            </Row>
+            </div>
           </>
         )
         : <Alert bsStyle="warning">No messages yet!</Alert>}

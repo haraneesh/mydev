@@ -1,6 +1,15 @@
-.navbar {
-  border-radius: 0;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+.backButton {
+  margin-left: 2.5rem;
+  margin-right: 4rem;
+  margin-top: 20px;
+  float: left;
+  font-size: 1.25em;
+  display: block;
+};
+
+@media (max-width: 500px) {
+  .backButton {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
 }
