@@ -1,9 +1,7 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
 import {
-  Row, Col, Panel, Button,
+  Row, Col, Panel,
 } from 'react-bootstrap';
-import { toast } from 'react-toastify';
 import { syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
 import { bulkSyncProductsZoho } from '../../../api/ZohoSyncUps/zohoProductsMethods';
 import { bulkSyncUsersZoho } from '../../../api/ZohoSyncUps/zohoContactsMethods';
@@ -16,15 +14,6 @@ const showButton = () => {
     return true;
   }
   return false;
-};
-
-const getLostOrders = () => {
-  Meteor.call('orders.getOrdersBetweenJul6Jul18', (error) => {
-    if (error) {
-      // toast.error(error.reason);
-      toast.error(error.reason);
-    }
-  });
 };
 
 const ZohoSyncUp = () => (
@@ -70,10 +59,6 @@ const ZohoSyncUp = () => (
             syncName="< Update Offline Payments"
             syncDescription="Update invoice and payment details from Zoho. Will be enabled before 9am and after 7 PM."
           />
-          <hr />
-          <Button type="button" onClick={getLostOrders}>
-            &#60; Sync Lost Orders
-          </Button>
         </Col>
       </Row>
     </Panel>

@@ -105,5 +105,5 @@ Orders.find({}).fetch().forEach(order => {
 
 // upgrade to Roles 3.0
 
-Roles._forwardMigrate();
-Roles._forwardMigrate2();
+// Roles._forwardMigrate();
+// Roles._forwardMigrate2();

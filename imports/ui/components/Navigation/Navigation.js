@@ -34,6 +34,7 @@ function Navigation(props) {
             className="brand-logo"
             src="/logo.png"
             alt="Suvai"
+            onClick={() => { history.push('/'); }}
           />
 
         </Navbar.Brand>
