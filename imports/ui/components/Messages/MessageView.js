@@ -156,7 +156,7 @@ const MessageView = ({
 };
 
 MessageView.defaultProps = {
-  loggedInUserId: Meteor.user()._id,
+  loggedInUserId: Meteor.user() ? Meteor.user()._id : '',
   editMessagePage: false,
   isAdmin: false,
 };

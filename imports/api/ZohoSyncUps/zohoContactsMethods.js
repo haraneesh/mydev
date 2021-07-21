@@ -288,7 +288,11 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['customer.getStatement', 'customer.sendStatement', bulkSyncUsersZoho, getUserWallet],
+  methods: [
+    'customer.getStatement',
+    'customer.sendStatement',
+    bulkSyncUsersZoho,
+    getUserWallet],
   limit: 5,
   timeRange: 1000,
 });

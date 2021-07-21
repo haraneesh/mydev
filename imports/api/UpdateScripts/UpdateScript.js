@@ -102,3 +102,8 @@ Orders.find({}).fetch().forEach(order => {
   const role = Roles.getRolesForUser(order.customer_details._id)[0];
   Orders.update({ _id: order._id }, { $set: { 'customer_details.role': role } });
 }); */
+
+// upgrade to Roles 3.0
+
+Roles._forwardMigrate();
+Roles._forwardMigrate2();

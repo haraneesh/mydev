@@ -63,7 +63,7 @@ class Signup extends React.Component {
     const user = {
       username: this.whMobilePhone.value,
       email: this.emailAddress.value,
-      password: document.querySelector('[name="password"]').value, // this.password.value,
+      password: document.querySelector('[name="password"]').value,
       profile: {
         name: {
           first: this.firstName.value,

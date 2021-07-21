@@ -1,8 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import './OurPromise.scss';
-
 function OurPromise() {
   return (
     <div className="page-header text-center no-padding">
@@ -15,7 +13,7 @@ function OurPromise() {
         That's why our food has
       </h7>
       <Row>
-        <Col xs={12} sm={8} className="flex-container-center text-center panel-body">
+        <Col xs={12} sm={7} className="d-flex justify-content-center text-center panel-body">
           <div style={{ alignSelf: 'center', listStyleType: 'none', textAlign: 'left' }}>
             <h7>
               <p>
@@ -70,13 +68,13 @@ function OurPromise() {
               <p>
                 <span className="underline">No</span>
                 {' '}
-                Hydrogenated and Unhealthy Oils
+                Trans Fat and Unhealthy Oils
               </p>
             </h7>
           </div>
         </Col>
-        <Col xs={12} sm={4} className="flex-container-center text-center">
-          <img src="about/foodPlate.jpg" alt="Food Plate" />
+        <Col xs={12} sm={5} className="d-flex justify-content-center text-center">
+          <img src="about/foodPlate.jpg" alt="Food Plate" style={{ maxWidth: '90%' }} />
         </Col>
       </Row>
       {/*

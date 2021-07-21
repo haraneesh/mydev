@@ -45,6 +45,7 @@ import { OrderLayout, RecipeLayout, MainLayout } from '../layouts/Layouts';
 import ReconcileInventoryList from '../pages/ReconcileInventory/ReconcileInventoryList';
 
 import RecipesHome from '../pages/Recipes/RecipesHome';
+import MessagesHome from '../pages/Messages/MessageHome/Messages';
 
 /*
 import dBaskets from '../pages/Baskets/Baskets';
@@ -90,7 +91,7 @@ import {
   dReconcileInventory,
   dReconcileInventoryList,
   dApproveUserSignUps,
-  dMessages,
+  // dMessages,
   dEditMessage,
   dAdminAllMessages,
   dZohoSyncUp,
@@ -180,7 +181,7 @@ const App = (props) => (
               {/* Product */}
               <AdminAuthenticated exact routeName="View_Products_Admin" layout={MainLayout} path="/products" component={dProductsAdmin} {...props} />
 
-              <Authenticated appName="messages" routeName="Messages" exact path="/messages" layout={MainLayout} component={dMessages} {...props} />
+              <Authenticated appName="messages" routeName="Messages" exact path="/messages" layout={MainLayout} component={MessagesHome} {...props} />
               <Authenticated appName="messages" routeName="Edit_Message" exact path="/messages/:_id/edit" layout={MainLayout} component={dEditMessage} {...props} />
               <AdminAuthenticated appName="messages" routeName="Messages_Admin" exact path="/messagesAdmin" layout={MainLayout} component={dAdminAllMessages} {...props} />
 

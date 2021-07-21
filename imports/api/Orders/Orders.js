@@ -29,14 +29,14 @@ const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 Orders.schema = new SimpleSchema({
   createdAt: {
     type: Date,
-    autoValue() {
-      if (this.isInsert) {
-        return new Date();
-      } if (this.isUpsert) {
-        return { $setOnInsert: new Date() };
-      }
-      this.unset(); // Prevent user from supplying their own value
-    },
+    // autoValue() {
+    //   if (this.isInsert) {
+    //     return new Date();
+    //   } if (this.isUpsert) {
+    //     return { $setOnInsert: new Date() };
+    //   }
+    //  this.unset(); // Prevent user from supplying their own value
+    // },
     optional: true,
   },
   // Force value to be current date (on server) upon update

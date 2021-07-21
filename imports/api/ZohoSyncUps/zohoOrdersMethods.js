@@ -273,8 +273,98 @@ export const syncOfflinePaymentDetails = new ValidatedMethod({
   },
 });
 
+Meteor.methods({
+  'orders.getOrdersBetweenJul6Jul18': function getOrdersBetweenJul6Jul18() {
+    if (Meteor.isServer) {
+      try {
+        const date_after = '2021-07-05';
+        const date_before = '2021-07-19';
+
+        const zhSOResponse = zh.getRecordsByParams(
+          'salesorders',
+          {
+            date_after,
+            date_before,
+          },
+        );
+
+        // insert lost orders
+        const salesOrders = zhSOResponse.salesorders;
+        salesOrders.forEach((salesorder) => {
+          // get customer id
+          const user = Meteor.users.findOne({
+            zh_contact_id: salesorder.customer_id,
+          });
+
+          if (user) {
+          // get products placed in the order
+
+            const zhSalesOrder = zh.getRecordById('salesorders', salesorder.salesorder_id);
+
+            const soProducts = zhSalesOrder.salesorder.line_items;
+
+            const productArray = [];
+            soProducts.forEach((soOrderDetails) => {
+              const product = Products.findOne({ zh_item_id: soOrderDetails.item_id });
+              if (product) {
+                delete product.createdAt;
+                delete product.updatedAt;
+                delete product.availableToOrderWH;
+                delete product.frequentlyOrdered;
+                delete product.sourceSuppliers;
+                product.quantity = soOrderDetails.quantity;
+                productArray.push(product);
+              }
+            });
+
+            const insertId = Orders.upsert(
+              { zh_salesorder_id: salesorder.salesorder_id },
+              {
+                $set: {
+                  products: productArray,
+                  productOrderListId: '1',
+                  customer_details: {
+                    role: constants.Roles.customer.name,
+                    _id: user._id,
+                    name: user.profile.name.first,
+                    email: user.emails[0].address,
+                    mobilePhone: user.username,
+                    deliveryAddress: user.profile.deliveryAddress,
+                  },
+                  createdAt: salesorder.date,
+                  zh_sales_type: 'salesorder',
+                  zh_salesorder_id: salesorder.salesorder_id,
+                  zh_salesorder_number: salesorder.salesorder_number,
+                  order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+                  total_bill_amount: salesorder.total,
+                  comments: '** Restored from backup **',
+                },
+              },
+            );
+            console.log(insertId);
+          } else {
+            console.log('---------------');
+            console.log(`- SO Id ${salesorder.salesorder_id} -`);
+            console.log(`- Customer Id ${salesorder.customer_id} -`);
+            console.log(`- Customer Name ${salesorder.customer_name} -`);
+            console.log('---------------');
+          }
+        });
+      // return zhSOResponse;
+      } catch (exception) {
+        console.log(exception);
+      }
+    }
+  },
+});
+
 rateLimit({
-  methods: [syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails],
+  methods: [
+    'orders.getOrdersBetweenJul6Jul18',
+    syncBulkOrdersWithZoho,
+    getOrdersAndInvoicesFromZoho,
+    syncOfflinePaymentDetails,
+  ],
   limit: 5,
   timeRange: 1000,
 });

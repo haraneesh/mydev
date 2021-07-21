@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import UserSignUps from '../UserSignUps';
+import { rateLimitSubscriptions } from '../../../modules/rate-limit';
 import { getPendingOrderDues } from '../../Orders/methods';
 
 import { retWalletAndSyncIfNecessary } from '../../ZohoSyncUps/zohoContactsMethods';
@@ -17,6 +18,13 @@ Meteor.publish('users.editProfile', function usersProfile() {
 });
 
 // Server
+Meteor.publish('users.getRoles', function getRoles() {
+  if (this.userId) {
+    return Meteor.roleAssignment.find({ 'user._id': this.userId });
+  }
+  this.ready();
+});
+
 Meteor.publish('users.userData', function userData() {
   if (this.userId) {
     return Meteor.users.find({ _id: this.userId }, {
@@ -52,3 +60,11 @@ Meteor.publish('users.userWallet', function user() {
 });
 
 Meteor.publish('userSignUps.getUsers', () => UserSignUps.find({ status: { $exists: false } }));
+
+rateLimitSubscriptions({
+  subscriptions: [
+    'users.getRoles',
+  ],
+  limit: 5,
+  timeRange: 1000,
+});

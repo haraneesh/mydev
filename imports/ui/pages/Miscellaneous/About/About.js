@@ -296,14 +296,10 @@ const About = () => {
       <Panel>
         <Col xs={12} className="text-center">
           <h4>
-            {' '}
             <p>
-              {' '}
-              To Join the community, do send us a Whatsapp Message at
+              To Join the community, send us a Whatsapp Message at
               <br />
-              {' '}
               <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
-              {' '}
             </p>
           </h4>
         </Col>

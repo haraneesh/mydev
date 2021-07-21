@@ -60,7 +60,8 @@ const Root = (props) => {
 export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
   const userSubscription = Meteor.subscribe('users.userData'); // Meteor.user();
-  const loading = !Roles.subscription.ready() || !userSubscription.ready();
+  const rolesSubscription = Meteor.subscribe('users.getRoles');
+  const loading = !rolesSubscription.ready() || !userSubscription.ready();
 
   const user = Meteor.user();
   const userId = Meteor.userId();
