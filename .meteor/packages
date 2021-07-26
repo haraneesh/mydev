@@ -33,7 +33,7 @@ reywood:publish-composite
 #cfs:graphicsmagick
 http
 perak:joins
-email@2.1.0
+email@2.1.1
 underscore@1.0.10
 sakulstra:aggregate
 standard-minifier-css@1.7.3

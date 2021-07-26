@@ -2,14 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 
 const name = 'Suvai';
-const email = '<hi@nammasuvai.com>';
+const email = `<${Meteor.settings.private.fromInvitationEmail}>`;
 const from = `${name} ${email}`;
-const emailTemplates = { Accounts };
 
-emailTemplates.siteName = name;
-emailTemplates.from = from;
+Accounts.emailTemplates.siteName = name;
+Accounts.emailTemplates.from = from;
 
-emailTemplates.resetPassword = {
+Accounts.emailTemplates.resetPassword = {
   subject() {
     return `[${name}] - Instructions To Reset Your Password`;
   },
@@ -24,7 +23,7 @@ emailTemplates.resetPassword = {
   },
 };
 
-emailTemplates.verifyEmail = {
+Accounts.emailTemplates.verifyEmail = {
   subject() {
     return `[${name}] - Instructions To Verify Your Email Address`;
   },

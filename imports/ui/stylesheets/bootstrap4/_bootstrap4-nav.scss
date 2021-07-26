@@ -1,0 +1,44 @@
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+  }
+  
+  .nav-link {
+    display: block;
+  }
+
+//
+// Justified variants
+//
+
+.nav-fill {
+    > .nav-link,
+    .nav-item {
+      flex: 1 1 auto;
+      text-align: center;
+    }
+  }
+  
+  .nav-justified {
+    > .nav-link,
+    .nav-item {
+      flex-basis: 0;
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
+  
+  .nav-fill,
+  .nav-justified {
+    .nav-item .nav-link {
+      width: 100%; // Make sure button will grow
+    }
+  }
+
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    color: $brand-primary;
+  }

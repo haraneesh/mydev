@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import {
-  ListGroup, ListGroupItem, Alert, Tabs, Tab, Panel, Button,
+  ListGroup, ListGroupItem, Alert, Tabs, Tab,
 } from 'react-bootstrap';
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
@@ -17,24 +17,38 @@ import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
 import ShowStatement from '../../Payments/Statement';
 
+import './MyOrdersList.scss';
+
 const feedBackPeriodInDays = 3000; // was 30 before
 
 export default class MyOrderList extends React.Component {
   constructor(props) {
     super(props);
+    const { loggedInUser } = this.props;
     this.state = {
       showFeedBackForm: true,
-      wallet: this.props.loggedInUser.wallet,
+      wallet: loggedInUser.wallet,
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
     this.receiveProductFit = this.receiveProductFit.bind(this);
     this.saveFeedBack = this.saveFeedBack.bind(this);
     this.showFeedBack = this.showFeedBack.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
+    this.setClasses = this.setClasses.bind(this);
   }
 
-  componentDidMount() {
-    // this.checkAndSyncUserWallet();
+  onFilterChange(event, filter) {
+    const { myOrderViewFilter } = this.props;
+    myOrderViewFilter(filter);
+  }
+
+  setClasses(buttonName) {
+    const { orderFilter } = this.props;
+    if (buttonName === orderFilter) {
+      return 'nav-link active';
+    }
+    return 'nav-link';
   }
 
   checkAndSyncUserWallet() {
@@ -179,25 +193,15 @@ export default class MyOrderList extends React.Component {
 
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
-            <div xs={12} className="panel panel-body text-right" style={{ marginBottom: '0px' }}>
-              <button
-                type="button"
-                className="btn text-primary"
-                style={{ background: '#fff' }}
-                onClick={() => { this.props.myOrderViewFilter('Active'); }}
-              >
-                Active
-              </button>
-              /
-              <button
-                type="button"
-                className="btn"
-                style={{ background: '#fff' }}
-                onClick={() => { this.props.myOrderViewFilter('All'); }}
-              >
-                All
-              </button>
-            </div>
+            <ul className="nav justify-content-end">
+              <li className="nav-item">
+                <a className={this.setClasses('Active')} onClick={(e) => { this.onFilterChange(e, 'Active'); }} name="Active" href="#"> Active</a>
+              </li>
+              <li className="nav-item" style={{ paddingTop: '10px', paddingRight: '5px' }}>/</li>
+              <li className="nav-item">
+                <a className={this.setClasses('All')} name="All" href="#" onClick={(e) => { this.onFilterChange(e, 'All'); }}> All </a>
+              </li>
+            </ul>
             {
               orders.length > 0 ? (
                 <div>
@@ -214,7 +218,7 @@ export default class MyOrderList extends React.Component {
                 </div>
               ) : (
                 <Alert bsStyle="info">
-                  You will find details of orders you place here.
+                  You do not have any active orders.
                 </Alert>
               )
             }
@@ -247,6 +251,7 @@ MyOrderList.propTypes = {
   emailVerified: PropTypes.bool.isRequired,
   emailAddress: PropTypes.string.isRequired,
   myOrderViewFilter: PropTypes.func.isRequired,
+  orderFilter: PropTypes.string.isRequired,
 };
 
 MyOrderList.defaultProps = {

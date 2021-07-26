@@ -90,8 +90,6 @@ Meteor.methods({
       showOptionsWithFee: Boolean,
     });
 
-    console.log(params);
-
     if (Meteor.isServer) {
       try {
       // make initiate call

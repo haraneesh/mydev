@@ -32,6 +32,7 @@ const MyOrders = ({
         emailVerified={emailVerified}
         emailAddress={emailAddress}
         myOrderViewFilter={myOrderViewFilter}
+        orderFilter={reactVarFilter.get()}
       />
 
     </Col>

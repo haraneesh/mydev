@@ -40,9 +40,6 @@ Meteor.publish('orders.list', function ordersList(options) {
 Meteor.publish('orders.list.status', function ordersListStatus(orderStatuses) {
   check(orderStatuses, [String]);
 
-  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-    return Orders.find({ order_status: { $in: orderStatuses } });
-  }
   return Orders.find({
     $and: [
       { order_status: { $in: orderStatuses } },

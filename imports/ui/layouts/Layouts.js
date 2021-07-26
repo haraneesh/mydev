@@ -68,7 +68,7 @@ export const OrderLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
       <Grid fluid="true">{props.children}</Grid>
@@ -82,7 +82,7 @@ export const RecipeLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <ThemeProvider theme={{}}>
         <GlobalStyle />
@@ -99,7 +99,7 @@ export const MainLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav {...props} />
       <Grid fluid="true">{props.children}</Grid>
@@ -113,7 +113,7 @@ export const SupplierLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <ThemeProvider theme={{}}>
         <GlobalStyle />

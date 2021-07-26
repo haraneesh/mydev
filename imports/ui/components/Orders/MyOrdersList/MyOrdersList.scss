@@ -1,0 +1,7 @@
+@import '../../../stylesheets/bootstrap/bootstrap/variables';
+.filterButton{
+    background: #fff;
+}
+.filterButton:hover{ 
+    color:$brand-primary !important;
+}
