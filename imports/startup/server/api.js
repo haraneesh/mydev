@@ -78,6 +78,7 @@ import '../../api/UserEvents/methods';
 
 import '../../api/ZohoSyncUps/zohoContactsMethods';
 import '../../api/ZohoSyncUps/zohoProductsMethods';
+import '../../api/ZohoSyncUps/zohoSalesByItemsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';
 
 import '../../api/Settings/methods';

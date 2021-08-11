@@ -95,6 +95,7 @@ import {
   dEditMessage,
   dAdminAllMessages,
   dZohoSyncUp,
+  dZohoUpdateReturnables,
 }
   from './dynamicRoutes';
 
@@ -197,6 +198,8 @@ const App = (props) => (
               <AdminAuthenticated exact routeName="View_All_Orders_Admin" layout={MainLayout} path="/allorders" component={dAllOrders} {...props} />
               {/* Zoho Sync */}
               <AdminAuthenticated exact routeName="Zoho_Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
+              <AdminAuthenticated exact routeName="Zoho_Returnables" layout={MainLayout} path="/zohoUpdateReturnables" component={dZohoUpdateReturnables} {...props} />
+
               {/* end admin */}
               <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={Signup} {...props} />
               <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />

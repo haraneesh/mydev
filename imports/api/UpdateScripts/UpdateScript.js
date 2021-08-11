@@ -34,23 +34,44 @@ if (IngWeights.findOne()) {
 
 // update products to have displayOrder
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
-/* Products.update( { _id: "wafHsp5bztCZPFqfW" },{ $set : {"zh_item_id" : "702207000005722588"} });
-Products.update( { _id: "PPrkeLbQNp2XXr2gp" },{ $set : {"zh_item_id" : "702207000006663301"} });
-Products.update( { _id: "X6hXmnjZLcYskSRwi" },{ $set : {"zh_item_id" : "702207000007989005"} });
-Products.update( { _id: "x9AnG9zNXosQLFuc9" },{ $set : {"zh_item_id" : "702207000007992005"} });
-Products.update( { _id: "HKpzgEHxP2huBJnyw" },{ $set : {"zh_item_id" : "702207000007988005"} }); */
 
 /*
-Meteor.users.update({ settings: { $exists: false } }, {
+
+702207000050765962	VEV000425
+702207000137410932	MRB000753
+702207000136418021	MRB000402
+702207000059654001	VEV000490
+702207000050777039	VEV000423
+702207000050770073	VEV000421
+702207000051114001	VEV000435
+702207000050771031	VEV000422
+702207000050764569	VEV000424
+
+*/
+
+Products.update({ sku: 'VEV000425' }, { $set: { zh_item_id: '702207000050765962' } });
+Products.update({ sku: 'MRB000753' }, { $set: { zh_item_id: '702207000137410932' } });
+Products.update({ sku: 'VEV000490' }, { $set: { zh_item_id: '702207000059654001' } });
+Products.update({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } });
+Products.update({ sku: 'VEV000423' }, { $set: { zh_item_id: '702207000050777039' } });
+Products.update({ sku: 'VEV000421' }, { $set: { zh_item_id: '702207000050770073' } });
+Products.update({ sku: 'VEV000435' }, { $set: { zh_item_id: '702207000051114001' } });
+Products.update({ sku: 'VEV000422' }, { $set: { zh_item_id: '702207000050771031' } });
+Products.update({ sku: 'VEV000424' }, { $set: { zh_item_id: '702207000050764569' } });
+
+Meteor.users.update({ productReturnables: { $exists: false } }, {
   $set: {
-    settings: {
-      dieteryPreference: {
-        value: '',
-      },
-    },
+    productReturnables: {},
   },
 },
-{ multi: true }); */
+{ multi: true });
+
+/*
+Meteor.users.update({ productReturns: { $exists: true } }, {
+  $rename: { productReturns: 'productReturnables' },
+},
+{ multi: true });
+*/
 
 /* const cusers = Meteor.users.find({}).fetch();
 

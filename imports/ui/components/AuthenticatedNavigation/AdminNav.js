@@ -43,8 +43,12 @@ const AdminNav = (props) => {
           <li>
             <NavLink to="/updateProfile">Create / Update User</NavLink>
           </li>
+          <br />
           <li>
             <NavLink to="/zohoSync">Zoho Sync</NavLink>
+          </li>
+          <li>
+            <NavLink to="/zohoUpdateReturnables">Zoho Update Returnables </NavLink>
           </li>
         </ul>
       </div>

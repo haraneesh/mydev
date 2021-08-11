@@ -21,6 +21,8 @@ export const dProductsAdmin = SuvaiLoadable({
 });
 */
 
+export const dZohoUpdateReturnables = lazy(() => import('../pages/Admin/ZohoUpdateReturnables'));
+
 export const dZohoSyncUp = lazy(() => import('../pages/Admin/ZohoSyncUp'));
 /* export const dZohoSyncUp = SuvaiLoadable({
   loader: () => import('../pages/Admin/ZohoSyncUp'),

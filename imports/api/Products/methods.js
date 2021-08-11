@@ -103,6 +103,20 @@ Meteor.methods({
       }
     }
   },
+  'products.getReturnables': function getReturnableProducts() {
+    try {
+      return Products.find(
+        { type: constants.ReturnProductType.name },
+        {
+          fields: {
+            _id: 1, name: 1, sku: 1, image_path: 1, zh_item_id: 1,
+          },
+        },
+      ).fetch();
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
 });
 
 rateLimit({
@@ -112,6 +126,7 @@ rateLimit({
     removeProduct,
     'products.getItemsFromZoho',
     'products.bulkUpdatePrices',
+    'products.getReturnables',
   ],
   limit: 5,
   timeRange: 1000,

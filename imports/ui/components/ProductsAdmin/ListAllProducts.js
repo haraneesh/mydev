@@ -24,10 +24,8 @@ const createProductRows = ({ suppliers, products }) => {
       }
       productRows[sectionHeaderName].push(<ProductTableHeader />);
     }
-
     productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
   });
-
   return productRows;
 };
 

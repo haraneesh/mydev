@@ -69,6 +69,7 @@ export default withTracker(() => {
   const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
   const emailAddress = user && user.emails && user.emails[0].address;
   const emailVerified = user && user.emails && user.emails[0].verified;
+  const productReturnables = user && user.productReturnables;
   const userSettings = user && user.settings;
   const globalStatuses = user && user.globalStatuses;
 
@@ -76,6 +77,7 @@ export default withTracker(() => {
     loading,
     loggingIn,
     authenticated: !loggingIn && !!userId,
+    productReturnables,
     name,
     emailAddress,
     emailVerified,

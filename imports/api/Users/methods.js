@@ -123,6 +123,7 @@ export const createNewUser = (user) => {
     Meteor.users.update({ username: cuser.username }, {
       $set: {
         wallet,
+        productReturnables: {},
         updatedAt: new Date(),
         'globalStatuses.lastVisitedMessageApp': new Date(),
       },

@@ -17,7 +17,14 @@ const myOrderViewFilter = (filter) => {
 };
 
 const MyOrders = ({
-  history, loading, loggedInUser, orders, emailVerified, loggedInUserId, emailAddress,
+  history,
+  loading,
+  loggedInUser,
+  orders,
+  emailVerified,
+  loggedInUserId,
+  emailAddress,
+  productReturnables,
 }) => (!loading ? (
   <Row>
     <Col xs={12}>
@@ -33,6 +40,7 @@ const MyOrders = ({
         emailAddress={emailAddress}
         myOrderViewFilter={myOrderViewFilter}
         orderFilter={reactVarFilter.get()}
+        productReturnables={productReturnables}
       />
 
     </Col>
@@ -51,7 +59,6 @@ MyOrders.propTypes = {
 
 export default withTracker((args) => {
   const userWallet = Meteor.subscribe('users.userWallet');
-  // const orderSub = Meteor.subscribe('orders.mylist');
   const orderFilter = reactVarFilter.get();
 
   const orderStatusArray = (orderFilter === 'Active')
@@ -75,6 +82,6 @@ export default withTracker((args) => {
     emailVerified: args.emailVerified,
     loggedInUserId: args.loggedInUserId,
     emailAddress: args.emailAddress,
-
+    productReturnables: args.productReturnables,
   };
 })(MyOrders);

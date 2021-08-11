@@ -5,6 +5,7 @@ import {
 import { syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
 import { bulkSyncProductsZoho } from '../../../api/ZohoSyncUps/zohoProductsMethods';
 import { bulkSyncUsersZoho } from '../../../api/ZohoSyncUps/zohoContactsMethods';
+import getSalesDetailsByItemFromZoho from '../../../api/ZohoSyncUps/zohoSalesByItemsMethods';
 import ZohoSync from '../../components/ZohoSync/ZohoSync';
 
 const showButton = () => {
@@ -35,25 +36,28 @@ const ZohoSyncUp = () => (
             syncName="Sync Products >"
             syncDescription="Send product updates to Zoho"
           />
-
           <ZohoSync
             orderSequence={3}
             syncFunction={syncBulkOrdersWithZoho}
             syncName="Send Pending Orders >"
             syncDescription="Send details of pending orders to Zoho and update status to Awaiting Fulfillment"
           />
-
           <hr />
-
           <ZohoSync
             orderSequence={4}
             syncFunction={getOrdersAndInvoicesFromZoho} // {getOrdersFromZoho}
             syncName="< Get Invoices "
             syncDescription="Get invoice details of orders from Zoho"
           />
-          <hr />
           <ZohoSync
             orderSequence={5}
+            syncFunction={getSalesDetailsByItemFromZoho}
+            syncName="< Update Returns"
+            syncDescription="Update returns"
+          />
+          <hr />
+          <ZohoSync
+            orderSequence={6}
             syncFunction={syncOfflinePaymentDetails}
             disabled={!showButton()}
             syncName="< Update Offline Payments"

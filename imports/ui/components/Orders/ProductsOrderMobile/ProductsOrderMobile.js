@@ -126,7 +126,7 @@ export default class ProductsOrderMobile extends React.Component {
                   isOpen={this.state.panelToFocus === 'veg-header'}
                   tabHash={productGroups.productGroupMetaHash.productVegetables}
                 />
-)}
+              )}
               expanded={(this.state.panelToFocus === 'veg-header')}
               eventKey="3"
             >

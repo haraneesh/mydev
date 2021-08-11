@@ -22,6 +22,19 @@ ZohoSyncUps.deny({
   remove: () => true,
 });
 
+export const syncUpConstants = {
+  products: 'products',
+  users: 'users',
+  ordersToZoho: 'orders-to-zoho',
+  ordersFromZoho: 'orders-from-zoho',
+  invoicesFromZoho: 'invoices-from-zoho',
+  itemsFromZoho: 'items-from-zoho',
+  salesDetailsByItemFromZoho: 'sales-details-by-item-from-zoho',
+  purchaseOrdersFromZoho: 'purchaseOrders-from-zoho',
+};
+
+syncUpConstants.allowedValues = Object.keys(syncUpConstants).map((key) => syncUpConstants[key]);
+
 ZohoSyncUps.schema = new SimpleSchema({
   syncDateTime: {
     type: Date,
@@ -51,22 +64,12 @@ ZohoSyncUps.schema = new SimpleSchema({
   syncEntity: {
     type: String,
     label: 'The collection that was synced.',
-    allowedValues: ['products', 'users', 'orders-to-zoho', 'orders-from-zoho', 'invoices-from-zoho', 'items-from-zoho', 'purchaseOrders-from-zoho'],
+    allowedValues: syncUpConstants.allowedValues,
   },
   syncedForUser: {
     type: String,
     label: 'The user for whom this was synced',
   },
 });
-
-export const syncUpConstants = {
-  products: 'products',
-  users: 'users',
-  ordersToZoho: 'orders-to-zoho',
-  ordersFromZoho: 'orders-from-zoho',
-  invoicesFromZoho: 'invoices-from-zoho',
-  itemsFromZoho: 'items-from-zoho',
-  purchaseOrdersFromZoho: 'purchaseOrders-from-zoho',
-};
 
 ZohoSyncUps.attachSchema(ZohoSyncUps.schema);

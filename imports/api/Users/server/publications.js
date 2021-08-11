@@ -29,7 +29,7 @@ Meteor.publish('users.userData', function userData() {
   if (this.userId) {
     return Meteor.users.find({ _id: this.userId }, {
       fields: {
-        emails: 1, profile: 1, settings: 1, wallet: 1, globalStatuses: 1,
+        emails: 1, profile: 1, settings: 1, wallet: 1, globalStatuses: 1, productReturnables: 1,
       },
     });
   }

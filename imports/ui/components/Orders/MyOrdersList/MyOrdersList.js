@@ -13,6 +13,7 @@ import { getNumDaysBetween } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import OrderSummaryRow from './OrderSummaryRow';
 import AddToWallet from './AddToWallet';
+import ShowReturnables from './ShowReturnables';
 import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
 import ShowStatement from '../../Payments/Statement';
@@ -187,13 +188,17 @@ export default class MyOrderList extends React.Component {
       },
     );
 
+    const { productReturnables, history } = this.props;
+
     return (
       <div>
-        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} history={this.props.history} />
+        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} history={history} />
+
+        <ShowReturnables productReturnables={productReturnables} />
 
         <Tabs defaultActiveKey={1} id="" bsStyle="pills">
           <Tab eventKey={1} title="Orders" tabClassName=" text-center">
-            <ul className="nav justify-content-end">
+            <ul className="nav justify-content-end" style={{ backgroundColor: '#fff' }}>
               <li className="nav-item">
                 <a className={this.setClasses('Active')} onClick={(e) => { this.onFilterChange(e, 'Active'); }} name="Active" href="#"> Active</a>
               </li>
@@ -245,6 +250,7 @@ export default class MyOrderList extends React.Component {
 
 MyOrderList.propTypes = {
   orders: PropTypes.array,
+  productReturnables: PropTypes.object,
   loggedInUser: PropTypes.object.isRequired,
   loggedInUserId: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired,
@@ -256,4 +262,5 @@ MyOrderList.propTypes = {
 
 MyOrderList.defaultProps = {
   orders: [],
+  productReturnables: {},
 };

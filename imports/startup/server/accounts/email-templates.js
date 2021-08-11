@@ -10,7 +10,7 @@ Accounts.emailTemplates.from = from;
 
 Accounts.emailTemplates.resetPassword = {
   subject() {
-    return `[${name}] - Instructions To Reset Your Password`;
+    return `${name}, Instructions To Reset Your Password`;
   },
   text(user, url) {
     const userEmail = user.emails[0].address;
@@ -25,7 +25,7 @@ Accounts.emailTemplates.resetPassword = {
 
 Accounts.emailTemplates.verifyEmail = {
   subject() {
-    return `[${name}] - Instructions To Verify Your Email Address`;
+    return `${name}, Instructions To Verify Your Email Address`;
   },
   text(user, url) {
     const urlWithoutHash = url.replace('#/', '');
