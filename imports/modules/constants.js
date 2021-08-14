@@ -50,7 +50,7 @@ DietaryPreferences.displayNames = Object.keys(DietaryPreferences).map((cat) => D
 // This for organizing tabs in the order screen
 // const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
 const ReturnProductType = { name: 'Returnable', value: 'Returnable' };
-const ProductType = ['New', ReturnProductType.name, 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners'];
+const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners', ReturnProductType.name];
 
 /*
 Saved - customer saved the current selection, with the intent to resume.

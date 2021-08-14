@@ -162,7 +162,7 @@ const ProductForNonAdmin = ({
       sliderView
     />
   );
-  const imagePath = Meteor.settings.public.Product_Images + image;
+  const imagePath = `${Meteor.settings.public.Product_Images}${image}?${Meteor.settings.public.Product_Images_Version}`;
   const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
 
   if (checkout) {
@@ -206,8 +206,8 @@ const ProductForNonAdmin = ({
 
   if (sliderView) {
     return (
-      <div className="product-item">
-        <Col xs={4} className="item-image-container">
+      <div className="product-item text-center">
+        <Col xs={8}>
           {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
         </Col>
 
@@ -218,12 +218,10 @@ const ProductForNonAdmin = ({
             </Col>
             <Col xs={12}>
               <p>
-                {' '}
                 {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
-                {' '}
               </p>
             </Col>
-            <Col xs={9} sm={12}>
+            <Col xs={12}>
               <AddToCart
                 onChange={onChange}
                 unit={unit}
@@ -241,7 +239,7 @@ const ProductForNonAdmin = ({
   }
 
   return (
-    <Row className="product-item">
+    <Row className="product-item text-center">
       <Col xs={12} className="item-image-container">
         {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
       </Col>

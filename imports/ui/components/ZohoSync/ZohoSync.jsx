@@ -66,9 +66,7 @@ export default class ZohoSync extends React.Component {
           </Col>
           <Col sm={5}>
             <p>
-              {' '}
               {this.props.syncDescription}
-              {' '}
             </p>
           </Col>
         </Row>
