@@ -110,8 +110,9 @@ function PayTMButton({
         onClick={initiateTransaction}
         disabled={!!isLoading}
       >
-        {(isLoading) && <Spinner />}
         {buttonText}
+        {' '}
+        {(isLoading) && <Spinner />}
       </button>
 
     </div>

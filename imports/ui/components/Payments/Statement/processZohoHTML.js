@@ -6,6 +6,7 @@ document.getElementsByClassName('trpadding')[0]
 */
 import React from 'react';
 import { formatMoney } from 'accounting-js';
+import constants from '../../../../modules/constants';
 import { accountSettings } from '../../../../modules/settings';
 
 const IGNORETERMS = ['Credits Applied', 'Payment Applied'];
@@ -59,7 +60,7 @@ function jsonRowsToHtml(jsonRows) {
       <thead>
         <th>Date</th>
         <th>Amount</th>
-        <th>Wallet</th>
+        <th style={{ paddingLeft: '5px' }}>Wallet</th>
       </thead>
       <tbody>
         {htmlRows}
@@ -79,7 +80,7 @@ function processHTMLTable(htmlElement, timePeriod) {
       <div className="panel-heading text-center">
         Statement for
         {' '}
-        <b>{timePeriod}</b>
+        <b>{constants.StatementPeriod[timePeriod].display_value}</b>
       </div>
       <div className="panel-body">
         {jsonRowsToHtml(jsonRows)}
