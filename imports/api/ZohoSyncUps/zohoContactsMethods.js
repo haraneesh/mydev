@@ -13,6 +13,8 @@ import { updateSyncAndReturn, retResponse } from './zohoCommon';
 import { getUserOrdersAndInvoicesFromZoho } from './zohoOrdersMethods';
 import handleMethodException from '../../modules/handle-method-exception';
 
+const fs = require('fs');
+
 const createZohoBooksContact = (usr) => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
   customer_sub_type: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
@@ -151,12 +153,8 @@ export const getUserWallet = new ValidatedMethod({
 });
 
 const sendMessage = ({
-  user, generatedDate, startDate, endDate, emailAddress,
+  user, zhStartDate, zhEndDate, zhGeneratedDate, emailAddress,
 }) => {
-  const zhStartDate = moment(startDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
-  const zhEndDate = moment(endDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
-  const zhGeneratedDate = moment(generatedDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
-
   const salutation = user.profile.salutation || '';
   const firstName = user.profile.name.first;
 
@@ -183,6 +181,55 @@ const sendMessage = ({
   return zhContactResponse;
 };
 
+function returnStartandEndDates(periodSelected) {
+  const today = moment();
+  let startDate;
+  let endDate;
+
+  switch (periodSelected) {
+    /* case constants.StatementPeriod.Today.name:
+      startDate = today;
+      endDate = today;
+      break; */
+    case constants.StatementPeriod.ThisWeek.name:
+      startDate = moment().day('Sunday');
+      endDate = today;
+      break;
+    case constants.StatementPeriod.ThisMonth.name:
+      startDate = moment().date(1);
+      endDate = today;
+      break;
+    case constants.StatementPeriod.ThisYear.name:
+      startDate = moment().dayOfYear(1);
+      endDate = today;
+      break;
+      /* case constants.StatementPeriod.Yesterday.name:
+      startDate = moment().subtract(1, 'days');
+      endDate = startDate;
+      break; */
+    case constants.StatementPeriod.PreviousWeek.name:
+      startDate = moment().subtract(7, 'days').day('Sunday');
+      endDate = moment().subtract(7, 'days').day('Saturday');
+      break;
+    case constants.StatementPeriod.PreviousMonth.name:
+      startDate = moment().subtract(1, 'months').date(1);
+      endDate = moment().date(1).subtract(1, 'days');
+      break;
+    case constants.StatementPeriod.PreviousYear.name:
+      startDate = moment().subtract(1, 'years').dayOfYear(1);
+      endDate = moment().dayOfYear(1).subtract(1, 'days');
+      break;
+    default:
+      handleMethodException('The period selected is not supported yet.', 404);
+      break;
+  }
+  const zhStartDate = moment(startDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+  const zhEndDate = moment(endDate).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+  const zhGeneratedDate = moment(today).tz(dateSettings.timeZone).format(dateSettings.zhPayDateFormat);
+
+  return { zhStartDate, zhEndDate, zhGeneratedDate };
+}
+
 Meteor.methods({
   'customer.sendStatement': function sendStatement(params) {
     check(params, {
@@ -199,50 +246,14 @@ Meteor.methods({
       }
 
       try {
-        const today = moment();
-        let startDate;
-        let endDate;
-
-        switch (params.periodSelected) {
-          /* case constants.StatementPeriod.Today.name:
-            startDate = today;
-            endDate = today;
-            break; */
-          case constants.StatementPeriod.ThisWeek.name:
-            startDate = moment().day('Sunday');
-            endDate = today;
-            break;
-          case constants.StatementPeriod.ThisMonth.name:
-            startDate = moment().date(1);
-            endDate = today;
-            break;
-          case constants.StatementPeriod.ThisYear.name:
-            startDate = moment().dayOfYear(1);
-            endDate = today;
-            break;
-            /* case constants.StatementPeriod.Yesterday.name:
-            startDate = moment().subtract(1, 'days');
-            endDate = startDate;
-            break; */
-          case constants.StatementPeriod.PreviousWeek.name:
-            startDate = moment().subtract(7, 'days').day('Sunday');
-            endDate = moment().subtract(7, 'days').day('Saturday');
-            break;
-          case constants.StatementPeriod.PreviousMonth.name:
-            startDate = moment().subtract(1, 'months').date(1);
-            endDate = moment().date(1).subtract(1, 'days');
-            break;
-          case constants.StatementPeriod.PreviousYear.name:
-            startDate = moment().subtract(1, 'years').dayOfYear(1);
-            endDate = moment().dayOfYear(1).subtract(1, 'days');
-            break;
-          default:
-            handleMethodException('The period selected is not supported yet.', 404);
-            break;
-        }
+        const {
+          zhStartDate,
+          zhEndDate,
+          zhGeneratedDate,
+        } = returnStartandEndDates(params.periodSelected);
 
         const zohoResponse = sendMessage({
-          user, generatedDate: today, startDate, endDate, emailAddress: user.emails[0].address,
+          user, zhStartDate, zhEndDate, zhGeneratedDate, emailAddress: user.emails[0].address,
         });
 
         if (zohoResponse.code !== 0) {
@@ -260,13 +271,16 @@ Meteor.methods({
   },
   'customer.getStatement': function getStatement(params) {
     check(params, {
-      accept: String,
-      fromDate: String,
-      toDate: String,
+      periodSelected: String,
     });
 
     if (Meteor.isServer) {
       try {
+        const {
+          zhStartDate,
+          zhEndDate,
+        } = returnStartandEndDates(params.periodSelected);
+
         const user = Meteor.users.find(this.userId).fetch({}, {
           fields: {
             zh_contact_id: 1,
@@ -274,11 +288,12 @@ Meteor.methods({
         })[0];
 
         const zhContactResponse = zh.getRecordByIdAndParams({
-          module: 'contacts',
+          module: 'customers',
           id: user.zh_contact_id,
           submodule: 'statements',
-          params: { from_date: params.fromDate, to_date: params.toDate, accept: params.accept },
+          params: { from_date: zhStartDate, to_date: zhEndDate, accept: 'json' },
         });
+
         return zhContactResponse;
       } catch (exception) {
         handleMethodException(exception);

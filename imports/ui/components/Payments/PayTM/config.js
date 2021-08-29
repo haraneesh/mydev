@@ -9,8 +9,8 @@ const CONFIG = ({
 }) => {
   const { merchantId, merchantName } = Meteor.settings.public.PayTM;
 
-  const NOFEE = ['UPI', 'DEBIT_CARD'];
-  const WITHFEE = ['NB', 'CREDIT_CARD'];
+  const NOFEE = ['UPI', 'DEBIT_CARD', 'QR_PAY'];
+  const WITHFEE = ['NB', 'CREDIT_CARD', 'QR_PAY'];
 
   return {
     style: {
@@ -43,6 +43,7 @@ const CONFIG = ({
       name: merchantName,
       logo: '/logo.png',
       redirect: false,
+      hidePaytmBranding: true,
     },
     handler: {
       notifyMerchant(eventName, data) {

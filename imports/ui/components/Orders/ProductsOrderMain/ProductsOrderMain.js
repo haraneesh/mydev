@@ -120,7 +120,7 @@ const ProductsOrderMain = (props) => {
     updateProductQuantity(productId, quantity);
   };
 
-  const getProductsMatchingSearch = (searchString, numOfElements) => {
+  const getProductsMatchingSearch = (searchString /* numOfElements */) => {
     const searchResults = [];
     const lowerSearchString = searchString.toLowerCase();
 
@@ -141,7 +141,10 @@ const ProductsOrderMain = (props) => {
       }
     });
 
-    return searchResults.slice(0, numOfElements);
+    return searchResults;
+
+    // limit search results
+    // return searchResults.slice(0, numOfElements);
   };
 
   const displayProductsByTypeStandardView = (

@@ -72,8 +72,6 @@ Meteor.methods({
           postRes.on('end', () => {
             const result = JSON.parse(response);
 
-            console.log(response);
-
             if (result.head.signature
                   && result.body.resultInfo.resultStatus
                   && result.body.resultInfo.resultStatus === 'S') {

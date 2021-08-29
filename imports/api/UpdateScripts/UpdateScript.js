@@ -49,6 +49,7 @@ if (IngWeights.findOne()) {
 
 */
 
+/*
 Products.update({ sku: 'VEV000425' }, { $set: { zh_item_id: '702207000050765962' } });
 Products.update({ sku: 'MRB000753' }, { $set: { zh_item_id: '702207000137410932' } });
 Products.update({ sku: 'VEV000490' }, { $set: { zh_item_id: '702207000059654001' } });
@@ -65,6 +66,7 @@ Meteor.users.update({ productReturnables: { $exists: false } }, {
   },
 },
 { multi: true });
+*/
 
 /*
 Meteor.users.update({ productReturns: { $exists: true } }, {

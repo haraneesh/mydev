@@ -206,33 +206,34 @@ const ProductForNonAdmin = ({
 
   if (sliderView) {
     return (
-      <div className="product-item text-center">
-        <Col xs={8}>
-          {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
+      <div className="product-item text-center align-items-center row">
+        <Col xs={12}>
+          {prodNameDesc}
         </Col>
-
-        <Col xs={8}>
+        {!!image && image.indexOf('blank_image.png') < 0 && (
+        <Col xs={5} className="align-items-center">
+          {imageRow}
+        </Col>
+        )}
+        <Col className="col align-items-center">
           <Row>
-            <Col xs={12}>
-              {prodNameDesc}
-            </Col>
             <Col xs={12}>
               <p>
                 {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
               </p>
             </Col>
-            <Col xs={12}>
-              <AddToCart
-                onChange={onChange}
-                unit={unit}
-                unitprice={unitprice}
-                controlName={productId}
-                quantitySelected={quantitySelected}
-                values={unitsForSelectionArray}
-                maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-              />
-            </Col>
           </Row>
+        </Col>
+        <Col xs={12} className="addCartButton">
+          <AddToCart
+            onChange={onChange}
+            unit={unit}
+            unitprice={unitprice}
+            controlName={productId}
+            quantitySelected={quantitySelected}
+            values={unitsForSelectionArray}
+            maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+          />
         </Col>
       </div>
     );

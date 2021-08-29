@@ -76,7 +76,7 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'payment.insert': async function paymentInsert(inputParams) {
+  'payments.insert': async function paymentInsert(inputParams) {
     check(inputParams, {
       razorpay_payment_id: String,
       amountChargedInPaise: Number,
