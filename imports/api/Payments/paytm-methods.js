@@ -173,6 +173,64 @@ Meteor.methods({
       }
     }
   },
+  'payment.paytm.getSavedCreditCards': async function getSavedCreditCards(params) {
+    check(params, {
+      mobile: String,
+      token: String,
+      suvaiTransactionId: String,
+    });
+
+    if (Meteor.isServer) {
+      try {
+        const { merchantKey, websiteName } = Meteor.settings.private.PayTM;
+        const { hostName, merchantId } = Meteor.settings.public.PayTM;
+        const now = new Date();
+
+        const paytmParams = {};
+
+        paytmParams.body = {
+          mid: merchantId,
+          custId: params.mobile,
+          includeExpired: true,
+        };
+
+        const checksum = await PaytmChecksum.generateSignature(
+          JSON.stringify(paytmParams.body), merchantKey,
+        );
+
+        paytmParams.head = {
+          signature: checksum,
+          version: 'v1',
+          requestId: params.suvaiTransactionId,
+          requestTimestamp: now.getTime().toString(),
+          token: params.token,
+          tokenType: 'JWT',
+        };
+
+        console.log('paytm params');
+        console.log(paytmParams);
+
+        const response = HTTP.call(
+          'POST',
+          `https://${hostName}/savedcardservice/vault/cards/fetchCardByMidCustId`,
+          {
+            params: {
+              mid: merchantId,
+              requestId: params.suvaiTransactionId,
+            },
+            data: paytmParams,
+          },
+        );
+
+        console.log(response);
+      } catch (exception) {
+        if (Meteor.isDevelopment) {
+          console.log(`Exception --- ${exception}`);
+        }
+        // handleMethodException(exception);
+      }
+    }
+  },
 });
 
 rateLimit({

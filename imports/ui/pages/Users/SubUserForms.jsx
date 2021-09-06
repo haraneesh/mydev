@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Row, Col, FormGroup, Panel, label, FormControl, Button,
 } from 'react-bootstrap';
+import { Roles } from 'meteor/alanning:roles';
 import { formValid } from '../../../modules/validate';
 import constants from '../../../modules/constants';
 
@@ -140,9 +141,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
                 className="form-control"
                 id="idUserRole"
                 name="userRole"
-                defaultValue={(user && user.roles && user.roles[0])
-                  ? user.roles[0]
-                  : constants.Roles.customer.name}
+                defaultValue={constants.Roles.customer.name}
               >
                 <option value={`${constants.Roles.admin.name}`}>
                   {constants.Roles.admin.display_value}

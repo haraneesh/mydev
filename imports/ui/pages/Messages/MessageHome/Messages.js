@@ -93,11 +93,11 @@ const Messages = ({
         </li>
       </ul>
 
-      {messages.length
+      {(messages.length && messages.length > 0)
         ? (
           <>
             {messages.map((msg) => {
-              if (filterSelected === 'none' || doesMsgMatchFilter(msg)) {
+              if (filterSelected === 'none' || doesMsgMatchFilter(msg) || Meteor.userId() === msg.owner) {
                 return (
                   <p key={msg._id}>
                     {
@@ -124,8 +124,10 @@ const Messages = ({
               }
             })}
 
-            <div className="text-center col-12">
-              <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
+            <div className="text-center col-12 panel panel-default panel-heading">
+              <Button className="btn btn-default" onClick={bringNextBatch}>
+                Load More
+              </Button>
             </div>
           </>
         )

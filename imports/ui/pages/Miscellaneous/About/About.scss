@@ -63,7 +63,7 @@
     }
 
     .bodyCursText p{
-        font-family:'Marck Script';
+        font-family:'Marck Script', $default-font;
         font-size:1.3em;
         font-weight: 400;
     }

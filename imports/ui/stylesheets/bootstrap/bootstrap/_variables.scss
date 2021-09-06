@@ -24,11 +24,12 @@ $brand-warning:         #FF8A00 !default; //#EBBB1E #E86D00 #FF6D00
 $brand-danger:          #A2082C !default; //#EA3128
 $brand-logo-yellow:     #FFB800 !default; //#FDC123
 
-$heading-font: 'Encode Sans Semi Expanded';
-$body-font: 'Nunito';
+$default-font: "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
+$heading-font: 'Encode Sans Semi Expanded', $default-font;
+$body-font: 'Nunito', $default-font;
 
 
-$font-family-sans-serif:  $body-font, "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
+$font-family-sans-serif:  $body-font;
 $font-family-serif:        "Times New Roman", Times, serif !default;
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;

@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Match, check } from 'meteor/check';
+import { Roles } from 'meteor/alanning:roles';
 import Comments from './Comments';
 import handleMethodException from '../../modules/handle-method-exception';
-
 
 function getUser(userId) {
   const usr = Meteor.users.find(userId, {
@@ -17,7 +17,7 @@ function getUser(userId) {
   return {
     owner: userId,
     ownerName,
-    ownerRole: usr.roles[0],
+    ownerRole: Roles.getRolesForUser(userId)[0],
   };
 }
 
@@ -96,4 +96,3 @@ export default {
   commentDelete,
   allCommentsOfPost,
 };
-

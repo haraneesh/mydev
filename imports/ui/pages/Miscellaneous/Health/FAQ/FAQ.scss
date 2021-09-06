@@ -5,7 +5,7 @@
 .FAQ {
     font-size:  $font-size-large;
     margin-top: 4em;
-    font-family: 'Buenard';
+    font-family: 'Buenard', $default-font;
 
     h1, h2, h3{
         text-transform:uppercase;

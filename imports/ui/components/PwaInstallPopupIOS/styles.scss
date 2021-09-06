@@ -1,0 +1,132 @@
+
+.pwa-install-popup-ios-content{
+    
+    .pwa-install-popup-ios-content-top-row{
+        justify-content: center;
+        align-items: center;
+    }
+    .pwa-install-popup-ios-content-body-row{
+        padding-top: 0.5em;
+    }
+    .appIcon{
+        margin: 0.5em 1.5em 0.5em 0em;
+        height: 4em;
+    }
+    .col-sm-7{
+        justify-content: left;
+        align-items: center;
+        display: flex;
+    }
+}
+
+.pwa-install-popup-ios {
+    position: fixed;
+    background-color: white;
+    border-radius: 0.4em;
+    padding: 1em 1em;
+    bottom: 20px;
+    z-index: 999999;
+    transform: translatey(0px);
+    animation: float 4s ease-in-out infinite;
+    width: 95%;
+    margin: auto;
+    left: 2.5%;
+  
+    &.safari-nav {
+      &:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border: 20px solid transparent;
+        border-top-color: white;
+        border-bottom: 0;
+        margin-left: -20px;
+        margin-bottom: -20px;
+      }
+    }
+  }
+  .pwa-install-popup-ios.ipad-device {
+    top: 30px;
+    bottom: auto;
+    right: 5%;
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: auto;
+      top: -5px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border: 20px solid transparent;
+      border-bottom-color: white;
+      border-top: 0;
+      border-right: 0;
+      margin-left: 40%;
+      margin-top: -15px;
+      margin-bottom: auto;
+    }
+  }
+  
+  @keyframes float {
+    0% {
+      box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+      transform: translatey(0px);
+    }
+    50% {
+      box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+      transform: translatey(-20px);
+    }
+    100% {
+      box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+      transform: translatey(0px);
+    }
+  }
+
+$blue-color-legacy: rgb(45, 124, 246);
+$blue-color-modern-light: rgba(0, 85, 179, 1);
+$blue-color-modern-dark: rgba(9, 132, 255, 1);
+
+
+.pwaPromptShareIcon,
+  .pwaPromptHomeIcon {
+    flex: 0 0 auto;
+    height: 30px;
+    margin-left: 1em;
+    width: 25px;
+  }
+
+  .pwaPromptHomeIcon {
+    color: $blue-color-legacy;
+
+    .modern & {
+      color: black;
+      fill: black;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: white;
+          fill: white;
+        }
+      }
+    }
+  }
+
+  .pwaPromptShareIcon {
+    color: $blue-color-legacy;
+    fill: $blue-color-legacy;
+
+    .modern & {
+      color: $blue-color-modern-light;
+      fill: $blue-color-modern-light;
+
+      @media (prefers-color-scheme: dark) {
+        & {
+          color: $blue-color-modern-dark;
+          fill: $blue-color-modern-dark;
+        }
+      }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "fr": {
+      "APP_NAME_DEFAULT": "l'application",
+      "PWA_POPUP_PART1": "Pour retrouver {{appName}} depuis votre écran d'accueil",
+      "PWA_POPUP_PART2": "1- Ouvrez {{appName}} sur Safari",
+      "PWA_POPUP_PART3": "2- Cliquez sur Partage",
+      "PWA_POPUP_PART4": "3- Sélectionnez 'Sur l'écran d'accueil'"
+    },
+    "en": {
+      "APP_NAME_DEFAULT": "Suvai",
+      "PWA_POPUP_PART1": "Add to Home Screen",
+      "PWA_POPUP_PART2": "1 Open nammasuvai.com in Safari",
+      "PWA_POPUP_PART3": "2 Click on Share menu",
+      "PWA_POPUP_PART4": "3 Select 'Add to Homescreen'"
+    },
+    "pt": {
+      "APP_NAME_DEFAULT": "a aplicação",
+      "PWA_POPUP_PART1": "Para encontrar o aplicativo {{appName}} na tela inicial",
+      "PWA_POPUP_PART2": "1- Abra o {{appName}} no Safari",
+      "PWA_POPUP_PART3": "2- Clique no menu Compartilhar",
+      "PWA_POPUP_PART4": "3- selecione 'Adicionar à tela inicial'"
+    },
+    "nl": {
+      "APP_NAME_DEFAULT": "de app",
+      "PWA_POPUP_PART1": "Om de {{appName}} -app te vinden op uw startscherm",
+      "PWA_POPUP_PART2": "1- Open {{appName}} in Safari",
+      "PWA_POPUP_PART3": "2- Klik op het menu Delen",
+      "PWA_POPUP_PART4": "3- Selecteer 'Toevoegen aan startscherm'"
+    },
+    "de": {
+      "APP_NAME_DEFAULT": "Die Anwendung",
+      "PWA_POPUP_PART1": "Um die {{appName}} -app auf deinem Startbildschirm zu installieren",
+      "PWA_POPUP_PART2": "1- Öffne die {{appName}} in Safari",
+      "PWA_POPUP_PART3": "2- Klicke auf dieses Aktionen-Menue",
+      "PWA_POPUP_PART4": "3- Wähle daraus zum 'Home-Bildschirm hinzufügen' aus"
+    }
+  }

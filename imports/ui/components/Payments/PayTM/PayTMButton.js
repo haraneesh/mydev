@@ -73,6 +73,18 @@ function PayTMButton({
     }
   }
 
+  function getSavedCreditCards(txToken, mobile, suvaiTransactionId) {
+    const transactionObject = {
+      token: txToken,
+      mobile,
+      suvaiTransactionId,
+    };
+
+    Meteor.call('payment.paytm.getSavedCreditCards', transactionObject, (error, result) => {
+
+    });
+  }
+
   function initiateTransaction() {
     setIsLoading(true);
 
@@ -87,6 +99,8 @@ function PayTMButton({
     };
     Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
       if (result && result.status === 'S') {
+        // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId); // to delete
+
         showPayScreen({
           txToken: result.txToken,
           amount,

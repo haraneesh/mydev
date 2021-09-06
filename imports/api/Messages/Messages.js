@@ -70,7 +70,7 @@ Messages.schema = new SimpleSchema({
     label: 'The body of the message.',
   },
   imageId: { type: String, label: 'The id of the image', optional: true },
-  onBehalf: { type: Object, optional: true },
+  onBehalf: { type: Object, optional: true, label: 'On Behalf' },
   'onBehalf.postedByUserId': { type: String },
   'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   messageStatus: {
