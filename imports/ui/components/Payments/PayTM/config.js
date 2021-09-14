@@ -22,10 +22,6 @@ const CONFIG = ({
       headerColor: '#493934',
       errorColor: '',
       successColor: '',
-      card: {
-        padding: '',
-        backgroundColor: '',
-      },
     },
     jsFile: '',
     data: {
@@ -43,7 +39,7 @@ const CONFIG = ({
       name: merchantName,
       logo: '/logo.png',
       redirect: false,
-      hidePaytmBranding: false,
+      hidePaytmBranding: true,
     },
     handler: {
       notifyMerchant(eventName, data) {

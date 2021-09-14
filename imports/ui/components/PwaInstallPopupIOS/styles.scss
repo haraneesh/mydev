@@ -6,16 +6,18 @@
         align-items: center;
     }
     .pwa-install-popup-ios-content-body-row{
-        padding-top: 0.5em;
+        div {
+            justify-content: left;
+            align-items: center;
+            display: flex;
+        }
+        .description {
+            justify-content: center;
+        }
     }
     .appIcon{
-        margin: 0.5em 1.5em 0.5em 0em;
+        margin: 0em 1.5em 0.5em 0em;
         height: 4em;
-    }
-    .col-sm-7{
-        justify-content: left;
-        align-items: center;
-        display: flex;
     }
 }
 
@@ -27,8 +29,9 @@
     bottom: 20px;
     z-index: 999999;
     transform: translatey(0px);
-    animation: float 4s ease-in-out infinite;
+    animation: float 12s ease-in-out infinite;
     width: 95%;
+    max-width: 480px; //iphone 5 width
     margin: auto;
     left: 2.5%;
   
@@ -88,7 +91,6 @@
 $blue-color-legacy: rgb(45, 124, 246);
 $blue-color-modern-light: rgba(0, 85, 179, 1);
 $blue-color-modern-dark: rgba(9, 132, 255, 1);
-
 
 .pwaPromptShareIcon,
   .pwaPromptHomeIcon {

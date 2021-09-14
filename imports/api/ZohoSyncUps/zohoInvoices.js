@@ -3,7 +3,7 @@ import zh from './ZohoBooks';
 import { retResponse } from './zohoCommon';
 import { Orders } from '../Orders/Orders';
 
-const areAllItemsInvoiced = zhSalesOrder => {
+const areAllItemsInvoiced = (zhSalesOrder) => {
   const lineItems = zhSalesOrder.line_items;
   return lineItems.reduce(
     (startValue, item) => startValue && item.is_invoiced,
@@ -74,7 +74,7 @@ export const InvoiceStatuses = {
 const getInvoices = (orderId, zhInvoices) => {
   const invoices = [];
 
-  zhInvoices.forEach(value => {
+  zhInvoices.forEach((value) => {
     const invoice = createInvoiceObject(orderId, value);
     invoices.push(invoice);
   });
@@ -82,7 +82,7 @@ const getInvoices = (orderId, zhInvoices) => {
   return invoices;
 };
 
-const deriveOrderStatusFromInvoices = zhInvoices => {
+const deriveOrderStatusFromInvoices = (zhInvoices) => {
   const invoices = zhInvoices;
   const statuses = {
     overdue: 0,
@@ -93,7 +93,7 @@ const deriveOrderStatusFromInvoices = zhInvoices => {
     draft: 0,
   };
 
-  invoices.forEach(invoice => {
+  invoices.forEach((invoice) => {
     switch (true) {
       case invoice.status === 'overdue':
         // return 'overdue';
@@ -163,11 +163,11 @@ export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
         orderStatus = constants.OrderStatus.Shipped.name;
         break;
       case 'paid':
-        if (order.zh_salesorder_status === 'partially_invoiced') {
-          orderStatus = constants.OrderStatus.Partially_Completed.name;
-        } else {
-          orderStatus = constants.OrderStatus.Completed.name;
-        }
+        // if (order.zh_salesorder_status === 'partially_invoiced') {
+        //   orderStatus = constants.OrderStatus.Partially_Completed.name;
+        // } else {
+        orderStatus = constants.OrderStatus.Completed.name;
+        // }
         break;
       case 'draft':
         orderStatus = constants.OrderStatus.Awaiting_Fulfillment.name;
@@ -188,7 +188,7 @@ export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
       code: r.code,
       message: `${r.message} : zoho salesOrder number=${
         order.zh_salesorder_number
-        }`,
+      }`,
     };
     errorResp.push(retResponse(res));
   }

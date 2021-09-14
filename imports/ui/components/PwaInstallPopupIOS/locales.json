@@ -8,10 +8,11 @@
     },
     "en": {
       "APP_NAME_DEFAULT": "Suvai",
-      "PWA_POPUP_PART1": "Add to Home Screen",
-      "PWA_POPUP_PART2": "1 Open nammasuvai.com in Safari",
-      "PWA_POPUP_PART3": "2 Click on Share menu",
-      "PWA_POPUP_PART4": "3 Select 'Add to Homescreen'"
+      "PWA_POPUP_PART1": "Add {{appName}} to Home Screen",
+      "PWA_POPUP_DESCRIPTION": "Adding {{appName}} to your home screen gives you better experience.",
+      "PWA_POPUP_PART2": "1) Open nammasuvai.com in Safari",
+      "PWA_POPUP_PART3": "2) Click on Share menu",
+      "PWA_POPUP_PART4": "3) Select 'Add to Homescreen'"
     },
     "pt": {
       "APP_NAME_DEFAULT": "a aplicação",

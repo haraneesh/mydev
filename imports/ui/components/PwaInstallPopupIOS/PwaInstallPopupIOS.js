@@ -107,26 +107,37 @@ const PwaInstallPopupIOS = ({
             <img className="appIcon" src={appIcon} />
             <h5>
               {translations[languageCode].PWA_POPUP_PART1.replace(
-                ' Suvai ',
+                '{{appName}}',
                 apppNameLabel,
               )}
             </h5>
           </div>
           <div className="row pwa-install-popup-ios-content-body-row">
-            <div className="col-sm-7 offset-sm-5">
+            <div className="col-xs-12 description">
+              <h5 style={{ margin: '0.25em' }}>
+                <small>
+                  {translations[languageCode].PWA_POPUP_DESCRIPTION.replace(
+                    '{{appName}}',
+                    apppNameLabel,
+                  )}
+                </small>
+
+              </h5>
+            </div>
+            <div className="col-xs-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART2.replace(
-                ' Suvai ',
+                '{{appName}}',
                 apppNameLabel,
               )}
             </div>
-            <div className="col-sm-7 offset-sm-5">
+            <div className="col-xs-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART3}
               <ShareIcon
                 className="pwaPromptShareIcon"
                 modern
               />
             </div>
-            <div className="col-sm-7 offset-sm-5">
+            <div className="col-xs-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART4}
               <HomeScreenIcon
                 className="pwaPromptHomeIcon"
