@@ -41,7 +41,7 @@ const About = () => {
               <h1> Fresh </h1>
               <h2> Organic and Natural </h2>
               <h4> produce delivered home, in Chennai </h4>
-              <HighLightText highLightText="100% Food" />
+              <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
             </Col>
           </div>

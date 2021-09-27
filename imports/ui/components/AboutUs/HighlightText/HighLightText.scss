@@ -18,8 +18,10 @@
 }
 
 .heading-highlight{
-    width: 50%;
-    color:$brand-success;
+    width: 80%;
+    color: $brand-success;
     fill: currentcolor;
-    margin-left:5rem;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    max-width: 20em;
 }
