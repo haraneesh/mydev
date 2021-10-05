@@ -4,7 +4,6 @@ import {
   Panel, Row, Col, FormGroup, ControlLabel, Button,
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
@@ -22,6 +21,7 @@ const defaultState = {
     whMobilePhone: '',
     deliveryAddress: '',
     confirmPassword: '',
+    eatingHealthyMeaning: '',
   },
 };
 
@@ -71,6 +71,7 @@ class Signup extends React.Component {
         },
         whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
+        eatingHealthyMeaning: this.eatingHealthyMeaning.value,
       },
     };
 
@@ -103,8 +104,27 @@ class Signup extends React.Component {
     return (!signUpRequestSent ? (
       <div className="Signup offset-sm-1">
         <div>
-          <Col xs={12} sm={6} md={5} lg={4}>
+          <Col xs={12} sm={10}>
             <h3 className="page-header">Sign Up</h3>
+            <div className="panel text-center">
+              <div className="panel-body">
+                <h3 className="text-primary"> Welcome to Suvai </h3>
+                <br />
+                <p>
+                  Suvai is a community of like minded families who have been together for more than
+                  {' '}
+                  <b className="text-info h4">5 years</b>
+                  .
+                </p>
+                <p>
+                  We are committed to eating healthy and leaving behind a small ecological footprint.
+                </p>
+                <p>
+                  We are happy to Welcome you, Please introduce yourself.
+                </p>
+              </div>
+            </div>
+
             { /* <Row>
             <Col xs={12}>
               <OAuthLoginButtons
@@ -182,6 +202,17 @@ class Signup extends React.Component {
                   onBlur={this.onValueChange}
                 />
               </FormGroup>
+              <FormGroup validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
+                <ControlLabel>What does eating healthy mean to you?</ControlLabel>
+                <textarea
+                  ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
+                  name="eatingHealthyMeaning"
+                  placeholder="You are never wrong, tell us what is in your mind."
+                  rows="6"
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+              </FormGroup>
               <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
                 <ControlLabel>Password</ControlLabel>
                 <input
@@ -210,6 +241,11 @@ class Signup extends React.Component {
                 <span className="control-label">{isError.confirmPassword}</span>
                 )}
               </FormGroup>
+              <p>
+                <small>
+                  By Signing up you are sharing your commitment towards healthy and sustainable lifestyle.
+                </small>
+              </p>
               <Button type="submit" bsStyle="primary">Sign Up</Button>
               <AccountPageFooter>
                 <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>

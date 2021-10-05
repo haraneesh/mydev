@@ -7,7 +7,7 @@ const Payments = new Mongo.Collection('Payments');
 export default Payments;
 
 if (Meteor.isServer) {
-  Payments._ensureIndex({ orderId: 1 });
+  Payments.rawCollection().createIndex({ orderId: 1 });
 }
 
 Payments.allow({
@@ -49,7 +49,7 @@ Payments.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value

@@ -17,7 +17,6 @@ Recommendations.deny({
   remove: () => true,
 });
 
-
 const PreviousOrderedProductsSchema = new SimpleSchema({
   prevOrderedProducts: { type: Object, blackbox: true },
   prevOrdersConsidered: { type: Array },
@@ -35,10 +34,10 @@ Recommendations.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
   },
   updatedAt: {
@@ -52,9 +51,8 @@ Recommendations.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Recommendations._ensureIndex({ customerId: 1 }, { unique: true });
+  Recommendations.rawCollection().createIndex({ customerId: 1 }, { unique: true });
 }
 
 Recommendations.attachSchema(Recommendations.schema);
 export default Recommendations;
-

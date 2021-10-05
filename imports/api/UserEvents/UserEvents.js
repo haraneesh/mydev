@@ -7,7 +7,7 @@ const UserEvents = new Mongo.Collection('UserEvents');
 export default UserEvents;
 
 if (Meteor.isServer) {
-  UserEvents._ensureIndex([{ owner: 1 }, { eventType: 1 }]);
+  UserEvents.rawCollection().createIndex([{ owner: 1 }, { eventType: 1 }]);
 }
 
 UserEvents.allow({

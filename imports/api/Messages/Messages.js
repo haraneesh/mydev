@@ -22,7 +22,7 @@ Messages.deny({
 });
 
 if (Meteor.isServer) {
-  Messages._ensureIndex({ to: 1 });
+  Messages.rawCollection().createIndex({ to: 1 });
 }
 
 Messages.schema = new SimpleSchema({

@@ -19,11 +19,6 @@ FeedBacks.deny({
   remove: () => true,
 });
 
-
-if (Meteor.isServer) {
-  FeedBacks._ensureIndex({ postId: 1, postType: 1 });
-}
-
 FeedBacks.schema = new SimpleSchema({
   owner: {
     type: String,
@@ -78,6 +73,10 @@ FeedBacks.schema = new SimpleSchema({
     optional: true,
   },
 });
+
+if (Meteor.isServer) {
+  FeedBacks.rawCollection().createIndex({ postId: 1, postType: 1 }, { });
+}
 
 FeedBacks.attachSchema(FeedBacks.schema);
 

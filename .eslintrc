@@ -33,7 +33,6 @@
       {
         "allow": [
           "_id",
-          "_ensureIndex",
           "_verifyEmailToken",
           "_resetPasswordToken",
           "_name"

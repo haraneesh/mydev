@@ -29,10 +29,10 @@ Baskets.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },
@@ -56,7 +56,7 @@ Baskets.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Baskets._ensureIndex({ owner: 1 });
+  Baskets.rawCollection().createIndex({ owner: 1 });
 }
 
 Baskets.attachSchema(Baskets.schema);

@@ -128,7 +128,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                 </Col>
                 <Col xs={12} sm={3} className="text-right-xs">
                   <PayTMButton
-                    buttonText={(walletState.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
+                    buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Add Money' : 'Pay Now'}
                     showOptionsWithFee={false}
                     paymentDetails={{
                       moneyToChargeInRs: walletState.amountToChargeInRs,
@@ -193,7 +193,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                   </Col>
                   <Col xs={12} sm={3} className="text-right-xs">
                     <PayTMButton
-                      buttonText={(walletState.netAmountInWalletInRs > 0) ? 'Add Money' : 'Pay Now'}
+                      buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Add Money' : 'Pay Now'}
                       showOptionsWithFee
                       paymentDetails={{
                         moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),

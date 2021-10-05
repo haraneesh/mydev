@@ -50,7 +50,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
         </Col>
         <Col xs={12} sm={3} className="text-right" style={{ paddingTop: '10px' }}>
           <Button bsStyle="primary" onClick={() => { history.push('/mywallet'); }}>
-            {(walletBalanceInRs > 0) ? 'Add To Wallet' : 'Pay Now'}
+            {(walletBalanceInRs >= 0) ? 'Add To Wallet' : 'Pay Now'}
           </Button>
         </Col>
       </Row>

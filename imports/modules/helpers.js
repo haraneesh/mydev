@@ -14,6 +14,28 @@ export function isDeviceMobile() {
   return window.screen.width < constants.ScreenWidths.ipad.width;
 }
 
+export function getDeliveryDay(date) {
+  const hour = date.getHours(); // 0 to 23
+  const day = date.getDay(); // 0 for Sunday to 6
+
+  const weekday = new Array(7);
+  weekday[0] = 'Sunday';
+  weekday[1] = 'Monday';
+  weekday[2] = 'Tuesday';
+  weekday[3] = 'Wednesday';
+  weekday[4] = 'Thursday';
+  weekday[5] = 'Friday';
+  weekday[6] = 'Saturday';
+
+  if (day === 0 || (day === 6 && hour > 10)) {
+    return weekday[1];
+  }
+  if (hour < 11) {
+    return `Today (${weekday[day]})`;
+  }
+  return `Tomorrow (${weekday[day + 1]})`;
+}
+
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
   if (!isShopOwnerPrice) {
     return productsArray.filter((product) => product.availableToOrder === true);

@@ -6,10 +6,6 @@ import SimpleSchema from 'simpl-schema';
 const UserAndPosts = new Mongo.Collection('UserAndPosts');
 export default UserAndPosts;
 
-if (Meteor.isServer) {
-  UserAndPosts._ensureIndex([{ postId: 1 }, { owner: 1 }]);
-}
-
 UserAndPosts.allow({
   insert: () => false,
   update: () => false,
@@ -61,15 +57,15 @@ UserAndPosts.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
+      } if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
-      this.unset();  // Prevent user from supplying their own value
+      this.unset(); // Prevent user from supplying their own value
     },
     optional: true,
   },
-    // Force value to be current date (on server) upon update
-    // and don't allow it to be set upon insert.
+  // Force value to be current date (on server) upon update
+  // and don't allow it to be set upon insert.
   updatedAt: {
     type: Date,
     autoValue() {
@@ -80,5 +76,9 @@ UserAndPosts.schema = new SimpleSchema({
     optional: true,
   },
 });
+
+if (Meteor.isServer) {
+  UserAndPosts.rawCollection().createIndex([{ postId: 1 }, { owner: 1 }], {});
+}
 
 UserAndPosts.attachSchema(UserAndPosts.schema);

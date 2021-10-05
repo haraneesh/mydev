@@ -64,6 +64,11 @@ class ApproveSignUps extends React.Component {
               <strong>{user.profile.deliveryAddress}</strong>
             </Col>
             <Col xs={12}>
+              Eating Healthy Means:
+              {' '}
+              <strong>{user.profile.eatingHealthyMeaning}</strong>
+            </Col>
+            <Col xs={12}>
               <Button bsStyle="primary" onClick={() => { this.handleSubmit(user, 'Approve'); }}> Approve </Button>
               {' '}
 &nbsp;

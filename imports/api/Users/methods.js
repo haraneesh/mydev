@@ -102,6 +102,7 @@ export const createNewUser = (user) => {
       salutation: user.profile.salutation,
       whMobilePhone: user.profile.whMobilePhone,
       deliveryAddress: user.profile.deliveryAddress,
+      eatingHealthyMeaning: user.profile.eatingHealthyMeaning,
     },
   };
 
@@ -218,17 +219,26 @@ export const adminUpdateUser = new ValidatedMethod({
   },
 });
 
-const notifyUserSignUp = (content, subject) => {
+const notifyUserSignUp = (content, subject, customerEmail) => {
   const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
   const fromEmail = Meteor.settings.private.fromInvitationEmail;
   if (Meteor.isDevelopment) {
     console.log(`To Email: ${toEmail} From Email: ${fromEmail} Subject: ${subject} Content: ${content}`);
   } else {
+    // Send email to admin
     Email.send({
       to: toEmail,
       from: `Suvai User SignUp ${fromEmail}`,
       subject,
       html: content,
+    });
+
+    // Send email to the person signing up
+    Email.send({
+      to: customerEmail,
+      from: `Suvai User SignUp ${fromEmail}`,
+      subject,
+      html: 'Thank you for your interest in Suvai. Please give us a few days, our admins will get back to you.',
     });
   }
 };
@@ -245,6 +255,7 @@ Meteor.methods({
         },
         whMobilePhone: String,
         deliveryAddress: String,
+        eatingHealthyMeaning: String,
       },
       password: String,
     });
@@ -254,8 +265,9 @@ Meteor.methods({
     Last Name:  ${user.profile.name.last}
     Phone number: ${user.profile.whMobilePhone} 
     deliveryAddress: ${user.profile.deliveryAddress}
+    eatingHealthyMeaning: ${user.profile.eatingHealthyMeaning}
     has signed up. Please approve in the app.`,
-    'New user signup');
+    'New user signup', user.email);
     return UserSignUps.insert(user);
   },
   'users.approveSignUp': function usersApproveSignUp(userSignUpId, status) {

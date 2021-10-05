@@ -7,7 +7,7 @@ const ZohoSyncUps = new Mongo.Collection('ZohoSyncUps');
 export default ZohoSyncUps;
 
 if (Meteor.isServer) {
-  ZohoSyncUps._ensureIndex({ syncEntity: 1, syncedForUser: 1 });
+  ZohoSyncUps.rawCollection().createIndex({ syncEntity: 1, syncedForUser: 1 });
 }
 
 ZohoSyncUps.allow({

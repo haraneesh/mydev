@@ -62,7 +62,7 @@ ProductLists.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  ProductLists._ensureIndex({ activeStartDateTime: 1, activeEndDateTime: 1 });
+  ProductLists.rawCollection().createIndex({ activeStartDateTime: 1, activeEndDateTime: 1 });
 }
 
 ProductLists.attachSchema(ProductLists.schema);

@@ -104,7 +104,7 @@ Products.schema = new SimpleSchema(ProductSchemaDefObject, {
 });
 
 if (Meteor.isServer) {
-  Products._ensureIndex({ availableToOrder: 1 });
+  Products.rawCollection().createIndex({ availableToOrder: 1 });
 }
 
 Products.attachSchema(Products.schema);

@@ -76,8 +76,8 @@ const InvitationsSchema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Invitations._ensureIndex({ _Id: 1, invitation_status: 1, sentUserId: 1 });
-  Invitations._ensureIndex({ token: 1, invitation_status: 1 });
+  Invitations.rawCollection().createIndex({ _Id: 1, invitation_status: 1, sentUserId: 1 });
+  Invitations.rawCollection().createIndex({ token: 1, invitation_status: 1 });
 }
 
 Invitations.attachSchema(InvitationsSchema);

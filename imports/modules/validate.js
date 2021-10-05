@@ -61,6 +61,11 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         ? 'delivery address is required'
         : '';
       break;
+    case name === 'eatingHealthyMeaning':
+      isError.eatingHealthyMeaning = trimmedVal.length < 1
+        ? 'you are never wrong, tell us what is in your mind'
+        : '';
+      break;
     case name === 'dietPreference':
       isError.dietPreference = trimmedVal.length < 1
         ? 'dietary preference is mandatory'

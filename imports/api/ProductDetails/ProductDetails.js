@@ -62,7 +62,7 @@ ProductDetails.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  ProductDetails._ensureIndex({ productId: 1 });
+  ProductDetails.rawCollection().createIndex({ productId: 1 });
 }
 
 ProductDetails.attachSchema(ProductDetails.schema);
