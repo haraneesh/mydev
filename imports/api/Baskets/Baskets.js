@@ -56,7 +56,7 @@ Baskets.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Baskets.rawCollection().createIndex({ owner: 1 });
+  Baskets.rawCollection().createIndex({ owner: 1 }, { name: 'owner_1' });
 }
 
 Baskets.attachSchema(Baskets.schema);

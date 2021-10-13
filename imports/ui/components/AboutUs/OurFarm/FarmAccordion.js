@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Flickity from 'flickity';
 import 'flickity/dist/flickity.min.css';
-import './HomePageSlider.scss';
+import './FarmAccordion.scss';
 
-function HomePageSlider() {
+function FarmAccordion() {
   const [flky, setFlky] = useState();
 
   useEffect(() => {
-    const newFlky = new Flickity('#cc1', {
+    const newFlky = new Flickity('#cc2', {
       // options, defaults listed
 
       accessibility: true,
       // enable keyboard navigation, pressing left & right keys
 
-      prevNextButtons: false,
+      prevNextButtons: true,
 
       adaptiveHeight: false,
       // set carousel height to the selected slide
 
-      autoPlay: 15000,
+      autoPlay: 7000,
       // advances to the next cell
       // if true, default is 15 seconds
       // or set time between advances in milliseconds
@@ -40,7 +40,7 @@ function HomePageSlider() {
       // enables dragging & flicking
       // if at least 2 cells
 
-      dragThreshold: 3,
+      dragThreshold: 0,
       // number of pixels a user must scroll horizontally to start dragging
       // increase to allow more room for vertical scroll for touch devices
 
@@ -51,12 +51,12 @@ function HomePageSlider() {
       groupCells: false,
       // group cells together in slides
 
-      initialIndex: 0,
+      initialIndex: 2,
       // zero-based index of the initial selected cell
 
       lazyLoad: false,
       // enable lazy-loading images
-      // set img data-flickity-lazyload="src.jpg"
+      // set img data-flickity-lazyload="src_new.jpg"
       // set to number to load images adjacent cells
 
       percentPosition: false,
@@ -64,7 +64,7 @@ function HomePageSlider() {
       // Enable if items have percent widths
       // Disable if items have pixel widths, like images
 
-      pageDots: true,
+      pageDots: false,
       // create and enable page dots
 
       resize: true,
@@ -93,31 +93,32 @@ function HomePageSlider() {
   }, []);
 
   return (
-    <div className="carousel-health">
-      <h2>
-        True wealth is health
-      </h2>
-      <div id="cc1" className="carousel panel-body">
+    <div className="carousel-farm">
+      <div id="cc2" className="carousel panel-body">
         <div className="carousel-cell">
-          <img src="about/feedingx640.jpg?v5" alt="Feeding a baby" />
-          <h7> Kids deserve the best </h7>
+          <img src="about/farm/1.jpg?v1" alt="Organic Rice Farm" />
         </div>
         <div className="carousel-cell">
-          <img src="about/exercisex640.jpg?v5" alt="Exercise" />
-          <h7> Take charge of your health </h7>
+          <img src="about/farm/2.jpg?v1" alt="Long Beans" />
         </div>
         <div className="carousel-cell">
-          <img src="about/grandparentx640.jpg?v5" alt="Grandparent" />
-          <h7> Happy family is a healthy family </h7>
+          <img src="about/farm/3.jpg?v1" alt="Cow shed" />
         </div>
-        {/* <div className="carousel-cell">
-          <img src="about/farmx640.jpg?v1" alt="Organic Farm" />
-          <h7> Preserve Nature, Sustainable Farming </h7>
+        <div className="carousel-cell">
+          <img src="about/farm/4.jpg?v1" alt="Jeevamruth" />
         </div>
-      */}
+        <div className="carousel-cell">
+          <img src="about/farm/5.jpg?v1" alt="Broccholi" />
+        </div>
+        <div className="carousel-cell">
+          <img src="about/farm/6.jpg?v1" alt="Ready to Sow" />
+        </div>
+        <div className="carousel-cell">
+          <img src="about/farm/7.jpg?v1" alt="Mother Hen and Chicks" />
+        </div>
       </div>
     </div>
   );
 }
 
-export default HomePageSlider;
+export default FarmAccordion;

@@ -78,7 +78,7 @@ UserAndPosts.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  UserAndPosts.rawCollection().createIndex([{ postId: 1 }, { owner: 1 }], {});
+  UserAndPosts.rawCollection().createIndex({ postId: 1, owner: 1 }, { name: 'postId_1_owner_1' });
 }
 
 UserAndPosts.attachSchema(UserAndPosts.schema);

@@ -154,8 +154,8 @@ Recipes.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Recipes.rawCollection().createIndex({ owner: 1 });
-  Recipes.rawCollection().createIndex({ recipeCategory: 1, publishStatus: 1 });
+  Recipes.rawCollection().createIndex({ owner: 1 }, { name: 'owner_1' });
+  Recipes.rawCollection().createIndex({ recipeCategory: 1, publishStatus: 1 }, { name: 'recipeCategory_1_publishStatus_1' });
 }
 
 Recipes.attachSchema(Recipes.schema);

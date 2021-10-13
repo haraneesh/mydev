@@ -75,7 +75,7 @@ FeedBacks.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  FeedBacks.rawCollection().createIndex({ postId: 1, postType: 1 }, { });
+  FeedBacks.rawCollection().createIndex({ postId: 1, postType: 1 }, { name: 'postId_1_postType_1' });
 }
 
 FeedBacks.attachSchema(FeedBacks.schema);

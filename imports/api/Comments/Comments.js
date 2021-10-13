@@ -78,7 +78,7 @@ Comments.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Comments.rawCollection().createIndex({ postId: 1, postType: 1 }, { });
+  Comments.rawCollection().createIndex({ postId: 1, postType: 1 }, { name: 'postId_1_postType_1' });
 }
 
 Comments.attachSchema(Comments.schema);

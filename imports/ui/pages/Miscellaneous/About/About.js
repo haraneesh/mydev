@@ -5,14 +5,15 @@ import PropTypes from 'prop-types';
 import {
   Panel, Row, Col, Button,
 } from 'react-bootstrap';
+import { relativeTimeRounding } from 'moment';
 import OurPromise from '../../../components/AboutUs/OurPromise/OurPromise';
+import OurFarm from '../../../components/AboutUs/OurFarm/OurFarm';
 import ContactUs from '../../../components/AboutUs/ContactUs/ContactUs';
 import Testimonials from '../../../components/AboutUs/Testimonials/Testimonials';
 import HomePageSlider from '../../../components/AboutUs/HomePageSlider/HomePageSlider';
 import HighLightText from '../../../components/AboutUs/HighlightText/HighLightText';
 
 import './About.scss';
-import { relativeTimeRounding } from 'moment';
 
 // class About extends React.Component {
 
@@ -49,6 +50,10 @@ const About = () => {
       </section>
 
       <Panel>
+        <OurFarm />
+      </Panel>
+
+      <Panel>
         <OurPromise />
       </Panel>
 
@@ -78,7 +83,7 @@ const About = () => {
               <p> as members</p>
             </Col>
             <Col sm={3}>
-              <h1 className="dt-align">5 days</h1>
+              <h1 className="dt-align">6 days</h1>
               {' '}
               <p> a week delivery</p>
             </Col>
@@ -117,7 +122,6 @@ const About = () => {
           </Col>
         </section>
       </Panel>
-
       {/*
       <Panel>
         <Col xs={12} className="text-center">
