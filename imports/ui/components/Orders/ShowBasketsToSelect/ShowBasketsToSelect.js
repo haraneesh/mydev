@@ -25,7 +25,7 @@ const ShowBasketsToSelect = ({
 
       <div className="panel panel-default">
         <div className="panel-heading text-center" style={{ borderBottomWidth: '0px' }}>
-          <h5> Pick a Basket to Prefill </h5>
+          <h4> Pick a Basket to Prefill </h4>
         </div>
         <Col xs={12} className="panel panel-default">
           {basketLists.map((element) => (

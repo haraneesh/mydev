@@ -105,16 +105,16 @@ const PwaInstallPopupIOS = ({
         <div className="pwa-install-popup-ios-content">
           <div className="row pwa-install-popup-ios-content-top-row">
             <img className="appIcon" src={appIcon} />
-            <h5>
+            <h4>
               {translations[languageCode].PWA_POPUP_PART1.replace(
                 '{{appName}}',
                 apppNameLabel,
               )}
-            </h5>
+            </h4>
           </div>
           <div className="row pwa-install-popup-ios-content-body-row">
             <div className="col-xs-12 description">
-              <h5 style={{ margin: '0.25em' }}>
+              <h4 style={{ margin: '0.25em' }}>
                 <small>
                   {translations[languageCode].PWA_POPUP_DESCRIPTION.replace(
                     '{{appName}}',
@@ -122,7 +122,7 @@ const PwaInstallPopupIOS = ({
                   )}
                 </small>
 
-              </h5>
+              </h4>
             </div>
             <div className="col-xs-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART2.replace(

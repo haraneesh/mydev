@@ -8,7 +8,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { formValChange, formValid } from '../../../../modules/validate';
 import constants from '../../../../modules/constants';
 
@@ -328,11 +328,11 @@ Profile.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const subscription = Meteor.subscribe('users.editProfile');
 
   return {
     loading: !subscription.ready(),
     user: Meteor.user(),
   };
-}, Profile);
+})(Profile);

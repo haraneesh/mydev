@@ -8,7 +8,7 @@ $bootstrap-sass-asset-helper: false !default;
 //
 //## Gray and brand colors for use across Bootstrap.
 
-$gray-base:              #493934 !default; // #151515 !default;
+$gray-base:             #4f3f2f !default; // #151515 321A18 493934 !default;
 $gray-darker:            darken($gray-base, 5%) !default;
 $gray-dark:              darken($gray-base, 15%) !default;
 $gray:                   lighten($gray-base, 35%) !default;
@@ -18,14 +18,14 @@ $gray-lightText:        #fff !default;
  
 $brand-primary:         #e04a06 !default; // #00A024 Primary #56B825 #226600 #388f38 #7bbb5e #0e7d13 #42a942 #406D04 #5A8D02 #4CAF50 #388E3C #69af07 ##77d91A #00A024
 $brand-default:         #522E23 !default; // Secondary #6F5F5C #3E1F0C #00A732
-$brand-success:         #1F7738 !default; // #1F7738 #547a37 #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
+$brand-success:         #519716 !default; // #418706 #547a37 #39B424 #8BC058 #65A832 #506d2f #1F7738 #006f0c
 $brand-info:            #976A4B !default; //#92B955
 $brand-warning:         #FF8A00 !default; //#EBBB1E #E86D00 #FF6D00
 $brand-danger:          #A2082C !default; //#EA3128
 $brand-logo-yellow:     #FFB800 !default; //#FDC123
 
 $default-font: "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
-$heading-font: 'Encode Sans Semi Expanded', $default-font;
+$heading-font: 'Crimson Pro', $default-font;
 $body-font: 'Nunito', $default-font;
 
 
@@ -60,12 +60,15 @@ $font-size-base:          16px !default;
 $font-size-large:         ceil(($font-size-base * 1.10)) !default; // ~22px
 $font-size-small:         ceil(($font-size-base * 0.90)) !default; // ~12px
 
-$font-size-h1:            floor(($font-size-base * 2)) !default; // ~32px
-$font-size-h2:            floor(($font-size-base * 1.8)) !default; // ~30px
-$font-size-h3:            ceil(($font-size-base * 1.5)) !default; // ~24px
+$font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~32px
+$font-size-h2:            floor(($font-size-base * 2.3)) !default; // ~30px
+$font-size-h3:            ceil(($font-size-base * 2)) !default; // ~24px
+
+$font-size-h6:            ceil(($font-size-base * 1.55)) !default; // ~18px
 $font-size-h4:            ceil(($font-size-base * 1.25)) !default; // ~18px
+
 $font-size-h5:            $font-size-base !default;
-$font-size-h6:            $font-size-h4; //ceil(($font-size-base * 0.85)) !default; // ~12px
+
 
 // v4
 
@@ -73,12 +76,15 @@ $font-size-base-v4:              0.85em !default; // Assumes the browser default
 $font-size-sm-v4:                $font-size-base * .875 !default;
 $font-size-lg-v4:                $font-size-base * 1.25 !default;
 
-$h1-font-size:                $font-size-base-v4 * 2.5 !default;
-$h2-font-size:                $font-size-base-v4 * 2 !default;
-$h3-font-size:                $font-size-base-v4 * 1.75 !default;
-$h4-font-size:                $font-size-base-v4 * 1.5 !default;
-$h5-font-size:                $font-size-base-v4 * 1.25 !default;
-$h6-font-size:                $h4-font-size !default;
+$h1-font-size:                $font-size-base-v4 * 2.6 !default;
+$h2-font-size:                $font-size-base-v4 * 2.3 !default;
+$h3-font-size:                $font-size-base-v4 * 2 !default;
+
+$h6-font-size:                $font-size-base-v4 * 1.55 !default;
+$h4-font-size:                $font-size-base-v4 * 1.25!default;
+
+$h5-font-size:                $font-size-base-v4 !default;
+
 
 // v4 end
 

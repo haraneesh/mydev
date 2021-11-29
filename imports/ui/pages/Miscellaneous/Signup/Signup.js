@@ -181,7 +181,7 @@ class Signup extends React.Component {
               </FormGroup>
 
               <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-                <ControlLabel>Mobile Number</ControlLabel>
+                <ControlLabel>Whatsapp Mobile Number</ControlLabel>
                 <input
                   type="text"
                   ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
@@ -190,6 +190,7 @@ class Signup extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
+                <small>You will receive a SMS to complete the Sign up</small>
               </FormGroup>
               <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
                 <ControlLabel>Delivery Address</ControlLabel>

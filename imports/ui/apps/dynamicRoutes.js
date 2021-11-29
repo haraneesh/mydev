@@ -73,6 +73,10 @@ export const dNewSupplier = lazy(() => import('../pages/Admin/Suppliers/NewSuppl
 export const dViewSupplier = lazy(() => import('../pages/Admin/Suppliers/ViewSupplier/ViewSupplier'));
 export const dEditSupplier = lazy(() => import('../pages/Admin/Suppliers/EditSupplier/EditSupplier'));
 
+/* Users */
+export const dUsers = lazy(()=> import('../pages/Admin/Users/UsersHome/Users'));
+export const dUserDetails = lazy(()=> import('../pages/Admin/Users/UserDetails/UserDetails'));
+
 /* Recipes */
 export const dRecipes = lazy(() => import('../pages/Recipes/Recipes'));
 

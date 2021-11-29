@@ -7,70 +7,70 @@ function OurPromise() {
       <h1>
         Our promise to you
       </h1>
-      <h5 style={{ display: 'block' }}>
+      <h4 style={{ display: 'block' }}>
         We believe living well begins with eating well.
         <br />
         That's why our food has
-      </h5>
+      </h4>
       <Row>
         <Col xs={12} sm={7} className="d-flex justify-content-center text-center panel-body">
           <div style={{ alignSelf: 'center', listStyleType: 'none', textAlign: 'left' }}>
-            <h5>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Pesticides
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Preservatives
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Artificial Colors
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Artificial Flavor Enhancers
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Artificial Sweetners
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Refined flour (Maida, White flour)
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Refined Sugar
               </p>
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               <p>
                 <span className="underline">No</span>
                 {' '}
                 Trans Fat and Unhealthy Oils
               </p>
-            </h5>
+            </h4>
           </div>
         </Col>
         <Col xs={12} sm={5} className="d-flex justify-content-center text-center">

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {
   Panel, Row, Col, Button,
 } from 'react-bootstrap';
-import { relativeTimeRounding } from 'moment';
 import OurPromise from '../../../components/AboutUs/OurPromise/OurPromise';
 import OurFarm from '../../../components/AboutUs/OurFarm/OurFarm';
 import ContactUs from '../../../components/AboutUs/ContactUs/ContactUs';
@@ -39,9 +38,10 @@ const About = () => {
               <img src="about/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
             </Col>
             <Col sm={6} xs={12} className="about-getOrganic text-center">
-              <h1> Fresh </h1>
+              
+              <h1> Authentic </h1> 
               <h2> Organic and Natural </h2>
-              <h4> produce delivered home, in Chennai </h4>
+              <h6> food, delivered home from Suvai Farms. </h6>
               <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
             </Col>

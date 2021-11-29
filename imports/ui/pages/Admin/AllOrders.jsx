@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Row, Col } from 'react-bootstrap';
 import Loading from '../../components/Loading/Loading';
 import { getScrollPercent } from '../../../modules/infiniteScroll';
@@ -116,7 +116,7 @@ AllOrders.propTypes = {
   count: PropTypes.number.isRequired,
 };
 
-export default createContainer(() => {
+export default withTracker(() => {
   const reactVarTemp = reactVar.get();
 
   const subscriptionsReady = [
@@ -136,4 +136,4 @@ export default createContainer(() => {
     orders: cursor && cursor.fetch(),
     count: cursor && cursor.count(),
   };
-}, AllOrders);
+}) (AllOrders);

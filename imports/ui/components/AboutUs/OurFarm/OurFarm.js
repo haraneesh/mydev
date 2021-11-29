@@ -8,9 +8,9 @@ function OurFarm() {
       <h1>
         Our Farm
       </h1>
-      <h5 style={{ display: 'block' }}>
+      <h4 style={{ display: 'block' }}>
         We practice Regenerative Organic Farming
-      </h5>
+      </h4>
       <Row>
         <Col xs={12} sm={6}>
           <FarmAccordion />
@@ -23,15 +23,15 @@ function OurFarm() {
             textAlign: 'left',
           }}
           >
-            <h5>
+            <h4>
               Intent is to promote ecological balance, conserve biological diversity and regenerate the soil.
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               This is a less intrusive way of organic farming, that sees soil, water, plants, animals and humans as interconnected parts of one whole system.
-            </h5>
-            <h5>
+            </h4>
+            <h4>
               The reality is that working with nature is complex, it takes patience and understanding of local ecological dynamics.
-            </h5>
+            </h4>
           </div>
         </Col>
       </Row>

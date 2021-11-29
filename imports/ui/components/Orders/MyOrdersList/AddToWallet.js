@@ -21,9 +21,9 @@ const displayWalletSummary = (amountInWalletInRs) => {
 
   return (
     <div>
-      <h6 className={textClassName}>
+      <h4 className={textClassName}>
         {`${formatMoney(amountInWalletInRs, accountSettings)}`}
-      </h6>
+      </h4>
     </div>
   );
 };
@@ -43,10 +43,10 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
     <Panel>
       <Row>
         <Col xs={6} sm={5}>
-          <h6 style={{ paddingRight: '5px' }}>Wallet Balance</h6>
+          <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
         </Col>
         <Col xs={6} sm={4} className="text-right-xs">
-          {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (<h6> -- </h6>)}
+          {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (displayWalletSummary(0))}
         </Col>
         <Col xs={12} sm={3} className="text-right" style={{ paddingTop: '10px' }}>
           <Button bsStyle="primary" onClick={() => { history.push('/mywallet'); }}>

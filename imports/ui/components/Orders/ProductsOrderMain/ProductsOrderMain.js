@@ -226,7 +226,7 @@ const ProductsOrderMain = (props) => {
 
   // Grouping product categories by tabs
   const isMobile = true;
-  const formHeading = (orderStatus) ? 'Update Your Order' : ' Place Your Order';
+  const formHeading = (orderStatus) ? 'Update Your Order' : ' Choose Your Products';
 
   const productGroups = displayProductsByType(
     {

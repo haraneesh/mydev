@@ -107,7 +107,7 @@ export default class ProfileUpdate extends React.Component {
   render() {
     const { mode, isError, user } = this.state;
     return (
-      <div className="updateProfile offset-sm-1">
+      <div className="updateProfile offset-sm-1 col-xs-12 col-sm-9 col-sm-6">
         <Row>
           <Col xs={12}>
             <h3 className="page-header"> Add or Update User Profile </h3>

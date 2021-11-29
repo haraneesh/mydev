@@ -95,6 +95,8 @@ import {
   dEditMessage,
   dAdminAllMessages,
   dZohoSyncUp,
+  dUsers,
+  dUserDetails,
 }
   from './dynamicRoutes';
 
@@ -173,8 +175,11 @@ const App = (props) => (
               <Authenticated exact routeName="Choose_Basket_Prefill" path="/neworder/selectbasket" layout={OrderLayout} component={SelectBasket} {...props} />
               <Authenticated exact routeName="Place_Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
 
+              {/* Users */}
+              <AdminAuthenticated exact routeName="Users" layout={MainLayout} path="/users" component={dUsers} {...props} />
+              <AdminAuthenticated exact routeName="User_Details" layout={MainLayout} path="/users/:userMobilePhone" component={dUserDetails} {...props} />
+              
               {/* Basket */}
-
               <Authenticated exact routeName="Baskets" layout={MainLayout} path="/baskets" component={dBaskets} {...props} />
               <Authenticated exact routeName="New_Basket" layout={MainLayout} path="/baskets/new" component={dNewBasket} {...props} />
               <Authenticated exact routeName="View_Basket" layout={MainLayout} path="/baskets/:_id" component={dViewBasket} {...props} />
@@ -209,7 +214,7 @@ const App = (props) => (
               <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={Signup} {...props} />
               <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
               <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
-              <AdminAuthenticated exact routeName="Approve_Sign_Ups" layout={MainLayout} path="/approveSignUps" component={dApproveUserSignUps} {...props} />
+              <AdminAuthenticated exact routeName="Approve_Sign_Ups" layout={MainLayout} path="/approvesignups" component={dApproveUserSignUps} {...props} />
 
               {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
               <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />

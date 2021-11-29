@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import Suppliers from '../../../../../api/Suppliers/Suppliers';
@@ -95,7 +95,7 @@ ViewSupplier.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default createContainer(({ match }) => {
+export default withTracker(({ match }) => {
   const supplierId = match.params._id;
   const subscription = Meteor.subscribe('suppliers.view', supplierId);
 
@@ -103,4 +103,4 @@ export default createContainer(({ match }) => {
     loading: !subscription.ready(),
     supp: Suppliers.findOne(supplierId) || {},
   };
-}, ViewSupplier);
+}) (ViewSupplier);

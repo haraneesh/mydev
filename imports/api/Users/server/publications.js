@@ -1,6 +1,9 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
+import { Roles } from 'meteor/alanning:roles';
 import UserSignUps from '../UserSignUps';
+import constants from '../../../modules/constants';
 import { rateLimitSubscriptions } from '../../../modules/rate-limit';
 import { getPendingOrderDues } from '../../Orders/methods';
 
@@ -36,6 +39,19 @@ Meteor.publish('users.userData', function userData() {
   this.ready();
 });
 
+Meteor.publish('users.getAllUsers', function getAllUsers() {
+  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    return Meteor.users.find({}, {
+      fields: {
+        createdAt:1, username:1, emails: 1, 
+        profile: 1, settings: 1, wallet: 1,  
+        productReturnables: 1,
+      },
+    });
+  }
+  this.ready();
+});
+
 Meteor.publish('users.userWallet', function user() {
   try {
     retWalletAndSyncIfNecessary(this.userId);
@@ -64,6 +80,8 @@ Meteor.publish('userSignUps.getUsers', () => UserSignUps.find({ status: { $exist
 rateLimitSubscriptions({
   subscriptions: [
     'users.getRoles',
+    'users.getAllUsers',
+    'users.getUserDetails',
   ],
   limit: 5,
   timeRange: 1000,
