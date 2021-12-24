@@ -1,6 +1,6 @@
 // import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
@@ -12,6 +12,20 @@ import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
 import { Emitter, Events } from '../Events/events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
+
+if (Meteor.isServer) {
+  Accounts.validateLoginAttempt((options) => {
+    const { user } = options;
+    if (user && user.status
+    && user.status.accountStatus
+    && constants.UserAccountStatus.Disabled.name === user.status.accountStatus) {
+      // return false;
+      throw new Meteor.Error('403', 'Your account appears to have been disabled. Please contact admin.');
+    }
+
+    return true;
+  });
+}
 
 export const editUserProfile = new ValidatedMethod({
   name: 'users.editUserProfile',
@@ -65,6 +79,7 @@ export const findUser = new ValidatedMethod({
       const u = Meteor.users.findOne({ username: user.mobileNumber });
       if (u) {
         u.isAdmin = Roles.userIsInRole(u._id, constants.Roles.admin.name);
+        u.roles = Roles.getRolesForUser(u._id);
       }
       return u;
     }
@@ -173,6 +188,8 @@ export const adminUpdateUser = new ValidatedMethod({
     'profile.deliveryAddress': { type: String },
     password: { type: Object, optional: true, blackbox: true },
     role: { type: String },
+    status: { type: Object },
+    'status.accountStatus': { type: String },
   }).validator(),
   run(options) {
     const user = { ...options };
@@ -204,6 +221,8 @@ export const adminUpdateUser = new ValidatedMethod({
         }
 
         user.updatedAt = new Date();
+        user.status.statusUpdate = new Date();
+        console.log(user);
         const u = Meteor.users.update({ _id: cuser._id }, { $set: user });
 
         assignUserRole(cuser._id, userRole);
@@ -244,6 +263,41 @@ const notifyUserSignUp = (content, subject, customerEmail) => {
 };
 
 Meteor.methods({
+  'users.getTotalUserCount': function getTotalUserCount() {
+    return Meteor.users.find({}).fetch().length;
+  },
+  'users.getAllUsers': function getAllUsers(options) {
+    check(options, {
+      limit: Number,
+      skip: Number,
+      sort: {
+        username: Match.Maybe(Number),
+        createdAt: Match.Maybe(Number),
+        'profile.deliveryAddress': Match.Maybe(Number),
+        'profile.name.first': Match.Maybe(Number),
+        'profile.name.last': Match.Maybe(Number),
+        'status.accountStatus': Match.Maybe(Number),
+      },
+    });
+
+    if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      return Meteor.users.find({}, {
+        fields: {
+          createdAt: 1,
+          username: 1,
+          emails: 1,
+          profile: 1,
+          settings: 1,
+          wallet: 1,
+          productReturnables: 1,
+          status: 1,
+        },
+        sort: options.sort,
+        limit: options.limit,
+        skip: options.skip,
+      }).fetch();
+    }
+  },
   'users.signUp': function userSelfSignUp(user) {
     check(user, {
       username: String,
@@ -269,6 +323,27 @@ Meteor.methods({
     has signed up. Please approve in the app.`,
     'New user signup', user.email);
     return UserSignUps.insert(user);
+  },
+  'users.accountStatusUpdate': function deactivateUser(args) {
+    check(args, { userId: String, accountStatus: String });
+    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      Meteor.users.update(
+        { _id: args.userId },
+        {
+          $set: {
+            status: {
+              accountStatus: constants.UserAccountStatus[args.accountStatus].name,
+              statusUpdate: new Date(),
+            },
+          },
+        },
+      );
+
+      if (constants.UserAccountStatus.Disabled.name === args.accountStatus) {
+        Meteor.users.update({ _id: args.userId }, { $set: { 'services.resume.loginTokens': [] } });
+      }
+    }
+    return Meteor.users.findOne({ _id: args.userId });
   },
   'users.approveSignUp': function usersApproveSignUp(userSignUpId, status) {
     check(userSignUpId, String);
@@ -314,7 +389,9 @@ rateLimit({
   methods: [
     'users.sendVerificationEmail',
     'users.visitedPlaceNewOrder',
+    'users.getAllUsers',
     'users.approveSignUp',
+    'users.getTotalUserCount',
     adminUpdateUser,
     findUser,
     createUser,

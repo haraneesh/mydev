@@ -38,10 +38,10 @@ const About = () => {
               <img src="about/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
             </Col>
             <Col sm={6} xs={12} className="about-getOrganic text-center">
-              
-              <h1> Authentic </h1> 
+
+              <h1> Authentic </h1>
               <h2> Organic and Natural </h2>
-              <h6> food, delivered home from Suvai Farms. </h6>
+              <h4> food, delivered home from Suvai Farms. </h4>
               <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
             </Col>

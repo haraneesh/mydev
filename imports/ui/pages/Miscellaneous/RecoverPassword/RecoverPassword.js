@@ -58,7 +58,7 @@ class RecoverPassword extends React.Component {
       <div className="RecoverPassword offset-sm-1">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
-            <h3 className="page-header">Recover Password</h3>
+            <h2 className="page-header">Recover Password</h2>
             <Alert bsStyle="info">
               Enter your email address below to receive a link to reset your password.
             </Alert>

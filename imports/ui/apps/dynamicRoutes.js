@@ -74,8 +74,8 @@ export const dViewSupplier = lazy(() => import('../pages/Admin/Suppliers/ViewSup
 export const dEditSupplier = lazy(() => import('../pages/Admin/Suppliers/EditSupplier/EditSupplier'));
 
 /* Users */
-export const dUsers = lazy(()=> import('../pages/Admin/Users/UsersHome/Users'));
-export const dUserDetails = lazy(()=> import('../pages/Admin/Users/UserDetails/UserDetails'));
+export const dUsers = lazy(() => import('../pages/Admin/Users/UsersHome/Users'));
+export const dUserDetails = lazy(() => import('../pages/Admin/Users/UserDetails/UserDetails'));
 
 /* Recipes */
 export const dRecipes = lazy(() => import('../pages/Recipes/Recipes'));
@@ -103,9 +103,7 @@ export const dEditAllSpecials = SuvaiLoadable({
 });
 
 // import ProfileUpdate from
-export const dProfileUpdate = SuvaiLoadable({
-  loader: () => import('../pages/Users/ProfileUpdate'),
-});
+export const dProfileUpdate = lazy(() => import('../pages/Users/ProfileUpdate'));
 
 // import ProfileUpdate from
 export const dVision = SuvaiLoadable({

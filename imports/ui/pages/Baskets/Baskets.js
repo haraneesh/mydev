@@ -27,7 +27,7 @@ const Baskets = ({
 }) => (!loading ? (
   <div className="Baskets">
     <div className="page-header clearfix">
-      <h3 className="text-center">Baskets</h3>
+      <h2 className="text-center">Baskets</h2>
     </div>
     <section className="panel panel-body text-center">
       <Col xs={12}>

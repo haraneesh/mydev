@@ -29,7 +29,7 @@ const Suppliers = ({
 }) => (!loading ? (
   <div className="Suppliers">
     <div className="page-header clearfix">
-      <h3 className="pull-left">Suppliers</h3>
+      <h2 className="pull-left">Suppliers</h2>
       <Link className="btn btn-primary pull-right" to={`${match.url}/new`}>Add Supplier</Link>
     </div>
     {suppliers.length ? (

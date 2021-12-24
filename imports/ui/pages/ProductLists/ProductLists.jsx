@@ -5,7 +5,7 @@ import DisplayProductLists from '../../containers/ProductLists/DisplayProductLis
 const ProductLists = ({ history }) => (
   <Row>
     <Col xs={12}>
-      <h3 className="page-header">All Product Lists</h3>
+      <h2 className="page-header">All Product Lists</h2>
       <DisplayProductLists history={history} />
     </Col>
   </Row>

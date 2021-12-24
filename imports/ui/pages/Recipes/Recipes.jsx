@@ -61,7 +61,7 @@ class Recipes extends React.Component {
         <Row>
           <Col xs={12}>
             <div className="page-header clearfix">
-              <h3 className="pull-left">Recipes</h3>
+              <h2 className="pull-left">Recipes</h2>
               { isAdmin && <Button
                 bsStyle="primary"
                 className="pull-right"

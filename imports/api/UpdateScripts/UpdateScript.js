@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
+import constants from '../../modules/constants';
 // import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 // import { Orders } from '../Orders/Orders';
 // import Messages from '../Messages/Messages';
@@ -130,3 +131,16 @@ Orders.find({}).fetch().forEach(order => {
 
 // Roles._forwardMigrate();
 // Roles._forwardMigrate2();
+
+Meteor.users.update(
+  { status: { $exists: false } },
+  {
+    $set: {
+      status: {
+        accountStatus: constants.UserAccountStatus.Active.name,
+        statusUpdate: new Date(),
+      },
+    },
+  },
+  { multi: true },
+);

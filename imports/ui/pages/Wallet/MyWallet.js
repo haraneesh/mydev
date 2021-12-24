@@ -11,7 +11,7 @@ const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
   <div className="MyWallet">
     <Row>
       <Col xs={12}>
-        <h3 className="page-header">My Wallet</h3>
+        <h2 className="page-header">My Wallet</h2>
         <AcceptPay
           loggedInUser={loggedInUser}
           userWallet={userWallet}

@@ -79,7 +79,7 @@ class Login extends React.Component {
     return (
       <div className="Login Absolute-Center is-Responsive offset-sm-1">
         <Col xs={12} sm={6} md={5} lg={4}>
-          <h3 className="page-header">Log In</h3>
+          <h2 className="page-header">Log In</h2>
           <form onSubmit={this.validateForm}>
             <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
               <label className="control-label">Mobile Number</label>

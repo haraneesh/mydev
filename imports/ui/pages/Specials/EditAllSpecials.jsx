@@ -16,7 +16,7 @@ const EditAllSpecials = ({ specials, history }) => {
     <div className="EditSpecials">
       <Row>
         <Col xs={12}>
-          <h3 className="page-header">Edit Specials</h3>
+          <h2 className="page-header">Edit Specials</h2>
         </Col>
         <Col xs={12}>
           <AddSpecial />

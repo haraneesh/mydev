@@ -35,7 +35,7 @@ class ApproveSignUps extends React.Component {
     return (!loading ? (
       <div className="ShowUserSignUps offset-sm-1">
         <div className="page-header clearfix">
-          <h3 className="pull-left">Users Requested to Join Suvai</h3>
+          <h2 className="pull-left">Users Requested to Join Suvai</h2>
         </div>
 
         { userSignUps.map((user) => (

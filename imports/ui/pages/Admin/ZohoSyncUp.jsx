@@ -19,7 +19,7 @@ const showButton = () => {
 
 const ZohoSyncUp = () => (
   <div>
-    <h3 className="page-header">Sync With Zoho Books</h3>
+    <h2 className="page-header">Sync With Zoho Books</h2>
     <Panel>
       <Row>
         <Col xs={12}>

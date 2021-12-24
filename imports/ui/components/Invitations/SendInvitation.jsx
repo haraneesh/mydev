@@ -35,7 +35,7 @@ export default function SendInvitation() {
   }
 
   return (
-    <div className="send-invitation">
+    <div className="send-invitation offset-sm-1">
       <Row>
         <Col xs={12} sm={6} md={4}>
           <form
@@ -44,7 +44,7 @@ export default function SendInvitation() {
             onSubmit={(event) => { event.preventDefault(); }}
           >
             <FormGroup>
-              <ControlLabel> Phone Number </ControlLabel>
+              <ControlLabel> Mobile Phone Number </ControlLabel>
               <FormControl
                 type="tel"
                 name="whMobilePhone"

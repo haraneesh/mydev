@@ -59,7 +59,7 @@ class ViewRecipe extends React.Component {
       return (
         <div className="ViewRecipe">
           <div className="page-header clearfix">
-            <h3 className="text-center col-xs-12">{recipe.title}</h3>
+            <h2 className="text-center col-xs-12">{recipe.title}</h2>
             <Col xs={12} className="buttonRowSpacing">
               {isOwner && <Button bsSize="small" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
             </Col>

@@ -11,7 +11,7 @@ import ReconcileInventoryMain from '../../components/ReconcileInventory/Reconcil
 const ReconcileInventory = ({ loading, products }) => (!loading ? (
   <div className="ReconcileInventory">
     <div className="page-header clearfix">
-      <h3 className="pull-left">Reconcile Products for {getDayWithoutTime()}</h3>
+      <h2 className="pull-left">Reconcile Products for {getDayWithoutTime()}</h2>
     </div>
     <Panel className="entry">
       <ReconcileInventoryMain products={products} />

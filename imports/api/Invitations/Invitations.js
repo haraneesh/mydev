@@ -33,6 +33,11 @@ const InvitationsSchema = new SimpleSchema({
     regEx: SimpleSchema.RegEx.Email,
     optional: true,
   },
+  otp: {
+    type: String,
+    label: 'OTP sent to phone number',
+    optional: true,
+  },
   token: {
     type: String,
     label: 'Invitation token.',

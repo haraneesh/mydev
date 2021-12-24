@@ -51,6 +51,11 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         ? 'last name should be atleast 4 characters long'
         : '';
       break;
+    case name === 'otp':
+      isError.otp = trimmedVal.length !== 4
+        ? 'OTP is a 4 digit value'
+        : '';
+      break;
     case name === 'whMobilePhone':
       isError.whMobilePhone = indiaMobilePhoneRegExp.test(trimmedVal)
         ? ''
@@ -80,23 +85,14 @@ export const formValChange = (e, isErrorState, fieldValues) => {
   });
 };
 
-export const formValid = ({ isError, ...rest }) => {
+export const formValid = ({ isError }) => {
   let isValid = false;
 
-  Object.values(isError).forEach((val) => {
+  isValid = Object.values(isError).every((val) => {
     if (val.length > 0) {
-      isValid = false;
-    } else {
-      isValid = true;
+      return false;
     }
-  });
-
-  Object.values(rest).forEach((val) => {
-    if (val === null) {
-      isValid = false;
-    } else {
-      isValid = true;
-    }
+    return true;
   });
 
   return isValid;

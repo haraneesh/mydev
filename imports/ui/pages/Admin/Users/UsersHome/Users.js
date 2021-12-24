@@ -1,102 +1,176 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import {
-  Table, Alert, Button, Panel,
-} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { withTracker } from 'meteor/react-meteor-data';
+import Pagination from 'react-js-pagination';
 import { toast } from 'react-toastify';
-import { ReactiveVar } from 'meteor/reactive-var';
+import { SortTypes } from '../../../../components/Common/ShopTableCells';
 import constants from '../../../../../modules/constants';
+import UserList from '../../../../components/Users/UserList/UserList';
+import Loading from '../../../../components/Loading/Loading';
 import { getDayWithoutTime } from '../../../../../modules/helpers';
 import { dateSettings } from '../../../../../modules/settings';
-import Loading from '../../../../components/Loading/Loading';
 
 import './Users.scss';
 
-const FIRSTPAGE = 1;
-const NUMBEROFROWS = 100;
-const reactVar = new ReactiveVar(
-  {
-    isWholeSale: false,
+const Users = ({
+  match, history,
+}) => {
+  const FIRSTPAGE = 1;
+  const NUMBEROFROWS = 50;
+
+  const [fetchState, setFetchState] = useState({
     sortBy: { createdAt: constants.Sort.DESCENDING },
+    colSortDirs: { createdAt: SortTypes.DESC },
     currentPage: FIRSTPAGE,
     limit: NUMBEROFROWS,
-  },
-);
+  });
 
-const handleRemove = (supplierId) => {
-  if (confirm('Are you sure? This is permanent!')) {
-    Meteor.call('suppliers.remove', supplierId, (error) => {
+  const [users, setUsers] = useState({});
+  const [totalUsers, setTotalUsers] = useState(-1);
+  const [loading, setLoading] = useState(true);
+
+  function createDataList() {
+    const usrObjs = users.map((u) => ({
+      createdAt: getDayWithoutTime(u.createdAt, dateSettings.timeZone),
+      deliveryAddress: u.profile.deliveryAddress,
+      firstName: u.profile.name.first,
+      lastName: u.profile.name.last,
+      username: u.username,
+      accountStatus: u.status.accountStatus,
+    }));
+
+    return usrObjs;
+  }
+
+  function fetchPages(pageNumber, sortBy, colSortDirs) {
+    const skip = (pageNumber * NUMBEROFROWS) - NUMBEROFROWS;
+
+    setLoading(true);
+    Meteor.call('users.getAllUsers', {
+      sort: sortBy,
+      limit: NUMBEROFROWS,
+      skip,
+    }, (error, pageOfUsers) => {
       if (error) {
-        toast.error(error.reason);a
+        toast.error(error.reason);
       } else {
-        toast.success('Supplier deleted!');
-      }a
+        setUsers(pageOfUsers);
+        setFetchState({
+          ...fetchState,
+          colSortDirs,
+          sortBy,
+          currentPage: pageNumber,
+        });
+
+        setLoading(false);
+      }
     });
   }
+
+  function handlePageChange(pageNumber) {
+    const { sortBy, colSortDirs } = fetchState;
+    fetchPages(pageNumber, sortBy, colSortDirs);
+  }
+
+  useEffect(() => {
+    Meteor.call('users.getTotalUserCount', (error, success) => {
+      if (error) {
+        toast.error(error.reason);
+      } else {
+        fetchPages(FIRSTPAGE, fetchState.sortBy, fetchState.colSortDirs);
+        setTotalUsers(success);
+      }
+    });
+  }, []);
+
+  function changeSortOptions(columnKey, sortDir) {
+    const sortDirection = (sortDir === SortTypes.DESC)
+      ? constants.Sort.DESCENDING
+      : constants.Sort.ASCENDING;
+
+    let sortBy;
+
+    switch (columnKey) {
+      case 'createdAt':
+        sortBy = { createdAt: sortDirection };
+        break;
+      case 'deliveryAddress':
+        sortBy = { 'profile.deliveryAddress': sortDirection };
+        break;
+      case 'firstName':
+        sortBy = { 'profile.name.first': sortDirection };
+        break;
+      case 'lastName':
+        sortBy = { 'profile.name.last': sortDirection };
+        break;
+      case 'accountStatus':
+        sortBy = { 'status.accountStatus': sortDirection };
+        break;
+      default:
+        sortBy = { username: sortDirection };
+        break;
+    }
+
+    const colSortDirs = {
+      [columnKey]: sortDir,
+    };
+
+    fetchPages(fetchState.currentPage, sortBy, colSortDirs);
+  }
+
+  return (!loading ? (
+    <div className="Users">
+      <div className="page-header clearfix">
+        <h2>Users</h2>
+      </div>
+
+      <UserList
+        colSortDirs={fetchState.colSortDirs}
+        users={createDataList()}
+        match={match}
+        history={history}
+        onSortChange={changeSortOptions}
+      />
+
+      <Pagination
+        activePage={fetchState.currentPage}
+        itemsCountPerPage={NUMBEROFROWS}
+        totalItemsCount={totalUsers}
+        pageRangeDisplayed={10}
+        onChange={handlePageChange}
+      />
+
+    </div>
+  ) : <Loading />);
 };
 
-const Users = ({
-  loading, users, match, history,
-}) => (!loading ? (
-  <div className="Users">
-    <div className="page-header clearfix">
-      <h3>Users</h3>
-    </div>
-    {users.length ? (
-      <Panel>
-        {' '}
-        <Table responsive>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Phone number</th>
-              <th>Date Joined</th>
-              <th>Date Last Order</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(({ _id,profile, createdAt, dlo }) => (
-              <tr key={_id}>
-                <td>{profile.name.first}</td>
-                <td>{profile.name.last}</td>
-                <td>{profile.whMobilePhone}</td>
-                <td>{getDayWithoutTime(createdAt, dateSettings.timeZone)}</td>
-                <td>{dlo}</td>
-                <td>
-                  <Button
-                    bsStyle="primary"
-                    onClick={() => history.push(`${match.url}/${profile.whMobilePhone}`)}
-                    block
-                  >
-                    View
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-        {' '}
-      </Panel>
-    ) : <Alert bsStyle="info">No users were found!</Alert>}
-  </div>
-) : <Loading />);
-
 Users.propTypes = {
-  loading: PropTypes.bool.isRequired,
-  users: PropTypes.arrayOf(PropTypes.object).isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export default withTracker(() => {
-  const subscription = Meteor.subscribe('users.getAllUsers');
+export default Users;
+
+/* withTracker(() => {
+  const {
+    currentPage, limit, sortBy,
+  } = reactVar.get();
+
+  const skip = (currentPage * limit) - limit;
+
+  const subscription = Meteor.subscribe('users.getAllUsers', {
+    sort: sortBy,
+    limit,
+    skip,
+  });
+
   return {
     loading: !subscription.ready(),
-    users: Meteor.users.find().fetch(),
+    users: Meteor.users.find({}, {
+      sort: sortBy,
+      limit,
+      skip,
+    }).fetch(),
+    currentPage,
   };
-})(Users);
+})(Users); */

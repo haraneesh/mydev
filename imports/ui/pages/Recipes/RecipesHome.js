@@ -69,7 +69,7 @@ const RecipesHome = ({ history }) => {
       <Row>
         <Col xs={12}>
           <div className="page-header clearfix row">
-            <h3 className={isAdmin ? 'col-xs-9' : 'col-xs-12'}>Recipes</h3>
+            <h2 className={isAdmin ? 'col-xs-9' : 'col-xs-12'}>Recipes</h2>
             { isAdmin && (
               <Col xs={3} className="text-left">
                 <Button

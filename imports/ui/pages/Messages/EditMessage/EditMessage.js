@@ -42,9 +42,9 @@ const EditMessage = ({
     const isEditMode = (message._id === messageEdit);
     return (
       <div className="EditMessage">
-        <h3 className="page-header">
+        <h2 className="page-header">
           Message Details
-        </h3>
+        </h2>
         {(!loadingMessage && isEditMode) && (<MessageEditor existingMessage={message} history={history} isAdmin onsuccessFullUpdate={handleEditMessage} />) }
         {(!loadingMessage && !isEditMode) && (<MessageView existingMessage={message} editMessagePage isAdmin loggedInUserId={loggedInUserId} handleEditMessage={handleEditMessage} />)}
         {(!loadingMessage) && (<MessageComments isAdmin={isAdmin} loggedInUserId={loggedInUserId} existingMessage={message} messageComments={comments} history={history} />)}

@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Buenard');
 @import '../../../stylesheets/bootstrap/bootstrap/variables';
 
 
 .Vision {
-    font-size:  $font-size-large;
+    font-size:  $h6-font-size;
     margin-top: 4em;
-    font-family: 'Buenard';
+    font-family: 'Crimson Pro';
+    font-weight: 400;
 
     h1, h2, h3{
         text-transform:uppercase;

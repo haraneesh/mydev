@@ -64,11 +64,9 @@ h1, h2, h3, h6, .h1, .h2, .h3, .h6{
   margin-top:0px;
   margin-bottom:0px;
 }
-
-h3, .h3 {
+.h3, h3{
   font-weight: 500;
 }
-
 
 hr {
   border-top: 2px dashed $brand-default;

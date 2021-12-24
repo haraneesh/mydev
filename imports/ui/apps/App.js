@@ -19,6 +19,7 @@ import Terms from '../pages/Miscellaneous/Terms/Terms';
 import Refund from '../pages/Miscellaneous/Refund/Refund';
 import Privacy from '../pages/Miscellaneous/Privacy/Privacy';
 import Signup from '../pages/Miscellaneous/Signup/Signup';
+import InviteSelf from '../pages/Invitations/InviteSelf';
 import ShowInterest from '../pages/Miscellaneous/ShowInterest/ShowInterest';
 import Login from '../pages/Miscellaneous/Login/Login';
 import Logout from '../pages/Miscellaneous/Logout/Logout';
@@ -56,7 +57,9 @@ import dEditBasket from '../pages/Baskets/EditBasket';
 
 import dNewBasket from '../pages/Baskets/NewBasket';
 
-import dCreateBasket from '../pages/Baskets/CreateBasket'; */
+import dCreateBasket from '../pages/Baskets/CreateBasket';
+
+import dProfileUpdate from '../pages/Users/ProfileUpdate'; */
 
 /* Dynamic Components */
 import {
@@ -143,8 +146,6 @@ const App = (props) => (
           <Authenticated routeName="Profile" exact path="/profile" component={Profile} {...props} />
           */}
               <Authenticated routeName="Profile" layout={MainLayout} exact path="/profile" component={Profile} {...props} />
-              {/* Update Other User's Profile */}
-              <AdminAuthenticated exact routeName="Update_Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
 
               {/* Recipes */}
               <Authenticated exact routeName="Recipes_Home" layout={RecipeLayout} path="/recipes" component={RecipesHome} {...props} />
@@ -176,9 +177,12 @@ const App = (props) => (
               <Authenticated exact routeName="Place_Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
 
               {/* Users */}
-              <AdminAuthenticated exact routeName="Users" layout={MainLayout} path="/users" component={dUsers} {...props} />
-              <AdminAuthenticated exact routeName="User_Details" layout={MainLayout} path="/users/:userMobilePhone" component={dUserDetails} {...props} />
-              
+              <AdminAuthenticated exact routeName="Users" layout={MainLayout} path="/allusers" component={dUsers} {...props} />
+              <AdminAuthenticated exact routeName="User_Details" layout={MainLayout} path="/allusers/:userMobilePhone" component={dUserDetails} {...props} />
+              {/* Update Other User's Profile */}
+              <AdminAuthenticated exact routeName="Update_Profile" layout={MainLayout} path="/updateProfile" component={dProfileUpdate} {...props} />
+              <AdminAuthenticated exact routeName="Update_Profile" layout={MainLayout} path="/updateProfile/:userMobilePhone" component={dProfileUpdate} {...props} />
+
               {/* Basket */}
               <Authenticated exact routeName="Baskets" layout={MainLayout} path="/baskets" component={dBaskets} {...props} />
               <Authenticated exact routeName="New_Basket" layout={MainLayout} path="/baskets/new" component={dNewBasket} {...props} />
@@ -211,7 +215,7 @@ const App = (props) => (
               {/* Zoho Sync */}
               <AdminAuthenticated exact routeName="Zoho_Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
               {/* end admin */}
-              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={Signup} {...props} />
+              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={InviteSelf} {...props} />
               <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
               <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
               <AdminAuthenticated exact routeName="Approve_Sign_Ups" layout={MainLayout} path="/approvesignups" component={dApproveUserSignUps} {...props} />

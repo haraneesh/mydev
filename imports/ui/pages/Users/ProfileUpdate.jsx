@@ -18,6 +18,7 @@ export default class ProfileUpdate extends React.Component {
     this.updateUserProfile = this.updateUserProfile.bind(this);
     this.createNewUser = this.createNewUser.bind(this);
     this.handleCreateUser = this.handleCreateUser.bind(this);
+    this.fetchUser = this.fetchUser.bind(this);
   }
 
   /* componentDidUpdate(prevState, prevProps) {
@@ -32,6 +33,13 @@ export default class ProfileUpdate extends React.Component {
         break;
     }
   } */
+
+  componentDidMount(prevState, prevProps) {
+    const { userMobilePhone } = this.props.match.params;
+    if (userMobilePhone) {
+      this.fetchUser(userMobilePhone);
+    }
+  }
 
   onValueChange(e) {
     const { isError } = this.state;
@@ -91,7 +99,10 @@ export default class ProfileUpdate extends React.Component {
 
   handleFindUser(e) {
     const mobileNumber = document.getElementsByName('mobileNumber')[0].value;
+    this.fetchUser(mobileNumber);
+  }
 
+  fetchUser(mobileNumber) {
     findUser.call({ mobileNumber }, (error, msg) => {
       if (error) {
         toast.error(error.reason);
@@ -110,7 +121,7 @@ export default class ProfileUpdate extends React.Component {
       <div className="updateProfile offset-sm-1 col-xs-12 col-sm-9 col-sm-6">
         <Row>
           <Col xs={12}>
-            <h3 className="page-header"> Add or Update User Profile </h3>
+            <h2 className="page-header"> Add or Update User Profile </h2>
           </Col>
           <Col xs={12}>
             <Button type="button" bsStyle="default" onClick={this.handleCreateUser}>Add User</Button>

@@ -110,6 +110,9 @@ class Profile extends React.Component {
       settings: {
         dietPreference: this.dietPreference.selectedOptions[0].value,
       },
+      status: {
+        accountStatus: this.accountStatus.selectedOptions[0].value,
+      },
     };
 
     if (this.confirmPassword.value) {
@@ -312,7 +315,7 @@ class Profile extends React.Component {
       <div className="Profile offset-sm-1">
         <Row>
           <Col xs={12} sm={9} md={6}>
-            <h3 className="page-header">Edit Profile</h3>
+            <h2 className="page-header">Edit Profile</h2>
             <form onSubmit={this.validateForm}>
               {this.renderProfileForm(loading, user)}
             </form>

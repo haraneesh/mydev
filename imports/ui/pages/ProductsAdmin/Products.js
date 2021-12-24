@@ -5,7 +5,7 @@ import ProductsList from '../containers/Products/ProductsList';
 export const Products = ({ history }) => (
   <Row>
     <Col xs={12}>
-      <h3 className="page-header">Products</h3>
+      <h2 className="page-header">Products</h2>
       <ProductsList history={history} />
     </Col>
   </Row>

@@ -34,7 +34,7 @@ class VerifyEmail extends React.Component {
       <div className="verifyEmail">
         <Row>
           <Col xs={12} sm={6} md={4}>
-            <h3 className="page-header">Verifying Email Address</h3>
+            <h2 className="page-header">Verifying Email Address</h2>
             <div className="VerifyEmail">
               <Alert bsStyle={!error ? 'info' : 'danger'}>
                 {!error

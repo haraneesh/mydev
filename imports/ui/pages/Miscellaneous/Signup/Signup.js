@@ -34,6 +34,10 @@ class Signup extends React.Component {
     this.state = { ...defaultState };
   }
 
+  componentDidMount() {
+    this.validateToken();
+  }
+
   onValueChange(e) {
     e.preventDefault();
     const { isError } = this.state;
@@ -56,6 +60,21 @@ class Signup extends React.Component {
     }
   }
 
+  validateToken() {
+    // validate token
+    const { history } = this.props;
+    const { match } = this.props;
+
+    Meteor.call('invitations.confirmToken', match.params.token, (error, whMobileNumber) => {
+      if (error) {
+        toast.error(error.reason);
+        history.push('/signup');
+      } else {
+        document.querySelector('[name="whMobilePhone"]').value = whMobileNumber;
+      }
+    });
+  }
+
   handleSubmit() {
     const { history } = this.props;
     const { match } = this.props;
@@ -69,7 +88,7 @@ class Signup extends React.Component {
           first: this.firstName.value,
           last: this.lastName.value,
         },
-        whMobilePhone: this.whMobilePhone.value,
+        // whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
         eatingHealthyMeaning: this.eatingHealthyMeaning.value,
       },
@@ -78,14 +97,17 @@ class Signup extends React.Component {
     if (match.params.token) {
       acceptInvitation.call({ user, token: match.params.token }, (error) => {
         if (error) {
+          history.push('/signup');
           toast.error(error.reason);
         } else {
+          history.push('/login');
           toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
-          history.push('/');
         }
       });
     } else {
-      Meteor.call('users.signUp', user, (error) => {
+      history.push('/signup');
+
+      /* Meteor.call('users.signUp', user, (error) => {
         if (error) {
           toast.error(error.reason);
         } else {
@@ -94,7 +116,7 @@ class Signup extends React.Component {
             signUpRequestSent: true,
           });
         }
-      });
+      }); */
     }
   }
 
@@ -105,10 +127,10 @@ class Signup extends React.Component {
       <div className="Signup offset-sm-1">
         <div>
           <Col xs={12} sm={10}>
-            <h3 className="page-header">Sign Up</h3>
+            <h2 className="page-header">Sign Up</h2>
             <div className="panel text-center">
               <div className="panel-body">
-                <h3 className="text-primary"> Welcome to Suvai </h3>
+                <h2 className="text-primary"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been together for more than
@@ -188,9 +210,11 @@ class Signup extends React.Component {
                   name="whMobilePhone"
                   placeholder="10 digit number example, 8787989897"
                   className="form-control"
-                  onBlur={this.onValueChange}
+                  disabled
                 />
-                <small>You will receive a SMS to complete the Sign up</small>
+
+                <Button style={{ marginTop: '0.5em' }} onClick={() => { this.props.history.push('/signup'); }}> Change Phone Number </Button>
+
               </FormGroup>
               <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
                 <ControlLabel>Delivery Address</ControlLabel>
@@ -265,7 +289,7 @@ class Signup extends React.Component {
       <Panel style={{ marginTop: '1.5em' }}>
         <Row className="text-center">
           <Col xs={12}>
-            <h3>Thanks for your interest in Suvai!</h3>
+            <h2>Thanks for your interest in Suvai!</h2>
             <br />
             <p>
               Please give us a few days for our admins to review the

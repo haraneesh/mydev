@@ -10,39 +10,97 @@ import constants from '../../modules/constants';
 import Invitations from './Invitations';
 import InvitationTemplate from './invitation_template';
 
+const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
+  let invitation;
+
+  if (phoneNumber) {
+    invitation = Invitations.findOne(
+      {
+        $and: [
+          { receiverPhoneNumber: phoneNumber },
+          { invitation_status: constants.InvitationStatus.Sent.name },
+        ],
+      },
+    );
+  }
+
+  if (!invitation) {
+    invitation = {};
+    invitation.sentUserId = sentUserId;
+    invitation.token = Random.hexString(16);
+    invitation.otp = otp;
+    invitation.role = sentRole;
+    invitation.receivedUserId = '';
+    invitation.receiverPhoneNumber = phoneNumber;
+    invitation.invitation_status = constants.InvitationStatus.Sent.name;
+
+    Invitations.insert(invitation);
+  }
+  const { domain } = Meteor.settings.private;
+  return `http://${domain}/invitations/${invitation.token}`;
+};
+
 Meteor.methods({
   'invitation.getInvitation': function invitationCreate(phoneNumber) {
     check(phoneNumber, Match.Maybe(String));
     try {
-      let invitation;
-
-      if (phoneNumber) {
-        invitation = Invitations.findOne(
-          {
-            $and: [
-              { receiverPhoneNumber: phoneNumber },
-              { invitation_status: constants.InvitationStatus.Sent.name },
-            ],
-          },
-        );
-      }
-
-      if (!invitation) {
-        invitation = {};
-        invitation.sentUserId = Meteor.userId();
-        invitation.token = Random.hexString(16);
-        invitation.role = 'member';
-        invitation.receivedUserId = '';
-        invitation.receiverPhoneNumber = phoneNumber;
-        invitation.invitation_status = constants.InvitationStatus.Sent.name;
-
-        Invitations.insert(invitation);
-      }
-      const { domain } = Meteor.settings.private;
-      return `http://${domain}/invitations/${invitation.token}`;
+      return addInvitation(phoneNumber, Meteor.userId(), constants.Roles.customer.name, '');
     } catch (exception) {
       handleMethodException(exception);
     }
+  },
+  'invitations.confirmToken': function confirmToken(confirmationToken) {
+    check(confirmationToken, String);
+    try {
+      const invitation = Invitations.findOne({ token: confirmationToken });
+      if (invitation) {
+        return invitation.receiverPhoneNumber;
+      }
+      throw new Meteor.Error(403, 'The token is invalid');
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
+  'invitation.sendOTP': function invitationSendOTP(phoneNumber) {
+    check(phoneNumber, String);
+    const indiaMobilePhoneRegExp = RegExp(/^[6789]\d{9}$/);
+    try {
+      if (indiaMobilePhoneRegExp.test(phoneNumber)) {
+        const otp = Math.floor(1000 + Math.random() * 9000);
+
+        const isPhoneNumberRegistered = Meteor.users.findOne({ username: phoneNumber });
+        if (isPhoneNumberRegistered) {
+          throw new Meteor.Error(404, 'Please check you phone number. You are either a registered user or the phone number is invalid.');
+        }
+
+        const adminUser = Meteor.users.findOne({ username: '9999999999' }); // admin
+        addInvitation(phoneNumber, adminUser._id, 'self', otp);
+
+        if (Meteor.isDevelopment) {
+          console.log(otp);
+        }
+        // send SMS
+        return true;
+      }
+
+      throw new Meteor.Error(403, 'The phone number is not a valid India Mobile Number');
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return false;
+  },
+  'invitation.isValidOTP': function isValidOTP(otp) {
+    check(otp, String);
+    try {
+      const invitation = Invitations.findOne({ otp });
+      if (invitation) {
+        return { token: invitation.token };
+      }
+      throw new Meteor.Error(403, 'OTP is in valid. Please request a new OTP.');
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return '';
   },
 });
 
@@ -103,15 +161,27 @@ const sendEmail = (email, content, subject) => {
   });
 };
 
-const _createUser = (user) => {
+const createUser = (user) => {
   const userId = Accounts.createUser(user);
 
   if (userId) {
+    Meteor.users.update(
+      { _id: userId },
+      {
+        $set: {
+          status: {
+            accountStatus: constants.UserAccountStatus.NewSignUp.name,
+            statusUpdate: new Date(),
+          },
+        },
+      },
+    );
+
     return userId;
   }
 };
 
-const _getInvitation = (token) => {
+const getInvitation = (token) => {
   const invitation = Invitations.findOne({
     $and: [
       { token }, // token
@@ -124,7 +194,7 @@ const _getInvitation = (token) => {
   }
 };
 
-const _updateInvitation = (token, userId) => {
+const updateInvitation = (token, userId) => {
   Invitations.update({ token }, {
     $set: {
       invitation_status: constants.InvitationStatus.Accepted.name,
@@ -141,11 +211,15 @@ export const acceptInvitation = new ValidatedMethod({
   }).validator(),
   run(options) {
     if (Meteor.isServer) {
-      const invitation = _getInvitation(options.token);
+      const invitation = getInvitation(options.token);
+      const cUser = { ...options.user };
+      cUser.username = invitation.receiverPhoneNumber;
+      cUser.profile.whMobilePhone = invitation.receiverPhoneNumber;
+
       if (invitation) {
-        const userId = _createUser(options.user);
+        const userId = createUser(cUser);
         if (userId) {
-          _updateInvitation(options.token, userId);
+          updateInvitation(options.token, userId);
         }
       } else {
         throw new Meteor.Error(403, 'Sign up token has expired or is invalid.');
@@ -187,6 +261,7 @@ export const removeInvitation = new ValidatedMethod({
 rateLimit({
   methods: [
     'invitation.getInvitation',
+    'invitation.sendOTP',
     sendInvitation,
     removeInvitation,
     acceptInvitation,

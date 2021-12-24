@@ -40,7 +40,6 @@ export default class CommentView extends React.Component {
 
   handleDeleteComment() {
     const { expandedComment } = this.props;
-    event.preventDefault();
     if (confirm('Are you sure you want to delete the comment? This is permanent.')) {
       removeComment.call({
         _id: expandedComment._id,

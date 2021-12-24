@@ -36,7 +36,7 @@ const ProductsAdminDetail = ({
   !loading ? (
     <Row>
       <Col xs={12}>
-        <h3 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h3>
+        <h2 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h2>
         <InsertProduct history={history} />
         <UploadPrices products={products} history={history} />
         <ListAllProducts

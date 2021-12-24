@@ -15,7 +15,7 @@ const renderCard = specials => (
           <Col sm={6} >
             <Row>
               <Col sm={12}>
-                <h3 className="special-head">{special.title}</h3>
+                <h2 className="special-head">{special.title}</h2>
                 <div>
                   <Editor editorState={editorState} readOnly />
                 </div>
@@ -35,7 +35,7 @@ const ListSpecials = ({ specials }) => (
   <div className="ListSpecials">
     <Row>
       <Col xs={12}>
-        <h3 className="page-header">Specials</h3>
+        <h2 className="page-header">Specials</h2>
       </Col>
       <Col xs={12}>
         { (specials.length > 0) ? renderCard(specials) : (<Alert bsStyle="info">We do not have any specials right now.</Alert>)}

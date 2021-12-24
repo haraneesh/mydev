@@ -30,7 +30,7 @@ const MyOrders = ({
     <Col xs={12}>
       <WelcomeMessage loggedInUser={loggedInUser} />
 
-      <h3 className="page-header">My Orders</h3>
+      <h2 className="page-header">My Orders</h2>
       <MyOrderList
         loggedInUser={loggedInUser}
         orders={orders}

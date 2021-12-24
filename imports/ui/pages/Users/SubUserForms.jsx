@@ -2,9 +2,10 @@ import React from 'react';
 import {
   Row, Col, FormGroup, Panel, label, FormControl, Button,
 } from 'react-bootstrap';
-import { Roles } from 'meteor/alanning:roles';
 import { formValid } from '../../../modules/validate';
 import constants from '../../../modules/constants';
+import { getDayWithoutTime } from '../../../modules/helpers';
+import { dateSettings } from '../../../modules/settings';
 
 export const findUserForm = (callBack) => (
   <Row>
@@ -45,6 +46,11 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
       <Panel>
         <Row>
           <Col xs={12} sm={8}>
+            <Row>
+              <label>Join Date :</label>
+              &nbsp;
+              <p>{getDayWithoutTime(user.createdAt, dateSettings.timeZone)}</p>
+            </Row>
             <FormGroup>
               <label>Salutation</label>
               <select
@@ -82,6 +88,23 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               {isError.lastName.length > 0 && (
               <span className="control-label">{isError.lastName}</span>
               )}
+            </FormGroup>
+            <FormGroup>
+              <label>Account Status</label>
+              <select
+                className="form-control"
+                id="idAccountStatus"
+                name="accountStatus"
+                defaultValue={user.status.accountStatus}
+              >
+                {
+                  constants.UserAccountStatus.names.map((key) => (
+                    <option value={`${constants.UserAccountStatus[key].name}`}>
+                      {constants.UserAccountStatus[key].status_display_value}
+                    </option>
+                  ))
+                }
+              </select>
             </FormGroup>
             <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
               <label>Email Address</label>
@@ -141,7 +164,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
                 className="form-control"
                 id="idUserRole"
                 name="userRole"
-                defaultValue={constants.Roles.customer.name}
+                defaultValue={user.roles[0]}
               >
                 <option value={`${constants.Roles.admin.name}`}>
                   {constants.Roles.admin.display_value}
@@ -185,5 +208,6 @@ export const getUserData = () => {
     },
     // isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked
     role: document.querySelector('[name="userRole"]').value,
+    status: { accountStatus: document.querySelector('[name="accountStatus"]').value },
   });
 };

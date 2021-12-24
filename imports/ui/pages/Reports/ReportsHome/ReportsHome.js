@@ -50,7 +50,7 @@ export default class ReportsHome extends React.Component {
         <Row>
           <Col xs={12}>
             <div className="page-header clearfix">
-              <h3 className="pull-left">Reports</h3>
+              <h2 className="pull-left">Reports</h2>
             </div>
             <Panel>
               <Button bsStyle="link" onClick={this.genDaysSummaryReport}>Days Summary</Button>

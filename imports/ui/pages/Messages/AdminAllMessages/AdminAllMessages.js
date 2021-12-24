@@ -70,7 +70,7 @@ const MessagesAdmin = ({
     <div className="Messages">
       {loading && (<Loading />)}
       <div className="page-header clearfix">
-        <h3>Admin Messages</h3>
+      <h2>Admin Messages</h2>
         {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 

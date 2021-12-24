@@ -8,7 +8,7 @@ import Loading from '../../components/Loading/Loading';
 
 const EditRecipe = ({ loading, recipe, history }) => (!loading ? (
   <div className="EditRecipe">
-    <h3 className="page-header">{`Editing ${recipe.title}`}</h3>
+    <h2 className="page-header">{`Editing ${recipe.title}`}</h2>
     <RecipeEditor recipe={recipe} history={history} />
   </div>
 ) : <Loading />);

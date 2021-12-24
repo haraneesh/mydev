@@ -64,7 +64,7 @@ class ResetPassword extends React.Component {
       <div className="ResetPassword offset-sm-1">
         <Row>
           <Col xs={12} sm={6} md={4}>
-            <h3 className="page-header">Reset Password</h3>
+            <h2 className="page-header">Reset Password</h2>
             <Alert bsStyle="info">
               To reset your password, enter a new one below. You will be logged in
               with your new password.

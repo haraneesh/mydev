@@ -124,6 +124,14 @@ const OrderStatus = {
   },
 };
 
+const UserAccountStatus = {
+  Active: { name: 'Active', status_display_value: 'Active', btn_display_name: 'Activate Account' },
+  Disabled: { name: 'Disabled', status_display_value: 'Disabled', btn_display_name: 'Disable Account' },
+  NewSignUp: { name: 'NewSignUp', status_display_value: 'New & Active' },
+};
+
+UserAccountStatus.names = Object.keys(UserAccountStatus).map((cat) => UserAccountStatus[cat].name);
+
 const StatementPeriod = {
   /* Today: { name: 'Today', display_value: 'Today' },
   Yesterday: { name: 'Yesterday', display_value: 'Yesterday' }, */
@@ -403,6 +411,7 @@ const constants = {
   UnitOfRecipes,
   SELECT_EMPTY_VALUE,
   ReturnProductType,
+  UserAccountStatus,
 };
 
 export default constants;

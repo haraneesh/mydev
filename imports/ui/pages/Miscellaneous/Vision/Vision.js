@@ -92,7 +92,7 @@ const Vision = () => (
                 It is often colored, is treated and artificially preserved to give the appearance of freshness.</p>
 
               <p>We do not do any of this and yet keep our food fresh. The only way to do this is by shortening the supply chain
-                and get then produce directly from the farmer. We are pioneering several approaches, that deliver fresher, high-quality food from
+                and get the produce directly from the farmer. We are pioneering several approaches, that deliver fresher, high-quality food from
                 the farm directly to you, avoiding long and wasteful detours at costly grocery stores.</p>
 
               <p>At Suvai, our produce reaches you on the same day of the harvest. When you bite in to it, you will know the difference.</p>
