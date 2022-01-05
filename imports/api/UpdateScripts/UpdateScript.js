@@ -132,6 +132,7 @@ Orders.find({}).fetch().forEach(order => {
 // Roles._forwardMigrate();
 // Roles._forwardMigrate2();
 
+/*
 Meteor.users.update(
   { status: { $exists: false } },
   {
@@ -144,3 +145,4 @@ Meteor.users.update(
   },
   { multi: true },
 );
+*/

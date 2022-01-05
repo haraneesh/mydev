@@ -36,8 +36,10 @@ const AdminNav = (props) => {
           </li>
           <br />
           <li>
-            {/* <NavLink to="/approvesignups"> Approve Sign Ups</NavLink> */}
             <NavLink to="/allusers"> All Users </NavLink>
+          </li>
+          <li>
+            <NavLink to="/approvesignups"> Approve Sign Ups</NavLink>
           </li>
           <li>
             <NavLink to="/updateProfile">Create / Update User</NavLink>

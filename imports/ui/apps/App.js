@@ -18,7 +18,8 @@ import Footer from '../components/Footer/Footer';
 import Terms from '../pages/Miscellaneous/Terms/Terms';
 import Refund from '../pages/Miscellaneous/Refund/Refund';
 import Privacy from '../pages/Miscellaneous/Privacy/Privacy';
-import Signup from '../pages/Miscellaneous/Signup/Signup';
+// import SelfSignUp from '../pages/Miscellaneous/SignUp/SelfSignUp'; -- self sign up
+import SignUp from '../pages/Miscellaneous/SignUp/SignUp';
 import InviteSelf from '../pages/Invitations/InviteSelf';
 import ShowInterest from '../pages/Miscellaneous/ShowInterest/ShowInterest';
 import Login from '../pages/Miscellaneous/Login/Login';
@@ -164,7 +165,20 @@ const App = (props) => (
               {/* Invitations */}
               <Authenticated exact routeName="My_Invitations" layout={MainLayout} path="/invitations" component={dInvitations} {...props} />
               <Authenticated exact routeName="New_Invitation" layout={MainLayout} path="/invitations/new" component={dNewInvitation} {...props} />
-              <Public routeName="Accept_Invitation" layout={MainLayout} path="/invitations/:token" component={Signup} {...props} />
+
+              {/* Sign Up */}
+              <Public routeName="Accept_Invitation" layout={MainLayout} path="/invitations/:token" component={SignUp} {...props} />
+              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={SignUp} {...props} />
+              <AdminAuthenticated exact routeName="Approve_Sign_Ups" layout={MainLayout} path="/approvesignups" component={dApproveUserSignUps} {...props} />
+
+              {/* Self Sign Up
+              <Public routeName="Accept_Invitation" layout={MainLayout} path="/invitations/:token" component={SelfSignUp} {...props} />
+              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={InviteSelf} {...props} />
+              Self Sign Up */}
+
+              {/* Signups */}
+              <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
+              <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
 
               {/* Specials */}
               <Authenticated exact routeName="View_Specials" layout={MainLayout} path="/specials" component={dListSpecials} {...props} />
@@ -215,10 +229,6 @@ const App = (props) => (
               {/* Zoho Sync */}
               <AdminAuthenticated exact routeName="Zoho_Sync" layout={MainLayout} path="/zohoSync" component={dZohoSyncUp} {...props} />
               {/* end admin */}
-              <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={InviteSelf} {...props} />
-              <NotAuthenticated routeName="Login" layout={MainLayout} path="/login" component={Login} {...props} />
-              <NotAuthenticated routeName="Logout" layout={MainLayout} path="/logout" component={Logout} {...props} />
-              <AdminAuthenticated exact routeName="Approve_Sign_Ups" layout={MainLayout} path="/approvesignups" component={dApproveUserSignUps} {...props} />
 
               {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
               <Public exact routeName="About" layout={MainLayout} path="/about" component={About} {...props} />

@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-tabs */
+import { Meteor } from 'meteor/meteor';
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -16,6 +17,7 @@ import './About.scss';
 
 // class About extends React.Component {
 
+const WhatsAppSupport = Meteor.settings.public.Support_Numbers.whatsapp;
 const About = () => {
   useEffect(() => {
     // console.log("Here, useEffect act as componentDidMount")
@@ -303,7 +305,7 @@ const About = () => {
             <p>
               To Join the community, send us a Whatsapp Message at
               <br />
-              <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
+              <a href={`tel:${WhatsAppSupport.replace(' ', '')}`} className="text-primary">{WhatsAppSupport}</a>
             </p>
           </h4>
         </Col>

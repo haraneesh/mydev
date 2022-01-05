@@ -1,7 +1,9 @@
+import { Meteor } from 'meteor/meteor';
+import { fetch, Headers } from 'meteor/fetch';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
-import { Meteor } from 'meteor/meteor';
+
 import { Email } from 'meteor/email';
 import { check, Match } from 'meteor/check';
 import rateLimit from '../../modules/rate-limit';
@@ -10,8 +12,51 @@ import constants from '../../modules/constants';
 import Invitations from './Invitations';
 import InvitationTemplate from './invitation_template';
 
+async function postData(url, data, var1, var2, mobileNumber) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      // credentials: 'same-origin', // include, *same-origin, omit
+      headers: new Headers({
+        authorization: data.authorization,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(
+        {
+          sender_id: data.sender_id,
+          message: data.message,
+          route: 'dlt',
+          variables_values: `${var1}|${var2}`,
+          numbers: mobileNumber,
+        },
+      ), // body data type must match "Content-Type" header
+    });
+    return response.json();
+  } catch (error) {
+    console.log(`Error Making Call: ${error}`);
+    return {
+      status_code: 401,
+      message: error,
+    };
+  }
+}
+
+const sendSMS = (var1, var2, mobileNumber) => {
+  const { fast2SMS } = Meteor.settings.private.SMS;
+  const response = postData(fast2SMS.urlToCall, fast2SMS, var1, var2, mobileNumber);
+
+  if (response.status_code) {
+    console.log(`Error: ${JSON.stringify(response)}`);
+    throw new Meteor.Error(response.status_code, 'Unable to send a SMS');
+  }
+
+  return true;
+};
 const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
   let invitation;
+  let returnOTP = otp;
 
   if (phoneNumber) {
     invitation = Invitations.findOne(
@@ -25,6 +70,7 @@ const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
   }
 
   if (!invitation) {
+    returnOTP = otp;
     invitation = {};
     invitation.sentUserId = sentUserId;
     invitation.token = Random.hexString(16);
@@ -37,14 +83,18 @@ const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
     Invitations.insert(invitation);
   }
   const { domain } = Meteor.settings.private;
-  return `http://${domain}/invitations/${invitation.token}`;
+  return {
+    url: `http://${domain}/invitations/${invitation.token}`,
+    returnOTP,
+  };
 };
 
 Meteor.methods({
   'invitation.getInvitation': function invitationCreate(phoneNumber) {
     check(phoneNumber, Match.Maybe(String));
     try {
-      return addInvitation(phoneNumber, Meteor.userId(), constants.Roles.customer.name, '');
+      const obj = addInvitation(phoneNumber, Meteor.userId(), constants.Roles.customer.name, '');
+      return obj.url;
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -74,12 +124,14 @@ Meteor.methods({
         }
 
         const adminUser = Meteor.users.findOne({ username: '9999999999' }); // admin
-        addInvitation(phoneNumber, adminUser._id, 'self', otp);
+        const otpSent = addInvitation(phoneNumber, adminUser._id, 'self', otp);
 
         if (Meteor.isDevelopment) {
-          console.log(otp);
+          console.log(otpSent);
+        } else {
+          sendSMS(otpSent.returnOTP, Meteor.settings.public.Support_Numbers.whatsapp, phoneNumber);
         }
-        // send SMS
+
         return true;
       }
 
@@ -220,6 +272,18 @@ export const acceptInvitation = new ValidatedMethod({
         const userId = createUser(cUser);
         if (userId) {
           updateInvitation(options.token, userId);
+
+          const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
+          const fromEmail = Meteor.settings.private.fromInvitationEmail;
+          if (!Meteor.isProduction) {
+            // Send email to admin
+            Email.send({
+              to: toEmail,
+              from: `Suvai User SignUp ${fromEmail}`,
+              subject: `New User Sign Up ${cUser.username}`,
+              html: `First Name: ${cUser.profile.name.first} Last name: ${cUser.profile.name.last}`,
+            });
+          }
         }
       } else {
         throw new Meteor.Error(403, 'Sign up token has expired or is invalid.');

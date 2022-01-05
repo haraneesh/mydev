@@ -25,12 +25,13 @@ $brand-danger:          #A2082C !default; //#EA3128
 $brand-logo-yellow:     #FFB800 !default; //#FDC123
 
 $default-font: "-apple-system","system-ui","BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue",Arial,sans-serif !default;
-$heading-font: 'Crimson Pro', $default-font;
+$default-serif-font:  "Georgia", "Cambria", "-apple-system", !default;
+$heading-font: 'Source Serif 4', $default-serif-font;
 $body-font: 'Nunito', $default-font;
 
 
 $font-family-sans-serif:  $body-font;
-$font-family-serif:        "Times New Roman", Times, serif !default;
+$font-family-serif:        "Georgia", "Cambria", "Times New Roman", Times, serif !default;
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
 $font-family-base:        $font-family-sans-serif !default;

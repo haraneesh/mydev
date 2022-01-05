@@ -6,6 +6,7 @@ import {
 
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
+import GeneratePriceList from '../../../reports/client/GeneratePriceList';
 import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers';
 import { removeProductList } from '../../../api/ProductLists/methods';
 import constants from '../../../modules/constants';
@@ -56,6 +57,7 @@ class ViewProductListDetails extends React.Component {
 
     this.handleRemove = this.handleRemove.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
+    this.handlePrintToPDF = this.handlePrintToPDF.bind(this);
     this.goBack = this.goBack.bind(this);
     this.state = { productList: this.props.productList };
   }
@@ -66,26 +68,39 @@ class ViewProductListDetails extends React.Component {
         if (error) {
           toast.error(error.reason);
         } else {
+          const { history } = this.props;
           toast.success('Product List deleted!');
-          this.props.history.push('/productLists');
+          history.push('/productLists');
         }
       });
     }
   }
 
+  createPriceList(products) {
+    GeneratePriceList({ products });
+  }
+
+  handlePrintToPDF() {
+    const { productList } = this.props;
+    this.createPriceList(productList.products);
+  }
+
   handleEdit(_id) {
-    this.props.history.push(`/productLists/${_id}/edit`);
+    const { history } = this.props;
+    history.push(`/productLists/${_id}/edit`);
   }
 
   displayDeleteProductListButton(productListStatus, productListId) {
-    if (productListStatus != constants.ProductListStatus.Expired.name) {
+    if (constants.ProductListStatus.Expired.name !== productListStatus) {
       return (
         <ButtonToolbar className="pull-right">
+          <Button bsSize="small" onClick={() => this.handlePrintToPDF()}>Retail PDF</Button>
           <Button bsSize="small" onClick={() => this.handleEdit(productListId)} className="btn-primary">Edit</Button>
           <Button bsSize="small" onClick={() => this.handleRemove(productListId)} className="btn">Delete</Button>
         </ButtonToolbar>
       );
     }
+    return (<></>);
   }
 
   goBack(e) {

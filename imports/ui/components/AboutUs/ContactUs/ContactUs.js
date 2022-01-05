@@ -1,7 +1,11 @@
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Panel, Row, Col } from 'react-bootstrap';
 
 import './ContactUs.scss';
+
+const WhatsAppSupport = Meteor.settings.public.Support_Numbers.whatsapp;
+const LandLineSupport = Meteor.settings.public.Support_Numbers.landline;
 
 const ContactUs = () => (
   <Panel className="ContactUs text-center">
@@ -30,12 +34,12 @@ const ContactUs = () => (
         <address>
           <strong>Land Line</strong>
           <br />
-          <a href="tel:+914448569950">+91 44 48569950</a>
+          <a href={`tel:${LandLineSupport.replace(' ', '')}`}>{LandLineSupport}</a>
         </address>
         <address>
           <strong>Whats App</strong>
           <br />
-          <a href="tel:+919361032849">+91 9361032849</a>
+          <a href={`tel:${WhatsAppSupport.replace(' ', '')}`}>{WhatsAppSupport}</a>
         </address>
         <address>
           <strong>E-Mail</strong>

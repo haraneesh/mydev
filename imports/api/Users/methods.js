@@ -142,6 +142,10 @@ export const createNewUser = (user) => {
         productReturnables: {},
         updatedAt: new Date(),
         'globalStatuses.lastVisitedMessageApp': new Date(),
+        status: {
+          accountStatus: constants.UserAccountStatus.Active.name,
+          statusUpdate: new Date(),
+        },
       },
     });
     return Meteor.users.findOne({ username: cuser.username });
@@ -222,7 +226,6 @@ export const adminUpdateUser = new ValidatedMethod({
 
         user.updatedAt = new Date();
         user.status.statusUpdate = new Date();
-        console.log(user);
         const u = Meteor.users.update({ _id: cuser._id }, { $set: user });
 
         assignUserRole(cuser._id, userRole);
@@ -322,6 +325,7 @@ Meteor.methods({
     eatingHealthyMeaning: ${user.profile.eatingHealthyMeaning}
     has signed up. Please approve in the app.`,
     'New user signup', user.email);
+
     return UserSignUps.insert(user);
   },
   'users.accountStatusUpdate': function deactivateUser(args) {
