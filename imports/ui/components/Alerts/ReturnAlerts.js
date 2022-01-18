@@ -11,6 +11,7 @@ const highLightText = (textToHighLight) => (
 function ReturnAlerts() {
   return (
     (Meteor.settings.public.ShowReturnBottles) && (
+
     <Alert
       bsStyle="danger"
       style={{

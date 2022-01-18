@@ -115,6 +115,7 @@ import { CartProvider } from '../stores/ShoppingCart';
 import Loading from '../components/Loading/Loading';
 
 import ReturnAlerts from '../components/Alerts/ReturnAlerts';
+import ShowAlerts from '../components/Alerts/ShowAlerts';
 import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
 
 const App = (props) => (
@@ -122,7 +123,8 @@ const App = (props) => (
     {!props.loading ? (
       <Suspense fallback={<Loading />}>
         <div className="App">
-          { /* props.authenticated && (<ReturnAlerts />) */ }
+          { props.authenticated && (<ShowAlerts />) }
+          { props.authenticated && (<ReturnAlerts />) }
           {props.authenticated && (
             <PwaInstallPopupIOS
               delay={3}
