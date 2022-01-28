@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import Product from '../Orders/Product';
+import constants from '../../../modules/constants';
 import { accountSettings } from '../../../modules/settings';
 import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
@@ -30,6 +31,9 @@ export const ListProducts = ({
     productGrains,
     productSpices,
     productOils,
+    productFlours,
+    productBatter,
+    productSnacks,
     productPrepared,
     productHygiene,
     productSweetners,
@@ -70,15 +74,18 @@ export const ListProducts = ({
           </Col>
         </Row>
       </Panel>
-      {displayWithDivider(productVegetables, 'Vegetables')}
-      {displayWithDivider(productFruits, 'Fruits')}
-      {displayWithDivider(productGrains, 'Grains & Flour')}
-      {displayWithDivider(productDhals, 'Pulses, Lentils & Dried Beans')}
-      {displayWithDivider(productSpices, 'Spices & Nuts')}
-      {displayWithDivider(productOils, 'Oils, Butter & Ghee')}
-      {displayWithDivider(productPrepared, 'Pickles & Podis')}
-      {displayWithDivider(productSweetners, 'Sweetners')}
-      {displayWithDivider(productHygiene, 'Personal & General Hygiene')}
+      {displayWithDivider(productVegetables, constants.ProductTypeName.Vegetables.display_name)}
+      {displayWithDivider(productFruits, constants.ProductTypeName.Fruits.display_name)}
+      {displayWithDivider(productGrains, constants.ProductTypeName.Grains.display_name)}
+      {displayWithDivider(productDhals, constants.ProductTypeName.Dhals.display_name)}
+      {displayWithDivider(productSpices, constants.ProductTypeName.Spices.display_name)}
+      {displayWithDivider(productOils, constants.ProductTypeName.Oils.display_name)}
+      {displayWithDivider(productFlours, constants.ProductTypeName.Flours.display_name)}
+      {displayWithDivider(productBatter, constants.ProductTypeName.Batter.display_name)}
+      {displayWithDivider(productSnacks, constants.ProductTypeName.Snacks.display_name)}
+      {displayWithDivider(productPrepared, constants.ProductTypeName.Prepared.display_name)}
+      {displayWithDivider(productSweetners, constants.ProductTypeName.Sweetners.display_name)}
+      {displayWithDivider(productHygiene, constants.ProductTypeName.Hygiene.display_name)}
       {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
 

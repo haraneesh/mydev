@@ -8,6 +8,9 @@
 .productOrderList .nav>li.oils_bk > a,
 .productOrderList .nav>li.prepared_bk > a,
 .productOrderList .nav>li.hyg_bk > a,
+.productOrderList .productCat_snack_bk_ph > a,
+.productOrderList .productCat_batter_bk_ph > a, 
+.productOrderList .productCat_flours_bk_ph > a,
 .productOrderList .productCat_recommended_bk_ph,
 .productOrderList .productCat_specials_bk_ph,
 .productOrderList .productCat_vegetables_bk_ph,
@@ -18,7 +21,10 @@
 .productOrderList .productCat_oils_bk_ph,
 .productOrderList .productCat_swt_bk_ph,
 .productOrderList .productCat_prepared_bk_ph,
-.productOrderList .productCat_hyg_bk_ph
+.productOrderList .productCat_hyg_bk_ph,
+.productOrderList .productCat_snack_bk_ph,
+.productOrderList .productCat_batter_bk_ph, 
+.productOrderList .productCat_flours_bk_ph
 {
-    background-image: url(/app/order-tabs.png?11);
+    background-image: url(/app/order-tabs.png?13);
 }

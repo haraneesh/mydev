@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { Panel, PanelGroup } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import constants from '../../../../modules/constants';
 import { DisplayCategoryHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
 
 import './ProductsOrderMobile.scss';
@@ -68,6 +69,10 @@ export default class ProductsOrderMobile extends React.Component {
     const { productHygiene } = productGroups;
     const { productSweetners } = productGroups;
     const { productSpecials } = productGroups;
+    const { productFlours } = productGroups;
+    const { productBatter } = productGroups;
+    const { productSnacks } = productGroups;
+
     const productRecommended = [];
 
     // const expanded = this.state.panelToFocus !== '';
@@ -115,50 +120,6 @@ export default class ProductsOrderMobile extends React.Component {
             </div>
           )}
 
-          {productVegetables.length > 0 && (
-          <div id="veg-header">
-            <Panel
-              header={(
-                <DisplayCategoryHeader
-                  clName="vegetables_bk_ph"
-                  title="Vegetables"
-                  onclick={() => this.handlePanelSelect('veg-header')}
-                  isOpen={this.state.panelToFocus === 'veg-header'}
-                  tabHash={productGroups.productGroupMetaHash.productVegetables}
-                />
-              )}
-              expanded={(this.state.panelToFocus === 'veg-header')}
-              eventKey="3"
-            >
-              <div className="row">
-                {(this.state.panelToFocus === 'veg-header') && productVegetables}
-              </div>
-            </Panel>
-          </div>
-          )}
-
-          {productFruits.length > 0 && (
-          <div id="fruits-header">
-            <Panel
-              header={(
-                <DisplayCategoryHeader
-                  clName="fruits_bk_ph"
-                  title="Fruits"
-                  onclick={() => this.handlePanelSelect('fruits-header')}
-                  isOpen={this.state.panelToFocus === 'fruits-header'}
-                  tabHash={productGroups.productGroupMetaHash.productFruits}
-                />
-)}
-              expanded={(this.state.panelToFocus === 'fruits-header')}
-              eventKey="4"
-            >
-              <div className="row">
-                {(this.state.panelToFocus === 'fruits-header') && productFruits}
-              </div>
-            </Panel>
-          </div>
-          )}
-
           {productGrains.length > 0 && (
           <div id="grain-header">
             <Panel
@@ -166,7 +127,7 @@ export default class ProductsOrderMobile extends React.Component {
               header={(
                 <DisplayCategoryHeader
                   clName="grains_bk_ph"
-                  title="Grains & Flour"
+                  title={constants.ProductTypeName.Grains.display_name} // "Grains & Flour"
                   onclick={() => this.handlePanelSelect('grain-header')}
                   isOpen={this.state.panelToFocus === 'grain-header'}
                   tabHash={productGroups.productGroupMetaHash.productGrains}
@@ -188,7 +149,7 @@ export default class ProductsOrderMobile extends React.Component {
               header={(
                 <DisplayCategoryHeader
                   clName="dhals_bk_ph"
-                  title="Pulses, Lentils & Dried Beans"
+                  title={constants.ProductTypeName.Dhals.display_name} // "Pulses, Lentils & Dried Beans"
                   onclick={() => this.handlePanelSelect('dhals-header')}
                   isOpen={this.state.panelToFocus === 'dhals-header'}
                   tabHash={productGroups.productGroupMetaHash.productDhals}
@@ -204,13 +165,101 @@ export default class ProductsOrderMobile extends React.Component {
           </div>
           )}
 
+          {productFlours.length > 0 && (
+          <div id="flours-header">
+            <Panel
+              header={(
+                <DisplayCategoryHeader
+                  clName="flours_bk_ph"
+                  title={constants.ProductTypeName.Flours.display_name} // "Flours"
+                  onclick={() => this.handlePanelSelect('flours-header')}
+                  isOpen={this.state.panelToFocus === 'flours-header'}
+                  tabHash={productGroups.productGroupMetaHash.productFlours}
+                />
+          )}
+              expanded={(this.state.panelToFocus === 'flours-header')}
+              eventKey="10"
+            >
+              <div className="row">
+                {(this.state.panelToFocus === 'flours-header') && productFlours}
+              </div>
+            </Panel>
+          </div>
+          )}
+
+          {productBatter.length > 0 && (
+          <div id="batter-header">
+            <Panel
+              header={(
+                <DisplayCategoryHeader
+                  clName="batter_bk_ph"
+                  title={constants.ProductTypeName.Batter.display_name} // "Batter"
+                  onclick={() => this.handlePanelSelect('batter-header')}
+                  isOpen={this.state.panelToFocus === 'batter-header'}
+                  tabHash={productGroups.productGroupMetaHash.productBatter}
+                />
+            )}
+              expanded={(this.state.panelToFocus === 'batter-header')}
+              eventKey="10"
+            >
+              <div className="row">
+                {(this.state.panelToFocus === 'batter-header') && productBatter}
+              </div>
+            </Panel>
+          </div>
+          )}
+
+          {productVegetables.length > 0 && (
+          <div id="veg-header">
+            <Panel
+              header={(
+                <DisplayCategoryHeader
+                  clName="vegetables_bk_ph"
+                  title={constants.ProductTypeName.Vegetables.display_name} // "Vegetables"
+                  onclick={() => this.handlePanelSelect('veg-header')}
+                  isOpen={this.state.panelToFocus === 'veg-header'}
+                  tabHash={productGroups.productGroupMetaHash.productVegetables}
+                />
+              )}
+              expanded={(this.state.panelToFocus === 'veg-header')}
+              eventKey="3"
+            >
+              <div className="row">
+                {(this.state.panelToFocus === 'veg-header') && productVegetables}
+              </div>
+            </Panel>
+          </div>
+          )}
+
+          {productFruits.length > 0 && (
+          <div id="fruits-header">
+            <Panel
+              header={(
+                <DisplayCategoryHeader
+                  clName="fruits_bk_ph"
+                  title={constants.ProductTypeName.Fruits.display_name} // "Fruits"
+                  onclick={() => this.handlePanelSelect('fruits-header')}
+                  isOpen={this.state.panelToFocus === 'fruits-header'}
+                  tabHash={productGroups.productGroupMetaHash.productFruits}
+                />
+)}
+              expanded={(this.state.panelToFocus === 'fruits-header')}
+              eventKey="4"
+            >
+              <div className="row">
+                {(this.state.panelToFocus === 'fruits-header') && productFruits}
+              </div>
+            </Panel>
+          </div>
+          )}
+
           {productSpices.length > 0 && (
           <div id="spices-header">
             <Panel
               header={(
                 <DisplayCategoryHeader
                   clName="spices_bk_ph"
-                  title="Spices & Nuts"
+                  title={constants.ProductTypeName.Spices.display_name} // "Spices & Nuts"
                   onclick={() => this.handlePanelSelect('spices-header')}
                   isOpen={this.state.panelToFocus === 'spices-header'}
                   tabHash={productGroups.productGroupMetaHash.productSpices}
@@ -232,7 +281,7 @@ export default class ProductsOrderMobile extends React.Component {
               header={(
                 <DisplayCategoryHeader
                   clName="oils_bk_ph"
-                  title="Oils, Butter & Ghee"
+                  title={constants.ProductTypeName.Oils.display_name} // "Oils, Butter & Ghee"
                   onclick={() => this.handlePanelSelect('oils-header')}
                   isOpen={this.state.panelToFocus === 'oils-header'}
                   tabHash={productGroups.productGroupMetaHash.productOils}
@@ -254,7 +303,7 @@ export default class ProductsOrderMobile extends React.Component {
               header={(
                 <DisplayCategoryHeader
                   clName="swt_bk_ph"
-                  title="Sweetners"
+                  title={constants.ProductTypeName.Sweetners.display_name} // "Sweetners"
                   onclick={() => this.handlePanelSelect('swt-header')}
                   isOpen={this.state.panelToFocus === 'swt-header'}
                   tabHash={productGroups.productGroupMetaHash.productSweetners}
@@ -270,13 +319,35 @@ export default class ProductsOrderMobile extends React.Component {
           </div>
           )}
 
+          {productSnacks.length > 0 && (
+          <div id="snacks-header">
+            <Panel
+              header={(
+                <DisplayCategoryHeader
+                  clName="snack_bk_ph"
+                  title={constants.ProductTypeName.Snacks.display_name} // "Snacks"
+                  onclick={() => this.handlePanelSelect('snacks-header')}
+                  isOpen={this.state.panelToFocus === 'snacks-header'}
+                  tabHash={productGroups.productGroupMetaHash.productSnacks}
+                />
+          )}
+              expanded={(this.state.panelToFocus === 'snacks-header')}
+              eventKey="10"
+            >
+              <div className="row">
+                {(this.state.panelToFocus === 'snacks-header') && productSnacks}
+              </div>
+            </Panel>
+          </div>
+          )}
+
           {productPrepared.length > 0 && (
           <div id="prepared-header">
             <Panel
               header={(
                 <DisplayCategoryHeader
                   clName="prepared_bk_ph"
-                  title="Pickles & Podis"
+                  title={constants.ProductTypeName.Prepared.display_name} // "Pickles & Podis"
                   onclick={() => this.handlePanelSelect('prepared-header')}
                   isOpen={this.state.panelToFocus === 'prepared-header'}
                   tabHash={productGroups.productGroupMetaHash.productPrepared}
@@ -298,7 +369,7 @@ export default class ProductsOrderMobile extends React.Component {
               header={(
                 <DisplayCategoryHeader
                   clName="hyg_bk_ph"
-                  title="Personal & General Hygiene"
+                  title={constants.ProductTypeName.Hygiene.display_name} // "Personal & General Hygiene"
                   onclick={() => this.handlePanelSelect('hyg-header')}
                   isOpen={this.state.panelToFocus === 'hyg-header'}
                   tabHash={productGroups.productGroupMetaHash.productHygiene}
@@ -313,6 +384,7 @@ export default class ProductsOrderMobile extends React.Component {
             </Panel>
           </div>
           )}
+
         </PanelGroup>
       </div>
     );

@@ -57,7 +57,10 @@
 .nav > li.spices_bk > a,
 .nav > li.oils_bk > a,
 .nav > li.prepared_bk > a,
-.nav > li.hyg_bk > a
+.nav > li.hyg_bk > a,
+.nav > li.snack_bk_ph > a,
+.nav > li.batter_bk_ph > a,
+.nav > li.flours_bk_ph > a
 {
     padding: 0px;
     background-size: 5em;
@@ -74,7 +77,10 @@
 .nav > li.spices_bk,
 .nav > li.oils_bk,
 .nav > li.prepared_bk,
-.nav > li.hyg_bk {
+.nav > li.hyg_bk,
+.nav > li.snack_bk_ph_bk,
+.nav > li.batter_bk_ph_bk,
+.nav > li.flours_bk_ph_bk {
     width:10em;
 }
 
@@ -232,7 +238,7 @@
     }
     
     .productCat_grains_bk_ph {
-        background-position:2px -70px;
+        background-position:2px -875px;
     }
     
     .productCat_hyg_bk_ph {
@@ -249,6 +255,18 @@
 
     .productCat_swt_bk_ph {
         background-position:2px -805px;
+    }
+
+    .productCat_snack_bk_ph {
+        background-position:2px -1002px;
+    }
+
+    .productCat_batter_bk_ph {
+        background-position:2px -942px;
+    }
+
+    .productCat_flours_bk_ph {
+        background-position:2px -70px;
     }
 
 }

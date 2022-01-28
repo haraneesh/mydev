@@ -141,6 +141,9 @@ export function displayProductsByType({
   const productHygiene = [];
   const productSpecials = [];
   const productSweetners = [];
+  const productFlours = [];
+  const productBatter = [];
+  const productSnacks = [];
   const productRecommended = [];
   const productsNoCategory = [];
 
@@ -226,6 +229,21 @@ export function displayProductsByType({
         tempKey = `sweetners-${index}`;
         tempType = 'productSweetners';
         break;
+      case (constants.ProductType[10] === product.type): // Flours
+        tempProductList = productFlours;
+        tempKey = `flours-${index}`;
+        tempType = 'productFlours';
+        break;
+      case (constants.ProductType[11] === product.type): // Batter
+        tempProductList = productBatter;
+        tempKey = `batter-${index}`;
+        tempType = 'productBatter';
+        break;
+      case (constants.ProductType[12] === product.type): // Snacks
+        tempProductList = productSnacks;
+        tempKey = `snacks-${index}`;
+        tempType = 'productSnacks';
+        break;
       default:
         tempProductList = productsNoCategory;
         tempKey = `noCat-${index}`;
@@ -271,6 +289,9 @@ export function displayProductsByType({
     productHygiene,
     productSpecials,
     productSweetners,
+    productFlours,
+    productBatter,
+    productSnacks,
     productRecommended,
     productsNoCategory,
     isMobile,

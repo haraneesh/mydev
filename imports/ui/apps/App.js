@@ -94,7 +94,7 @@ import {
   dReportsHome,
   dReconcileInventory,
   dReconcileInventoryList,
-  dApproveUserSignUps,
+  // dApproveUserSignUps,
   // dMessages,
   dEditMessage,
   dAdminAllMessages,
@@ -103,6 +103,8 @@ import {
   dUserDetails,
 }
   from './dynamicRoutes';
+
+import dApproveUserSignUps from '../pages/Miscellaneous/ApproveSignUps';
 
 import RouteNames from './RouteNames';
 
