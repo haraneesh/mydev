@@ -65,7 +65,7 @@ const ProductTypeName = {
   },
   Dhals: {
     name: 'Dhals',
-    display_name: 'Pulses, Lentils & Dried Beans',
+    display_name: 'Dhal, Lentils & Dried Beans',
   },
   Grains: {
     name: 'Grains',

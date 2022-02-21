@@ -207,9 +207,6 @@ const ProductForNonAdmin = ({
   if (sliderView) {
     return (
       <div className="product-item text-center align-items-center row">
-        <Col xs={12}>
-          {prodNameDesc}
-        </Col>
         {!!image && image.indexOf('blank_image.png') < 0 && (
         <Col xs={5} className="align-items-center">
           {imageRow}
@@ -223,6 +220,9 @@ const ProductForNonAdmin = ({
               </p>
             </Col>
           </Row>
+        </Col>
+        <Col xs={12}>
+          {prodNameDesc}
         </Col>
         <Col xs={12} className="addCartButton">
           <AddToCart
