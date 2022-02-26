@@ -5,7 +5,7 @@ import { Grid } from 'react-bootstrap';
 import './Footer.scss';
 
 const copyrightYear = () => {
-  const currentYear = 2020;
+  const currentYear = 2022;
   return currentYear;
 };
 

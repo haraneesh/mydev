@@ -43,7 +43,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
     <Panel>
       <Row>
         <Col xs={6} sm={5}>
-          <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
+          <h4 style={{ paddingRight: '5px' }}>{(walletBalanceInRs < 0) ? 'To Pay' : 'Wallet Balance'}</h4>
         </Col>
         <Col xs={6} sm={4} className="text-right-xs">
           {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (displayWalletSummary(0))}

@@ -46,11 +46,13 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
       <Panel>
         <Row>
           <Col xs={12} sm={8}>
+            {(user) && (
             <Row>
               <label>Join Date :</label>
               &nbsp;
               <p>{getDayWithoutTime(user.createdAt, dateSettings.timeZone)}</p>
             </Row>
+            )}
             <FormGroup>
               <label>Salutation</label>
               <select
@@ -95,11 +97,11 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
                 className="form-control"
                 id="idAccountStatus"
                 name="accountStatus"
-                defaultValue={user.status.accountStatus}
+                defaultValue={(user && user.status && user.status.accountStatus) ? user.status.accountStatus : ''}
               >
                 {
                   constants.UserAccountStatus.names.map((key) => (
-                    <option value={`${constants.UserAccountStatus[key].name}`}>
+                    <option key={key} value={`${constants.UserAccountStatus[key].name}`}>
                       {constants.UserAccountStatus[key].status_display_value}
                     </option>
                   ))
@@ -164,7 +166,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
                 className="form-control"
                 id="idUserRole"
                 name="userRole"
-                defaultValue={user.roles[0]}
+                defaultValue={(user && user.roles) ? user.roles[0] : constants.Roles.customer.name}
               >
                 <option value={`${constants.Roles.admin.name}`}>
                   {constants.Roles.admin.display_value}

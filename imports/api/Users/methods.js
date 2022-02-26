@@ -166,9 +166,10 @@ export const createUser = new ValidatedMethod({
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
     'profile.deliveryAddress': { type: String },
-    // isAdmin: { type: Boolean, optional: true },
     password: { type: Object, blackbox: true },
     role: { type: String },
+    status: { type: Object },
+    'status.accountStatus': { type: String },
   }).validator(),
   run(user) {
     if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
