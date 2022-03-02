@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
+import { reset, bringUp } from './hideUnHideToolBar';
 import Icon from '../Icon/Icon';
 import './ToolBar.scss';
 
@@ -33,41 +34,6 @@ const ToolBar = ({
 }) => {
   const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
 
-  const hideBottom = -70;
-  let bottom = hideBottom;
-  let intervalID = 0;
-
-  function show() {
-    const toolBar = document.getElementById('toolBar');
-    if (toolBar !== null) {
-      toolBar.style.display = 'flex';
-
-      bottom = parseInt(toolBar.style.bottom, 10);
-      if (bottom < 0) {
-        bottom += 10;
-        toolBar.style.bottom = `${bottom}px`;
-      } else {
-        clearInterval(intervalID);
-      }
-    }
-  }
-
-  function reset() {
-    clearInterval(intervalID);
-    bottom = hideBottom;
-    const toolBar = document.getElementById('toolBar');
-    if (toolBar !== null) {
-      toolBar.style.display = 'none';
-      toolBar.style.bottom = `${bottom}px`;
-    }
-  }
-
-  function bringUp() {
-    clearInterval(intervalID);
-    intervalID = setInterval(show, 20);
-  }
-
-  let lastScrollTop = 0;
   const cartState = useCartState();
   const totalProductsInCount = cartState.newCartCountOfItems;
 
@@ -86,9 +52,11 @@ const ToolBar = ({
 
   // element should be replaced with the actual target element on
   // which you have applied scroll, use window in case of no target element.
-  window.addEventListener('scroll', () => { // or window.addEventListener("scroll"....
+  // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+
+  /* let lastScrollTop = 0;
+  window.addEventListener('scroll', () => {
     const st = window.pageYOffset || document.documentElement.scrollTop;
-    // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
     if (st > lastScrollTop) {
     // downscroll code
       reset();
@@ -97,7 +65,7 @@ const ToolBar = ({
       bringUp();
     }
     lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
-  }, false);
+  }, false); */
 
   function onCartIconClick() {
     if (totalProductsInCount > 0) {
