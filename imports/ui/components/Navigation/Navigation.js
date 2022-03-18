@@ -32,7 +32,7 @@ function Navigation(props) {
 
           <img
             className="brand-logo"
-            src="/logo.svg?v10"
+            src="/logo.svg?v100"
             alt="Suvai"
             onClick={() => { history.push('/'); }}
           />
