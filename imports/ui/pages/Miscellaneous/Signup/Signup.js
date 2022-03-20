@@ -25,7 +25,7 @@ const defaultState = {
   },
 };
 
-class Signup extends React.Component {
+class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.onValueChange = this.onValueChange.bind(this);
@@ -286,9 +286,9 @@ class Signup extends React.Component {
   }
 }
 
-Signup.propTypes = {
+SignUp.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
 };
 
-export default Signup;
+export default SignUp;

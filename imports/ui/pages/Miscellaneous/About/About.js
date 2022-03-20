@@ -46,7 +46,7 @@ const About = () => {
               <h4> food, delivered home from Suvai Farms. </h4>
               <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
-              <Button className="membersBtn" href="/signup"> Sign Up </Button>
+              <Button className="membersBtn" bsStyle="info" href="/signup"> Sign Up </Button>
             </Col>
           </div>
         </Panel>
