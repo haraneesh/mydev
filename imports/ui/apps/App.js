@@ -257,7 +257,7 @@ const App = (props) => (
               {/* Page not found */}
               <Redirect from="*" to="/" />
             </Switch>
-            <Footer />
+            <Footer {...props} />
           </CartProvider>
         </div>
       </Suspense>

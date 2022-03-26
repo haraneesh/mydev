@@ -9,8 +9,8 @@ const copyrightYear = () => {
   return currentYear;
 };
 
-const Footer = () => (
-  <div className="Footer">
+const Footer = (args) => (
+  <div className={`Footer ${(args.authenticated) ? 'footer-show-toolbar' : 'footer-no-toolbar'} `}>
 
     <Grid fluid="true">
 
