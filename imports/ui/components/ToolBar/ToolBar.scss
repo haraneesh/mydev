@@ -1,5 +1,11 @@
 @import '../../stylesheets/bootstrap/bootstrap/variables';
 
+
+.navbar {
+  .container-fluid {
+    padding-bottom: 0px;
+  }
+}
 .toolBar{
     z-index: 1000;
     position: fixed;
