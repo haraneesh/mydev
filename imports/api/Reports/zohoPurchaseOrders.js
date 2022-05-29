@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import zh from '../ZohoSyncUps//ZohoBooks';
+import zh from '../ZohoSyncUps/ZohoBooks';
 import { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
 import { updateSyncAndReturn, retResponse, getZhDisplayDate } from '../ZohoSyncUps/zohoCommon';
 
@@ -56,10 +56,10 @@ const addPOOrderedQty = (pendingProductHash) => {
   return pos.reduce((productHash, p) => {
     let propertyToUpdate = 'none';
     switch (p.delivery_date) {
-      case getZhDisplayDate(today) :
+      case getZhDisplayDate(today):
         propertyToUpdate = 'poOrderedQtyForToday';
         break;
-      case getZhDisplayDate(tomorrow) :
+      case getZhDisplayDate(tomorrow):
         propertyToUpdate = 'poOrderedQtyForTomorrow';
         break;
       default:
@@ -72,7 +72,7 @@ const addPOOrderedQty = (pendingProductHash) => {
         productHash = po.line_items.reduce((map, item) => {
           if (map[item.item_id]) {
             map = addPOQuantities(map, item.item_id, item.quantity, propertyToUpdate);
-         /* if (map[item.item_id].poOrderedQuantity) {
+            /* if (map[item.item_id].poOrderedQuantity) {
             map[item.item_id].poOrderedQuantity = map[item.item_id].poOrderedQuantity + item.quantity;
           } else {
             map[item.item_id].poOrderedQuantity = item.quantity;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import {
   Panel, Row, Col, Button,
@@ -9,18 +9,11 @@ import Loading from '../../../components/Loading/Loading';
 
 // import './ReportsHome.scss';
 
-export default class ReportsHome extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      loading: false,
-    };
+const ReportsHome = () => {
+  const [loading, setLoading] = useState(false);
 
-    this.genDaysSummaryReport = this.genDaysSummaryReport.bind(this);
-  }
-
-  genDaysSummaryReport() {
-    if (!this.state.loading) {
+  function genDaysSummaryReport() {
+    if (!loading) {
       Meteor.call('reports.generateDaysSummary', (error, success) => {
         if (error) {
           toast.error(error.reason);
@@ -33,34 +26,53 @@ export default class ReportsHome extends React.Component {
             toast.success(message, 'default');
           }
         }
-        this.setState({
-          loading: false,
-        });
+        setLoading(false);
       });
     }
-    this.setState({
-      loading: true,
-    });
+    setLoading(true);
   }
 
-  render() {
-    return (
-      <div className="ReportsHome">
-        {(this.state.loading) ? (<Loading />) : (<div />)}
-        <Row>
-          <Col xs={12}>
-            <div className="page-header clearfix">
-              <h2 className="pull-left">Reports</h2>
-            </div>
-            <Panel>
-              <Button bsStyle="link" onClick={this.genDaysSummaryReport}>Days Summary</Button>
-            </Panel>
-            <Panel>
-              <Button bsStyle="link" href="/reconcileInventoryList">Inventory Reconciliation</Button>
-            </Panel>
-          </Col>
-        </Row>
-      </div>
-    );
+  function listInvoicesPerMonth() {
+    if (!loading) {
+      Meteor.call('reports.getInvoices', (error, success) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          return success;
+        }
+        setLoading(false);
+      });
+    }
+    setLoading(true);
   }
-}
+
+  return (
+    <div className="ReportsHome">
+      {(loading) ? (<Loading />) : (<div />)}
+      <Row>
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h2 className="pull-left">General Reports</h2>
+          </div>
+          <Panel>
+            <Button bsStyle="link" onClick={genDaysSummaryReport}>Days Summary</Button>
+          </Panel>
+          <Panel>
+            <Button bsStyle="link" href="/reconcileInventoryList">Inventory Reconciliation</Button>
+          </Panel>
+        </Col>
+
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h2 className="pull-left">Sales</h2>
+          </div>
+          <Panel>
+            <Button bsStyle="link" onClick={listInvoicesPerMonth}>Sales</Button>
+          </Panel>
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default ReportsHome;

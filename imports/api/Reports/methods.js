@@ -3,6 +3,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Orders } from '../Orders/Orders';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import addPOOrderedQty from './zohoPurchaseOrders';
+import getInvoicesFromZoho from './zohoInvoices';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
@@ -29,9 +30,8 @@ const getProductsFrmAwaitingFullOrders = () => {
     returnValue = awaitingFullFillMentOrders.reduce((acc, order) => {
       acc = order.products.reduce((map, product) => {
         if (map[product.zh_item_id]) {
-          map[product.zh_item_id].orderQuantity =
-                    map[product.zh_item_id].orderQuantity +
-                    product.quantity;
+          map[product.zh_item_id].orderQuantity = map[product.zh_item_id].orderQuantity
+                    + product.quantity;
         } else {
           map[product.zh_item_id] = {
             orderQuantity: product.quantity,
@@ -63,7 +63,7 @@ Meteor.methods({
   'reports.generateDaysSummary': function generateDaySummary() {
     // check(day, Date);
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-        // user not authorized. do not publish secrets
+      // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
     try {
@@ -74,9 +74,21 @@ Meteor.methods({
         awaitingFullFillmentProductsHash = addStockOnHand(awaitingFullFillmentProductsHash);
         awaitingFullFillmentProductsHash = addPOOrderedQty(awaitingFullFillmentProductsHash);
       }
-    //  writeFile(awaitingFullFillmentProductsHash);
+      //  writeFile(awaitingFullFillmentProductsHash);
 
       return awaitingFullFillmentProductsHash;
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return { };
+  },
+  'reports.getInvoices': function getInvoices() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      // user not authorized. do not publish secrets
+      handleMethodException('Access denied', 403);
+    }
+    try {
+      return getInvoicesFromZoho();
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -87,8 +99,8 @@ Meteor.methods({
 rateLimit({
   methods: [
     'reports.generateDaysSummary',
+    'reports.getInvoices',
   ],
   limit: 5,
   timeRange: 1000,
 });
-

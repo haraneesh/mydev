@@ -105,7 +105,7 @@ export default class ProductsOrderMobile extends React.Component {
                 header={(
                   <DisplayCategoryHeader
                     clName="specials_bk_ph"
-                    title="Specials"
+                    title="New Arrivals"
                     isOpen={this.state.panelToFocus === 'spcl-header'}
                     onclick={() => this.handlePanelSelect('spcl-header')}
                     tabHash={productGroups.productGroupMetaHash.productSpecials}

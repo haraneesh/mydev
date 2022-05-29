@@ -28,6 +28,8 @@ export const syncUpConstants = {
   ordersToZoho: 'orders-to-zoho',
   ordersFromZoho: 'orders-from-zoho',
   invoicesFromZoho: 'invoices-from-zoho',
+  invoicesLastModifiedTimeFromZoho: 'invoices-last-modified-time-from-zoho',
+  invoiceDetailsFromZoho: 'invoice-details-from-zoho',
   itemsFromZoho: 'items-from-zoho',
   salesDetailsByItemFromZoho: 'sales-details-by-item-from-zoho',
   purchaseOrdersFromZoho: 'purchaseOrders-from-zoho',
@@ -39,6 +41,11 @@ ZohoSyncUps.schema = new SimpleSchema({
   syncDateTime: {
     type: Date,
     label: 'The time when the sync up happened',
+  },
+  noErrorSyncDate: {
+    type: Date,
+    label: 'The time when the sync up happened without error',
+    optional: true,
   },
   errorRecords: {
     type: Array,

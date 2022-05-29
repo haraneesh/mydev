@@ -6,7 +6,7 @@ import { Roles } from 'meteor/alanning:roles';
 import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
 import constants from '../../modules/constants';
-// import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
+import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
 // import { Orders } from '../Orders/Orders';
 // import Messages from '../Messages/Messages';
 // import constants from '../../modules/constants';
@@ -48,7 +48,10 @@ if (IngWeights.findOne()) {
 702207000050771031	VEV000422
 702207000050764569	VEV000424
 
-*/
+Products.update({ sku: 'VLO000570' }, { $set: { zh_item_id: '702207000099462029' } });
+Products.update({ sku: 'VLG000019' }, { $set: { zh_item_id: '702207000000087121' } });
+Products.update({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } });
+Products.update({ sku: 'GCR000767' }, { $set: { zh_item_id: '702207000141238235' } });
 
 /*
 Products.update({ sku: 'VEV000425' }, { $set: { zh_item_id: '702207000050765962' } });
@@ -120,6 +123,29 @@ cusers.forEach((u) => {
 // Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
+
+const syncDate = new Date();
+syncDate.setDate(syncDate.getDate() - 32);
+const zohoSyncUp = {
+  syncDateTime: syncDate,
+  noErrorSyncDate: syncDate,
+  errorRecords: [],
+  successRecords: [],
+  syncEntity: 'invoices-last-modified-time-from-zoho',
+  syncedForUser: 'All',
+};
+ZohoSyncUps.upsert({ syncEntity: 'invoices-last-modified-time-from-zoho' }, { $set: zohoSyncUp });
+
+syncDate.setDate(syncDate.getDate() - 32);
+const zohoSyncUp2 = {
+  syncDateTime: syncDate,
+  noErrorSyncDate: syncDate,
+  errorRecords: [],
+  successRecords: [],
+  syncEntity: 'invoice-details-from-zoho',
+  syncedForUser: 'All',
+};
+ZohoSyncUps.upsert({ syncEntity: 'invoice-details-from-zoho' }, { $set: zohoSyncUp2 });
 
 /*
 Orders.find({}).fetch().forEach(order => {
