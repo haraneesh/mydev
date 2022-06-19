@@ -67,7 +67,7 @@ Orders.schema = new SimpleSchema({
   },
   'customer_details._id': { type: String, label: 'The customer id.' },
   'customer_details.name': { type: String, label: 'The customer name.' },
-  'customer_details.email': { type: String, label: 'The customer email address.' },
+  'customer_details.email': { type: String, label: 'The customer email address.', optional: true },
   'customer_details.mobilePhone': { type: Number, label: 'The customer name.' },
   'customer_details.deliveryAddress': { type: String, label: 'The customer\'s delivery address.' },
   order_status: { type: String, label: 'Status of the order.' },

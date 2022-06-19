@@ -134,7 +134,11 @@ const CartDetails = ({
   };
 
   const handleAddItems = () => {
-    if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/neworder/'); }
+    if (loggedInUser) {
+      if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/neworder/'); }
+    } else {
+      history.push('/orderspecials/');
+    }
   };
 
   const handleCommentChange = (e) => {
@@ -170,7 +174,7 @@ const CartDetails = ({
           <Col xs={12}>
             <Panel>
               <h4> Cart is Empty! </h4>
-              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { history.push('/neworder/selectbasket'); }}> Add Items</Button>
+              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { handleAddItems(); }}> Add Items</Button>
             </Panel>
           </Col>
         </Row>

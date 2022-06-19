@@ -140,7 +140,7 @@ const addUpdateOrder = (order) => {
       _id: loggedInUserId,
       name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
       role: Roles.getRolesForUser(loggedInUserId)[0],
-      email: loggedInUser.emails[0].address,
+      email: (loggedInUser.emails && loggedInUser.emails[0]) ? loggedInUser.emails[0].address : '',
       mobilePhone: loggedInUser.profile.whMobilePhone,
       deliveryAddress: loggedInUser.profile.deliveryAddress,
     };

@@ -107,7 +107,7 @@ const assignUserRole = (userId, selectedRole) => {
 export const createNewUser = (user) => {
   const cuser = {
     username: user.username,
-    email: user.email,
+    email: user.email || '',
     password: user.password,
     profile: {
       name: {
@@ -117,7 +117,7 @@ export const createNewUser = (user) => {
       salutation: user.profile.salutation,
       whMobilePhone: user.profile.whMobilePhone,
       deliveryAddress: user.profile.deliveryAddress,
-      eatingHealthyMeaning: user.profile.eatingHealthyMeaning,
+      eatingHealthyMeaning: user.profile.eatingHealthyMeaning || '',
     },
   };
 
@@ -256,13 +256,15 @@ const notifyUserSignUp = (content, subject, customerEmail) => {
       html: content,
     });
 
+    if (customerEmail) {
     // Send email to the person signing up
-    Email.send({
-      to: customerEmail,
-      from: `Suvai User SignUp ${fromEmail}`,
-      subject,
-      html: 'Thank you for your interest in Suvai. Please give us a few days, our admins will get back to you.',
-    });
+      Email.send({
+        to: customerEmail,
+        from: `Suvai User SignUp ${fromEmail}`,
+        subject,
+        html: 'Thank you for your interest in Suvai. Please give us a few days, our admins will get back to you.',
+      });
+    }
   }
 };
 
@@ -329,6 +331,38 @@ Meteor.methods({
 
     return UserSignUps.insert(user);
   },
+  'users.createSelfSignUpsForSpecials': function createSelfSignUpsForSpecials(user) {
+    check(user, {
+      username: String,
+      profile: {
+        name: {
+          last: String,
+          first: String,
+        },
+        whMobilePhone: String,
+        deliveryAddress: String,
+        eatingHealthyMeaning: Match.Maybe(String),
+      },
+      password: String,
+    });
+
+    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
+    First Name: ${user.profile.name.first}
+    Last Name:  ${user.profile.name.last}
+    Phone number: ${user.profile.whMobilePhone} 
+    deliveryAddress: ${user.profile.deliveryAddress}
+    has ordered via specials page.`,
+    'Orders Via Special');
+
+    const u = Meteor.users.findOne({ username: user.username });
+    if (u) {
+      return u;
+    }
+
+    const newUser = { ...user };
+    newUser.role = constants.Roles.customer.name;
+    return createNewUser(newUser);
+  },
   'users.accountStatusUpdate': function deactivateUser(args) {
     check(args, { userId: String, accountStatus: String });
     if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
@@ -392,6 +426,7 @@ Meteor.methods({
 
 rateLimit({
   methods: [
+    'users.createSelfSignUpsForSpecials',
     'users.sendVerificationEmail',
     'users.visitedPlaceNewOrder',
     'users.getAllUsers',

@@ -33,6 +33,7 @@ import About from '../pages/Miscellaneous/About/About';
 /* order */
 // import PlaceOrder from '../pages/Orders/PlaceOrder/PlaceOrder';
 import PlaceOrder from '../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+import OrderSpecials from '../pages/Orders/OrderSpecials/OrderSpecials';
 import SelectBasket from '../pages/Orders/PlaceNewOrder/SelectBasket';
 
 import MyOrders from '../pages/Orders/MyOrders/MyOrders';
@@ -210,6 +211,7 @@ const App = (props) => (
 
               {/* CartHome */}
               <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
+              <Public routeName="Order Specials" path="/orderspecials" layout={MainLayout} component={OrderSpecials} {...props} />
 
               {/* Accept Payment */}
               <Authenticated exact routeName="My_Wallet" layout={MainLayout} path="/mywallet" component={dMyWallet} {...props} />

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import ProductLists from '../ProductLists';
+import { getActiveProductList } from '../commonFunctions';
 
 Meteor.publish('productLists.list', () => ProductLists.find({}, {
   sort: { updatedAt: -1 },
@@ -32,14 +33,4 @@ Meteor.publish('productOrderList.viewByDate', (dateValue) => {
   );
 });
 
-Meteor.publish('productOrderList.view', () => {
-  const dateValue = new Date();
-  return ProductLists.find(
-    {
-      $and: [
-        { activeStartDateTime: { $lte: dateValue } },
-        { activeEndDateTime: { $gte: dateValue } },
-      ],
-    },
-  );
-});
+Meteor.publish('productOrderList.view', () => getActiveProductList());

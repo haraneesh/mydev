@@ -7,6 +7,7 @@ import constants from '../../modules/constants';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit.js';
+import { getActiveProductList } from '../ProductLists/commonFunctions';
 import Products from './Products';
 import ProductDetails from '../ProductDetails/ProductDetails';
 
@@ -68,6 +69,35 @@ export const removeProduct = new ValidatedMethod({
 });
 
 Meteor.methods({
+  'products.getSpecialsToOrder': function getSpecialsToOrder() {
+    try {
+      if (Meteor.isServer) {
+        const activeProductList = getActiveProductList().fetch();
+        if (activeProductList[0]) {
+          const allProducts = activeProductList[0].products;
+          let countOfSpecialProducts = 0;
+          const specialProductsMap = allProducts.reduce((specialProductObj, product) => {
+            const obj = specialProductObj;
+            if (product.displayAsSpecial && product.availableToOrder) {
+              obj[product._id] = product;
+              countOfSpecialProducts += 1;
+            }
+            return obj;
+          }, {});
+
+          if (countOfSpecialProducts > 0) {
+            return {
+              productListId: activeProductList[0]._id,
+              specialProductsMap,
+            };
+          }
+        }
+        return { productListId: 'none' }; // no active product list
+      }
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
   'products.getItemsFromZoho': function getItemsFromZoho() {
     try {
       return getActiveItemsFromZoho();
@@ -113,6 +143,7 @@ rateLimit({
     'products.getItemsFromZoho',
     'products.bulkUpdatePrices',
     'products.getReturnables',
+    'products.getSpecialsToOrder',
   ],
   limit: 5,
   timeRange: 1000,

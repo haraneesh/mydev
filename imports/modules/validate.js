@@ -59,7 +59,12 @@ export const formValChange = (e, isErrorState, fieldValues) => {
     case name === 'whMobilePhone':
       isError.whMobilePhone = indiaMobilePhoneRegExp.test(trimmedVal)
         ? ''
-        : 'India mobile number appears to be invalid';
+        : 'India mobile number appears to be invalid, mobile number is 10 digits long';
+      break;
+    case name === 'confirmWhMobileNumber':
+      isError.confirmWhMobileNumber = (fieldValues.confirmWhMobileNumber === fieldValues.whMobilePhone)
+        ? ''
+        : 'Mobile numbers entered are not the same';
       break;
     case name === 'deliveryAddress':
       isError.deliveryAddress = trimmedVal.length < 1
