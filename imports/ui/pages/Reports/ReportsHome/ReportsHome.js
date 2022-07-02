@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
+import previousSalesByProducts from '../../../../reports/client/PreviousSalesByProducts';
 import Loading from '../../../components/Loading/Loading';
 
 // import './ReportsHome.scss';
@@ -46,10 +47,42 @@ const ReportsHome = () => {
     setLoading(true);
   }
 
+  function showPreviousSalesByProducts() {
+    if (!loading) {
+      Meteor.call('reports.getPreviousSalesByProduct', (error, success) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          const { val, day } = success;
+          const rowsDetails = Object.values(val);
+          if (rowsDetails.length > 0) {
+            previousSalesByProducts(day, rowsDetails);
+          } else {
+            const message = 'There are no orders on previous days';
+            toast.success(message, 'default');
+          }
+        }
+        setLoading(false);
+      });
+    }
+    setLoading(true);
+  }
+
   return (
     <div className="ReportsHome">
       {(loading) ? (<Loading />) : (<div />)}
       <Row>
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h2 className="pull-left">Previous Orders</h2>
+          </div>
+          <Panel>
+            <Button bsStyle="link" onClick={showPreviousSalesByProducts}>
+              Previous Order Quantities
+            </Button>
+          </Panel>
+        </Col>
+
         <Col xs={12}>
           <div className="page-header clearfix">
             <h2 className="pull-left">General Reports</h2>
@@ -70,6 +103,7 @@ const ReportsHome = () => {
             <Button bsStyle="link" onClick={listInvoicesPerMonth}>Sales</Button>
           </Panel>
         </Col>
+
       </Row>
     </div>
   );

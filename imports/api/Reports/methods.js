@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
+import { DateTime } from 'luxon';
 import { Orders } from '../Orders/Orders';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import addPOOrderedQty from './zohoPurchaseOrders';
@@ -10,6 +11,41 @@ import handleMethodException from '../../modules/handle-method-exception';
 // import daysSummary from './daysSummary';
 
 // import { configure, getLogger } from 'log4js';
+
+const getPreviousOrdersByProduct = (val, forDate, nextDate, label) => {
+  // const forDateIst = new Date(forDate);
+  // forDateIst.setHours(0, 0, 0, 0);
+  const orders = Orders.find({
+    createdAt:
+    {
+      $gte: forDate.toJSDate(),
+      $lt: nextDate.toJSDate(),
+    },
+  }).fetch();
+
+  const returnValue = orders.reduce((acc, order) => {
+    acc = order.products.reduce((map, product) => {
+      if (!map[product._id]) {
+        map[product._id] = {
+          name: product.name,
+          unitOfSale: product.unitOfSale,
+        };
+      }
+
+      if (map[product._id][label]) {
+        map[product._id][label].orderQuantity += product.quantity;
+      } else {
+        map[product._id][label] = {
+          orderQuantity: product.quantity,
+        };
+      }
+      return map;
+    }, acc);
+    return acc;
+  }, val);
+
+  return returnValue;
+};
 
 const addStockOnHand = (productsHash) => {
   const itemsListFromZoho = getActiveItemsFromZoho();
@@ -94,12 +130,37 @@ Meteor.methods({
     }
     return { };
   },
+  'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      // user not authorized. do not publish secrets
+      handleMethodException('Access denied', 403);
+    }
+    try {
+      const lastWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 6 }).set({ hour: 0, minute: 0, second: 0 });
+      const lastWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 5 }).set({ hour: 0, minute: 0, second: 0 });
+
+      const twoWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 13 }).set({ hour: 0, minute: 0, second: 0 });
+      const twoWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 12 }).set({ hour: 0, minute: 0, second: 0 });
+
+      let val = getPreviousOrdersByProduct({}, lastWeekSameDay, lastWeekNextDay, 'firstWeek');
+      val = getPreviousOrdersByProduct(val, twoWeekSameDay, twoWeekNextDay, 'secondWeek');
+
+      return {
+        val,
+        day: lastWeekSameDay.weekdayLong,
+      };
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return { };
+  },
 });
 
 rateLimit({
   methods: [
     'reports.generateDaysSummary',
     'reports.getInvoices',
+    'reports.getPreviousSalesByProduct',
   ],
   limit: 5,
   timeRange: 1000,

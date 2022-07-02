@@ -30,6 +30,7 @@ const CartDetails = ({
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
+  const refReturnables = {};
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
@@ -37,6 +38,7 @@ const CartDetails = ({
     isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {},
   });
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
+  const { productReturnables } = Meteor.user();
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
