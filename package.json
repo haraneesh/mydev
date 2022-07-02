@@ -27,7 +27,7 @@
     "helmet": "^4.5.0",
     "luxon": "^2.4.0",
     "meteor-node-stubs": "^1.0.0",
-    "moment": "^2.25.3",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.28",
     "paytmchecksum": "^1.5.0",
     "polished": "^3.6.5",
