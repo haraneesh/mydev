@@ -10,7 +10,9 @@ import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
 import OnBehalf from '../OnBehalf/OnBehalf';
-import { ListProducts, OrderComment, OrderFooter } from './CartCommon';
+import {
+  ListProducts, OrderComment, PrevOrderComplaint, OrderFooter,
+} from './CartCommon';
 import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
 import Loading from '../Loading/Loading';
 
@@ -30,7 +32,6 @@ const CartDetails = ({
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
-  const refReturnables = {};
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
@@ -38,7 +39,6 @@ const CartDetails = ({
     isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {},
   });
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
-  const { productReturnables } = Meteor.user();
 
   const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
@@ -98,6 +98,8 @@ const CartDetails = ({
         products,
         _id: orderId && orderId !== 'NEW' ? orderId : '',
         comments: cartState.cart.comments || '',
+        issuesWithPreviousOrder: cartState.cart.issuesWithPreviousOrder || '',
+        payCashWithThisDelivery: cartState.cart.payCashWithThisDelivery || false,
         basketId: cartState.cart.basketId || '',
         loggedInUserId: loggedInUser._id,
       };
@@ -145,6 +147,14 @@ const CartDetails = ({
 
   const handleCommentChange = (e) => {
     cartDispatch({ type: cartActions.setCartComments, payload: { comments: e.target.value } });
+  };
+
+  const handleIssuesWithPreviousOrderChange = (e) => {
+    cartDispatch({ type: cartActions.setIssuesWithPreviousOrder, payload: { issuesWithPreviousOrder: e.target.value } });
+  };
+
+  const handlePayCashWithThisDeliveryChange = (value) => {
+    cartDispatch({ type: cartActions.setPayCashWithThisDelivery, payload: { payCashWithThisDelivery: value } });
   };
 
   useEffect(() => {
@@ -218,7 +228,14 @@ const CartDetails = ({
                   </Button>
                 </Col>
               </Row>
+
               <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+
+              <PrevOrderComplaint
+                onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
+                prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
+              />
+
               {onBehalfUser.isNecessary && (
               <OnBehalf
                 onSelectedChange={onSelectedChange}
@@ -260,6 +277,8 @@ const CartDetails = ({
                 }
                 history={history}
                 orderId={orderId}
+                payCash={cartState.cart.payCashWithThisDelivery}
+                onPayCash={handlePayCashWithThisDeliveryChange}
               />
             </Panel>
           </Col>

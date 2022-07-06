@@ -44,12 +44,17 @@ const _getZohoUserIdFromUserId = (userId) =>
 
 const _getZohoItemIdFromProductId = (productId) => Products.findOne({ _id: productId }, { zh_item_id: 1 }).zh_item_id || '';
 
-const _createZohoSalesOrder = (order) => {
+const createZohoSalesOrder = (order) => {
+  const notes = ` ${order.comments || ''} 
+  | ${order.issuesWithPreviousOrder || ''} 
+  | ${(order.payCashWithThisDelivery) ? ' Customer wants to pay cash, please collect with this delivery' : ''}
+  `;
+
   const zhSalesOrder = {
     customer_id: _getZohoUserIdFromUserId(order.customer_details._id), // mandatory
     date: getZhDisplayDate(order.createdAt), // "2013-11-17"
     // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -
-    notes: order.comments || '',
+    notes,
   };
 
   const lineItems = [];
@@ -70,7 +75,7 @@ const _createZohoSalesOrder = (order) => {
 
 const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
-  const zhSalesOrder = _createZohoSalesOrder(order);
+  const zhSalesOrder = createZohoSalesOrder(order);
 
   let r = {};
   if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {

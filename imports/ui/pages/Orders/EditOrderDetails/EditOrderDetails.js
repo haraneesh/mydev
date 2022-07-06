@@ -28,7 +28,7 @@ const EditOrderDetails = ({
     || order.order_status === constants.OrderStatus.Saved.name);
 
   const updateCart = ({
-    orderId, products, comments, basketId,
+    orderId, products, comments, basketId, payCashWithThisDelivery, issuesWithPreviousOrder,
   }) => {
     switch (true) {
       case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
@@ -44,7 +44,7 @@ const EditOrderDetails = ({
         cartDispatch({
           type: cartActions.setActiveCart,
           payload: {
-            activeCartId: orderId, selectedProducts, comments, basketId,
+            activeCartId: orderId, selectedProducts, comments, basketId, payCashWithThisDelivery, issuesWithPreviousOrder,
           },
         });
         break;
@@ -67,7 +67,12 @@ const EditOrderDetails = ({
             toast.error(error.reason);
           } else {
             updateCart({
-              orderId: order._id, products: order.products, comments: order.comments, basketId: order.basketId || '',
+              orderId: order._id,
+              products: order.products,
+              comments: order.comments,
+              basketId: order.basketId || '',
+              payCashWithThisDelivery: order.payCashWithThisDelivery || false,
+              issuesWithPreviousOrder: order.issuesWithPreviousOrder || '',
             });
             setProductList(prdList);
             setIsLoading(false);
@@ -86,7 +91,12 @@ const EditOrderDetails = ({
           <ProductsOrderMain
             productList={productList}
             orderId={order._id || ''}
-            products={getProductUnitPrice(Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name), productList.products)}
+            products={
+              getProductUnitPrice(
+                Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name),
+                productList.products,
+              )
+            }
             productListId={(order.productOrderListId) ? order.productOrderListId : ''}
             orderCustomerId={order.customer_details._id}
             orderStatus={order.order_status}
@@ -118,7 +128,11 @@ const EditOrderDetails = ({
           <ViewOrderDetails order={order} history={history} />
           <Panel>
             <h4>Responses</h4>
-            <Comments postId={order._id} postType={constants.PostTypes.Order.name} loggedUserId={loggedInUserId} />
+            <Comments
+              postId={order._id}
+              postType={constants.PostTypes.Order.name}
+              loggedUserId={loggedInUserId}
+            />
           </Panel>
         </div>
       );

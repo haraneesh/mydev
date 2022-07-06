@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, Panel, PanelGroup, Button,
+  Row, Col, Panel, PanelGroup, Button, Checkbox,
 } from 'react-bootstrap';
 import { formatMoney } from 'accounting-js';
 import Product from '../Orders/Product';
@@ -152,10 +152,18 @@ ListProducts.propTypes = {
 };
 
 export const OrderFooter = ({
-  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting,
+  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting, payCash, onPayCash,
 }) => (
   <div className="orderFooter row">
-    <Col sm={8} xs={12}>
+    <Col sm={5} xs={12} className="align-items-center text-center-xs text-right-not-xs">
+
+      <label htmlFor="payCashId" style={{ marginBottom: '0', marginTop: '10px' }}>
+        <input type="checkbox" id="payCashId" name="payCash" checked={payCash} onClick={(e) => { onPayCash(e.target.checked); e.stopPropagation(); }} />
+        Please tick to pay Cash with delivery
+      </label>
+
+    </Col>
+    <Col sm={3} xs={12}>
       <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
         {'Total '}
         <strong>
@@ -216,14 +224,10 @@ OrderFooter.propTypes = {
 export const OrderComment = ({ refComment, onCommentChange, comments }) => (
   <PanelGroup>
     <Row>
-      <Col sm={3}>
-        <h4 className="text-right-not-xs">
-          <strong>Comments</strong>
-          {' '}
-&nbsp;
+      <Col className="offset-sm-2" sm={8} xs={12}>
+        <h4 className="text-left">
+          <strong>Add Notes for the Packing Team</strong>
         </h4>
-      </Col>
-      <Col sm={9}>
         <textarea
           name="comments"
           componentClass="textarea"
@@ -242,4 +246,32 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
 OrderComment.propTypes = {
   onCommentChange: PropTypes.func.isRequired,
   comments: PropTypes.string.isRequired,
+};
+
+export const PrevOrderComplaint = ({ refPrevOrderComplaint, onPrevOrderComplaintChange, prevOrderComplaint }) => (
+  <PanelGroup>
+    <Row>
+      <Col className="offset-sm-2" sm={8} xs={12}>
+        <h4 className="text-left">
+          <strong>Were there any issues with Previous Order?</strong>
+        </h4>
+
+        <textarea
+          name="previousOrderComplaints"
+          componentClass="textarea"
+          placeholder="Were there any Issues with the Previous Order?"
+          defaultValue={prevOrderComplaint}
+          onBlur={onPrevOrderComplaintChange}
+          rows="4"
+          className="form-control"
+          ref={refPrevOrderComplaint}
+        />
+      </Col>
+    </Row>
+  </PanelGroup>
+);
+
+PrevOrderComplaint.propTypes = {
+  onPrevOrderComplaintChange: PropTypes.func.isRequired,
+  prevOrderComplaint: PropTypes.string.isRequired,
 };

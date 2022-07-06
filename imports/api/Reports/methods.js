@@ -1,13 +1,16 @@
 import { Meteor } from 'meteor/meteor';
+import { check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
 import { DateTime } from 'luxon';
 import { Orders } from '../Orders/Orders';
+import { daysInWeek } from '../../modules/helpers';
 import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import addPOOrderedQty from './zohoPurchaseOrders';
 import getInvoicesFromZoho from './zohoInvoices';
 import constants from '../../modules/constants';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
+
 // import daysSummary from './daysSummary';
 
 // import { configure, getLogger } from 'log4js';
@@ -130,17 +133,34 @@ Meteor.methods({
     }
     return { };
   },
-  'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct() {
+  'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct(reportForDayInWeek) {
+    check(reportForDayInWeek, String);
+
+    const allDaysInWeek = daysInWeek();
+    const todayDayInWeek = DateTime.now().setZone('Asia/Kolkata').weekdayLong;
+
+    const todayDayInWeekNum = allDaysInWeek.findIndex((currentValue) => {
+      if (todayDayInWeek === currentValue) {
+        return true;
+      }
+      return false;
+    });
+
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
-    try {
-      const lastWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 6 }).set({ hour: 0, minute: 0, second: 0 });
-      const lastWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 5 }).set({ hour: 0, minute: 0, second: 0 });
 
-      const twoWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 13 }).set({ hour: 0, minute: 0, second: 0 });
-      const twoWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: 12 }).set({ hour: 0, minute: 0, second: 0 });
+    const incr = (todayDayInWeekNum > reportForDayInWeek)
+      ? todayDayInWeekNum - reportForDayInWeek
+      : 7 - (reportForDayInWeek - todayDayInWeekNum);
+
+    try {
+      const lastWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr) }).set({ hour: 0, minute: 0, second: 0 });
+      const lastWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr - 1) }).set({ hour: 0, minute: 0, second: 0 });
+
+      const twoWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr + 7) }).set({ hour: 0, minute: 0, second: 0 });
+      const twoWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr + 6) }).set({ hour: 0, minute: 0, second: 0 });
 
       let val = getPreviousOrdersByProduct({}, lastWeekSameDay, lastWeekNextDay, 'firstWeek');
       val = getPreviousOrdersByProduct(val, twoWeekSameDay, twoWeekNextDay, 'secondWeek');

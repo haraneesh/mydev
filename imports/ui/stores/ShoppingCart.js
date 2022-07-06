@@ -61,6 +61,8 @@ const cartActions = {
   activateCart: 'NEW_CART',
   setCartComments: 'SET_COMMENTS',
   orderFlowComplete: 'ORDER_FLOW_COMPLETE',
+  setIssuesWithPreviousOrder: 'SET_ISSUES_WITH_PREVIOUS_ORDER',
+  setPayCashWithThisDelivery: 'SET_PAY_CASH_WITH_THIS_DELIVERY',
 };
 
 // Reducer
@@ -72,10 +74,18 @@ const cartReducer = (currentState, action) => {
       newState.carts[cartId].comments = action.payload.comments;
       break;
     }
+    case cartActions.setIssuesWithPreviousOrder: {
+      newState.carts[cartId].issuesWithPreviousOrder = action.payload.issuesWithPreviousOrder;
+      break;
+    }
+    case cartActions.setPayCashWithThisDelivery: {
+      newState.carts[cartId].payCashWithThisDelivery = action.payload.payCashWithThisDelivery;
+      break;
+    }
     case cartActions.setActiveCart: {
       const newActiveCartId = action.payload.activeCartId;
       const { selectedProducts } = action.payload;
-      const { comments } = action.payload;
+      const { comments, payCashWithThisDelivery, issuesWithPreviousOrder } = action.payload;
       const { basketId } = action.payload;
       newState.activeCartId = newActiveCartId;
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(selectedProducts);
@@ -86,6 +96,8 @@ const cartReducer = (currentState, action) => {
         lastUpdateDate: new Date(),
         comments,
         basketId,
+        issuesWithPreviousOrder,
+        payCashWithThisDelivery,
       };
       break;
     }
@@ -114,6 +126,8 @@ const cartReducer = (currentState, action) => {
         lastUpdateDate: new Date(),
         comments: currentState.carts[cartId].comments,
         basketId,
+        issuesWithPreviousOrder: currentState.carts[cartId].issuesWithPreviousOrder,
+        payCashWithThisDelivery: currentState.carts[cartId].payCashWithThisDelivery,
       };
       break;
     }

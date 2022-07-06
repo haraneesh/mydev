@@ -72,6 +72,8 @@ Orders.schema = new SimpleSchema({
   'customer_details.deliveryAddress': { type: String, label: 'The customer\'s delivery address.' },
   order_status: { type: String, label: 'Status of the order.' },
   comments: { type: String, label: 'Comments added by the user to this order.', optional: true },
+  issuesWithPreviousOrder: { type: String, label: 'Issues with previous order.', optional: true },
+  payCashWithThisDelivery: { type: Boolean, label: 'Issues with previous order.', optional: true },
   total_bill_amount: { type: Number, label: 'The total bill amount.', min: 1 },
   // Whenever the "_id" field is updated, automatically store
   productOrderListId: { type: String, label: 'The Id of the product list from which the order was made.' },

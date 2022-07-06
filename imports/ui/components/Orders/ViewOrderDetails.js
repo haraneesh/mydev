@@ -54,7 +54,7 @@ class ViewOrderDetails extends React.Component {
             </div>
             <Row>
               <Col xs={12}>
-                <strong> Comments </strong>
+                <strong> Notes for packaging team </strong>
               </Col>
               <Col xs={12}>
                 {order.comments}

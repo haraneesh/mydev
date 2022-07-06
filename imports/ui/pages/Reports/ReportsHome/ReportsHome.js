@@ -4,12 +4,14 @@ import {
   Panel, Row, Col, Button,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { daysInWeek } from '../../../../modules/helpers';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
 import previousSalesByProducts from '../../../../reports/client/PreviousSalesByProducts';
 import Loading from '../../../components/Loading/Loading';
 
 // import './ReportsHome.scss';
 
+const weekday = daysInWeek();
 const ReportsHome = () => {
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +51,9 @@ const ReportsHome = () => {
 
   function showPreviousSalesByProducts() {
     if (!loading) {
-      Meteor.call('reports.getPreviousSalesByProduct', (error, success) => {
+      const reportForDayInWeek = document.getElementById('dayInWeek').value;
+
+      Meteor.call('reports.getPreviousSalesByProduct', reportForDayInWeek, (error, success) => {
         if (error) {
           toast.error(error.reason);
         } else {
@@ -77,6 +81,19 @@ const ReportsHome = () => {
             <h2 className="pull-left">Previous Orders</h2>
           </div>
           <Panel>
+
+            <div className="col-xs-6 col-sm-4">
+              <select className="form-control" id="dayInWeek" name="dayInWeek">
+                <option value="0">{weekday[0]}</option>
+                <option value="1">{weekday[1]}</option>
+                <option value="2">{weekday[2]}</option>
+                <option value="3">{weekday[3]}</option>
+                <option value="4">{weekday[4]}</option>
+                <option value="5">{weekday[5]}</option>
+                <option value="6">{weekday[6]}</option>
+              </select>
+            </div>
+
             <Button bsStyle="link" onClick={showPreviousSalesByProducts}>
               Previous Order Quantities
             </Button>
