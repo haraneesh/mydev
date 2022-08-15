@@ -152,54 +152,80 @@ ListProducts.propTypes = {
 };
 
 export const OrderFooter = ({
-  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting, payCash, onPayCash,
+  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting, payCash, collectRecyclables, onPayCash, onCollectRecyclables,
 }) => (
-  <div className="orderFooter row">
-    <Col sm={5} xs={12} className="align-items-center text-center-xs text-right-not-xs">
 
-      <label htmlFor="payCashId" style={{ marginBottom: '0', marginTop: '10px' }}>
-        <input type="checkbox" id="payCashId" name="payCash" checked={payCash} onClick={(e) => { onPayCash(e.target.checked); e.stopPropagation(); }} />
-        Please tick to pay Cash with delivery
-      </label>
+  <div>
+    <div className="row">
+      <Col sm={8} xs={12} className="align-items-center offset-sm-2">
+        <label htmlFor="payCashId" style={{ marginBottom: '0', marginTop: '10px' }}>
+          <input
+            type="checkbox"
+            id="payCashId"
+            name="payCash"
+            checked={payCash}
+            onClick={(e) => { onPayCash(e.target.checked); e.stopPropagation(); }}
+          />
+          Please collect cash with this delivery
+        </label>
+      </Col>
+    </div>
 
-    </Col>
-    <Col sm={3} xs={12}>
-      <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
-        {'Total '}
-        <strong>
-          {
+    <div className="row">
+      <Col sm={8} xs={12} className="align-items-center offset-sm-2">
+        <label htmlFor="collectRecyclablesId" style={{ marginBottom: '0', marginTop: '10px' }}>
+          <input
+            type="checkbox"
+            id="collectRecyclablesId"
+            name="collectRecyclables"
+            checked={collectRecyclables}
+            onClick={(e) => { onCollectRecyclables(e.target.checked); e.stopPropagation(); }}
+          />
+          Please collect recyclables (Glass bottles, Net bags, White bags and others )
+        </label>
+      </Col>
+    </div>
+
+    <div className="orderFooter row" style={{ marginTop: '2.5em' }}>
+      <Col sm={6} xs={12}>
+        <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
+          {'Total '}
+          <strong>
+            {
             formatMoney(totalBillAmount, accountSettings)
           }
-          {' '}
+            {' '}
           &nbsp;
-        </strong>
-      </h4>
-    </Col>
-    <Col className="text-right-not-xs  d-flex align-items-center" sm={4} xs={12}>
-      {(!showWaiting) && (
-      <Button
-        bsStyle="primary"
-        style={{ marginLeft: '0.5em' }}
-        disabled={totalBillAmount <= 0}
-        onClick={() => { onButtonClick({ history, orderId }); }}
-        className="btn-block"
-      >
-        {submitButtonName}
-      </Button>
-      )}
+          </strong>
+        </h4>
+      </Col>
 
-      {(showWaiting) && (
-      <Button
-        bsStyle="primary"
-        style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
-        disabled
-        className="btn-block"
-      >
-        {submitButtonName}
-      </Button>
-      )}
+      <Col className="text-right-not-xs text-center-xs d-flex align-items-center" sm={4} xs={12}>
+        {(!showWaiting) && (
+        <Button
+          bsStyle="primary"
+          style={{ marginLeft: '0.5em' }}
+          disabled={totalBillAmount <= 0}
+          onClick={() => { onButtonClick({ history, orderId }); }}
+          className="btn-block"
+        >
+          {submitButtonName}
+        </Button>
+        )}
 
-    </Col>
+        {(showWaiting) && (
+        <Button
+          bsStyle="primary"
+          style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
+          disabled
+          className="btn-block"
+        >
+          {submitButtonName}
+        </Button>
+        )}
+
+      </Col>
+    </div>
   </div>
 );
 
@@ -234,7 +260,7 @@ export const OrderComment = ({ refComment, onCommentChange, comments }) => (
           placeholder="Is there anything that you would like to tell us about this order?"
           defaultValue={comments}
           onBlur={onCommentChange}
-          rows="4"
+          rows="2"
           className="form-control"
           ref={refComment}
         />
@@ -262,7 +288,7 @@ export const PrevOrderComplaint = ({ refPrevOrderComplaint, onPrevOrderComplaint
           placeholder="Were there any Issues with the Previous Order?"
           defaultValue={prevOrderComplaint}
           onBlur={onPrevOrderComplaintChange}
-          rows="4"
+          rows="2"
           className="form-control"
           ref={refPrevOrderComplaint}
         />

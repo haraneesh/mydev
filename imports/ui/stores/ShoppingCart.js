@@ -63,6 +63,7 @@ const cartActions = {
   orderFlowComplete: 'ORDER_FLOW_COMPLETE',
   setIssuesWithPreviousOrder: 'SET_ISSUES_WITH_PREVIOUS_ORDER',
   setPayCashWithThisDelivery: 'SET_PAY_CASH_WITH_THIS_DELIVERY',
+  setCollectRecyclablesWithThisDelivery: 'SET_COLLECT_RECYCLABLES_WITH_THIS_DELIVERY',
 };
 
 // Reducer
@@ -82,10 +83,19 @@ const cartReducer = (currentState, action) => {
       newState.carts[cartId].payCashWithThisDelivery = action.payload.payCashWithThisDelivery;
       break;
     }
+    case cartActions.setCollectRecyclablesWithThisDelivery: {
+      newState.carts[cartId].collectRecyclablesWithThisDelivery = action.payload.collectRecyclablesWithThisDelivery;
+      break;
+    }
     case cartActions.setActiveCart: {
       const newActiveCartId = action.payload.activeCartId;
       const { selectedProducts } = action.payload;
-      const { comments, payCashWithThisDelivery, issuesWithPreviousOrder } = action.payload;
+      const {
+        comments,
+        payCashWithThisDelivery,
+        issuesWithPreviousOrder,
+        collectRecyclablesWithThisDelivery,
+      } = action.payload;
       const { basketId } = action.payload;
       newState.activeCartId = newActiveCartId;
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(selectedProducts);
@@ -98,6 +108,7 @@ const cartReducer = (currentState, action) => {
         basketId,
         issuesWithPreviousOrder,
         payCashWithThisDelivery,
+        collectRecyclablesWithThisDelivery,
       };
       break;
     }
@@ -128,6 +139,7 @@ const cartReducer = (currentState, action) => {
         basketId,
         issuesWithPreviousOrder: currentState.carts[cartId].issuesWithPreviousOrder,
         payCashWithThisDelivery: currentState.carts[cartId].payCashWithThisDelivery,
+        collectRecyclablesWithThisDelivery: currentState.carts[cartId].collectRecyclablesWithThisDelivery,
       };
       break;
     }
@@ -154,7 +166,13 @@ const CartDispatchContext = React.createContext();
 const CartProvider = ({ children }) => {
   const [state, dispatch] = React.useReducer(cartReducer, emptyCart, initializeCart);
   return (
-    <CartStateContext.Provider value={{ cart: getActiveCart(state), newCartCountOfItems: state.carts.NEW.countOfItems, activeCartId: state.activeCartId }}>
+    <CartStateContext.Provider
+      value={{
+        cart: getActiveCart(state),
+        newCartCountOfItems: state.carts.NEW.countOfItems,
+        activeCartId: state.activeCartId,
+      }}
+    >
       <CartDispatchContext.Provider value={dispatch}>
         {children}
       </CartDispatchContext.Provider>

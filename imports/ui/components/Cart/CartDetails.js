@@ -100,6 +100,7 @@ const CartDetails = ({
         comments: cartState.cart.comments || '',
         issuesWithPreviousOrder: cartState.cart.issuesWithPreviousOrder || '',
         payCashWithThisDelivery: cartState.cart.payCashWithThisDelivery || false,
+        collectRecyclablesWithThisDelivery: cartState.cart.collectRecyclablesWithThisDelivery || false,
         basketId: cartState.cart.basketId || '',
         loggedInUserId: loggedInUser._id,
       };
@@ -157,6 +158,10 @@ const CartDetails = ({
     cartDispatch({ type: cartActions.setPayCashWithThisDelivery, payload: { payCashWithThisDelivery: value } });
   };
 
+  const handleCollectRecyclablesWithThisDeliveryChange = (value) => {
+    cartDispatch({ type: cartActions.setCollectRecyclablesWithThisDelivery, payload: { collectRecyclablesWithThisDelivery: value } });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -210,15 +215,7 @@ const CartDetails = ({
                 isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
               />
               <Row>
-                <Col xs={6} className="text-left">
-                  <Button
-                    style={{ marginBottom: '2.5em', marginLeft: '.5em' }}
-                    onClick={() => { clearCart(); }}
-                  >
-                    Clear Cart
-                  </Button>
-                </Col>
-                <Col xs={6} className="text-right">
+                <Col sm={11} xs={12} className="text-right text-center-xs">
                   <Button
                     style={{ marginBottom: '2.5em', marginRight: '.5em' }}
                     onClick={() => { handleAddItems(); }}
@@ -226,23 +223,16 @@ const CartDetails = ({
                     <i className="fa fa-plus" />
                     {' Add Items'}
                   </Button>
+
+                  <Button
+                    style={{ marginBottom: '2.5em', marginLeft: '.5em' }}
+                    onClick={() => { clearCart(); }}
+                  >
+                    Clear Cart
+                  </Button>
                 </Col>
               </Row>
 
-              <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
-
-              <PrevOrderComplaint
-                onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
-                prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
-              />
-
-              {onBehalfUser.isNecessary && (
-              <OnBehalf
-                onSelectedChange={onSelectedChange}
-                showMandatoryFields={onBehalfUserInfoError}
-              />
-              )}
-              {(isOrderBeingUpdated) && <Loading />}
               {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
               <Alert>
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
@@ -263,6 +253,20 @@ const CartDetails = ({
               </div>
               )}
 
+              <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+
+              <PrevOrderComplaint
+                onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
+                prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
+              />
+
+              {onBehalfUser.isNecessary && (
+              <OnBehalf
+                onSelectedChange={onSelectedChange}
+                showMandatoryFields={onBehalfUserInfoError}
+              />
+              )}
+              {(isOrderBeingUpdated) && <Loading />}
               <OrderFooter
                 totalBillAmount={cartState.cart.totalBillAmount}
                 onButtonClick={() => { handleOrderSubmit(cartState); }}
@@ -278,7 +282,9 @@ const CartDetails = ({
                 history={history}
                 orderId={orderId}
                 payCash={cartState.cart.payCashWithThisDelivery}
+                collectRecyclables={cartState.cart.collectRecyclablesWithThisDelivery}
                 onPayCash={handlePayCashWithThisDeliveryChange}
+                onCollectRecyclables={handleCollectRecyclablesWithThisDeliveryChange}
               />
             </Panel>
           </Col>

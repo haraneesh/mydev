@@ -48,6 +48,7 @@ const createZohoSalesOrder = (order) => {
   const notes = ` ${order.comments || ''} 
   | ${order.issuesWithPreviousOrder || ''} 
   | ${(order.payCashWithThisDelivery) ? ' Customer wants to pay cash, please collect with this delivery' : ''}
+  | ${(order.collectRecyclablesWithThisDelivery) ? ' Customer wants to pick up bootles, or bags with this delivery' : ''}
   `;
 
   const zhSalesOrder = {

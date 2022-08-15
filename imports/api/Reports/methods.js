@@ -24,6 +24,7 @@ const getPreviousOrdersByProduct = (val, forDate, nextDate, label) => {
       $gte: forDate.toJSDate(),
       $lt: nextDate.toJSDate(),
     },
+    'customer_details.role': constants.Roles.customer.name,
   }).fetch();
 
   const returnValue = orders.reduce((acc, order) => {
@@ -50,6 +51,39 @@ const getPreviousOrdersByProduct = (val, forDate, nextDate, label) => {
   return returnValue;
 };
 
+function customerOrderPreferences() {
+  const orders = Orders.find({
+    $or: [
+      { order_status: constants.OrderStatus.Pending.name },
+      { order_status: constants.OrderStatus.Processing.name },
+      { order_status: constants.OrderStatus.Awaiting_Fulfillment.name },
+    ],
+  }).fetch();
+
+  const orderPreferences = [];
+  orders.forEach((order) => {
+    const user = Meteor.users.findOne({ _id: order.customer_details._id });
+    orderPreferences.push(
+      {
+        name: order.customer_details.name,
+        orderStatus: constants.OrderStatus[order.order_status].display_value,
+        mobilePhone: order.customer_details.mobilePhone,
+        collectRecyclablesWithThisDelivery: (order.collectRecyclablesWithThisDelivery === true)
+          ? 'Yes'
+          : 'No',
+        payCashWithThisDelivery: (order.payCashWithThisDelivery === true)
+          ? 'Yes'
+          : 'No',
+        packingPreference: constants.PackingPreferences[user.settings.packingPreference].displayName,
+        issuesWithPreviousOrder: order.issuesWithPreviousOrder,
+        comments: order.comments,
+      },
+    );
+  });
+
+  return orderPreferences;
+}
+
 const addStockOnHand = (productsHash) => {
   const itemsListFromZoho = getActiveItemsFromZoho();
 
@@ -69,8 +103,7 @@ const getProductsFrmAwaitingFullOrders = () => {
     returnValue = awaitingFullFillMentOrders.reduce((acc, order) => {
       acc = order.products.reduce((map, product) => {
         if (map[product.zh_item_id]) {
-          map[product.zh_item_id].orderQuantity = map[product.zh_item_id].orderQuantity
-                    + product.quantity;
+          map[product.zh_item_id].orderQuantity = map[product.zh_item_id].orderQuantity + product.quantity;
         } else {
           map[product.zh_item_id] = {
             orderQuantity: product.quantity,
@@ -133,6 +166,19 @@ Meteor.methods({
     }
     return { };
   },
+  'reports.reportCustomerOrderPreferences': function reportCustomerOrderPreferences() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      // user not authorized. do not publish secrets
+      handleMethodException('Access denied', 403);
+    }
+
+    try {
+      return customerOrderPreferences();
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return {};
+  },
   'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct(reportForDayInWeek) {
     check(reportForDayInWeek, String);
 
@@ -181,6 +227,7 @@ rateLimit({
     'reports.generateDaysSummary',
     'reports.getInvoices',
     'reports.getPreviousSalesByProduct',
+    'reports.reportCustomerOrderPreferences',
   ],
   limit: 5,
   timeRange: 1000,

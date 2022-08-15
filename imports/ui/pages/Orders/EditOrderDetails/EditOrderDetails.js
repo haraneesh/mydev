@@ -28,7 +28,13 @@ const EditOrderDetails = ({
     || order.order_status === constants.OrderStatus.Saved.name);
 
   const updateCart = ({
-    orderId, products, comments, basketId, payCashWithThisDelivery, issuesWithPreviousOrder,
+    orderId,
+    products,
+    comments,
+    basketId,
+    payCashWithThisDelivery,
+    collectRecyclablesWithThisDelivery,
+    issuesWithPreviousOrder,
   }) => {
     switch (true) {
       case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
@@ -44,7 +50,13 @@ const EditOrderDetails = ({
         cartDispatch({
           type: cartActions.setActiveCart,
           payload: {
-            activeCartId: orderId, selectedProducts, comments, basketId, payCashWithThisDelivery, issuesWithPreviousOrder,
+            activeCartId: orderId,
+            selectedProducts,
+            comments,
+            basketId,
+            payCashWithThisDelivery,
+            collectRecyclablesWithThisDelivery,
+            issuesWithPreviousOrder,
           },
         });
         break;
@@ -72,6 +84,7 @@ const EditOrderDetails = ({
               comments: order.comments,
               basketId: order.basketId || '',
               payCashWithThisDelivery: order.payCashWithThisDelivery || false,
+              collectRecyclablesWithThisDelivery: order.collectRecyclablesWithThisDelivery || false,
               issuesWithPreviousOrder: order.issuesWithPreviousOrder || '',
             });
             setProductList(prdList);

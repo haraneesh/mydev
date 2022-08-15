@@ -45,6 +45,14 @@ export const editUserProfile = new ValidatedMethod({
       optional: true,
       allowedValues: constants.DietaryPreferences.names,
     },
+    'settings.packingPreference': {
+      type: String,
+      allowedValues: constants.PackingPreferences.names,
+    },
+    'settings.productUpdatePreference': {
+      type: String,
+      allowedValues: constants.ProductUpdatePreferences.names,
+    },
   }).validator(),
   run(profile) {
     editProfile({ userId: this.userId, user: profile });

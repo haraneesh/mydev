@@ -36,6 +36,20 @@ const FoodGroups = {
   digestive: { name: 'digestive', displayName: 'Digestive' },
 };
 
+const PackingPreferences = {
+  paperOnly: { name: 'paperOnly', displayName: 'Paper Only' },
+  polythene: { name: 'polythene', displayName: 'Polythene Only' },
+  noPacking: { name: 'noPacking', displayName: 'Avoid Packing' },
+  noPreference: { name: 'noPreference', displayName: 'Any (Paper or Polythene)' },
+};
+PackingPreferences.names = Object.keys(PackingPreferences).map((cat) => PackingPreferences[cat].name);
+
+const ProductUpdatePreferences = {
+  sendMeProductPhotosOnWhatsApp: { name: 'sendMeProductPhotosOnWhatsApp', displayName: 'Send me product photos on WhatsApp' },
+  dontSendMeProductPhotosOnWhatsApp: { name: 'dontSendMeProductPhotosOnWhatsApp', displayName: "Don't send me product photos on WhatsApp" },
+};
+ProductUpdatePreferences.names = Object.keys(ProductUpdatePreferences).map((cat) => ProductUpdatePreferences[cat].name);
+
 FoodGroups.names = Object.keys(FoodGroups).map((cat) => FoodGroups[cat].name);
 FoodGroups.displayNames = Object.keys(FoodGroups).map((cat) => FoodGroups[cat].displayName);
 
@@ -474,6 +488,8 @@ const constants = {
   SELECT_EMPTY_VALUE,
   ReturnProductType,
   UserAccountStatus,
+  PackingPreferences,
+  ProductUpdatePreferences,
 };
 
 export default constants;

@@ -26,6 +26,9 @@ const defaultState = {
     newPassword: '',
     confirmPassword: '',
     dietPreference: '',
+    packingPreference: '',
+    productUpdatePreferences: '',
+    productUpdatePreference: '',
   },
 };
 
@@ -109,10 +112,12 @@ class Profile extends React.Component {
       },
       settings: {
         dietPreference: this.dietPreference.selectedOptions[0].value,
+        packingPreference: this.packingPreference.selectedOptions[0].value,
+        productUpdatePreference: this.productUpdatePreference.selectedOptions[0].value,
       },
-      status: {
+      /* status: {
         accountStatus: this.accountStatus.selectedOptions[0].value,
-      },
+      }, */
     };
 
     if (this.confirmPassword.value) {
@@ -222,6 +227,44 @@ class Profile extends React.Component {
           />
           {isError.whMobilePhone.length > 0 && (
           <span className="control-label">{isError.whMobilePhone}</span>
+          )}
+        </FormGroup>
+        <FormGroup validationState={isError.packingPreference.length > 0 ? 'error' : ''}>
+          <label>Packing Preference</label>
+          <select
+            name="packingPreference"
+            onChange={this.onValueChange}
+            ref={(packingPreference) => (this.packingPreference = packingPreference)}
+            className="form-control"
+            defaultValue={(user.settings && user.settings.packingPreference) ? user.settings.packingPreference : ''}
+          >
+            {constants.PackingPreferences.names.map((name) => (
+              <option value={name} key={name}>
+                {constants.PackingPreferences[name].displayName}
+              </option>
+            ))}
+          </select>
+          {isError.packingPreference.length > 0 && (
+          <span className="control-label">{isError.packingPreference}</span>
+          )}
+        </FormGroup>
+        <FormGroup validationState={isError.productUpdatePreference.length > 0 ? 'error' : ''}>
+          <label>Product Update Preference</label>
+          <select
+            name="packingPreference"
+            onChange={this.onValueChange}
+            ref={(productUpdatePreference) => (this.productUpdatePreference = productUpdatePreference)}
+            className="form-control"
+            defaultValue={(user.settings && user.settings.productUpdatePreference) ? user.settings.productUpdatePreference : ''}
+          >
+            {constants.ProductUpdatePreferences.names.map((name) => (
+              <option value={name} key={name}>
+                {constants.ProductUpdatePreferences[name].displayName}
+              </option>
+            ))}
+          </select>
+          {isError.packingPreference.length > 0 && (
+          <span className="control-label">{isError.productUpdatePreference}</span>
           )}
         </FormGroup>
         <FormGroup validationState={isError.dietPreference.length > 0 ? 'error' : ''}>

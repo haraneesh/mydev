@@ -158,17 +158,23 @@ Orders.find({}).fetch().forEach(order => {
 // Roles._forwardMigrate();
 // Roles._forwardMigrate2();
 
-/*
+/* db.users.find({"settings.packingPreference":{$exists:false}}); */
 Meteor.users.update(
-  { status: { $exists: false } },
+  { 'settings.packingPreference': { $exists: false } },
   {
     $set: {
-      status: {
-        accountStatus: constants.UserAccountStatus.Active.name,
-        statusUpdate: new Date(),
-      },
+      'settings.packingPreference': constants.PackingPreferences.noPreference.name,
     },
   },
   { multi: true },
 );
-*/
+
+Meteor.users.update(
+  { 'settings.productUpdatePreference': { $exists: false } },
+  {
+    $set: {
+      'settings.productUpdatePreference': constants.ProductUpdatePreferences.sendMeProductPhotosOnWhatsApp.name,
+    },
+  },
+  { multi: true },
+);

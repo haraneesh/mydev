@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { daysInWeek } from '../../../../modules/helpers';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
 import previousSalesByProducts from '../../../../reports/client/PreviousSalesByProducts';
+import generateOrderPreferences from '../../../../reports/client/GenerateOrderPreferences';
 import Loading from '../../../components/Loading/Loading';
 
 // import './ReportsHome.scss';
@@ -72,6 +73,21 @@ const ReportsHome = () => {
     setLoading(true);
   }
 
+  function reportCustomerOrderPreferences() {
+    if (!loading) {
+      setLoading(true);
+      Meteor.call('reports.reportCustomerOrderPreferences', (error, openOrderPreferences) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          // show report
+          generateOrderPreferences(openOrderPreferences);
+        }
+        setLoading(false);
+      });
+    }
+  }
+
   return (
     <div className="ReportsHome">
       {(loading) ? (<Loading />) : (<div />)}
@@ -96,6 +112,17 @@ const ReportsHome = () => {
 
             <Button bsStyle="link" onClick={showPreviousSalesByProducts}>
               Previous Order Quantities
+            </Button>
+          </Panel>
+        </Col>
+
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h2 className="pull-left">Show Preferences and Order Comments</h2>
+          </div>
+          <Panel>
+            <Button bsStyle="link" onClick={reportCustomerOrderPreferences}>
+              Show Pending and Packing orders
             </Button>
           </Panel>
         </Col>
