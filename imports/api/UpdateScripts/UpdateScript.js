@@ -124,6 +124,7 @@ cusers.forEach((u) => {
 
 // ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
 
+/*
 const syncDate = new Date();
 syncDate.setDate(syncDate.getDate() - 32);
 const zohoSyncUp = {
@@ -146,7 +147,7 @@ const zohoSyncUp2 = {
   syncedForUser: 'All',
 };
 ZohoSyncUps.upsert({ syncEntity: 'invoice-details-from-zoho' }, { $set: zohoSyncUp2 });
-
+*/
 /*
 Orders.find({}).fetch().forEach(order => {
   const role = Roles.getRolesForUser(order.customer_details._id)[0];
@@ -178,3 +179,14 @@ Meteor.users.update(
   },
   { multi: true },
 );
+
+// clean up some junk accounts
+Meteor.users.remove({ _id: 'D37aYoxgCMgbngr9f' });
+Meteor.users.remove({ username: '9987876223' });
+Meteor.users.remove({ username: '9884854633' });
+Meteor.users.remove({ username: '9884854634' });
+Meteor.users.remove({ username: '9884854635' });
+Meteor.users.remove({ username: '9884854636' });
+Meteor.users.remove({ username: '8734486932' });
+Meteor.users.remove({ username: '8754486933' });
+Meteor.users.remove({ username: '8734486933' });

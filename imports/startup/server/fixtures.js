@@ -233,6 +233,10 @@ const users = [{
     whMobilePhone: '7555335244',
     deliveryAddress: 'Office Address',
   },
+  settings: {
+    productUpdatePreference: 'sendMeProductPhotosOnWhatsApp',
+    packingPreference: 'noPreference',
+  },
   roles: ['customer'],
 },
 

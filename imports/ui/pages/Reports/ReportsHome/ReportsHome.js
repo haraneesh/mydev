@@ -7,7 +7,8 @@ import { toast } from 'react-toastify';
 import { daysInWeek } from '../../../../modules/helpers';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
 import previousSalesByProducts from '../../../../reports/client/PreviousSalesByProducts';
-import generateOrderPreferences from '../../../../reports/client/GenerateOrderPreferences';
+import { generateOrderPreferences, downloadOrderPreferences } from '../../../../reports/client/GenerateOrderPreferences';
+import downloadUserList from '../../../../reports/client/ListOfUsers';
 import Loading from '../../../components/Loading/Loading';
 
 // import './ReportsHome.scss';
@@ -73,17 +74,31 @@ const ReportsHome = () => {
     setLoading(true);
   }
 
-  function reportCustomerOrderPreferences() {
+  function reportCustomerOrderPreferences(download) {
     if (!loading) {
       setLoading(true);
       Meteor.call('reports.reportCustomerOrderPreferences', (error, openOrderPreferences) => {
         if (error) {
           toast.error(error.reason);
-        } else {
-          // show report
+        } else if (!download) {
           generateOrderPreferences(openOrderPreferences);
+        } else {
+          downloadOrderPreferences(openOrderPreferences);
         }
         setLoading(false);
+      });
+    }
+  }
+
+  function reportGetAllUsers() {
+    if (!loading) {
+      setLoading(true);
+      Meteor.call('reports.getAllUsers', (error, allUsers) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          downloadUserList(allUsers, new Date());
+        }
       });
     }
   }
@@ -121,8 +136,25 @@ const ReportsHome = () => {
             <h2 className="pull-left">Show Preferences and Order Comments</h2>
           </div>
           <Panel>
-            <Button bsStyle="link" onClick={reportCustomerOrderPreferences}>
-              Show Pending and Packing orders
+            <p>
+              <Button bsStyle="default" onClick={() => { reportCustomerOrderPreferences(false); }}>
+                Show Order Summary
+              </Button>
+            </p>
+            <Button bsStyle="success" onClick={() => { reportCustomerOrderPreferences(true); }}>
+              Download Order Summary &darr;
+            </Button>
+
+          </Panel>
+        </Col>
+
+        <Col xs={12}>
+          <div className="page-header clearfix">
+            <h2 className="pull-left">User Report</h2>
+          </div>
+          <Panel>
+            <Button bsStyle="default" onClick={() => { reportGetAllUsers(); }}>
+              User Report
             </Button>
           </Panel>
         </Col>

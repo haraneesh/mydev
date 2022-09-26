@@ -154,6 +154,10 @@ export const createNewUser = (user) => {
           accountStatus: constants.UserAccountStatus.Active.name,
           statusUpdate: new Date(),
         },
+        settings: {
+          productUpdatePreference: 'sendMeProductPhotosOnWhatsApp',
+          packingPreference: 'noPreference',
+        },
       },
     });
     return Meteor.users.findOne({ username: cuser.username });

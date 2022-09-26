@@ -24,32 +24,38 @@ function ReturnAlerts() {
       >
         <small>
           {' '}
-          Wishing Suvaineers a very happy and healthy Pongal!
+          Dear Suvaineers,
+          {' '}
+          <br />
+          Wish you a very happy Ganapathy Pooja.
         </small>
         <br />
         <small>
-          Since farmers celebrate Pongal grandly,
-          <br />
-          There will be
+          On account of celebrations,
+          there will be
           <span style={{ color: '#EF0905' }}>
             {' '}
             no
             {' '}
           </span>
           {' '}
-          deliveries from
+          deliveries on
           <span style={{ color: '#EF0905' }}>
             {' '}
-            Friday
+            Wednesday
             {' '}
           </span>
-          14th Jan up to, including
+          31
+          <sup>st</sup>
+          {' '}
+          Aug.
+          {/* and
           <span style={{ color: '#EF0905' }}>
             {' '}
-            Monday
+            Thursday
             {' '}
           </span>
-          17th Jan.
+      1st Sept. */}
         </small>
       </Alert>
     )

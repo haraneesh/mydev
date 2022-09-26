@@ -81,7 +81,18 @@ function customerOrderPreferences() {
     );
   });
 
-  return orderPreferences;
+  return orderPreferences.sort((a, b) => {
+    const nameA = a.packingPreference.toUpperCase(); // ignore upper and lowercase
+    const nameB = b.packingPreference.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  });
 }
 
 const addStockOnHand = (productsHash) => {
@@ -166,6 +177,19 @@ Meteor.methods({
     }
     return { };
   },
+  'reports.getAllUsers': function getAllUsers() {
+    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      // user not authorized. do not publish secrets
+      handleMethodException('Access denied', 403);
+    }
+
+    try {
+      return Meteor.users.find({}, { fields: { services: 0, _id: 0 } }).fetch();
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+    return [];
+  },
   'reports.reportCustomerOrderPreferences': function reportCustomerOrderPreferences() {
     if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       // user not authorized. do not publish secrets
@@ -177,7 +201,7 @@ Meteor.methods({
     } catch (exception) {
       handleMethodException(exception);
     }
-    return {};
+    return [];
   },
   'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct(reportForDayInWeek) {
     check(reportForDayInWeek, String);
@@ -228,6 +252,7 @@ rateLimit({
     'reports.getInvoices',
     'reports.getPreviousSalesByProduct',
     'reports.reportCustomerOrderPreferences',
+    'reports.getAllUsers',
   ],
   limit: 5,
   timeRange: 1000,

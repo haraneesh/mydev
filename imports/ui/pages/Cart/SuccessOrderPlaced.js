@@ -68,18 +68,18 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
             Hello
             {` ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)},`}
           </h4>
-          <h4 className="text-success">Thank you for Ordering on Suvai.</h4>
+          <h4>Thank you for Ordering on Suvai.</h4>
 
-          <div>
+          <div className="text-success">
             <p>
               {`Your order will be delivered on ${getDeliveryDay(new Date())}`}
               . You can pay us after delivery.
             </p>
           </div>
-          <div>
+          <div className="text-success">
             <p>
               To pay now, you can add to your wallet and
-              we will deduct automatically.
+              we will deduct once the order is delivered.
             </p>
           </div>
 

@@ -225,6 +225,10 @@ const createUser = (user) => {
             accountStatus: constants.UserAccountStatus.NewSignUp.name,
             statusUpdate: new Date(),
           },
+          settings: {
+            productUpdatePreference: 'sendMeProductPhotosOnWhatsApp',
+            packingPreference: 'noPreference',
+          },
         },
       },
     );
