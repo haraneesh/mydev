@@ -29,6 +29,7 @@
     "meteor-node-stubs": "^1.0.0",
     "moment": "^2.25.3",
     "moment-timezone": "^0.5.28",
+    "node-sass": "^7.0.3",
     "paytmchecksum": "^1.5.0",
     "polished": "^3.6.5",
     "prop-types": "^15.7.2",
