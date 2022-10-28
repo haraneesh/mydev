@@ -27,8 +27,16 @@ Meteor.methods({
     });
 
     if (Meteor.isServer) {
+      Payments.update({ orderId: paymentStatus.ORDERID },
+        {
+          $set: {
+            paymentApiResponseObject: paymentStatus,
+            owner: this.userId,
+          },
+        });
+
       if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
-        const paidUser = Meteor.users.find({ _id: this.userId }).fetch()[0];
+        const paidUser = Meteor.users.findOne({ _id: this.userId });
 
         const zhResponse = zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
@@ -44,14 +52,9 @@ Meteor.methods({
           console.log(paymentStatus);
         }
 
-        const paymentId = Payments.insert({
-          paymentApiResponseObject: paymentStatus,
-          owner: this.userId,
-        });
-
         // Update Payment record history with the updated payment record
         Payments.update(
-          { _id: paymentId },
+          { orderId: paymentStatus.ORDERID },
           { $set: { paymentZohoResponseObject: zhResponse } },
         );
 
@@ -67,7 +70,7 @@ Meteor.methods({
 
         // Update Payment record with the latest contact information
         Payments.update(
-          { _id: paymentId },
+          { orderId: paymentStatus.ORDERID },
           { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
         );
 
@@ -149,6 +152,13 @@ Meteor.methods({
         );
 
         const result = response.data;
+
+        Payments.insert({
+          orderId,
+          owner: this.userId,
+          paymentApiInitiationResponseObject: result,
+
+        });
 
         if (result.head.signature
                   && result.body.resultInfo.resultStatus

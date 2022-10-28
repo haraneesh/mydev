@@ -27,10 +27,22 @@ Payments.schema = new SimpleSchema({
     type: String,
     label: 'Customer Id against which this payment was processed',
   },
+  orderId: {
+    type: String,
+    label: 'OrderId of the transaction',
+    optional: true,
+  },
+  paymentApiInitiationResponseObject: {
+    type: Object,
+    label: 'payment JSON initiation return response from gateway',
+    blackbox: true,
+    optional: true,
+  },
   paymentApiResponseObject: {
     type: Object,
     label: 'payment JSON object returned by payment gateway',
     blackbox: true,
+    optional: true,
   },
   paymentZohoResponseObject: {
     type: Object,
