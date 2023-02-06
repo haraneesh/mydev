@@ -1,23 +1,24 @@
 import React from 'react';
-import {
-  Col, FormGroup, Button, Panel,
-} from 'react-bootstrap';
+
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+
 import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
-import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
 import { formValid, formValChange } from '../../../../modules/validate';
+import { clearEntireLocalStore } from '../../../stores/localStorage';
 
 const showPasswordButtonPositions = {
   position: 'relative',
-  top: '-41px',
+  top: '-46px',
   padding: '10px',
-  right: '6px',
-  float: 'right',
-  fontSize: '75%',
+  fontSize: '76%',
+  width: '75px',
 };
 
 const defaultState = {
@@ -77,11 +78,11 @@ class Login extends React.Component {
   render() {
     const { isError } = this.state;
     return (
-      <div className="Login Absolute-Center is-Responsive offset-sm-1">
+      <div className="Login Absolute-Center is-Responsive offset-sm-1 p-3">
         <Col xs={12} sm={6} md={5} lg={4}>
-          <h2 className="page-header">Log In</h2>
+          <h2 className="py-4">Log In</h2>
           <form onSubmit={this.validateForm}>
-            <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
+            <Row className="py-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
               <label className="control-label">Mobile Number</label>
               <input
                 type="text"
@@ -92,13 +93,13 @@ class Login extends React.Component {
                 onBlur={this.onValueChange}
               />
               {isError.whMobilePhone.length > 0 && (
-                <span className="control-label">{isError.whMobilePhone}</span>
+                <span className="small text-info">{isError.whMobilePhone}</span>
               )}
-            </FormGroup>
-            <FormGroup validationState={isError.password.length > 0 ? 'error' : null} style={{ position: 'relative' }}>
+            </Row>
+            <Row className="py-2" validationState={isError.password.length > 0 ? 'error' : null} style={{ position: 'relative' }}>
               <label className="clearfix control-label">
-                <span className="pull-left">Password</span>
-                <Link className="pull-right" to="/recover-password">Forgot password?</Link>
+                <span>Password</span>
+                <Link className="float-end" to="/recover-password">Forgot password?</Link>
               </label>
               <input
                 type={(this.state.showPassword ? 'text' : 'password')}
@@ -107,26 +108,38 @@ class Login extends React.Component {
                 placeholder="Password"
                 onBlur={this.onValueChange}
               />
-              <Button
-                className="btn-xs btn-info"
-                onClick={this.switchPasswordBox}
-                style={showPasswordButtonPositions}
-              >
-                {this.state.showPassword ? 'Hide' : 'Show'}
-              </Button>
-              {isError.password.length > 0 && (
-                <span className="control-label">{isError.password}</span>
-              )}
-            </FormGroup>
-            <Button type="submit" bsStyle="primary" className="loginBtn">Log In</Button>
-            <AccountPageFooter>
-              <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>
-                <span>
-                  {'Not a member yet? '}
-                  <a href="/signup" className="login-signup">Join</a>
-                </span>
+
+              <div className="col-12">
+                <Button
+                  className="text-center btn-block float-end"
+                  variant="info"
+                  onClick={this.switchPasswordBox}
+                  style={showPasswordButtonPositions}
+                >
+                  {this.state.showPassword ? 'Hide' : 'Show'}
+                </Button>
+
+                {isError.password.length > 0 && (
+                <span className="small text-info">{isError.password}</span>
+                )}
+
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  className="my-3 loginBtn"
+                >
+                  Log In
+
+                </Button>
               </div>
-            </AccountPageFooter>
+            </Row>
+            <div className="text-center alert bg-body py-3">
+              <span>
+                {'Not a member yet? '}
+                <a href="/signup" className="login-signup text-secondary h4 ps-1">Join</a>
+              </span>
+            </div>
+
           </form>
           {/* } <Row>
             <p>- Or - </p>

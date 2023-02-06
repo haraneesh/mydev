@@ -30,10 +30,6 @@ const GlobalStyle = createGlobalStyle`
    background:#F5F1EF;
   }
 
-  .recipesApp .panel-body{
-    padding: 0px;
-  }
-
   .btn-primary {
     background-color: var(--brand-primary);
     border: none;

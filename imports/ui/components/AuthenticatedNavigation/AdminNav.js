@@ -4,52 +4,53 @@ import { NavLink } from 'react-router-dom';
 
 const AdminNav = (props) => {
   // const user = Meteor.user();
-  if (props.isAdmin) {
+  const { isAdmin } = props;
+  if (isAdmin) {
     return (
       <div>
-        <div className="menu-header"> Admin </div>
-        <ul>
+        <div className="small mb-3"> ADMIN </div>
+        <ul style={{ listStyle: 'none' }} className="p-0">
           <li>
-            <NavLink to="/products">Manage Products</NavLink>
+            <NavLink to="/products" onClick={props.handleClose}>Manage Products</NavLink>
           </li>
           <li>
-            <NavLink to="/productLists">Manage ProductLists</NavLink>
+            <NavLink to="/productLists" onClick={props.handleClose}>Manage ProductLists</NavLink>
           </li>
           <li>
-            <NavLink to="/allorders"> Manage Orders</NavLink>
+            <NavLink to="/allorders" onClick={props.handleClose}> Manage Orders</NavLink>
           </li>
           <li>
-            <NavLink to="/messagesadmin"> Manage Messages</NavLink>
+            <NavLink to="/messagesadmin" onClick={props.handleClose}> Manage Messages</NavLink>
           </li>
           <li>
-            <NavLink to="/recipes">Manage Recipes</NavLink>
+            <NavLink to="/recipes" onClick={props.handleClose}>Manage Recipes</NavLink>
           </li>
           <li>
-            <NavLink to="/suppliers">Manage Suppliers</NavLink>
+            <NavLink to="/suppliers" onClick={props.handleClose}>Manage Suppliers</NavLink>
           </li>
           {/* <li>
             <NavLink to="/baskets"> Manage Baskets</NavLink>
           </li>
          */}
           <li>
-            <NavLink to="/specials/edit">Manage Specials</NavLink>
+            <NavLink to="/specials/edit" onClick={props.handleClose}>Manage Specials</NavLink>
           </li>
           <br />
           <li>
-            <NavLink to="/allusers"> All Users </NavLink>
+            <NavLink to="/allusers" onClick={props.handleClose}> All Users </NavLink>
           </li>
           <li>
-            <NavLink to="/approvesignups"> Approve Sign Ups</NavLink>
+            <NavLink to="/approvesignups" onClick={props.handleClose}> Approve Sign Ups</NavLink>
           </li>
           <li>
-            <NavLink to="/updateProfile">Create / Update User</NavLink>
+            <NavLink to="/updateProfile" onClick={props.handleClose}>Create / Update User</NavLink>
           </li>
           <br />
           <li>
-            <NavLink to="/reports">View Reports</NavLink>
+            <NavLink to="/reports" onClick={props.handleClose}>View Reports</NavLink>
           </li>
           <li>
-            <NavLink to="/zohoSync">Zoho Sync</NavLink>
+            <NavLink to="/zohoSync" onClick={props.handleClose}>Zoho Sync</NavLink>
           </li>
         </ul>
       </div>
@@ -62,4 +63,5 @@ export default AdminNav;
 
 AdminNav.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };

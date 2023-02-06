@@ -10,7 +10,7 @@ const SupplierOrderDetails = ({
   loading, suppOrder,
 }) => (!loading ? (
   <div className="SupplierOrderDetail">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h4>{suppOrder.customer_details.name}</h4>
       <SupplierOrderDetailsView supplierOrder={suppOrder} />
     </div>

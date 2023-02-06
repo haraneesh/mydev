@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Label,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import * as timeago from 'timeago.js';
 import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
@@ -54,22 +55,21 @@ const MessageView = ({
   };
 
   return (
-    <div className="messageView" key={_id}>
+    <Card className="messageView p-2" key={_id}>
       <div className="list-group-item">
         <Row>
           <Col xs={7} style={{ paddingBottom: '10px' }}>
-            <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
-              <i className={`text-muted ${constants.MessageTypes[messageType].iconClass}`} />
-              {' '}
+            <div className="d-flex text-black-50">
+              <Icon type="mt" icon={`${constants.MessageTypes[messageType].iconClass}`} className="pe-2" />
               {ownerName}
             </div>
           </Col>
           <Col xs={5} style={{ textAlign: 'right' }}>
             {(isIssue) && (
             <small>
-              <Label bsStyle={constants.MessageStatus[messageStatus].label} style={{ marginRight: '5px' }}>
+              <label className={`${constants.MessageStatus[messageStatus].label}`} style={{ marginRight: '5px' }}>
                 {constants.MessageStatus[messageStatus].display_value}
-              </Label>
+              </label>
             </small>
             )}
             <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small>
@@ -90,36 +90,42 @@ const MessageView = ({
         <Row>
           <Col xs={6} className="text-left" style={{ padding: '10px 0px 0px 5px' }}>
 
-            <button
-              type="button"
-              style={{ background: 'transparent', border: 'none', outline: '0' }}
+            <Button
               onClick={() => { history.push(`/messages/${_id}/edit`); }}
+              className="bg-body btn-sm pe-1 text-info"
+              style={{ border: 'none', width: '4em' }}
             >
-              <Icon icon="comment" />
-              {(commentCount && commentCount > 0) ? ` ${commentCount}` : ' 0'}
-            </button>
-
-            <button
-              type="button"
-              style={{ background: 'transparent', border: 'none', outline: '0' }}
-              onClick={() => { updateLikeClick(_id); }}
-            >
-              <span className={(userLikes.indexOf(loggedInUserId) > -1) ? 'text-primary' : 'text-default'}>
-                <Icon icon="heart" />
+              <Icon icon="comment" type="mt" className="fs-3" />
+              <span>
+                {(commentCount && commentCount > 0) ? ` ${commentCount}` : ' 0'}
               </span>
-              {(userLikes) ? ` ${userLikes.length}` : ' 0'}
-            </button>
+            </Button>
+
+            <Button
+
+              onClick={() => { updateLikeClick(_id); }}
+              className="bg-body btn-sm pe-1 text-info"
+              style={{ border: 'none', width: '4em' }}
+            >
+              <Icon icon="favorite" type="mt" className={(userLikes.indexOf(loggedInUserId) > -1) ? 'text-secondary fs-3' : 'fs-3'} />
+              <span>
+                {(userLikes) ? ` ${userLikes.length}` : ' 0'}
+              </span>
+            </Button>
 
             {isAdmin && (
-            <button
-              type="button"
-              style={{ background: 'transparent', border: 'none', outline: '0' }}
+
+            <Button
+
+              className="bg-body btn-sm text-info"
+              style={{ border: 'none', width: '4em' }}
               onClick={() => { addLikeClicks(_id); }}
             >
-              <span>
-                <Icon icon="plus-square" />
-              </span>
-            </button>
+
+              <Icon icon="add_box" type="mt" className="fs-3" />
+
+            </Button>
+
             )}
 
           </Col>
@@ -151,7 +157,7 @@ const MessageView = ({
         </Row>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 

@@ -1,7 +1,8 @@
 import React from 'react';
-import {
-  Panel, Label, Row, Col,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+
 import { dateSettings } from '../../../modules/settings';
 import constants from '../../../modules/constants';
 import { getDisplayShortDate, displayUnitOfSale } from '../../../modules/helpers';
@@ -10,11 +11,11 @@ function SupplierOrderDetailsView(args) {
   const { supplierOrder } = args;
 
   return (
-    <Panel style={{ textAlign: 'left' }}>
+    <Row className="text-left">
       <Col xs={6} style={{ marginBottom: '3rem' }}>
-        <Label bsStyle={constants.OrderStatus[supplierOrder.order_status].label}>
+        <Badge bg={constants.OrderStatus[supplierOrder.order_status].label}>
           {constants.OrderStatus[supplierOrder.order_status].display_value}
-        </Label>
+        </Badge>
       </Col>
       <Col xs={6} style={{ textAlign: 'right' }}>
         {getDisplayShortDate(supplierOrder.createdAt, dateSettings.timeZone)}
@@ -27,7 +28,7 @@ function SupplierOrderDetailsView(args) {
           </Col>
         </Row>
       ))}
-    </Panel>
+    </Row>
   );
 }
 

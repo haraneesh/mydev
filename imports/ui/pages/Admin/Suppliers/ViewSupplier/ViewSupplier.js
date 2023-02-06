@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
@@ -23,54 +24,54 @@ const handleRemove = (supplierId, history) => {
 
 const renderSupplier = (supp, match, history) => (supp ? (
   <div className="ViewSupplier">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h3 className="pull-left">{supp && supp.name}</h3>
-      <ButtonToolbar className="pull-right">
-        <ButtonGroup bsSize="small">
-          <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
-          <Button onClick={() => handleRemove(supp._id, history)} className="text-danger">
-            Delete
-          </Button>
-        </ButtonGroup>
-      </ButtonToolbar>
+      <Row className="pull-right">
+
+        <Button size="sm" onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
+        <Button size="sm" onClick={() => handleRemove(supp._id, history)} className="text-danger">
+          Delete
+        </Button>
+
+      </Row>
     </div>
 
-    <section className="panel panel-default">
-      <div className="panel-body">
-        <div className="col-xs-6">
+    <section className="card">
+      <div className="card-body">
+        <div className="col-6">
           Margin:
         </div>
-        <div className="col-xs-6">
+        <div className="col-6">
           {supp && supp.marginPercentage}
           {' '}
           %
         </div>
       </div>
     </section>
-    <section className="panel panel-default">
-      <div className="panel-body">
-        <div className="col-xs-6">
+    <section className="card">
+      <div className="card-body">
+        <div className="col-6">
           Zoho Auth Token:
         </div>
-        <div className="col-xs-6">
+        <div className="col-6">
           {supp && supp.zohoAuthtoken}
         </div>
       </div>
     </section>
-    <section className="panel panel-default">
-      <div className="panel-body">
-        <div className="col-xs-6">
+    <section className="card">
+      <div className="card-body">
+        <div className="col-6">
           Zoho Organization Id:
         </div>
-        <div className="col-xs-6">
+        <div className="col-6">
           {supp && supp.zohoOrganizationId}
         </div>
       </div>
     </section>
 
-    <section className="panel panel-default">
-      <div className="panel-body">
-        <div className="col-xs-12">
+    <section className="card">
+      <div className="card-body">
+        <div className="col-12">
           Description:
           {' '}
           <br />
@@ -103,4 +104,4 @@ export default withTracker(({ match }) => {
     loading: !subscription.ready(),
     supp: Suppliers.findOne(supplierId) || {},
   };
-}) (ViewSupplier);
+})(ViewSupplier);

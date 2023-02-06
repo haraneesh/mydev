@@ -93,11 +93,11 @@ function HomePageSlider() {
   }, []);
 
   return (
-    <div className="carousel-health">
-      <h2>
+    <div className="carousel-health py-4">
+      <h2 className="py-2">
         True wealth is health
       </h2>
-      <div id="cc1" className="carousel panel-body">
+      <div id="cc1" className="carousel pb-2">
         <div className="carousel-cell">
           <img src="about/feedingx640.jpg?v5" alt="Feeding a baby" />
           <h7> Kids deserve the best </h7>

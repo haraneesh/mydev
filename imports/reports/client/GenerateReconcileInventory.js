@@ -11,10 +11,10 @@ const writeOrderSummaryDetails = (products, displayDate) => ReactDOMServer.rende
   <div className="container">
     <div className="row">
       <div className="invoice-title">
-        <div className="col-xs-12">
+        <div className="col-12">
           <h3>Suvai - Reconcile Inventory</h3>
         </div>
-        <div className="col-xs-12">
+        <div className="col-12">
           <h4>
             {`${displayDate}`}
           </h4>
@@ -23,13 +23,13 @@ const writeOrderSummaryDetails = (products, displayDate) => ReactDOMServer.rende
     </div>
     <div className="row">
       <div className="col-md-12">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title"><strong>Reconcile Inventory Report</strong></h3>
+        <div className="card">
+          <div className="card-body">
+            <h3 className="card-title"><strong>Reconcile Inventory Report</strong></h3>
           </div>
-          <div className="panel-body">
+          <div className="card-text">
             <div className="table-responsive">
-              <table className="table table-condensed">
+              <table className="table table-striped table-bordered table-condensed">
                 <thead>
                   <tr>
                     <td className="text-center"><strong>Product Name</strong></td>
@@ -42,16 +42,16 @@ const writeOrderSummaryDetails = (products, displayDate) => ReactDOMServer.rende
                 <tbody>
                   {
                      products.map((item) => {
-                        const alert = (item.differenceQty < 0) ? 'bg-warning' : '';
-                         return (
-                           <tr>
-                             <td className="text-center">{item.productName}</td>
-                             <td className="text-center">{item.unit}</td>
-                             <td className="text-right">{item.zohoProductInventory}</td>
-                             <td className="text-right">{item.reportedPhysicalInventory}</td>
-                             <td className={`${alert} text-right`}>{item.differenceQty}</td>
-                           </tr>
-                         );
+                       const alert = (item.differenceQty < 0) ? 'bg-warning' : '';
+                       return (
+                         <tr>
+                           <td className="text-center">{item.productName}</td>
+                           <td className="text-center">{item.unit}</td>
+                           <td className="text-right">{item.zohoProductInventory}</td>
+                           <td className="text-right">{item.reportedPhysicalInventory}</td>
+                           <td className={`${alert} text-right`}>{item.differenceQty}</td>
+                         </tr>
+                       );
                      })
                   }
                 </tbody>
@@ -61,7 +61,7 @@ const writeOrderSummaryDetails = (products, displayDate) => ReactDOMServer.rende
         </div>
       </div>
     </div>
-  </div>
+  </div>,
 );
 
 const generateRCInven = (item, displayDate) => {

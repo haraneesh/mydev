@@ -1,7 +1,8 @@
 import React from 'react';
-import {
-  Row, Col, Label, Pager, Panel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Badge from 'react-bootstrap/Badge';
 import { formatMoney } from 'accounting-js';
 import moment from 'moment';
 import 'moment-timezone';
@@ -14,20 +15,14 @@ class ViewOrderDetails extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    this.goBack = this.goBack.bind(this);
     this.state = { order: this.props.order };
-  }
-
-  goBack(e) {
-    e.preventDefault();
-    this.props.history.goBack();
   }
 
   render() {
     const { order } = this.props;
     return (
-      <div className="ViewOrderDetails ">
-        <div className="page-header">
+      <div className="ViewOrderDetails mb-4">
+        <div className="py-4 ps-2">
           <Row>
             <Col xs={12}>
               <h3 className="pull-left">
@@ -40,19 +35,17 @@ class ViewOrderDetails extends React.Component {
             </Col>
           </Row>
         </div>
-        <Panel>
+        <Card>
           <Row>
-            <Col xs={12}>
-              <Label bsStyle={constants.OrderStatus[order.order_status].label}>
+            <Col xs={12} className="p-2">
+              <Badge bg={constants.OrderStatus[order.order_status].label}>
                 {constants.OrderStatus[order.order_status].display_value}
-              </Label>
+              </Badge>
             </Col>
           </Row>
-          <div className="orderDetails panel-body">
-            <div>
-              <ViewOrderProducts products={order.products} />
-            </div>
-            <Row>
+          <div className="orderDetails">
+            <ViewOrderProducts products={order.products} />
+            <Row className="p-2">
               <Col xs={12}>
                 <strong> Notes for packaging team </strong>
               </Col>
@@ -61,7 +54,7 @@ class ViewOrderDetails extends React.Component {
               </Col>
             </Row>
           </div>
-          <div className="panel-footer">
+          <div className="card-footer">
             <Row>
               <Col xs={12} className="text-right">
                 Amount:
@@ -74,10 +67,7 @@ class ViewOrderDetails extends React.Component {
               </Col>
             </Row>
           </div>
-        </Panel>
-        <Pager>
-          <Pager.Item previous onClick={this.goBack}>← Back</Pager.Item>
-        </Pager>
+        </Card>
       </div>
     );
   }

@@ -1,7 +1,9 @@
 import React from 'react';
-import {
-  FormGroup, FormControl, Button, Col, Row,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+
 import { toast } from 'react-toastify';
 import { insertProduct } from '../../../api/Products/methods';
 import constants from '../../../modules/constants';
@@ -52,22 +54,18 @@ const handleInsertProduct = (event) => {
 };
 
 const InsertProduct = () => (
-  <FormGroup>
-    <Row>
-      <Col xs={9}>
-        <FormControl
-          type="text"
-          placeholder="Type a product title and press Add Product button"
-          name="productName"
-        />
-      </Col>
-      <Col xs={3}>
-        {' '}
-        <Button onClick={handleInsertProduct} bsStyle="primary"> Add Product </Button>
-        {' '}
-      </Col>
-    </Row>
-  </FormGroup>
+  <Row className="px-2">
+    <Col>
+      <Form.Control
+        type="text"
+        placeholder="Type a product title and press Add Product button"
+        name="productName"
+      />
+    </Col>
+    <Col xs={5} sm={3} className="text-sm-start">
+      <Button onClick={handleInsertProduct} className="btn-block btn-secondary"> Add Product </Button>
+    </Col>
+  </Row>
 );
 
 export default InsertProduct;

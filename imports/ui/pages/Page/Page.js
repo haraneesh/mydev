@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { Panel } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import Content from '../../components/Content/Content';
 
-import './Page.scss';
-
 const Page = ({ title, subtitle, content }) => (
-  <div className="Page">
-    <Panel>
+  <div className="Page card p-2">
+    <Row>
       <PageHeader title={title} subtitle={subtitle} />
       <Content content={content} />
-    </Panel>
+    </Row>
   </div>
 );
 
@@ -44,4 +42,4 @@ export default withTracker(({ content, page }) => {
   return {
     content: content || pageContent.get(),
   };
-}) (Page);
+})(Page);

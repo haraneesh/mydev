@@ -14,7 +14,7 @@ const EditSupplier = ({ supp, loading, history }) => {
 
   return (supp ? (
     <div className="EditSupplier">
-      <h3 className="page-header">{`Editing "${supp.name}"`}</h3>
+      <h3 className="py-4">{`Editing "${supp.name}"`}</h3>
       <SupplierEditor supp={supp} history={history} />
     </div>
   ) : <NotFound />);
@@ -34,4 +34,4 @@ export default withTracker(({ match }) => {
     loading: !subscription.ready(),
     supp: Suppliers.findOne(supplierId),
   };
-}) (EditSupplier);
+})(EditSupplier);

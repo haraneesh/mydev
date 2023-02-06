@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
@@ -23,16 +24,16 @@ const handleRemove = (messageId, history) => {
 
 const renderMessage = (msg, match, history) => (msg ? (
   <div className="ViewMessage">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h4 className="pull-left">{ msg && msg.message }</h4>
-      <ButtonToolbar className="pull-right">
-        <ButtonGroup bsSize="small">
-          <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
-          <Button onClick={() => handleRemove(msg._id, history)} className="text-danger">
-            Delete
-          </Button>
-        </ButtonGroup>
-      </ButtonToolbar>
+      <Row className="pull-right">
+
+        <Button onClick={() => history.push(`${match.url}/edit`)} size="sm">Edit</Button>
+        <Button onClick={() => handleRemove(msg._id, history)} className="text-danger" size="sm">
+          Delete
+        </Button>
+
+      </Row>
     </div>
     { msg && msg.message }
   </div>

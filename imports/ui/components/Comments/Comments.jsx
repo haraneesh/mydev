@@ -35,7 +35,7 @@ export default class Comments extends React.Component {
       return <CommentView expandedComment={expandedComment} loggedUserId={loggedUserId} key={`comment-${index}`} />;
     }, this);
     return (
-      <div style={{ padding: '1em' }}>
+      <div>
         <CommentWrite postId={postId} postType={postType} loggedUserId={loggedUserId} />
         { commentViews }
       </div>

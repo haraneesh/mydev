@@ -1,9 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  Button, FormGroup, ControlLabel, FormControl, Col, Row,
-} from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Form from 'react-bootstrap/Form';
+
 import { formValChange, formValid } from '../../../modules/validate';
 
 export default function SendInvitation() {
@@ -43,18 +45,18 @@ export default function SendInvitation() {
             className="form-send-invitation"
             onSubmit={(event) => { event.preventDefault(); }}
           >
-            <FormGroup>
-              <ControlLabel> Mobile Phone Number </ControlLabel>
-              <FormControl
+            <Row className="my-3">
+              <label> Mobile Phone Number </label>
+              <Form.Control
                 type="tel"
                 name="whMobilePhone"
                 placeholder="9889899888"
                 pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
               />
               {isError.whMobilePhone.length > 0 && (
-              <span className="control-label">{isError.whMobilePhone}</span>
+              <span className="small text-info">{isError.whMobilePhone}</span>
               )}
-            </FormGroup>
+            </Row>
             <Button type="submit" bsStyle="primary" onClick={handleSubmit}> Invite </Button>
           </form>
         </Col>

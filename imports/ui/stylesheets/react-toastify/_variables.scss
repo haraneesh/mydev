@@ -1,4 +1,4 @@
-@import "../bootstrap/bootstrap/_variables.scss";
+@import "../bootstrap/_variables.scss";
 
 $rt-namespace: 'Toastify';
 $rt-toast-width: 320px !default;
@@ -9,10 +9,10 @@ $rt-toast-max-height: 800px !default;
 
 $rt-color-default: #fff !default;
 $rt-color-dark: #121212 !default;
-$rt-color-info: darken($brand-info, 5%) !default;
-$rt-color-success: darken($brand-success, 5%) !default;
-$rt-color-warning: darken($brand-warning, 5%) !default;
-$rt-color-error: darken($brand-danger, 5%) !default;
+$rt-color-info: darken($info, 5%) !default;
+$rt-color-success: darken($success, 5%) !default;
+$rt-color-warning: darken($warning, 5%) !default;
+$rt-color-error: darken($danger, 5%) !default;
 
 $rt-text-color-default: #aaa !default;
 $rt-text-color-dark: #fff !default;
@@ -21,6 +21,6 @@ $rt-color-progress-default: linear-gradient(to right, #4cd964, #5ac8fa, #007aff,
 $rt-color-progress-dark: #bb86fc !default;
 $rt-mobile: "only screen and (max-width : 480px)" !default;
 $rt-not-mobile: "only screen and (min-width : 481px)" !default;
-$rt-font-family: $body-font !default;
+$rt-font-family: $font-family-base !default;
 $rt-z-index: 9999 !default;
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Alert } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
 
 const NotFound = () => (
-  <div className="NotFound page-header offset-sm-1">
-    <Alert bsStyle="danger">
+  <div className="NotFound py-4 offset-sm-1 col-sm-10">
+    <Alert variant="warning">
       <p>
         <strong>Error [404]</strong>
         :

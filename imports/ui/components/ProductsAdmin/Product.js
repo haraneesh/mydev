@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Modal, Row, Col, Panel, ListGroupItem, FormGroup, FormControl, Button, ControlLabel, Checkbox,
-} from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
+import Checkbox from '../Common/Checkbox';
 import AttachIngredient from './AttachIngredient';
 import ProductDetails from './ProductDetails';
 import { upsertProduct, removeProduct } from '../../../api/Products/methods.js';
@@ -48,24 +53,41 @@ function FieldGroup({
   if (values) {
     values.unshift(constants.SELECT_EMPTY_VALUE);
   }
+
+  if (controlName === 'associatedFoodGroups') {
+    console.log(`Control name ${controlName}`);
+  }
+
+  if (controlType === 'select') {
+    return (
+      <Row>
+        {displayControlName && <label>{controlLabel}</label>}
+
+        <Form.Select size="sm" value={defaultValue} name={controlName} onChange={updateValue}>
+          {values && values.map((optionValue, index) => (
+            <option value={optionValue._id ? optionValue._id : optionValue} key={`prd-${index}`}>
+              {optionValue.name ? optionValue.name : optionValue}
+            </option>
+          ))}
+        </Form.Select>
+      </Row>
+    );
+  }
+
   return (
-    <FormGroup>
-      {displayControlName && <ControlLabel>{controlLabel}</ControlLabel>}
-      <FormControl
+    <Row>
+      {displayControlName && <label>{controlLabel}</label>}
+      <Form.Control
+        size="sm"
         type={controlType}
         name={controlName}
         defaultValue={defaultValue}
         onBlur={updateValue}
-        componentClass={values || controlType === 'textarea' ? controlType : 'input'}
+        as={controlType === 'textarea' ? 'textarea' : 'input'}
         {...props}
-      >
-        {values && values.map((optionValue, index) => (
-          <option value={optionValue._id ? optionValue._id : optionValue} key={`prd-${index}`}>
-            {optionValue.name ? optionValue.name : optionValue}
-          </option>
-        ))}
-      </FormControl>
-    </FormGroup>
+      />
+
+    </Row>
   );
 }
 
@@ -95,11 +117,16 @@ export default class Product extends React.Component {
 
   launchProductDetails({ productId, productName, showDetails }) {
     return (
-      <Modal show={showDetails} className="modalProductDetails">
-        <Modal.Header>
+      <Modal show={showDetails} onHide={() => { this.showDetailsPage(false); }} className="modalProductDetails">
+        <Modal.Header closeButton>
           <Modal.Title>
-            {productName}
-            <Button bsStyle="link" style={{ float: 'right' }} onClick={() => { this.showDetailsPage(false); }}>x</Button>
+
+            <h4>
+              {' '}
+              {productName}
+              {' '}
+            </h4>
+
           </Modal.Title>
         </Modal.Header>
 
@@ -255,11 +282,12 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={1}>
+          <Col xs={1} className="text-center">
             <Checkbox
               name="availableToOrder"
               checked={this.state.product.availableToOrder}
               onChange={this.handleProductUpsert}
+
             >
               {/* Is Available To Order */}
             </Checkbox>
@@ -286,26 +314,28 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={1}>
+          <Col xs={1} className="text-center">
             <Checkbox
               name="availableToOrderWH"
               checked={this.state.product.availableToOrderWH}
               onChange={this.handleProductUpsert}
+
             />
           </Col>
-          <Col xs={1}>
+          <Col xs={1} className="text-center">
             <Checkbox
               name="displayAsSpecial"
               checked={this.state.product.displayAsSpecial}
               onChange={this.handleProductUpsert}
+
             >
               {/* Display this as special? */}
             </Checkbox>
           </Col>
           <Col xs={1}>
             <Button
-              bsStyle="link"
-              bsSize="small"
+              variant="link"
+              size="sm"
               onClick={() => this.setState({ open: !this.state.open })}
             >
               {this.state.open ? <span>&#9650;</span> : <span>&#9660;</span>}
@@ -313,11 +343,11 @@ export default class Product extends React.Component {
           </Col>
         </Row>
         {this.state.open && (
-          <Panel>
-            <Row>
+          <Alert variant="primary" className="mt-2">
+            <Row className="py-2">
               <Col xs={1} />
 
-              <Col xs={2}>
+              <Col xs={4}>
                 <FieldGroup
                   controlType="number"
                   controlLabel="Max Units Available"
@@ -352,7 +382,7 @@ export default class Product extends React.Component {
                 choiceValues={constants.ProductCategory}
                 help
               /> */}
-              <Col xs={2}>
+              <Col>
                 <FieldGroup
                   controlType="select"
                   controlLabel="Type"
@@ -364,7 +394,7 @@ export default class Product extends React.Component {
                   help
                 />
               </Col>
-              <Col xs={3}>
+              <Col>
                 <FieldGroup
                   controlType="text"
                   controlLabel="Category"
@@ -375,19 +405,8 @@ export default class Product extends React.Component {
                   help
                 />
               </Col>
-              <Col xs={3}>
-                <FieldGroup
-                  controlType="text"
-                  controlLabel="SKU"
-                  controlName="sku"
-                  displayControlName="true"
-                  updateValue={this.handleProductUpsert}
-                  defaultValue={product.sku}
-                  help
-                />
-              </Col>
             </Row>
-            <Row>
+            <Row className="py-2">
               <Col xs={1} />
               <Col xs={7}>
                 <FieldGroup
@@ -412,9 +431,9 @@ export default class Product extends React.Component {
                 />
               </Col>
             </Row>
-            <Row>
+            <Row className="py-2">
               <Col xs={1} />
-              <Col xs={6}>
+              <Col xs={4}>
                 <Checkbox
                   name="frequentlyOrdered"
                   checked={this.state.product.frequentlyOrdered}
@@ -423,7 +442,18 @@ export default class Product extends React.Component {
                   Frequently Ordered
                 </Checkbox>
               </Col>
-              <Col xs={5}>
+              <Col>
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="SKU"
+                  controlName="sku"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={product.sku}
+                  help
+                />
+              </Col>
+              <Col>
                 <FieldGroup
                   controlType="text"
                   controlLabel="Units For Selection"
@@ -435,21 +465,21 @@ export default class Product extends React.Component {
                 />
               </Col>
             </Row>
-            <Row>
+            <Row className="py-2">
               <Col xs={1} />
-              <Col xs={5}>
-                <ControlLabel>
+              {/* <Col xs={5}>
+                <label>
                   Associated with Ingredient:
                   <strong>
                     {product.associatedIngredient ? ` ${product.associatedIngredient.Long_Desc}` : ''}
                   </strong>
-                </ControlLabel>
+                </label>
                 <AttachIngredient
                   onChange={this.handleChangeInAssocIngredient}
                   ingredient={product.associatedIngredient}
                 />
-              </Col>
-              <Col xs={3}>
+            </Col> */}
+              <Col xs={5}>
                 <FieldGroup
                   controlType="select"
                   controlLabel="Suppliers"
@@ -465,23 +495,7 @@ export default class Product extends React.Component {
                   help
                 />
               </Col>
-              <Col xs={2}>
-                <ControlLabel>&nbsp;</ControlLabel>
-                <br />
-                <Button
-                  bsSize="small"
-                  name={product._id}
-                  onClick={this.handleRemoveProduct}
-                  style={{ marginLeft: '5px' }}
-                >
-                  {' '}
-                  Delete Product
-                </Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={1} />
-              <Col xs={5}>
+              <Col>
                 <FieldGroup
                   style={{ height: '170px' }}
                   controlType="select"
@@ -495,6 +509,18 @@ export default class Product extends React.Component {
                   help
                 />
               </Col>
+            </Row>
+            <Row className="py-2">
+              <Col xs={1} />
+              <Col>
+                <Button
+                  size="sm"
+                  name={product._id}
+                  onClick={this.handleRemoveProduct}
+                >
+                  Delete Product
+                </Button>
+              </Col>
 
               {this.launchProductDetails(
                 {
@@ -504,14 +530,10 @@ export default class Product extends React.Component {
                 },
               )}
 
-              <Col xs={3}>
+              <Col>
                 <Button
-                  className="btn-info btn-sm"
-                  style={{
-                    top: '12em',
-                    marginLeft: '1rem',
-                    position: 'relative',
-                  }}
+                  size="sm"
+                  variant="info"
                   onClick={
                   () => {
                     this.showDetailsPage(true);
@@ -522,7 +544,7 @@ export default class Product extends React.Component {
                 </Button>
               </Col>
             </Row>
-          </Panel>
+          </Alert>
         )}
       </ListGroupItem>
     );

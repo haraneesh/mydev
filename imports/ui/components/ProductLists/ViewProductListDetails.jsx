@@ -1,9 +1,8 @@
 import React from 'react';
-import {
-  Row, Col, Label, Pager, Panel,
-  ButtonToolbar, Button,
-} from 'react-bootstrap';
-
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 import GeneratePriceList from '../../../reports/client/GeneratePriceList';
@@ -27,15 +26,13 @@ function FieldGroup({ label, value }) {
 const ViewProductListProducts = ({ products }) => (
 
   <div className="view-product-list-details">
-    <h4> Products </h4>
+    <h3 className="py-2"> Products </h3>
     {
       products.map((product) => (
         <Col xs={12} key={product._id}>
           <p className="lead">
             <strong>
-              {' '}
               { product.name }
-              {' '}
             </strong>
           </p>
           <FieldGroup label="SKU" value={product.sku} />
@@ -45,6 +42,7 @@ const ViewProductListProducts = ({ products }) => (
           <FieldGroup label="Type" value={product.type} />
           <FieldGroup label="Max Orderable Units" value={product.maxUnitsAvailableToOrder} />
           <FieldGroup label="Total Units Ordered" value={product.totQuantityOrdered} />
+          <hr />
         </Col>
       ))
     }
@@ -93,11 +91,13 @@ class ViewProductListDetails extends React.Component {
   displayDeleteProductListButton(productListStatus, productListId) {
     if (constants.ProductListStatus.Expired.name !== productListStatus) {
       return (
-        <ButtonToolbar className="pull-right">
-          <Button bsSize="small" onClick={() => this.handlePrintToPDF()}>Retail PDF</Button>
-          <Button bsSize="small" onClick={() => this.handleEdit(productListId)} className="btn-primary">Edit</Button>
-          <Button bsSize="small" onClick={() => this.handleRemove(productListId)} className="btn">Delete</Button>
-        </ButtonToolbar>
+        <Row>
+          <Col>
+            <Button size="sm" onClick={() => this.handlePrintToPDF()} className="me-2">Retail PDF</Button>
+            <Button size="sm" onClick={() => this.handleEdit(productListId)} className="btn-secondary me-2">Edit</Button>
+            <Button size="sm" onClick={() => this.handleRemove(productListId)}>Delete</Button>
+          </Col>
+        </Row>
       );
     }
     return (<></>);
@@ -112,32 +112,30 @@ class ViewProductListDetails extends React.Component {
     const { productList } = this.props;
     const productListStatus = getProductListStatus(productList.activeStartDateTime, productList.activeEndDateTime);
     return (
-      <div className="ViewProductListDetails ">
-        <div className="page-header clearfix">
-          <h3 className="pull-left">
+      <div className="ViewProductListDetails px-2">
+        <div className="py-2">
+          <h3 className="text-left">
             { getDisplayDateTitle(productList.activeStartDateTime, productList.activeEndDateTime) }
           </h3>
           { this.displayDeleteProductListButton(productListStatus, productList._id) }
         </div>
-        <Panel>
+
+        <Row>
+          <Col className="bg-white p-4">
+            <Badge bg={constants.ProductListStatus[productListStatus].label}>
+              { constants.ProductListStatus[productListStatus].display_value }
+            </Badge>
+          </Col>
+        </Row>
+        <div className="productListDetails px-2 bg-white">
           <Row>
-            <Col xs={12}>
-              <Label bsStyle={constants.ProductListStatus[productListStatus].label}>
-                { constants.ProductListStatus[productListStatus].display_value }
-              </Label>
+            <Col>
+              <ViewProductListProducts products={productList.products} />
             </Col>
           </Row>
-          <div className="productListDetails panel-body">
-            <Row>
-              <Col xs={12}>
-                <ViewProductListProducts products={productList.products} />
-              </Col>
-            </Row>
-          </div>
-        </Panel>
-        <Pager>
-          <Pager.Item previous onClick={this.goBack}>&larr; Back</Pager.Item>
-        </Pager>
+        </div>
+
+        <Button size="sm" onClick={this.goBack}>&larr; Back</Button>
       </div>
     );
   }

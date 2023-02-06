@@ -5,7 +5,9 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { Alert, Row, Button } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import MessagesCollection from '../../../../api/Messages/Messages';
 import Loading from '../../../components/Loading/Loading';
 import MessageEditor from '../../../components/Messages/MessageEditor';
@@ -67,26 +69,28 @@ const Messages = ({
   };
 
   return !loading ? (
-    <div className="Messages">
-      <div className="page-header clearfix">
+    <div className="Messages pb-4">
+      <Row className="py-4 text-center">
         <h3>Messages</h3>
-      </div>
+      </Row>
 
       <MessageEditor history={history} showOpen doNotShowClose />
 
-      <ul className="nav nav-pills">
-        <li role="presentation" className={(filterSelected === 'none') ? 'active' : ''}>
+      <ul className="nav nav-tabs px-2">
+        <li role="presentation" className="nav-item">
           <button
             type="button"
             onClick={() => { onFilterSelect('none'); }}
+            className={(filterSelected === 'none') ? 'nav-link active' : 'nav-link'}
           >
             All
           </button>
         </li>
-        <li className={(filterSelected === 'my') ? 'active' : ''}>
+        <li className="nav-item">
           <button
             type="button"
             onClick={() => { onFilterSelect('my'); }}
+            className={(filterSelected === 'my') ? 'nav-link active' : 'nav-link'}
           >
             My
           </button>
@@ -124,14 +128,14 @@ const Messages = ({
               }
             })}
 
-            <div className="text-center col-12 panel panel-default panel-heading">
-              <Button className="btn btn-default" onClick={bringNextBatch}>
+            <div className="text-center col-12 my-2">
+              <Button className="px-5" onClick={bringNextBatch}>
                 Load More
               </Button>
             </div>
           </>
         )
-        : <Alert bsStyle="warning">No messages yet!</Alert>}
+        : <Alert variant="warning">No messages yet!</Alert>}
     </div>
   )
     : (<Loading />);

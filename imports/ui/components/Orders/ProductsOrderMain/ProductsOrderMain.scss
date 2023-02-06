@@ -1,22 +1,11 @@
-@import '../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../stylesheets/bootstrap/variables';
 
 .productOrderList{
 
-.panel{
-    margin-top: 0.5rem;
-}
-
-.panel-heading{
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    border-bottom: $table-border-color 1px solid !important;
-}
-.order-details-products .panel-default {
+.order-details-products  {
     border: 0px none;
     border-bottom: 0px solid;
-    border-color: $gray-lighter;
+    border-color: $gray-300;
 }
 
 .productCategoryHeading::before {
@@ -30,7 +19,7 @@
 }
 
 .form-control{
-    font-size: $font-size-large;
+    font-size: $font-size-lg;
     height: 42px;
 }
 
@@ -132,25 +121,6 @@
     padding-top:1.5em;
 }
 
-    /*.panel-heading{
-        background-image: url('/app/order-tabs.png');
-        background-size: 4.5em;
-        background-repeat: no-repeat;
-        padding-top: 2.5em;
-    }
-
-    .panel-heading .panel-title{
-        position: relative;
-        top: -0.8em;
-        left: 3.9em;
-        max-width:170px;
-    }*/
-
-    /* phone */
-    .panel-body{
-        padding-left: 5px;
-        padding-right: 5px;
-    }
     .prodCatTitle{
         padding:0px 0px;
         padding-left:0.5em;
@@ -160,9 +130,9 @@
     }
 
     .productCatHead div{
-        background-size: 3.6em;
+        background-size: 3.28em;
         background-repeat: no-repeat;
-        height: 45px;
+        height: 47px;
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -218,7 +188,7 @@
     }
 
     .productCat_specials_bk_ph{
-        background-position: -2px -375px;
+        background-position: -2px -338px;
     }
 
     .productCat_vegetables_bk_ph{
@@ -226,60 +196,60 @@
     }
 
     .productCat_dhals_bk_ph{
-        background-position: 2px -735px;
+        background-position: 2px -666px;
     }
 
     .productCat_prepared_bk_ph{
-        background-position: 2px -139px;
+        background-position: 2px -124px;
     }
     
     .productCat_fruits_bk_ph {
-        background-position: 2px -656px;
+        background-position: 2px -596px;
     }
     
     .productCat_grains_bk_ph {
-        background-position:2px -875px;
+        background-position:2px -793px;
     }
     
     .productCat_hyg_bk_ph {
-        background-position:2px -220px;
+        background-position:2px -194px;
     }
     
     .productCat_spices_bk_ph {
-        background-position:2px -461px;
+        background-position:2px -423px;
     }
     
     .productCat_oils_bk_ph {
-        background-position:2px -560px;
+        background-position:2px -506px;
     }
 
     .productCat_swt_bk_ph {
-        background-position:2px -805px;
+        background-position:2px -729px;
     }
 
     .productCat_snack_bk_ph {
-        background-position:2px -1002px;
+        background-position:2px -914px;
     }
 
     .productCat_batter_bk_ph {
-        background-position:2px -942px;
+        background-position:2px -855px;
     }
 
     .productCat_flours_bk_ph {
-        background-position:2px -70px;
+        background-position:2px -62px;
     }
 
 }
 
 .EditOrderDetails  {
-    @media (max-width: $screen-sm-min) {
+    @media (max-width: breakpoint-min('sm')) {
         .orderFooter{
             position: fixed;
-            background:$navbar-default-bg;
+            background:$navbar-light-brand-color;
             width: 100%;
             left: 0px;
             bottom: 0px;
-            z-index: $zindex-navbar;
+            //z-index: $zindex-navbar;
         }
     }
 }

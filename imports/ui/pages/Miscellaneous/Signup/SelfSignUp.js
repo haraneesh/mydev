@@ -1,15 +1,15 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import {
-  Panel, Row, Col, FormGroup, ControlLabel, Button,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
 import { formValChange, formValid } from '../../../../modules/validate';
-import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 
 const defaultState = {
   signUpRequestSent: false,
@@ -129,9 +129,9 @@ class SelfSignUp extends React.Component {
       <div className="Signup offset-sm-1">
         <div>
           <Col xs={12} sm={10}>
-            <h2 className="page-header">Sign Up</h2>
-            <div className="panel text-center">
-              <div className="panel-body">
+            <h2 className="py-4">Sign Up</h2>
+            <div className="card text-center">
+              <div className="card-body">
                 <h2 className="text-primary"> Welcome to Suvai </h2>
                 <br />
                 <p>
@@ -163,11 +163,11 @@ class SelfSignUp extends React.Component {
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
               <Row>
                 <Col xs={6}>
-                  <FormGroup
+                  <Row
                     validationState={isError.firstName.length > 0 ? 'error' : ''}
                     style={{ paddingRight: '1px' }}
                   >
-                    <ControlLabel>First Name</ControlLabel>
+                    <Row>First Name</Row>
                     <input
                       type="text"
                       name="firstName"
@@ -175,14 +175,14 @@ class SelfSignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
-                  </FormGroup>
+                  </Row>
                 </Col>
                 <Col xs={6}>
-                  <FormGroup
+                  <Row
                     validationState={isError.lastName.length > 0 ? 'error' : ''}
                     style={{ paddingLeft: '1px' }}
                   >
-                    <ControlLabel>Last Name</ControlLabel>
+                    <Row>Last Name</Row>
                     <input
                       type="text"
                       name="lastName"
@@ -190,11 +190,11 @@ class SelfSignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
-                  </FormGroup>
+                  </Row>
                 </Col>
               </Row>
-              <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
-                <ControlLabel>Email Address</ControlLabel>
+              <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+                <Row>Email Address</Row>
                 <input
                   type="email"
                   name="emailAddress"
@@ -202,10 +202,10 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                   className="form-control"
                 />
-              </FormGroup>
+              </Row>
 
-              <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-                <ControlLabel>Whatsapp Mobile Number</ControlLabel>
+              <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+                <Row>Whatsapp Mobile Number</Row>
                 <input
                   type="text"
                   ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
@@ -217,31 +217,31 @@ class SelfSignUp extends React.Component {
 
                 <Button style={{ marginTop: '0.5em' }} onClick={() => { this.props.history.push('/signup'); }}> Change Phone Number </Button>
 
-              </FormGroup>
-              <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
-                <ControlLabel>Delivery Address</ControlLabel>
+              </Row>
+              <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+                <Row>Delivery Address</Row>
                 <textarea
                   ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
                   name="deliveryAddress"
                   placeholder="Complete address to deliver at, including Landmark, Pincode."
-                  rows="6"
+                  rows={6}
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <FormGroup validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
-                <ControlLabel>What does eating healthy mean to you?</ControlLabel>
+              </Row>
+              <Row validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
+                <Row>What does eating healthy mean to you?</Row>
                 <textarea
                   ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
                   name="eatingHealthyMeaning"
                   placeholder="You are never wrong, tell us what is in your mind."
-                  rows="6"
+                  rows={6}
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
-                <ControlLabel>Password</ControlLabel>
+              </Row>
+              <Row validationState={isError.password.length > 0 ? 'error' : ''}>
+                <Row>Password</Row>
                 <input
                   id="password"
                   type="password"
@@ -252,11 +252,11 @@ class SelfSignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="control-label">{isError.password}</span>
+                <span className="small text-info">{isError.password}</span>
                 )}
-              </FormGroup>
-              <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
-                <ControlLabel>Confirm Password</ControlLabel>
+              </Row>
+              <Row validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+                <Row>Confirm Password</Row>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -265,30 +265,28 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="control-label">{isError.confirmPassword}</span>
+                <span className="small text-info">{isError.confirmPassword}</span>
                 )}
-              </FormGroup>
+              </Row>
               <p>
                 <small>
                   By Signing up you are sharing your commitment towards healthy and sustainable lifestyle.
                 </small>
               </p>
-              <Button type="submit" bsStyle="primary">Sign Up</Button>
-              <AccountPageFooter>
-                <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>
-                  <span>
-                    {'Already have an account? '}
-                    <a href="/login" className="login-signup">Log In</a>
-                  </span>
-                </div>
+              <Button type="submit" variant="secondary">Sign Up</Button>
 
-              </AccountPageFooter>
+              <div className="alert alert-info text-center p-3 mt-3">
+                <span>
+                  {'Already have an account? '}
+                  <a href="/login" className="login-signup text-secondary">Log In</a>
+                </span>
+              </div>
             </form>
           </Col>
         </div>
       </div>
     ) : (
-      <Panel style={{ marginTop: '1.5em' }}>
+      <Card style={{ marginTop: '1.5em' }}>
         <Row className="text-center">
           <Col xs={12}>
             <h2>Thanks for your interest in Suvai!</h2>
@@ -307,7 +305,7 @@ class SelfSignUp extends React.Component {
             </h4>
           </Col>
         </Row>
-      </Panel>
+      </Card>
     )
     );
   }

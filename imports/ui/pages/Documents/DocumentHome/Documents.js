@@ -27,7 +27,7 @@ const Documents = ({
   loading, documents, match, history,
 }) => (!loading ? (
   <div className="Documents">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h4 className="pull-left">Documents</h4>
       <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Document</Link>
     </div>

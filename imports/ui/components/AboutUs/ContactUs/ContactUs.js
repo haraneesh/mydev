@@ -1,14 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Panel, Row, Col } from 'react-bootstrap';
-
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 import './ContactUs.scss';
 
 const WhatsAppSupport = Meteor.settings.public.Support_Numbers.whatsapp;
 const LandLineSupport = Meteor.settings.public.Support_Numbers.landline;
 
 const ContactUs = () => (
-  <Panel className="ContactUs text-center">
+  <Card className="ContactUs text-center my-3 py-3">
     <p><h3>Contact Us</h3></p>
     <Row>
       <Col xs={12} sm={6}>
@@ -48,7 +49,7 @@ const ContactUs = () => (
         </address>
       </Col>
     </Row>
-  </Panel>
+  </Card>
 );
 
 ContactUs.propTypes = {};

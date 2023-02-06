@@ -15,7 +15,7 @@ const ShowBasketsToSelect = ({
 
   return (
     <Row>
-      <section className="page-header">
+      <section className="py-4">
         <Col sm={6} smOffset={3} xs={10} xsOffset={1}>
           <Button className="btn-block btn-primary " onClick={handleStartEmpty}>Start With Empty Cart </Button>
         </Col>

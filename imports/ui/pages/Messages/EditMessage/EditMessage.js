@@ -41,8 +41,8 @@ const EditMessage = ({
   if (message) {
     const isEditMode = (message._id === messageEdit);
     return (
-      <div className="EditMessage">
-        <h2 className="page-header">
+      <div className="EditMessage p-2">
+        <h2 className="py-4 text-center">
           Message Details
         </h2>
         {(!loadingMessage && isEditMode) && (<MessageEditor existingMessage={message} history={history} isAdmin onsuccessFullUpdate={handleEditMessage} />) }

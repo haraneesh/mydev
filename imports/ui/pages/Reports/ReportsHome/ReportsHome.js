@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
-import {
-  Panel, Row, Col, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import { daysInWeek } from '../../../../modules/helpers';
 import createDaysSummaryReport from '../../../../reports/client/DaysSummary';
@@ -106,15 +106,14 @@ const ReportsHome = () => {
   return (
     <div className="ReportsHome">
       {(loading) ? (<Loading />) : (<div />)}
-      <Row>
+      <Row className="p-2">
         <Col xs={12}>
-          <div className="page-header clearfix">
-            <h2 className="pull-left">Previous Orders</h2>
+          <div className="py-4">
+            <h2>Previous Orders</h2>
           </div>
-          <Panel>
-
-            <div className="col-xs-6 col-sm-4">
-              <select className="form-control" id="dayInWeek" name="dayInWeek">
+          <Row>
+            <div className="col-12 col-sm-4 bg-body p-2">
+              <select className="form-select" id="dayInWeek" name="dayInWeek">
                 <option value="0">{weekday[0]}</option>
                 <option value="1">{weekday[1]}</option>
                 <option value="2">{weekday[2]}</option>
@@ -123,62 +122,72 @@ const ReportsHome = () => {
                 <option value="5">{weekday[5]}</option>
                 <option value="6">{weekday[6]}</option>
               </select>
+              <Row>
+                <Button className="mt-2" variant="primary" onClick={showPreviousSalesByProducts}>
+                  Previous Order Quantities
+                </Button>
+              </Row>
             </div>
-
-            <Button bsStyle="link" onClick={showPreviousSalesByProducts}>
-              Previous Order Quantities
-            </Button>
-          </Panel>
+          </Row>
         </Col>
 
-        <Col xs={12}>
-          <div className="page-header clearfix">
-            <h2 className="pull-left">Show Preferences and Order Comments</h2>
-          </div>
-          <Panel>
-            <p>
-              <Button bsStyle="default" onClick={() => { reportCustomerOrderPreferences(false); }}>
+        <Row>
+          <Col xs={12} sm={4}>
+            <div className="py-4 clearfix">
+              <h2>Show Preferences and Order Comments</h2>
+            </div>
+            <Row className="bg-body m-2 p-2">
+
+              <Button variant="primary" onClick={() => { reportCustomerOrderPreferences(false); }}>
                 Show Order Summary
               </Button>
-            </p>
-            <Button bsStyle="success" onClick={() => { reportCustomerOrderPreferences(true); }}>
-              Download Order Summary &darr;
-            </Button>
 
-          </Panel>
-        </Col>
+              <Button variant="success" onClick={() => { reportCustomerOrderPreferences(true); }}>
+                Download Order Summary &darr;
+              </Button>
 
-        <Col xs={12}>
-          <div className="page-header clearfix">
-            <h2 className="pull-left">User Report</h2>
-          </div>
-          <Panel>
-            <Button bsStyle="default" onClick={() => { reportGetAllUsers(); }}>
-              User Report
-            </Button>
-          </Panel>
-        </Col>
+            </Row>
+          </Col>
+        </Row>
 
-        <Col xs={12}>
-          <div className="page-header clearfix">
-            <h2 className="pull-left">General Reports</h2>
-          </div>
-          <Panel>
-            <Button bsStyle="link" onClick={genDaysSummaryReport}>Days Summary</Button>
-          </Panel>
-          <Panel>
-            <Button bsStyle="link" href="/reconcileInventoryList">Inventory Reconciliation</Button>
-          </Panel>
-        </Col>
+        <Row>
 
-        <Col xs={12}>
-          <div className="page-header clearfix">
-            <h2 className="pull-left">Sales</h2>
-          </div>
-          <Panel>
-            <Button bsStyle="link" onClick={listInvoicesPerMonth}>Sales</Button>
-          </Panel>
-        </Col>
+          <Col xs={12} sm={4}>
+            <div className="py-4">
+              <h2>User Report</h2>
+            </div>
+            <Row className="bg-body m-2 p-2">
+              <Button variant="primary" onClick={() => { reportGetAllUsers(); }}>
+                User Report
+              </Button>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={12} sm={4}>
+            <div className="py-4">
+              <h2>General Reports</h2>
+            </div>
+            <Row className="bg-body m-2 p-2">
+              <Button variant="primary" onClick={genDaysSummaryReport}>Days Summary</Button>
+            </Row>
+            <Row className="bg-body m-2 p-2">
+              <Button variant="primary" href="/reconcileInventoryList">Inventory Reconciliation</Button>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={12} sm={4}>
+            <div className="py-4">
+              <h2 className="pull-left">Sales</h2>
+              <Row className="bg-body m-2 p-2">
+                <Button variant="primary" onClick={listInvoicesPerMonth}>Sales</Button>
+              </Row>
+            </div>
+          </Col>
+        </Row>
 
       </Row>
     </div>

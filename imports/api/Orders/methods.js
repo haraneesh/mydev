@@ -242,7 +242,7 @@ export const updateExpectedDeliveryDate = new ValidatedMethod({
     }, { _id: 1 }).fetch();
 
     if (orderIds.length !== orders.length) {
-      handleMethodException(`Please select only orders in ${constants.OrderStatus.Pending.name} status.`, 403);
+      handleMethodException(`Please select only orders in '${constants.OrderStatus.Pending.display_value}' status.`, 403);
     }
 
     const newExpectedDeliveryDate = orderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy);
@@ -398,13 +398,19 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
 });
 
 Meteor.methods({
-  'admin.fetchOrderCount': function adminFetchOrders() { // eslint-disable-line
-    // check(options, Match.Maybe(Object));
+  'admin.fetchOrderCount': function adminFetchOrders(options) { // eslint-disable-line
+
+    check(options, { isWholeSale: Boolean });
+
+    let customerRoles = [constants.Roles.customer.name, constants.Roles.admin.name];
+    if (options.isWholeSale) {
+      customerRoles = [constants.Roles.shopOwner.name];
+    }
 
     try {
       if (Roles.userIsInRole(this.userId, 'admin')) {
         return {
-          total: Orders.find({}).count(),
+          total: Orders.find({ 'customer_details.role': { $in: customerRoles } }).count(),
         };
       }
 

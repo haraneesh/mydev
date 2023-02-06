@@ -33,11 +33,19 @@ const addRowHeaders = () => (
 );
 
 const withWarningLabel = (showWarning, value) => (
-  (showWarning) ? <Label bsStyle="danger"> {value} </Label> : value
+  (showWarning) ? (
+    <Label bsStyle="danger">
+      {' '}
+      {value}
+      {' '}
+    </Label>
+  ) : value
 );
 
-const addRowDetails = rowsDetails => rowsDetails.map(
-  ({ name, unitOfSale, orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow }) => {
+const addRowDetails = (rowsDetails) => rowsDetails.map(
+  ({
+    name, unitOfSale, orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow,
+  }) => {
     const balanceAfterToday = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday);
     const balanceAfterTomorrow = calcBalanceAfterOrder(orderQuantity, stockOnHand, poOrderedQtyForToday, poOrderedQtyForTomorrow);
     const warnToday = (balanceAfterToday < 0) ? 'text-danger' : '';
@@ -55,16 +63,17 @@ const addRowDetails = rowsDetails => rowsDetails.map(
         <td className="text-right">{withWarningLabel(warnTomorrow, balanceAfterTomorrow)}</td>
       </tr>
     );
-  });
+  },
+);
 
 const writeDaysSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToStaticMarkup(
   <div className="container">
     <div className="row">
       <div className="invoice-title">
-        <div className="col-xs-12">
+        <div className="col-12">
           <h3>Suvai - Days Summary: Awaiting Fullfilment</h3>
         </div>
-        <div className="col-xs-12">
+        <div className="col-12">
           <h4>
             {`${moment(today).tz(dateSettingsWithTime.timeZone).format(dateSettingsWithTime.format)}`}
           </h4>
@@ -73,24 +82,27 @@ const writeDaysSummaryDetails = (rowsDetails, today) => ReactDOMServer.renderToS
     </div>
     <div className="row">
       <div className="col-md-12">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title"><strong>Days Summary</strong></h3>
-          </div>
-          <div className="panel-body">
-            <div className="table-responsive">
-              <table className="table table-condensed">
-                <thead>
-                  {
+        <div className="card">
+
+          <div className="card-body">
+            <h3 className="card-title"><strong>Days Summary</strong></h3>
+
+            <div className="card-text">
+
+              <div className="table-responsive">
+                <table className="table table-striped table-bordered table-condensed">
+                  <thead>
+                    {
                     addRowHeaders()
                   }
-                </thead>
-                <tbody>
-                  {
+                  </thead>
+                  <tbody>
+                    {
                     addRowDetails(rowsDetails)
                   }
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

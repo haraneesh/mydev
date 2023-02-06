@@ -3,9 +3,10 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Panel, Row, Col, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import OurPromise from '../../../components/AboutUs/OurPromise/OurPromise';
 import OurFarm from '../../../components/AboutUs/OurFarm/OurFarm';
 import ContactUs from '../../../components/AboutUs/ContactUs/ContactUs';
@@ -32,10 +33,10 @@ const About = () => {
 
   return (
 
-    <div className="about-page">
+    <Row className="about-page pb-3">
       <section>
-        <Panel>
-          <div className="about-section text-left row d-flex align-items-center">
+        <Card className="my-3 py-4">
+          <div className="about-section text-left row d-flex text-center">
             <Col sm={6} xs={12} className="d-flex justify-content-center">
               <img src="about/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
             </Col>
@@ -45,30 +46,32 @@ const About = () => {
               <h2> Organic and Natural </h2>
               <h4> food, delivered home from Suvai Farms. </h4>
               <HighLightText highLightText="Healthy Food, No Chemicals" />
-              <Button className="membersBtn" bsStyle="primary" href="/login"> Shop Now &rarr; </Button>
-              <Button className="membersBtn" bsStyle="info" href="/signup"> Sign Up </Button>
+              <Col xs={12} className="mt-4">
+                <Button className="membersBtn btn-block" variant="secondary" href="/login"> Shop Now &rarr; </Button>
+                <Button className="membersBtn btn-block" variant="info" href="/signup"> Sign Up </Button>
+              </Col>
             </Col>
           </div>
-        </Panel>
+        </Card>
       </section>
 
-      <Panel>
+      <Card className="my-3">
         <OurFarm />
-      </Panel>
+      </Card>
 
-      <Panel>
+      <Card className="my-3">
         <OurPromise />
-      </Panel>
+      </Card>
 
-      <Panel>
+      <Card className="my-3">
         <section className="text-center">
           <HomePageSlider />
         </section>
-      </Panel>
+      </Card>
 
-      <Panel>
+      <Card className="my-3">
         <div className="text-center bodyCursText">
-          <h2 className="page-header no-margin-no-padding"> Why Us</h2>
+          <h2 className="py-4 p-0 m-0"> Why Us</h2>
           <Row>
             <Col sm={3}>
               <h1 className="dt-align">6+ Years</h1>
@@ -92,18 +95,18 @@ const About = () => {
             </Col>
           </Row>
         </div>
-      </Panel>
+      </Card>
 
-      <Panel>
+      <Card className="my-3 py-3">
         <section className="text-left text-center-xs row" style={{ height: '20%' }}>
-          <Col sm={5} className="d-flex align-items-center justify-content-center">
-            <h2>
+          <Col sm={5} className="d-flex text-center justify-content-center">
+            <h2 className="pb-3">
               Our journey, from the
               <br />
               person behind Suvai
             </h2>
           </Col>
-          <Col sm={7} className="panel-body">
+          <Col sm={7} className="Row-body">
             <div
               className="video"
             >
@@ -124,11 +127,11 @@ const About = () => {
             </div>
           </Col>
         </section>
-      </Panel>
+      </Card>
       {/*
-      <Panel>
+      <Row>
         <Col xs={12} className="text-center">
-          <h2 className="page-header"> Belong to a Better Market</h2>
+          <h2 className="py-4"> Belong to a Better Market</h2>
           <p style={{ padding: '0 0 2.5rem 0' }}>
             Suvai is an online community that leverages the power of direct buying to deliver the consumers best healthy food and natural products
             while ensuring that the farmer gets paid above market prices thus encouraging them to continue doing good.
@@ -143,12 +146,12 @@ const About = () => {
             3 states Andhra, Tamilnadu and Karnataka.
           </p>
         </Col>
-      </Panel> */}
+      </Row> */}
 
       {/*
-	 <Panel>
+	 <Row>
 		<section className="text-center">
-			<h1 className="page-header"> Our Quality Manifesto </h1>
+			<h1 className="py-4"> Our Quality Manifesto </h1>
 			<Col xs={12}>
 				<div>
 					<Col className="describe_service" xs={12}>
@@ -169,12 +172,12 @@ const About = () => {
 				</div>
 			</Col>
 		</section>
-	</Panel> */}
+	</Row> */}
       {/*
-	<Panel>
+	<Row>
 		<div class="how-section1">
 			<div class="row">
-				<h1 className="page-header"> Suvai Story </h1>
+				<h1 className="py-4"> Suvai Story </h1>
 				<div class="col-md-2">
 					<h1 class="dt-align">2014</h1>
 				</div>
@@ -236,11 +239,11 @@ const About = () => {
 				</div>
 			</div>
 		</div>
-	</Panel>
+	</Row>
 */}
 
       {/*
-	<Panel>
+	<Row>
 	<div className="text-center">
 	<Col xs={12}>
 		<h4><span className="text-danger"> <strong> New! </strong> </span> </h4> <h1> Create your Basket</h1>
@@ -248,11 +251,11 @@ const About = () => {
 			<p>No more hassle of remembering to order and having to decide what is good for your family every week. </p>
 		</Col>
 		</div>
-	</Panel>
+	</Row>
 
-        <Panel>
+        <Row>
           <div>
-            <Col xs={12} sm={12} className="page-header text-center no-padding">
+            <Col xs={12} sm={12} className="py-4 text-center">
               <h1> <span> We Deliver Here </span> </h1>
             </Col>
           </div>
@@ -298,9 +301,9 @@ const About = () => {
               </ul>
             </Col>
         </section>
-        </Panel> */}
+        </Row> */}
 
-      <Panel>
+      <Card className="my-3 py-3">
         <Col xs={12} className="text-center">
           <h4>
             <p>
@@ -310,12 +313,12 @@ const About = () => {
             </p>
           </h4>
         </Col>
-      </Panel>
+      </Card>
 
       <Testimonials />
 
       <ContactUs />
-    </div>
+    </Row>
   );
 };
 

@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Accounts } from 'meteor/accounts-base';
 import {
-  FormGroup, FormControl, ControlLabel, Button,
+  Row, FormControl, ControlLabel, Button,
 } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
@@ -98,20 +98,20 @@ class SupplierEditor extends React.Component {
     const user = (supp.userId) ? supp.user : null;
     return (
       <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-        <FormGroup>
+        <Row>
           <label>Salutation</label>
           <select
             name="salutation"
             ref={(salutation) => (this.salutation = salutation)}
-            className="form-control"
+            className="form-select"
             defaultValue={(user && user.profile && user.profile.salutation) ? user.profile.salutation : ''}
           >
             <option value="Mrs.">Mrs</option>
             <option value="Mr.">Mr</option>
             <option value="Miss"> Miss</option>
           </select>
-        </FormGroup>
-        <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.firstName.length > 0 ? 'error' : ''}>
           <label>First Name</label>
           <FormControl
             type="text"
@@ -121,10 +121,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.name.first : ''}
           />
           {isError.firstName.length > 0 && (
-          <span className="control-label">{isError.firstName}</span>
+          <span className="small text-info">{isError.firstName}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.lastName.length > 0 ? 'error' : ''}>
           <label>Last Name</label>
           <FormControl
             type="text"
@@ -134,10 +134,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.name.last : ''}
           />
           {isError.lastName.length > 0 && (
-          <span className="control-label">{isError.lastName}</span>
+          <span className="small text-info">{isError.lastName}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
           <label>Email Address</label>
           <FormControl
             type="text"
@@ -147,10 +147,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.email : ''}
           />
           {isError.emailAddress.length > 0 && (
-          <span className="control-label">{isError.emailAddress}</span>
+          <span className="small text-info">{isError.emailAddress}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
           <label>Mobile Number</label>
           <FormControl
             type="text"
@@ -160,24 +160,24 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.whMobilePhone : ''}
           />
           {isError.whMobilePhone.length > 0 && (
-          <span className="control-label">{isError.whMobilePhone}</span>
+          <span className="small text-info">{isError.whMobilePhone}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
           <label>Address</label>
           <FormControl
             componentClass="textarea"
             name="deliveryAddress"
             onBlur={this.onValueChange}
             placeholder="Complete address to deliver at, including Landmark, Pincode."
-            rows="6"
+            rows={6}
             defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ''}
           />
           {isError.deliveryAddress.length > 0 && (
-          <span className="control-label">{isError.deliveryAddress}</span>
+          <span className="small text-info">{isError.deliveryAddress}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.password.length > 0 ? 'error' : ''}>
           <label>Password</label>
           <FormControl
             type="password"
@@ -186,11 +186,11 @@ class SupplierEditor extends React.Component {
             onBlur={this.onValueChange}
           />
           {isError.password.length > 0 && (
-          <span className="control-label">{isError.password}</span>
+          <span className="small text-info">{isError.password}</span>
           )}
-        </FormGroup>
+        </Row>
         <hr />
-        <FormGroup validationState={isError.name.length > 0 ? 'error' : ''}>
+        <Row validationState={isError.name.length > 0 ? 'error' : ''}>
           <label>Supplier Name</label>
           <input
             type="text"
@@ -202,10 +202,10 @@ class SupplierEditor extends React.Component {
             placeholder="Name of the supplier."
           />
           {isError.name.length > 0 && (
-          <span className="control-label">{isError.name}</span>
+          <span className="small text-info">{isError.name}</span>
           )}
-        </FormGroup>
-        <FormGroup>
+        </Row>
+        <Row>
           <label>Margin ( % )</label>
           <input
             type="text"
@@ -215,8 +215,8 @@ class SupplierEditor extends React.Component {
             defaultValue={supp && supp.marginPercentage}
             placeholder="margin percentage"
           />
-        </FormGroup>
-        <FormGroup>
+        </Row>
+        <Row>
           <label>Zoho Auth Token</label>
           <input
             type="text"
@@ -226,8 +226,8 @@ class SupplierEditor extends React.Component {
             defaultValue={supp && supp.zohoAuthtoken}
             placeholder="Zoho Auth Token"
           />
-        </FormGroup>
-        <FormGroup>
+        </Row>
+        <Row>
           <label>Zoho Organization Id</label>
           <input
             type="text"
@@ -237,8 +237,8 @@ class SupplierEditor extends React.Component {
             defaultValue={supp && supp.zohoOrganizationId}
             placeholder="Write a  note about the supplier."
           />
-        </FormGroup>
-        <FormGroup>
+        </Row>
+        <Row>
           <label>Description</label>
           <textarea
             className="form-control"
@@ -247,8 +247,8 @@ class SupplierEditor extends React.Component {
             defaultValue={supp && supp.description}
             placeholder="Write a  note about the supplier."
           />
-        </FormGroup>
-        <Button type="submit" bsStyle="primary">
+        </Row>
+        <Button type="submit" variant="secondary">
           {supp && supp._id ? 'Save Changes' : 'Add Supplier'}
         </Button>
       </form>

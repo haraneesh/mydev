@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  FormGroup, Button, ButtonToolbar, Row, Col,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import RichTextEditor, { EditorValue } from 'react-rte';
 import { EditorState } from 'draft-js';
 import { toast } from 'react-toastify';
@@ -94,60 +94,59 @@ function EditProductDetails({ productId, closeFunction }) {
   if (productDetailsState) {
     return (
       <Row className={`productDetailsCard-${productDetailsState.colorTheme}`}>
-        <div className="card">
-          <Col sm={12}>
-            <FormGroup>
-              <FieldGroup
-                controlType="text"
-                controlLabel="Image Url"
-                controlName="imageUrl"
-                defaultValue={productDetailsState && productDetailsState.imageUrl}
-                displayControlName="true"
-                updateValue={onValueChange}
-              />
-            </FormGroup>
-            <div
-              className="view-productDetailss-image"
-              style={{ backgroundImage: `url('${productDetailsState.imageUrl}')` }}
-            />
-          </Col>
 
-          <Col sm={12}>
-
+        <Col xs={12}>
+          <Row>
             <FieldGroup
               controlType="text"
-              controlLabel="Title"
-              controlName="title"
-              defaultValue={productDetailsState && productDetailsState.title}
+              controlLabel="Image Url"
+              controlName="imageUrl"
+              defaultValue={productDetailsState && productDetailsState.imageUrl}
               displayControlName="true"
               updateValue={onValueChange}
             />
+          </Row>
+          <div
+            className="view-productDetailss-image"
+            style={{ backgroundImage: `url('${productDetailsState.imageUrl}')` }}
+          />
+        </Col>
 
-            <FormGroup>
-              <h4>Description</h4>
-              <RichTextEditor
-                value={descriptionValue} // productDetailsState.value
-                onChange={onRichTextEditorChange}
-                toolbarConfig={constants.RichEditorToolbarConfig}
-                placeholder="Type Special Announcement Text"
-                className="richTextEditor"
-              />
-            </FormGroup>
-          </Col>
-        </div>
+        <Col xs={12}>
 
-        <ButtonToolbar>
+          <FieldGroup
+            controlType="text"
+            controlLabel="Title"
+            controlName="title"
+            defaultValue={productDetailsState && productDetailsState.title}
+            displayControlName="true"
+            updateValue={onValueChange}
+          />
+
+          <Row>
+            <h4>Description</h4>
+            <RichTextEditor
+              value={descriptionValue} // productDetailsState.value
+              onChange={onRichTextEditorChange}
+              toolbarConfig={constants.RichEditorToolbarConfig}
+              placeholder="Type Special Announcement Text"
+              className="richTextEditor"
+            />
+          </Row>
+        </Col>
+
+        <Col className="text-end">
           <Button
-            bsSize="small"
-            className="pull-right"
+            size="sm"
             type="submit"
+            className="btn-block col-2 me-1"
             onClick={saveOrUpdateProductDetails}
           >
             Save
           </Button>
 
-          <Button bsSize="small" onClick={deleteProductDetails}>Delete</Button>
-        </ButtonToolbar>
+          <Button size="sm" className="btn-block col-2" onClick={deleteProductDetails}>Delete</Button>
+        </Col>
       </Row>
 
     );

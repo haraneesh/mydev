@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
-import { Panel } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
 import ViewOrderDetails from '../../../components/Orders/ViewOrderDetails';
 import ViewInvoicedOrderDetails from '../../../components/Orders/ViewInvoicedOrderDetails';
 // import ProductsOrderList from '../../../components/Orders/ProductsOrderList';
@@ -122,31 +122,31 @@ const EditOrderDetails = ({
     }
     case ('invoices' in order && order.invoices !== null && order.invoices.length > 0): {
       return (
-        <div>
+        <div className="pb-4">
           <ViewInvoicedOrderDetails order={order} history={history} />
-          <Panel>
+          <Row className="p-4 bg-light">
             <h4>Responses</h4>
             <Comments
               postId={order._id}
               postType={constants.PostTypes.Order.name}
               loggedUserId={loggedInUserId}
             />
-          </Panel>
+          </Row>
         </div>
       );
     }
     default: {
       return (
-        <div>
+        <div className="pb-4">
           <ViewOrderDetails order={order} history={history} />
-          <Panel>
+          <Row className="p-4 bg-light">
             <h4>Responses</h4>
             <Comments
               postId={order._id}
               postType={constants.PostTypes.Order.name}
               loggedUserId={loggedInUserId}
             />
-          </Panel>
+          </Row>
         </div>
       );
     }

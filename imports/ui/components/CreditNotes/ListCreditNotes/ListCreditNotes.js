@@ -1,10 +1,11 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import PropTypes from 'prop-types';
-import {
-  Button, Row, Table, Col, Panel, Glyphicon,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
+import Icon from '../../Icon/Icon';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
 import './ListCreditNotes.scss';
@@ -70,7 +71,7 @@ class ListCreditNotes extends React.Component {
     const { creditNotes } = this.state;
     const { creditNoteDetail } = this.state;
     return !this.state.isCreditNotesLoading ? (
-      <Panel>
+      <Card>
 
         {/* } <Row>
                     <Button type="button" onClick={this.fetchCreditNotes}>Show Refunds</Button>
@@ -78,7 +79,7 @@ class ListCreditNotes extends React.Component {
                 */}
         {creditNotes.length > 0 && (
         <Col xs={12}>
-          <Row className="refund-heading">
+          <Row className="card-header ps-1">
             <Col xs={5}><b>Refund Date</b></Col>
             <Col xs={5}><b>Refund Amount</b></Col>
             <Col xs={2} />
@@ -92,7 +93,11 @@ class ListCreditNotes extends React.Component {
                   <Col xs={5}>{getDayWithoutTime(new Date(creditNote.date))}</Col>
                   <Col xs={5}>{getFormattedMoney(creditNote.total)}</Col>
                   <Col xs={2}>
-                    {(!isCurrentRow) && (<Glyphicon glyph="plus" className="refund-expand" onClick={() => { this.fetchCreditNote(creditNote.creditnote_id); }} />) }
+                    {(!isCurrentRow) && (
+                    <Button variant="link" onClick={() => { this.fetchCreditNote(creditNote.creditnote_id); }}>
+                      <Icon icon="expand_more" className="fs-3" type="mt" />
+                    </Button>
+                    ) }
 
                   </Col>
                   <Col xs={12}>
@@ -104,13 +109,18 @@ class ListCreditNotes extends React.Component {
           }
         </Col>
         )}
-      </Panel>
+      </Card>
     ) : (
-      <Panel>
-        {' '}
-        <button className="btn btn-sm btn-default" onClick={this.fetchCreditNotes}> Fetch Refund History </button>
-        {' '}
-      </Panel>
+      <Card className="p-3 pt-3">
+        <Col>
+          <Button
+            onClick={this.fetchCreditNotes}
+          >
+            Fetch Refund History
+
+          </Button>
+        </Col>
+      </Card>
     );
   }
 }

@@ -53,20 +53,26 @@ class Recipes extends React.Component {
   }
 
   render() {
-    const { loading, count, recipes, history } = this.props;
+    const {
+      loading, count, recipes, history,
+    } = this.props;
     const isAdmin = isLoggedInUserAdmin();
 
     return (!loading ? (
-      <div className="Recipes">
+      <div className="Recipes m-2">
         <Row>
           <Col xs={12}>
-            <div className="page-header clearfix">
-              <h2 className="pull-left">Recipes</h2>
-              { isAdmin && <Button
-                bsStyle="primary"
-                className="pull-right"
+            <div className="py-4">
+              <h2>Recipes</h2>
+              { isAdmin && (
+              <Button
+                variant="primary"
                 href="/recipes/new"
-              >New Recipe</Button> }
+                size="sm"
+              >
+                New Recipe
+              </Button>
+              ) }
             </div>
             <RecipesList recipes={recipes} count={count} history={history} />
           </Col>
@@ -84,13 +90,11 @@ Recipes.propTypes = {
 };
 
 export default withTracker(({ match }) => {
-  const subscription =
-    Meteor.subscribe('recipes.list', {
-      sort: { createdAt: constants.Sort.DESCENDING },
-      recipeCategory: match.params.category,
-      limit: limit.get(),
-    },
-  );
+  const subscription = Meteor.subscribe('recipes.list', {
+    sort: { createdAt: constants.Sort.DESCENDING },
+    recipeCategory: match.params.category,
+    limit: limit.get(),
+  });
 
   /*
   const recipesC = RecipeCollection.find({}, {

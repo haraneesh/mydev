@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Button, Alert, Badge, Panel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
+import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
 import constants from '../../../modules/constants';
 import { removeInvitation } from '../../../api/Invitations/methods';
@@ -51,12 +53,12 @@ const InvitationList = ({ invitations }) => {
     ));
 
     return (
-      <Panel>
+      <Row>
         { rowList }
-      </Panel>
+      </Row>
     );
   }
-  return (<Alert bsStyle="info">You are yet to invite your friends.</Alert>);
+  return (<Alert variant="info">You are yet to invite your friends.</Alert>);
 };
 
 InvitationList.propTypes = {

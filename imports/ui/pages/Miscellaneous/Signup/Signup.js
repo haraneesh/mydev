@@ -1,15 +1,15 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import {
-  Panel, Row, Col, FormGroup, ControlLabel, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
 import { formValChange, formValid } from '../../../../modules/validate';
-import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 
 const defaultState = {
   signUpRequestSent: false,
@@ -105,10 +105,10 @@ class SignUp extends React.Component {
       <div className="Signup offset-sm-1">
         <div>
           <Col xs={12} sm={10}>
-            <h3 className="page-header">Sign Up</h3>
-            <div className="panel text-center">
-              <div className="panel-body">
-                <h3 className="text-primary"> Welcome to Suvai </h3>
+            <h2 className="py-4 text-center">Sign Up</h2>
+            <div className="text-center">
+              <Card className="p-3">
+                <h2 className="text-secondary"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been together for more than
@@ -122,7 +122,7 @@ class SignUp extends React.Component {
                 <p>
                   We are happy to Welcome you, Please introduce yourself.
                 </p>
-              </div>
+              </Card>
             </div>
 
             { /* <Row>
@@ -137,13 +137,13 @@ class SignUp extends React.Component {
             </Col>
           </Row> */ }
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-              <Row>
+              <Row className="pt-3">
                 <Col xs={6}>
-                  <FormGroup
+                  <Row
                     validationState={isError.firstName.length > 0 ? 'error' : ''}
                     style={{ paddingRight: '1px' }}
                   >
-                    <ControlLabel>First Name</ControlLabel>
+                    <label>First Name</label>
                     <input
                       type="text"
                       name="firstName"
@@ -151,14 +151,14 @@ class SignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
-                  </FormGroup>
+                  </Row>
                 </Col>
                 <Col xs={6}>
-                  <FormGroup
+                  <Row
                     validationState={isError.lastName.length > 0 ? 'error' : ''}
                     style={{ paddingLeft: '1px' }}
                   >
-                    <ControlLabel>Last Name</ControlLabel>
+                    <label>Last Name</label>
                     <input
                       type="text"
                       name="lastName"
@@ -166,11 +166,11 @@ class SignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
-                  </FormGroup>
+                  </Row>
                 </Col>
               </Row>
-              <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
-                <ControlLabel>Email Address</ControlLabel>
+              <Row className="pt-3" validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+                <label>Email Address</label>
                 <input
                   type="email"
                   name="emailAddress"
@@ -178,10 +178,10 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                   className="form-control"
                 />
-              </FormGroup>
+              </Row>
 
-              <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-                <ControlLabel>Mobile Number</ControlLabel>
+              <Row className="pt-3" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+                <label>Mobile Number</label>
                 <input
                   type="text"
                   ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
@@ -190,31 +190,31 @@ class SignUp extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
-                <ControlLabel>Delivery Address</ControlLabel>
+              </Row>
+              <Row className="pt-3" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+                <label>Delivery Address</label>
                 <textarea
                   ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
                   name="deliveryAddress"
                   placeholder="Complete address to deliver at, including Landmark, Pincode."
-                  rows="6"
+                  rows={6}
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <FormGroup validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
-                <ControlLabel>What does eating healthy mean to you?</ControlLabel>
+              </Row>
+              <Row className="pt-3" validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
+                <label>What does eating healthy mean to you?</label>
                 <textarea
                   ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
                   name="eatingHealthyMeaning"
                   placeholder="You are never wrong, tell us what is in your mind."
-                  rows="6"
+                  rows={6}
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
-                <ControlLabel>Password</ControlLabel>
+              </Row>
+              <Row className="pt-3" validationState={isError.password.length > 0 ? 'error' : ''}>
+                <label>Password</label>
                 <input
                   id="password"
                   type="password"
@@ -225,11 +225,11 @@ class SignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="control-label">{isError.password}</span>
+                <span className="small text-info">{isError.password}</span>
                 )}
-              </FormGroup>
-              <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
-                <ControlLabel>Confirm Password</ControlLabel>
+              </Row>
+              <Row className="pt-3" validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+                <label>Confirm Password</label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -238,49 +238,46 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="control-label">{isError.confirmPassword}</span>
+                <span className="small text-info">{isError.confirmPassword}</span>
                 )}
-              </FormGroup>
+              </Row>
               <p>
                 <small>
                   By Signing up you are sharing your commitment towards healthy and sustainable lifestyle.
                 </small>
               </p>
-              <Button type="submit" bsStyle="primary">Sign Up</Button>
-              <AccountPageFooter>
-                <div className="panel text-center" style={{ marginBottom: '0px', padding: '6px' }}>
-                  <span>
-                    {'Already have an account? '}
-                    <a href="/login" className="login-signup">Log In</a>
-                  </span>
-                </div>
+              <Button type="submit" variant="secondary">Sign Up</Button>
 
-              </AccountPageFooter>
+              <div className="alert alert-info text-center p-3 mt-3">
+                <span>
+                  {'Already have an account? '}
+                  <a href="/login" className="login-signup text-secondary">Log In</a>
+                </span>
+              </div>
+
             </form>
           </Col>
         </div>
       </div>
     ) : (
-      <Panel style={{ marginTop: '1.5em' }}>
-        <Row className="text-center">
-          <Col xs={12}>
-            <h3>Thanks for your interest in Suvai!</h3>
-            <br />
-            <p>
-              Please give us a few days for our admins to review the
-              request and send an invite to join our community.
-            </p>
-          </Col>
-          <Col xs={12} style={{ marginTop: '2rem' }}>
-            <p>
-              While you are waiting, here is our manifesto on Healthy Living.
-            </p>
-            <h4>
-              <a className="text-primary" href="/healthprinciples"> Suvai's Health Principles</a>
-            </h4>
-          </Col>
-        </Row>
-      </Panel>
+      <Card className="text-center mt-3 p-4">
+        <Col xs={12} className="mt-3">
+          <h3>Thanks for your interest in Suvai!</h3>
+          <br />
+          <p>
+            Please give us a few days for our admins to review the
+            request and send an invite to join our community.
+          </p>
+        </Col>
+        <Col xs={12} className="mt-2">
+          <p>
+            While you are waiting, here is our manifesto on Healthy Living.
+          </p>
+          <h4>
+            <a className="text-secondary" href="/healthprinciples"> Suvai's Health Principles</a>
+          </h4>
+        </Col>
+      </Card>
     )
     );
   }

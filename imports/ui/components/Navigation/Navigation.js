@@ -1,53 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Row } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
 import { useHistory } from 'react-router-dom';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
 import SideMenu from '../AuthenticatedNavigation/SideMenu';
 import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigation/EasyNav';
 
-import './Navigation.scss';
-
 function Navigation(props) {
   const history = useHistory();
   return (
-    <Navbar fluid="true">
-
-      <Navbar.Header style={{ margin: '0px' }}>
-        {props.authenticated
+    <>
+      <Container fluid="true" className="bg-white py-2">
+        <Row>
+          <span className="text-left col-9 col-sm-4 ps-2">
+            {props.authenticated
         && (
 
-        <button
-          type="button"
-          className="btn-link backButton"
+        <Button
+          variant="white"
           onClick={() => { history.goBack(); }}
+          className="backButton"
           id="backIcon"
         >
-          <i className="fa fa-arrow-left" style={{ color: '#522E23' }} />
-        </button>
+          <span className="material-icons fs-2"> arrow_back </span>
+        </Button>
 
         )}
 
-        <Navbar.Brand>
+            <img
+              className="brand-logo ms-3"
+              src="/logo.svg?v200"
+              alt="Suvai"
+              style={{ maxHeight: '4em' }}
+              onClick={() => { history.push('/'); }}
+            />
+          </span>
 
-          <img
-            className="brand-logo"
-            src="/logo.svg?v200"
-            alt="Suvai"
-            onClick={() => { history.push('/'); }}
-          />
+          { !props.authenticated && <PublicNavigation {...props} /> }
+          { !!props.authenticated && <EasyNavWideScreen isAdmin={props.isAdmin} /> }
 
-        </Navbar.Brand>
+          { !!props.authenticated && <SideMenu {...props} /> }
+        </Row>
+        {/*  </header> */}
+        <Row>
+          { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen isAdmin={props.isAdmin} /> }
+        </Row>
+      </Container>
 
-        { !props.authenticated && <PublicNavigation {...props} /> }
-        { !!props.authenticated && <EasyNavWideScreen isAdmin={props.isAdmin} /> }
-        { !!props.authenticated && <SideMenu {...props} /> }
-
-      </Navbar.Header>
-
-      { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen isAdmin={props.isAdmin} /> }
-
-    </Navbar>
+    </>
   );
 }
 

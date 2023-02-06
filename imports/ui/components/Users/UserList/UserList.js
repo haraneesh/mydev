@@ -1,157 +1,105 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, SplitButton, MenuItem, Button, ButtonToolbar,
-
-  Alert, Panel,
-} from 'react-bootstrap';
-import Dimensions from 'react-dimensions';
-import { Table, Column, Cell } from 'fixed-data-table-2';
-import {
-  DataListStore, SortTypes, SortHeaderCell, AmountCell, RowSelectedCell,
-  TextCell, DateCell,
-} from '../../Common/ShopTableCells';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+import Table from 'react-bootstrap/Table';
+import { DataListStore, SortHeaderCell, TextCell } from '../../Common/ShopTableCells';
 import { getDayWithoutTime } from '../../../../modules/helpers';
 import { dateSettings } from '../../../../modules/settings';
-import constants from '../../../../modules/constants';
 
 const UserListTable = ({
-  dataList, dynamicWidth, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack, history, match,
+  dataList, colSortDirs, onSortChangeCallBack, history,
 }) => {
-  function displayStatus(rowIndex, columnKey) {
-    return dataList.getObjectAt(rowIndex)[columnKey];
-  }
+  const writeRows = () => {
+    const rowList = [];
+    for (let index = 0; index < dataList.getSize(); index += 1) {
+      rowList.push(
+        <tr>
+          {<TextCell rowIndex={index} data={dataList} columnKey="username" />}
+          {<TextCell rowIndex={index} data={dataList} columnKey="createdAt" />}
+          {<TextCell rowIndex={index} data={dataList} columnKey="deliveryAddress" />}
+          {<TextCell rowIndex={index} data={dataList} columnKey="firstName" />}
+          {<TextCell rowIndex={index} data={dataList} columnKey="lastName" />}
+          {<TextCell rowIndex={index} data={dataList} columnKey="accountStatus" />}
+          {<td>
+            <Button
+              variant="info"
+              size="sm"
+              onClick={() => history.push(`updateProfile/${dataList.getObjectAt(rowIndex)[columnKey]}`)}
+              className="btn-block"
+            >
+              ...
+            </Button>
+          </td>}
+        </tr>,
+      );
+    }
+    return rowList;
+  };
+
   return (
-    <Table
-      rowHeight={100}
-      headerHeight={50}
-      rowsCount={dataList.getSize()}
-      width={dynamicWidth}
-      onRowClick={onRowClickCallBack}
-      height={5070}
-    >
-      <Column
-        columnKey="username"
-        cell={<TextCell data={dataList} />}
-        flexGrow={1}
-        width={25}
-        header={(
+    <Table striped bordered hover>
+      <thead>
+        <tr>
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.username}
-          >
-            User Name
-          </SortHeaderCell>
-        )}
-      />
-      <Column
-        columnKey="createdAt"
-        flexGrow={1}
-        width={25}
-        header={(
+            cellName="User Name"
+            columnKey="username"
+          />
+
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.createdAt}
-          >
-            DOJ
-          </SortHeaderCell>
-        )}
-        cell={<TextCell data={dataList} />}
-      />
-      <Column
-        columnKey="deliveryAddress"
-        header={(
+            cellName="DOJ"
+            columnKey="createdAt"
+            style={{ minWidth: '7.5em' }}
+          />
+
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.deliveryAddress}
-          >
-            Delivery Address
-          </SortHeaderCell>
-        )}
+            cellName="Delivery Address"
+            columnKey="deliveryAddress"
+          />
 
-        cell={<TextCell data={dataList} />}
-        width={125}
-        flexGrow={3}
-      />
-      <Column
-        columnKey="firstName"
-        header={(
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.firstName}
-            keyToPass="dsfasdfsd"
-          >
-            First Name
-          </SortHeaderCell>
-        )}
+            cellName="First Name"
+            columnKey="firstName"
+          />
 
-        cell={<TextCell data={dataList} />}
-        width={50}
-        flexGrow={1}
-      />
-
-      <Column
-        columnKey="lastName"
-        header={(
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.lastName}
-          >
-            Last Name
-          </SortHeaderCell>
-        )}
+            cellName="Last Name"
+            columnKey="lastName"
+          />
 
-        cell={<TextCell data={dataList} />}
-        width={50}
-        flexGrow={1}
-      />
-
-      <Column
-        columnKey="accountStatus"
-        header={(
           <SortHeaderCell
             onSortChange={onSortChangeCallBack}
             sortDir={colSortDirs.accountStatus}
-          >
-            Status
-          </SortHeaderCell>
-        )}
-
-        cell={<TextCell data={dataList} />}
-        width={25}
-        flexGrow={1}
-      />
-      <Column
-        columnKey="username"
-        header={<Cell />}
-        cell={({ rowIndex, columnKey }) => (
-          <Cell>
-            <Button
-              bsStyle="primary"
-              onClick={() => history.push(`updateProfile/${dataList.getObjectAt(rowIndex)[columnKey]}`)}
-              block
-            >
-              View
-            </Button>
-          </Cell>
-
-        )}
-        width={25}
-        flexGrow={1}
-      />
-
+            cellName="Status"
+            columnKey="accountStatus"
+          />
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        {writeRows()}
+      </tbody>
     </Table>
   );
 };
 
 const UserList = ({
-  users, history, match, colSortDirs, sortedDataList, containerWidth, containerHeight, onSortChange,
+  users, history, match, colSortDirs, onSortChange,
 }) => (
   <Row>
     <UserListTable
       dataList={new DataListStore(users)}
-      dynamicWidth={containerWidth}
-      dynamicHeight={containerHeight}
       colSortDirs={colSortDirs}
       onSortChangeCallBack={onSortChange}
       history={history}
@@ -165,9 +113,9 @@ const UserList1 = ({
 }) => (
 
   users.length ? (
-    <Panel>
+    <Row>
       {' '}
-      <Table responsive>
+      <Table striped bordered responsive>
         <thead>
           <tr>
             <th>First Name</th>
@@ -190,7 +138,7 @@ const UserList1 = ({
               <td>{dlo}</td>
               <td>
                 <Button
-                  bsStyle="primary"
+                  variant="secondary"
                   onClick={() => history.push(`${match.url}/${profile.whMobilePhone}`)}
                   block
                 >
@@ -202,8 +150,8 @@ const UserList1 = ({
         </tbody>
       </Table>
       {' '}
-    </Panel>
-  ) : <Alert bsStyle="info">No users were found!</Alert>
+    </Row>
+  ) : <Alert variant="info">No users were found!</Alert>
 );
 
 UserList.propTypes = {
@@ -212,4 +160,4 @@ UserList.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default Dimensions()(UserList);
+export default UserList;

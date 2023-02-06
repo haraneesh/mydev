@@ -1,9 +1,10 @@
 import React from 'react';
-import { Cell } from 'fixed-data-table-2';
-import { Label, Checkbox } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
 import moment from 'moment';
 import 'moment-timezone';
 import { formatMoney } from 'accounting-js';
+import Checkbox from './Checkbox';
 import LoadImage from './LoadImage';
 import constants from '../../../modules/constants';
 import { accountSettings, dateSettings } from '../../../modules/settings';
@@ -58,9 +59,9 @@ export class DataListStore {
 export const DateCell = ({
   rowIndex, data, columnKey, ...props
 }) => (
-  <Cell {...props}>
+  <td {...props}>
     {moment(data.getObjectAt(rowIndex)[columnKey]).tz(dateSettings.timeZone).format(dateSettings.format)}
-  </Cell>
+  </td>
 );
 
 export const RowSelectedCell = ({
@@ -68,18 +69,15 @@ export const RowSelectedCell = ({
 }) => {
   const isChecked = data.getObjectAt(rowIndex)[columnKey];
   return (
-    <Cell {...props}>
-      {' '}
+    <td {...props}>
       <Checkbox
-        onClick={(e) => { onChecked(e, rowIndex); e.stopPropagation(); }}
+        onChange={(e) => { onChecked(e, rowIndex); e.stopPropagation(); }}
         checked={isChecked}
       />
-      {' '}
+    </td>
 
-    </Cell>
-
-  /* <Cell {...props} > <input type = "checkbox" onClick = { (e) => { onChecked(e, rowIndex); e.stopPropagation();} }
-        /> </Cell> */
+  /* <td {...props} > <input type = "checkbox" onClick = { (e) => { onChecked(e, rowIndex); e.stopPropagation();} }
+        /> </td> */
   );
 };
 
@@ -90,24 +88,22 @@ export const OrderStatusCell = ({
   const labelStyle = constants.OrderStatus[order_status].label;
   const statusToDisplay = constants.OrderStatus[order_status].display_value;
   return (
-    <Cell {...props}>
-      {' '}
-      <Label bsStyle={labelStyle}>
-        {' '}
+    <td {...props}>
+      <Badge bg={labelStyle}>
         { statusToDisplay }
-        {' '}
-      </Label>
-      {' '}
-    </Cell>
+      </Badge>
+    </td>
   );
 };
 
 export const ImageCell = ({
   rowIndex, data, columnKey, ...props
 }) => (
-  <LoadImage
-    src={data.getObjectAt(rowIndex)[columnKey]}
-  />
+  <td>
+    <LoadImage
+      src={data.getObjectAt(rowIndex)[columnKey]}
+    />
+  </td>
 );
 
 export const LinkCell = ({
@@ -115,9 +111,9 @@ export const LinkCell = ({
 }) => {
   if (callBack) {
     return (
-      <Cell {...props}>
+      <td {...props}>
         <a onClick={(e) => { e.stopPropagation(); callBack(e, rowIndex); }}>{data.getObjectAt(rowIndex)[columnKey]}</a>
-      </Cell>
+      </td>
     );
   }
   return TextCell({
@@ -128,17 +124,17 @@ export const LinkCell = ({
 export const TextCell = ({
   rowIndex, data, columnKey, ...props
 }) => (
-  <Cell {...props}>
+  <td {...props}>
     {data.getObjectAt(rowIndex)[columnKey]}
-  </Cell>
+  </td>
 );
 
 export const AmountCell = ({
   rowIndex, data, columnKey, ...props
 }) => (
-  <Cell {...props}>
+  <td {...props}>
     {formatMoney(data.getObjectAt(rowIndex)[columnKey], accountSettings)}
-  </Cell>
+  </td>
 );
 
 // Sortable header columns
@@ -153,19 +149,14 @@ function reverseSortDirection(sortDir) {
 }
 
 export const SortHeaderCell = ({
-  sortDir, children, onSortChange, columnKey, ...props
+  sortDir, cellName, onSortChange, columnKey, ...props
 }) => {
-  return (
-    <Cell {...props}>
-      <a onClick={_onSortChange}>
-        {children}
-        {' '}
-        {sortDir ? (sortDir === SortTypes.DESC ? '↓' : '↑') : ''}
-      </a>
-    </Cell>
-  );
+  let arrowToDisplay = '';
+  if (sortDir) {
+    arrowToDisplay = (sortDir === SortTypes.DESC) ? '↓' : '↑';
+  }
 
-  function _onSortChange(e) {
+  function onSortChangeFunc(e) {
     e.preventDefault();
 
     if (onSortChange) {
@@ -177,4 +168,14 @@ export const SortHeaderCell = ({
       );
     }
   }
+
+  return (
+    <th {...props} className="align-middle">
+      <Button variant="link" onClick={onSortChangeFunc}>
+        {cellName}
+        {' '}
+        {arrowToDisplay}
+      </Button>
+    </th>
+  );
 };

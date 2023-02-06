@@ -1,11 +1,11 @@
-@import '../../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../../stylesheets/bootstrap/variables';
 
 
 .Principles {
     font-size:  $h6-font-size;
     font-weight: 400;
     margin-top: 4em;
-    font-family: 'Lora';
+    font-family: 'Source Serif';
 
     h1, h2, h3{
         text-transform:uppercase;
@@ -25,14 +25,10 @@
         list-style:none;
     }
 
-    .img-responsive {
-        margin: 0 auto;
-    }
-
     sup{
         padding-left: 5px;
         top:-0.8em;
-        color:$gray-light;
+        color:$gray-300;
     }
 
     .embed-container {
@@ -53,31 +49,13 @@
         height: 100%;
       }
 
-    @media (max-width: $screen-xs-max){
+      @media (max-width: 375px){
          h1, h2, h3{
-            font-size:100%;
+            font-size: 100%;
          }
-        }
-
-    @media (min-width: 768px){
-    .panel-body {
-        padding: 0 1.5em 1.5em 1.5em;
-        }
-     h1, h2, h3{
-        margin:4em 0 3rem 0;
-     }
-    }
-
-     @media (min-width: 992px){
-    .panel-body {
-            padding: 0 3em 3em 3em;
-        }
-    }
-    
-    @media (min-width: 1200px) {
-    .panel-body {
-            padding: 0 5em 5em 5em;
-        }
+         .table{
+            font-size: 80%;
+         }
     }
 
 }

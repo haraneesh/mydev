@@ -4,7 +4,7 @@ import SupplierEditor from '../../../../components/SupplierEditor/SupplierEditor
 
 const NewSupplier = ({ history }) => (
   <div className="NewSupplier">
-    <h2 className="page-header">New Supplier</h2>
+    <h2 className="py-4">New Supplier</h2>
     <SupplierEditor history={history} />
   </div>
 );

@@ -39,20 +39,19 @@ function ProductOrderSpecials({ products, placeOrder }) {
     ));
     return (
       <>
-        <div className="panel text-center">
-          <div className="panel-body">
+        <div className="py-2 text-center">
+          <div className="bg-body">
             <div className="row">
               {ProductRows}
             </div>
           </div>
         </div>
 
-        <div className="panel text-center">
-          <div className="panel-body">
+        <div className="text-center">
+          <div className="bg-body py-4 px-2">
             <h4>
-              Please note, delivery charges may apply if a 3rd delivery partner
+              Please note, delivery charges may apply if a delivery partner
               like Dunzo is hired to delivery.
-
             </h4>
             <OrderFooter
               totalBillAmount={cartState.cart.totalBillAmount}

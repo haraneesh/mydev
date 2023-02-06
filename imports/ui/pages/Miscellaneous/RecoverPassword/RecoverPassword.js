@@ -1,12 +1,12 @@
 import React from 'react';
-import {
-  Row, Col, Alert, FormGroup, ControlLabel, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
-import AccountPageFooter from '../../../components/AccountPageFooter/AccountPageFooter';
 import { formValChange, formValid } from '../../../../modules/validate';
 
 class RecoverPassword extends React.Component {
@@ -58,13 +58,13 @@ class RecoverPassword extends React.Component {
       <div className="RecoverPassword offset-sm-1">
         <Row>
           <Col xs={12} sm={6} md={5} lg={4}>
-            <h2 className="page-header">Recover Password</h2>
-            <Alert bsStyle="info">
+            <h2 className="py-4">Recover Password</h2>
+            <Alert variant="info">
               Enter your email address below to receive a link to reset your password.
             </Alert>
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-              <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
-                <ControlLabel>Email Address</ControlLabel>
+              <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+                <label>Email Address</label>
                 <input
                   type="email"
                   name="emailAddress"
@@ -72,15 +72,17 @@ class RecoverPassword extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
-              </FormGroup>
-              <Button type="submit" bsStyle="primary">Recover Password</Button>
-              <AccountPageFooter>
-                <p>
+              </Row>
+              <Button type="submit" className="my-3" variant="secondary">Recover Password</Button>
+
+              <div className="text-center alert alert-info py-3">
+                <span>
                   {'Remember your password? '}
                   <Link to="/login" className="login-signup">Log In</Link>
                   .
-                </p>
-              </AccountPageFooter>
+                </span>
+              </div>
+
             </form>
           </Col>
         </Row>

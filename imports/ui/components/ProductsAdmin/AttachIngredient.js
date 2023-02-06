@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Panel } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
 import AddIngredient from '../Ingredients/AddIngredient/AddIngredient';
 import { IngredientItemDisplay } from './IngredientItemDisplay';
 
@@ -21,7 +21,8 @@ export default class AttachIngredient extends React.Component {
     this.setState(
       {
         ingredient: null,
-      });
+      },
+    );
     this.props.onChange(null);
   }
 
@@ -29,18 +30,18 @@ export default class AttachIngredient extends React.Component {
     this.setState(
       {
         ingredient,
-      });
+      },
+    );
     this.props.onChange(ingredient);
   }
-
 
   render() {
     const { ingredient } = this.state;
     return (
-      <Panel>
+      <Card>
         {!ingredient && (<AddIngredient addIngredient={this.handleSelectIngredient} />)}
         {ingredient && (<IngredientItemDisplay ingredient={ingredient} removeIngredient={this.handleRemoveIngredient} />)}
-      </Panel>
+      </Card>
     );
   }
 }

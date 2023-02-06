@@ -80,32 +80,41 @@ function ProductsOrderSpecialsMain({ history, loggedInUserId }) {
   }
 
   const DeliveryDetails = () => (
-    <div className="panel text-left">
-      <h3 className="page-header col-md-8 col-lg-6"> Delivery Details </h3>
-      <div className="panel">
-        <div className="panel-body col-md-8 col-lg-6">
-          <SpecialOrderDeliveryDetails ref={childRef} />
-          <br />
-          <div className="text-right">
-            <button type="button" className="btn btn-default" style={{ marginRight: '1em', minWidth: '10em' }} onClick={() => { setShowState(STATES.showProducts); }}>
-              &#x2190; back
-            </button>
+    <div className="text-left bg-body p-2 ps-sm-4">
+      <h3 className="py-4 col-md-8 col-lg-6"> Delivery Details </h3>
+      <div className="col-md-8 col-lg-6">
+        <SpecialOrderDeliveryDetails ref={childRef} />
+        <br />
+        <div className="text-right">
+          <button
+            type="button"
+            className="btn btn-default"
+            style={{ marginRight: '1em', minWidth: '10em' }}
+            onClick={() => { setShowState(STATES.showProducts); }}
+          >
+            &#x2190; back
+          </button>
 
-            <button type="button" className="btn btn-primary" style={{ minWidth: '14em' }} onClick={placeOrder}>
-              Place Order
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn-block btn-primary"
+            style={{ minWidth: '14em' }}
+            onClick={placeOrder}
+          >
+            Place Order
+          </button>
         </div>
       </div>
+
     </div>
   );
 
   const WhatsAppSupport = Meteor.settings.public.Support_Numbers.whatsapp;
   const OrderConfirm = () => (
-    <div className="panel text-center">
-      <h3 className="page-header"> Order Placed Successfully </h3>
-      <div className="panel">
-        <div className="panel-body">
+    <div className="bg-body text-center pb-2">
+      <h3 className="py-4"> Order Placed Successfully </h3>
+      <div>
+        <div>
           Thank you for placing your order with Suvai.
           <br />
           You can
@@ -115,23 +124,26 @@ function ProductsOrderSpecialsMain({ history, loggedInUserId }) {
           to Suvai to track your order and pay online if you wish to.
           <br />
 
-          <h4>
+          <div className="col py-4">
             <button
               type="button"
               className="btn btn-primary"
-              style={{ marginRight: '1em', minWidth: '10em' }}
+              style={{ minWidth: '10em' }}
               onClick={() => { history.push('/login'); }}
             >
               Take me to Login
             </button>
-          </h4>
-
-          <br />
+          </div>
           <p>
             You can talk to us or send us a Whatsapp Message at
             <br />
             <h4>
-              <a href={`tel:${WhatsAppSupport.replace(' ', '')}`} className="text-info">{WhatsAppSupport}</a>
+              <a
+                href={`tel:${WhatsAppSupport.replace(' ', '')}`}
+                className="text-info"
+              >
+                {WhatsAppSupport}
+              </a>
             </h4>
           </p>
         </div>

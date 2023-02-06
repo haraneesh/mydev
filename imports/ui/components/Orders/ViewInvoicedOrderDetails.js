@@ -3,9 +3,10 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Label, Panel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+
 import { toast } from 'react-toastify';
 import { dateSettings } from '../../../modules/settings';
 import constants from '../../../modules/constants';
@@ -62,37 +63,36 @@ class ViewInvoicedOrderDetails extends React.Component {
 
       return (
         <div className="ViewOrderDetails ">
-          <div className="page-header">
+          <div className="py-4 ps-2">
             <Row>
               <Col xs={12}>
-                <h3 className="pull-left">
-                  {' '}
+                <h2>
                   {moment(order.createdAt)
                     .tz(dateSettings.timeZone)
                     .format(dateSettings.format)}
-                  {' '}
-                </h3>
+                </h2>
               </Col>
             </Row>
           </div>
-          <Panel>
+          <Row className="bg-body p-2">
             <Col xs={12}>
-              <Label bsStyle={constants.OrderStatus[order.order_status].label}>
+              <Badge bg={constants.OrderStatus[order.order_status].label}>
                 {constants.OrderStatus[order.order_status].display_value}
-              </Label>
+              </Badge>
             </Col>
             { viewInvoiceComponents }
-          </Panel>
+          </Row>
           {((itemIds.length > 0) && (
-          <Panel>
-            <Col xs={12}>
-              <h4>Not Delivered</h4>
+          <Row className="bg-white p-2">
+            <hr />
+            <Col xs={12} className="py-2 px-sm-4">
+              <h4 className="text-info"><b>NOT DELIVERED</b></h4>
             </Col>
             <NotInvoiced
               orderedNotInvoicedProductsHash={orderedNotInvoicedProductsHash}
               itemIds={itemIds}
             />
-          </Panel>
+          </Row>
           ))}
         </div>
       );

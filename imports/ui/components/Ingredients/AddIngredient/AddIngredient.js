@@ -1,14 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Glyphicon, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import autoBind from 'react-autobind';
 import Autosuggest from 'react-autosuggest';
 import { toast } from 'react-toastify';
 
-import './AddIngredient.scss';
+// import './AddIngredient.scss';
 
 function renderSuggestion(suggestion) {
   return (
@@ -93,11 +93,12 @@ export default class AddIngredient extends React.Component {
       placeholder: "Start typing an ingredient name example 'lime'",
       value,
       onChange: this.onChange,
+      style: { width: '100%', borderWidth: '0px' },
     };
 
     return (
       <Row>
-        <Col xs={10}>
+        <Col>
           <Autosuggest
             suggestions={suggestions}
             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
@@ -107,9 +108,9 @@ export default class AddIngredient extends React.Component {
             inputProps={inputProps}
           />
         </Col>
-        <Col xs={2} className="text-center" style={{ paddingTop: '0.7rem' }}>
-          <Button bsSize="xsmall" onClick={this.addIngredient}>
-            <i className="fa fa-plus" />
+        <Col xs={1} className="text-center">
+          <Button size="sm" onClick={this.addIngredient}>
+            +
           </Button>
         </Col>
       </Row>

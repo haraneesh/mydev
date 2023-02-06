@@ -1,11 +1,12 @@
 import React from 'react';
-import { Panel, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Card from 'react-bootstrap/Card';
 
 import './Testimonials.scss';
 
 const Testimonials = () => (
-  <Panel className="testimonials text-center bodyCursText">
-    <h2 className="mb-5">What people are saying...</h2>
+  <Card className="testimonials text-center bodyCursText py-3 my-3">
+    <h2 className="m-5">What people are saying...</h2>
 
     <Row>
       <div className="col-sm-4">
@@ -30,7 +31,7 @@ const Testimonials = () => (
         </div>
       </div>
     </Row>
-  </Panel>
+  </Card>
 );
 
 Testimonials.propTypes = {};

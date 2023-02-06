@@ -1,6 +1,8 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Panel, Col, Button } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -33,19 +35,20 @@ class ApproveSignUps extends React.Component {
     const { userSignUps } = this.props;
 
     return (!loading ? (
-      <div className="ShowUserSignUps offset-sm-1">
-        <div className="page-header clearfix">
-          <h2 className="pull-left">Users Requested to Join Suvai</h2>
-        </div>
+      <div className="ShowUserSignUps p-4">
+
+        <h2 className="py-4">Users Requested to Join Suvai</h2>
 
         { userSignUps.map((user) => (
-          <Panel className="user">
+          <Row className="user bg-body p-3 mb-3" key={user._id}>
             <Col xs={12}>
               Name:
+              {' '}
               <strong>{`${user.profile.name.first} ${user.profile.name.last}`}</strong>
             </Col>
             <Col xs={12}>
               Created At:
+              {' '}
               <strong>{user.createdAt}</strong>
             </Col>
             <Col xs={12}>
@@ -69,12 +72,11 @@ class ApproveSignUps extends React.Component {
               <strong>{user.profile.eatingHealthyMeaning}</strong>
             </Col>
             <Col xs={12}>
-              <Button bsStyle="primary" onClick={() => { this.handleSubmit(user, 'Approve'); }}> Approve </Button>
+              <Button variant="secondary" onClick={() => { this.handleSubmit(user, 'Approve'); }}> Approve </Button>
               {' '}
-&nbsp;
               <Button onClick={() => { this.handleSubmit(user, 'Reject'); }}> Reject </Button>
             </Col>
-          </Panel>
+          </Row>
         ))}
       </div>
     ) : <Loading />);

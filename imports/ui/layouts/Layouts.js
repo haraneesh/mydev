@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Helmet } from 'react-helmet';
 import { ThemeProvider } from 'styled-components';
-import { Grid } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import Navigation from '../components/Navigation/Navigation';
 import ToolBar from '../components/ToolBar/ToolBar';
 import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';
@@ -71,7 +71,7 @@ export const OrderLayout = (props) => {
         <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
-      <Grid fluid="true">{props.children}</Grid>
+      <Container fluid="true">{props.children}</Container>
       <ToolBar {...props} />
     </div>
   );
@@ -87,7 +87,7 @@ export const RecipeLayout = (props) => {
       <ThemeProvider theme={{}}>
         <GlobalStyle />
         <Navigation showEasyNav={false} {...props} />
-        <Grid fluid="true" className="recipesApp">{props.children}</Grid>
+        <Container fluid="true" className="recipesApp">{props.children}</Container>
       </ThemeProvider>
       <ToolBar {...props} />
     </div>
@@ -102,7 +102,7 @@ export const MainLayout = (props) => {
         <title>{`${props.routeName.replace('_', ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <Navigation showEasyNav {...props} />
-      <Grid fluid="true">{props.children}</Grid>
+      <Container fluid="true">{props.children}</Container>
       <ToolBar {...props} />
     </div>
   );
@@ -118,7 +118,7 @@ export const SupplierLayout = (props) => {
       <ThemeProvider theme={{}}>
         <GlobalStyle />
         <Navigation showEasyNav={false} {...props} />
-        <Grid className="supplierApp">{props.children}</Grid>
+        <Container className="supplierApp">{props.children}</Container>
       </ThemeProvider>
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import { withRouter } from 'react-router';
 
 const handleResendVerificationEmail = (history) => {

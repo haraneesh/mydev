@@ -8,7 +8,8 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
 import Pagination from 'react-js-pagination';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import constants from '../../../modules/constants';
 import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
@@ -35,28 +36,10 @@ class AllOrders extends React.Component {
     autoBind(this);
   }
 
-  handlePageChange(pageNumber) {
-    const prevValue = reactVar.get();
-    reactVar.set({
-      ...prevValue,
-      currentPage: pageNumber,
-    });
-  }
-
   componentDidUpdate(previousProps) {
     if (this.props.currentPage !== previousProps.currentPage || this.state.total === -1) {
       this.fetchOrderCount();
     }
-  }
-
-  fetchOrderCount(search) {
-    Meteor.call('admin.fetchOrderCount', (error, response) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        this.setState({ ...response });
-      }
-    });
   }
 
   changeSortOptions(columnKey, sortDir) {
@@ -110,18 +93,45 @@ class AllOrders extends React.Component {
     }
   }
 
+  fetchOrderCount() {
+    const { isWholeSale } = reactVar.get();
+
+    Meteor.call('admin.fetchOrderCount',
+      { isWholeSale },
+      (error, response) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          this.setState({ ...response });
+        }
+      });
+  }
+
+  handlePageChange(pageNumber) {
+    const prevValue = reactVar.get();
+    reactVar.set({
+      ...prevValue,
+      currentPage: pageNumber,
+    });
+  }
+
   selectView() {
     const { isWholeSale } = reactVar.get();
     return (
-      <div className="panel panel-body form-group form-inline" style={{ textAlign: 'center' }}>
-        <label className="radio-inline form-inline" htmlFor="retail" style={{ borderWidth: '0px' }}>
-          <input type="radio" id="retail" name="orderView" value="retail" onClick={this.onRadioClick} checked={(!isWholeSale) ? 'checked' : ''} />
-          Retail Orders
-        </label>
-        <label className="radio-inline form-control" htmlFor="whSale" style={{ borderWidth: '0px' }}>
-          <input type="radio" id="whSale" name="orderView" value="whSale" onClick={this.onRadioClick} checked={(isWholeSale) ? 'checked' : ''} />
-          WholeSale Orders
-        </label>
+      <div className="m-2 p-3 alert bg-body text-center">
+        <div className="form-check form-check-inline">
+          <input type="radio" id="retail" className="form-check-input" name="orderView" value="retail" onClick={this.onRadioClick} checked={(!isWholeSale) ? 'checked' : ''} />
+          <label className="radio-inline form-check-inline form-check-label" htmlFor="retail" style={{ borderWidth: '0px' }}>
+            Retail Orders
+          </label>
+        </div>
+
+        <div className="form-check form-check-inline">
+          <input type="radio" id="whSale" className="form-check-input" name="orderView" value="whSale" onClick={this.onRadioClick} checked={(isWholeSale) ? 'checked' : ''} />
+          <label className="radio-inline form-check-inline form-check-label" htmlFor="whSale" style={{ borderWidth: '0px' }}>
+            WholeSale Orders
+          </label>
+        </div>
       </div>
     );
   }
@@ -131,10 +141,10 @@ class AllOrders extends React.Component {
     const { currentPage, limit, isWholeSale } = reactVar.get();
     return (
 
-      <div className="AllOrders">
+      <div className="AllOrders pb-4">
         <Row>
           <Col xs={12}>
-            <h3 className="page-header">All Orders</h3>
+            <h2 className="py-4 text-center">All Orders</h2>
 
             {this.selectView()}
 
@@ -144,14 +154,18 @@ class AllOrders extends React.Component {
               changeSortOptions={this.changeSortOptions}
               colSortDirs={this.colSortDirs}
               isWholeSale={isWholeSale}
+              pageChange={this.handlePageChange}
             />
           </Col>
         </Row>
+
         <Pagination
+          itemClass="page-item"
+          linkClass="page-link"
           activePage={currentPage}
           itemsCountPerPage={limit}
           totalItemsCount={this.state.total}
-          pageRangeDisplayed={10}
+          pageRangeDisplayed={5}
           onChange={this.handlePageChange}
         />
 

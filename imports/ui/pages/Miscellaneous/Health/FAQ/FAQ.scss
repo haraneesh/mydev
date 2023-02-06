@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Buenard');
-@import '../../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../../stylesheets/bootstrap/variables';
 
 
 .FAQ {
-    font-size:  $font-size-large;
+    font-size:  $font-size-lg;
     margin-top: 4em;
-    font-family: 'Buenard', $default-font;
+    font-family: 'Buenard', $font-family-base;
 
     h1, h2, h3{
         text-transform:uppercase;
@@ -32,7 +32,7 @@
     sup{
         padding-left: 5px;
         top:-0.8em;
-        color:$gray-light;
+        color:$gray-300;
     }
 
     .embed-container {
@@ -53,14 +53,14 @@
         height: 100%;
       }
 
-    @media (max-width: $screen-xs-max){
+    @media (max-width: breakpoint-min('sm')){
          h1, h2, h3{
             font-size:100%;
          }
         }
 
     @media (min-width: 768px){
-    .panel-body {
+    .card-body {
         padding: 0 1.5em 1.5em 1.5em;
         }
      h1, h2, h3{
@@ -69,13 +69,13 @@
     }
 
      @media (min-width: 992px){
-    .panel-body {
+    .card-body {
             padding: 0 3em 3em 3em;
         }
     }
     
     @media (min-width: 1200px) {
-    .panel-body {
+    .card-body {
             padding: 0 5em 5em 5em;
         }
     }

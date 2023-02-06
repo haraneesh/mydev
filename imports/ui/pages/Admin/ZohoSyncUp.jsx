@@ -1,7 +1,7 @@
 import React from 'react';
-import {
-  Row, Col, Panel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 import { syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
 import { bulkSyncProductsZoho } from '../../../api/ZohoSyncUps/zohoProductsMethods';
 import { bulkSyncUsersZoho } from '../../../api/ZohoSyncUps/zohoContactsMethods';
@@ -18,54 +18,52 @@ const showButton = () => {
 };
 
 const ZohoSyncUp = () => (
-  <div>
-    <h2 className="page-header">Sync With Zoho Books</h2>
-    <Panel>
-      <Row>
-        <Col xs={12}>
-          <ZohoSync
-            orderSequence={1}
-            syncFunction={bulkSyncUsersZoho}
-            syncName="Sync Users >"
-            syncDescription="Send user updates to Zoho"
-          />
+  <div className="p-1 pb-4">
+    <h2 className="py-4">Sync With Zoho Books</h2>
+    <Row className="bg-body m-2 p-2">
+      <Col xs={12}>
+        <ZohoSync
+          orderSequence={1}
+          syncFunction={bulkSyncUsersZoho}
+          syncName="Sync Users >"
+          syncDescription="Send user updates to Zoho"
+        />
 
-          <ZohoSync
-            orderSequence={2}
-            syncFunction={bulkSyncProductsZoho}
-            syncName="Sync Products >"
-            syncDescription="Send product updates to Zoho"
-          />
-          <ZohoSync
-            orderSequence={3}
-            syncFunction={syncBulkOrdersWithZoho}
-            syncName="Send Pending Orders >"
-            syncDescription="Send details of pending orders to Zoho and update status to Awaiting Fulfillment"
-          />
-          <hr />
-          <ZohoSync
-            orderSequence={4}
-            syncFunction={getOrdersAndInvoicesFromZoho} // {getOrdersFromZoho}
-            syncName="< Get Invoices "
-            syncDescription="Get invoice details of orders from Zoho"
-          />
-          <ZohoSync
-            orderSequence={5}
-            syncFunction={getSalesDetailsByItemFromZoho}
-            syncName="< Update Returns"
-            syncDescription="Update returns"
-          />
-          <hr />
-          <ZohoSync
-            orderSequence={6}
-            syncFunction={syncOfflinePaymentDetails}
-            disabled={!showButton()}
-            syncName="< Update Offline Payments"
-            syncDescription="Update invoice and payment details from Zoho. Will be enabled before 9am and after 7 PM."
-          />
-        </Col>
-      </Row>
-    </Panel>
+        <ZohoSync
+          orderSequence={2}
+          syncFunction={bulkSyncProductsZoho}
+          syncName="Sync Products >"
+          syncDescription="Send product updates to Zoho"
+        />
+        <ZohoSync
+          orderSequence={3}
+          syncFunction={syncBulkOrdersWithZoho}
+          syncName="Send Processing Orders >"
+          syncDescription="Send details of 'Processing' orders to Zoho and update status to Awaiting Fulfillment"
+        />
+        <hr />
+        <ZohoSync
+          orderSequence={4}
+          syncFunction={getOrdersAndInvoicesFromZoho} // {getOrdersFromZoho}
+          syncName="< Get Invoices "
+          syncDescription="Get invoice details of orders from Zoho"
+        />
+        <ZohoSync
+          orderSequence={5}
+          syncFunction={getSalesDetailsByItemFromZoho}
+          syncName="< Update Returns"
+          syncDescription="Update returns"
+        />
+        <hr />
+        <ZohoSync
+          orderSequence={6}
+          syncFunction={syncOfflinePaymentDetails}
+          disabled={!showButton()}
+          syncName="< Update Offline Payments"
+          syncDescription="Update invoice and payment details from Zoho. Will be enabled before 9am and after 7 PM."
+        />
+      </Col>
+    </Row>
   </div>
 );
 

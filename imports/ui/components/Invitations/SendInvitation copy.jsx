@@ -1,8 +1,9 @@
 import React from 'react';
 import { toast } from 'react-toastify';
-import {
-  Button, FormGroup, ControlLabel, FormControl, Col, Row,
-} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 import { sendInvitation } from '../../../api/Invitations/methods';
 
 const validateSendInvitationForm = (onSuccess) => {
@@ -67,25 +68,25 @@ export default class SendInvitation extends React.Component {
               className="form-send-invitation"
               onSubmit={(event) => { event.preventDefault(); }}
             >
-              <FormGroup>
-                <ControlLabel>Name</ControlLabel>
-                <FormControl
+              <Row>
+                <label>Name</label>
+                <Form.Control
                   type="text"
                   ref="name"
                   name="name"
                   placeholder="Divya Kumari"
                 />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel> Email </ControlLabel>
-                <FormControl
+              </Row>
+              <Row>
+                <label> Email </label>
+                <Form.Control
                   type="email"
                   ref="email"
                   name="email"
                   placeholder="divyaKumari@gmail.com"
                 />
-              </FormGroup>
-              <Button type="submit" bsStyle="primary" onClick={this.handleSubmit}>Invite</Button>
+              </Row>
+              <Button type="submit" variant="primary" onClick={this.handleSubmit}>Invite</Button>
             </form>
           </Col>
         </Row>

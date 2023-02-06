@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ButtonToolbar, ButtonGroup, Button, Row, Col,
-} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import { getDayWithoutTime } from '../../../../../modules/helpers';
@@ -17,10 +15,10 @@ const returnRow = (displayLabel, displayValue) => {
 
   return (
     <div className="row">
-      <div className="col-xs-6">
+      <div className="col-6">
         {displayLabel}
       </div>
-      <div className={`col-xs-6 ${highLightLabel}`}>
+      <div className={`col-6 ${highLightLabel}`}>
         <strong>
           {' '}
           {displayValue}
@@ -105,14 +103,14 @@ const ViewUserDetails = ({ match }) => {
     } = user;
     return (
       <div>
-        <div className="page-header clearfix">
+        <div className="py-4 clearfix">
           <h3>{`${profile.salutation} ${profile.name.first} ${profile.name.last}`}</h3>
 
         </div>
-        <div className="ViewUser panel panel-default offset-sm-1 col-xs-12 col-sm-9 col-sm-6">
-          <section className="panel-default">
-            <div className="panel-body">
-              <div className="col-xs-12 offset-sm-1 col-sm-10" style={{ padding: '1em' }}>
+        <div className="ViewUser offset-sm-1 col-12 col-sm-9 col-sm-6">
+          <section className="card">
+            <div className="card-body">
+              <div className="col-12 offset-sm-1 col-sm-10" style={{ padding: '1em' }}>
                 {returnRow('Account Status', constants.UserAccountStatus[status.accountStatus].status_display_value)}
                 {returnRow('Join Date', getDayWithoutTime(profile.createdAt, dateSettings.timeZone))}
                 {returnRow('Mobile Phone', profile.whMobilePhone)}

@@ -1,4 +1,4 @@
-@import '../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../stylesheets/bootstrap/variables';
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -13,35 +13,28 @@ body {
 }
 
 .footer-show-toolbar{
-  bottom: 60px;
+  bottom: 3rem;
 }
 
 .footer-no-toolbar{
   bottom: 0px;
 }
 
-.Footer {
+footer {
   position: absolute;
   
   width: 100%;
   margin-top: 5em !important;
   /* Set the fixed height of the footer here */
-  //height: 3.1em;
-
+  height: 3rem;
+  line-height: 3rem;
   .container, .container-fluid{
-    background-color: $navbar-default-bg;
-    font-size:$font-size-small;
+    font-size:$font-size-sm;
     padding: 10px;
   }
 
-  /*padding-bottom: 0px;
-  width: 100%;
-  bottom:0;
-
-  margin:0px;
-  padding-bottom:1.2em;*/
   p {
-    color: $gray-darker;
+    color: $gray-700;
   }
 
   ul {
@@ -57,14 +50,14 @@ body {
     }
 
     a {
-      color: $navbar-default-link-color;
+      color: $navbar-light-color;
     }
 
     a:hover,
     a:active,
     a:focus {
       text-decoration: none;
-      color: $navbar-default-link-hover-color;
+      color: $navbar-light-active-color;
     }
   }
 }

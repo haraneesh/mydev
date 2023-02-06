@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
 import InsertProduct from '../../components/ProductsAdmin/InsertProduct';
@@ -34,9 +35,9 @@ const ProductsAdminDetail = ({
   loading, products, suppliers, productListId, history,
 }) => (
   !loading ? (
-    <Row>
-      <Col xs={12}>
-        <h2 className="page-header">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h2>
+    <Row className="pb-4">
+      <Col xs={12} className="justify-content-center text-center">
+        <h2 className="py-4">{(productListId) ? `Editing Product List - ${productListId}` : 'Products Admin'}</h2>
         <InsertProduct history={history} />
         <UploadPrices products={products} history={history} />
         <ListAllProducts

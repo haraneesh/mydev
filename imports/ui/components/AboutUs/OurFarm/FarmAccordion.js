@@ -94,7 +94,7 @@ function FarmAccordion() {
 
   return (
     <div className="carousel-farm">
-      <div id="cc2" className="carousel panel-body">
+      <div id="cc2" className="carousel">
         <div className="carousel-cell">
           <img src="about/farm/1.jpg?v1" alt="Organic Rice Farm" />
         </div>

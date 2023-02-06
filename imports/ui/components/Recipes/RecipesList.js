@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Panel, Row, Col, Alert, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+
 import { ShowNutritionSummary, ShowEffortSummary } from './recipeHelpers';
 
 import './RecipeList.scss';
@@ -19,40 +21,38 @@ const RecipesList = ({ recipes }) => (
     <Row className="RecipesList">
       {recipes.map((recipe) => (
         <Col xs={12} md={6}>
-          <Panel className="entry">
-            <Row>
-              <div>
-                <Col xs={12} md={4} className="text-center imageCol">
-                  <div style={ShowThumbnail(recipe.thumbnailUrl)} alt="" />
-                </Col>
-                <Col xs={12} md={8} className="entry-desc">
-                  <Row>
-                    <h3 className="text-center entry-title">
-                      <a href={`/recipes/${recipe._id}`}>{ recipe.title }</a>
-                    </h3>
-                  </Row>
-                  {/*
+          <Row className="entry bg-body">
+            <div>
+              <Col xs={12} md={4} className="text-center imageCol">
+                <div style={ShowThumbnail(recipe.thumbnailUrl)} alt="" />
+              </Col>
+              <Col xs={12} md={8} className="entry-desc">
+                <Row>
+                  <h3 className="text-center entry-title">
+                    <a href={`/recipes/${recipe._id}`}>{ recipe.title }</a>
+                  </h3>
+                </Row>
+                {/*
                 <div className="text-center">
                   <div> { ShowNutritionSummary(recipe) } </div>
                 </div>
                 */}
-                  <div className="text-center">
-                    <div>
-                      { ShowEffortSummary(recipe) }
-                    </div>
+                <div className="text-center">
+                  <div>
+                    { ShowEffortSummary(recipe) }
                   </div>
-                  <Col xs={12} className="text-center btn-view-recipe">
-                    <Button bsStyle="primary" href={`/recipes/${recipe._id}`} bsSize="small"> View Recipe </Button>
-                  </Col>
+                </div>
+                <Col xs={12} className="text-center btn-view-recipe">
+                  <Button bsStyle="primary" href={`/recipes/${recipe._id}`} bsSize="small"> View Recipe </Button>
                 </Col>
-              </div>
-            </Row>
-          </Panel>
+              </Col>
+            </div>
+          </Row>
         </Col>
       ))}
     </Row>
   )
-    : <Alert bsStyle="info">No recipes yet.</Alert>
+    : <Alert variant="info">No recipes yet.</Alert>
 );
 
 RecipesList.propTypes = {

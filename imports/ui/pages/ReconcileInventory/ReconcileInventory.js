@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Panel } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import Loading from '../../components/Loading/Loading';
@@ -10,12 +10,16 @@ import ReconcileInventoryMain from '../../components/ReconcileInventory/Reconcil
 
 const ReconcileInventory = ({ loading, products }) => (!loading ? (
   <div className="ReconcileInventory">
-    <div className="page-header clearfix">
-      <h2 className="pull-left">Reconcile Products for {getDayWithoutTime()}</h2>
+    <div className="py-4 clearfix">
+      <h2 className="pull-left">
+        Reconcile Products for
+        {' '}
+        {getDayWithoutTime()}
+      </h2>
     </div>
-    <Panel className="entry">
+    <Row className="bg-body m-2 p-2 entry">
       <ReconcileInventoryMain products={products} />
-    </Panel>
+    </Row>
   </div>
 ) : <Loading />);
 

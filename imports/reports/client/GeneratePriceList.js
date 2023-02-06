@@ -64,10 +64,10 @@ class GeneratePriceList {
     <div className="container">
       <div className="row">
         <div className="invoice-title">
-          <div className="col-xs-12">
+          <div className="col-12">
             <h3>Suvai - Price List</h3>
           </div>
-          <div className="col-xs-12">
+          <div className="col-12">
             <h4>
               {`${moment(new Date()).tz(dateSettingsWithTime.timeZone).format(dateSettingsWithTime.format)}`}
             </h4>
@@ -76,9 +76,9 @@ class GeneratePriceList {
       </div>
       <div className="row">
         <div className="col-md-12">
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <table className="table table-bordered table-striped">
+          <div className="card">
+            <div className="card-body">
+              <table className="table table-striped table-bordered ">
                 <thead className="thead-dark">
                   {
                       this.addRowHeaders()
@@ -90,7 +90,6 @@ class GeneratePriceList {
                     }
                 </tbody>
               </table>
-
             </div>
           </div>
         </div>

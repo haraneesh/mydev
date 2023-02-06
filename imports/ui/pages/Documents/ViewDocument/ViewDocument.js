@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, ButtonGroup, Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
@@ -23,22 +24,22 @@ const handleRemove = (documentId, history) => {
 
 const renderDocument = (doc, match, history) => (doc ? (
   <div className="ViewDocument">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h4 className="pull-left">{ doc && doc.title }</h4>
-      <ButtonToolbar className="pull-right">
-        <ButtonGroup bsSize="small">
-          <Button onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
-          <Button onClick={() => handleRemove(doc._id, history)} className="text-danger">
-            Delete
-          </Button>
-        </ButtonGroup>
-      </ButtonToolbar>
+      <Row className="pull-right pe-2">
+        <Button size="sm" onClick={() => history.push(`${match.url}/edit`)}>Edit</Button>
+        <Button size="sm" onClick={() => handleRemove(doc._id, history)} className="text-danger">
+          Delete
+        </Button>
+      </Row>
     </div>
     { doc && doc.body }
   </div>
 ) : <NotFound />);
 
-const ViewDocument = ({ loading, doc, match, history }) => (
+const ViewDocument = ({
+  loading, doc, match, history,
+}) => (
   !loading ? renderDocument(doc, match, history) : <Loading />
 );
 
@@ -57,4 +58,4 @@ export default withTracker(({ match }) => {
     loading: !subscription.ready(),
     doc: Documents.findOne(documentId) || {},
   };
-}) (ViewDocument);
+})(ViewDocument);

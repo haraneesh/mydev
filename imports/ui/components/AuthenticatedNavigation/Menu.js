@@ -1,71 +1,53 @@
 // import React, { Component } from 'react';
-import React, { useState, useEffect } from 'react';
-import { Button, Row } from 'react-bootstrap';
+import React from 'react';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 import PropTypes from 'prop-types';
 
-/* export default class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false,
-    };
-    this.show = this.show.bind(this);
-    this.hide = this.hide.bind(this);
-  } */
+const Menu = (props) => (
+  <>
+    <div className="text-end col-3 col-sm-2">
 
-const Menu = (props) => {
-  const [isMenuVisible, setMenuVisibility] = useState(false);
-
-  useEffect(() => {
-    setMenuVisibility(false);
-  }, []);
-
-  const hide = () => {
-    setMenuVisibility(false);
-    document.removeEventListener('click', hide);
-  };
-
-  const show = () => {
-    if (!isMenuVisible) {
-      document.addEventListener('click', hide);
-    }
-    setMenuVisibility(true);
-  };
-
-  const menuVisible = isMenuVisible ? 'visible' : ''; // this.state.visible ? 'visible ' : '';
-
-  return (
-    <Row className="pull-right">
-      <span
+      <Button
+        variant="white"
+        onClick={() => { props.history.push('/profile'); }}
+        className="px-2 px-sm-3"
         id="profileIcon"
-        style={{
-          marginTop: '2.4rem', marginRight: '15px', float: 'left', fontSize: '1.25em', display: 'block',
-        }}
       >
-        <a onClick={() => { props.history.push('/profile'); }} href="#">
-          <i className="fas fa-user" style={{ color: '#522E23' }} />
-        </a>
-      </span>
-      <div className="menu-expand-button">
-        <Button type="button" bsStyle="link" onClick={show}>
-          <span className={`icon-bar top-bar ${menuVisible}`} />
-          <span className={`icon-bar middle-bar ${menuVisible}`} />
-          <span className={`icon-bar bottom-bar ${menuVisible}`} />
-        </Button>
-      </div>
-      <div className="menu" style={{ display: (isMenuVisible) ? 'block' : 'none' }}>
-        <div className={menuVisible + props.alignment} style={{ zIndex: 1100 }}>
-          {props.children}
-        </div>
-      </div>
-    </Row>
-  );
-};
+        <span className="material-icons fs-2">person</span>
+      </Button>
+
+      <Button
+        variant="white"
+        onClick={props.handleShow}
+        className="px-2 px-sm-3"
+        id="menuIcon"
+      >
+        <span className="material-icons fs-2"> menu </span>
+      </Button>
+
+      <Offcanvas show={props.show} onHide={props.handleClose} placement="top" name="OffCanvasMenu">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>
+            <h3> Namma Suvai </h3>
+          </Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <Row className="px-sm-4">
+            {props.children}
+          </Row>
+        </Offcanvas.Body>
+      </Offcanvas>
+
+    </div>
+
+  </>
+);
 
 export default Menu;
 
 Menu.propTypes = {
-  alignment: PropTypes.string.isRequired,
   children: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };

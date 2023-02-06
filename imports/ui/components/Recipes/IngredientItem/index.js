@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Button, ControlLabel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import constants from '../../../../modules/constants';
 
 const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
@@ -43,7 +43,7 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
 
   return (
     <div>
-      <Row className="ingredient-item panel-body">
+      <Row className="ingredient-item card-body">
         <Col xs={10}>
           <h4>
             {`${ingredient.name}`}
@@ -58,14 +58,14 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
             paddingTop: '1rem',
           }}
         >
-          <Button bsSize="xsmall" onClick={checkRemoveIngredient}>
-            <i className="fa fa-minus" />
+          <Button size="sm" onClick={checkRemoveIngredient}>
+            <i>-</i>
           </Button>
         </Col>
       </Row>
       <Row>
-        <Col xs={5} className="rowRightSpacing">
-          <ControlLabel>Quantity</ControlLabel>
+        <Col xs={5} className="pr-2">
+          <label>Quantity</label>
           <input
             className="form-control"
             ref={inputIngMeasure}
@@ -76,10 +76,10 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
             required
           />
         </Col>
-        <Col xs={5} className="rowRightSpacing">
-          <ControlLabel>Measure</ControlLabel>
+        <Col xs={5} className="pr-2">
+          <label>Measure</label>
           <select
-            className="form-control"
+            className="form-select"
             name="unit"
             ref={inputIngUnit}
             defaultValue={ingredient.unit}
@@ -95,7 +95,7 @@ const IngredientItem = ({ ingredient, removeIngredient, onChange }) => {
           </select>
         </Col>
         <Col xs={2}>
-          <ControlLabel>Disp Order</ControlLabel>
+          <label>Disp Order</label>
           <input
             type="number"
             className="form-control"

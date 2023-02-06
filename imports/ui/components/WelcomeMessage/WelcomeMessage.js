@@ -1,16 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
 
 class WelcomeMessage extends React.Component {
   constructor(props, context) {
     super(props, context);
-
-    this.handleDismiss = this.handleDismiss.bind(this);
-
-    this.state = {
-      show: true,
-    };
   }
 
   getGreetingMessageByTime() {
@@ -26,33 +20,26 @@ class WelcomeMessage extends React.Component {
     return greet;
   }
 
-  handleDismiss() {
-    this.setState({ show: false });
-  }
-
-  handleShow() {
-    this.setState({ show: true });
-  }
-
   render() {
     const { profile } = this.props.loggedInUser;
-    if (this.state.show) {
-      return (
-        <Alert bsStyle="info" onDismiss={this.handleDismiss} style={{ marginTop: '2em' }}>
-          <p className="lead text-center-not-xs">
-            <strong>
-              {this.getGreetingMessageByTime()}
-              ,
-            </strong>
-            {' '}
-            <br className="d-xs-block d-sm-none" />
-            {` ${(profile.salutation) ? profile.salutation : ''} ${profile.name.first} ${profile.name.last}`}
-          </p>
-        </Alert>
-      );
-    }
 
-    return <span />;
+    return (
+      <Alert
+        variant="light"
+        key="light"
+        className="mt-4 bg-white"
+      >
+        <p className="text-center-not-xs my-1">
+          <strong>
+            {this.getGreetingMessageByTime()}
+            ,
+          </strong>
+          {' '}
+          <br className="d-xs-block d-sm-none" />
+          {` ${(profile.salutation) ? profile.salutation : ''} ${profile.name.first} ${profile.name.last}`}
+        </p>
+      </Alert>
+    );
   }
 }
 

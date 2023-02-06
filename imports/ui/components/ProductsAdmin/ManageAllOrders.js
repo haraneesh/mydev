@@ -1,13 +1,15 @@
 // eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, SplitButton, MenuItem, Button, ButtonToolbar,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import autoBind from 'react-autobind/lib/autoBind';
-import { Table, Column } from 'fixed-data-table-2';
-import Dimensions from 'react-dimensions';
+import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
+import Icon from '../Icon/Icon';
 import {
   DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
   TextCell, DateCell,
@@ -31,117 +33,104 @@ const UpdateStatusButtons = ({
   const rows = [];
   _.each(statuses, (value, key) => {
     if (!ignoreStatuses[key]) {
-      rows.push(<MenuItem eventKey={value.name} onSelect={onSelectCallBack}>
-        {`to ${value.display_value}`}
-        {' '}
-
-      </MenuItem>);
+      rows.push(
+        <Dropdown.Item href="#" onClick={() => { onSelectCallBack(key); }}>
+          {`to ${value.display_value}`}
+        </Dropdown.Item>,
+      );
     }
   });
   return (
-    <SplitButton bsSize="small" title={title} key="split-button-status-change" id="split-button-basic-status">
-      {rows}
-    </SplitButton>
+    <Dropdown as={ButtonGroup} className="m-2">
+      <Dropdown.Toggle size="sm" id="updateButtons">
+        {title}
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        {rows}
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 
+const writeRows = ({ dataList, onChecked, onRowClickCallBack }) => {
+  const rowList = [];
+  rowList.push(<div />);
+  for (let index = 0; index < dataList.getSize(); index += 1) {
+    rowList.push(
+      <tr>
+        {<RowSelectedCell rowIndex={index} data={dataList} onChecked={onChecked} columnKey="selected" />}
+        {<OrderStatusCell rowIndex={index} data={dataList} columnKey="status" />}
+        {<TextCell rowIndex={index} data={dataList} columnKey="name" />}
+        {<TextCell rowIndex={index} data={dataList} columnKey="whMobileNum" />}
+        {<DateCell rowIndex={index} data={dataList} columnKey="date" />}
+        {<AmountCell rowIndex={index} data={dataList} columnKey="amount" />}
+        {<td>
+          <Button size="sm" variant="link" onClick={(e) => { onRowClickCallBack(e, index); }} className="w-100 btn-block">
+            <Icon icon="more_vert" type="mt" />
+          </Button>
+         </td>}
+      </tr>,
+    );
+  }
+  return rowList;
+};
+
 const OrderTable = ({
-  dataList, dynamicWidth, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack,
+  dataList, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack,
 }) => (
-  <Table
-    rowHeight={50}
-    headerHeight={50}
-    rowsCount={dataList.getSize()}
-    width={dynamicWidth}
-    onRowClick={onRowClickCallBack}
-    height={5070}
-  >
-    <Column
-      columnKey="selected"
-      // header = { <Cell>Selected</Cell> }
-      header={(
+
+  <Table striped bordered hover responsive>
+    <thead>
+      <tr>
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.selected}
-        >
-          Selected
-        </SortHeaderCell>
-      )}
-      cell={<RowSelectedCell data={dataList} onChecked={onChecked} />}
-      flexGrow={1}
-      width={50}
-    />
-    <Column
-      columnKey="status"
-      cell={<OrderStatusCell data={dataList} />}
-      flexGrow={2}
-      width={50}
-      // header = { <Cell>Status</Cell> }
-      header={(
+          cellName="#"
+          columnKey="selected"
+        />
+
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.status}
-        >
-          Status
-        </SortHeaderCell>
-      )}
-    />
-    <Column
-      columnKey="name"
-      header={(
+          cellName="Statue"
+          columnKey="status"
+        />
+
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.name}
-        >
-          Name
-        </SortHeaderCell>
-      )}
-      cell={<TextCell data={dataList} />}
-      width={100}
-      flexGrow={3}
-    />
-    <Column
-      columnKey="whMobileNum"
-      header={(
+          cellName="Name"
+          columnKey="name"
+        />
+
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.whMobileNum}
-        >
-          Mobile Number
-        </SortHeaderCell>
-      )}
-      cell={<TextCell data={dataList} />}
-      width={100}
-      flexGrow={2}
-    />
-    <Column
-      columnKey="date"
-      header={(
+          cellName="Mobile Number"
+          columnKey="whMobileNum"
+        />
+
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.date}
-        >
-          Delivery Date
-        </SortHeaderCell>
-      )}
-      cell={<DateCell data={dataList} />}
-      width={100}
-      flexGrow={3}
-    />
-    <Column
-      columnKey="amount"
-      header={(
+          cellName="Delivery Date"
+          columnKey="date"
+        />
+
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.amount}
-        >
-          Bill Amount
-        </SortHeaderCell>
-      )}
-      cell={<AmountCell data={dataList} />}
-      width={100}
-      flexGrow={2}
-    />
+          cellName="Bill Amount"
+          columnKey="amount"
+        />
+
+        <th />
+
+      </tr>
+    </thead>
+    <tbody>
+      {writeRows({ dataList, onChecked, onRowClickCallBack })}
+    </tbody>
   </Table>
 );
 
@@ -182,17 +171,6 @@ class ManageAllOrders extends React.Component {
     };
 
     autoBind(this);
-    /*
-    this.handleRowClick = this.handleRowClick.bind(this);
-    this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this);
-    this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
-    this.onSortChange = this.onSortChange.bind(this);
-    this.groupSelectedRowsInUI = this.groupSelectedRowsInUI.bind(this);
-    this.handleGenerateBills = this.handleGenerateBills.bind(this);
-    this.handleGenerateOPL = this.handleGenerateOPL.bind(this);
-    this.handleGenerateOPLNew = this.handleGenerateOPLNew.bind(this);
-    this.handleDeliveryDateUpdate = this.handleDeliveryDateUpdate.bind(this);
-    */
   }
 
   UNSAFE_componentWillMount() {
@@ -422,8 +400,7 @@ class ManageAllOrders extends React.Component {
     return (
       <div>
         <Row>
-          <ButtonToolbar>
-
+          <Col>
             <UpdateStatusButtons
               title="Update Status"
               statuses={constants.OrderStatus}
@@ -438,8 +415,8 @@ class ManageAllOrders extends React.Component {
             />
             {!this.props.isWholeSale && (
             <Button
-              bsStyle="default"
-              bsSize="small"
+              size="sm"
+              className="m-2"
               onClick={this.handleGenerateBills}
             >
               Generate Bills
@@ -448,8 +425,8 @@ class ManageAllOrders extends React.Component {
 
             {!this.props.isWholeSale && (
             <Button
-              bsStyle="default"
-              bsSize="small"
+              size="sm"
+              className="m-2"
               onClick={this.handleGenerateOPL}
             >
               Generate OPL
@@ -458,8 +435,8 @@ class ManageAllOrders extends React.Component {
 
             {!this.props.isWholeSale && (
             <Button
-              bsStyle="default"
-              bsSize="small"
+              size="sm"
+              className="m-2"
               onClick={this.handleGenerateOPLNew}
             >
               Generate OPL New
@@ -468,8 +445,9 @@ class ManageAllOrders extends React.Component {
 
             {!!this.props.isWholeSale && (
             <Button
-              bsStyle="success"
-              bsSize="small"
+              variant="success"
+              size="sm"
+              className="m-2"
               onClick={this.handleGeneratePackingPOs}
             >
               Export Packing POs
@@ -478,8 +456,9 @@ class ManageAllOrders extends React.Component {
 
             {!!this.props.isWholeSale && (
             <Button
-              bsStyle="success"
-              bsSize="small"
+              variant="success"
+              size="sm"
+              className="m-2"
               onClick={this.handleGeneratePOsAsCSV}
             >
               Export POs
@@ -488,26 +467,24 @@ class ManageAllOrders extends React.Component {
 
             {!this.props.isWholeSale && (
             <Button
-              bsStyle="default"
-              bsSize="small"
+              size="sm"
+              className="m-2"
               href="/reconcileInventory"
             >
               Daily Inventory Update
             </Button>
             )}
-
-          </ButtonToolbar>
+          </Col>
         </Row>
         <Row>
           <OrderTable
             dataList={this.state.sortedDataList}
-            dynamicWidth={this.props.containerWidth}
-            dynamicHeight={this.props.containerHeight}
             onRowClickCallBack={this.handleRowClick}
             onChecked={this.handleCheckBoxClick}
             colSortDirs={this.state.colSortDirs}
             onSortChangeCallBack={this.onSortChange}
           />
+
         </Row>
       </div>
     );
@@ -524,4 +501,5 @@ ManageAllOrders.propTypes = {
   isWholeSale: PropTypes.bool.isRequired,
 };
 
-export default Dimensions()(ManageAllOrders);
+export default ManageAllOrders;
+// export default Dimensions()(ManageAllOrders);

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Col, Glyphicon } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
-
-import './ProductSearch.scss';
+import Icon from '../../Icon/Icon';
 
 class ProductSearch extends React.Component {
   constructor(props) {
@@ -61,9 +61,9 @@ class ProductSearch extends React.Component {
 
     return (
       <div className="productOrderSearch">
-        <div className="panel panel-default" style={{ marginBottom: '0px' }}>
-          <div className="panel-heading">
-            <div className="input-group productSearchInp">
+        <div className="mb-0 justify-content-center card">
+          <div className="card-header">
+            <div className="input-group px-sm-5">
               <input
                 className="form-control"
                 type="text"
@@ -73,19 +73,19 @@ class ProductSearch extends React.Component {
                 onBlur={this.onLostFocus}
                 ref={(searchBox) => (this.searchBox = searchBox)}
               />
-              <span className="input-group-addon">
-                <Glyphicon glyph="remove" onClick={this.clear} />
-              </span>
+              <button className="btn btn-primary input-group-text" type="button" onClick={this.clear}>
+                <Icon icon="close" type="mt" />
+              </button>
             </div>
           </div>
+
           {searchString !== '' && (
-          <div className="panel-body">
-            <div className="row">
-              { searchResults }
-              { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
-            </div>
+          <div className="row card-body">
+            { searchResults }
+            { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
           </div>
           )}
+
         </div>
 
       </div>

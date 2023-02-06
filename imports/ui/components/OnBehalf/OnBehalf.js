@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
-import { Col } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
 import constants from '../../../modules/constants';
 
 const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }) => {
@@ -39,7 +39,7 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
   };
 
   return (
-    <div className="row well">
+    <div className="row alert alert-primary px-4">
       <Col xs={12}>
         <h4> Ordered User Details</h4>
       </Col>
@@ -62,13 +62,13 @@ const OnBehalf = ({ defaultSelectedUser, onSelectedChange, showMandatoryFields }
 
       </Col>
       <Col xs={4} sm={2}>
-        <button onClick={findUser} className="btn btn-default btn-sm"> Find </button>
+        <button onClick={findUser} className="btn btn-primary btn-sm"> Find </button>
       </Col>
       <Col xs={12} sm={4}>
         <label htmlFor="onBehalfReceivedMethod">How was the order received? </label>
       </Col>
       <Col xs={8} sm={6} style={{ paddingRight: '0px' }}>
-        <select id="onBehalfReceived" name="onBehalfReceivedType" className="form-control" onChange={onOrderReceivedTypeChange}>
+        <select id="onBehalfReceived" name="onBehalfReceivedType" className="form-select" onChange={onOrderReceivedTypeChange}>
           <option value="" />
           {constants.OrderReceivedType.allowedValues.map((typ) => (
             <option key={typ} value={typ}>{constants.OrderReceivedType[typ].display_value}</option>

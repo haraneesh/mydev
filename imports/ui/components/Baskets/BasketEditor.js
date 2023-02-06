@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import React, { useRef, useState } from 'react';
 import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
-import { Col, Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import constants from '../../../modules/constants';
 import { ListProducts, createProductHash } from './BasketCommon';
@@ -105,9 +106,9 @@ const BasketEditor = ({
 
   return (
     <div>
-      <h3 className="page-header">{basketDetails._id ? 'Update Basket' : 'New Basket'}</h3>
-      <div className="panel panel-default">
-        <section className="panel-body">
+      <h3 className="py-4">{basketDetails._id ? 'Update Basket' : 'New Basket'}</h3>
+      <div className="card">
+        <section className="card-body">
           <Col
             xs={12}
             style={{
@@ -141,7 +142,7 @@ const BasketEditor = ({
               <textarea
                 name="basketDesc"
                 defaultValue={basketDetails.description}
-                rows="4"
+                rows={4}
                 placeholder="Describe your basket"
                 className="form-control"
                 ref={refDescription}
@@ -150,7 +151,7 @@ const BasketEditor = ({
           </Col>
         </section>
 
-        <section className="panel-body">
+        <section className="card-body">
           <Col xs={12}>
             <ListProducts
               products={productsHashInBasket}

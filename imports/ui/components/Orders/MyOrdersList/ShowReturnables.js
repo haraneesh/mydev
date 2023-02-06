@@ -1,9 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 function ShowReturnables({ productReturnables }) {
   function retReturnableRowsForDisplay(productKeys) {
@@ -13,7 +12,7 @@ function ShowReturnables({ productReturnables }) {
       return productKeys.map((key) => {
         if (productReturnables[key].quantitySold > 0) {
           return (
-            <Row key={key} className="d-flex align-items-center">
+            <Row key={key}>
               <Col xs={3} sm={4} className="text-center">
                 <img src={imgPath(productReturnables[key].image_path)} height="64" width="64" />
               </Col>
@@ -34,13 +33,13 @@ function ShowReturnables({ productReturnables }) {
 
   if (productKeys.length > 0) {
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading text-center" style={{ padding: '2px' }}>
-          <h6 style={{ margin: '5px' }}> Let's Recycle </h6>
+      <div className="card mt-4">
+        <div className="text-center card-header m-0 py-2 pt-4">
+          <h6 className="pb-2"> Let's Recycle </h6>
           <p>Please return these and help us recycle </p>
         </div>
 
-        <div className="panel-body">
+        <div className="card-body">
           { retReturnableRowsForDisplay(productKeys) }
         </div>
       </div>

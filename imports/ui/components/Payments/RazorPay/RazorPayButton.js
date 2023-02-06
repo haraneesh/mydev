@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import loadCheckOutRzr from './loadCheckOutRzr';
 
@@ -63,7 +63,7 @@ class RazorPayButton extends React.Component {
       <Button
         type="button"
         onClick={this.handleOnPayButtonClick}
-        bsStyle="primary"
+        variant="secondary"
       >
         {this.props.buttonText}
       </Button>

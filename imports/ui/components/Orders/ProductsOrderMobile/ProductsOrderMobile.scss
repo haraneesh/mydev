@@ -1,21 +1,7 @@
-@import '../../../stylesheets/bootstrap/bootstrap/variables';
-
-.notifyCount{
-    font-family: $body-font;
-    position: relative;
-    display:inline-block;
-    padding: 0.5rem;
-    top: -0.5rem;
-    background: $brand-success;
-    border-radius: 5px;
-    font-size: 11px;
-    color: white;
-    border: 2px solid white;
-    min-width: 2.6rem;
-}
+@import '../../../stylesheets/bootstrap/variables';
 
 .productOrderList {
-    .panel-body{
-      padding:0px !important;
+    .accordion-button::after{
+      display:none;
     }
 }

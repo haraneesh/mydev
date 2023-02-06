@@ -1,11 +1,9 @@
 import React, {
   useState, forwardRef, useImperativeHandle,
 } from 'react';
-
 import { Meteor } from 'meteor/meteor';
-import {
-  Row, Col, FormGroup, ControlLabel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import PropTypes from 'prop-types';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import { toast } from 'react-toastify';
@@ -122,48 +120,48 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
   const { isError } = state;
 
   return (
-    <div className="SpecialOrderDeliveryDetails offset-sm-1">
+    <div className="SpecialOrderDeliveryDetails">
       <div>
         <Col xs={12}>
           <Row>
             <Col xs={6}>
-              <FormGroup
+              <Row
                 validationState={isError.firstName.length > 0 ? 'error' : ''}
-                style={{ paddingRight: '1px' }}
+                className="pe-1"
               >
-                <ControlLabel>First Name</ControlLabel>
+                <label>First Name</label>
                 <input
                   type="text"
                   name="firstName"
                   onBlur={onValueChange}
                   className="form-control"
                 />
-              </FormGroup>
+              </Row>
               {isError.firstName.length > 0 && (
                 <span className="small text-muted">{isError.firstName}</span>
               )}
             </Col>
             <Col xs={6}>
-              <FormGroup
+              <Row
                 validationState={isError.lastName.length > 0 ? 'error' : ''}
-                style={{ paddingLeft: '1px' }}
+                className="ps-1"
               >
-                <ControlLabel>Last Name</ControlLabel>
+                <label>Last Name</label>
                 <input
                   type="text"
                   name="lastName"
                   onBlur={onValueChange}
                   className="form-control"
                 />
-              </FormGroup>
+              </Row>
               {isError.lastName.length > 0 && (
                 <span className="small text-muted">{isError.lastName}</span>
               )}
             </Col>
           </Row>
 
-          <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-            <ControlLabel>Whats App Mobile Number</ControlLabel>
+          <Row className="pt-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+            <label>Whats App Mobile Number</label>
             <input
               type="text"
               name="whMobilePhone"
@@ -174,9 +172,9 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
             {isError.whMobilePhone.length > 0 && (
             <span className="small text-muted">{isError.whMobilePhone}</span>
             )}
-          </FormGroup>
-          <FormGroup validationState={isError.confirmWhMobileNumber.length > 0 ? 'error' : ''}>
-            <ControlLabel>Confirm Mobile Number</ControlLabel>
+          </Row>
+          <Row className="pt-2" validationState={isError.confirmWhMobileNumber.length > 0 ? 'error' : ''}>
+            <label>Confirm Mobile Number</label>
             <input
               type="password"
               name="confirmWhMobileNumber"
@@ -188,19 +186,19 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
             {isError.confirmWhMobileNumber.length > 0 && (
             <span className="small text-muted">{isError.confirmWhMobileNumber}</span>
             )}
-          </FormGroup>
-          <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
-            <ControlLabel>Delivery Address</ControlLabel>
+          </Row>
+          <Row className="pt-2" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+            <label>Delivery Address</label>
             <textarea
               name="deliveryAddress"
               placeholder="Complete address to deliver at, including Landmark, Pincode."
-              rows="6"
+              rows={6}
               className="form-control"
               onBlur={onValueChange}
             />
-          </FormGroup>
-          <FormGroup validationState={isError.password.length > 0 ? 'error' : ''}>
-            <ControlLabel>Password</ControlLabel>
+          </Row>
+          <Row className="pt-2" validationState={isError.password.length > 0 ? 'error' : ''}>
+            <label>Create Password</label>
             <input
               id="password"
               type="password"
@@ -212,9 +210,9 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
             {isError.password.length > 0 && (
             <span className="small text-muted">{isError.password}</span>
             )}
-          </FormGroup>
-          <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
-            <ControlLabel>Confirm Password</ControlLabel>
+          </Row>
+          <Row className="pt-2" validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+            <label>Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
@@ -225,7 +223,7 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
             {isError.confirmPassword.length > 0 && (
             <span className="small text-muted">{isError.confirmPassword}</span>
             )}
-          </FormGroup>
+          </Row>
         </Col>
       </div>
     </div>

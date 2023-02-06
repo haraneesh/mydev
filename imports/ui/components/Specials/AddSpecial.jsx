@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Button, FormGroup, FormControl,
+  Row, Col, Button, FormControl,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { upsertSpecialDraft } from '../../../api/Specials/methods';
@@ -19,7 +19,7 @@ const addNewSpecial = () => {
 };
 
 const AddSpecial = () => (
-  <FormGroup>
+  <Row>
     <Row>
       <Col xs={10}>
         <FormControl
@@ -32,7 +32,7 @@ const AddSpecial = () => (
         <Button type="submit" onClick={addNewSpecial}>Add New </Button>
       </Col>
     </Row>
-  </FormGroup>
+  </Row>
 );
 
 export default AddSpecial;

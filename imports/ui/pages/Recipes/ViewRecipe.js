@@ -3,9 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor, EditorState } from 'draft-js';
 import { stateFromHTML } from 'draft-js-import-html';
-import {
-  Button, Panel, Row, Col,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
 import Recipes from '../../../api/Recipes/Recipes';
@@ -57,21 +57,21 @@ class ViewRecipe extends React.Component {
 
     if (recipe.publishStatus !== constants.PublishStatus.Draft.name) {
       return (
-        <div className="ViewRecipe">
-          <div className="page-header clearfix">
-            <h2 className="text-center col-xs-12">{recipe.title}</h2>
-            <Col xs={12} className="buttonRowSpacing">
-              {isOwner && <Button bsSize="small" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
+        <div className="ViewRecipe py-4 px-2">
+          <div className="py-4">
+            <h2 className="text-center col-12">{recipe.title}</h2>
+            <Col xs={12} className="pt-2 text-center">
+              {isOwner && <Button size="sm" href={`/recipes/${recipe._id}/edit`}>Edit</Button>}
             </Col>
           </div>
 
           {recipe.imageId && (
-          <Panel>
+          <Row className="bg-body p-2 m-2">
             <RecipeImageViewHero cloudImageId={recipe.imageId} />
-          </Panel>
+          </Row>
           )}
 
-          <Panel style={{ padding: '1rem' }}>
+          <Row className="bg-body p-1">
             <Row>
               <Col xs={3} style={{ marginBottom: '1rem' }}>Serves:</Col>
               <Col xs={3} style={{ marginBottom: '1rem' }}>{recipe.serves}</Col>
@@ -85,9 +85,9 @@ class ViewRecipe extends React.Component {
               <Col xs={3} style={{ marginBottom: '1rem' }}>Cook time:</Col>
               <Col xs={3} style={{ marginBottom: '1rem' }}>{`${recipe.cookingTimeInMins} mins`}</Col>
             </Row>
-          </Panel>
+          </Row>
 
-          <Panel className="ingredientsView">
+          <Row className="ingredientsView m-2 p-2 bg-body">
             <h4 style={{ padding: '0 1rem' }}>Ingredients</h4>
             <Col xs={12}>
               <ol>
@@ -98,23 +98,23 @@ class ViewRecipe extends React.Component {
                 ))}
               </ol>
             </Col>
-          </Panel>
+          </Row>
 
-          <Panel>
+          <Row className="bg-body p-2 m-2">
             <h4 style={{ padding: '0 1rem' }}>Instructions</h4>
-            <div className="panel-body" style={{ paddingLeft: '1.5em' }}>
+            <div className="card-body" style={{ paddingLeft: '1.5em' }}>
               <Editor editorState={editorState} readOnly className="view-recipe" />
             </div>
-          </Panel>
+          </Row>
 
-          <Panel>
+          <Row className="bg-body p-2 m-2">
             <h4 style={{ padding: '0 1rem' }}>Responses</h4>
             <Comments
               postId={recipe._id}
               postType={constants.PostTypes.Recipe.name}
               loggedUserId={loggedUserId}
             />
-          </Panel>
+          </Row>
         </div>
       );
     }

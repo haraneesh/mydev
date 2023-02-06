@@ -7,8 +7,8 @@ import RecipeEditor from '../../components/Recipes/RecipeEditor';
 import Loading from '../../components/Loading/Loading';
 
 const EditRecipe = ({ loading, recipe, history }) => (!loading ? (
-  <div className="EditRecipe">
-    <h2 className="page-header">{`Editing ${recipe.title}`}</h2>
+  <div className="EditRecipe px-2 py-4">
+    <h2>{`Editing ${recipe.title}`}</h2>
     <RecipeEditor recipe={recipe} history={history} />
   </div>
 ) : <Loading />);

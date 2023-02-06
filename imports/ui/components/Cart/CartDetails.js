@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Meteor } from 'meteor/meteor';
-import PropTypes from 'prop-types';
-import {
-  Row, Col, Panel, Button, Alert,
-} from 'react-bootstrap';
 import { Roles } from 'meteor/alanning:roles';
+import PropTypes from 'prop-types';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import { toast } from 'react-toastify';
+import Icon from '../Icon/Icon';
 import { upsertOrder } from '../../../api/Orders/methods';
 import { isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
@@ -184,15 +186,13 @@ const CartDetails = ({
     }
     case (!orderId && cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0): {
       return (
-        <Row>
+        <Row className="m-3">
           <Col xs={12}>
-            <h3 className="page-header">Your Cart</h3>
+            <h2 className="py-4 text-center">Your Cart</h2>
           </Col>
-          <Col xs={12}>
-            <Panel>
-              <h4> Cart is Empty! </h4>
-              <Button style={{ marginBottom: '2.5em', marginRight: '.5em' }} onClick={() => { handleAddItems(); }}> Add Items</Button>
-            </Panel>
+          <Col className="bg-white m-3 p-3">
+            <h4 className="pb-2"> Cart is Empty! </h4>
+            <Button className="mb-2" onClick={() => { handleAddItems(); }}> Add Items</Button>
           </Col>
         </Row>
       );
@@ -201,46 +201,54 @@ const CartDetails = ({
       return (
         <Row>
           <Col xs={12}>
-            <h3 className="page-header">{orderId ? 'Update Order' : 'Your Cart'}</h3>
+            <h2 className="py-4 text-center">{orderId ? 'Update Order' : 'Your Cart'}</h2>
           </Col>
 
-          <Col xs={12}>
-            <Panel>
-              <ListProducts
-                products={cartState.cart.productsInCart}
-                deletedProducts={deletedProducts.cart}
-                updateProductQuantity={updateProductQuantity}
-                isMobile
-                isAdmin={isLoggedInUserAdmin()}
-                isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
-              />
-              <Row>
-                <Col sm={11} xs={12} className="text-right text-center-xs">
-                  <Button
-                    style={{ marginBottom: '2.5em', marginRight: '.5em' }}
-                    onClick={() => { handleAddItems(); }}
-                  >
-                    <i className="fa fa-plus" />
-                    {' Add Items'}
-                  </Button>
+          <Card className="mb-5">
+            <ListProducts
+              products={cartState.cart.productsInCart}
+              deletedProducts={deletedProducts.cart}
+              updateProductQuantity={updateProductQuantity}
+              isMobile
+              isAdmin={isLoggedInUserAdmin()}
+              isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
+            />
+            <Row>
+              <Col
+                sm={11}
+                xs={12}
+                className="text-right text-center-xs"
+                style={{
+                  marginBottom: '2.5em',
+                }}
+              >
+                <Button
+                  onClick={() => { handleAddItems(); }}
+                  style={{
+                    marginRight: '.5em',
+                  }}
+                >
+                  <Icon icon="add" type="mts" />
+                  <span>Add Items</span>
+                </Button>
 
-                  <Button
-                    style={{ marginBottom: '2.5em', marginLeft: '.5em' }}
-                    onClick={() => { clearCart(); }}
-                  >
-                    Clear Cart
-                  </Button>
-                </Col>
-              </Row>
+                <Button
+                  onClick={() => { clearCart(); }}
+                  style={{ marginRight: '.5em' }}
+                >
+                  Clear Cart
+                </Button>
+              </Col>
+            </Row>
 
-              {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
-              <Alert>
+            {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
+              <div className="offset-1 col-10 alert alert-info py-3">
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
-              </Alert>
-              )}
+              </div>
+            )}
 
-              {(Meteor.settings.public.ShowReturnBottles) && (
-              <div className="row well">
+            {(Meteor.settings.public.ShowReturnBottles) && (
+              <div className="row alert alert-info py-3">
                 <p className="offset-sm-1">
                   Let's Reduce, Renew and Recycle.
                   <br />
@@ -251,43 +259,44 @@ const CartDetails = ({
                   bottles and crates to the delivery person.
                 </p>
               </div>
-              )}
+            )}
 
-              <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+            <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
 
-              <PrevOrderComplaint
-                onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
-                prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
-              />
+            <PrevOrderComplaint
+              onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
+              prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
+            />
 
-              {onBehalfUser.isNecessary && (
+            {onBehalfUser.isNecessary && (
               <OnBehalf
                 onSelectedChange={onSelectedChange}
                 showMandatoryFields={onBehalfUserInfoError}
               />
-              )}
-              {(isOrderBeingUpdated) && <Loading />}
-              <OrderFooter
-                totalBillAmount={cartState.cart.totalBillAmount}
-                onButtonClick={() => { handleOrderSubmit(cartState); }}
-                submitButtonName={
+            )}
+
+            {(isOrderBeingUpdated) && <Loading />}
+
+            <OrderFooter
+              totalBillAmount={cartState.cart.totalBillAmount}
+              onButtonClick={() => { handleOrderSubmit(cartState); }}
+              submitButtonName={
                     isOrderBeingUpdated ? 'Order Being Placed ...'
                       : orderId ? 'Update Order'
                         : 'Place Order'
                 }
-                showWaiting={
+              showWaiting={
                   isOrderBeingUpdated
                   || !(isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount))
                 }
-                history={history}
-                orderId={orderId}
-                payCash={cartState.cart.payCashWithThisDelivery}
-                collectRecyclables={cartState.cart.collectRecyclablesWithThisDelivery}
-                onPayCash={handlePayCashWithThisDeliveryChange}
-                onCollectRecyclables={handleCollectRecyclablesWithThisDeliveryChange}
-              />
-            </Panel>
-          </Col>
+              history={history}
+              orderId={orderId}
+              payCash={cartState.cart.payCashWithThisDelivery}
+              collectRecyclables={cartState.cart.collectRecyclablesWithThisDelivery}
+              onPayCash={handlePayCashWithThisDeliveryChange}
+              onCollectRecyclables={handleCollectRecyclablesWithThisDeliveryChange}
+            />
+          </Card>
         </Row>
       );
     }

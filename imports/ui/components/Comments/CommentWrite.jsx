@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import {
-  FormGroup, FormControl, Button, ButtonToolbar,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { upsertComment } from '../../../api/Comments/methods';
 
 const saveComment = (postId, postType, userId, commentId, commentAddBoxName, onSave) => {
@@ -34,33 +34,30 @@ const CommentWrite = ({
   postId, postType, loggedUserId, expandedComment, onSave,
 }) => {
   const value = expandedComment ? expandedComment.description : '';
-  const cancelButton = onSave ? (<Button bsSize="small" onClick={() => onSave('cancel')}> Cancel </Button>) : '';
+  const cancelButton = onSave ? (<Button size="sm" className="ms-2" onClick={() => onSave('cancel')}> Cancel </Button>) : '';
   const saveButtonText = onSave ? 'Update' : 'Post';
   const commentId = expandedComment ? expandedComment._id : '';
   const commentAddBoxName = `commentAddBox_${commentId}`;
 
   return (
-    <FormGroup controlId="commentWrite">
-      <FormControl
+    <Row controlId="commentWrite">
+      <textarea
         name={commentAddBoxName}
-        componentClass="textarea"
-        rows="2"
+        rows={4}
         placeholder="Write a response ..."
         defaultValue={value}
+        className="form-control"
       />
       <ButtonToolbar style={{ marginTop: '1em' }}>
         <Button
-          bsSize="small"
-          className="btn-primary"
+          size="sm"
           onClick={() => saveComment(postId, postType, loggedUserId, commentId, commentAddBoxName, onSave)}
         >
-
           { saveButtonText }
-
         </Button>
         { cancelButton }
       </ButtonToolbar>
-    </FormGroup>
+    </Row>
   );
 };
 

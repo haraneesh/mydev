@@ -119,10 +119,9 @@ const Users = ({
   }
 
   return (!loading ? (
-    <div className="Users">
-      <div className="page-header clearfix">
-        <h2>Users</h2>
-      </div>
+    <div className="Users py-4">
+
+      <h2 className="ps-2 pt-2">Users</h2>
 
       <UserList
         colSortDirs={fetchState.colSortDirs}
@@ -133,6 +132,8 @@ const Users = ({
       />
 
       <Pagination
+        itemClass="page-item"
+        linkClass="page-link"
         activePage={fetchState.currentPage}
         itemsCountPerPage={NUMBEROFROWS}
         totalItemsCount={totalUsers}

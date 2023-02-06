@@ -2,16 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import AcceptPay from '../../components/Payments/AcceptPay/AcceptPay';
 import ListPayments from '../../components/Payments/ListPayments/ListPayments';
 import Loading from '../../components/Loading/Loading';
 
 const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
-  <div className="MyWallet">
+  <div className="MyWallet pb-5">
     <Row>
       <Col xs={12}>
-        <h2 className="page-header">My Wallet</h2>
+        <h2 className="pt-4 text-center">My Wallet</h2>
         <AcceptPay
           loggedInUser={loggedInUser}
           userWallet={userWallet}

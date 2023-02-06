@@ -2,7 +2,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings';
 import { extractNumber, extractString } from '../../../modules/helpers';
@@ -59,8 +60,8 @@ class ProductForAdmin extends React.Component {
     } = this.props;
 
     return (
-      <Row className="no-padding product-item">
-        <Col sm={!isBasket ? 5 : 8}>
+      <Row className="p-0 product-item">
+        <Col sm={!isBasket ? 6 : 8}>
           <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>
           {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -84,11 +85,11 @@ class ProductForAdmin extends React.Component {
               value={extractNumber(unit) * this.state.quantitySelected}
               onChange={this.handleWeightChange}
             />
-            <span className="input-group-addon">{`${extractString(unit)}`}</span>
+            <span className="input-group-text">{`${extractString(unit)}`}</span>
           </div>
         </Col>
         {!isBasket && (
-          <Col sm={4} className="text-right-not-xs">
+          <Col sm={3} className="text-right-not-xs">
             <p>
               {formatMoney(unitprice, accountSettings)}
               <span className="text-muted">{` ${'x'} `}</span>

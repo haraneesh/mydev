@@ -3,9 +3,15 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
-import {
-  Alert, Button, Col, Row, Panel, ListGroup, ControlLabel, HelpBlock, Tabs, Tab,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+
 import Product, { ProductTableHeader } from './Product';
 import { upsertProductList } from '../../../api/ProductLists/methods';
 
@@ -49,11 +55,13 @@ class ListAllProducts extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    // const productRows = createProductRows({ products: nextProps.products, suppliers: nextProps.suppliers })
-    // if (productRows !== prevState.productRows) {
-    // return { productRows };
-    // }
-    // else return null;
+    const productRows = createProductRows(
+      { products: nextProps.products, suppliers: nextProps.suppliers },
+    );
+    if (productRows !== prevState.productRows) {
+      return { productRows };
+    }
+    return null;
   }
 
   onFocusChange(focusedInput) {
@@ -109,12 +117,12 @@ class ListAllProducts extends React.Component {
   publishSection() {
     const { showEndDateError, isPublishingProductList } = this.state;
     return (
-      <Panel>
+      <Card className="p-2 m-2">
         <h3> Publish Product List for Users to order </h3>
-        <HelpBlock bsStyle="info">Select dates during which this product list will be available for the users to order</HelpBlock>
+        <p className="text-info">Select dates during which this product list will be available for the users to order</p>
         <Row>
           <Col xs={6}>
-            <ControlLabel> Active start date </ControlLabel>
+            <label> Active start date </label>
           </Col>
           <Col xs={6}>
             <Datetime
@@ -126,7 +134,7 @@ class ListAllProducts extends React.Component {
         </Row>
         <Row>
           <Col xs={6}>
-            <ControlLabel> Active end date </ControlLabel>
+            <label> Active end date </label>
           </Col>
           <Col xs={6}>
             <Datetime
@@ -135,29 +143,29 @@ class ListAllProducts extends React.Component {
               onChange={this.checkValidEndDate}
             />
             {showEndDateError && (
-            <Alert bsStyle="danger">
+            <Alert variant="danger">
               End date and time should be greater than start date.
             </Alert>
             )}
           </Col>
         </Row>
         <Row>
-          <Col xs={12}>
+          <Col xs={12} className="text-end mt-2">
             { !isPublishingProductList && (
-            <Button bsStyle="primary" onClick={() => { this.publishProductList(); }}>
+            <Button variant="secondary" onClick={() => { this.publishProductList(); }}>
               Publish Product List
             </Button>
             )}
             {
               !!isPublishingProductList && (
-                <Button bsStyle="primary" disabled>
+                <Button variant="secondary" disabled>
                   Product List is being Published ...
                 </Button>
               )
             }
           </Col>
         </Row>
-      </Panel>
+      </Card>
     );
   }
 
@@ -179,18 +187,17 @@ class ListAllProducts extends React.Component {
             {productKeys.forEach((key) => {
               sectionCount += 1;
               productsDisplay.push(
-                <Tab eventKey={sectionCount} title={key}>
-                  {(sectionCount === selectedHeaderKey) && productRows[key]}
+                <Tab eventKey={sectionCount} title={key} className="text-start">
+                  {/* (sectionCount === selectedHeaderKey) && productRows[key] */}
+                  { productRows[key]}
                 </Tab>,
               );
             })}
 
             <Tabs
-              animation={false}
               id="adminProductList"
-              activeKey={selectedHeaderKey}
-              onSelect={this.tabOnClick}
-              style={{ textAlign: 'center' }}
+             // activeKey={selectedHeaderKey}
+             // onSelect={this.tabOnClick}
             >
               {productsDisplay}
             </Tabs>
@@ -200,7 +207,7 @@ class ListAllProducts extends React.Component {
           </ListGroup>
         )
         : (
-          <Alert bsStyle="info">
+          <Alert variant="info">
             The product list is empty.
             You can add products by typing in the name of the product in the above box.
           </Alert>

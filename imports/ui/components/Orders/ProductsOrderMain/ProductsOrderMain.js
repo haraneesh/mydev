@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ListGroup, Alert, Row, Col, Panel, Button,
-} from 'react-bootstrap';
+import
+ListGroup from 'react-bootstrap/ListGroup';
+import Alert from 'react-bootstrap/Alert';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import { Roles } from 'meteor/alanning:roles';
 import Product from '../Product';
@@ -66,10 +70,10 @@ const ProductsOrderMain = (props) => {
   };
 
   const displayToolBar = (orderStatus) => (
-    <div className="text-center">
-      {(orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button bsSize="small" onClick={handleCancel}>Cancel Order</Button>)}
+    <div className="text-center pt-2">
+      {(orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button size="sm" onClick={handleCancel}>Cancel Order</Button>)}
       {' '}
-      {(isAdmin) && (<Button bsSize="small" onClick={handlePrintProductList}>Print Order List</Button>)}
+      {(isAdmin) && (<Button size="sm" onClick={handlePrintProductList}>Print Order List</Button>)}
     </div>
   );
 
@@ -191,9 +195,9 @@ const ProductsOrderMain = (props) => {
 
   const displayProductsAndSubmit = (isMobile, productGroups) => (
     products.length > 0 ? (
-      <Panel>
+      <Card className="m-1 mb-5">
         <Row>
-          <Col xs={12}>
+          <Col xs={12} className="pt-2">
             <ProductSearch
               getProductsMatchingSearch={getProductsMatchingSearch}
               ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}
@@ -209,15 +213,14 @@ const ProductsOrderMain = (props) => {
               }
             </ListGroup>
           </Col>
-
           <Col xs={12}>
             {displayOrderFooter(isMobile)}
           </Col>
         </Row>
-      </Panel>
+      </Card>
     )
       : (
-        <Alert bsStyle="info">
+        <Alert variant="info">
           Every day, List of available fresh items and their prices will be updated by 11 AM.
           Please wait for the message in the group.
         </Alert>
@@ -242,10 +245,10 @@ const ProductsOrderMain = (props) => {
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
-          <div className="page-header">
-            <h3>
+          <div className="py-4 my-2 text-center">
+            <h2>
               {formHeading}
-            </h3>
+            </h2>
             {displayToolBar(orderStatus)}
           </div>
           {displayProductsAndSubmit(isMobile, productGroups)}

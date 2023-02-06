@@ -102,9 +102,9 @@ const PwaInstallPopupIOS = ({
       className={`pwa-install-popup-ios ${isIPad() ? 'ipad-device' : ''} ${isSafari() ? 'safari-nav' : ''}`}
     >
       {children || (
-        <div className="pwa-install-popup-ios-content">
-          <div className="row pwa-install-popup-ios-content-top-row">
-            <img className="appIcon" src={appIcon} />
+        <div className="pwa-install-popup-ios-content text-center">
+          <div className="row pwa-install-popup-ios-content-top-row my-2">
+            <img className="appIcon col-3" src={appIcon} />
             <h4>
               {translations[languageCode].PWA_POPUP_PART1.replace(
                 '{{appName}}',
@@ -113,7 +113,7 @@ const PwaInstallPopupIOS = ({
             </h4>
           </div>
           <div className="row pwa-install-popup-ios-content-body-row">
-            <div className="col-xs-12 description">
+            <div className="col-12 description">
               <h4 style={{ margin: '0.25em' }}>
                 <small>
                   {translations[languageCode].PWA_POPUP_DESCRIPTION.replace(
@@ -124,20 +124,20 @@ const PwaInstallPopupIOS = ({
 
               </h4>
             </div>
-            <div className="col-xs-12 offset-sm-2">
+            <div className="col-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART2.replace(
                 '{{appName}}',
                 apppNameLabel,
               )}
             </div>
-            <div className="col-xs-12 offset-sm-2">
+            <div className="col-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART3}
               <ShareIcon
                 className="pwaPromptShareIcon"
                 modern
               />
             </div>
-            <div className="col-xs-12 offset-sm-2">
+            <div className="col-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART4}
               <HomeScreenIcon
                 className="pwaPromptHomeIcon"

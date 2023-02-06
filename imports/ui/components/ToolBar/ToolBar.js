@@ -2,10 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
-import { reset, bringUp } from './hideUnHideToolBar';
 import Icon from '../Icon/Icon';
 import './ToolBar.scss';
 
@@ -87,10 +86,11 @@ const ToolBar = ({
   if (authenticated) {
     return (
       <div id="toolBar" className="toolBar text-center">
-        <div className="box box1">
-          <Button bsStyle="link" onClick={() => { onMessageIconClick(isAdmin); }}>
-            <Icon icon="comment" />
-            <span style={fontProps}>Message</span>
+        <div className="col box1">
+          <Button variant="white" onClick={() => { onMessageIconClick(isAdmin); }}>
+            { /* <Icon icon="comment" /> */}
+            <Icon icon="forum" type="mt" className="fs-2" />
+            <div style={fontProps}>Message</div>
             {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
             <b className="alertMenu shoppingCartBubble">
               {countOfUnreadNotifications}
@@ -98,21 +98,21 @@ const ToolBar = ({
             )}
           </Button>
         </div>
-        <div className="box box2">
-          <Button bsStyle="link" onClick={() => { history.push('/recipes'); }}>
-            <Icon icon="utensils" />
+        <div className="col box2">
+          <Button variant="white" onClick={() => { history.push('/recipes'); }}>
+            <Icon icon="restaurant" type="mt" className="fs-2" />
             <span style={fontProps}>Recipes</span>
           </Button>
         </div>
-        <div className="box box3">
-          <Button bsStyle="link" onClick={() => { history.push('/'); }}>
-            <Icon icon="home" type="glyph" />
+        <div className="col box3">
+          <Button variant="white" onClick={() => { history.push('/'); }}>
+            <Icon icon="home" type="mt" className="fs-1" />
             <span style={fontProps}>Home</span>
           </Button>
         </div>
-        <div className="box box4">
-          <Button bsStyle="link" onClick={onCartIconClick}>
-            <Icon icon="shopping-basket" />
+        <div className="col box4">
+          <Button variant="white" onClick={onCartIconClick}>
+            <Icon icon="local_mall" type="mt" className="fs-2" />
             {(totalProductsInCount > 0) && (
             <b className="alertMenu shoppingCartBubble">
               {totalProductsInCount}
@@ -121,9 +121,9 @@ const ToolBar = ({
             <span style={fontProps}>Cart</span>
           </Button>
         </div>
-        <div className="box box5">
-          <Button bsStyle="link" onClick={() => { history.push('/mywallet'); }}>
-            <Icon icon="rupee-sign" />
+        <div className="col box5">
+          <Button variant="white" onClick={() => { history.push('/mywallet'); }}>
+            <Icon icon="currency_rupee" type="mt" className="fs-2" />
             { (numberOfAwaitingPayments > 0) && (
             <b className="alertMenu alertBubble"> </b>
             )}

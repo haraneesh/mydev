@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import {
-  Row, Col, FormControl, Panel, Button, Glyphicon,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { formatMoney } from 'accounting-js';
+import Icon from '../Icon/Icon';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 import { accountSettings } from '../../../modules/settings';
 import { displayUnitOfSale } from '../../../modules/helpers';
@@ -17,7 +19,7 @@ const QuantitySelectorWithPrice = ({
   controlName,
   quantitySelected,
 }) => (
-  <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
+  <Form.Select name={controlName} onChange={onChange} value={quantitySelected}>
     {values.map((selectValue, index) => {
       const value = parseFloat(selectValue);
       const cost = formatMoney(value * unitprice, accountSettings);
@@ -29,7 +31,7 @@ const QuantitySelectorWithPrice = ({
         </option>
       );
     })}
-  </FormControl>
+  </Form.Select>
 );
 
 const QuantitySelector = ({
@@ -39,10 +41,11 @@ const QuantitySelector = ({
   unitprice,
   controlName,
   quantitySelected,
+  sliderView,
 }) => (
-  <div className="row">
-    <Col xs={10} className="no-padding">
-      <FormControl name={controlName} onChange={onChange} componentClass="select" value={quantitySelected}>
+  <div className="row justify-content-center">
+    <Col xs={10} className="p-0">
+      <Form.Select name={controlName} onChange={onChange} value={quantitySelected} className={sliderView ? 'btn-block w-75' : ''}>
         {values.map((selectValue, index) => (
           <option value={parseFloat(selectValue)} key={`option-${index}`}>
             {' '}
@@ -50,14 +53,19 @@ const QuantitySelector = ({
             {' '}
           </option>
         ))}
-      </FormControl>
+      </Form.Select>
     </Col>
-    <Col xs={2} className="no-padding">
-      <Glyphicon
-        style={{ paddingLeft: '35%', paddingTop: '10px' }}
-        glyph="trash"
+    <Col xs={2} className="text-left ps-0">
+      <Button
+        variant="white"
+        className="m-0 p-0 text-center"
         onClick={() => { onChange({ target: { name: controlName, value: 0 } }); }}
-      />
+      >
+        <Icon
+          icon="delete"
+          type="mt"
+        />
+      </Button>
     </Col>
   </div>
 );
@@ -83,8 +91,9 @@ const ProductName = ({
       }
       />
       ))
-    ) */}
+    )
     {!sliderView && !!description && <p><small>{description}</small></p>}
+    */}
   </div>
 );
 
@@ -96,6 +105,7 @@ const AddToCart = ({
   controlName,
   quantitySelected,
   maxUnitsAvailableToOrder,
+  sliderView,
 }) => {
   const target = { name: controlName, value: 0 };
   if (quantitySelected === 0) {
@@ -122,6 +132,7 @@ const AddToCart = ({
       quantitySelected={quantitySelected}
       values={values}
       maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+      sliderView={sliderView}
     />
   );
 };
@@ -159,7 +170,6 @@ const ProductForNonAdmin = ({
       maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
       totQuantityOrdered={totQuantityOrdered}
       previousOrdQty={previousOrdQty}
-      sliderView
     />
   );
   const imagePath = `${Meteor.settings.public.Product_Images}${image}?${Meteor.settings.public.Product_Images_Version}`;
@@ -167,63 +177,63 @@ const ProductForNonAdmin = ({
 
   if (checkout) {
     return (
-      <Panel>
-        <Row>
-          <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
-            { removedDuringCheckout ? (
-              <s>
-                {' '}
-                {name}
-                {' '}
-              </s>
-            ) : name }
-          </Col>
-          <div className="col" style={{ paddingLeft: '10px' }}>
-            <Col xs={12} className="no-padding">
-              {!isBasket && (
-              <Col xs={12} className="no-padding">
+      <Row className="pb-4">
+        <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
+          { removedDuringCheckout ? (
+            <s>
+              {' '}
+              {name}
+              {' '}
+            </s>
+          ) : name }
+        </Col>
+        <div className="col" style={{ paddingLeft: '10px' }}>
+          <Col xs={12} className="p-0">
+            {!isBasket && (
+              <Col xs={12} className="p-0">
                 {formatMoney(
                   unitprice * quantitySelected,
                   accountSettings,
                 )}
               </Col>
-              )}
-              <QuantitySelector
-                onChange={onChange}
-                unit={unit}
-                unitprice={unitprice}
-                controlName={productId}
-                quantitySelected={quantitySelected}
-                values={unitsForSelectionArray}
-                maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-              />
-            </Col>
-          </div>
-        </Row>
-      </Panel>
+            )}
+            <QuantitySelector
+              onChange={onChange}
+              unit={unit}
+              unitprice={unitprice}
+              controlName={productId}
+              quantitySelected={quantitySelected}
+              values={unitsForSelectionArray}
+              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            />
+          </Col>
+        </div>
+      </Row>
     );
   }
 
   if (sliderView) {
     return (
-      <div className="product-item text-center align-items-center row">
+      <div className="product-item text-center text-center row">
         {!!image && image.indexOf('blank_image.png') < 0 && (
-        <Col xs={5} className="align-items-center">
+        <Col xs={5} className="text-center">
           {imageRow}
         </Col>
         )}
-        <Col className="col align-items-center">
+        <Col className="col text-center">
           <Row>
+            <Col xs={12}>
+              {prodNameDesc}
+            </Col>
             <Col xs={12}>
               <p>
                 {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
               </p>
             </Col>
+
           </Row>
         </Col>
-        <Col xs={12}>
-          {prodNameDesc}
-        </Col>
+
         <Col xs={12} className="addCartButton">
           <AddToCart
             onChange={onChange}
@@ -233,6 +243,7 @@ const ProductForNonAdmin = ({
             quantitySelected={quantitySelected}
             values={unitsForSelectionArray}
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            sliderView
           />
         </Col>
       </div>
@@ -240,13 +251,13 @@ const ProductForNonAdmin = ({
   }
 
   return (
-    <Row className="product-item text-center">
+    <Row className="product-item text-center my-2">
       <Col xs={12} className="item-image-container">
         {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
       </Col>
 
       <Col xs={12}>
-        <Row>
+        <Row style={{ minHeight: '7em' }}>
           <Col xs={12}>
             {prodNameDesc}
           </Col>
@@ -258,9 +269,9 @@ const ProductForNonAdmin = ({
               {' '}
             </p>
           </Col>
-
-          <Col xs={12}>
-            {/* <QuantitySelector
+        </Row>
+        <Col xs={10} className="mx-auto">
+          {/* <QuantitySelector
               onChange={onChange}
               unit={unit}
               unitprice={unitprice}
@@ -269,17 +280,17 @@ const ProductForNonAdmin = ({
               values={unitsForSelectionArray}
               maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             /> */}
-            <AddToCart
-              onChange={onChange}
-              unit={unit}
-              unitprice={unitprice}
-              controlName={productId}
-              quantitySelected={quantitySelected}
-              values={unitsForSelectionArray}
-              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-            />
-          </Col>
-        </Row>
+          <AddToCart
+            onChange={onChange}
+            unit={unit}
+            unitprice={unitprice}
+            controlName={productId}
+            quantitySelected={quantitySelected}
+            values={unitsForSelectionArray}
+            maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+          />
+        </Col>
+
       </Col>
 
     </Row>

@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import {
-  Row, Col, Alert, Button, Panel,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
@@ -26,10 +27,10 @@ const Baskets = ({
   loading, baskets, match, history,
 }) => (!loading ? (
   <div className="Baskets">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h2 className="text-center">Baskets</h2>
     </div>
-    <section className="panel panel-body text-center">
+    <section className="card card-body text-center">
       <Col xs={12}>
         {/* <p> You can prefill your order from Baskets you are creating.</p> */}
         <p> Basket is a list of your favorite products.</p>
@@ -40,23 +41,21 @@ const Baskets = ({
     </section>
 
     {baskets.length ? (
-      <Panel>
+      <Row className="p-2 m-2 bg-body">
         {baskets.map(({ _id, name, description }) => (
-          <Row className="panel-body" key={`${name}`}>
-            <Col xs={12} sm={4} style={{ marginBottom: '3px' }}>{name}</Col>
-            <Col xs={12} sm={5} className="text-muted" style={{ marginBottom: '3px' }}>{description}</Col>
-            <Col xs={12} sm={3} className="text-right" style={{ marginBottom: '3px' }}>
+          <Row className="card-body" key={`${name}`}>
+            <Col xs={12} sm={4} className="mb-3">{name}</Col>
+            <Col xs={12} sm={5} className="text-muted mb-3">{description}</Col>
+            <Col xs={12} sm={3} className="text-right mb-3">
               <Button
-                className="btn-sm"
-                style={{ marginRight: '2px' }}
-                bsStyle="info"
+                size="sm"
+                variant="info"
                 onClick={() => history.push(`/baskets/${_id}`)}
               >
                 View
               </Button>
               <Button
-                className="btn-sm"
-                bsStyle="default"
+                size="sm"
                 onClick={() => handleRemove(_id)}
               >
                 Delete
@@ -64,8 +63,8 @@ const Baskets = ({
             </Col>
           </Row>
         ))}
-      </Panel>
-    ) : <Alert bsStyle="info">No baskets yet!</Alert>}
+      </Row>
+    ) : <Alert variant="info">No baskets yet!</Alert>}
   </div>
 ) : <Loading />);
 

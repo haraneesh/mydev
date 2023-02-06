@@ -5,7 +5,9 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { Row, Alert, Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
+import Card from 'react-bootstrap/Card';
 import MessagesCollection from '../../../../api/Messages/Messages';
 import Loading from '../../../components/Loading/Loading';
 import MessageEditor from '../../../components/Messages/MessageEditor';
@@ -67,28 +69,30 @@ const MessagesAdmin = ({
   };
 
   return (
-    <div className="Messages">
+    <div className="Messages pb-4">
       {loading && (<Loading />)}
-      <div className="page-header clearfix">
-      <h2>Admin Messages</h2>
+      <div className="py-4">
+        <h2 className="text-center">Admin Messages</h2>
         {/* <Link className="btn btn-success pull-right" to={`${match.url}/new`}>Add Message</Link> */}
       </div>
 
       <MessageEditor history={history} isAdmin showOpen doNotShowClose />
 
-      <ul className="nav nav-pills">
-        <li role="presentation" className={(filterSelected === 'none') ? 'active' : ''}>
+      <ul className="nav nav-tabs">
+        <li role="presentation" className="nav-item">
           <button
             type="button"
             onClick={() => { onFilterSelect('none'); }}
+            className={(filterSelected === 'none') ? 'nav-link active' : 'nav-link'}
           >
             All
           </button>
         </li>
-        <li className={(filterSelected === 'my') ? 'active' : ''}>
+        <li className="nav-item">
           <button
             type="button"
             onClick={() => { onFilterSelect('my'); }}
+            className={(filterSelected === 'my') ? 'nav-link active' : 'nav-link'}
           >
             My
           </button>
@@ -98,11 +102,12 @@ const MessagesAdmin = ({
       {messages.length
         ? (
           <>
-            {messages.map((msg) => {
-              if (filterSelected === 'none' || doesMsgMatchFilter(msg)) {
-                return (
-                  <div style={{ marginBottom: '1rem' }} key={msg._id}>
-                    {
+            <Card className="p-2">
+              {messages.map((msg) => {
+                if (filterSelected === 'none' || doesMsgMatchFilter(msg)) {
+                  return (
+                    <div style={{ marginBottom: '1rem' }} key={msg._id}>
+                      {
                       (editMessage === msg._id)
                         ? (
                           <MessageEditor
@@ -123,16 +128,20 @@ const MessagesAdmin = ({
                           />
                         )
                   }
-                  </div>
-                );
-              }
-            })}
-            <div className="text-center col-12">
-              <Button className="btn btn-default" onClick={bringNextBatch}>Load More </Button>
-            </div>
+                    </div>
+                  );
+                }
+              })}
+
+              <div className="text-center col-12">
+                <Button className="px-5" onClick={bringNextBatch}>Load More </Button>
+              </div>
+            </Card>
           </>
-        ) : !loading && (<Alert bsStyle="warning">No messages yet!</Alert>)}
+        ) : !loading && (<Alert variant="warning">No messages yet!</Alert>)}
+
     </div>
+
   );
 };
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import {
-  Table, Alert, Button, Panel,
-} from 'react-bootstrap';
+import Table from 'react-bootstrap/Table';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { toast } from 'react-toastify';
@@ -28,14 +30,13 @@ const Suppliers = ({
   loading, suppliers, match, history,
 }) => (!loading ? (
   <div className="Suppliers">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h2 className="pull-left">Suppliers</h2>
       <Link className="btn btn-primary pull-right" to={`${match.url}/new`}>Add Supplier</Link>
     </div>
     {suppliers.length ? (
-      <Panel>
-        {' '}
-        <Table responsive>
+      <Row className="bg-body">
+        <Table striped bordered responsive>
           <thead>
             <tr>
               <th>Name</th>
@@ -50,18 +51,18 @@ const Suppliers = ({
                 <td>{description}</td>
                 <td>
                   <Button
-                    bsStyle="primary"
+                    variant="secondary"
                     onClick={() => history.push(`${match.url}/${_id}`)}
-                    block
+                    className="btn-block"
                   >
                     View
                   </Button>
                 </td>
                 <td>
                   <Button
-                    bsStyle="info"
+                    variant="info"
                     onClick={() => handleRemove(_id)}
-                    block
+                    className="btn-block"
                   >
                     Delete
                   </Button>
@@ -72,8 +73,8 @@ const Suppliers = ({
         </Table>
         {' '}
 
-      </Panel>
-    ) : <Alert bsStyle="info">No suppliers yet!</Alert>}
+      </Row>
+    ) : <Alert variant="info">No suppliers yet!</Alert>}
   </div>
 ) : <Loading />);
 

@@ -1,4 +1,4 @@
-@import '../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../stylesheets/bootstrap/variables';
 
 .menu-item {
     padding: 0 40px;
@@ -13,7 +13,7 @@
   }
 
   .arrow-disabled {
-    color: $gray-lighter;
+    color: $gray-300;
   }
 
   .item-slider-view {
@@ -30,3 +30,13 @@
     cursor: pointer;
   }
 
+  .flickity-slider{
+     .fix-product-height{
+        min-height: 0rem;
+    }
+    .product-item{
+      margin-top:1rem;
+      margin-bottom:1rem;
+    }
+  }
+  

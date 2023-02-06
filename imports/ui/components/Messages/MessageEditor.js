@@ -2,9 +2,9 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  FormGroup, Button, Panel, Col, Row,
-} from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
@@ -155,12 +155,11 @@ const MessageEditor = ({
     : (
       <p>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Panel>
-            <FormGroup id="msgTypes">
+          <Row className="alert alert-info p-1">
+            <Row id="msgTypes">
               {(!doNotShowClose) && (
               <Row
-                className="panel-heading"
-                style={{ padding: '0px', marginBottom: '7px', marginTop: '-5px' }}
+                className="card-heading"
               >
                 <Col xs={11}>
                   <span className="text-info">
@@ -169,11 +168,11 @@ const MessageEditor = ({
                 </Col>
                 <Col xs={1} className="text-right">
                   <Button
-                    className="btn btn-xs btn-link"
-                    style={{ float: 'right', fontSize: '1.25em', lineHeight: '1' }}
+                    variant="link"
+                    className="btn-sm p-1"
                     onClick={() => { activateControl(false); }}
                   >
-                    <Icon className="text-info" icon="times" />
+                    <Icon className="text-info" icon="close" type="mt" />
                   </Button>
                 </Col>
               </Row>
@@ -186,10 +185,11 @@ const MessageEditor = ({
               const isChecked = message.messageType === item.name;
               const radioId = `${msgId}_${index}`;
               return (
-                <div key={`key-${value}`}>
+                <div key={`key-${value}`} className="d-flex py-2 form-check">
                   <input
                     type="radio"
                     name="messageTypeRadios"
+                    className="form-check-input"
                     id={radioId}
                     value={item.name}
                     checked={isChecked}
@@ -198,9 +198,9 @@ const MessageEditor = ({
                   <label
                     htmlFor={radioId}
                     style={{ display: 'contents' }}
-                    className={(isChecked) ? 'text-default' : 'text-muted'}
+                    className={(isChecked) ? 'text-default justify-content-center form-check-label' : 'text-muted justify-content-center form-check-label'}
                   >
-                    <i className={item.iconClass} style={{ minWidth: '2em' }} />
+                    <Icon type="mt" icon={`${item.iconClass}`} className="px-2 fs-3" />
                     {item.display_value}
                   </label>
                 </div>
@@ -213,20 +213,21 @@ const MessageEditor = ({
                 To whom do you wish to share?
               </label>
               ) }
-            </FormGroup>
+            </Row>
 
             {isAdmin && message.messageType === constants.MessageTypes.Issue.name && (
-            <FormGroup>
+            <div className="m-1 form-check">
               <input
                 type="checkbox"
                 id="closeMessage"
                 name="CloseMessage"
                 value="closeMessage"
                 onClick={handleCheckClicked}
+                className="form-check-input"
                 checked={message.messageStatus === constants.MessageStatus.Closed.name}
               />
-              <label htmlFor="closeMessage">Mark this issue as resolved</label>
-            </FormGroup>
+              <label htmlFor="closeMessage form-check-label">Mark this issue as resolved</label>
+            </div>
             )}
 
             {(!showCamera && imageDataUri) && (
@@ -241,13 +242,13 @@ const MessageEditor = ({
             <Col xs={12} />
             )}
 
-            <FormGroup>
+            <Row>
               <Col xs={12}>
                 {!showCamera && (
                 <textarea
                   className="form-control"
                   name="message"
-                  rows="4"
+                  rows={4}
                   defaultValue={message && message.message}
                   onChange={handleMessageUpdate}
                   placeholder="Today is your day. What is on your mind?"
@@ -266,22 +267,22 @@ const MessageEditor = ({
               <Row>
                 <Col xs={5}>
                   <Button
-                    bsStyle="link"
+                    variant="link"
                     onClick={() => { setShowCamera(!showCamera); }}
                     style={{
                       paddingTop: '0px', marginLeft: '0px', fontSize: '1.7em',
                     }}
                   >
-                    <Icon icon="camera" />
+                    <Icon icon="photo_camera" type="mt" />
                   </Button>
                   <Button
-                    bsStyle="link"
+                    variant="link"
                     onClick={() => { getImageAttachment(fileUploadId); }}
                     style={{
                       paddingTop: '5px', marginLeft: '0px', fontSize: '1.4em',
                     }}
                   >
-                    <Icon icon="paperclip" />
+                    <Icon icon="attach_file" type="mt" />
                     <input
                       type="file"
                       id={fileUploadId}
@@ -306,7 +307,7 @@ const MessageEditor = ({
 
                   <Button
                     type="submit"
-                    bsStyle="primary btn-sm"
+                    className="btn-secondary btn-sm"
                     style={{ marginLeft: '5px' }}
                     onClick={handleSubmit}
                   >
@@ -314,10 +315,8 @@ const MessageEditor = ({
                   </Button>
                 </Col>
               </Row>
-
-            </FormGroup>
-
-          </Panel>
+            </Row>
+          </Row>
         </form>
       </p>
     );

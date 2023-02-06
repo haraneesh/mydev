@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Panel, PanelGroup, Button, Checkbox,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { formatMoney } from 'accounting-js';
 import Product from '../Orders/Product';
 import constants from '../../../modules/constants';
@@ -11,11 +12,11 @@ import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrd
 
 const displayWithDivider = (displayArray, displayText) => (
   displayArray && displayArray.length > 0 && (
-    <div className="panel panel-default" style={{ borderBottomWidth: '0px' }}>
-      <div className="panel-heading" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
+    <div style={{ borderBottomWidth: '0px' }}>
+      <div className="card-header p-3 text-start" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
         <small className="text-uppercase">{displayText}</small>
       </div>
-      <div className="panel-body">
+      <div className="card-body">
         {displayArray}
       </div>
     </div>
@@ -60,20 +61,19 @@ export const ListProducts = ({
   });
 
   return (
-    <PanelGroup className="order-details-products">
-      <Panel>
-        <Row>
-          <Col xs={7} sm={9}>
-            {' '}
-            <strong> Name </strong>
-          </Col>
-          {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-          <Col xs={5} sm={3} className="text-left">
-            {' '}
-            <strong> Value </strong>
-          </Col>
-        </Row>
-      </Panel>
+    <Row className="order-details-products p-1 p-sm-2 mb-3">
+      <Row>
+        <Col xs={7} sm={9}>
+          {' '}
+          <strong> Name </strong>
+        </Col>
+        {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
+        <Col xs={5} sm={3} className="text-left">
+          {' '}
+          <strong> Value </strong>
+        </Col>
+      </Row>
+
       {displayWithDivider(productVegetables, constants.ProductTypeName.Vegetables.display_name)}
       {displayWithDivider(productFruits, constants.ProductTypeName.Fruits.display_name)}
       {displayWithDivider(productGrains, constants.ProductTypeName.Grains.display_name)}
@@ -89,27 +89,26 @@ export const ListProducts = ({
       {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
 
-    </PanelGroup>
+    </Row>
   );
 };
 
 export const ListProducts1 = ({
   products, deletedProducts, updateProductQuantity, isMobile, isAdmin,
 }) => (
-  <PanelGroup className="order-details-products">
-    <Panel>
-      <Row>
-        <Col xs={7} sm={9}>
-          {' '}
-          <strong> Name </strong>
-        </Col>
-        {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} sm={3} className="text-left">
-          {' '}
-          <strong> Value </strong>
-        </Col>
-      </Row>
-    </Panel>
+  <Card className="order-details-products p-1 p-sm-2">
+    <Row>
+      <Col xs={7} sm={9}>
+        {' '}
+        <strong> Name </strong>
+      </Col>
+      {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
+      <Col xs={5} sm={3} className="text-left">
+        {' '}
+        <strong> Value </strong>
+      </Col>
+    </Row>
+
     {Object.keys(products).map((key, index) => {
       const product = products[key];
       if (product.quantity > 0 || product.removedDuringCheckout) {
@@ -140,7 +139,7 @@ export const ListProducts1 = ({
         );
       }
     })}
-  </PanelGroup>
+  </Card>
 );
 
 ListProducts.propTypes = {
@@ -152,15 +151,17 @@ ListProducts.propTypes = {
 };
 
 export const OrderFooter = ({
-  history, orderId, totalBillAmount, onButtonClick, submitButtonName, showWaiting, payCash, collectRecyclables, onPayCash, onCollectRecyclables,
+  history, orderId, totalBillAmount, onButtonClick,
+  submitButtonName, showWaiting, payCash, collectRecyclables, onPayCash, onCollectRecyclables,
 }) => (
 
-  <div>
+  <div className="bg-body py-0 px-2 m-0">
     <div className="row">
-      <Col sm={8} xs={12} className="align-items-center offset-sm-2">
-        <label htmlFor="payCashId" style={{ marginBottom: '0', marginTop: '10px' }}>
+      <Col sm={8} xs={12} className="text-left offset-sm-2 pt-3 form-check">
+        <label htmlFor="payCashId" className="form-check-label">
           <input
             type="checkbox"
+            className="form-check-input"
             id="payCashId"
             name="payCash"
             checked={payCash}
@@ -172,10 +173,11 @@ export const OrderFooter = ({
     </div>
 
     <div className="row">
-      <Col sm={8} xs={12} className="align-items-center offset-sm-2">
-        <label htmlFor="collectRecyclablesId" style={{ marginBottom: '0', marginTop: '10px' }}>
+      <Col sm={8} xs={12} className="text-left offset-sm-2 pt-3 form-check">
+        <label htmlFor="collectRecyclablesId" className="form-check-label">
           <input
             type="checkbox"
+            className="form-check-input"
             id="collectRecyclablesId"
             name="collectRecyclables"
             checked={collectRecyclables}
@@ -186,28 +188,26 @@ export const OrderFooter = ({
       </Col>
     </div>
 
-    <div className="orderFooter row" style={{ marginTop: '2.5em' }}>
+    <div className="orderFooter alert alert-light row" style={{ marginTop: '2.5em' }}>
       <Col sm={6} xs={12}>
-        <h4 className="text-center-xs text-right-not-xs" style={{ paddingTop: '0.25em' }}>
+        <h4 className="text-center-xs text-right-not-xs py-2">
           {'Total '}
           <strong>
             {
             formatMoney(totalBillAmount, accountSettings)
           }
-            {' '}
-          &nbsp;
           </strong>
         </h4>
       </Col>
 
-      <Col className="text-right-not-xs text-center-xs d-flex align-items-center" sm={4} xs={12}>
+      <Col className="offset-1 text-right-not-xs text-center-xs" sm={4} xs={12}>
         {(!showWaiting) && (
         <Button
-          bsStyle="primary"
+          variant="secondary"
           style={{ marginLeft: '0.5em' }}
           disabled={totalBillAmount <= 0}
           onClick={() => { onButtonClick({ history, orderId }); }}
-          className="btn-block"
+          className="col-10 d-grid"
         >
           {submitButtonName}
         </Button>
@@ -215,10 +215,10 @@ export const OrderFooter = ({
 
         {(showWaiting) && (
         <Button
-          bsStyle="primary"
+          variant="secondary"
           style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
           disabled
-          className="btn-block"
+          className="col-10 d-grid"
         >
           {submitButtonName}
         </Button>
@@ -248,25 +248,24 @@ OrderFooter.propTypes = {
 };
 
 export const OrderComment = ({ refComment, onCommentChange, comments }) => (
-  <PanelGroup>
-    <Row>
-      <Col className="offset-sm-2" sm={8} xs={12}>
-        <h4 className="text-left">
-          <strong>Add Notes for the Packing Team</strong>
-        </h4>
-        <textarea
-          name="comments"
-          componentClass="textarea"
-          placeholder="Is there anything that you would like to tell us about this order?"
-          defaultValue={comments}
-          onBlur={onCommentChange}
-          rows="2"
-          className="form-control"
-          ref={refComment}
-        />
-      </Col>
-    </Row>
-  </PanelGroup>
+
+  <Row>
+    <Col className="offset-sm-2 mb-3" sm={8} xs={12}>
+      <h4 className="text-left my-3">
+        Add Notes for the Packing Team
+      </h4>
+      <textarea
+        name="comments"
+        placeholder="Is there anything that you would like to tell us about this order?"
+        defaultValue={comments}
+        onBlur={onCommentChange}
+        rows={2}
+        ref={refComment}
+        className="form-control"
+      />
+    </Col>
+  </Row>
+
 );
 
 OrderComment.propTypes = {
@@ -275,26 +274,25 @@ OrderComment.propTypes = {
 };
 
 export const PrevOrderComplaint = ({ refPrevOrderComplaint, onPrevOrderComplaintChange, prevOrderComplaint }) => (
-  <PanelGroup>
-    <Row>
-      <Col className="offset-sm-2" sm={8} xs={12}>
-        <h4 className="text-left">
-          <strong>Were there any issues with Previous Order?</strong>
-        </h4>
 
-        <textarea
-          name="previousOrderComplaints"
-          componentClass="textarea"
-          placeholder="Were there any Issues with the Previous Order?"
-          defaultValue={prevOrderComplaint}
-          onBlur={onPrevOrderComplaintChange}
-          rows="2"
-          className="form-control"
-          ref={refPrevOrderComplaint}
-        />
-      </Col>
-    </Row>
-  </PanelGroup>
+  <Row className="py-2">
+    <Col className="offset-sm-2 mb-3" sm={8} xs={12}>
+      <h4 className="text-left my-3">
+        Were there any issues with Previous Order?
+      </h4>
+
+      <textarea
+        name="previousOrderComplaints"
+        placeholder="Were there any Issues with the Previous Order?"
+        defaultValue={prevOrderComplaint}
+        onBlur={onPrevOrderComplaintChange}
+        rows={2}
+        className="form-control"
+        ref={refPrevOrderComplaint}
+      />
+    </Col>
+  </Row>
+
 );
 
 PrevOrderComplaint.propTypes = {

@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Label, Glyphicon,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 import { formatMoney } from 'accounting-js';
+import Icon from '../../Icon/Icon';
 import { accountSettings } from '../../../../modules/settings';
 import orderCommon from '../../../../modules/both/orderCommon';
 import { getDisplayShortDate } from '../../../../modules/helpers';
@@ -42,38 +44,37 @@ const OrderSummaryRow = ({
     <Row>
       <Col xs={11}>
         <Row>
-          <Col xs={12} sm={6} md={3} className="remLeftRightPad">
-            <Label bsStyle={constants.OrderStatus[displayOrderStatus].label}>
+          <Col xs={12} sm={6} md={3}>
+            <Badge bg={constants.OrderStatus[displayOrderStatus].label}>
               {constants.OrderStatus[displayOrderStatus].display_value}
-            </Label>
+            </Badge>
           </Col>
-          <Col xs={12} sm={6} md={3} className="remLeftRightPad">
+          <Col xs={12} sm={6} md={3}>
             {orderDateDisplay}
           </Col>
 
           <Col xs={12} md={6}>
             <Row>
-              <Col xs={6} className="remLeftRightPad row">
-                <Col xs={12} sm={3} md={4} className="remLeftRightPad">
-                  <span className="text-muted">Amount: </span>
-                </Col>
-                <Col xs={12} sm={9} md={8} className="remLeftRightPad">
-                  {invoiceTotals
-                    ? formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)
-                    : formatMoney(orderAmount, accountSettings)}
-                </Col>
+
+              <Col xs={12} sm={3} md={4}>
+                <span className="text-muted">Amount: </span>
+              </Col>
+              <Col xs={12} sm={9} md={8}>
+                {invoiceTotals
+                  ? formatMoney(invoiceTotals.totalInvoicedAmount, accountSettings)
+                  : formatMoney(orderAmount, accountSettings)}
               </Col>
 
-              <Col xs={6} className="remLeftRightPad">
+              <Col xs={6}>
                 <Row>
-                  <Col xs={12} sm={3} md={4} className="remLeftRightPad">
+                  <Col xs={12} sm={3} md={4}>
                     {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
                       <div>
                         <span className="text-muted">Pending: </span>
                       </div>
                     ) : (<div />)}
                   </Col>
-                  <Col xs={12} sm={9} md={8} className="remLeftRightPad">
+                  <Col xs={12} sm={9} md={8}>
                     {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
                       ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
                     ) : (<div />)}
@@ -86,9 +87,9 @@ const OrderSummaryRow = ({
       </Col>
 
       <Col xs={1}>
-        <span className="text-muted">
-          <Glyphicon glyph="chevron-right" bsSize="large" />
-        </span>
+        <Button className="text-muted" size="sm" variant="link">
+          <Icon icon="chevron_right" type="mt" />
+        </Button>
       </Col>
     </Row>
   );

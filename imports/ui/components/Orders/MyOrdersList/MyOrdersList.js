@@ -3,9 +3,15 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import {
-  ListGroup, ListGroupItem, Alert, Tabs, Tab,
-} from 'react-bootstrap';
+
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Alert from 'react-bootstrap/Alert';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
@@ -47,7 +53,7 @@ export default class MyOrderList extends React.Component {
   setClasses(buttonName) {
     const { orderFilter } = this.props;
     if (buttonName === orderFilter) {
-      return 'nav-link active';
+      return 'nav-link text-secondary';
     }
     return 'nav-link';
   }
@@ -194,20 +200,36 @@ export default class MyOrderList extends React.Component {
       <div>
         <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} history={history} />
 
-        <ShowReturnables productReturnables={productReturnables} />
-
-        <Tabs defaultActiveKey={1} id="" bsStyle="pills">
-          <Tab eventKey={1} title="Orders" tabClassName=" text-center">
-            <ul className="nav justify-content-end" style={{ backgroundColor: '#fff' }}>
-              <li className="nav-item">
-                <a className={this.setClasses('Active')} onClick={(e) => { this.onFilterChange(e, 'Active'); }} name="Active" href="#"> Active</a>
-              </li>
-              <li className="nav-item" style={{ paddingTop: '10px', paddingRight: '5px' }}>/</li>
-              <li className="nav-item">
-                <a className={this.setClasses('All')} name="All" href="#" onClick={(e) => { this.onFilterChange(e, 'All'); }}> All </a>
-              </li>
-            </ul>
-            {
+        <Row>
+          <ShowReturnables productReturnables={productReturnables} />
+        </Row>
+        <Row className="my-2 pb-3 MyOrderList">
+          <Tabs defaultActiveKey={1}>
+            <Tab eventKey={1} title="Orders" tabClassName="text-center px-2">
+              <ul className="nav justify-content-end bg-body py-1">
+                <li className="nav-item text-center">
+                  <Button
+                    variant="link"
+                    className={this.setClasses('Active')}
+                    onClick={(e) => { this.onFilterChange(e, 'Active'); }}
+                    name="Active"
+                  >
+                    Active
+                  </Button>
+                </li>
+                <li className="nav-item" style={{ paddingTop: '8px' }}>/</li>
+                <li className="nav-item text-center">
+                  <Button
+                    variant="link"
+                    className={this.setClasses('All')}
+                    onClick={(e) => { this.onFilterChange(e, 'All'); }}
+                    name="All"
+                  >
+                    All
+                  </Button>
+                </li>
+              </ul>
+              {
               orders.length > 0 ? (
                 <div>
                   {showFeedBackForm && (
@@ -222,27 +244,28 @@ export default class MyOrderList extends React.Component {
 
                 </div>
               ) : (
-                <Alert bsStyle="info">
+                <Alert variant="light">
                   You do not have any active orders.
                 </Alert>
               )
             }
-          </Tab>
-          <Tab eventKey={2} title="Payments" tabClassName=" text-center">
-            <ListPayments />
-          </Tab>
-          <Tab eventKey={3} title="Refunds" tabClassName=" text-center">
-            <ListCreditNotes />
-          </Tab>
-          <Tab eventKey={4} title="Statements" tabClassName="text-center">
-            <ShowStatement
-              emailVerified={this.props.emailVerified}
-              loggedInUserId={this.props.loggedInUserId}
-              emailAddress={this.props.emailAddress}
-              history={this.props.history}
-            />
-          </Tab>
-        </Tabs>
+            </Tab>
+            <Tab eventKey={2} title="Payments" tabClassName="text-center px-2">
+              <ListPayments />
+            </Tab>
+            <Tab eventKey={3} title="Refunds" tabClassName="text-center px-2">
+              <ListCreditNotes />
+            </Tab>
+            <Tab eventKey={4} title="Statements" tabClassName="text-center px-2">
+              <ShowStatement
+                emailVerified={this.props.emailVerified}
+                loggedInUserId={this.props.loggedInUserId}
+                emailAddress={this.props.emailAddress}
+                history={this.props.history}
+              />
+            </Tab>
+          </Tabs>
+        </Row>
       </div>
     );
   }

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
-import { Table, Button, Alert } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
 import { getDayWithoutTime } from '../../../modules/helpers';
 import ProductRow from './ProductRow';
@@ -118,7 +120,7 @@ export default class ReconcileInventoryMain extends React.Component {
     return (
       products.length ? (
         <div>
-          <Table responsive>
+          <Table striped bordered responsive>
             <thead>
               <tr>
                 <th>Product</th>

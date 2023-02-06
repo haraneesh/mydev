@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Panel } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
 import AddIngredient from '../../Ingredients/AddIngredient/AddIngredient';
 import IngredientItem from '../IngredientItem/index';
 
@@ -43,7 +43,7 @@ const IngredientSelector = ({
   };
 
   return (
-    <Panel name={controlName}>
+    <Row name={controlName}>
       <AddIngredient
         addIngredient={addIngredient}
       />
@@ -57,7 +57,7 @@ const IngredientSelector = ({
           />
         ))
       }
-    </Panel>
+    </Row>
   );
 };
 

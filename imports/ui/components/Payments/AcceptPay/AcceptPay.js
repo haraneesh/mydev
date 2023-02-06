@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import {
-  FormGroup, InputGroup, FormControl, Row, Col, Panel,
-} from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
@@ -86,7 +88,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
     <div>
 
       {walletState.paymentInProcess && (<Loading />)}
-      <Panel>
+      <Card className="py-4 my-4">
         <Row>
           <Col xs={12} className="text-center">
             <h4>
@@ -97,12 +99,12 @@ function AcceptPay({ userWallet, loggedInUser }) {
             </h4>
           </Col>
         </Row>
-      </Panel>
+      </Card>
 
-      <Panel>
+      <Card className="py-4 my-4 px-4">
         <Row>
           <Col xs={12} sm={11} className="offset-sm-1">
-            <h6 className="panel-heading">
+            <h6 className="py-3">
               UPI or Debit card -
               <span className="underline"> No fee</span>
             </h6>
@@ -110,11 +112,11 @@ function AcceptPay({ userWallet, loggedInUser }) {
             <form
               onSubmit={(event) => event.preventDefault()}
             >
-              <FormGroup validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
-                <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="rowRightSpacing">
+              <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+                <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
                   <InputGroup>
-                    <InputGroup.Addon>Rs.</InputGroup.Addon>
-                    <FormControl
+                    <InputGroup.Text>Rs.</InputGroup.Text>
+                    <Form.Control
                       type="number"
                       name="amountToChargeInRs"
                       value={walletState.amountToChargeInRs}
@@ -123,7 +125,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                     />
                   </InputGroup>
                   {isError.amountToChargeInRs.length > 0 && (
-                  <span className="control-label">{isError.amountToChargeInRs}</span>
+                  <span className="small text-info">{isError.amountToChargeInRs}</span>
                   )}
                 </Col>
                 <Col xs={12} sm={3} className="text-right-xs">
@@ -146,7 +148,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                     paymentResponseSuccess={paymentResponseSuccess}
                   />
                 </Col>
-              </FormGroup>
+              </Form.Group>
             </form>
             {/* } <Row>
           <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
@@ -155,25 +157,25 @@ function AcceptPay({ userWallet, loggedInUser }) {
               </Row> */}
           </Col>
         </Row>
-      </Panel>
+      </Card>
 
       { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
-        <Panel>
+        <Card className="py-4 my-4">
           <Row>
             <Col xs={12} sm={11} className="offset-sm-1">
 
-              <h6 className="panel-heading">
+              <h6 className="py-3">
                 <div>NetBanking or Credit Card - 2% transaction fee </div>
               </h6>
 
               <form
                 onSubmit={(event) => event.preventDefault()}
               >
-                <FormGroup validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
-                  <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="rowRightSpacing">
+                <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+                  <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
                     <InputGroup>
-                      <InputGroup.Addon>Rs.</InputGroup.Addon>
-                      <FormControl
+                      <InputGroup.Text>Rs.</InputGroup.Text>
+                      <Form.Control
                         type="number"
                         name="amountToChargeInRs"
                         value={walletState.amountToChargeInRs}
@@ -188,7 +190,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                       </small>
                     </p>
                     {isError.amountToChargeInRs.length > 0 && (
-                    <span className="control-label">{isError.amountToChargeInRs}</span>
+                    <span className="small text-info">{isError.amountToChargeInRs}</span>
                     )}
                   </Col>
                   <Col xs={12} sm={3} className="text-right-xs">
@@ -211,7 +213,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
                       paymentResponseSuccess={paymentResponseSuccess}
                     />
                   </Col>
-                </FormGroup>
+                </Form.Group>
               </form>
               {/*
           <Row>
@@ -221,7 +223,7 @@ function AcceptPay({ userWallet, loggedInUser }) {
           </Row> */}
             </Col>
           </Row>
-        </Panel>
+        </Card>
       )}
     </div>
   );

@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
-import {
-  Row, Table, Col, Panel,
-} from 'react-bootstrap';
+
+import Card from 'react-bootstrap/Card';
+import Table from 'react-bootstrap/Table';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import { getFormattedMoney, getDayWithoutTime } from '../../../../modules/helpers';
 
@@ -24,11 +27,11 @@ const ListPayments = () => {
   };
 
   return !isPaymentstLoading ? (
-    <Panel>
+    <Card className="p-sm-3">
       <Col xs={12}>
         <Row>
           {payments.length > 0 && (
-          <Table>
+          <Table striped bordered>
             <thead>
               <tr>
                 <th>Date</th>
@@ -51,14 +54,14 @@ const ListPayments = () => {
           )}
         </Row>
       </Col>
-    </Panel>
+    </Card>
 
   ) : (
-    <Panel>
-      {' '}
-      <button className="btn btn-default" onClick={loadPaymentHistory}> Fetch Payments History </button>
-      {' '}
-    </Panel>
+    <Card className="p-3">
+      <Col>
+        <Button onClick={loadPaymentHistory}> Fetch Payments History </Button>
+      </Col>
+    </Card>
   );
 };
 

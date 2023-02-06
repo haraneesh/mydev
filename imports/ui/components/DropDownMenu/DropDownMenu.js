@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {
-  DropdownButton, MenuItem, Button, Row,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
+
 import constants from '../../../modules/constants';
 
 function useWindowSize() {
@@ -40,11 +41,8 @@ const DropDownStyles = styled.div`
     top: 0;
     z-index: var(--stick-zIndex);
 
-    margin-top:1rem;
-    margin-bottom:1rem;
-
     #dropdown-basic, .btn-group, .dropdown-menu {
-        width: 100%;
+        min-width: 100%;
     }
 `;
 
@@ -66,24 +64,32 @@ const DropDownMenu = ({
   return ((constants.ScreenWidths.ipad.width > size.width)
     ? (
       <DropDownStyles>
-        <DropdownButton
-          bsStyle="primary"
-          title={`${title} `}
-          id="dropdown-basic"
-        >
-          {
-          menuItemKeys.map((el) => (
-            <MenuItem
-              className="text-center"
-              key={menuItems[el].name}
-              eventKey={menuItems[el].name}
-              onClick={() => { initializeNewCategory(); history.push(`/recipes/bycategory/${menuItems[el].name}`); }}
-            >
-              {menuItems[el].displayName}
-            </MenuItem>
-          ))
+        <Dropdown>
+          <Dropdown.Toggle
+            id="dropdown-cat"
+            variant="primary"
+            className="btn-block"
+          >
+            {`${title} `}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {
+          menuItemKeys.map((el) => {
+            if (menuItems[el].name !== selectedItemKey) {
+              return (
+                <Dropdown.Item
+                  className="text-left"
+                  key={menuItems[el].name}
+                  onClick={() => { initializeNewCategory(menuItems[el].name); history.push(`/recipes/bycategory/${menuItems[el].name}`); }}
+                >
+                  {menuItems[el].displayName}
+                </Dropdown.Item>
+              );
+            }
+          })
         }
-        </DropdownButton>
+          </Dropdown.Menu>
+        </Dropdown>
       </DropDownStyles>
     ) : (
       <TabViewStyles>
@@ -91,10 +97,11 @@ const DropDownMenu = ({
           <h4>
             {menuItemKeys.map((el) => (
               <Button
-                bsStyle="link"
+                className="px-2"
+                variant="link"
                 key={menuItems[el].name}
                 className={(selectedItemKey === menuItems[el].name) ? 'activeTab' : ''}
-                onClick={() => { initializeNewCategory(); history.push(`/recipes/bycategory/${menuItems[el].name}`); }}
+                onClick={() => { initializeNewCategory(menuItems[el].name); history.push(`/recipes/bycategory/${menuItems[el].name}`); }}
               >
                 {menuItems[el].displayName}
               </Button>

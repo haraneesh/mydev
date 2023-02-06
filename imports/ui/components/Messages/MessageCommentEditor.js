@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
-import {
-  FormGroup, Button, Panel, Col, Row,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 
 import './Message.scss';
 
@@ -59,40 +60,41 @@ const MessageCommentEditor = ({ existingMessage, existingComment, onsuccessFullU
   const isEdit = (comment && comment._id);
   return (
     <div>
-      <Panel className="commentBackGround">
+      <Card className="commentBackGround p-4">
         <Row>
           <Col xs={7} style={{ paddingBottom: '10px' }}>
-            <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
+            <div className="text-info" style={{ padding: '0px', marginBottom: '7px' }}>
               {isEdit ? 'Edit Reply' : 'Your reply' }
             </div>
           </Col>
           <Col xs={5} className="text-right">
             {(isEdit) && (
             <Button
-              className="btn btn-xs btn-info"
-              style={{ float: 'right' }}
+              className="btn btn-sm btn-info"
               onClick={() => { onsuccessFullUpdate(); }}
             >
               cancel
             </Button>
             )}
           </Col>
-          <FormGroup className="col-12">
+          <Row className="col-12">
             <textarea
               className="form-control"
               name="comment"
-              rows="4"
+              rows={4}
               value={comment && comment.description}
               onChange={handleCommentUpdate}
               placeholder="Would you like to respond ..."
             />
-          </FormGroup>
-          {(isEdit) && <Button className="btn-default btn-sm" onClick={() => { handleRemove(comment._id, comment.postId); }}>Delete</Button>}
-          <Button type="submit" bsStyle="primary btn-sm" onClick={handleCommentSubmit} style={{ marginLeft: '0.5em' }}>
-            {isEdit ? 'Update' : 'Reply'}
-          </Button>
+          </Row>
+          <Col className="text-end">
+            {(isEdit) && <Button className="btn-primary btn-sm me-2" onClick={() => { handleRemove(comment._id, comment.postId); }}>Delete</Button>}
+            <Button type="submit" className="btn-block btn-sm" variant="secondary" onClick={handleCommentSubmit}>
+              {isEdit ? 'Update' : 'Reply'}
+            </Button>
+          </Col>
         </Row>
-      </Panel>
+      </Card>
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Orders } from '../../../../api/Orders/Orders';
@@ -26,11 +27,16 @@ const MyOrders = ({
   emailAddress,
   productReturnables,
 }) => (!loading ? (
-  <Row>
-    <Col xs={12}>
-      <WelcomeMessage loggedInUser={loggedInUser} />
-
-      <h2 className="page-header">My Orders</h2>
+  <div>
+    <Row>
+      <Col xs={12}>
+        <WelcomeMessage loggedInUser={loggedInUser} />
+      </Col>
+    </Row>
+    <Row>
+      <h2 className="py-4 text-center">My Orders</h2>
+    </Row>
+    <Row>
       <MyOrderList
         loggedInUser={loggedInUser}
         orders={orders}
@@ -43,8 +49,8 @@ const MyOrders = ({
         productReturnables={productReturnables}
       />
 
-    </Col>
-  </Row>
+    </Row>
+  </div>
 ) : <Loading />);
 
 MyOrders.propTypes = {

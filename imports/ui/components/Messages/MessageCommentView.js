@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import * as timeago from 'timeago.js';
 import { dateSettings } from '../../../modules/settings';
 
@@ -15,10 +16,10 @@ const MessageCommentView = ({
   const isLoggedInUserCommentOwner = (owner === loggedInUserId);
   return (
     <div key={_id}>
-      <div className="list-group-item commentBackGround">
+      <div className="list-group-item bg-light p-4">
         <Row>
           <Col xs={7} style={{ paddingBottom: '10px' }}>
-            <div className="text-info panel-heading" style={{ padding: '0px', marginBottom: '7px' }}>
+            <div className="text-info" style={{ padding: '0px', marginBottom: '7px' }}>
               {ownerName}
             </div>
           </Col>
@@ -26,7 +27,7 @@ const MessageCommentView = ({
             <small className="text-muted">{timeago.format(updatedAt, dateSettings.timeZone)}</small>
             {' '}
 &nbsp;
-            {(isLoggedInUserCommentOwner || isAdmin) && (<button className="btn btn-info btn-xs" id={`id-${_id}`} onClick={() => { handleEditComment(_id); }}>edit</button>)}
+            {(isLoggedInUserCommentOwner || isAdmin) && (<button className="btn btn-info btn-xs btn-block" id={`id-${_id}`} onClick={() => { handleEditComment(_id); }}>edit</button>)}
           </Col>
         </Row>
         <Row>

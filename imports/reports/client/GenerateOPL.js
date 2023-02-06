@@ -11,10 +11,10 @@ const writeOrderSummaryDetails = (rowsDetails, today, type) => ReactDOMServer.re
   <div className="container">
     <div className="row">
       <div className="invoice-title">
-        <div className="col-xs-12">
+        <div className="col-12">
           <h3>{`${type} Suvai - OPL Report, Status Considered: Awaiting Fullfilment`}</h3>
         </div>
-        <div className="col-xs-12">
+        <div className="col-12">
           <h4>
             {`${moment(today).tz(dateSettingsWithTime.timeZone).format(dateSettingsWithTime.format)}`}
           </h4>
@@ -23,22 +23,21 @@ const writeOrderSummaryDetails = (rowsDetails, today, type) => ReactDOMServer.re
     </div>
     <div className="row">
       <div className="col-md-12">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title"><strong>Order Planning List</strong></h3>
-          </div>
-          <div className="panel-body">
-            <div className="table-responsive">
-              <table className="table table-condensed">
-                <thead>
-                  <tr>
-                    <td className="text-center"><strong>Product Name</strong></td>
-                    <td className="text-center"><strong>Unit of Sale</strong></td>
-                    <td className="text-right"><strong>Total Quantity</strong></td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
+        <div className="card">
+          <div className="card-body">
+            <h3 className="card-title"><strong>Order Planning List</strong></h3>
+            <div className="card-text">
+              <div className="table-responsive">
+                <table className="table table-condensed">
+                  <thead>
+                    <tr>
+                      <td className="text-center"><strong>Product Name</strong></td>
+                      <td className="text-center"><strong>Unit of Sale</strong></td>
+                      <td className="text-right"><strong>Total Quantity</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
                     rowsDetails.map((rowDetail) => {
                       if (rowDetail.totalQuantity > 0) {
                         return (
@@ -51,18 +50,19 @@ const writeOrderSummaryDetails = (rowsDetails, today, type) => ReactDOMServer.re
                       }
                     })
                   }
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </div>,
 );
 
 const generateOPL = (rowsDetails, isWholeSale) => {
-  const type = (isWholeSale) ? "WHOLESALE" : " RETAIL";
+  const type = (isWholeSale) ? 'WHOLESALE' : ' RETAIL';
   let htmlReport = getHeader();
 
   htmlReport += writeOrderSummaryDetails(rowsDetails, new Date(), type);

@@ -1,18 +1,24 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
-import constants from '../../../modules/constants';
-
-import './UploadPrices.scss';
 
 const UploadPrices = ({ history, products }) => {
   const refFileInput = useRef();
-  const refFileInfo = useRef();
 
   const [fileData, setFileData] = useState([]);
-  const [fileInfo, setFileInfo] = useState('');
+  function handleFileSelect() {
+    const { current } = refFileInput;
+    const file = current.files[0];
+    const reader = new FileReader();
+    reader.onload = function (file) {
+      const rows = file.target.result.split(/[\r\n|\n]+/);
+      setFileData(rows);
+    };
+    reader.readAsText(file);
+  }
 
   function getFileInfo(e) {
     const file = e.target.files[0];
@@ -20,7 +26,6 @@ const UploadPrices = ({ history, products }) => {
       toast.success('Invalid csv file !');
       e.target.parentNode.reset();
     } else {
-      setFileInfo(`${file.name},${file.size} Bytes.`);
       handleFileSelect();
     }
   }
@@ -56,17 +61,6 @@ const UploadPrices = ({ history, products }) => {
 
   function refreshPage() {
     history.go(0);
-  }
-
-  function handleFileSelect() {
-    const { current } = refFileInput;
-    const file = current.files[0];
-    const reader = new FileReader();
-    reader.onload = function (file) {
-      const rows = file.target.result.split(/[\r\n|\n]+/);
-      setFileData(rows);
-    };
-    reader.readAsText(file);
   }
 
   function exportTableToCSV() {
@@ -118,11 +112,16 @@ const UploadPrices = ({ history, products }) => {
   }
 
   return (
-    <div style={{ marginBottom: '10px' }} className="priceUpload">
-      <span className="control-fileupload">
-        <label htmlFor="fileInput" ref={refFileInfo}>{(fileInfo === '') ? 'Choose a file :' : fileInfo}</label>
-        <input type="file" id="fileInput" ref={refFileInput} onChange={getFileInfo} />
-      </span>
+    <div className="priceUpload my-2 px-2 row">
+      <div className="control-fileupload col">
+        {/* <label htmlFor="fileInput" className="form-label"> Upload price file </label> */}
+        <input className="form-control" type="file" id="fileInput" ref={refFileInput} onChange={getFileInfo} />
+      </div>
+
+      <div className="col-sm col-12 text-sm-start">
+        <Button onClick={() => { exportTableToCSV(); }}>Download Template</Button>
+        <Button onClick={refreshPage} className="ms-1"> Reload Data </Button>
+      </div>
 
       {/* If file exists */}
       {fileData.length > 0 && (
@@ -141,9 +140,6 @@ const UploadPrices = ({ history, products }) => {
           </Modal.Dialog>
         </div>
       )}
-
-      <Button onClick={() => { exportTableToCSV(); }}>Download Template</Button>
-      <Button onClick={refreshPage} style={{ marginLeft: '10px' }}> Reload Data </Button>
       <div id="list" />
     </div>
   );

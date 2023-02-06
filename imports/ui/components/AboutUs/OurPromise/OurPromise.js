@@ -3,15 +3,16 @@ import { Row, Col } from 'react-bootstrap';
 
 function OurPromise() {
   return (
-    <div className="page-header text-center no-padding">
-      <h1>
+    <div className="py-4 text-center p-0">
+      <h1 className="pb-3">
         Our promise to you
       </h1>
-      <h4 style={{ display: 'block' }}>
+      <p>
         We believe living well begins with eating well.
-        <br />
+      </p>
+      <p>
         That's why our food has
-      </h4>
+      </p>
       <Row>
         <Col xs={12} sm={7} className="d-flex justify-content-center text-center panel-body">
           <div style={{ alignSelf: 'center', listStyleType: 'none', textAlign: 'left' }}>
@@ -78,7 +79,7 @@ function OurPromise() {
         </Col>
       </Row>
       {/*
-        <Col xs={12} sm={6} className="text-center no-padding">
+        <Col xs={12} sm={6} className="text-center">
           <div className="heading-text">
             <h1 style={{ width: '100%' }}>
               {' '}
@@ -87,7 +88,7 @@ function OurPromise() {
             </h1>
           </div>
         </Col>
-        <Col xs={12} sm={6} className="text-left-not-xs no-padding">
+        <Col xs={12} sm={6} className="text-left-not-xs">
           <div />
         </Col>
 

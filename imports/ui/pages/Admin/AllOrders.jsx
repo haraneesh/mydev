@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Loading from '../../components/Loading/Loading';
 import { getScrollPercent } from '../../../modules/infiniteScroll';
 import constants from '../../../modules/constants';
@@ -96,7 +97,7 @@ class AllOrders extends React.Component {
       !loading ? (
         <Row>
           <Col xs={12}>
-            <h2 className="page-header">All Orders</h2>
+            <h2 className="py-4">All Orders</h2>
             <ManageAllOrders
               history={history}
               orders={orders}
@@ -123,8 +124,7 @@ export default withTracker(() => {
     Meteor.subscribe('orders.list', {
       sort: reactVarTemp.sortBy,
       limit: reactVarTemp.limit,
-    },
-    )].every(subscription => subscription.ready());
+    })].every((subscription) => subscription.ready());
 
   const cursor = Orders.find({}, {
     sort: reactVarTemp.sortBy,
@@ -136,4 +136,4 @@ export default withTracker(() => {
     orders: cursor && cursor.fetch(),
     count: cursor && cursor.count(),
   };
-}) (AllOrders);
+})(AllOrders);

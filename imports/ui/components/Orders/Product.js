@@ -9,8 +9,11 @@ const Product = ({
   updateProductQuantity, product, isAdmin, checkout, isShopOwner, isBasket, productClass, sliderView,
 }) => {
   let classes = (productClass) || '';
-  classes += (product.displayAsSpecial) ? ' special-product-item' : '';
-  classes += (!checkout && !isAdmin && !isShopOwner) ? ' col-xs-6 col-sm-3 d-flex align-items-end' : ' col-12';
+  if (product.displayAsSpecial && !(isAdmin || isShopOwner || checkout)) {
+    classes += '  special-product-item d-flex align-items-end fix-product-height col-6 col-sm-3';
+  } else {
+    classes += (!checkout && !isAdmin && !isShopOwner) ? ' col-6 col-sm-3 d-flex align-items-end fix-product-height' : ' col-12';
+  }
 
   return (
     <div key={product._id} className={classes}>

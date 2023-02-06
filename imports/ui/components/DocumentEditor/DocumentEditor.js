@@ -2,7 +2,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import validate from '../../../modules/validate';
@@ -59,8 +60,8 @@ class DocumentEditor extends React.Component {
     const { doc } = this.props;
     return (
       <form ref={(form) => (this.form = form)} onSubmit={(event) => event.preventDefault()}>
-        <FormGroup>
-          <ControlLabel>Title</ControlLabel>
+        <Row>
+          <label>Title</label>
           <input
             type="text"
             className="form-control"
@@ -69,9 +70,9 @@ class DocumentEditor extends React.Component {
             defaultValue={doc && doc.title}
             placeholder="Oh, The Places You'll Go!"
           />
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Body</ControlLabel>
+        </Row>
+        <Row>
+          <label>Body</label>
           <textarea
             className="form-control"
             name="body"
@@ -79,8 +80,8 @@ class DocumentEditor extends React.Component {
             defaultValue={doc && doc.body}
             placeholder="Congratulations! Today is your day. You're off to Great Places! You're off and away!"
           />
-        </FormGroup>
-        <Button type="submit" bsStyle="success">
+        </Row>
+        <Button type="submit" variant="success">
           {doc && doc._id ? 'Save Changes' : 'Add Document'}
         </Button>
       </form>

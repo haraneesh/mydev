@@ -2,9 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, FormGroup, label, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
@@ -150,20 +150,20 @@ class Profile extends React.Component {
     const { isError } = this.state;
     return !loading ? (
       <div>
-        <FormGroup>
+        <Row className="my-3">
           <label>Salutation</label>
           <select
             name="salutation"
             ref={(salutation) => (this.salutation = salutation)}
-            className="form-control"
+            className="form-select"
             defaultValue={(user.profile.salutation) ? user.profile.salutation : ''}
           >
             <option value="Mrs.">Mrs</option>
             <option value="Mr.">Mr</option>
             <option value="Miss"> Miss</option>
           </select>
-        </FormGroup>
-        <FormGroup validationState={isError.firstName.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.firstName.length > 0 ? 'error' : ''} className="my-3">
           <label>First Name</label>
           <input
             type="text"
@@ -174,10 +174,10 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.firstName.length > 0 && (
-          <span className="control-label">{isError.firstName}</span>
+          <span className="small text-info">{isError.firstName}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.lastName.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.lastName.length > 0 ? 'error' : ''} className="my-3">
           <label>Last Name</label>
           <input
             type="text"
@@ -188,17 +188,17 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.lastName.length > 0 && (
-          <span className="control-label">{isError.lastName}</span>
+          <span className="small text-info">{isError.lastName}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''} className="my-3">
           <Row>
             <Col xs={6}>
               <label>Email Address</label>
             </Col>
             <Col xs={6} className="text-right" style={{ top: '-0.5rem' }}>
               {!user.emails[0].verified
-                ? (<Button className="btn-warning btn-sm" onClick={this.handleVerifyEmail}>Verify Email</Button>)
+                ? (<Button variant="secondary" className="btn-sm" onClick={this.handleVerifyEmail}>Verify Email</Button>)
                 : (<span className="text-default">Verified</span>)}
             </Col>
           </Row>
@@ -211,10 +211,10 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.emailAddress.length > 0 && (
-          <span className="control-label">{isError.emailAddress}</span>
+          <span className="small text-info">{isError.emailAddress}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''} className="my-3">
           <label>Mobile Number</label>
           <input
             type="text"
@@ -226,16 +226,16 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.whMobilePhone.length > 0 && (
-          <span className="control-label">{isError.whMobilePhone}</span>
+          <span className="small text-info">{isError.whMobilePhone}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.packingPreference.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.packingPreference.length > 0 ? 'error' : ''} className="my-3">
           <label>Packing Preference</label>
           <select
             name="packingPreference"
             onChange={this.onValueChange}
             ref={(packingPreference) => (this.packingPreference = packingPreference)}
-            className="form-control"
+            className="form-select"
             defaultValue={(user.settings && user.settings.packingPreference) ? user.settings.packingPreference : ''}
           >
             {constants.PackingPreferences.names.map((name) => (
@@ -245,16 +245,16 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.packingPreference.length > 0 && (
-          <span className="control-label">{isError.packingPreference}</span>
+          <span className="small text-info">{isError.packingPreference}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.productUpdatePreference.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.productUpdatePreference.length > 0 ? 'error' : ''} className="my-3">
           <label>Product Update Preference</label>
           <select
             name="packingPreference"
             onChange={this.onValueChange}
             ref={(productUpdatePreference) => (this.productUpdatePreference = productUpdatePreference)}
-            className="form-control"
+            className="form-select"
             defaultValue={(user.settings && user.settings.productUpdatePreference) ? user.settings.productUpdatePreference : ''}
           >
             {constants.ProductUpdatePreferences.names.map((name) => (
@@ -264,16 +264,16 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.packingPreference.length > 0 && (
-          <span className="control-label">{isError.productUpdatePreference}</span>
+          <span className="small text-info">{isError.productUpdatePreference}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.dietPreference.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.dietPreference.length > 0 ? 'error' : ''} className="my-3">
           <label>Dietary Preference</label>
           <select
             name="dietPreference"
             onChange={this.onValueChange}
             ref={(dietPreference) => (this.dietPreference = dietPreference)}
-            className="form-control"
+            className="form-select"
             defaultValue={(user.settings && user.settings.dietPreference) ? user.settings.dietPreference : ''}
           >
             <option value="" key="notselected" />
@@ -284,25 +284,25 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.dietPreference.length > 0 && (
-          <span className="control-label">{isError.dietPreference}</span>
+          <span className="small text-info">{isError.dietPreference}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''} className="my-3">
           <label>Delivery Address</label>
           <textarea
             ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
             name="deliveryAddress"
             placeholder="Complete address to deliver at, including Landmark, Pincode."
-            rows="6"
+            rows={6}
             defaultValue={user.profile.deliveryAddress}
             className="form-control"
             onBlur={this.onValueChange}
           />
           {isError.deliveryAddress.length > 0 && (
-          <span className="control-label">{isError.deliveryAddress}</span>
+          <span className="small text-info">{isError.deliveryAddress}</span>
           )}
-        </FormGroup>
-        <FormGroup validationState={isError.newPassword.length > 0 ? 'error' : ''}>
+        </Row>
+        <Row validationState={isError.newPassword.length > 0 ? 'error' : ''} className="my-3">
           <label>New Password</label>
           <input
             id="newPassword"
@@ -313,12 +313,12 @@ class Profile extends React.Component {
             onChange={this.onValueChange}
           />
           {isError.newPassword.length > 0 && (
-          <span className="control-label">{isError.newPassword}</span>
+          <span className="small text-info">{isError.newPassword}</span>
           )}
-        </FormGroup>
-        <Row>
+        </Row>
+        <Row className="my-3">
           <Col xs={12}>
-            <FormGroup validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+            <Row validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
               <label>Confirm New Password</label>
               <input
                 type="password"
@@ -328,9 +328,9 @@ class Profile extends React.Component {
                 onChange={this.onValueChange}
               />
               {isError.confirmPassword.length > 0 && (
-              <span className="control-label">{isError.confirmPassword}</span>
+              <span className="small text-info">{isError.confirmPassword}</span>
               )}
-            </FormGroup>
+            </Row>
           </Col>
         </Row>
         <div>
@@ -356,9 +356,9 @@ class Profile extends React.Component {
     const { loading, user } = this.props;
     return (
       <div className="Profile offset-sm-1">
-        <Row>
+        <Row className="my-3 pb-5">
           <Col xs={12} sm={9} md={6}>
-            <h2 className="page-header">Edit Profile</h2>
+            <h2 className="py-4 text-center">Edit Profile</h2>
             <form onSubmit={this.validateForm}>
               {this.renderProfileForm(loading, user)}
             </form>

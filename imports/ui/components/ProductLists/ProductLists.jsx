@@ -1,34 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListGroup, ListGroupItem, Alert, Row, Col, Label } from 'react-bootstrap';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Alert from 'react-bootstrap/Alert';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { getDisplayDateTitle, getProductListStatus } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
 
 const DisplayProductLists = ({ productLists }) => (
-    productLists.length > 0 ? <ListGroup className="productsList-list">{
+  productLists.length > 0 ? (
+    <ListGroup className="productsList-list">
+      {
     productLists.map(({ _id, activeStartDateTime, activeEndDateTime }) => {
       const productListStatus = getProductListStatus(activeStartDateTime, activeEndDateTime);
       return (
-        <ListGroupItem key={_id} href={`/productLists/${_id}`}>
+        <ListGroup.Item key={_id} href={`/productLists/${_id}`} action>
           <ProductListTitleRow
             dateRangeToDisplay={getDisplayDateTitle(activeStartDateTime, activeEndDateTime)}
             statusToDisplay={constants.ProductListStatus[productListStatus].display_value}
             labelStyle={constants.ProductListStatus[productListStatus].label}
           />
-        </ListGroupItem>
+        </ListGroup.Item>
       );
-    },
- )}
-    </ListGroup> :
-    <Alert bsStyle="info">No Product Lists have been created yet.</Alert>
+    })
+}
+    </ListGroup>
+  )
+    : <Alert variant="info">No Product Lists have been created yet.</Alert>
 );
 
 export const ProductListTitleRow = ({ dateRangeToDisplay, labelStyle, statusToDisplay }) => (
   <Row>
-    <Col xs={4} sm={3}> <Label bsStyle={labelStyle}> { statusToDisplay } </Label> </Col>
-    <Col xs={8} sm={9}> { dateRangeToDisplay } </Col>
+    <Col xs={4} sm={3}>
+      {' '}
+      <label>
+        {' '}
+        { statusToDisplay }
+        {' '}
+      </label>
+      {' '}
+    </Col>
+    <Col xs={8} sm={9}>
+      {' '}
+      { dateRangeToDisplay }
+      {' '}
+    </Col>
   </Row>
-  );
+);
 
 DisplayProductLists.propTypes = {
   productLists: PropTypes.array,

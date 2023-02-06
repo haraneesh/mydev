@@ -9,8 +9,8 @@ const OrderSpecials = ({
   loading, match, history, loggedInUserId,
 }) => (!loading ? (
   <div className="OrderSpecials">
-    <div className="page-header clearfix">
-      <h3 className="page-header">Suvai Specials</h3>
+    <div className="py-4 text-center">
+      <h2 className="py-4">Suvai Specials</h2>
       <ProductsOrderSpecialsMain match={match} history={history} loggedInUserId={loggedInUserId} />
     </div>
   </div>

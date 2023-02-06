@@ -1,32 +1,40 @@
 import React from 'react';
-import { FormGroup, FormControl } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Form from 'react-bootstrap/Form';
 
-const FieldGroup = ({ displayControlName,
-    controlType, controlLabel, controlName, updateValue,
-    defaultValue, unitOfSale, options, ...props }) => {
+const FieldGroup = ({
+  displayControlName,
+  controlType, controlLabel, controlName, updateValue,
+  defaultValue, unitOfSale, options, ...props
+}) => {
   /* return (
-    <FormGroup controlId={id}>
+    <Row controlId={id}>
       <ControlLabel>{label}</ControlLabel>
       <FormControl {...props} />
 
-    </FormGroup>
+    </Row>
   );
-    }*/
+    } */
   const displayName = displayControlName || false;
   return (
-    <FormGroup>
+    <Row>
       {displayName && <h4>{controlLabel}</h4>}
-      <FormControl
+      <Form.Control
         type={controlType}
         name={controlName}
         defaultValue={defaultValue}
         onBlur={updateValue}
-        componentClass={options || controlType === 'textarea' ? controlType : 'input'}
+        as={options || controlType === 'textarea' ? controlType : 'input'}
         {...props}
       >
-        {options && options.map((optionValue, index) => (<option value={optionValue} key={`fld-${index}`}> {optionValue}</option>))}
-      </FormControl>
-    </FormGroup>
+        {options && options.map((optionValue, index) => (
+          <option value={optionValue} key={`fld-${index}`}>
+            {' '}
+            {optionValue}
+          </option>
+        ))}
+      </Form.Control>
+    </Row>
   );
 };
 

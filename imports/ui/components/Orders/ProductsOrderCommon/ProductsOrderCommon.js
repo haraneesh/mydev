@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Button, FormControl, PanelGroup, Panel,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 import { isDeviceMobile } from '../../../../modules/helpers';
 import Product from '../Product';
 import constants from '../../../../modules/constants';
@@ -22,12 +23,12 @@ export const OrderFooter = ({
           </Button>
     </Col> */}
 
-    <div className="offset-1 col-xs-10 offset-sm-3 col-sm-6">
+    <div className="offset-1 col-10 offset-sm-3 col-sm-6 px-4 text-center">
       <Button
-        bsStyle="primary"
+        variant="secondary"
+        className=" w-75 btn-block"
         disabled={totalBillAmount <= 0}
         onClick={onButtonClick}
-        className="btn-block"
       >
         {' '}
         {submitButtonName}
@@ -52,7 +53,7 @@ export const DisplayCategoryHeader = ({
   clName, title, onclick, isOpen, tabHash,
 }) => (
 
-  <Row onClick={onclick} className="productCatHead">
+  <Row onClick={onclick} className="productCatHead" style={{ width: '100%' }}>
     <Col xs={3} sm={2} className={`productCat_${clName}`} />
     <Col xs={7} sm={9} className="prodCatTitle">
       <p style={{ marginBottom: '0px' }}>
@@ -66,14 +67,14 @@ export const DisplayCategoryHeader = ({
       </p>
     </Col>
     <Col xs={2} sm={1} className="prodCatPlus text-center">
-      <span className="text-default">
-        {!!isOpen && (<b style={{ fontSize: '1.5em' }}> - </b>)}
-        {!isOpen && (<b style={{ fontSize: '1.5em' }}> + </b>)}
-        {
+
+      {!!isOpen && (<b style={{ fontSize: '1.5rem' }}> - </b>)}
+      {!isOpen && (<b style={{ fontSize: '1.5rem' }}> + </b>)}
+      {
           (tabHash.orderedItemCount > 0)
-            && (<span className="notifyCount text-center">{tabHash.orderedItemCount}</span>)
+            && (<span className="badge bg-success py-2 px-3 mx-auto">{tabHash.orderedItemCount}</span>)
         }
-      </span>
+
     </Col>
   </Row>
 
@@ -88,24 +89,24 @@ DisplayCategoryHeader.propTypes = {
 };
 
 export const OrderComment = ({ comments }) => (
-  <PanelGroup>
+  <Card className="p-3">
     <Row>
       <Col sm={3}>
-        <h4 className="noMarginNoPadding">
+        <h4 className="p-0 m-0">
           <strong> Comments </strong>
         </h4>
       </Col>
       <Col sm={9}>
-        <FormControl
+        <textarea
+          className="form-control"
           name="comments"
-          componentClass="textarea"
+          rows={4}
           placeholder="Is there anything that you would like to tell us about this order?"
           defaultValue={comments}
-          rows="4"
         />
       </Col>
     </Row>
-  </PanelGroup>
+  </Card>
 );
 
 OrderComment.propTypes = {
@@ -162,7 +163,7 @@ export function displayProductsByType({
         <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );
 
-      if (!(isAdmin || isShopOwner)) {
+      /* if (!(isAdmin || isShopOwner)) {
         if (isDeviceMobile() && productSpecials.length % 3 === 2) {
           productSpecials.push(
             <div className="clearfix nextRow" />,
@@ -174,7 +175,7 @@ export function displayProductsByType({
             <div className="clearfix nextRow" />,
           );
         }
-      }
+      } */
 
       productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, 'productSpecials', product);
     }
@@ -262,7 +263,7 @@ export function displayProductsByType({
         isBasket={isBasket}
       />,
     );
-    if (!(isAdmin || isShopOwner)) {
+    /* if (!(isAdmin || isShopOwner)) {
       if (isDeviceMobile() && tempProductList.length % 3 === 2) {
         tempProductList.push(
           <div className="clearfix nextRow" />,
@@ -274,7 +275,7 @@ export function displayProductsByType({
           <div className="clearfix nextRow" />,
         );
       }
-    }
+    } */
     productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, tempType, product);
   });
 

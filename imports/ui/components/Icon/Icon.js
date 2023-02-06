@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Glyphicon } from 'react-bootstrap';
+// import { Glyphicon } from 'react-bootstrap';
 
 const getIconStyle = (iconStyle) => ({
   regular: 'far',
@@ -15,7 +15,17 @@ const Icon = ({
   if (type === 'ft') {
     return (<i className={`${getIconStyle(iconStyle)} fa-${icon} ${className}`} style={style} />);
   }
-  return (<Glyphicon glyph={`${icon}`} className={`${className}`} style={style} />);
+  if (type === 'mt') {
+    return (
+      <span className={`material-icons-outlined ${className}`} style={style}>{icon}</span>
+    );
+  }
+  if (type === 'mts') {
+    return (
+      <i className={`material-icons-outlined fs-4 ${className}`} style={{ fontWeight: 900, lineHeight: '0.85' }}>{icon}</i>
+    );
+  }
+  return (<i className={`${icon} ${className}`} style={style} />);
 };
 
 Icon.defaultProps = {

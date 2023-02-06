@@ -46,10 +46,10 @@ const writeDetails = (forDay, rowsDetails, today) => ReactDOMServer.renderToStat
   <div className="container">
     <div className="row">
       <div className="invoice-title">
-        <div className="col-xs-12">
+        <div className="col-12">
           <h3>Suvai - Previous Week Orders</h3>
         </div>
-        <div className="col-xs-12">
+        <div className="col-12">
           <h4>
             {`${moment(today).tz(dateSettingsWithTime.timeZone).format(dateSettingsWithTime.format)}`}
           </h4>
@@ -58,24 +58,24 @@ const writeDetails = (forDay, rowsDetails, today) => ReactDOMServer.renderToStat
     </div>
     <div className="row">
       <div className="col-md-12">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <h3 className="panel-title"><strong>Previous Week's Orders</strong></h3>
-          </div>
-          <div className="panel-body">
-            <div className="table-responsive">
-              <table className="table table-condensed">
-                <thead>
-                  {
+        <div className="card">
+          <div className="card-body">
+            <h3 className="card-title"><strong>Previous Week's Orders</strong></h3>
+            <div className="card-text">
+              <div className="table-responsive">
+                <table className="table table-striped table-bordered table-condensed">
+                  <thead>
+                    {
                     addRowHeaders(forDay)
                   }
-                </thead>
-                <tbody>
-                  {
+                  </thead>
+                  <tbody>
+                    {
                     addRowDetails(rowsDetails)
                   }
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

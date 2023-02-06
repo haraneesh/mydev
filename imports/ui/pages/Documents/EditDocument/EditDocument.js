@@ -8,7 +8,7 @@ import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
 const EditDocument = ({ doc, history }) => (doc ? (
   <div className="EditDocument">
-    <h4 className="page-header">{`Editing "${doc.title}"`}</h4>
+    <h4 className="py-4">{`Editing "${doc.title}"`}</h4>
     <DocumentEditor doc={doc} history={history} />
   </div>
 ) : <NotFound />);
@@ -26,4 +26,4 @@ export default withTracker(({ match }) => {
     loading: !subscription.ready(),
     doc: Documents.findOne(documentId),
   };
-}) (EditDocument);
+})(EditDocument);

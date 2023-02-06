@@ -160,7 +160,7 @@ const OrderStatus = {
   Pending: {
     name: 'Pending',
     display_value: 'Order Placed',
-    label: 'logo-yellow',
+    label: 'brand-yellow',
   },
   Processing: {
     name: 'Processing',
@@ -170,7 +170,7 @@ const OrderStatus = {
   Awaiting_Fulfillment: {
     name: 'Awaiting_Fulfillment',
     display_value: 'Packing',
-    label: 'logo-yellow',
+    label: 'brand-yellow',
   },
   Awaiting_Payment: {
     name: 'Awaiting_Payment',
@@ -185,7 +185,7 @@ const OrderStatus = {
   Cancelled: {
     name: 'Cancelled',
     display_value: 'Cancelled',
-    label: 'default',
+    label: 'primary',
   },
   Shipped: {
     name: 'Shipped',
@@ -278,7 +278,7 @@ const UnitOfRecipes = {
 UnitOfRecipes.names = Object.keys(UnitOfRecipes).map((cat) => UnitOfRecipes[cat].name);
 
 const ProductListStatus = {
-  Expired: { name: 'Expired', display_value: 'Expired', label: 'default' },
+  Expired: { name: 'Expired', display_value: 'Expired', label: 'info' },
   Active_Now: {
     name: 'Active_Now',
     display_value: 'Active',
@@ -372,13 +372,13 @@ const MessageTypes = {
     name: 'Issue',
     display_value: 'Suvai Admin ( Issue, Quality, Payments )',
     label: 'danger',
-    iconClass: 'fas fa-hourglass-end',
+    iconClass: 'error',
   },
   Message: {
     name: 'Message',
     display_value: 'Suvai Community',
     label: 'info',
-    iconClass: 'fas fa-comment',
+    iconClass: 'chat',
   },
 };
 

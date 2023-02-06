@@ -1,7 +1,7 @@
 import React from 'react';
-import {
-  Row, Col, FormGroup, Dropdown, MenuItem, Glyphicon,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import CommentWrite from './CommentWrite';
@@ -57,29 +57,28 @@ export default class CommentView extends React.Component {
     const { expandedComment, loggedUserId } = this.props;
     const creatorOfComment = loggedUserId == expandedComment.owner;
     const addDeleteOptions = (
-      <Dropdown id="comment-edit" pullRight>
-        <Dropdown.Toggle noCaret bsStyle="link no-margin-no-padding">
-          <small>
-            {' '}
-            <Glyphicon glyph="option-vertical" className="text-muted" />
-            {' '}
-          </small>
+
+      <Dropdown>
+        <Dropdown.Toggle id="dropdown-basic" size="sm">
+          Action
         </Dropdown.Toggle>
-        <Dropdown.Menu className="comment-dropdown">
-          <MenuItem eventKey="1" onClick={this.handleEditComment}>Edit Comment</MenuItem>
-          <MenuItem eventKey="2" onClick={this.handleDeleteComment}>Delete Comment</MenuItem>
+
+        <Dropdown.Menu>
+          <Dropdown.Item href="#" onClick={this.handleEditComment}>Edit Comment</Dropdown.Item>
+          <Dropdown.Item href="#" onClick={this.handleDeleteComment}>Delete Comment</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
+
     );
 
     if (this.state.mode === constants.ControlStates.view) {
       return (
-        <FormGroup controlId="commentsView">
+        <Row controlId="commentsView">
           <Row>
-            <Col xs={10}>
+            <Col xs={9}>
               <small className="text-muted">{ expandedComment.displayName }</small>
             </Col>
-            <Col xs={2} className="text-right">
+            <Col xs={3} className="text-right">
               { creatorOfComment && addDeleteOptions }
             </Col>
           </Row>
@@ -92,7 +91,7 @@ export default class CommentView extends React.Component {
               </p>
             </Col>
           </Row>
-        </FormGroup>
+        </Row>
       );
     }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Panel, Pager } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
@@ -17,30 +18,44 @@ const reactVar = new ReactiveVar(
   },
 );
 
-const nextPage = () => {
-    const reactVarTemp = reactVar.get();
-    reactVarTemp.skip = reactVarTemp.skip + 1; 
-    reactVar.set(reactVarTemp);
-}
+const prevPage = () => {
+  const reactVarTemp = reactVar.get();
+  if (reactVarTemp.skip <= 0) {
+    reactVarTemp.skip = 0;
+  } else {
+    reactVarTemp.skip -= 1;
+  }
+  reactVar.set(reactVarTemp);
+};
 
-const ReconcileInventoryList = ({ loading, reconciledList, count, page }) => (!loading ? (
+const nextPage = () => {
+  const reactVarTemp = reactVar.get();
+  reactVarTemp.skip += 1;
+  reactVar.set(reactVarTemp);
+};
+
+const ReconcileInventoryList = ({
+  loading, reconciledList, count, page,
+}) => (!loading ? (
   <div className="ReconcileInventory">
-    <div className="page-header clearfix">
+    <div className="py-4 clearfix">
       <h3 className="pull-left">Inventory Reconciled Reports</h3>
     </div>
-    <Panel className="entry">
-     <ReconcileInventoryListMain reconciledList={reconciledList} />
-    </Panel>
-    <Pager>
-    { page > 0 && ( <Pager.Item previous href="#">
+    <Row className="bg-body m-2 p-2 entry">
+      <ReconcileInventoryListMain reconciledList={reconciledList} />
+    </Row>
+    <Row className="p-2">
+      { page > 0 && (
+      <Button size="sm" onClick={prevPage}>
         &larr; Previous Page
-        </Pager.Item>)
-    }
-    { count > 0  && (<Pager.Item next href="#" onClick={nextPage}>
+      </Button>
+      )}
+      { count > 0 && (
+      <Button size="sm" onClick={nextPage}>
         Next Page &rarr;
-        </Pager.Item>)
-    }
-</Pager>
+      </Button>
+      )}
+    </Row>
   </div>
 ) : <Loading />);
 
@@ -53,10 +68,10 @@ ReconcileInventoryList.propTypes = {
 
 export default withTracker(() => {
   const reactVarTemp = reactVar.get();
-  const subscription = Meteor.subscribe('reconcileInventory.list',{
-      sort: reactVarTemp.sortBy,
-      limit: reactVarTemp.limit,
-      skip: reactVarTemp.skip,
+  const subscription = Meteor.subscribe('reconcileInventory.list', {
+    sort: reactVarTemp.sortBy,
+    limit: reactVarTemp.limit,
+    skip: reactVarTemp.skip,
   });
 
   const cursor = ReconcileInventory.find({}, {

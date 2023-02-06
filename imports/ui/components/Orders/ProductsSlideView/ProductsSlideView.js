@@ -33,7 +33,7 @@ export const Menu = ({
   menuList, changeProductQuantity, isAdmin, isShopOwner,
 }) => menuList.filter((el) => el.props.product).map((el) => (
 
-  <div className="carousel-cell" style={{ width: '300px', margin: '0 1em 0 0' }} key={`carSlideView-${el.props.product._id}`}>
+  <div className="carousel-cell" style={{ width: '300px', margin: '0 0.5em 0 0' }} key={`carSlideView-${el.props.product._id}`}>
     <Product
       key={`prdSlideView-${el.props.product._id}`}
       updateProductQuantity={changeProductQuantity}

@@ -1,5 +1,4 @@
-@import '../../../stylesheets/bootstrap/bootstrap/variables';
-@import '../../../stylesheets/base/social';
+@import '../../../stylesheets/bootstrap/variables';
 
 .OAuthProfile {
   .LoggedInWith {
@@ -26,15 +25,15 @@
     }
 
     &.facebook {
-      background: $facebook;
+      background: $teal;
     }
 
     &.github {
-      background: $github;
+      background: $purple;
     }
 
     &.google {
-      background: $google;
+      background: $pink;
     }
   }
 }

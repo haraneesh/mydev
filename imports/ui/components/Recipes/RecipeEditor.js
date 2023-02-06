@@ -4,9 +4,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import {
-  FormGroup, FormControl, Button, ButtonToolbar, Row, Col,
-} from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import RecipeRTE from './RecipeRTE/RecipeRTE';
 import { upsertRecipeDraft, upsertRecipePublish, removeRecipe } from '../../../api/Recipes/methods';
 import IngredientSelector from './IngredientSelector';
@@ -142,23 +143,24 @@ const RecipeEditor = ({ recipe, history }) => {
   if (recipe) {
     return (
       <form onSubmit={(event) => event.preventDefault()}>
-        <FormGroup>
+        <Row className="my-4">
           <h4>Title</h4>
-          <FormControl
+          <Form.Control
             type="text"
             name="title"
             defaultValue={recipe && recipe.title}
             placeholder="Title of the recipe"
             required
           />
-        </FormGroup>
+        </Row>
 
-        <FormGroup>
+        <Row className="my-4">
           <h4>Banner Image</h4>
           {imageProps.imageId && (<RecipeImageViewHero cloudImageId={imageProps.imageId} />) }
           <ImageUploader onChange={changeImage} folder="recipes" imageId={imageProps.imageId} />
-        </FormGroup>
-        <FormGroup>
+        </Row>
+
+        {/* <Row className="my-4">
           <h4>Ingredients</h4>
           <IngredientSelector
             controlName="IngredientSelector"
@@ -166,11 +168,12 @@ const RecipeEditor = ({ recipe, history }) => {
             updateIngredientList={ingredientListUpdate}
             onChange={ingredientListOnChange}
           />
-        </FormGroup>
-        <Row>
-          <Col xs={6} sm={3} className="rowRightSpacing">
+        </Row> */}
+
+        <Row className="my-4">
+          <Col xs={6} sm={3} className="pr-2">
             <h4>Prep Time in Mins</h4>
-            <FormControl
+            <Form.Control
               type="text"
               name="prepTimeInMins"
               defaultValue={recipe && recipe.prepTimeInMins}
@@ -180,7 +183,7 @@ const RecipeEditor = ({ recipe, history }) => {
           </Col>
           <Col xs={6} sm={3}>
             <h4>Cooking Time in Mins</h4>
-            <FormControl
+            <Form.Control
               type="text"
               name="cookingTimeInMins"
               defaultValue={recipe && recipe.cookingTimeInMins}
@@ -188,12 +191,11 @@ const RecipeEditor = ({ recipe, history }) => {
               required
             />
           </Col>
-          <Col xs={6} sm={3} className="rowRightSpacing">
+          <Col xs={6} sm={3} className="pr-2">
             <h4>Cooking Level</h4>
-            <FormControl
+            <Form.Select
               name="cookingLevel"
             // onChange={onChange}
-              componentClass="select"
               required
               defaultValue={recipe && recipe.level}
             >
@@ -204,11 +206,11 @@ const RecipeEditor = ({ recipe, history }) => {
                   {' '}
                 </option>
               ))}
-            </FormControl>
+            </Form.Select>
           </Col>
           <Col xs={6} sm={3}>
             <h4>Serves </h4>
-            <FormControl
+            <Form.Control
               type="text"
               name="serves"
               defaultValue={recipe && recipe.serves}
@@ -216,13 +218,12 @@ const RecipeEditor = ({ recipe, history }) => {
             />
           </Col>
         </Row>
-        <Row>
+        <Row className="my-4">
           <Col xs={12}>
             <h4>Food Type</h4>
-            <FormControl
+            <Form.Select
               style={{ height: '170px' }}
               name="recipeCategory"
-              componentClass="select"
               multiple
               required
             >
@@ -238,43 +239,45 @@ const RecipeEditor = ({ recipe, history }) => {
 
                 </option>
               ))}
-            </FormControl>
+            </Form.Select>
           </Col>
         </Row>
-        <FormGroup>
+        <Row className="my-4">
           <h4>Instructions</h4>
           <RecipeRTE description={recipe.description} rteValueUpdate={rteValueUpdate} />
 
-        </FormGroup>
-        <ButtonToolbar>
-          <Button bsSize="small" type="submit" bsStyle="primary" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Published.name)}>
+        </Row>
+        <div>
+          <Button className="m-1" size="sm" type="submit" variant="primary" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Published.name)}>
             Save and Publish
           </Button>
-          <Button bsSize="small" type="submit" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Draft.name)}>
+          <Button className="m-1" size="sm" type="submit" onClick={(event) => saveOrUpdateRecipe(event, constants.PublishStatus.Draft.name)}>
             Save as Draft
           </Button>
-          <Button bsSize="small" type="submit" onClick={cancelSaveRecipe}>
+          <Button size="sm" className="m-1" type="submit" onClick={cancelSaveRecipe}>
             Cancel Edit
           </Button>
 
-          <Button bsSize="small" className="pull-right" onClick={deleteRecipe}>Delete Recipe</Button>
-        </ButtonToolbar>
+          <Button size="sm" className="m-1" onClick={deleteRecipe}>Delete Recipe</Button>
+        </div>
 
       </form>
     );
   }
 
   return (
-    <FormGroup>
+    <Row>
       <h4>Title</h4>
-      <FormControl
+      <Form.Control
         type="text"
         name="title"
         defaultValue={recipe && recipe.title}
         placeholder="Title of the recipe"
       />
-      <Button type="submit" onClick={addNewRecipe}> Add New Recipe </Button>
-    </FormGroup>
+      <div>
+        <Button type="submit" onClick={addNewRecipe}> Add New Recipe </Button>
+      </div>
+    </Row>
   );
 };
 

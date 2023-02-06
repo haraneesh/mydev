@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Alert } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { Accounts } from 'meteor/accounts-base';
 import { toast } from 'react-toastify';
 
@@ -34,7 +36,7 @@ class VerifyEmail extends React.Component {
       <div className="verifyEmail">
         <Row>
           <Col xs={12} sm={6} md={4}>
-            <h2 className="page-header">Verifying Email Address</h2>
+            <h2 className="py-4">Verifying Email Address</h2>
             <div className="VerifyEmail">
               <Alert bsStyle={!error ? 'info' : 'danger'}>
                 {!error

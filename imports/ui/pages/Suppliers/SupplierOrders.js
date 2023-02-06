@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
-import {
-  Panel, Label, Alert, Row, Col, Glyphicon, Button,
-} from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
+import Alert from 'react-bootstrap/Alert';
 import * as timeago from 'timeago.js';
+import Icon from '../../components/Icon/Icon';
 import constants from '../../../modules/constants';
 import { dateSettings } from '../../../modules/settings';
 import SuppOrdersCollection from '../../../api/SupplierOrders/SupplierOrders';
@@ -42,13 +45,13 @@ const SupplierOrders = ({
 }) => (!loading ? (
   <div className="SupplierHome">
     <WelcomeMessage loggedInUser={loggedInUser} />
-    <div className="page-header clearfix">
-      <Row style={{ marginBottom: '1rem' }}>
+    <div className="py-4 clearfix">
+      <Row className="mb-1">
         <Col xs={6}>
           <h4 style={{ margin: '0px' }}>Orders</h4>
         </Col>
         <Col xs={6}>
-          <Button bsStyle="primary" className="btn-sm" onClick={() => { AggregateSupplierOrdersCSV({ suppOrders }); }}>
+          <Button variant="secondary" className="btn-sm" onClick={() => { AggregateSupplierOrdersCSV({ suppOrders }); }}>
             Export Excel
           </Button>
         </Col>
@@ -62,17 +65,17 @@ const SupplierOrders = ({
       {
         suppOrders.map((suppOrder) => (
 
-          <Panel
+          <Row
+            className="bg-body p-1 m-0 text-left"
             key={suppOrder.createdAt}
-            style={{ margin: '0px', textAlign: 'left', padding: '1rem' }}
             onClick={() => { history.push(`/order/${suppOrder._id}`); }}
           >
             <Row>
               <Col xs={11}>
                 <Col xs={6} sm={6} md={3} className="remLeftRightPad">
-                  <Label bsStyle={constants.OrderStatus[suppOrder.order_status].label}>
+                  <Badge bg={constants.OrderStatus[suppOrder.order_status].label}>
                     {constants.OrderStatus[suppOrder.order_status].display_value}
-                  </Label>
+                  </Badge>
                 </Col>
                 <Col xs={6} sm={6} md={3} style={{ paddingTop: '0.5rem', textAlign: 'right' }}>
                   {timeago.format(suppOrder.createdAt, dateSettings.timeZone)}
@@ -80,12 +83,12 @@ const SupplierOrders = ({
                 <Col xs={12}>{suppOrder.customer_details.name}</Col>
               </Col>
               <Col xs={1}>
-                <span className="text-muted" style={{ paddingLeft: '1rem', lineHeight: '4rem' }}>
-                  <Glyphicon glyph="chevron-right" bsSize="large" />
+                <span className="text-muted p-1 my-4">
+                  <Icon icon="chevron_right" />
                 </span>
               </Col>
             </Row>
-          </Panel>
+          </Row>
         ))
       }
       {(showLoadMore) && (
@@ -96,7 +99,7 @@ const SupplierOrders = ({
       </Row>
       )}
       {(suppOrders.length === 0) && (
-        <Alert bsStyle="warning">No Orders yet!</Alert>)}
+        <Alert variant="warning">No Orders yet!</Alert>)}
     </div>
   </div>
 ) : <Loading />);

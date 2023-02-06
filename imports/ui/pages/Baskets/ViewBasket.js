@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withTracker } from 'meteor/react-meteor-data';
-import { ButtonToolbar, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
+import {
+  ButtonToolbar, ButtonGroup, Button, Row, Col,
+} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import Products from '../../../api/Products/Products';
@@ -45,13 +47,13 @@ const renderBasket = ({ products, basketId, history }) => {
 
   return (!isBasketLoading ? (
     <div className="ViewBasket">
-      <div className="page-header clearfix">
+      <div className="py-4 clearfix">
         <h3 className="text-center">{basket && basket.name}</h3>
       </div>
 
-      <section className="panel panel-default">
-        <div className="panel-body">
-          <div className="col-xs-12 text-right">
+      <section className="card">
+        <div className="card-body">
+          <div className="col-12 text-right">
             <Button style={{ marginRight: '2px' }} bsStyle="info" className="btn-sm" onClick={() => history.push(`${history.location.pathname}/edit`)}>Edit</Button>
             <Button onClick={() => handleRemove(basket._id, history)} bsStyle="default" className="btn-sm">
               Delete
@@ -59,19 +61,19 @@ const renderBasket = ({ products, basketId, history }) => {
           </div>
         </div>
 
-        <div className="panel-body">
-          <div className="col-xs-4">
+        <div className="card-body">
+          <div className="col-4">
             <b style={{ marginBottom: '3px' }}> Description: </b>
           </div>
-          <div className="col-xs-8">
+          <div className="col-8">
             {basket && basket.description}
           </div>
         </div>
 
-        <div className="panel-body">
-          <div className="col-xs-12">
+        <div className="card-body">
+          <div className="col-12">
             <b style={{ marginBottom: '3px' }}> Products:</b>
-            {basket && basket.products && basket.products.map(product => (
+            {basket && basket.products && basket.products.map((product) => (
               <Row key={product._id} style={{ paddingBottom: '4px' }}>
                 <Col xs={9}>{productHash[product._id].name}</Col>
                 <Col xs={3}>{displayUnitOfSale(product.quantity, productHash[product._id].unitOfSale)}</Col>
@@ -82,12 +84,11 @@ const renderBasket = ({ products, basketId, history }) => {
         </div>
       </section>
 
-
     </div>
   ) : <Loading />);
 };
 
-const ViewBasket = args => (
+const ViewBasket = (args) => (
   !args.loading ? renderBasket({ ...args }) : <Loading />
 );
 

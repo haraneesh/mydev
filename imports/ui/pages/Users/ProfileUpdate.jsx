@@ -118,14 +118,14 @@ export default class ProfileUpdate extends React.Component {
   render() {
     const { mode, isError, user } = this.state;
     return (
-      <div className="updateProfile offset-sm-1 col-xs-12 col-sm-9 col-sm-6">
+      <div className="updateProfile offset-sm-1 col-12 col-sm-9 col-sm-6 p-2">
         <Row>
           <Col xs={12}>
-            <h2 className="page-header"> Add or Update User Profile </h2>
+            <h2 className="py-4"> Add or Update User Profile </h2>
           </Col>
           <Col xs={12}>
-            <Button type="button" bsStyle="default" onClick={this.handleCreateUser}>Add User</Button>
-            <h4> - OR - </h4>
+            <Button type="button" onClick={this.handleCreateUser}>Add User</Button>
+            <h4 className="py-2"> - OR - </h4>
           </Col>
         </Row>
         { findUserForm(this.handleFindUser) }

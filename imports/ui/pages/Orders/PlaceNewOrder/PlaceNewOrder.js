@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Alert } from 'react-bootstrap';
 import { Roles } from 'meteor/alanning:roles';
 import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
 import ProductLists from '../../../../api/ProductLists/ProductLists';

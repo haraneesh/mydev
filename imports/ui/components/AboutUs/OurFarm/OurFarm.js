@@ -1,37 +1,38 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import FarmAccordion from './FarmAccordion';
 
 function OurFarm() {
   return (
-    <div className="page-header text-center no-padding">
-      <h1>
+    <div className="py-4 px-sm-4 text-center">
+      <h1 className="pb-2">
         Our Farm
       </h1>
-      <h4 style={{ display: 'block' }}>
+      <p>
         We practice Regenerative Organic Farming
-      </h4>
+      </p>
       <Row>
         <Col xs={12} sm={6}>
           <FarmAccordion />
         </Col>
 
-        <Col xs={12} sm={5} className="d-flex justify-content-center text-center panel-body offset-sm-1">
+        <Col xs={12} sm={6} className="d-flex justify-content-center text-center p-2">
           <div style={{
             alignSelf: 'center',
             listStyleType: 'none',
             textAlign: 'left',
           }}
           >
-            <h4>
+            <p>
               Intent is to promote ecological balance, conserve biological diversity and regenerate the soil.
-            </h4>
-            <h4>
+            </p>
+            <p>
               This is a less intrusive way of organic farming, that sees soil, water, plants, animals and humans as interconnected parts of one whole system.
-            </h4>
-            <h4>
+            </p>
+            <p>
               The reality is that working with nature is complex, it takes patience and understanding of local ecological dynamics.
-            </h4>
+            </p>
           </div>
         </Col>
       </Row>

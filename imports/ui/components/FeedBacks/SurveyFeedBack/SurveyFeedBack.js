@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SurveyQuestion from './SurveyQuestion.js';
-import { Modal, Button, Row, Col, FormGroup } from 'react-bootstrap';
+import { Modal, Button, Row, Col, Row } from 'react-bootstrap';
 
 import './SurveyFeedBack.scss';
 
@@ -48,7 +48,7 @@ export default class SurveyFeedBack extends React.Component {
           </Modal.Header>
 
           <Modal.Body>
-            <FormGroup>
+            <Row>
               <Row>
                 <Col xs={12}>
                   <p> {feedBackQuestion} </p>
@@ -107,7 +107,7 @@ export default class SurveyFeedBack extends React.Component {
                   </Button>
                 </Col>
               </Row>
-            </FormGroup>
+            </Row>
           </Modal.Body>
         </Modal>
       </div>

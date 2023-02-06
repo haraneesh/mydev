@@ -1,70 +1,61 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Row, Col, Panel, PanelGroup,
-} from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
 import { displayUnitOfSale } from '../../../../modules/helpers';
 import Product from '../Product';
 
-import './ViewOrderProducts.scss';
-
 export const ViewOrderProducts = ({ products }) => (
-  <PanelGroup className="order-details-products">
-    <Panel>
-      <Row>
-        <Col xs={4}>
+  <>
+    <Row className="bg-light p-3">
+      <Col xs={4}>
+        <strong> Name </strong>
+      </Col>
+      <Col xs={3} className="text-right-xs">
+        <strong> Rate </strong>
+      </Col>
+      <Col xs={2} className="text-right-xs">
+        <strong> Qty </strong>
+      </Col>
+      <Col xs={3} className="text-right">
+        <strong> Value </strong>
+      </Col>
+    </Row>
 
-          <strong> Name </strong>
-        </Col>
-        <Col xs={3} className="text-right-xs">
-
-          <strong> Rate </strong>
-        </Col>
-        <Col xs={2} className="text-right-xs">
-
-          <strong> Qty </strong>
-        </Col>
-        <Col xs={3} className="text-right">
-          <strong> Value </strong>
-        </Col>
-      </Row>
-
-    </Panel>
     {products.map((product) => {
       if (product.quantity > 0) {
         return (
-          <Panel key={product._id}>
-            <Row>
-              <Col xs={4}>
-                {`${product.name} ${product.unitOfSale}`}
+          <Row key={product._id} className="p-2">
+            <Col xs={4}>
+              {`${product.name} ${product.unitOfSale}`}
+              {' '}
+              <br />
+              <small>
                 {' '}
-                <br />
-                <small>
-                  {' '}
-                  {product.description}
-                  {' '}
-                </small>
-              </Col>
-              <Col xs={3} className="text-right-xs">
-                {formatMoney(product.unitprice, accountSettings)}
-              </Col>
-              <Col xs={2} className="text-right-xs">
-                {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
-              </Col>
-              <Col xs={3} className="text-right">
-                {formatMoney(
-                  product.unitprice * product.quantity,
-                  accountSettings,
-                )}
-              </Col>
-            </Row>
-          </Panel>
+                {product.description}
+                {' '}
+              </small>
+            </Col>
+            <Col xs={3} className="text-right-xs">
+              {formatMoney(product.unitprice, accountSettings)}
+            </Col>
+            <Col xs={2} className="text-right-xs">
+              {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
+            </Col>
+            <Col xs={3} className="text-right">
+              {formatMoney(
+                product.unitprice * product.quantity,
+                accountSettings,
+              )}
+            </Col>
+          </Row>
+
         );
       }
     })}
-  </PanelGroup>
+  </>
 );
 
 ViewOrderProducts.propTypes = {
@@ -74,20 +65,19 @@ ViewOrderProducts.propTypes = {
 export const ReviewOrder = ({
   products, updateProductQuantity, isMobile, isAdmin,
 }) => (
-  <PanelGroup className="order-details-products">
-    <Panel>
-      <Row>
-        <Col xs={7} sm={9}>
-          {' '}
-          <strong> Name </strong>
-        </Col>
-        {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} sm={3} className="text-left">
-          {' '}
-          <strong> Value </strong>
-        </Col>
-      </Row>
-    </Panel>
+  <Row className="order-details-products p-2">
+    <Row>
+      <Col xs={7} sm={9}>
+        {' '}
+        <strong> Name </strong>
+      </Col>
+      {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
+      <Col xs={5} sm={3} className="text-left">
+        {' '}
+        <strong> Value </strong>
+      </Col>
+    </Row>
+
     {Object.keys(products).map((key, index) => {
       const product = products[key];
       if (product.quantity > 0 || product.removedDuringCheckout) {
@@ -103,7 +93,7 @@ export const ReviewOrder = ({
         );
       }
     })}
-  </PanelGroup>
+  </Row>
 );
 
 ReviewOrder.propTypes = {

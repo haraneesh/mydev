@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
-import {
-  Row, Col, Panel,
-} from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import processHTMLTable from './processZohoHTML';
 import Spinner from '../../Common/Spinner/Spinner';
@@ -10,16 +11,17 @@ import constants from '../../../../modules/constants';
 import Loading from '../../Loading/Loading';
 
 const periodSelector = (name, displayValue, selectFunction) => (
-  <Col xs={6} sm={4} className="rowTopSpacing">
-    <div>
+  <Col xs={6} sm={4}>
+    <div className="form-check">
       <input
+        className="form-check-input"
         type="radio"
         id={name}
         value={name}
         name="periodSelect"
         onClick={() => { selectFunction(name); }}
       />
-      <label htmlFor={name}>{`${displayValue}`}</label>
+      <label className="form-check-label" htmlFor={name}>{`${displayValue}`}</label>
     </div>
   </Col>
 );
@@ -55,8 +57,8 @@ const ShowStatement = () => {
 
   return (
     <div>
-      <Panel style={{ padding: '1rem' }}>
-        <h4>
+      <Card className="p-3">
+        <h4 className="mb-3">
           Statement is a consolidated view of all your transactions with Suvai.
         </h4>
 
@@ -70,22 +72,20 @@ const ShowStatement = () => {
               )
             ))}
           </Row>
-          <Row className="buttonRowSpacing">
-            <button
-              type="button"
-              className="btn btn-default"
-              onClick={getStatement}
-              disabled={!!isLoading}
-            >
-              Get Statement
-              {' '}
-              {(isLoading) && <Spinner />}
-            </button>
-          </Row>
+
+          <Button
+            onClick={getStatement}
+            disabled={!!isLoading}
+            className="mt-3"
+          >
+            Get Statement
+            {(isLoading) && <Spinner />}
+          </Button>
+
         </div>
 
         {!!isLoading && (<Loading />)}
-      </Panel>
+      </Card>
       {statement}
     </div>
   );

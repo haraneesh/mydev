@@ -43,7 +43,7 @@ function jsonRowsToHtml(jsonRows) {
       return (
         <>
           <tr key={index}>
-            <td colSpan="3">{transactionType}</td>
+            <td colSpan="3" className="text-left">{transactionType}</td>
           </tr>
           <tr key={`d-${index}`}>
             <td>{row.displayDate}</td>
@@ -56,13 +56,16 @@ function jsonRowsToHtml(jsonRows) {
   });
 
   return (
-    <table className="table table-striped">
+    <table className="table table-striped table-bordered text-center">
       <thead>
-        <th>Date</th>
-        <th>Amount</th>
-        <th style={{ paddingLeft: '5px' }}>Wallet</th>
+        <tr>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Wallet</th>
+        </tr>
       </thead>
       <tbody>
+
         {htmlRows}
       </tbody>
     </table>
@@ -76,13 +79,13 @@ function processHTMLTable(htmlElement, timePeriod) {
 
   const jsonRows = Object.keys(tableRows).map((index) => getRowElements(tableRows[index]));
   return (
-    <div className="panel panel-default">
-      <div className="panel-heading text-center">
+    <div className="card p-sm-3">
+      <h4 className="card-header text-center py-3">
         Statement for
         {' '}
         <b>{constants.StatementPeriod[timePeriod].display_value}</b>
-      </div>
-      <div className="panel-body">
+      </h4>
+      <div className="pt-2">
         {jsonRowsToHtml(jsonRows)}
       </div>
     </div>

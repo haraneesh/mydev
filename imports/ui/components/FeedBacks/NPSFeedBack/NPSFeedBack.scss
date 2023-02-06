@@ -1,4 +1,4 @@
-@import '../../../stylesheets/bootstrap/bootstrap/variables';
+@import '../../../stylesheets/bootstrap/variables';
 
 .modalNPSFeedBack{
 
@@ -9,26 +9,26 @@
         display: inline-block;
         line-height: 2.5em;
         font-size: 42%;
-        box-shadow: 1px 2px $gray-lighter;
+        box-shadow: 1px 2px $gray-300;
         width: 2.5em;
     }
 
     .selectedRatingPromoter{
-        background-color:$brand-primary;
-        color: $gray-lightText;
-        border-color: $brand-success;
+        background-color:$primary;
+        color: $gray-300Text;
+        border-color: $success;;
     }
 
     .selectedRatingPassive{
-        background-color:$brand-warning;
-        color: $gray-lightText;
-        border-color: $brand-warning;
+        background-color:$warning;
+        color: $gray-300Text;
+        border-color: $warning;
     }
 
     .selectedRatingDetractor{
-        background-color:$brand-danger;
-        color: $gray-lightText;
-        border-color: $brand-danger;
+        background-color:$danger;
+        color: $gray-300Text;
+        border-color: $danger;
     }
 
     .ratingGuide{

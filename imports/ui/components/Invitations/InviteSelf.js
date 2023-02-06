@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  Button, FormGroup, ControlLabel, FormControl, Col, Row, Panel,
-} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import OtpInput from 'react-otp-input';
 import Spinner from '../Common/Spinner/Spinner';
 import { formValChange, formValid } from '../../../modules/validate';
@@ -67,17 +68,17 @@ export default function InviteSelf({ history }) {
     <div className="send-invitation">
       <Row>
         <Col xs={12}>
-          <FormGroup validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
-            <ControlLabel> STEP 1. Enter Mobile Number to receive OTP </ControlLabel>
+          <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
+            <Form.Label> STEP 1. Enter Mobile Number to receive OTP </Form.Label>
             <p />
-            <FormControl
+            <Form.Control
               type="tel"
               name="whMobilePhone"
               placeholder="10 digit number, example 9889899888"
               pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
             />
             {isError.whMobilePhone.length > 0 && (
-            <span className="control-label">{isError.whMobilePhone}</span>
+            <span className="small text-info">{isError.whMobilePhone}</span>
             )}
             <p />
             <Button type="submit" bsStyle="default" onClick={sendInvitation}>
@@ -85,12 +86,12 @@ export default function InviteSelf({ history }) {
               {' '}
               {(isSendingSMSInProgress) && <Spinner />}
             </Button>
-          </FormGroup>
+          </Row>
           <hr />
-          <FormGroup validationState={isError.otp.length > 0 ? 'error' : null}>
-            <ControlLabel>
+          <Row validationState={isError.otp.length > 0 ? 'error' : null}>
+            <Form.Label>
               STEP 2. Enter OTP that was last sent to your Mobile Number
-            </ControlLabel>
+            </Form.Label>
             <p />
 
             <OtpInput
@@ -103,16 +104,16 @@ export default function InviteSelf({ history }) {
             />
 
             {isError.otp.length > 0 && (
-            <span className="control-label">{isError.otp}</span>
+            <span className="small text-info">{isError.otp}</span>
             )}
             <p />
-            <Button type="submit" bsStyle="default" onClick={confirmOTP}>
+            <Button type="submit" variant="primary" onClick={confirmOTP}>
               Verify OTP
               {' '}
               {(isOTPValidationInProgress) && <Spinner />}
             </Button>
-          </FormGroup>
-          <Panel>
+          </Row>
+          <Row>
             <Col xs={12} className="text-center">
               <h4>
                 <p>Do you have any questions?</p>
@@ -120,7 +121,7 @@ export default function InviteSelf({ history }) {
                 <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
               </h4>
             </Col>
-          </Panel>
+          </Row>
         </Col>
       </Row>
 

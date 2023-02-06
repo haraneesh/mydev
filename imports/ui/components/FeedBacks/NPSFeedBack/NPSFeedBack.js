@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Rating from './NPSRating';
-import { Modal, Button, Row, Col, FormControl, FormGroup } from 'react-bootstrap';
+import { Modal, Button, Row, Col, FormControl, Row } from 'react-bootstrap';
 
 import './NPSFeedBack.scss';
 
@@ -74,7 +74,7 @@ export default class NPSFeedBack extends React.Component {
           </Modal.Header>
 
           <Modal.Body>
-            <FormGroup>
+            <Row>
             <Row className="text-center">
               <Col xs={12}>
                 <p> {feedBackQuestion} </p>
@@ -91,7 +91,7 @@ export default class NPSFeedBack extends React.Component {
                 </div>
               </Col>
             </Row>
-            </FormGroup>
+            </Row>
             {this.state.value > -1 && (
             <Row className="text-center">
               <Col xs={12}>

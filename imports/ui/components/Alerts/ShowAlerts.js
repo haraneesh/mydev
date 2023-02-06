@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Alert } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
 
 const highLightText = (textToHighLight) => (
   <span style={{ color: '#EF0905' }}>
@@ -12,7 +12,7 @@ function ReturnAlerts() {
   return (
     (Meteor.settings.public.ShowAlerts) && (
       <Alert
-        bsStyle="danger"
+        variant="light"
         style={{
           color: '#3a2d29',
           margin: '0px',
@@ -56,7 +56,7 @@ function ReturnAlerts() {
           </span>
           25
           <sup>th</sup>
-         {' '}
+          {' '}
           Oct.
         </small>
       </Alert>
