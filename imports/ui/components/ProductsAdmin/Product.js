@@ -282,7 +282,7 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={1} className="text-center">
+          <Col xs={1} className="d-flex justify-content-center">
             <Checkbox
               name="availableToOrder"
               checked={this.state.product.availableToOrder}
@@ -314,7 +314,7 @@ export default class Product extends React.Component {
               help
             />
           </Col>
-          <Col xs={1} className="text-center">
+          <Col xs={1} className="d-flex justify-content-center">
             <Checkbox
               name="availableToOrderWH"
               checked={this.state.product.availableToOrderWH}
@@ -322,7 +322,7 @@ export default class Product extends React.Component {
 
             />
           </Col>
-          <Col xs={1} className="text-center">
+          <Col xs={1} className="d-flex justify-content-center">
             <Checkbox
               name="displayAsSpecial"
               checked={this.state.product.displayAsSpecial}

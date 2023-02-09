@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import { useHistory } from 'react-router-dom';
+import Icon from '../Icon/Icon';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
 import SideMenu from '../AuthenticatedNavigation/SideMenu';
 import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigation/EasyNav';
@@ -24,7 +25,7 @@ function Navigation(props) {
           className="backButton"
           id="backIcon"
         >
-          <span className="material-icons fs-2"> arrow_back </span>
+          <Icon icon="arrow_back" className="fs-2" type="mt" />
         </Button>
 
         )}

@@ -17,12 +17,12 @@ const Icon = ({
   }
   if (type === 'mt') {
     return (
-      <span className={`material-icons-outlined ${className}`} style={style}>{icon}</span>
+      <span className={`material-symbols-outlined ${className}`} style={style}>{icon}</span>
     );
   }
   if (type === 'mts') {
     return (
-      <i className={`material-icons-outlined fs-4 ${className}`} style={{ fontWeight: 900, lineHeight: '0.85' }}>{icon}</i>
+      <i className={`material-symbols-outlined fs-4 ${className}`} style={{ fontWeight: 900, lineHeight: '0.85' }}>{icon}</i>
     );
   }
   return (<i className={`${icon} ${className}`} style={style} />);

@@ -51,7 +51,7 @@ function ProductOrderSpecials({ products, placeOrder }) {
           <div className="bg-body py-4 px-2">
             <h4>
               Please note, delivery charges may apply if a delivery partner
-              like Dunzo is hired to delivery.
+              like Dunzo is hired to deliver.
             </h4>
             <OrderFooter
               totalBillAmount={cartState.cart.totalBillAmount}

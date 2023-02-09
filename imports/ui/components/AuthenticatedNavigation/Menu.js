@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import PropTypes from 'prop-types';
+import Icon from '../Icon/Icon';
 
 const Menu = (props) => (
   <>
@@ -12,10 +13,10 @@ const Menu = (props) => (
       <Button
         variant="white"
         onClick={() => { props.history.push('/profile'); }}
-        className="px-2 px-sm-3"
+        className="px-2"
         id="profileIcon"
       >
-        <span className="material-icons fs-2">person</span>
+        <Icon icon="person" className="fs-2" type="mt" style={{ fontVariationSettings: '"FILL" 1' }} />
       </Button>
 
       <Button
@@ -24,7 +25,7 @@ const Menu = (props) => (
         className="px-2 px-sm-3"
         id="menuIcon"
       >
-        <span className="material-icons fs-2"> menu </span>
+        <Icon icon="menu" className="fs-2" type="mt" style={{ fontVariationSettings: '"FILL" 1' }} />
       </Button>
 
       <Offcanvas show={props.show} onHide={props.handleClose} placement="top" name="OffCanvasMenu">
