@@ -197,7 +197,7 @@ const ProductsOrderMain = (props) => {
     products.length > 0 ? (
       <Card className="m-1 mb-5">
         <Row>
-          <Col xs={12} className="pt-2">
+          <Col xs={12} className="pt-0">
             <ProductSearch
               getProductsMatchingSearch={getProductsMatchingSearch}
               ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}

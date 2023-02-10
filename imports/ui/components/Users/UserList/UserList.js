@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Table from 'react-bootstrap/Table';
+import Icon from '../../Icon/Icon';
 import { DataListStore, SortHeaderCell, TextCell } from '../../Common/ShopTableCells';
 import { getDayWithoutTime } from '../../../../modules/helpers';
 import { dateSettings } from '../../../../modules/settings';
@@ -24,14 +25,14 @@ const UserListTable = ({
           {<TextCell rowIndex={index} data={dataList} columnKey="accountStatus" />}
           {<td>
             <Button
-              variant="info"
               size="sm"
-              onClick={() => history.push(`updateProfile/${dataList.getObjectAt(rowIndex)[columnKey]}`)}
-              className="btn-block"
+              variant="link"
+              onClick={() => history.push(`updateProfile/${dataList.getObjectAt(index).username}`)}
+              className="w-100 btn-block"
             >
-              ...
+              <Icon icon="more_vert" type="mt" />
             </Button>
-          </td>}
+           </td>}
         </tr>,
       );
     }
@@ -39,7 +40,7 @@ const UserListTable = ({
   };
 
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover responsive>
       <thead>
         <tr>
           <SortHeaderCell

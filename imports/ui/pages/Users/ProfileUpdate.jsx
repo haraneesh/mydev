@@ -125,9 +125,9 @@ export default class ProfileUpdate extends React.Component {
           </Col>
           <Col xs={12}>
             <Button type="button" onClick={this.handleCreateUser}>Add User</Button>
-            <h4 className="py-2"> - OR - </h4>
           </Col>
         </Row>
+        <h4 className="py-3 ps-5"> - OR - </h4>
         { findUserForm(this.handleFindUser) }
         <hr />
         { mode && userProfileForm(

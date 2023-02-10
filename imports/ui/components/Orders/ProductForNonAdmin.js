@@ -270,7 +270,7 @@ const ProductForNonAdmin = ({
             </p>
           </Col>
         </Row>
-        <Col xs={10} className="mx-auto">
+        <Col className="mx-auto">
           {/* <QuantitySelector
               onChange={onChange}
               unit={unit}

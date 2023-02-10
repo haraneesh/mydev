@@ -116,7 +116,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               type="text"
               name="emailAddress"
               placeholder="Email Address"
-              defaultValue={(user) ? user.emails[0].address : ''}
+              defaultValue={(user && user.emails) ? user.emails[0].address : ''}
             />
             {isError.emailAddress.length > 0 && (
               <span className="small text-info">{isError.emailAddress}</span>
@@ -138,6 +138,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
           <Row className="py-2" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
             <label>Delivery Address</label>
             <textarea
+              className="form-control"
               onBlur={onValueChange}
               name="deliveryAddress"
               placeholder="Complete address to deliver at, including Landmark, Pincode."
