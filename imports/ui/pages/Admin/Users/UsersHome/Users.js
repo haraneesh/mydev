@@ -121,7 +121,7 @@ const Users = ({
   return (!loading ? (
     <div className="Users py-4">
 
-      <h2 className="ps-2 pt-2">Users</h2>
+      <h2 className="ps-2 pt-2 mb-4">Users</h2>
 
       <UserList
         colSortDirs={fetchState.colSortDirs}
@@ -137,7 +137,7 @@ const Users = ({
         activePage={fetchState.currentPage}
         itemsCountPerPage={NUMBEROFROWS}
         totalItemsCount={totalUsers}
-        pageRangeDisplayed={10}
+        pageRangeDisplayed={7}
         onChange={handlePageChange}
       />
 

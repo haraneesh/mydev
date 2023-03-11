@@ -23,7 +23,7 @@ const displayWithDivider = (displayArray, displayText) => (
   ));
 
 export const ListProducts = ({
-  products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner,
+  products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner, isDeliveryInChennai,
 }) => {
   const {
     productVegetables,
@@ -40,7 +40,13 @@ export const ListProducts = ({
     productSweetners,
     productsNoCategory,
   } = displayProductsByType({
-    products, isMobile, isAdmin, isShopOwner, cartScreen: true, updateProductQuantity,
+    products,
+    isMobile,
+    isAdmin,
+    isShopOwner,
+    cartScreen: true,
+    updateProductQuantity,
+    isDeliveryInChennai,
   });
 
   const chosenButDeleted = [];
@@ -203,7 +209,7 @@ export const OrderFooter = ({
       <Col className="offset-1 text-right-not-xs text-center-xs" sm={4} xs={12}>
         {(!showWaiting) && (
         <Button
-          variant="secondary"
+          variant="primary"
           style={{ marginLeft: '0.5em' }}
           disabled={totalBillAmount <= 0}
           onClick={() => { onButtonClick({ history, orderId }); }}
@@ -215,7 +221,7 @@ export const OrderFooter = ({
 
         {(showWaiting) && (
         <Button
-          variant="secondary"
+          variant="primary"
           style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
           disabled
           className="col-10 d-grid"
@@ -241,7 +247,7 @@ OrderFooter.propTypes = {
   onSecondButtonClick: PropTypes.func,
   totalBillAmount: PropTypes.number.isRequired,
   submitButtonName: PropTypes.string.isRequired,
-  isMainProductListPage: PropTypes.bool.isRequired,
+  // isMainProductListPage: PropTypes.bool.isRequired,
   history: PropTypes.object.isRequired,
   orderId: PropTypes.string,
   showWaiting: PropTypes.bool,

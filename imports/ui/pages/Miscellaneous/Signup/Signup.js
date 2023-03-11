@@ -19,7 +19,9 @@ const defaultState = {
     firstName: '',
     lastName: '',
     whMobilePhone: '',
+    confirmWhMobileNumber: '',
     deliveryAddress: '',
+    deliveryPincode: '',
     confirmPassword: '',
     eatingHealthyMeaning: '',
   },
@@ -42,6 +44,8 @@ class SignUp extends React.Component {
       {
         password: document.querySelector('[name="password"]').value,
         confirmPassword: document.querySelector('[name="confirmPassword"]').value,
+        whMobilePhone: this.whMobilePhone.value,
+        confirmWhMobileNumber: this.confirmWhMobileNumber.value,
       });
     this.setState(newState);
   }
@@ -71,6 +75,7 @@ class SignUp extends React.Component {
         },
         whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
+        deliveryPincode: this.deliveryPincode.value,
         eatingHealthyMeaning: this.eatingHealthyMeaning.value,
       },
     };
@@ -89,12 +94,33 @@ class SignUp extends React.Component {
         if (error) {
           toast.error(error.reason);
         } else {
+          /* toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
+          this.setState({
+            signUpRequestSent: true,
+          }); */
+
+          // Log In
+          Meteor.loginWithPassword(user.username, user.password, (error) => {
+            if (error) {
+              toast.warn(error.reason);
+            } else {
+              toast.success(`Welcome ${getLoggedInUserDisplayUserName()}`);
+              history.push('/cart');
+            }
+          });
+        }
+      });
+      /*
+      Meteor.call('users.signUp', user, (error) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
           toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
           this.setState({
             signUpRequestSent: true,
           });
         }
-      });
+      }); */
     }
   }
 
@@ -102,7 +128,7 @@ class SignUp extends React.Component {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
     return (!signUpRequestSent ? (
-      <div className="Signup offset-sm-1">
+      <div className="Signup offset-sm-1 p-2">
         <div>
           <Col xs={12} sm={10}>
             <h2 className="py-4 text-center">Sign Up</h2>
@@ -152,6 +178,9 @@ class SignUp extends React.Component {
                       className="form-control"
                     />
                   </Row>
+                  {isError.firstName.length > 0 && (
+                  <span className="small text-danger">{isError.firstName}</span>
+                  )}
                 </Col>
                 <Col xs={6}>
                   <Row
@@ -167,6 +196,9 @@ class SignUp extends React.Component {
                       className="form-control"
                     />
                   </Row>
+                  {isError.lastName.length > 0 && (
+                  <span className="small text-danger">{isError.lastName}</span>
+                  )}
                 </Col>
               </Row>
               <Row className="pt-3" validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
@@ -178,10 +210,12 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                   className="form-control"
                 />
+                {isError.emailAddress.length > 0 && (
+                <span className="small text-danger">{isError.emailAddress}</span>
+                )}
               </Row>
-
               <Row className="pt-3" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
-                <label>Mobile Number</label>
+                <label>Whats App Mobile Number</label>
                 <input
                   type="text"
                   ref={(whMobilePhone) => (this.whMobilePhone = whMobilePhone)}
@@ -190,6 +224,24 @@ class SignUp extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
+                {isError.whMobilePhone.length > 0 && (
+                <span className="small text-danger">{isError.whMobilePhone}</span>
+                )}
+              </Row>
+              <Row className="pt-2" validationState={isError.confirmWhMobileNumber.length > 0 ? 'error' : ''}>
+                <label>Confirm Mobile Number</label>
+                <input
+                  type="password"
+                  ref={(confirmWhMobileNumber) => (this.confirmWhMobileNumber = confirmWhMobileNumber)}
+                  name="confirmWhMobileNumber"
+                  placeholder="10 digit number example, 8787989897"
+                  onBlur={this.onValueChange}
+                  onPaste={(e) => { e.preventDefault(); }}
+                  className="form-control"
+                />
+                {isError.confirmWhMobileNumber.length > 0 && (
+                <span className="small text-danger">{isError.confirmWhMobileNumber}</span>
+                )}
               </Row>
               <Row className="pt-3" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
                 <label>Delivery Address</label>
@@ -201,6 +253,23 @@ class SignUp extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
+                {isError.deliveryAddress.length > 0 && (
+                <span className="small text-danger">{isError.deliveryAddress}</span>
+                )}
+              </Row>
+              <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+                <Row>Delivery Address Pincode</Row>
+                <input
+                  type="text"
+                  ref={(deliveryPincode) => (this.deliveryPincode = deliveryPincode)}
+                  name="deliveryPincode"
+                  placeholder="Enter Pincode of the delivery address"
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+                {isError.deliveryPincode.length > 0 && (
+                <span className="small text-danger">{isError.deliveryPincode}</span>
+                )}
               </Row>
               <Row className="pt-3" validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
                 <label>What does eating healthy mean to you?</label>
@@ -212,6 +281,9 @@ class SignUp extends React.Component {
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
+                {isError.eatingHealthyMeaning.length > 0 && (
+                <span className="small text-info">{isError.eatingHealthyMeaning}</span>
+                )}
               </Row>
               <Row className="pt-3" validationState={isError.password.length > 0 ? 'error' : ''}>
                 <label>Password</label>

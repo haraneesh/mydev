@@ -12,11 +12,13 @@ const MyWallet = ({ loading, loggedInUser, userWallet }) => (!loading ? (
   <div className="MyWallet pb-5">
     <Row>
       <Col xs={12}>
-        <h2 className="pt-4 text-center">My Wallet</h2>
+        <h2 className="px-2 pt-4 text-center">My Wallet</h2>
+
         <AcceptPay
           loggedInUser={loggedInUser}
           userWallet={userWallet}
         />
+
       </Col>
     </Row>
     <Row>

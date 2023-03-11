@@ -9,7 +9,8 @@ import Card from 'react-bootstrap/Card';
 import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
 import { upsertOrder } from '../../../api/Orders/methods';
-import { isLoggedInUserAdmin } from '../../../modules/helpers';
+import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
+import { isChennaiPinCode, isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
 import OnBehalf from '../OnBehalf/OnBehalf';
 import {
@@ -36,6 +37,7 @@ const CartDetails = ({
   const refComment = useRef();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
   const [onBehalfUser, setOnBehalfUser] = useState({
     isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {},
@@ -80,7 +82,7 @@ const CartDetails = ({
     setOnBehalfUser(onBehalfUserTemp);
   };
 
-  const handleOrderSubmit = () => {
+  const handleOrderSubmit = (orderSubmitProps = { dontShowPaymentProceed: false }) => {
     if (onBehalfUser.isNecessary && !(
       constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs)
         && 'profile' in onBehalfUser.user)
@@ -105,6 +107,7 @@ const CartDetails = ({
         collectRecyclablesWithThisDelivery: cartState.cart.collectRecyclablesWithThisDelivery || false,
         basketId: cartState.cart.basketId || '',
         loggedInUserId: loggedInUser._id,
+        deliveryPincode: cartState.cart.deliveryPincode,
       };
 
       if (onBehalfUser.isNecessary) {
@@ -115,21 +118,33 @@ const CartDetails = ({
         };
       }
 
+      if (!isLoggedInUserAdmin()
+      && !cartState.cart.payCashWithThisDelivery
+      && !orderSubmitProps.dontShowPaymentProceed) {
+        // if (loogedInUser.isPlanAvailed)
+        /* if (notpayOnDelivery){
+          //showPaymentModal
+        } */
+        setShowPaymentModal(true);
+        return;
+      }
+
       setOrderUpdated(true);
       upsertOrder.call(order, (error, order) => {
         const confirmation = 'Your Order has been placed';
         if (error) {
-          toast.error(error.reason);
+          toast.error(error);
         } else {
           cartDispatch({ type: cartActions.orderFlowComplete });
           toast.success(confirmation);
           history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
         }
+        setShowPaymentModal(false);
         setOrderUpdated(false);
       });
     } else {
       // Sign up
-
+      history.push('/signup');
     }
   };
 
@@ -141,10 +156,10 @@ const CartDetails = ({
   };
 
   const handleAddItems = () => {
-    if (loggedInUser) {
-      if (orderId) { history.push(`/order/${orderId}`); } else { history.push('/neworder/'); }
+    if (loggedInUser && orderId) {
+      history.push(`/order/${orderId}`);
     } else {
-      history.push('/orderspecials/');
+      history.push('/neworder/');
     }
   };
 
@@ -162,6 +177,19 @@ const CartDetails = ({
 
   const handleCollectRecyclablesWithThisDeliveryChange = (value) => {
     cartDispatch({ type: cartActions.setCollectRecyclablesWithThisDelivery, payload: { collectRecyclablesWithThisDelivery: value } });
+  };
+
+  const afterPaymentScreen = ({ action }) => {
+    if (action === 'PAYONDELIVERY') {
+      handlePayCashWithThisDeliveryChange(true);
+      handleOrderSubmit();
+    } else if (action === 'DEDUCTFROMWALLET') {
+      handleOrderSubmit({ dontShowPaymentProceed: true });
+    } else if (action === 'BACKTOCART') {
+      setShowPaymentModal(false);
+    } else if (action === 'ADDEDTOWALLET') {
+      // Meteor would auto refresh loggedInUser
+    }
   };
 
   useEffect(() => {
@@ -185,6 +213,9 @@ const CartDetails = ({
       return (<div />);
     }
     case (!orderId && cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0): {
+      history.push('/neworder');
+      return (<div />);
+      { /*
       return (
         <Row className="m-3">
           <Col xs={12}>
@@ -196,7 +227,12 @@ const CartDetails = ({
           </Col>
         </Row>
       );
+      */ }
     }
+    case (showPaymentModal):
+      return (
+        <CollectOrderPayment loggedInUser={loggedInUser} callFuncAfterPay={afterPaymentScreen} />
+      );
     default: {
       return (
         <Row>
@@ -212,6 +248,7 @@ const CartDetails = ({
               isMobile
               isAdmin={isLoggedInUserAdmin()}
               isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
+              isDeliveryInChennai={isChennaiPinCode(cartState.cart.deliveryPincode)}
             />
             <Row>
               <Col
@@ -223,6 +260,7 @@ const CartDetails = ({
                 }}
               >
                 <Button
+                  variant="secondary"
                   onClick={() => { handleAddItems(); }}
                   style={{
                     marginRight: '.5em',
@@ -283,7 +321,7 @@ const CartDetails = ({
               submitButtonName={
                     isOrderBeingUpdated ? 'Order Being Placed ...'
                       : orderId ? 'Update Order'
-                        : 'Place Order'
+                        : 'Continue →'
                 }
               showWaiting={
                   isOrderBeingUpdated

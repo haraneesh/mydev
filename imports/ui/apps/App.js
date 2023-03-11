@@ -33,6 +33,7 @@ import About from '../pages/Miscellaneous/About/About';
 /* order */
 // import PlaceOrder from '../pages/Orders/PlaceOrder/PlaceOrder';
 import PlaceOrder from '../pages/Orders/PlaceNewOrder/PlaceNewOrder';
+import CollectOrderPaymentHome from '../pages/Cart/CollectOrderPaymentHome';
 import OrderSpecials from '../pages/Orders/OrderSpecials/OrderSpecials';
 import SelectBasket from '../pages/Orders/PlaceNewOrder/SelectBasket';
 
@@ -142,7 +143,8 @@ const App = (props) => (
       ) */ }
           <CartProvider>
             <Switch>
-              <Authenticated routeName="My_Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} />
+              {/* <Authenticated routeName="My_Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} /> */}
+              <Public exact routeName="Cart" path="/" layout={OrderLayout} component={Cart} {...props} />
               <Authenticated routeName="My_Orders" layout={MainLayout} exact path="/myorders" component={MyOrders} {...props} />
               {/*
           <Authenticated routeName="Documents" exact path="/documents" component={Documents} {...props} />
@@ -191,9 +193,9 @@ const App = (props) => (
 
               {/* Order */}
               <PlaceOrderAuthenticated exact routeName="Order_Success" layout={MainLayout} path="/order/success/:orderId?" component={SuccessOrderPlaced} {...props} />
-              <Authenticated exact routeName="Edit_Order_Details" layout={MainLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
+              <Authenticated exact routeName="Edit_Order_Details" layout={OrderLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
               <Authenticated exact routeName="Choose_Basket_Prefill" path="/neworder/selectbasket" layout={OrderLayout} component={SelectBasket} {...props} />
-              <Authenticated exact routeName="Place_Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
+              <Public exact routeName="Place_Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
 
               {/* Users */}
               <AdminAuthenticated exact routeName="Users" layout={MainLayout} path="/allusers" component={dUsers} {...props} />
@@ -210,7 +212,8 @@ const App = (props) => (
               <Authenticated routeName="Create_Basket_From_Order" path="/createBasket/:orderId" layout={MainLayout} component={dCreateBasket} {...props} />
 
               {/* CartHome */}
-              <PlaceOrderAuthenticated routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
+              <Public routeName="CollectPayment" path="/collectPay" layout={OrderLayout} component={CollectOrderPaymentHome} {...props} />
+              <Public routeName="Cart" path="/cart/:id?" layout={OrderLayout} component={Cart} {...props} />
               <Public routeName="Order Specials" path="/orderspecials" layout={MainLayout} component={OrderSpecials} {...props} />
 
               {/* Accept Payment */}

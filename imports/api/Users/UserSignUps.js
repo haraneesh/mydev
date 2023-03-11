@@ -41,6 +41,7 @@ UserSignUps.schema = new SimpleSchema({
   'profile.name.last': { type: String, label: 'Last Name' },
   'profile.whMobilePhone': { type: String, label: 'Mobile Phone' },
   'profile.deliveryAddress': { type: String, label: 'Delivery Address' },
+  'profile.deliveryPincode': { type: String, label: 'Delivery Pincode.' },
   'profile.eatingHealthyMeaning': { type: String, label: 'Eating Healthy Meaning', optional: true },
   password: { type: String, label: 'Password' },
   status: { type: String, label: 'Status of the sign up request', optional: true },

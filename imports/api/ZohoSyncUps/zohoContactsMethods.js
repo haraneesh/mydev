@@ -91,6 +91,8 @@ export const updateUserWallet = (user) => {
       unused_retainer_payments_InPaise: contact.unused_retainer_payments * 100,
       unused_credits_receivable_amount_InPaise: contact.unused_credits_receivable_amount * 100,
       outstanding_receivable_amount_InPaise: contact.outstanding_receivable_amount * 100,
+      activeDiscountPercentage: 0,
+      discountActiveUntilDate: null,
       lastZohoSync: new Date(),
     };
 

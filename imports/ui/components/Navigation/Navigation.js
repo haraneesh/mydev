@@ -39,10 +39,10 @@ function Navigation(props) {
             />
           </span>
 
-          { !props.authenticated && <PublicNavigation {...props} /> }
-          { !!props.authenticated && <EasyNavWideScreen isAdmin={props.isAdmin} /> }
+          { /*! props.authenticated && <PublicNavigation {...props} /> */ }
+          { <EasyNavWideScreen isAdmin={props.isAdmin} /> }
 
-          { !!props.authenticated && <SideMenu {...props} /> }
+          { <SideMenu {...props} /> }
         </Row>
         {/*  </header> */}
         <Row>

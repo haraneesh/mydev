@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import
-ListGroup from 'react-bootstrap/ListGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import { toast } from 'react-toastify';
 import { Roles } from 'meteor/alanning:roles';
+import { isChennaiPinCode, isLoggedInUserAdmin } from '../../../../modules/helpers';
 import Product from '../Product';
 import ProductListView from '../ProductsSlideView/ProductsSlideView';
-import { isLoggedInUserAdmin } from '../../../../modules/helpers';
+
 import constants from '../../../../modules/constants';
 import ProductSearch from '../ProductSearch/ProductSearch';
 import ProductsOrderMobile from '../ProductsOrderMobile/ProductsOrderMobile';
@@ -70,10 +72,35 @@ const ProductsOrderMain = (props) => {
   };
 
   const displayToolBar = (orderStatus) => (
-    <div className="text-center pt-2">
-      {(orderStatus === constants.OrderStatus.Pending.name || orderStatus === constants.OrderStatus.Saved.name) && (<Button size="sm" onClick={handleCancel}>Cancel Order</Button>)}
-      {' '}
-      {(isAdmin) && (<Button size="sm" onClick={handlePrintProductList}>Print Order List</Button>)}
+    <div className="row text-center pt-2">
+      <Col xs={12}>
+        <DropdownButton
+          id="btnSetDeliveryCode"
+          title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? 'In Chennai' : 'Out of Chennai'} (${cartState.cart.deliveryPincode ? cartState.cart.deliveryPincode : '---'})`}
+          className="d-inline-flex pe-2 mb-2"
+        >
+          <Dropdown.Item
+            className="mx-5"
+            onClick={() => {
+              cartDispatch({
+                type: cartActions.setDeliveryPinCode,
+                payload: { deliveryPincode: '' },
+              });
+            }}
+          >
+            Change Delivery Location
+          </Dropdown.Item>
+        </DropdownButton>
+
+        {
+        (orderStatus === constants.OrderStatus.Pending.name
+          || orderStatus === constants.OrderStatus.Saved.name)
+        && (<Button onClick={handleCancel} variant="info">Cancel Order</Button>)
+        }
+      </Col>
+      <div>
+        {(isAdmin) && (<Button onClick={handlePrintProductList} variant="info">Print Order List</Button>)}
+      </div>
     </div>
   );
 
@@ -95,6 +122,7 @@ const ProductsOrderMain = (props) => {
       _id: orderId,
       loggedInUserId: loggedInUser._id,
       order_status: saveStatus,
+      deliveryPincode: cartState.cart.deliveryPincode,
       // totalBillAmount: this.state.totalBillAmount,
       comments: (commentBox) ? commentBox.value : '',
     };
@@ -174,6 +202,7 @@ const ProductsOrderMain = (props) => {
         totalBillAmount={cartState.cart.totalBillAmount}
         dateValue={dateValue}
         history={history}
+        deliveryPincode={cartState.cart.deliveryPincode}
       />
       )}
     </div>
@@ -238,6 +267,7 @@ const ProductsOrderMain = (props) => {
       isAdmin,
       isShopOwner,
       updateProductQuantity: changeProductQuantity,
+      isDeliveryInChennai: isChennaiPinCode(cartState.cart.deliveryPincode),
     },
   );
 

@@ -168,6 +168,7 @@ export const upsertOrder = new ValidatedMethod({
     order_status: { type: String, optional: true },
     comments: { type: String, optional: true },
     loggedInUserId: { type: String },
+    deliveryPincode: { type: String, optional: true },
     basketId: { type: String, optional: true },
     issuesWithPreviousOrder: { type: String, optional: true },
     payCashWithThisDelivery: { type: Boolean, optional: true },

@@ -74,7 +74,7 @@ class RazorPayButton extends React.Component {
 }
 
 RazorPayButton.defaultProps = {
-  buttonText: 'Add Money',
+  buttonText: 'Add To Wallet',
   paymentDetails: {
     moneyToChargeInPaise: 0,
     description: '',

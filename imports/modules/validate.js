@@ -7,6 +7,7 @@ export const formValChange = (e, isErrorState, fieldValues) => {
   const isError = { ...isErrorState };
 
   const trimmedVal = value.trim();
+  const isIndiaPincode = RegExp(/^[1-9][0-9]{5}$/);
 
   switch (true) {
     case name === 'amountToChargeInRs':
@@ -56,12 +57,16 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         ? 'OTP is a 4 digit value'
         : '';
       break;
-    case name === 'whMobilePhone':
+    case name === 'deliveryPincode':
+      isError.deliveryPincode = !isIndiaPincode.test(trimmedVal)
+        ? 'Pincode has to have 6 digits only'
+        : '';
+      break;
+    case name === 'whMobilePhone' || name === 'confirmWhMobileNumber':
       isError.whMobilePhone = indiaMobilePhoneRegExp.test(trimmedVal)
         ? ''
         : 'India mobile number appears to be invalid, mobile number is 10 digits long';
-      break;
-    case name === 'confirmWhMobileNumber':
+
       isError.confirmWhMobileNumber = (fieldValues.confirmWhMobileNumber === fieldValues.whMobilePhone)
         ? ''
         : 'Mobile numbers entered are not the same';

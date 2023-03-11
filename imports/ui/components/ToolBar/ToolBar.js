@@ -29,7 +29,7 @@ const reactVar = new ReactiveVar(
 const PreLoad = [dMessages];
 
 const ToolBar = ({
-  history, countOfUnreadNotifications, authenticated, isAdmin, globalStatuses, appName,
+  history, countOfUnreadNotifications, authenticated, isAdmin, globalStatuses, appName, match,
 }) => {
   const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
 
@@ -89,7 +89,7 @@ const ToolBar = ({
         <div className="col box1">
           <Button variant="white" onClick={() => { onMessageIconClick(isAdmin); }}>
             { /* <Icon icon="comment" /> */}
-            <Icon icon="forum" type="mt" className="fs-2" />
+            <Icon icon="forum" type="mt" className={`fs-2 ${(match.url === '/messages') ? 'text-primary' : ''}`} />
             <div style={fontProps}>Message</div>
             {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
             <b className="alertMenu shoppingCartBubble">
@@ -98,14 +98,14 @@ const ToolBar = ({
             )}
           </Button>
         </div>
-        <div className="col box2">
+        { /* <div className="col box2">
           <Button variant="white" onClick={() => { history.push('/recipes'); }}>
             <Icon icon="restaurant" type="mt" className="fs-2" />
             <span style={fontProps}>Recipes</span>
           </Button>
-        </div>
+            </div> */}
         <div className="col box3">
-          <Button variant="white" onClick={() => { history.push('/'); }}>
+          <Button variant="white" onClick={() => { history.push('/myorders'); }}>
             <Icon icon="home" type="mt" className="fs-1" />
             <span style={fontProps}>Home</span>
           </Button>

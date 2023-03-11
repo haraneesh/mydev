@@ -90,6 +90,7 @@ Orders.schema = new SimpleSchema({
       this.unset(); // Prevent user from supplying their own value
     },
   },
+  deliveryPincode: { type: String, label: 'The order\'s delivery pin code.' },
   basketId: { type: String, optional: true },
   onBehalf: { type: Object, optional: true },
   'onBehalf.postUserId': { type: String },

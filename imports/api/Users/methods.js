@@ -12,6 +12,13 @@ import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
 import { Emitter, Events } from '../Events/events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
+const NonEmptyString = (x, name) => {
+  check(x, String);
+  if (x.length <= 0) {
+    throw new Meteor.Error(404, `Please enter ${name} and other fields.`);
+  }
+  return true;
+};
 
 if (Meteor.isServer) {
   Accounts.validateLoginAttempt((options) => {
@@ -39,6 +46,7 @@ export const editUserProfile = new ValidatedMethod({
     'profile.name.last': String,
     'profile.whMobilePhone': String,
     'profile.deliveryAddress': String,
+    'profile.deliveryPincode': String,
     settings: Object,
     'settings.dietPreference': {
       type: String,
@@ -126,6 +134,7 @@ export const createNewUser = (user) => {
       whMobilePhone: user.profile.whMobilePhone,
       deliveryAddress: user.profile.deliveryAddress,
       eatingHealthyMeaning: user.profile.eatingHealthyMeaning || '',
+      deliveryPincode: user.profile.deliveryPincode,
     },
   };
 
@@ -134,6 +143,7 @@ export const createNewUser = (user) => {
     unused_credits_receivable_amount_InPaise: 0,
     outstanding_receivable_amount_InPaise: 0,
     lastZohoSync: new Date('1/1/2000'),
+    isEligibleForDiscount: false,
   };
 
   const userExists = Meteor.users.findOne({ username: cuser.username });
@@ -268,15 +278,17 @@ const notifyUserSignUp = (content, subject, customerEmail) => {
       html: content,
     });
 
+    /*
     if (customerEmail) {
     // Send email to the person signing up
       Email.send({
         to: customerEmail,
         from: `Suvai User SignUp ${fromEmail}`,
         subject,
-        html: 'Thank you for your interest in Suvai. Please give us a few days, our admins will get back to you.',
+        html: 'Thank you for signing up with Suvai.',
       });
     }
+    */
   }
 };
 
@@ -327,10 +339,21 @@ Meteor.methods({
         },
         whMobilePhone: String,
         deliveryAddress: String,
-        eatingHealthyMeaning: String,
+        eatingHealthyMeaning: Match.Maybe(String),
+        deliveryPincode: String,
       },
       password: String,
     });
+
+    NonEmptyString(user.profile.name.first, 'First name');
+    NonEmptyString(user.profile.name.last, 'Last name');
+    NonEmptyString(user.email, 'Email address');
+    NonEmptyString(user.username, 'Mobile phone');
+    NonEmptyString(user.profile.whMobilePhone, 'Mobile phone ');
+    NonEmptyString(user.profile.deliveryAddress, 'Delivery address');
+    NonEmptyString(user.profile.deliveryPincode, 'Delivery pincode');
+
+    console.log('herer');
 
     notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
@@ -338,10 +361,12 @@ Meteor.methods({
     Phone number: ${user.profile.whMobilePhone} 
     deliveryAddress: ${user.profile.deliveryAddress}
     eatingHealthyMeaning: ${user.profile.eatingHealthyMeaning}
-    has signed up. Please approve in the app.`,
+    deliveryPincode: ${user.profile.deliveryPincode}
+    has signed up. This user has been auto approved in the app.`,
     'New user signup', user.email);
 
-    return UserSignUps.insert(user);
+    // return UserSignUps.insert(user);
+    return createNewUser(user);
   },
   'users.createSelfSignUpsForSpecials': function createSelfSignUpsForSpecials(user) {
     check(user, {
@@ -353,6 +378,7 @@ Meteor.methods({
         },
         whMobilePhone: String,
         deliveryAddress: String,
+        deliveryPincode: String,
         eatingHealthyMeaning: Match.Maybe(String),
       },
       password: String,

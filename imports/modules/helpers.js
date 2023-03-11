@@ -14,6 +14,16 @@ export function isDeviceMobile() {
   return window.screen.width < constants.ScreenWidths.ipad.width;
 }
 
+// https://www.indiapost.gov.in/vas/pages/findpincode.aspx
+export function isChennaiPinCode(pinCode) {
+  const chennaiPinCodes = Meteor.settings.public.pinCodes.allowedCodes;
+
+  if (chennaiPinCodes.includes(pinCode)) {
+    return true;
+  }
+  return false;
+}
+
 export function daysInWeek() {
   const weekday = new Array(7);
   weekday[0] = 'Sunday';

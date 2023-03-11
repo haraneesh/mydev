@@ -47,8 +47,8 @@ const About = () => {
               <h4> food, delivered home from Suvai Farms. </h4>
               <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Col xs={12} className="mt-4">
-                <Button className="membersBtn btn-block" variant="secondary" href="/login"> Shop Now &rarr; </Button>
-                <Button className="membersBtn btn-block" variant="info" href="/signup"> Sign Up </Button>
+                <Button className="membersBtn btn-block" variant="secondary" href="/cart"> Shop Now &rarr; </Button>
+                <Button className="membersBtn btn-block" variant="info" href="/login"> Log In </Button>
               </Col>
             </Col>
           </div>

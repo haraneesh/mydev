@@ -57,6 +57,9 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
             </Button>
           </Col>
         </Row>
+        <p className="text-info text-center small pt-3">
+          Wallet Balance is adjusted only after order delivery.
+        </p>
       </Card.Body>
     </Card>
   );

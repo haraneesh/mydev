@@ -5,18 +5,20 @@ import { toast } from 'react-toastify';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
+import SelectDeliveryLocation from '../../../components/Orders/ProductsOrderCommon/SelectDeliveryLocation';
 import ProductLists from '../../../../api/ProductLists/ProductLists';
 import { getProductUnitPrice } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
 import Loading from '../../../components/Loading/Loading';
 import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
-import { cartActions, useCartDispatch } from '../../../stores/ShoppingCart';
+import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 
 const PlaceNewOrder = ({
   dateValue, name, products, productListId, history, basketId, loggedInUser,
 }) => {
   const [isBasketLoading, setIsLoading] = useState(true);
   const cartDispatch = useCartDispatch();
+  const cartState = useCartState();
 
   const updateNewCart = (productsInBasket, productsInProductList) => {
     cartDispatch({ type: cartActions.emptyCart });
@@ -39,7 +41,27 @@ const PlaceNewOrder = ({
   };
 
   useEffect(() => {
-    cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: 'NEW', basketId } });
+    let deliveryPincode = '';
+    switch (true) {
+      case (cartState.cart && cartState.cart.deliveryPincode.length > 0):
+        deliveryPincode = cartState.cart.deliveryPincode;
+        break;
+      case (loggedInUser && loggedInUser.profile && loggedInUser.profile.deliveryPincode.length > 0):
+        deliveryPincode = loggedInUser.profile.deliveryPincode;
+        break;
+      default:
+        deliveryPincode = '';
+    }
+
+    cartDispatch({
+      type: cartActions.activateCart,
+      payload: { cartIdToActivate: 'NEW', basketId },
+    });
+    cartDispatch({
+      type: cartActions.setDeliveryPinCode,
+      payload: { deliveryPincode },
+    });
+
     if (basketId) {
       setIsLoading(true);
       Meteor.call('baskets.getOne', basketId,
@@ -62,6 +84,7 @@ const PlaceNewOrder = ({
     default:
       return (
         <div className="OrderHomePage">
+          <SelectDeliveryLocation />
           <ProductsOrderMain
             products={products}
             history={history}

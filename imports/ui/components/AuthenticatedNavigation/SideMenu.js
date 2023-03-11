@@ -20,6 +20,7 @@ const SideMenu = (props) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const { authenticated } = props;
 
   return (
     <Menu {...props} show={show} handleClose={handleClose} handleShow={handleShow}>
@@ -32,8 +33,12 @@ const SideMenu = (props) => {
       <Col className="ps-3">
         <ListGroup style={{ listStyle: 'none' }}>
           <li className="p-1">
-            <NavLink to="/" onClick={handleClose}>My Orders</NavLink>
+            <NavLink to="/myorders" onClick={handleClose}>My Orders</NavLink>
           </li>
+          <li className="p-1">
+            <NavLink to="/neworder" onClick={handleClose}>Place Order</NavLink>
+          </li>
+          <br />
           <li className="p-1">
             <NavLink to="/profile" onClick={handleClose}>My Profile</NavLink>
           </li>
@@ -53,9 +58,17 @@ const SideMenu = (props) => {
           {/* <li className="p-1">
                 <NavLink to="/recover-password">Change Password</NavLink>
               </li> */}
+          {!!authenticated && (
           <li className="py-2">
-            <Button id="app-logout" onClick={() => handleLogout(props)}>Logout</Button>
+            <Button id="app-logout" onClick={() => { handleClose(); handleLogout(props); }}>Log out</Button>
           </li>
+          )}
+          {!authenticated && (
+          <li className="py-2">
+            <Button id="app-login" onClick={() => { handleClose(); props.history.push('/login'); }}>Log in</Button>
+          </li>
+          )}
+
         </ListGroup>
       </Col>
 
@@ -64,6 +77,7 @@ const SideMenu = (props) => {
 };
 
 SideMenu.propTypes = {
+  history: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
 };
 

@@ -5,6 +5,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import { toast } from 'react-toastify';
 import constants from '../../../../modules/constants';
 import { DisplayCategoryHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
+import { isChennaiPinCode } from '../../../../modules/helpers';
 
 import './ProductsOrderMobile.scss';
 
@@ -76,6 +77,8 @@ export default class ProductsOrderMobile extends React.Component {
     const { productSnacks } = productGroups;
 
     const productRecommended = [];
+
+    const isDeliveryInChennai = isChennaiPinCode(this.props.deliveryPincode);
 
     // const expanded = this.state.panelToFocus !== '';
     return (
@@ -211,7 +214,7 @@ export default class ProductsOrderMobile extends React.Component {
           </div>
           )}
 
-          {productBatter.length > 0 && (
+          {productBatter.length > 0 && isDeliveryInChennai && (
           <div id="batter-header">
             <Accordion.Item
               // onSelect={( === 'batter-header')}
@@ -238,7 +241,7 @@ export default class ProductsOrderMobile extends React.Component {
           </div>
           )}
 
-          {productVegetables.length > 0 && (
+          {productVegetables.length > 0 && isDeliveryInChennai && (
           <div id="veg-header">
             <Accordion.Item
               // onSelect={( === 'veg-header')}
@@ -265,7 +268,7 @@ export default class ProductsOrderMobile extends React.Component {
           </div>
           )}
 
-          {productFruits.length > 0 && (
+          {productFruits.length > 0 && isDeliveryInChennai && (
           <div id="fruits-header">
             <Accordion.Item
               // onSelect={( === 'fruits-header')}

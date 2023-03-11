@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-bootstrap/Alert';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class WelcomeMessage extends React.Component {
   constructor(props, context) {
@@ -24,21 +26,23 @@ class WelcomeMessage extends React.Component {
     const { profile } = this.props.loggedInUser;
 
     return (
-      <Alert
-        variant="light"
-        key="light"
-        className="mt-4 bg-white"
-      >
-        <p className="text-center-not-xs my-1">
-          <strong>
-            {this.getGreetingMessageByTime()}
-            ,
-          </strong>
-          {' '}
-          <br className="d-xs-block d-sm-none" />
-          {` ${(profile.salutation) ? profile.salutation : ''} ${profile.name.first} ${profile.name.last}`}
-        </p>
-      </Alert>
+      <Card className="mt-4 bg-body">
+        <div className="card-body">
+          <Row className="text-center-not-xs my-1">
+            <Col xs="12" sm="6" className="text-right-not-xs">
+              <strong>
+                {this.getGreetingMessageByTime()}
+                ,
+              </strong>
+            </Col>
+            <Col xs="12" sm="6" className="text-left-not-xs">
+              {' '}
+              {` ${(profile.salutation) ? profile.salutation : ''} ${profile.name.first} ${profile.name.last}`}
+            </Col>
+          </Row>
+        </div>
+      </Card>
+
     );
   }
 }

@@ -23,10 +23,10 @@ export const OrderFooter = ({
           </Button>
     </Col> */}
 
-    <div className="offset-1 col-10 offset-sm-3 col-sm-6 px-4 text-center">
+    <div className="offset-1 col-10 offset-sm-3 col-sm-6 px-2 text-center">
       <Button
         variant="secondary"
-        className=" w-75 btn-block"
+        className=" col-10 col-sm-6 btn-block"
         disabled={totalBillAmount <= 0}
         onClick={onButtonClick}
       >
@@ -128,7 +128,9 @@ const incrementMetaWithOrderCount = (productGroupMetaHash, productType, product)
 };
 
 export function displayProductsByType({
-  products, isMobile, isAdmin, isShopOwner, updateProductQuantity, wasProductOrderedPreviously, cartScreen, isBasket,
+  products, isMobile, isAdmin, isShopOwner, updateProductQuantity,
+  wasProductOrderedPreviously, cartScreen, isBasket,
+  isDeliveryInChennai,
 }) {
   let productGroupMetaHash = {};
   // Grouping product categories by tabs
@@ -159,6 +161,13 @@ export function displayProductsByType({
     }
 
     if (product.displayAsSpecial) {
+      if (!isDeliveryInChennai
+        && (constants.ProductType[1] === product.type /* Vegetable */
+        || constants.ProductType[2] === product.type) /* Fruits */
+      ) {
+        return;
+      }
+
       productSpecials.push(
         <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
       );

@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Roles } from 'meteor/alanning:roles';
-import { getDeliveryDay } from '../../../modules/helpers';
+// import { getDeliveryDay } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
+import Icon from '../../components/Icon/Icon';
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -53,11 +54,12 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
   if (!orderId) {
     history.push('/');
   }
+
   return (
     <div className="OrderPlaced mt-0 pb-5 text-center mx-2">
 
       <h1 className="text-success" style={{ top: '30px', position: 'relative' }}>
-        <span className="material-icons" style={{ fontSize: '1.5em' }}>check_circle</span>
+        <Icon icon="check_circle" style={{ fontSize: '1.5em' }} type="mt" />
       </h1>
 
       <div>
@@ -69,24 +71,13 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
           </h4>
           <h4 className="py-2">Thank you for Ordering on Suvai.</h4>
 
-          <div className="text-success pt-4">
+          {/* <div className="text-success pt-4">
             <p>
               {`Your order will be delivered on ${getDeliveryDay(new Date())}`}
               . You can pay us after delivery.
             </p>
-          </div>
-          <div className="text-success  pt-2 pb-3">
-            <p>
-              To pay now, you can add to your wallet and
-              we will deduct once the order is delivered.
-            </p>
-          </div>
+            </div> */}
 
-          <Button variant="secondary" onClick={() => { history.push('/mywallet'); }}>
-            Add To Wallet
-          </Button>
-          <br />
-          {' '}
           <br />
 
           {(Meteor.settings.public.ShowInviteButton) && (

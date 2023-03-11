@@ -23,6 +23,7 @@ const defaultState = {
     lastName: '',
     whMobilePhone: '',
     deliveryAddress: '',
+    deliveryPincode: '',
     newPassword: '',
     confirmPassword: '',
     dietPreference: '',
@@ -109,6 +110,7 @@ class Profile extends React.Component {
         salutation: this.salutation.selectedOptions[0].value,
         whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
+        deliveryPincode: this.deliveryPincode.value,
       },
       settings: {
         dietPreference: this.dietPreference.selectedOptions[0].value,
@@ -292,7 +294,7 @@ class Profile extends React.Component {
           <textarea
             ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
             name="deliveryAddress"
-            placeholder="Complete address to deliver at, including Landmark, Pincode."
+            placeholder="Complete address to deliver at, including Landmark."
             rows={6}
             defaultValue={user.profile.deliveryAddress}
             className="form-control"
@@ -302,6 +304,24 @@ class Profile extends React.Component {
           <span className="small text-info">{isError.deliveryAddress}</span>
           )}
         </Row>
+
+        <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''} className="my-3">
+          <label>Delivery Address Pincode</label>
+          <input
+            type="text"
+            maxLength={6}
+            ref={(deliveryPincode) => (this.deliveryPincode = deliveryPincode)}
+            name="deliveryPincode"
+            placeholder="Pincode of the delivery address."
+            defaultValue={user.profile.deliveryPincode}
+            className="form-control"
+            onBlur={this.onValueChange}
+          />
+          {isError.deliveryPincode.length > 0 && (
+          <span className="small text-info">{isError.deliveryPincode}</span>
+          )}
+        </Row>
+
         <Row validationState={isError.newPassword.length > 0 ? 'error' : ''} className="my-3">
           <label>New Password</label>
           <input

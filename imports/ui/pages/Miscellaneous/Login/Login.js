@@ -135,8 +135,8 @@ class Login extends React.Component {
             </Row>
             <div className="text-center alert bg-body py-3">
               <span>
-                {'Not a member yet? '}
-                <a href="/signup" className="login-signup text-secondary h4 ps-1">Join</a>
+                {'New to Suvai? '}
+                <a href="/signup" className="login-signup text-secondary h4 ps-1">Create an account</a>
               </span>
             </div>
 

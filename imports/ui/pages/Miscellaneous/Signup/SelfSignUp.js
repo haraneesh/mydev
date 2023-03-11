@@ -20,6 +20,7 @@ const defaultState = {
     lastName: '',
     whMobilePhone: '',
     deliveryAddress: '',
+    deliveryPincode: '',
     confirmPassword: '',
     eatingHealthyMeaning: '',
   },
@@ -90,6 +91,7 @@ class SelfSignUp extends React.Component {
         },
         // whMobilePhone: this.whMobilePhone.value,
         deliveryAddress: this.deliveryAddress.value,
+        deliveryPincode: this.deliveryPincode.value,
         eatingHealthyMeaning: this.eatingHealthyMeaning.value,
       },
     };
@@ -109,7 +111,9 @@ class SelfSignUp extends React.Component {
     } else {
       history.push('/signup');
 
-      /* Meteor.call('users.signUp', user, (error) => {
+      // Sign Up
+
+      Meteor.call('users.signUp', user, (error) => {
         if (error) {
           toast.error(error.reason);
         } else {
@@ -118,7 +122,7 @@ class SelfSignUp extends React.Component {
             signUpRequestSent: true,
           });
         }
-      }); */
+      });
     }
   }
 
@@ -223,8 +227,19 @@ class SelfSignUp extends React.Component {
                 <textarea
                   ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
                   name="deliveryAddress"
-                  placeholder="Complete address to deliver at, including Landmark, Pincode."
+                  placeholder="Complete address to deliver at, including Landmark."
                   rows={6}
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+              </Row>
+              <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+                <Row>Delivery Address Pincode</Row>
+                <input
+                  type="text"
+                  ref={(deliveryPincode) => (this.deliveryPincode = deliveryPincode)}
+                  name="deliveryPincode"
+                  placeholder="Enter Pincode of the delivery address"
                   className="form-control"
                   onBlur={this.onValueChange}
                 />

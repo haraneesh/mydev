@@ -27,20 +27,22 @@ const ListPayments = () => {
   };
 
   return !isPaymentstLoading ? (
-    <Card className="p-sm-3">
-      <Col xs={12}>
+    <Card className="py-3">
+      <Col xs={12} sm={10} className="offset-sm-1">
         <Row>
           {payments.length > 0 && (
-          <Table striped bordered>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Method</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
+            <>
+              <h4 className="pb-2"> Previous Transactions </h4>
+              <Table striped bordered>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
                 payments.map((payment) => (
                   <tr key={payment.invoice_numbers}>
                     <td>{getDayWithoutTime(new Date(payment.date))}</td>
@@ -49,16 +51,18 @@ const ListPayments = () => {
                   </tr>
                 ))
               }
-            </tbody>
-          </Table>
+                </tbody>
+              </Table>
+            </>
+
           )}
         </Row>
       </Col>
     </Card>
 
   ) : (
-    <Card className="p-3">
-      <Col>
+    <Card className="py-3">
+      <Col className="offset-sm-1">
         <Button onClick={loadPaymentHistory}> Fetch Payments History </Button>
       </Col>
     </Card>

@@ -22,10 +22,12 @@ Emitter.on(Events.NAV_PLACEORDER_LANDING, ({ userId }) => {
     }
   }
 
+  const userIdToLog = (userId) || 'NotLogged';
+
   UserEvents.insert(
     {
       eventType: Events.NAV_PLACEORDER_LANDING,
-      owner: userId,
+      owner: userIdToLog,
     },
   );
 });

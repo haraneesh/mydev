@@ -23,6 +23,7 @@ const emptyCart = {
   countOfItems: 0,
   comments: '',
   lastUpdateDate: new Date(),
+  deliveryPincode: 0,
 };
 
 const initializeCart = () => {
@@ -55,6 +56,7 @@ const getActiveCart = (cartState) => {
 
 // Reducer Cart Actions
 const cartActions = {
+  setDeliveryPinCode: 'SET_DELIVERY_PIN_CODE',
   setActiveCart: 'SET_ACTIVE_CART',
   emptyCart: 'EMPTY_CART',
   updateCart: 'UPDATE_CART',
@@ -70,7 +72,12 @@ const cartActions = {
 const cartReducer = (currentState, action) => {
   const cartId = currentState.activeCartId;
   const newState = { ...currentState };
+  // let newStateCart = newState.carts[cartId];
   switch (action.type) {
+    case cartActions.setDeliveryPinCode: {
+      newState.carts[cartId].deliveryPincode = action.payload.deliveryPincode;
+      break;
+    }
     case cartActions.setCartComments: {
       newState.carts[cartId].comments = action.payload.comments;
       break;
@@ -97,6 +104,7 @@ const cartReducer = (currentState, action) => {
         collectRecyclablesWithThisDelivery,
       } = action.payload;
       const { basketId } = action.payload;
+      const { deliveryPincode } = action.payload;
       newState.activeCartId = newActiveCartId;
       const { totalBillAmount, countOfItems } = getTotalBillAmountAndCount(selectedProducts);
       newState.carts[newActiveCartId] = {
@@ -106,6 +114,7 @@ const cartReducer = (currentState, action) => {
         lastUpdateDate: new Date(),
         comments,
         basketId,
+        deliveryPincode,
         issuesWithPreviousOrder,
         payCashWithThisDelivery,
         collectRecyclablesWithThisDelivery,
@@ -137,6 +146,7 @@ const cartReducer = (currentState, action) => {
         lastUpdateDate: new Date(),
         comments: currentState.carts[cartId].comments,
         basketId,
+        deliveryPincode: currentState.carts[cartId].deliveryPincode,
         issuesWithPreviousOrder: currentState.carts[cartId].issuesWithPreviousOrder,
         payCashWithThisDelivery: currentState.carts[cartId].payCashWithThisDelivery,
         collectRecyclablesWithThisDelivery: currentState.carts[cartId].collectRecyclablesWithThisDelivery,

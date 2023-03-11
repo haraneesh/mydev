@@ -9,6 +9,7 @@ import { Orders } from '../../../../api/Orders/Orders';
 import MyOrderList from '../../../components/Orders/MyOrdersList/MyOrdersList';
 import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
+import FivePlusOne from '/imports/ui/components/Payments/Coupons/FivePlusOne';
 import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
 const reactVarFilter = new ReactiveVar('Active');

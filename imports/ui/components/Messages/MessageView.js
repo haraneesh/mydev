@@ -95,7 +95,7 @@ const MessageView = ({
               className="bg-body btn-sm pe-1 text-info"
               style={{ border: 'none', width: '4em' }}
             >
-              <Icon icon="comment" type="mt" className="fs-3" />
+              <Icon icon="comment" type="mt" className={(commentCount && commentCount > 0) ? 'icon-fill fs-3' : 'fs-3'} />
               <span>
                 {(commentCount && commentCount > 0) ? ` ${commentCount}` : ' 0'}
               </span>
@@ -107,7 +107,7 @@ const MessageView = ({
               className="bg-body btn-sm pe-1 text-info"
               style={{ border: 'none', width: '4em' }}
             >
-              <Icon icon="favorite" type="mt" className={(userLikes.indexOf(loggedInUserId) > -1) ? 'text-secondary fs-3' : 'fs-3'} />
+              <Icon icon="favorite" type="mt" className={(userLikes.indexOf(loggedInUserId) > -1) ? 'text-secondary icon-fill fs-3' : 'fs-3'} />
               <span>
                 {(userLikes) ? ` ${userLikes.length}` : ' 0'}
               </span>

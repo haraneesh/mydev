@@ -20,7 +20,7 @@ const SupplierAuthenticated = ({
             <Component {...props} authenticated {...rest} roles={roles} />
           </Layout>
         )
-        : (<Redirect to="/about" />)
+        : (<Redirect to="/login" />)
     )}
   />
 );

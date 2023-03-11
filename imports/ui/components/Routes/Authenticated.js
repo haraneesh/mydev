@@ -17,7 +17,7 @@ const Authenticated = ({ layout: Layout, roles, authenticated, component, ...res
         {(React.createElement(component, { ...props, authenticated, ...rest }))}
       </Layout>)
       :
-      (<Redirect to="/about" />)
+      (<Redirect to="/login" />)
     )}
   />
 );
@@ -40,7 +40,7 @@ const Authenticated = ({
             <Component {...props} authenticated {...rest} roles={roles} />
           </Layout>
         )
-        : (<Redirect to="/about" />)
+        : (<Redirect to="/login" />)
     )}
   />
 );

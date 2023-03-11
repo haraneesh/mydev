@@ -81,7 +81,7 @@ export default function InviteSelf({ history }) {
             <span className="small text-info">{isError.whMobilePhone}</span>
             )}
             <p />
-            <Button type="submit" bsStyle="default" onClick={sendInvitation}>
+            <Button type="submit" variant="default" onClick={sendInvitation}>
               Send OTP
               {' '}
               {(isSendingSMSInProgress) && <Spinner />}

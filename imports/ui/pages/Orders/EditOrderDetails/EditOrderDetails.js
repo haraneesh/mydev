@@ -14,6 +14,7 @@ import { Orders } from '../../../../api/Orders/Orders';
 import Loading from '../../../components/Loading/Loading';
 import { getProductUnitPrice } from '../../../../modules/helpers';
 import constants from '../../../../modules/constants';
+import SelectDeliveryLocation from '../../../components/Orders/ProductsOrderCommon/SelectDeliveryLocation';
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 import NotFound from '../../Miscellaneous/NotFound/NotFound';
 
@@ -35,6 +36,7 @@ const EditOrderDetails = ({
     payCashWithThisDelivery,
     collectRecyclablesWithThisDelivery,
     issuesWithPreviousOrder,
+    deliveryPincode,
   }) => {
     switch (true) {
       case (orderId !== '' && orderId === currentActiveCartId): { //! !addItemsFromCart
@@ -54,6 +56,7 @@ const EditOrderDetails = ({
             selectedProducts,
             comments,
             basketId,
+            deliveryPincode,
             payCashWithThisDelivery,
             collectRecyclablesWithThisDelivery,
             issuesWithPreviousOrder,
@@ -86,6 +89,7 @@ const EditOrderDetails = ({
               payCashWithThisDelivery: order.payCashWithThisDelivery || false,
               collectRecyclablesWithThisDelivery: order.collectRecyclablesWithThisDelivery || false,
               issuesWithPreviousOrder: order.issuesWithPreviousOrder || '',
+              deliveryPincode: order.deliveryPincode || 0,
             });
             setProductList(prdList);
             setIsLoading(false);
@@ -101,23 +105,27 @@ const EditOrderDetails = ({
     case (editOrder): {
       return !isProductListLoading
         ? (
-          <ProductsOrderMain
-            productList={productList}
-            orderId={order._id || ''}
-            products={
+          <>
+            <SelectDeliveryLocation />
+
+            <ProductsOrderMain
+              productList={productList}
+              orderId={order._id || ''}
+              products={
               getProductUnitPrice(
                 Roles.userIsInRole(order.customer_details._id, constants.Roles.shopOwner.name),
                 productList.products,
               )
             }
-            productListId={(order.productOrderListId) ? order.productOrderListId : ''}
-            orderCustomerId={order.customer_details._id}
-            orderStatus={order.order_status}
-            comments={order.comments}
-            history={history}
-            addItemsFromCart={addItemsFromCart}
-            loggedInUser={loggedInUser}
-          />
+              productListId={(order.productOrderListId) ? order.productOrderListId : ''}
+              orderCustomerId={order.customer_details._id}
+              orderStatus={order.order_status}
+              comments={order.comments}
+              history={history}
+              addItemsFromCart={addItemsFromCart}
+              loggedInUser={loggedInUser}
+            />
+          </>
         ) : <Loading />;
     }
     case ('invoices' in order && order.invoices !== null && order.invoices.length > 0): {
