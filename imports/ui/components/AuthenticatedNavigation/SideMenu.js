@@ -40,6 +40,10 @@ const SideMenu = (props) => {
           </li>
           <br />
           <li className="p-1">
+            <NavLink to="/mywallet" onClick={handleClose}>My Wallet</NavLink>
+          </li>
+          <br />
+          <li className="p-1">
             <NavLink to="/profile" onClick={handleClose}>My Profile</NavLink>
           </li>
           <li className="p-1">

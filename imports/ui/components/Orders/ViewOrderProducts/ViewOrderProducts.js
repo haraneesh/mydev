@@ -32,11 +32,11 @@ export const ViewOrderProducts = ({ products }) => (
               {`${product.name} ${product.unitOfSale}`}
               {' '}
               <br />
-              <small>
+              {/* <small>
                 {' '}
                 {product.description}
                 {' '}
-              </small>
+               </small> */}
             </Col>
             <Col xs={3} className="text-right-xs">
               {formatMoney(product.unitprice, accountSettings)}

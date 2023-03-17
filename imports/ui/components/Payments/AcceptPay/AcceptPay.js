@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import Form from 'react-bootstrap/Form';
@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
+import { useBootstrapBreakpoints } from 'react-bootstrap/esm/ThemeProvider';
 import Loading from '../../Loading/Loading';
 import { formValChange } from '../../../../modules/validate';
 import { accountSettings } from '../../../../modules/settings';
@@ -18,9 +19,14 @@ import PayTMButton from '../PayTM/PayTMButton';
 import { calculateGateWayFee, prepareState, SignUpForDiscountMessage } from '../../../../modules/both/walletHelpers';
 
 function AcceptPay({
-  userWallet, loggedInUser, showWalletBalance, callFuncAfterPay,
+  userWallet, loggedInUser, showWalletBalance, callCollectPayFuncAfterPay,
 }) {
-  const [walletState, setWalletState] = useState(prepareState(userWallet));
+  const userWalletBeforeUpdate = prepareState(userWallet);
+  const [walletState, setWalletState] = useState(userWalletBeforeUpdate);
+
+  useEffect(() => {
+    setWalletState(prepareState(userWallet));
+  }, [userWallet]);
 
   function amountToChargeOnChange(event) {
     const { isError } = walletState;
@@ -39,7 +45,7 @@ function AcceptPay({
     if (error) {
       toast.error(error.reason);
     } else {
-      // if (callFuncAfterPay) { callFuncAfterPay({ action: 'ADDEDTOWALLET' }); }
+      if (callCollectPayFuncAfterPay) { callCollectPayFuncAfterPay(result); }
       toast.success('Payment has been successfully processed');
     }
   }
@@ -52,7 +58,31 @@ function AcceptPay({
     return (amtToCharge).toString();
   }
 
+  function simulatePayment() {
+    Meteor.call('payment.paytm.simulatePayment', (err, result) => {
+      if (callCollectPayFuncAfterPay) {
+        const tresult = result;
+        tresult.unused_credits_receivable_amount_InPaise = '9999999';
+        callCollectPayFuncAfterPay(tresult);
+      }
+      toast.success('Payment has been successfully processed');
+    });
+  }
+
   const { isError } = walletState;
+
+  function optionValuesForWalletUpdate() {
+    const maxWalletAddAmt = (userWalletBeforeUpdate.amountToChargeInRs < 10000)
+      ? 10000 : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
+
+    const chargeOptions = [];
+    for (let i = 500; i < maxWalletAddAmt; i += 500) {
+      if (userWalletBeforeUpdate.amountToChargeInRs < i) {
+        chargeOptions.push(<option value={i}>{i}</option>);
+      }
+    }
+    return chargeOptions;
+  }
 
   return (
     <div>
@@ -90,19 +120,21 @@ function AcceptPay({
                   {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                   <InputGroup>
                     <InputGroup.Text>Rs.</InputGroup.Text>
-                    <Form.Control
-                      type="number"
+                    <select
+                      className="form-select"
                       name="amountToChargeInRs"
-                      value={walletState.amountToChargeInRs}
-                      placeholder="5000"
+                      id="noChargeFee"
                       onChange={amountToChargeOnChange}
-                    />
+                    >
+                      {optionValuesForWalletUpdate()}
+                    </select>
                   </InputGroup>
                   {isError.amountToChargeInRs.length > 0 && (
                   <span className="small text-info">{isError.amountToChargeInRs}</span>
                   )}
                 </Col>
                 <Col xs={12} sm={3} className="text-right-xs">
+                  {/* <button onClick={simulatePayment}> Test Payment </button> */}
                   <PayTMButton
                     buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Add To Wallet' : 'Pay Now'}
                     showOptionsWithFee={false}
@@ -152,13 +184,14 @@ function AcceptPay({
                       {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                       <InputGroup>
                         <InputGroup.Text>Rs.</InputGroup.Text>
-                        <Form.Control
-                          type="number"
+                        <select
+                          className="form-select"
                           name="amountToChargeInRs"
-                          value={walletState.amountToChargeInRs}
-                          placeholder="5000"
+                          id="toChargeFee"
                           onChange={amountToChargeOnChange}
-                        />
+                        >
+                          {optionValuesForWalletUpdate()}
+                        </select>
                       </InputGroup>
                       <p>
                         <small>
@@ -210,7 +243,7 @@ function AcceptPay({
 AcceptPay.defaultProps = {
   loggedInUser: Meteor.user(),
   showWalletBalance: true,
-  callFuncAfterPay: null,
+  callCollectPayFuncAfterPay: null,
 };
 
 AcceptPay.propTypes = {
@@ -221,7 +254,7 @@ AcceptPay.propTypes = {
     outstanding_receivable_amount_InPaise: PropTypes.number.isRequired,
   }).isRequired,
   loggedInUser: PropTypes.object,
-  callFuncAfterPay: PropTypes.func,
+  callCollectPayFuncAfterPay: PropTypes.func,
 };
 
 export default AcceptPay;

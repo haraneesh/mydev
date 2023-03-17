@@ -206,6 +206,17 @@ export const removeOrder = new ValidatedMethod({
   },
 });
 
+export const getOrderDetails = new ValidatedMethod({
+  name: 'orders.getOrderDetails',
+  validate: new SimpleSchema({ orderId: { type: String } }).validator(),
+  run({ orderId }) {
+    const ord = Orders.find({
+      $and: [{ _id: orderId }, { 'customer_details._id': this.userId }],
+    }).fetch()[0];
+    return ord;
+  },
+});
+
 export const updateMyOrderStatus = new ValidatedMethod({
   name: 'orders.updateMyOrderStatus',
   validate: new SimpleSchema({
@@ -474,6 +485,7 @@ Meteor.methods({
 rateLimit({
   methods: [
     getOrders,
+    getOrderDetails,
     getProductQuantityForOrderAwaitingFullFillment,
     getProductQuantityForOrderAwaitingFullFillmentNEW,
     updateMyOrderStatus,

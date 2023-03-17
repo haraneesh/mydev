@@ -86,6 +86,13 @@ const ToolBar = ({
   if (authenticated) {
     return (
       <div id="toolBar" className="toolBar text-center">
+        <div className="col box3">
+          <Button variant="white" onClick={() => { history.push('/myorders'); }}>
+            <Icon icon="home" type="mt" className="fs-1" />
+            <span style={fontProps}>Home</span>
+          </Button>
+        </div>
+
         <div className="col box1">
           <Button variant="white" onClick={() => { onMessageIconClick(isAdmin); }}>
             { /* <Icon icon="comment" /> */}
@@ -104,12 +111,6 @@ const ToolBar = ({
             <span style={fontProps}>Recipes</span>
           </Button>
             </div> */}
-        <div className="col box3">
-          <Button variant="white" onClick={() => { history.push('/myorders'); }}>
-            <Icon icon="home" type="mt" className="fs-1" />
-            <span style={fontProps}>Home</span>
-          </Button>
-        </div>
         <div className="col box4">
           <Button variant="white" onClick={onCartIconClick}>
             <Icon icon="local_mall" type="mt" className="fs-2" />

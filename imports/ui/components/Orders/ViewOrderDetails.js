@@ -19,7 +19,8 @@ class ViewOrderDetails extends React.Component {
   }
 
   render() {
-    const { order } = this.props;
+    const { order, heading } = this.props;
+    const title = (heading) || moment(order.createdAt).tz(dateSettings.timeZone).format(dateSettings.format);
     return (
       <div className="ViewOrderDetails mb-4">
         <div className="py-4 ps-2">
@@ -27,9 +28,7 @@ class ViewOrderDetails extends React.Component {
             <Col xs={12}>
               <h3 className="pull-left">
                 {' '}
-                {moment(order.createdAt)
-                  .tz(dateSettings.timeZone)
-                  .format(dateSettings.format)}
+                {title}
                 {' '}
               </h3>
             </Col>

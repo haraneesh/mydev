@@ -172,7 +172,8 @@ const ProductForNonAdmin = ({
       previousOrdQty={previousOrdQty}
     />
   );
-  const imagePath = `${Meteor.settings.public.Product_Images}${image}?${Meteor.settings.public.Product_Images_Version}`;
+  const useImg = (!image || (!!image && image.indexOf('blank_image') > 0)) ? 'blank.jpg' : image;
+  const imagePath = `${Meteor.settings.public.Product_Images}${useImg}?${Meteor.settings.public.Product_Images_Version}`;
   const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
 
   if (checkout) {
@@ -215,7 +216,7 @@ const ProductForNonAdmin = ({
   if (sliderView) {
     return (
       <div className="product-item text-center text-center row">
-        {!!image && image.indexOf('blank_image.png') < 0 && (
+        {!!image && useImg.indexOf('blank.jpg') < 0 && (
         <Col xs={5} className="text-center">
           {imageRow}
         </Col>
@@ -253,7 +254,7 @@ const ProductForNonAdmin = ({
   return (
     <Row className="product-item text-center my-2">
       <Col xs={12} className="item-image-container">
-        {!!image && image.indexOf('blank_image.png') < 0 && imageRow}
+        {imageRow}
       </Col>
 
       <Col xs={12}>

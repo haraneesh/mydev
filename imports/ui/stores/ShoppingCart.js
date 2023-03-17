@@ -23,7 +23,7 @@ const emptyCart = {
   countOfItems: 0,
   comments: '',
   lastUpdateDate: new Date(),
-  deliveryPincode: 0,
+  deliveryPincode: '',
 };
 
 const initializeCart = () => {

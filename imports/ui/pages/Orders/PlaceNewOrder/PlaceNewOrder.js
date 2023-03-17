@@ -43,10 +43,10 @@ const PlaceNewOrder = ({
   useEffect(() => {
     let deliveryPincode = '';
     switch (true) {
-      case (cartState.cart && cartState.cart.deliveryPincode.length > 0):
+      case (cartState.cart && !!cartState.cart.deliveryPincode):
         deliveryPincode = cartState.cart.deliveryPincode;
         break;
-      case (loggedInUser && loggedInUser.profile && loggedInUser.profile.deliveryPincode.length > 0):
+      case (loggedInUser && loggedInUser.profile && !!loggedInUser.profile.deliveryPincode):
         deliveryPincode = loggedInUser.profile.deliveryPincode;
         break;
       default:
@@ -84,7 +84,7 @@ const PlaceNewOrder = ({
     default:
       return (
         <div className="OrderHomePage">
-          <SelectDeliveryLocation />
+          <SelectDeliveryLocation loggedInUser={loggedInUser} history={history} />
           <ProductsOrderMain
             products={products}
             history={history}

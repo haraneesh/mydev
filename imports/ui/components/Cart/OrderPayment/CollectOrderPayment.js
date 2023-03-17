@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
@@ -16,18 +16,39 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
   const cartState = useCartState();
   const [walletState, setWalletState] = useState(prepareState(loggedInUser.wallet));
 
-  const updatedWallet = newWallet(
-    {
-      wallet: loggedInUser.wallet,
-      add_outstanding_receivable_amount_InPaise: cartState.cart.totalBillAmount * 100,
-    },
-  );
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     setWalletState(prepareState(loggedInUser.wallet));
   }, [loggedInUser.wallet]);
 
-  const balanceToPay = calculateWalletBalanceInRs(updatedWallet);
+  function retWalletAdjustedAndBalanceToPay(wallet) {
+    const tmpWallet = newWallet(
+      {
+        wallet,
+        add_outstanding_receivable_amount_InPaise: cartState.cart.totalBillAmount * 100,
+      },
+    );
+
+    const balanceToPay = -1 * calculateWalletBalanceInRs(tmpWallet);
+
+    return {
+      adjustedWallet: tmpWallet,
+      balanceToPay,
+    };
+  }
+
+  const { adjustedWallet, balanceToPay } = retWalletAdjustedAndBalanceToPay(loggedInUser.wallet);
+
+  function callCollectPayFuncAfterPay(updatedWallet) {
+    const val = retWalletAdjustedAndBalanceToPay(updatedWallet);
+
+    if (val.balanceToPay <= 0) {
+      callFuncAfterPay({ action: 'ADDEDTOWALLETMORETHANBALANCE' });
+    }
+  }
 
   return (
     <Row>
@@ -37,11 +58,6 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
 
       <div className="bg-white card p-2 pt-5 pb-5 mb-5 py-4">
         <div className="col col-sm-8 h4 offset-sm-1">
-          <Col xs={12} className="text-left pb-3">
-            <Button className="px-2" variant="primary" size="sm" onClick={() => { callFuncAfterPay({ action: 'BACKTOCART' }); }}>
-              &#x2190; back
-            </Button>
-          </Col>
           <div className="card-header p-3 text-start">
             <small className="text-uppercase"> Total Pay </small>
           </div>
@@ -63,20 +79,20 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
                     {`${formatMoney(cartState.cart.totalBillAmount, accountSettings)}`}
                   </td>
                 </tr>
-                { (balanceToPay < 0) && (
-                  <tr>
-                    <td><b>To Pay</b></td>
-                    <td>
-                      {`${formatMoney(balanceToPay, accountSettings)}`}
-                    </td>
-                  </tr>
-                )}
-
-                { (balanceToPay >= 0 /* active cart not set */) && (
+                { (balanceToPay <= 0) && (
                   <tr>
                     <td><b>To Pay</b></td>
                     <td>
                       {`${formatMoney(0, accountSettings)}`}
+                    </td>
+                  </tr>
+                )}
+
+                { (balanceToPay > 0 /* active cart not set */) && (
+                  <tr>
+                    <td><b>To Pay</b></td>
+                    <td>
+                      {`${formatMoney(balanceToPay, accountSettings)}`}
                     </td>
                   </tr>
                 )}
@@ -87,7 +103,7 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
 
           <div className="card">
 
-            {(balanceToPay < 0) && (
+            {(balanceToPay > 0) && (
               <>
                 <div className="card-header p-3 text-start">
                   <small className="text-uppercase"> Payment Options </small>
@@ -95,9 +111,9 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
                 <div className="card-body">
                   <AcceptPay
                     loggedInUser={loggedInUser}
-                    userWallet={updatedWallet}
+                    userWallet={adjustedWallet}
                     showWalletBalance={false}
-                    callFuncAfterPay={callFuncAfterPay}
+                    callCollectPayFuncAfterPay={callCollectPayFuncAfterPay}
                   />
 
                   <div>
@@ -116,16 +132,31 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
                 </div>
               </>
             )}
-            {(balanceToPay > 0) && (
+            {(balanceToPay <= 0) && (
 
-              <div className="text-right-xs m-4">
-                <Button className="px-5" variant="secondary" onClick={() => { callFuncAfterPay({ action: 'DEDUCTFROMWALLET' }); }}> Place Order </Button>
+              <div className="text-right m-4">
+                <Button className="px-3" variant="secondary" onClick={() => { callFuncAfterPay({ action: 'DEDUCTFROMWALLET' }); }}> Place Order </Button>
               </div>
 
             )}
           </div>
-          <div />
         </div>
+
+        <div className="bg-white card p-2 py-4">
+          <div className="col col-sm-8 h4 offset-sm-1">
+
+            <div className="card-header p-3 text-start">
+              <small className="text-uppercase">  BACK TO CART </small>
+            </div>
+
+            <div className="card-body">
+              <Button className="px-5" variant="primary" onClick={() => { callFuncAfterPay({ action: 'BACKTOCART' }); }}>
+                &#x2190; Update Cart
+              </Button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </Row>
   );

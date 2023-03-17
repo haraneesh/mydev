@@ -15,7 +15,7 @@ import { clearEntireLocalStore } from '../../../stores/localStorage';
 
 const showPasswordButtonPositions = {
   position: 'relative',
-  top: '-46px',
+  top: '-45px',
   padding: '10px',
   fontSize: '76%',
   width: '75px',
@@ -112,7 +112,7 @@ class Login extends React.Component {
               <div className="col-12">
                 <Button
                   className="text-center btn-block float-end"
-                  variant="info"
+                  variant="link"
                   onClick={this.switchPasswordBox}
                   style={showPasswordButtonPositions}
                 >
@@ -126,7 +126,7 @@ class Login extends React.Component {
                 <Button
                   type="submit"
                   variant="secondary"
-                  className="my-3 loginBtn"
+                  className="my-2 mb-4 loginBtn d-block"
                 >
                   Log In
 

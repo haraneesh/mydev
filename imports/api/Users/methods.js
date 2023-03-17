@@ -119,6 +119,7 @@ const assignUserRole = (userId, selectedRole) => {
       break;
   }
 };
+
 // used by supplier method to create supplier user
 export const createNewUser = (user) => {
   const cuser = {
@@ -196,6 +197,22 @@ export const createUser = new ValidatedMethod({
   run(user) {
     if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
       return createNewUser(user);
+    }
+  },
+});
+
+export const updateDeliveryPincode = new ValidatedMethod({
+  name: 'user.updateDeliveryPincode',
+  validate: new SimpleSchema({
+    deliveryPincode: { type: String },
+  }).validator(),
+  run({ deliveryPincode }) {
+    if (this.userId) {
+      Meteor.users.upsert({ _id: this.userId }, {
+        $set: {
+          'profile.deliveryPincode': deliveryPincode,
+        },
+      });
     }
   },
 });
@@ -353,8 +370,6 @@ Meteor.methods({
     NonEmptyString(user.profile.deliveryAddress, 'Delivery address');
     NonEmptyString(user.profile.deliveryPincode, 'Delivery pincode');
 
-    console.log('herer');
-
     notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
     Last Name:  ${user.profile.name.last}
@@ -471,6 +486,7 @@ rateLimit({
     'users.approveSignUp',
     'users.getTotalUserCount',
     adminUpdateUser,
+    updateDeliveryPincode,
     findUser,
     createUser,
     editUserProfile,

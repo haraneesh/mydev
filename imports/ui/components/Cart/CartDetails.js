@@ -187,7 +187,8 @@ const CartDetails = ({
       handleOrderSubmit({ dontShowPaymentProceed: true });
     } else if (action === 'BACKTOCART') {
       setShowPaymentModal(false);
-    } else if (action === 'ADDEDTOWALLET') {
+    } else if (action === 'ADDEDTOWALLETMORETHANBALANCE') {
+      handleOrderSubmit({ dontShowPaymentProceed: true });
       // Meteor would auto refresh loggedInUser
     }
   };
@@ -301,10 +302,12 @@ const CartDetails = ({
 
             <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
 
+            {/*
             <PrevOrderComplaint
               onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
               prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
             />
+            */}
 
             {onBehalfUser.isNecessary && (
               <OnBehalf

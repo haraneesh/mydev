@@ -7,10 +7,13 @@ import Col from 'react-bootstrap/Col';
 function ShowReturnables({ productReturnables }) {
   function retReturnableRowsForDisplay(productKeys) {
     const imgPath = (imagePath) => `${Meteor.settings.public.Product_Images}${imagePath}?${Meteor.settings.public.Product_Images_Version}`;
+    let countOfProducts = 0;
+    let productMap = [];
 
     if (productKeys.length > 0) {
-      return productKeys.map((key) => {
+      productMap = productKeys.map((key) => {
         if (productReturnables[key].quantitySold > 0) {
+          countOfProducts += productReturnables[key].quantitySold;
           return (
             <Row key={key}>
               <Col xs={3} sm={4} className="text-center">
@@ -27,20 +30,32 @@ function ShowReturnables({ productReturnables }) {
         }
       });
     }
+
+    return {
+      productMap,
+      countOfProducts,
+    };
   }
 
   const productKeys = Object.keys(productReturnables);
+  const productReturnablesMap = retReturnableRowsForDisplay(productKeys);
 
   if (productKeys.length > 0) {
     return (
       <div className="card mt-4">
-        <div className="text-center card-header m-0 py-2 pt-4">
-          <h6 className="pb-2"> Let's Recycle </h6>
-          <p>Please return these and help us recycle </p>
+        <div className="text-center card-header m-0 py-3">
+          <h6 className="pb-2">
+            <span className="text-secondary">
+              {productReturnablesMap.countOfProducts}
+            </span>
+            {' '}
+            items to return
+          </h6>
+          <span> Let's Reuse and Recycle </span>
         </div>
 
         <div className="card-body">
-          { retReturnableRowsForDisplay(productKeys) }
+          { productReturnablesMap.productMap }
         </div>
       </div>
     );

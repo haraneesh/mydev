@@ -16,7 +16,7 @@ const Menu = (props) => (
         className="px-2"
         id="profileIcon"
       >
-        <Icon icon="person" className="fs-2" type="mt" style={{ fontVariationSettings: '"FILL" 1' }} />
+        <Icon icon="person" className="fs-2 icon-fill" type="mt" />
       </Button>
 
       <Button
@@ -25,7 +25,7 @@ const Menu = (props) => (
         className="px-2 px-sm-3"
         id="menuIcon"
       >
-        <Icon icon="menu" className="fs-2" type="mt" style={{ fontVariationSettings: '"FILL" 1' }} />
+        <Icon icon="menu" className="fs-2" type="mt" />
       </Button>
 
       <Offcanvas show={props.show} onHide={props.handleClose} placement="top" name="OffCanvasMenu">

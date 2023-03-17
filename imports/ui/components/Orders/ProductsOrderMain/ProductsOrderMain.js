@@ -74,13 +74,14 @@ const ProductsOrderMain = (props) => {
   const displayToolBar = (orderStatus) => (
     <div className="row text-center pt-2">
       <Col xs={12}>
+        {(!props.loggedInUser) && (
         <DropdownButton
           id="btnSetDeliveryCode"
           title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? 'In Chennai' : 'Out of Chennai'} (${cartState.cart.deliveryPincode ? cartState.cart.deliveryPincode : '---'})`}
           className="d-inline-flex pe-2 mb-2"
         >
           <Dropdown.Item
-            className="mx-5"
+            className="mx-4"
             onClick={() => {
               cartDispatch({
                 type: cartActions.setDeliveryPinCode,
@@ -91,6 +92,7 @@ const ProductsOrderMain = (props) => {
             Change Delivery Location
           </Dropdown.Item>
         </DropdownButton>
+        )}
 
         {
         (orderStatus === constants.OrderStatus.Pending.name
@@ -120,7 +122,7 @@ const ProductsOrderMain = (props) => {
     const order = {
       products: selectedProducts,
       _id: orderId,
-      loggedInUserId: loggedInUser._id,
+      loggedInUserId: props.loggedInUser._id,
       order_status: saveStatus,
       deliveryPincode: cartState.cart.deliveryPincode,
       // totalBillAmount: this.state.totalBillAmount,
@@ -242,7 +244,7 @@ const ProductsOrderMain = (props) => {
               }
             </ListGroup>
           </Col>
-          <Col xs={12}>
+          <Col xs={12} className="bg-white pt-3">
             {displayOrderFooter(isMobile)}
           </Col>
         </Row>
@@ -275,7 +277,7 @@ const ProductsOrderMain = (props) => {
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
-          <div className="py-4 my-2 text-center">
+          <div className="py-sm-4 py-2 my-1 text-center">
             <h2>
               {formHeading}
             </h2>

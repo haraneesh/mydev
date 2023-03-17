@@ -200,9 +200,6 @@ export default class MyOrderList extends React.Component {
       <div>
         <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} history={history} />
 
-        <Row>
-          <ShowReturnables productReturnables={productReturnables} />
-        </Row>
         <Row className="my-2 pb-3 MyOrderList">
           <Tabs defaultActiveKey={1}>
             <Tab eventKey={1} title="Orders" tabClassName="text-center px-2">

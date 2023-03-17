@@ -106,7 +106,7 @@ const EditOrderDetails = ({
       return !isProductListLoading
         ? (
           <>
-            <SelectDeliveryLocation />
+            <SelectDeliveryLocation loggedInUser={loggedInUser} history={history} />
 
             <ProductsOrderMain
               productList={productList}

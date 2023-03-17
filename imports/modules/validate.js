@@ -67,9 +67,9 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         ? ''
         : 'India mobile number appears to be invalid, mobile number is 10 digits long';
 
-      isError.confirmWhMobileNumber = (fieldValues.confirmWhMobileNumber === fieldValues.whMobilePhone)
-        ? ''
-        : 'Mobile numbers entered are not the same';
+      isError.confirmWhMobileNumber = (fieldValues && fieldValues.confirmWhMobileNumber && fieldValues.confirmWhMobileNumber !== fieldValues.whMobilePhone)
+        ? 'Mobile numbers entered are not the same'
+        : '';
       break;
     case name === 'deliveryAddress':
       isError.deliveryAddress = trimmedVal.length < 1

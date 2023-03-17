@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Roles } from 'meteor/alanning:roles';
 // import { getDeliveryDay } from '../../../modules/helpers';
+import { toast } from 'react-toastify';
+import { getOrderDetails } from '../../../api/Orders/methods';
+import ViewOrderDetails from '../../components/Orders/ViewOrderDetails';
+import ShowReturnables from '../../components/Orders/MyOrdersList/ShowReturnables';
 import constants from '../../../modules/constants';
 import Icon from '../../components/Icon/Icon';
 
@@ -43,17 +47,28 @@ const RegisterInvitation = () => {
   });
 };
 
-const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
+const SuccessOrderPlaced = ({
+  history, match: { params }, loggedInUser, productReturnables,
+}) => {
   const { profile } = loggedInUser;
   const { orderId } = params;
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const [order, setOrder] = useState({});
 
   if (!orderId) {
     history.push('/');
   }
+  useEffect(() => {
+    if (orderId) {
+      getOrderDetails.call({ orderId }, (err, orderDetails) => {
+        if (err) {
+          toast.error(err.reason);
+        } else {
+          setOrder(orderDetails);
+        }
+        window.scrollTo(0, 0);
+      });
+    }
+  }, [orderId]);
 
   return (
     <div className="OrderPlaced mt-0 pb-5 text-center mx-2">
@@ -96,11 +111,21 @@ const SuccessOrderPlaced = ({ history, match: { params }, loggedInUser }) => {
           </div>
           )}
         </section>
+        <section className="text-left">
+          {/* order Summary */}
+          {(order && order._id) && (<ViewOrderDetails order={order} history={history} heading="Order Summary" />)}
+        </section>
+
+        <section className="mb-4">
+          <ShowReturnables productReturnables={productReturnables} />
+        </section>
 
         {!Roles.userIsInRole(loggedInUser._id, constants.Roles.shopOwner.name) && (
-          <section className="card text-center">
+          <section className="card  text-center">
             <Col xs={12}>
-              <h4 className="my-4"> Congratulations for doing Good</h4>
+              <div className="card-header p-4 mb-4">
+                <h6>Congratulations for doing Good</h6>
+              </div>
               <SuccessRow heading="Good for You" text="Choosing Nutrition rich wholesome food" iconName="food" />
               <SuccessRow heading="Good for You" text="Limiting highly processed and refined food" iconName="junk" />
               <SuccessRow heading="Good for You" text="Avoiding pesticides, artificial colors and preservatives" iconName="safe" />

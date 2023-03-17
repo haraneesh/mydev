@@ -162,7 +162,7 @@ export const OrderFooter = ({
 }) => (
 
   <div className="bg-body py-0 px-2 m-0">
-    <div className="row">
+    {/* <div className="row">
       <Col sm={8} xs={12} className="text-left offset-sm-2 pt-3 form-check">
         <label htmlFor="payCashId" className="form-check-label">
           <input
@@ -192,9 +192,9 @@ export const OrderFooter = ({
           Please collect recyclables (Glass bottles, Net bags, White bags and others )
         </label>
       </Col>
-    </div>
+    </div> */}
 
-    <div className="orderFooter alert alert-light row" style={{ marginTop: '2.5em' }}>
+    <div className="orderFooter alert alert-light row">
       <Col sm={6} xs={12}>
         <h4 className="text-center-xs text-right-not-xs py-2">
           {'Total '}
