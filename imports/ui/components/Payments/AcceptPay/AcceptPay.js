@@ -9,7 +9,6 @@ import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
-import { useBootstrapBreakpoints } from 'react-bootstrap/esm/ThemeProvider';
 import Loading from '../../Loading/Loading';
 import { formValChange } from '../../../../modules/validate';
 import { accountSettings } from '../../../../modules/settings';
@@ -76,6 +75,13 @@ function AcceptPay({
       ? 10000 : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
 
     const chargeOptions = [];
+    if (userWalletBeforeUpdate.amountToChargeInRs > 0) {
+      chargeOptions.push(
+        <option value={userWalletBeforeUpdate.amountToChargeInRs}>
+          {userWalletBeforeUpdate.amountToChargeInRs}
+        </option>,
+      );
+    }
     for (let i = 500; i < maxWalletAddAmt; i += 500) {
       if (userWalletBeforeUpdate.amountToChargeInRs < i) {
         chargeOptions.push(<option value={i}>{i}</option>);
