@@ -82,7 +82,7 @@ const ViewInvoice = ({ invoice }) => (
       </Col>
     </Row>
     <div>
-      {invoice.balance > 0 && (
+      {/* invoice.balance > 0 && (
       <div className="p-3">
         <Row className="text-right">
           <Col xs={12}>
@@ -92,7 +92,7 @@ const ViewInvoice = ({ invoice }) => (
           </Col>
         </Row>
       </div>
-      )}
+      ) */}
     </div>
   </div>
 );

@@ -65,22 +65,22 @@ const OrderSummaryRow = ({
                   : formatMoney(orderAmount, accountSettings)}
               </Col>
 
-              <Col xs={6}>
-                <Row>
-                  <Col xs={12} sm={3} md={4}>
-                    {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
-                      <div>
-                        <span className="text-muted">Pending: </span>
-                      </div>
-                    ) : (<div />)}
-                  </Col>
-                  <Col xs={12} sm={9} md={8}>
-                    {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
-                      ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
-                    ) : (<div />)}
-                  </Col>
-                </Row>
-              </Col>
+              {/* <Row>
+                <Col xs={12} sm={3} md={4}>
+                  {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
+                    <div>
+                      <span className="text-muted">Pending: </span>
+                    </div>
+                  ) : (<div />)}
+                </Col>
+                <Col xs={12} sm={9} md={8}>
+                  {showPendingInvoiceAmount(invoiceTotals, walletBalance) ? (
+                    ` ${formatMoney(invoiceTotals.balanceInvoicedAmount, accountSettings)}`
+                  ) : (<div />)}
+                </Col>
+              </Row>
+              */}
+
             </Row>
           </Col>
         </Row>

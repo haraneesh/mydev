@@ -53,12 +53,12 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
           </Col>
           <Col xs={12} sm={3} className="text-right">
             <Button variant="secondary" onClick={() => { history.push('/mywallet'); }}>
-              {(walletBalanceInRs >= 0) ? 'Add To Wallet' : 'Pay Now'}
+              {(walletBalanceInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
             </Button>
           </Col>
         </Row>
         <p className="text-info text-center small pt-3">
-          Wallet Balance is adjusted only after order delivery.
+          Orders yet to be delivered are not considered.
         </p>
       </Card.Body>
     </Card>

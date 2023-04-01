@@ -28,6 +28,8 @@ function PayTMButton({
       window.Paytm.CheckoutJS.close();
     }
     if (paymentStatus.STATUS === 'TXN_FAILURE') {
+      Meteor.call('payment.paytm.paymentTransactionError',
+        { ORDERID: paymentStatus.ORDERID, errorObject: paymentStatus.RESPMSG });
       toast.error(paymentStatus.RESPMSG);
       return;
     }
@@ -67,6 +69,7 @@ function PayTMButton({
         window.Paytm.CheckoutJS.invoke();
         setIsLoading(false);
       }).catch((error) => {
+        Meteor.call('payment.paytm.paymentTransactionError', { ORDERID: suvaiTransactionId, errorObject: error });
         console.log('PayTM Button error: ', error);
         setIsLoading(false);
       });

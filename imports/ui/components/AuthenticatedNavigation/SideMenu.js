@@ -40,7 +40,7 @@ const SideMenu = (props) => {
           </li>
           <br />
           <li className="p-1">
-            <NavLink to="/mywallet" onClick={handleClose}>My Wallet</NavLink>
+            <NavLink to="/mywallet" onClick={handleClose}> My Account </NavLink>
           </li>
           <br />
           <li className="p-1">

@@ -34,11 +34,11 @@ export const EasyNavWideScreen = (props) => (
     </span>
     {!!props.authenticated && (
     <span className="col-3 text-center  px-2">
-      <NavLink to="/mywallet"> My Wallet </NavLink>
+      <NavLink to="/mywallet"> My Account </NavLink>
     </span>
     )}
     <span className="col-3 text-center  px-2">
-      <NavLink to="/healthprinciples"> Health </NavLink>
+      <NavLink to="/about">About Us</NavLink>
     </span>
   </div>
 );

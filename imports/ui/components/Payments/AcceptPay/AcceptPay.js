@@ -82,7 +82,7 @@ function AcceptPay({
         </option>,
       );
     }
-    for (let i = 500; i < maxWalletAddAmt; i += 500) {
+    for (let i = 500; i <= maxWalletAddAmt; i += 500) {
       if (userWalletBeforeUpdate.amountToChargeInRs < i) {
         chargeOptions.push(<option value={i}>{i}</option>);
       }
@@ -98,13 +98,13 @@ function AcceptPay({
         <Row>
           <Col xs={12} className="text-center">
             <h4 className="m-2">
-              {`Wallet Balance is${' '}`}
+              {`Account Balance is${' '}`}
               <span className={walletState.balanceAmountClass}>
                 {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
               </span>
             </h4>
             <p className="text-info small">
-              Wallet Balance is adjusted only after order delivery.
+              Orders yet to be delivered are not considered.
             </p>
           </Col>
         </Row>
@@ -142,7 +142,7 @@ function AcceptPay({
                 <Col xs={12} sm={3} className="text-right-xs">
                   {/* <button onClick={simulatePayment}> Test Payment </button> */}
                   <PayTMButton
-                    buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Add To Wallet' : 'Pay Now'}
+                    buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
                     showOptionsWithFee={false}
                     paymentDetails={{
                       moneyToChargeInRs: walletState.amountToChargeInRs,
@@ -211,7 +211,7 @@ function AcceptPay({
                     </Col>
                     <Col xs={12} sm={3} className="text-right-xs">
                       <PayTMButton
-                        buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Add To Wallet' : 'Pay Now'}
+                        buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
                         showOptionsWithFee
                         paymentDetails={{
                           moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import PaytmChecksum from './PaytmChecksum';
 import Payments from './Payments';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
@@ -13,7 +13,19 @@ const STATUS = {
   TXN_FAILURE: 'TXN_FAILURE',
 };
 
+function updatePaymentTransactionError(orderId, errorObject) {
+  Payments.upsert({ orderId }, {
+    $set: {
+      errorObject,
+    },
+  });
+}
+
 Meteor.methods({
+  'payment.paytm.paymentTransactionError': async function paymentTransactionError(error) {
+    check(error, Match.Any());
+    updatePaymentTransactionError(error.ORDERID, error.errorObject);
+  },
   'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus) {
     check(paymentStatus, {
       STATUS: String,
@@ -250,7 +262,7 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['payment.paytm.initiateTransaction', 'payment.paytm.completeTransaction'],
+  methods: ['payment.paytm.initiateTransaction', 'payment.paytm.completeTransaction', 'payment.paytm.paymentTransactionError'],
   limit: 5,
   timeRange: 1000,
 });

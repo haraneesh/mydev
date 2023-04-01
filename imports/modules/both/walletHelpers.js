@@ -78,7 +78,7 @@ export const prepareState = (wallet) => {
       balanceAmountClass = '';
   }
 
-  const amtToChrg = ((netAmountInWalletInRs < 0) ? (-1 * netAmountInWalletInRs) : 5000);
+  const amtToChrg = ((netAmountInWalletInRs < 0) ? (-1 * netAmountInWalletInRs) : 500);
 
   return {
     amountToChargeInRs: amtToChrg,
