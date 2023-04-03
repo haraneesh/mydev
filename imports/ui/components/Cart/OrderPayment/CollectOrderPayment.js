@@ -66,7 +66,7 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
             <Table responsive className="border-white">
               <tbody>
                 <tr>
-                  <td>Account Balance</td>
+                  <td>Wallet Balance</td>
                   <td>
                     <span className={walletState.balanceAmountClass}>
                       {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}

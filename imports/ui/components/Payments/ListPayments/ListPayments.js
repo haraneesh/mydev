@@ -62,7 +62,7 @@ const ListPayments = () => {
 
   ) : (
     <Card className="py-3">
-      <Col>
+      <Col xs={12} sm={10} className="offset-sm-1">
         <Button onClick={loadPaymentHistory}> Fetch Payments History </Button>
       </Col>
     </Card>

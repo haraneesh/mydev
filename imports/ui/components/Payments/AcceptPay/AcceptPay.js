@@ -98,7 +98,7 @@ function AcceptPay({
         <Row>
           <Col xs={12} className="text-center">
             <h4 className="m-2">
-              {`Account Balance is${' '}`}
+              {`Wallet Balance is${' '}`}
               <span className={walletState.balanceAmountClass}>
                 {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
               </span>
