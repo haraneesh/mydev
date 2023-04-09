@@ -80,7 +80,7 @@ export const NoProductsToOrder = ({ history }) => (
     <br />
     <h4>
       Suvai member, you can access
-      products available to community members after you sign in to the application.
+      products available to community members after you Sign in to the application.
     </h4>
     <button
       type="button"

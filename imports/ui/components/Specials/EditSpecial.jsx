@@ -165,15 +165,17 @@ function EditSpecial({ special }) {
         </Row>
 
         <Row className="text-right">
-          <Button size="sm" type="submit" variant="secondary" onClick={(event) => saveOrUpdateSpecial(event, constants.PublishStatus.Published.name)}>
-            Save and Publish
-          </Button>
+          <Col>
+            <Button size="sm" type="submit" variant="secondary" className="me-2" onClick={(event) => saveOrUpdateSpecial(event, constants.PublishStatus.Published.name)}>
+              Save and Publish
+            </Button>
 
-          <Button size="sm" type="submit" onClick={(event) => saveOrUpdateSpecial(event, constants.PublishStatus.Draft.name)}>
-            Save as Draft
-          </Button>
+            <Button size="sm" type="submit" className="me-2" onClick={(event) => saveOrUpdateSpecial(event, constants.PublishStatus.Draft.name)}>
+              Save as Draft
+            </Button>
 
-          <Button size="sm" onClick={deleteSpecial}>Delete</Button>
+            <Button size="sm" onClick={deleteSpecial}>Delete</Button>
+          </Col>
         </Row>
       </Row>
     );

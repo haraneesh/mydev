@@ -13,6 +13,8 @@ const CONFIG = ({
   const WITHFEE = ['NB', 'CREDIT_CARD', 'QR_PAY', 'PTM_QR_PAY'];
 
   return {
+    flow: 'DEFAULT',
+    hideUserDropFeedbackForm: true,
     style: {
       bodyBackgroundColor: '#fafafb',
       bodyColor: '',
@@ -43,7 +45,7 @@ const CONFIG = ({
     },
     handler: {
       notifyMerchant(eventName, data) {
-        callBackNotifyMerchant(eventName, data);
+        callBackNotifyMerchant(eventName, data, suvaiTransactionId);
       },
       transactionStatus(paymentStatus) {
         callBackTransactionStatus(paymentStatus);
@@ -65,7 +67,6 @@ const CONFIG = ({
         'CARD',
       ],
     },
-    flow: 'DEFAULT',
   };
 };
 

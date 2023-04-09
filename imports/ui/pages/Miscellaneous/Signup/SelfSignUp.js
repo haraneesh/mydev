@@ -81,18 +81,18 @@ class SelfSignUp extends React.Component {
     const { match } = this.props;
 
     const user = {
-      username: this.whMobilePhone.value,
-      email: this.emailAddress.value,
-      password: document.querySelector('[name="password"]').value,
+      username: this.whMobilePhone.value.trim(),
+      email: this.emailAddress.value.trim(),
+      password: document.querySelector('[name="password"]').value.trim(),
       profile: {
         name: {
-          first: this.firstName.value,
-          last: this.lastName.value,
+          first: this.firstName.value.trim(),
+          last: this.lastName.value.trim(),
         },
         // whMobilePhone: this.whMobilePhone.value,
-        deliveryAddress: this.deliveryAddress.value,
-        deliveryPincode: this.deliveryPincode.value,
-        eatingHealthyMeaning: this.eatingHealthyMeaning.value,
+        deliveryAddress: this.deliveryAddress.value.trim(),
+        deliveryPincode: this.deliveryPincode.value.trim(),
+        eatingHealthyMeaning: this.eatingHealthyMeaning.value.trim(),
       },
     };
 
@@ -293,7 +293,7 @@ class SelfSignUp extends React.Component {
               <div className="alert alert-info text-center p-3 mt-3">
                 <span>
                   {'Already have an account? '}
-                  <a href="/login" className="login-signup text-secondary">Log In</a>
+                  <a href="/login" className="login-signup text-secondary">Sign in</a>
                 </span>
               </div>
             </form>

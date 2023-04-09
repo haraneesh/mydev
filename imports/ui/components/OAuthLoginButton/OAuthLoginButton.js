@@ -34,10 +34,10 @@ const serviceLabel = {
   facebook: <span>
     <Icon icon="facebook-official" />
     {' '}
-    Log In with Facebook
-            </span>,
-  // github: <span><Icon icon="github" /> Log In with GitHub</span>,
-  // google: <span><Icon icon="google" /> Log In with Google</span>,
+    Sign in with Facebook
+  </span>,
+  // github: <span><Icon icon="github" /> Sign in with GitHub</span>,
+  // google: <span><Icon icon="google" /> Sign in with Google</span>,
 };
 
 const OAuthLoginButton = ({ service, callback }) => (

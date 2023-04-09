@@ -58,7 +58,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
           </Col>
         </Row>
         <p className="text-info text-center small pt-3">
-          Orders yet to be delivered are not considered.
+          Only delivered orders are considered.
         </p>
       </Card.Body>
     </Card>

@@ -48,7 +48,6 @@ const About = () => {
               <HighLightText highLightText="Healthy Food, No Chemicals" />
               <Col xs={12} className="mt-4">
                 <Button className="membersBtn btn-block" variant="secondary" href="/cart"> Shop Now &rarr; </Button>
-                <Button className="membersBtn btn-block" variant="info" href="/login"> Log In </Button>
               </Col>
             </Col>
           </div>

@@ -57,8 +57,13 @@ Payments.schema = new SimpleSchema({
     optional: true,
   },
   errorObject: {
-    type: Object,
+    type: Array,
     label: 'error JSON object returned by any of the calls',
+    blackbox: true,
+    optional: true,
+  },
+  'errorObject.$': {
+    type: Object,
     blackbox: true,
     optional: true,
   },

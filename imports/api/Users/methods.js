@@ -10,6 +10,7 @@ import rateLimit from '../../modules/rate-limit';
 import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
 import UserSignUps from './UserSignUps';
+import { syncNewSignUpUserWithZoho } from '../ZohoSyncUps/zohoContactsMethods';
 import { Emitter, Events } from '../Events/events';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 const NonEmptyString = (x, name) => {
@@ -66,20 +67,6 @@ export const editUserProfile = new ValidatedMethod({
     editProfile({ userId: this.userId, user: profile });
     Emitter.emit(Events.USER_PROFILE_UPDATED, { userId: this.userId, user: profile });
   },
-});
-
-const createZohoContact = (usr) => ({
-  contact_name: usr.username,
-  billing_address: {
-    street: usr.profile.deliveryAddress,
-  },
-  contact_persons: [{
-    first_name: usr.profile.name.first,
-    last_name: usr.profile.name.last,
-    email: usr.email,
-    mobile: usr.profile.whMobilePhone,
-    is_primary_contact: true,
-  }],
 });
 
 export const findUser = new ValidatedMethod({
@@ -171,10 +158,14 @@ export const createNewUser = (user) => {
         },
       },
     });
-    return Meteor.users.findOne({ username: cuser.username });
+
+    // New User, register with Zoho.
+    const userFromDB = Meteor.users.findOne({ username: cuser.username });
+    syncNewSignUpUserWithZoho(userFromDB);
+    return userFromDB;
   }
 
-  throw new Meteor.Error('500', 'A user with this username already exists.');
+  throw new Meteor.Error('500', 'You have already registered with Suvai. Please Sign in to proceed further.');
 };
 
 export const createUser = new ValidatedMethod({

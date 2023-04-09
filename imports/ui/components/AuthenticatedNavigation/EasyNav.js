@@ -4,10 +4,13 @@ import { NavLink, Link } from 'react-router-dom';
 
 export const EasyNavNarrowScreen = (props) => (
   <ul className="sec-menu-bar d-sm-none pt-4 row" style={{ listStyleType: 'none' }}>
-    <li className="col-6 text-center">
+    <li className="col-4 text-center">
       <Link to="/myorders">My Orders</Link>
     </li>
-    <li className="col-6 text-center">
+    <li className="col-4 text-center">
+      <Link to="/mywallet">My Wallet</Link>
+    </li>
+    <li className="col-4 text-center">
       {/* <Link to="/neworder/selectbasket"> Place Order </Link> */}
       <Link to="/neworder"> Place Order </Link>
     </li>
@@ -24,20 +27,20 @@ export const EasyNavNarrowScreen = (props) => (
 );
 
 export const EasyNavWideScreen = (props) => (
-  <div className="d-none d-md-block col">
-    <span className="col-3 text-center  px-2">
+  <div className="d-none d-md-block text-center col">
+    <span className="col text-center  px-2">
       <NavLink exact to="/myorders"> My Orders</NavLink>
     </span>
-    <span className="col-3 text-center px-2">
+    <span className="col text-center px-2">
       { /* <NavLink to="/neworder/selectbasket"> Place Order</NavLink> */}
       <Link to="/neworder"> Place Order </Link>
     </span>
     {!!props.authenticated && (
-    <span className="col-3 text-center  px-2">
+    <span className="col text-center  px-2">
       <NavLink to="/mywallet"> My Wallet </NavLink>
     </span>
     )}
-    <span className="col-3 text-center  px-2">
+    <span className="col text-center  px-2">
       <NavLink to="/about">About Us</NavLink>
     </span>
   </div>

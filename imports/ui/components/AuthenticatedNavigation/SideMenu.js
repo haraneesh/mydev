@@ -69,7 +69,7 @@ const SideMenu = (props) => {
           )}
           {!authenticated && (
           <li className="py-2">
-            <Button id="app-login" onClick={() => { handleClose(); props.history.push('/login'); }}>Log in</Button>
+            <Button id="app-login" onClick={() => { handleClose(); props.history.push('/login'); }}>Sign in</Button>
           </li>
           )}
 

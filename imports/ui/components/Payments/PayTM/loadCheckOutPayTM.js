@@ -3,13 +3,14 @@ import { Meteor } from 'meteor/meteor';
 const loadCheckOutPayTM = (callback) => {
   const { hostName, merchantId } = Meteor.settings.public.PayTM;
 
-  const SCRIPTID = 'payTMScript1234';
+  const SCRIPTID = 'payTMScript1234567';
   const isScriptExist = document.getElementById(SCRIPTID);
 
   if (!isScriptExist) {
     const scriptElement = document.createElement('script');
     scriptElement.type = 'application/javascript';
     scriptElement.src = `https://${hostName}/merchantpgpui/checkoutjs/merchants/${merchantId}.js`;
+    scriptElement.crossOrigin = 'anonymous';
     scriptElement.async = true;
     scriptElement.id = SCRIPTID;
     scriptElement.onload = () => {

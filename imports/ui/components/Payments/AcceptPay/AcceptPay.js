@@ -104,7 +104,7 @@ function AcceptPay({
               </span>
             </h4>
             <p className="text-info small">
-              Orders yet to be delivered are not considered.
+              Only delivered orders are considered.
             </p>
           </Col>
         </Row>

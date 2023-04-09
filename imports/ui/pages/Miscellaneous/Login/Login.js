@@ -80,7 +80,7 @@ class Login extends React.Component {
     return (
       <div className="Login Absolute-Center is-Responsive offset-sm-1 p-3">
         <Col xs={12} sm={6} md={5} lg={4}>
-          <h2 className="py-4">Log In</h2>
+          <h2 className="py-4">Sign in</h2>
           <form onSubmit={this.validateForm}>
             <Row className="py-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
               <label className="control-label">Mobile Number</label>
@@ -128,7 +128,7 @@ class Login extends React.Component {
                   variant="secondary"
                   className="my-2 mb-4 loginBtn d-block"
                 >
-                  Log In
+                  Sign in
 
                 </Button>
               </div>

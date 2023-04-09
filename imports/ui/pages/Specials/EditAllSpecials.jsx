@@ -14,7 +14,7 @@ const EditAllSpecials = ({ specials, history }) => {
   });
 
   return (
-    <div className="EditSpecials bg-body">
+    <div className="EditSpecials">
       <Row>
         <Col xs={12}>
           <h2 className="py-4">Edit Specials</h2>

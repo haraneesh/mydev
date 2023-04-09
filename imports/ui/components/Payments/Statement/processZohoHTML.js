@@ -25,32 +25,69 @@ function getRowElements(tableRow) {
 }
 
 function jsonRowsToHtml(jsonRows) {
+  const lastRow = jsonRows.length;
+  let amount = '';
+
   const htmlRows = jsonRows.map((row, index) => {
     let { transactionType } = row;
     if (IGNORETERMS.indexOf(row.transactionType) === -1) {
       switch (transactionType) {
         case 'Invoice':
           transactionType = 'Ordered';
+          amount = formatMoney(row.amount.replace(',', ''), accountSettings);
           break;
         case 'Credit Note':
           transactionType = 'Refund';
+          amount = `${formatMoney(row.amount.replace(/[,()\s]/g, ''), accountSettings)} (R)`;
           break;
         default:
+          amount = formatMoney(row.payment.replace(',', ''), accountSettings);
           break;
       }
 
-      const walletBallance = row.balance.replace(',', '') * -1;
+      const walletBalance = row.balance.replace(',', '') * -1;
+
+      if (index > 0) {
+        return (
+          <>
+            <tr key={`d-${index}`}>
+
+              <td>{row.displayDate}</td>
+              {(transactionType === 'Ordered') ? (
+                <>
+                  <td>{amount}</td>
+                  <td />
+                </>
+              ) : (
+                <>
+                  <td />
+                  <td>{amount}</td>
+                </>
+              )}
+
+            </tr>
+            {(index === lastRow - 1) && (
+            <tr key={index}>
+              <td colSpan="3" className="text-center">
+                Closing Balance:
+                {' '}
+                {`${formatMoney(walletBalance, accountSettings)}`}
+              </td>
+            </tr>
+            )}
+          </>
+
+        );
+      }
+
       return (
-        <>
-          <tr key={index}>
-            <td colSpan="3" className="text-left">{transactionType}</td>
-          </tr>
-          <tr key={`d-${index}`}>
-            <td>{row.displayDate}</td>
-            <td>{(row.amount && index > 0) ? row.amount : row.payment}</td>
-            <td>{`${formatMoney(walletBallance, accountSettings)}`}</td>
-          </tr>
-        </>
+        <tr key={index}>
+          <td colSpan="3" className="text-center">
+            Opening Balance:
+            {' '}
+            {`${formatMoney(walletBalance, accountSettings)}`}
+          </td>
+        </tr>
       );
     }
   });
@@ -60,8 +97,8 @@ function jsonRowsToHtml(jsonRows) {
       <thead>
         <tr>
           <th>Date</th>
-          <th>Amount</th>
-          <th>Wallet</th>
+          <th>Bill Value</th>
+          <th>Payment</th>
         </tr>
       </thead>
       <tbody>

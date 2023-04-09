@@ -56,6 +56,13 @@ const _syncUsersWithZoho = (usr, successResp, errorResp) => {
   }
 };
 
+export function syncNewSignUpUserWithZoho(user) {
+  const successResp = [];
+  const errorResp = [];
+  _syncUsersWithZoho(user, successResp, errorResp);
+  return updateSyncAndReturn(syncUpConstants.users, successResp, errorResp, new Date());
+}
+
 export const bulkSyncUsersZoho = new ValidatedMethod({
   name: 'users.bulkSyncUsersZoho',
   validate() { },

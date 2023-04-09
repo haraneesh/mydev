@@ -15,7 +15,7 @@ function Navigation(props) {
     <>
       <Container fluid="true" className="bg-white py-2">
         <Row>
-          <span className="text-left col-9 col-sm-4 ps-2">
+          <span className="text-left col-9 col-sm-3 ps-2" style={{ minWidth: '15em' }}>
             {props.authenticated
         && (
 
@@ -34,13 +34,13 @@ function Navigation(props) {
               className="brand-logo ms-3"
               src="/logo.svg?v200"
               alt="Suvai"
-              style={{ maxHeight: '4em' }}
+              style={{ maxHeight: '3.6em' }}
               onClick={() => { history.push('/'); }}
             />
           </span>
 
           { /*! props.authenticated && <PublicNavigation {...props} /> */ }
-          { <EasyNavWideScreen isAdmin={props.isAdmin} /> }
+          { <EasyNavWideScreen isAdmin={props.isAdmin} {...props} /> }
 
           { <SideMenu {...props} /> }
         </Row>

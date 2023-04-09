@@ -14,16 +14,19 @@ const STATUS = {
 };
 
 function updatePaymentTransactionError(orderId, errorObject) {
-  Payments.upsert({ orderId }, {
+  const payment = Payments.find({ orderId }).fetch();
+  const paymentErrorObject = (payment.errorObject) ? payment.errorObject : [];
+  paymentErrorObject.push(errorObject);
+  Payments.update({ orderId }, {
     $set: {
-      errorObject,
+      errorObject: paymentErrorObject,
     },
   });
 }
 
 Meteor.methods({
   'payment.paytm.paymentTransactionError': async function paymentTransactionError(error) {
-    check(error, Match.Any());
+    check(error, Match.Any);
     updatePaymentTransactionError(error.ORDERID, error.errorObject);
   },
   'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus) {
@@ -174,7 +177,7 @@ Meteor.methods({
         Payments.insert({
           orderId,
           owner: this.userId,
-          paymentApiInitiationResponseObject: result,
+          paymentApiInitiationResponseObject: { result, amount: params.amount },
 
         });
 

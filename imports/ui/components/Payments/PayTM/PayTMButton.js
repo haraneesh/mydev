@@ -12,10 +12,9 @@ function PayTMButton({
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  function notifyMerchantHandler(eventName, data) {
-    console.log('notifyMerchant handler function called ');
-    console.log('eventName ', eventName);
-    console.log('data ', data);
+  function notifyMerchantHandler(eventName, data, orderId) {
+    Meteor.call('payment.paytm.paymentTransactionError',
+      { ORDERID: orderId, errorObject: { eventName, data } });
   }
 
   useEffect(() => {
@@ -70,7 +69,7 @@ function PayTMButton({
         setIsLoading(false);
       }).catch((error) => {
         Meteor.call('payment.paytm.paymentTransactionError', { ORDERID: suvaiTransactionId, errorObject: error });
-        console.log('PayTM Button error: ', error);
+        // console.log('PayTM Button error: ', error);
         setIsLoading(false);
       });
     }

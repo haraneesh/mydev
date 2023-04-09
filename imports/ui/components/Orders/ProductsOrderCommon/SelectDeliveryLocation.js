@@ -55,11 +55,17 @@ const SelectDeliveryLocation = ({ history, loggedInUser }) => {
         <Modal.Body>
           <>
             <div className="text-center">
-              <p>At the moment we are able to deliver fresh produce only within Chennai.</p>
+              <p>
+                At the moment we are able to deliver
+                {' '}
+                <span className="text-secondary">Fruits and Vegetables </span>
+                {' '}
+                only within Chennai.
+              </p>
             </div>
             <label className="fw-semibold fs-4 col-form-label">Pin Code</label>
             <div className="row">
-              <div className="col-9">
+              <div className="col-9 col-sm-7">
                 <input id="inpPinCode" className="form-control" type="number" placeholder="600087" onBlur={(e) => { validatePincode(e.target.value); }} />
               </div>
               <div className="col">
@@ -89,7 +95,7 @@ const SelectDeliveryLocation = ({ history, loggedInUser }) => {
                 variant="secondary"
                 onClick={() => { history.push('/login'); }}
               >
-                Log in
+                Sign in
               </Button>
             </div>
           </div>

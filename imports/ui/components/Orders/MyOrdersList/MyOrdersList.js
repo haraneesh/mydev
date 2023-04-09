@@ -247,13 +247,7 @@ export default class MyOrderList extends React.Component {
               )
             }
             </Tab>
-            <Tab eventKey={2} title="Payments" tabClassName="text-center px-2">
-              <ListPayments />
-            </Tab>
-            <Tab eventKey={3} title="Refunds" tabClassName="text-center px-2">
-              <ListCreditNotes />
-            </Tab>
-            <Tab eventKey={4} title="Statements" tabClassName="text-center px-2">
+            <Tab eventKey={2} title="Statements" tabClassName="text-center px-2">
               <ShowStatement
                 emailVerified={this.props.emailVerified}
                 loggedInUserId={this.props.loggedInUserId}
@@ -261,6 +255,10 @@ export default class MyOrderList extends React.Component {
                 history={this.props.history}
               />
             </Tab>
+            <Tab eventKey={3} title="Refund Details" tabClassName="text-center px-2">
+              <ListCreditNotes />
+            </Tab>
+
           </Tabs>
         </Row>
       </div>
