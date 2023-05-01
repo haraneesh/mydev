@@ -112,6 +112,7 @@ Meteor.methods({
       firstName: String,
       lastName: String,
       showOptionsWithFee: Boolean,
+      cartTotalBillAmount: Number,
     });
 
     if (Meteor.isServer) {
@@ -128,6 +129,7 @@ Meteor.methods({
         const now = new Date();
         const suvaiTransactionId = `${this.userId}_${now.getTime().toString()}`;
         const orderId = suvaiTransactionId;
+        const user = Meteor.users.findOne({ _id: this.userId });
 
         const paytmParams = {};
 
@@ -177,7 +179,12 @@ Meteor.methods({
         Payments.insert({
           orderId,
           owner: this.userId,
-          paymentApiInitiationResponseObject: { result, amount: params.amount },
+          paymentApiInitiationResponseObject: {
+            result,
+            amount: params.amount,
+            cartTotalBillAmount: params.cartTotalBillAmount,
+            userWallet: user.wallet,
+          },
 
         });
 

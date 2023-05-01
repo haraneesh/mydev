@@ -23,7 +23,7 @@ const emptyCart = {
   countOfItems: 0,
   comments: '',
   lastUpdateDate: new Date(),
-  deliveryPincode: '',
+  deliveryPincode: '600087', // change to '' to start showing the Pincode form
 };
 
 const initializeCart = () => {

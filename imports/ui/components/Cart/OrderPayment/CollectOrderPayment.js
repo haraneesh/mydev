@@ -112,6 +112,7 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
                   <AcceptPay
                     loggedInUser={loggedInUser}
                     userWallet={adjustedWallet}
+                    cartTotalBillAmount={cartState.cart.totalBillAmount}
                     showWalletBalance={false}
                     callCollectPayFuncAfterPay={callCollectPayFuncAfterPay}
                   />

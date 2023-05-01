@@ -98,6 +98,9 @@ function PayTMButton({
       firstName: paymentDetails.prefill.firstName,
       lastName: paymentDetails.prefill.lastName,
       showOptionsWithFee,
+      cartTotalBillAmount: (paymentDetails.cartTotalBillAmount)
+        ? paymentDetails.cartTotalBillAmount * 100
+        : 0,
     };
     Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
       if (result && result.status === 'S') {

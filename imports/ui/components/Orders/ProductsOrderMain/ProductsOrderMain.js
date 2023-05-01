@@ -77,11 +77,11 @@ const ProductsOrderMain = (props) => {
         {(!props.loggedInUser) && (
         <DropdownButton
           id="btnSetDeliveryCode"
-          title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? 'In Chennai' : 'Out of Chennai'} (${cartState.cart.deliveryPincode ? cartState.cart.deliveryPincode : '---'})`}
-          className="d-inline-flex pe-2 mb-2"
+          title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? '  In Chennai  ' : ' Out of Chennai '}`}
+          className="d-inline-flex bg-light"
+          variant="outline-primary"
         >
           <Dropdown.Item
-            className="mx-4"
             onClick={() => {
               cartDispatch({
                 type: cartActions.setDeliveryPinCode,

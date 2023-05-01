@@ -121,11 +121,16 @@ const CartDetails = ({
       if (!isLoggedInUserAdmin()
       && !cartState.cart.payCashWithThisDelivery
       && !orderSubmitProps.dontShowPaymentProceed) {
-        // if (loogedInUser.isPlanAvailed)
-        /* if (notpayOnDelivery){
-          //showPaymentModal
-        } */
-        setShowPaymentModal(true);
+        // Update the wallet from Zoho.
+        setOrderUpdated(true);
+        Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
+          setOrderUpdated(false);
+          if (error) {
+            toast.error(error.reason);
+          } else {
+            setShowPaymentModal(true);
+          }
+        });
         return;
       }
 
@@ -322,7 +327,7 @@ const CartDetails = ({
               totalBillAmount={cartState.cart.totalBillAmount}
               onButtonClick={() => { handleOrderSubmit(cartState); }}
               submitButtonName={
-                    isOrderBeingUpdated ? 'Order Being Placed ...'
+                    isOrderBeingUpdated ? 'Checking Wallet Balance ...'
                       : orderId ? 'Update Order'
                         : 'Continue →'
                 }

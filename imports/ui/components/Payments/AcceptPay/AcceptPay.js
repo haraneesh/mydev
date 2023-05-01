@@ -18,7 +18,7 @@ import PayTMButton from '../PayTM/PayTMButton';
 import { calculateGateWayFee, prepareState, SignUpForDiscountMessage } from '../../../../modules/both/walletHelpers';
 
 function AcceptPay({
-  userWallet, loggedInUser, showWalletBalance, callCollectPayFuncAfterPay,
+  userWallet, loggedInUser, showWalletBalance, callCollectPayFuncAfterPay, cartTotalBillAmount,
 }) {
   const userWalletBeforeUpdate = prepareState(userWallet);
   const [walletState, setWalletState] = useState(userWalletBeforeUpdate);
@@ -145,6 +145,7 @@ function AcceptPay({
                     buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
                     showOptionsWithFee={false}
                     paymentDetails={{
+                      cartTotalBillAmount,
                       moneyToChargeInRs: walletState.amountToChargeInRs,
                       description: 'Add to Wallet',
                       prefill: {
@@ -214,6 +215,7 @@ function AcceptPay({
                         buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
                         showOptionsWithFee
                         paymentDetails={{
+                          cartTotalBillAmount,
                           moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),
                           description: 'Add to Wallet',
                           prefill: {
@@ -250,10 +252,12 @@ AcceptPay.defaultProps = {
   loggedInUser: Meteor.user(),
   showWalletBalance: true,
   callCollectPayFuncAfterPay: null,
+  cartTotalBillAmount: 0,
 };
 
 AcceptPay.propTypes = {
   showWalletBalance: PropTypes.bool,
+  cartTotalBillAmount: PropTypes.string,
   userWallet: PropTypes.shape({
     unused_retainer_payments_InPaise: PropTypes.number.isRequired,
     unused_credits_receivable_amount_InPaise: PropTypes.number.isRequired,

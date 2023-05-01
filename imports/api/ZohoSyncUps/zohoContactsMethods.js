@@ -115,52 +115,6 @@ export const updateUserWallet = (user) => {
   };
 };
 
-export function retWalletAndSyncIfNecessary(userId) {
-  const user = Meteor.users.find(userId).fetch({}, {
-    fields: {
-      zh_contact_id: 1,
-      wallet: 1,
-    },
-  })[0];
-
-  const userSyncedWithZoho = user && user.zh_contact_id;
-  if (Meteor.isServer && userSyncedWithZoho) {
-    const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync)
-      ? user.wallet.lastZohoSync : new Date('1/1/2000');
-    const now = moment(new Date()); // todays date
-    const end = moment(lastWalletSyncDate);
-    const duration = moment.duration(now.diff(end));
-    const days = duration.asDays();
-
-    if (days > 1) {
-      const { zohoResponse } = updateUserWallet(user);
-
-      if (zohoResponse.code !== 0) {
-        handleMethodException(zohoResponse, zohoResponse.code);
-      }
-
-      const { error } = getUserOrdersAndInvoicesFromZoho(userId);
-
-      if (error.erroResp && error.erroResp.length > 0) {
-        handleMethodException(error.errorResp[0], error.errorResp[0].code);
-      }
-
-      return zohoResponse.wallet;
-    }
-    return user.wallet;
-  }
-
-  return {};
-}
-
-export const getUserWallet = new ValidatedMethod({
-  name: 'users.getUserWallet',
-  validate() { },
-  run() {
-    return retWalletAndSyncIfNecessary(this.userId);
-  },
-});
-
 const sendMessage = ({
   user, zhStartDate, zhEndDate, zhGeneratedDate, emailAddress,
 }) => {
@@ -239,7 +193,70 @@ function returnStartandEndDates(periodSelected) {
   return { zhStartDate, zhEndDate, zhGeneratedDate };
 }
 
+export function retWalletAndSyncIfNecessary(userId) {
+  const user = Meteor.users.find(userId).fetch({}, {
+    fields: {
+      zh_contact_id: 1,
+      wallet: 1,
+    },
+  })[0];
+
+  const userSyncedWithZoho = user && user.zh_contact_id;
+  if (Meteor.isServer && userSyncedWithZoho) {
+    const lastWalletSyncDate = (user.wallet && user.wallet.lastZohoSync)
+      ? user.wallet.lastZohoSync : new Date('1/1/2000');
+    const now = moment(new Date()); // todays date
+    const end = moment(lastWalletSyncDate);
+    const duration = moment.duration(now.diff(end));
+    const days = duration.asDays();
+
+    if (days > 1) {
+      const { zohoResponse } = updateUserWallet(user);
+
+      if (zohoResponse.code !== 0) {
+        handleMethodException(zohoResponse, zohoResponse.code);
+      }
+
+      const { error } = getUserOrdersAndInvoicesFromZoho(userId);
+
+      if (error.erroResp && error.erroResp.length > 0) {
+        handleMethodException(error.errorResp[0], error.errorResp[0].code);
+      }
+
+      return zohoResponse.wallet;
+    }
+    return user.wallet;
+  }
+
+  return {};
+}
+
+export const getUserWallet = new ValidatedMethod({
+  name: 'users.getUserWallet',
+  validate() { },
+  run() {
+    return retWalletAndSyncIfNecessary(this.userId);
+  },
+});
+
 Meteor.methods({
+  'customer.getUserWalletWithoutCheck': function getUserWalletWithoutCheck() {
+    const user = Meteor.users.find(this.userId).fetch({}, {
+      fields: {
+        zh_contact_id: 1,
+        wallet: 1,
+      },
+    })[0];
+
+    const userSyncedWithZoho = user && user.zh_contact_id;
+    if (Meteor.isServer && userSyncedWithZoho) {
+      const { zohoResponse } = updateUserWallet(user);
+
+      if (zohoResponse.code !== 0) {
+        handleMethodException(zohoResponse, zohoResponse.code);
+      }
+    }
+  },
   'customer.sendStatement': function sendStatement(params) {
     check(params, {
       periodSelected: String,
@@ -315,6 +332,7 @@ rateLimit({
   methods: [
     'customer.getStatement',
     'customer.sendStatement',
+    'customer.getUserWalletWithoutCheck',
     bulkSyncUsersZoho,
     getUserWallet],
   limit: 5,
