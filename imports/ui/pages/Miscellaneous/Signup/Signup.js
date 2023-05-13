@@ -134,7 +134,7 @@ class SignUp extends React.Component {
             <h2 className="py-4 text-center">Sign Up</h2>
             <div className="text-center">
               <Card className="p-3">
-                <h2 className="text-secondary"> Welcome to Suvai </h2>
+                <h2 className="text-info"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been together for more than
@@ -163,6 +163,14 @@ class SignUp extends React.Component {
             </Col>
           </Row> */ }
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
+              <div className="alert bg-white text-center p-3 mt-3">
+                <span>
+                  Are you already a Suvaineer?
+                  <Button className="ms-3" variant="secondary" id="app-login" onClick={() => { this.props.history.push('/login'); }}>Sign In</Button>
+                  {/* <a href="/login" className="login-signup text-secondary p-2">Sign In</a> */}
+                </span>
+              </div>
+
               <Row className="pt-3">
                 <Col xs={6}>
                   <Row
@@ -282,7 +290,7 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.eatingHealthyMeaning.length > 0 && (
-                <span className="small text-info">{isError.eatingHealthyMeaning}</span>
+                <span className="small text-danger">{isError.eatingHealthyMeaning}</span>
                 )}
               </Row>
               <Row className="pt-3" validationState={isError.password.length > 0 ? 'error' : ''}>
@@ -297,7 +305,7 @@ class SignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="small text-info">{isError.password}</span>
+                <span className="small text-danger">{isError.password}</span>
                 )}
               </Row>
               <Row className="pt-3" validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
@@ -310,7 +318,7 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="small text-info">{isError.confirmPassword}</span>
+                <span className="small text-danger">{isError.confirmPassword}</span>
                 )}
               </Row>
               <p>
@@ -319,14 +327,6 @@ class SignUp extends React.Component {
                 </small>
               </p>
               <Button type="submit" variant="secondary">Sign Up</Button>
-
-              <div className="alert alert-info text-center p-3 mt-3">
-                <span>
-                  {'Already have an account? '}
-                  <a href="/login" className="login-signup text-secondary">Sign in</a>
-                </span>
-              </div>
-
             </form>
           </Col>
         </div>

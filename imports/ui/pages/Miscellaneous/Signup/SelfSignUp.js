@@ -136,7 +136,7 @@ class SelfSignUp extends React.Component {
             <h2 className="py-4">Sign Up</h2>
             <div className="card text-center">
               <div className="card-body">
-                <h2 className="text-primary"> Welcome to Suvai </h2>
+                <h2 className="text-info"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been together for more than
@@ -165,6 +165,14 @@ class SelfSignUp extends React.Component {
             </Col>
           </Row> */ }
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
+
+              <div className="alert alert-info text-center p-3 mt-3">
+                <span>
+                  {'Already have an account? '}
+                  <a href="/login" className="login-signup text-secondary">Sign In</a>
+                </span>
+              </div>
+
               <Row>
                 <Col xs={6}>
                   <Row
@@ -290,12 +298,6 @@ class SelfSignUp extends React.Component {
               </p>
               <Button type="submit" variant="secondary">Sign Up</Button>
 
-              <div className="alert alert-info text-center p-3 mt-3">
-                <span>
-                  {'Already have an account? '}
-                  <a href="/login" className="login-signup text-secondary">Sign in</a>
-                </span>
-              </div>
             </form>
           </Col>
         </div>

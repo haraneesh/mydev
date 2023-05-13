@@ -131,22 +131,21 @@ const CartDetails = ({
             setShowPaymentModal(true);
           }
         });
-        return;
+      } else {
+        setOrderUpdated(true);
+        upsertOrder.call(order, (error, order) => {
+          const confirmation = 'Your Order has been placed';
+          if (error) {
+            toast.error(error);
+          } else {
+            cartDispatch({ type: cartActions.orderFlowComplete });
+            toast.success(confirmation);
+            history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
+          }
+          setShowPaymentModal(false);
+          setOrderUpdated(false);
+        });
       }
-
-      setOrderUpdated(true);
-      upsertOrder.call(order, (error, order) => {
-        const confirmation = 'Your Order has been placed';
-        if (error) {
-          toast.error(error);
-        } else {
-          cartDispatch({ type: cartActions.orderFlowComplete });
-          toast.success(confirmation);
-          history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
-        }
-        setShowPaymentModal(false);
-        setOrderUpdated(false);
-      });
     } else {
       // Sign up
       history.push('/signup');

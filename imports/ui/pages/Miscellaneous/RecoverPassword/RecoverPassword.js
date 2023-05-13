@@ -78,7 +78,7 @@ class RecoverPassword extends React.Component {
               <div className="text-center alert alert-info py-3">
                 <span>
                   {'Remember your password? '}
-                  <Link to="/login" className="login-signup">Sign in</Link>
+                  <Link to="/login" className="login-signup">Sign In</Link>
                   .
                 </span>
               </div>

@@ -165,7 +165,7 @@ export const createNewUser = (user) => {
     return userFromDB;
   }
 
-  throw new Meteor.Error('500', 'You have already registered with Suvai. Please Sign in to proceed further.');
+  throw new Meteor.Error('500', 'You are already registered with Suvai. Please Sign in to proceed further.');
 };
 
 export const createUser = new ValidatedMethod({
@@ -361,6 +361,8 @@ Meteor.methods({
     NonEmptyString(user.profile.deliveryAddress, 'Delivery address');
     NonEmptyString(user.profile.deliveryPincode, 'Delivery pincode');
 
+    const usr = createNewUser(user);
+
     notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
     Last Name:  ${user.profile.name.last}
@@ -371,8 +373,7 @@ Meteor.methods({
     has signed up. This user has been auto approved in the app.`,
     'New user signup', user.email);
 
-    // return UserSignUps.insert(user);
-    return createNewUser(user);
+    return usr;
   },
   'users.createSelfSignUpsForSpecials': function createSelfSignUpsForSpecials(user) {
     check(user, {

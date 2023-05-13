@@ -119,7 +119,7 @@ function ProductsOrderSpecialsMain({ history, loggedInUserId }) {
           <br />
           You can
           {' '}
-          <span className="text-warning">Sign in </span>
+          <span className="text-warning">Sign In </span>
           {' '}
           to Suvai to track your order and pay online if you wish to.
           <br />

@@ -78,7 +78,7 @@ export const formValChange = (e, isErrorState, fieldValues) => {
       break;
     case name === 'eatingHealthyMeaning':
       isError.eatingHealthyMeaning = trimmedVal.length < 1
-        ? 'you are never wrong, tell us what is in your mind'
+        ? 'You are never wrong, tell us what is in your mind'
         : '';
       break;
     case name === 'dietPreference':
