@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
   BrowserRouter, useHistory,
 } from 'react-router-dom';
+
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
 import Security from '../../modules/both/security';
@@ -51,9 +52,11 @@ const Root = (props) => {
   }
 
   return (
-    <BrowserRouter>
-      <RootWithRouter {...props} />
-    </BrowserRouter>
+    <React.StrictMode>
+      <BrowserRouter>
+        <RootWithRouter {...props} />
+      </BrowserRouter>
+    </React.StrictMode>
   );
 };
 
