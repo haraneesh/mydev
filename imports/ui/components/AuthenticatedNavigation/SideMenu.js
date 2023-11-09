@@ -64,12 +64,12 @@ const SideMenu = (props) => {
               </li> */}
           {!!authenticated && (
           <li className="py-2">
-            <Button id="app-logout" onClick={() => { handleClose(); handleLogout(props); }}>Sign Out</Button>
+            <Button id="app-logout" onClick={() => { handleClose(); handleLogout(props); }}>Log Out</Button>
           </li>
           )}
           {!authenticated && (
           <li className="py-2">
-            <Button id="app-login" onClick={() => { handleClose(); props.history.push('/login'); }}>Sign In</Button>
+            <Button id="app-login" onClick={() => { handleClose(); props.history.push('/login'); }}>Log In</Button>
           </li>
           )}
 

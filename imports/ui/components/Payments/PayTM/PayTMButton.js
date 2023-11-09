@@ -22,17 +22,6 @@ function PayTMButton({
   }, []);
 
   function transactionStatus(paymentStatus) {
-    if (window.Paytm && window.Paytm.CheckoutJS) {
-      // after successfully updating configuration, invoke JS Checkout
-      window.Paytm.CheckoutJS.close();
-    }
-    if (paymentStatus.STATUS === 'TXN_FAILURE') {
-      Meteor.call('payment.paytm.paymentTransactionError',
-        { ORDERID: paymentStatus.ORDERID, errorObject: paymentStatus.RESPMSG });
-      toast.error(paymentStatus.RESPMSG);
-      return;
-    }
-
     const transactionDetails = {
       STATUS: paymentStatus.STATUS,
       TXNAMOUNT: paymentStatus.TXNAMOUNT,
@@ -44,8 +33,23 @@ function PayTMButton({
       PAYMENTMODE: paymentStatus.PAYMENTMODE,
     };
 
+    // if (paymentStatus.STATUS === 'TXN_FAILURE') {
+    // Meteor.call('payment.paytm.paymentTransactionError',
+    // { ORDERID: paymentStatus.ORDERID, errorObject: paymentStatus.RESPMSG });
+    // toast.error(paymentStatus.RESPMSG);
+    // return;
+    // }
+
     Meteor.call('payment.paytm.completeTransaction', transactionDetails, (error, result) => {
-      paymentResponseSuccess(error, result);
+      if (error) {
+        toast.error(error.reason);
+      } else {
+        if (window.Paytm && window.Paytm.CheckoutJS) {
+          // after successfully updating configuration, invoke JS Checkout
+          window.Paytm.CheckoutJS.close();
+        }
+        paymentResponseSuccess(result);
+      }
     });
   }
 
@@ -104,7 +108,8 @@ function PayTMButton({
     };
     Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
       if (result && result.status === 'S') {
-        // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId); // to delete
+        // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId);
+        // to delete
 
         showPayScreen({
           txToken: result.txToken,

@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { formatMoney } from 'accounting-js';
+import Icon from '../../Icon/Icon';
 import AcceptPay from '../../Payments/AcceptPay/AcceptPay';
 import { accountSettings } from '../../../../modules/settings';
 import { useCartState } from '../../../stores/ShoppingCart';
@@ -55,11 +56,19 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
       <Col xs={12}>
         <h2 className="py-4 text-center">Payment</h2>
       </Col>
-
       <div className="bg-white card p-2 pt-5 pb-5 mb-5 py-4">
         <div className="col col-sm-8 h4 offset-sm-1">
+          <Row>
+            <div className="alert alert-primary justify-content-center" role="alert">
+              <h4 className="d-flex alert-heading align-items-center">
+                <Icon icon="check" type="mt" className="text-success pe-2" />
+                We have received your order, thank you!
+              </h4>
+
+            </div>
+          </Row>
           <div className="card-header p-3 text-start">
-            <small className="text-uppercase"> Total Pay </small>
+            <small className="text-uppercase"> Payment Dues </small>
           </div>
 
           <div className="card-body">
@@ -142,22 +151,6 @@ function CollectOrderPayment({ loggedInUser, callFuncAfterPay }) {
             )}
           </div>
         </div>
-
-        <div className="bg-white card p-2 py-4">
-          <div className="col col-sm-8 h4 offset-sm-1">
-
-            <div className="card-header p-3 text-start">
-              <small className="text-uppercase">  BACK TO CART </small>
-            </div>
-
-            <div className="card-body">
-              <Button className="px-5" variant="primary" onClick={() => { callFuncAfterPay({ action: 'BACKTOCART' }); }}>
-                &#x2190; Update Cart
-              </Button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </Row>
   );

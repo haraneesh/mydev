@@ -9,7 +9,7 @@ const PublicNavigation = (props) => (
     <Col xs={12} className="text-sm-end text-center py-2 px-2 pt-2">
       { (props.routeName !== 'About')
         ? (<Link className="row-col-6 p-sm-3 pe-6" to="/about">About Us</Link>)
-        : (<Link className="row-col-6 p-sm-3 pe-6" to="/login">Sign In</Link>) }
+        : (<Link className="row-col-6 p-sm-3 pe-6" to="/login">Log In</Link>) }
       <Link className="row-col-6 ps-xs-6 p-sm-3" to="/vision">Our Vision</Link>
     </Col>
     {/* } <li>

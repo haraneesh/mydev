@@ -95,7 +95,7 @@ const SelectDeliveryLocation = ({ history, loggedInUser }) => {
                 variant="secondary"
                 onClick={() => { history.push('/login'); }}
               >
-                Sign In
+                Log In
               </Button>
             </div>
           </div>

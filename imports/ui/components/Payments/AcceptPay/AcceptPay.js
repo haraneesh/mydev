@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
+import Dropdown from 'react-bootstrap/Dropdown';
 import Loading from '../../Loading/Loading';
 import { formValChange } from '../../../../modules/validate';
 import { accountSettings } from '../../../../modules/settings';
@@ -22,31 +23,37 @@ function AcceptPay({
 }) {
   const userWalletBeforeUpdate = prepareState(userWallet);
   const [walletState, setWalletState] = useState(userWalletBeforeUpdate);
+  const [textValue, setTextValue] = useState(userWalletBeforeUpdate.amountToChargeInRs);
 
   useEffect(() => {
     setWalletState(prepareState(userWallet));
   }, [userWallet]);
 
-  function amountToChargeOnChange(event) {
+  function amountToChargeOnChange(value) {
     const { isError } = walletState;
-    const newErrorState = formValChange(event, { ...isError });
+    const e = {
+      target: {
+        name: 'amountToChargeInRs',
+        value: value.toString(),
+      },
+    };
+
+    setTextValue(value);
+
+    const newErrorState = formValChange(e, { ...isError });
 
     const newWalletState = { ...walletState };
 
-    newWalletState.amountToChargeInRs = event.target.value;
+    newWalletState.amountToChargeInRs = e.target.value;
     newWalletState.isError = newErrorState.isError;
-    newWalletState.gateWayFee = calculateGateWayFee(event.target.value);
+    newWalletState.gateWayFee = calculateGateWayFee(e.target.value);
 
     setWalletState(newWalletState);
   }
 
-  function paymentResponseSuccess(error, result) {
-    if (error) {
-      toast.error(error.reason);
-    } else {
-      if (callCollectPayFuncAfterPay) { callCollectPayFuncAfterPay(result); }
-      toast.success('Payment has been successfully processed');
-    }
+  function paymentResponseSuccess(result) {
+    if (callCollectPayFuncAfterPay) { callCollectPayFuncAfterPay(result); }
+    toast.success('Payment has been successfully processed');
   }
 
   function calculateTotalAmountWithGatewayFee(wallet) {
@@ -90,6 +97,36 @@ function AcceptPay({
     return chargeOptions;
   }
 
+  function dropDownValuesForWalletUpdate() {
+    const maxWalletAddAmt = (userWalletBeforeUpdate.amountToChargeInRs < 10000)
+      ? 10000 : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
+
+    const chargeOptions = [];
+    if (userWalletBeforeUpdate.amountToChargeInRs > 0) {
+      chargeOptions.push(
+        <Dropdown.Item onClick={() => {
+          amountToChargeOnChange(userWalletBeforeUpdate.amountToChargeInRs);
+        }}
+        >
+          {userWalletBeforeUpdate.amountToChargeInRs}
+        </Dropdown.Item>,
+      );
+    }
+    for (let i = 500; i <= maxWalletAddAmt; i += 500) {
+      if (userWalletBeforeUpdate.amountToChargeInRs < i) {
+        chargeOptions.push(
+          <Dropdown.Item onClick={() => {
+            amountToChargeOnChange(i);
+          }}
+          >
+            {i}
+          </Dropdown.Item>,
+        );
+      }
+    }
+    return chargeOptions;
+  }
+
   return (
     <div>
       {walletState.paymentInProcess && (<Loading />)}
@@ -118,51 +155,61 @@ function AcceptPay({
               <span className="underline"> No fee</span>
             </h6>
 
-            <form
-              onSubmit={(event) => event.preventDefault()}
-            >
-              <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
-                <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
-                  {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
-                  <InputGroup>
-                    <InputGroup.Text>Rs.</InputGroup.Text>
-                    <select
-                      className="form-select"
-                      name="amountToChargeInRs"
-                      id="noChargeFee"
-                      onChange={amountToChargeOnChange}
-                    >
-                      {optionValuesForWalletUpdate()}
-                    </select>
-                  </InputGroup>
-                  {isError.amountToChargeInRs.length > 0 && (
-                  <span className="small text-info">{isError.amountToChargeInRs}</span>
-                  )}
-                </Col>
-                <Col xs={12} sm={3} className="text-right-xs">
-                  {/* <button onClick={simulatePayment}> Test Payment </button> */}
-                  <PayTMButton
-                    buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
-                    showOptionsWithFee={false}
-                    paymentDetails={{
-                      cartTotalBillAmount,
-                      moneyToChargeInRs: walletState.amountToChargeInRs,
-                      description: 'Add to Wallet',
-                      prefill: {
-                        firstName: loggedInUser.profile.name.first,
-                        lastName: loggedInUser.profile.name.last,
-                        email: loggedInUser.emails[0].address,
-                        mobile: loggedInUser.profile.whMobilePhone,
-                      },
-                      notes: {
-                        address: loggedInUser.profile.deliveryAddress,
-                      },
-                    }}
-                    paymentResponseSuccess={paymentResponseSuccess}
+            <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+              <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
+                {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
+                <InputGroup>
+                  <InputGroup.Text>Rs.</InputGroup.Text>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={textValue}
+                    onChange={(e) => { amountToChargeOnChange(e.target.value); }}
                   />
-                </Col>
-              </Form.Group>
-            </form>
+                  <Dropdown align="end">
+                    <Dropdown.Toggle
+                      variant="outline-primary"
+                      style={{
+                        fontSize: '1.5em',
+                        paddingTop: '0.2em',
+                      }}
+                    />
+                    <Dropdown.Menu className="border border-primary">
+                      <div style={{ maxHeight: '10em', overflow: 'scroll' }}>
+                        {dropDownValuesForWalletUpdate()}
+                      </div>
+                    </Dropdown.Menu>
+                  </Dropdown>
+
+                </InputGroup>
+                {isError.amountToChargeInRs.length > 0 && (
+                  <span className="small text-info">{isError.amountToChargeInRs}</span>
+                )}
+              </Col>
+              <Col xs={12} sm={3} className="text-right-xs">
+                {/* <button onClick={simulatePayment}> Test Payment </button> */}
+                <PayTMButton
+                  buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
+                  showOptionsWithFee={false}
+                  paymentDetails={{
+                    cartTotalBillAmount,
+                    moneyToChargeInRs: walletState.amountToChargeInRs,
+                    description: 'Add to Wallet',
+                    prefill: {
+                      firstName: loggedInUser.profile.name.first,
+                      lastName: loggedInUser.profile.name.last,
+                      email: loggedInUser.emails[0].address,
+                      mobile: loggedInUser.profile.whMobilePhone,
+                    },
+                    notes: {
+                      address: loggedInUser.profile.deliveryAddress,
+                    },
+                  }}
+                  paymentResponseSuccess={paymentResponseSuccess}
+                />
+              </Col>
+            </Form.Group>
+
             {/* } <Row>
           <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>
             <img alt="UPI options" style={{ maxWidth: '300px', width: '100%' }} src="/about/paymentOptions.png?v4" />
@@ -183,56 +230,66 @@ function AcceptPay({
                   <div>2. NetBanking or Credit Card, 2% transaction fee </div>
                 </h6>
 
-                <form
-                  onSubmit={(event) => event.preventDefault()}
-                >
-                  <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
-                    <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
-                      {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
-                      <InputGroup>
-                        <InputGroup.Text>Rs.</InputGroup.Text>
-                        <select
-                          className="form-select"
-                          name="amountToChargeInRs"
-                          id="toChargeFee"
-                          onChange={amountToChargeOnChange}
-                        >
-                          {optionValuesForWalletUpdate()}
-                        </select>
-                      </InputGroup>
-                      <p>
-                        <small>
-                          Transaction Fee
-                          {`: ${formatMoney(walletState.gateWayFee, accountSettings)}, extra`}
-                        </small>
-                      </p>
-                      {isError.amountToChargeInRs.length > 0 && (
-                      <span className="small text-info">{isError.amountToChargeInRs}</span>
-                      )}
-                    </Col>
-                    <Col xs={12} sm={3} className="text-right-xs">
-                      <PayTMButton
-                        buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
-                        showOptionsWithFee
-                        paymentDetails={{
-                          cartTotalBillAmount,
-                          moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),
-                          description: 'Add to Wallet',
-                          prefill: {
-                            firstName: loggedInUser.profile.name.first,
-                            lastName: loggedInUser.profile.name.last,
-                            email: loggedInUser.emails[0].address,
-                            mobile: loggedInUser.profile.whMobilePhone,
-                          },
-                          notes: {
-                            address: loggedInUser.profile.deliveryAddress,
-                          },
-                        }}
-                        paymentResponseSuccess={paymentResponseSuccess}
+                <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+                  <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
+                    {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
+                    <InputGroup>
+                      <InputGroup.Text>Rs.</InputGroup.Text>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={textValue}
+                        onChange={(e) => { amountToChargeOnChange(e.target.value); }}
                       />
-                    </Col>
-                  </Form.Group>
-                </form>
+                      <Dropdown align="end">
+                        <Dropdown.Toggle
+                          variant="outline-primary"
+                          style={{
+                            fontSize: '1.5em',
+                            paddingTop: '0.2em',
+                          }}
+                        />
+                        <Dropdown.Menu className="border border-primary">
+                          <div style={{ maxHeight: '10em', overflow: 'scroll' }}>
+                            {dropDownValuesForWalletUpdate()}
+                          </div>
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                    </InputGroup>
+                    <p>
+                      <small>
+                        Transaction Fee
+                        {`: ${formatMoney(walletState.gateWayFee, accountSettings)}, extra`}
+                      </small>
+                    </p>
+                    {isError.amountToChargeInRs.length > 0 && (
+                      <span className="small text-info">{isError.amountToChargeInRs}</span>
+                    )}
+                  </Col>
+                  <Col xs={12} sm={3} className="text-right-xs">
+                    <PayTMButton
+                      buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
+                      showOptionsWithFee
+                      paymentDetails={{
+                        cartTotalBillAmount,
+                        moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),
+                        description: 'Add to Wallet',
+                        prefill: {
+                          firstName: loggedInUser.profile.name.first,
+                          lastName: loggedInUser.profile.name.last,
+                          email: loggedInUser.emails[0].address,
+                          mobile: loggedInUser.profile.whMobilePhone,
+                        },
+                        notes: {
+                          address: loggedInUser.profile.deliveryAddress,
+                        },
+                      }}
+                      paymentResponseSuccess={paymentResponseSuccess}
+                    />
+                  </Col>
+                </Form.Group>
+
                 {/*
           <Row>
             <Col xs={12} className="text-center" style={{ paddingTop: '1em' }}>

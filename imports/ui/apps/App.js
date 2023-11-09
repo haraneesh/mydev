@@ -44,7 +44,9 @@ import EditOrderDetails from '../pages/Orders/EditOrderDetails/EditOrderDetails'
 import Cart from '../pages/Cart/CartHome';
 import SuccessOrderPlaced from '../pages/Cart/SuccessOrderPlaced';
 /* layout */
-import { OrderLayout, RecipeLayout, MainLayout } from '../layouts/Layouts';
+import {
+  OrderLayout, RecipeLayout, MainLayout,
+} from '../layouts/Layouts';
 
 import ReconcileInventoryList from '../pages/ReconcileInventory/ReconcileInventoryList';
 

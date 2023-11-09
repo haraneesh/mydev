@@ -128,7 +128,7 @@ class Login extends React.Component {
                   variant="secondary"
                   className="my-2 mb-4 loginBtn d-block"
                 >
-                  Sign In
+                  Log In
 
                 </Button>
               </div>

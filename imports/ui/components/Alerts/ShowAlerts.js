@@ -27,7 +27,7 @@ function ReturnAlerts() {
           Dear Suvaineers,
           {' '}
           <br />
-          Wish you and your family a very happy Deepavali.
+          Wish you and your family a very happy Vinayaka Chaturthi .
         </small>
         <br />
         <small>
@@ -45,10 +45,10 @@ function ReturnAlerts() {
             Monday
             {' '}
           </span>
-          24
+          18
           <sup>th</sup>
           {' '}
-          and
+          {/* and
           <span style={{ color: '#EF0905' }}>
             {' '}
             Tuesday
@@ -56,8 +56,8 @@ function ReturnAlerts() {
           </span>
           25
           <sup>th</sup>
-          {' '}
-          Oct.
+      {' '} */}
+          Sep.
         </small>
       </Alert>
     )

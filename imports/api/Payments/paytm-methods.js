@@ -50,54 +50,59 @@ Meteor.methods({
           },
         });
 
-      // If not failure completeTransaction is  called
-      //  if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
-      const paidUser = Meteor.users.findOne({ _id: this.userId });
+      if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
+        const paidUser = Meteor.users.findOne({ _id: this.userId });
 
-      const zhResponse = zohoPayments.createCustomerPayment({
-        zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
-        paymentAmountInPaise: paymentStatus.TXNAMOUNT * 100,
-        paymentMode: paymentStatus.PAYMENTMODE,
-        razorPaymentId: paymentStatus.ORDERID,
-        paymentDescription: `Paid via PayTm, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
-        zoho_fund_deposit_account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id,
-      });
+        const zhResponse = zohoPayments.createCustomerPayment({
+          zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
+          paymentAmountInPaise: paymentStatus.TXNAMOUNT * 100,
+          paymentMode: paymentStatus.PAYMENTMODE,
+          razorPaymentId: paymentStatus.ORDERID,
+          paymentDescription: `Paid via PayTm, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
+          zoho_fund_deposit_account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id,
+        });
 
-      if (Meteor.isDevelopment) {
-        console.log(zhResponse);
-        console.log(paymentStatus);
-      }
+        if (Meteor.isDevelopment) {
+          console.log(zhResponse);
+          console.log(paymentStatus);
+        }
 
-      // Update Payment record history with the updated payment record
-      Payments.update(
-        { orderId: paymentStatus.ORDERID },
-        { $set: { paymentZohoResponseObject: zhResponse } },
-      );
-
-      if (zhResponse.code !== 0) {
-        handleMethodException(zhResponse, zhResponse.code);
-      }
-
-      const zhContactResponse = updateUserWallet(paidUser);
-
-      if (Meteor.isDevelopment) {
-        console.log(zhContactResponse);
-      }
-
-      // Update Payment record with the latest contact information
-      Payments.update(
-        { orderId: paymentStatus.ORDERID },
-        { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
-      );
-
-      if (zhContactResponse.zohoResponse.code !== 0) {
-        handleMethodException(
-          zhContactResponse.zohoResponse,
-          zhContactResponse.zohoResponse.code,
+        // Update Payment record history with the updated payment record
+        Payments.update(
+          { orderId: paymentStatus.ORDERID },
+          { $set: { paymentZohoResponseObject: zhResponse } },
         );
+
+        if (zhResponse.code !== 0) {
+          handleMethodException(zhResponse, zhResponse.code);
+        }
+
+        const zhContactResponse = updateUserWallet(paidUser);
+
+        if (Meteor.isDevelopment) {
+          console.log(zhContactResponse);
+        }
+
+        // Update Payment record with the latest contact information
+        Payments.update(
+          { orderId: paymentStatus.ORDERID },
+          { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
+        );
+
+        if (zhContactResponse.zohoResponse.code !== 0) {
+          handleMethodException(
+            zhContactResponse.zohoResponse,
+            zhContactResponse.zohoResponse.code,
+          );
+        }
+        return zhContactResponse.wallet;
       }
-      return zhContactResponse.wallet;
-      //  }
+
+      const errorMsg = paymentStatus.RESPMSG
+        ? paymentStatus.RESPMSG
+        : 'An error occured when processing the payment. Please let the Suvai team to know if you are not sure of the reason.';
+
+      handleMethodException(errorMsg, paymentStatus.STATUS);
     }
   },
   'payment.paytm.simulatePayment': async function simulatePayment() {

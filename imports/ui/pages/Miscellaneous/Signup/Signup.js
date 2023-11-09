@@ -165,9 +165,9 @@ class SignUp extends React.Component {
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
               <div className="alert bg-white text-center p-3 mt-3">
                 <span>
-                  Are you already a Suvaineer?
-                  <Button className="ms-3" variant="secondary" id="app-login" onClick={() => { this.props.history.push('/login'); }}>Sign In</Button>
-                  {/* <a href="/login" className="login-signup text-secondary p-2">Sign In</a> */}
+                  Are you an existing Suvaineer?
+                  <Button className="ms-3" variant="secondary" id="app-login" onClick={() => { this.props.history.push('/login'); }}>Log In</Button>
+                  {/* <a href="/login" className="login-signup text-secondary p-2">Log In</a> */}
                 </span>
               </div>
 

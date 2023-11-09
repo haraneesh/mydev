@@ -209,7 +209,7 @@ export const OrderFooter = ({
       <Col className="offset-1 text-right-not-xs text-center-xs" sm={4} xs={12}>
         {(!showWaiting) && (
         <Button
-          variant="primary"
+          variant="secondary"
           style={{ marginLeft: '0.5em' }}
           disabled={totalBillAmount <= 0}
           onClick={() => { onButtonClick({ history, orderId }); }}
@@ -221,7 +221,7 @@ export const OrderFooter = ({
 
         {(showWaiting) && (
         <Button
-          variant="primary"
+          variant="secondary"
           style={{ marginBottom: '0.5em', marginTop: '0.5em' }}
           disabled
           className="col-10 d-grid"

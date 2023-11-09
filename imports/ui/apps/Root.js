@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
-  BrowserRouter, useHistory,
+  BrowserRouter, useHistory, useLocation,
 } from 'react-router-dom';
 
 import { withTracker } from 'meteor/react-meteor-data';
@@ -33,6 +33,12 @@ const RootWithRouter = (props) => {
       }
     });
   }, [history]);
+
+  const location = useLocation();
+  // Scroll to top if path changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   switch (true) {
     case loggedInUserId && Security.checkBoolUserIsSupplier(loggedInUserId):

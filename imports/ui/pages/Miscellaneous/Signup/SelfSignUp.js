@@ -169,7 +169,7 @@ class SelfSignUp extends React.Component {
               <div className="alert alert-info text-center p-3 mt-3">
                 <span>
                   {'Already have an account? '}
-                  <a href="/login" className="login-signup text-secondary">Sign In</a>
+                  <a href="/login" className="login-signup text-secondary">Log In</a>
                 </span>
               </div>
 

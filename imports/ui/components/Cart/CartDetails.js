@@ -37,6 +37,7 @@ const CartDetails = ({
   const refComment = useRef();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
+  const [successfullyPlacedOrderId, setSuccessfullyPlacedOrderId] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
   const [onBehalfUser, setOnBehalfUser] = useState({
@@ -82,7 +83,7 @@ const CartDetails = ({
     setOnBehalfUser(onBehalfUserTemp);
   };
 
-  const handleOrderSubmit = (orderSubmitProps = { dontShowPaymentProceed: false }) => {
+  const handleOrderSubmit = () => {
     if (onBehalfUser.isNecessary && !(
       constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs)
         && 'profile' in onBehalfUser.user)
@@ -118,34 +119,34 @@ const CartDetails = ({
         };
       }
 
-      if (!isLoggedInUserAdmin()
-      && !cartState.cart.payCashWithThisDelivery
-      && !orderSubmitProps.dontShowPaymentProceed) {
-        // Update the wallet from Zoho.
-        setOrderUpdated(true);
-        Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
+      setOrderUpdated(true);
+      upsertOrder.call(order, (error, createdOrder) => {
+        if (error) {
+          toast.error(error);
           setOrderUpdated(false);
-          if (error) {
-            toast.error(error.reason);
-          } else {
-            setShowPaymentModal(true);
-          }
-        });
-      } else {
-        setOrderUpdated(true);
-        upsertOrder.call(order, (error, order) => {
-          const confirmation = 'Your Order has been placed';
-          if (error) {
-            toast.error(error);
-          } else {
-            cartDispatch({ type: cartActions.orderFlowComplete });
-            toast.success(confirmation);
-            history.push(`/order/success/${(order.insertedId) ? order.insertedId : orderId}`);
-          }
-          setShowPaymentModal(false);
-          setOrderUpdated(false);
-        });
-      }
+        } else if (!isLoggedInUserAdmin()) {
+          toast.success('Order has been placed successfully!');
+
+          setSuccessfullyPlacedOrderId(
+            (createdOrder.insertedId)
+              ? createdOrder.insertedId
+              : orderId,
+          );
+
+          Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
+            setOrderUpdated(false);
+            if (error) {
+              toast.error(error.reason);
+            } else {
+              setShowPaymentModal(true);
+            }
+            setOrderUpdated(false);
+          });
+          setShowPaymentModal(true);
+        } else {
+          moveToOrderSubmitScreen();
+        }
+      });
     } else {
       // Sign up
       history.push('/signup');
@@ -183,23 +184,26 @@ const CartDetails = ({
     cartDispatch({ type: cartActions.setCollectRecyclablesWithThisDelivery, payload: { collectRecyclablesWithThisDelivery: value } });
   };
 
-  const afterPaymentScreen = ({ action }) => {
-    if (action === 'PAYONDELIVERY') {
-      handlePayCashWithThisDeliveryChange(true);
-      handleOrderSubmit();
-    } else if (action === 'DEDUCTFROMWALLET') {
-      handleOrderSubmit({ dontShowPaymentProceed: true });
-    } else if (action === 'BACKTOCART') {
-      setShowPaymentModal(false);
-    } else if (action === 'ADDEDTOWALLETMORETHANBALANCE') {
-      handleOrderSubmit({ dontShowPaymentProceed: true });
-      // Meteor would auto refresh loggedInUser
-    }
+  const moveToOrderSubmitScreen = () => {
+    cartDispatch({ type: cartActions.orderFlowComplete });
+    history.push(`/order/success/${successfullyPlacedOrderId}`);
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const afterPaymentScreen = ({ action }) => {
+    moveToOrderSubmitScreen();
+    { /*
+    if (action === 'PAYONDELIVERY') {
+      moveToOrderSubmitScreen();
+    } else if (action === 'DEDUCTFROMWALLET') {
+      // handleOrderSubmit({ dontShowPaymentProceed: true });
+      moveToOrderSubmitScreen();
+    } else if (action === 'ADDEDTOWALLETMORETHANBALANCE') {
+      // handleOrderSubmit({ dontShowPaymentProceed: true });
+      moveToOrderSubmitScreen();
+      // Meteor would auto refresh loggedInUser
+    }
+    */ }
+  };
 
   useEffect(() => {
     const { current } = refComment;
@@ -244,8 +248,8 @@ const CartDetails = ({
           <Col xs={12}>
             <h2 className="py-4 text-center">{orderId ? 'Update Order' : 'Your Cart'}</h2>
           </Col>
-
-          <Card className="mb-5">
+          <Card className="mt-3">
+            <h3 className="card-header" style={{ textAlign: 'center' }}> Cart Details </h3>
             <ListProducts
               products={cartState.cart.productsInCart}
               deletedProducts={deletedProducts.cart}
@@ -265,7 +269,7 @@ const CartDetails = ({
                 }}
               >
                 <Button
-                  variant="secondary"
+                  variant="primary"
                   onClick={() => { handleAddItems(); }}
                   style={{
                     marginRight: '.5em',
@@ -276,6 +280,7 @@ const CartDetails = ({
                 </Button>
 
                 <Button
+                  variant="info"
                   onClick={() => { clearCart(); }}
                   style={{ marginRight: '.5em' }}
                 >
@@ -283,12 +288,6 @@ const CartDetails = ({
                 </Button>
               </Col>
             </Row>
-
-            {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
-              <div className="offset-1 col-10 alert alert-info py-3">
-                {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
-              </div>
-            )}
 
             {(Meteor.settings.public.ShowReturnBottles) && (
               <div className="row alert alert-info py-3">
@@ -304,23 +303,29 @@ const CartDetails = ({
               </div>
             )}
 
-            <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
-
             {/*
             <PrevOrderComplaint
               onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
               prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
             />
             */}
-
+            {(isOrderBeingUpdated) && <Loading />}
+          </Card>
+          <Card className="mb-5">
             {onBehalfUser.isNecessary && (
-              <OnBehalf
-                onSelectedChange={onSelectedChange}
-                showMandatoryFields={onBehalfUserInfoError}
-              />
+            <OnBehalf
+              onSelectedChange={onSelectedChange}
+              showMandatoryFields={onBehalfUserInfoError}
+            />
             )}
 
-            {(isOrderBeingUpdated) && <Loading />}
+            <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+
+            {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
+              <div className="offset-1 col-10 alert alert-info py-3">
+                {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
+              </div>
+            )}
 
             <OrderFooter
               totalBillAmount={cartState.cart.totalBillAmount}
@@ -328,7 +333,7 @@ const CartDetails = ({
               submitButtonName={
                     isOrderBeingUpdated ? 'Checking Wallet Balance ...'
                       : orderId ? 'Update Order'
-                        : 'Continue →'
+                        : 'Place Order →'
                 }
               showWaiting={
                   isOrderBeingUpdated
