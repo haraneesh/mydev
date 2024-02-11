@@ -23,6 +23,14 @@ Orders.deny({
 
 const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
 productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a particular product that was ordered', min: 0.00001 };
+// const { associatedReturnables } = ProductSchemaDefObject.getObjectSchema('associatedReturnables');
+
+productsSchemaDefObject['associatedReturnables.quantity'] = {
+  type: Number, label: 'Returnable quantity selected', min: 0, optional: true,
+};
+productsSchemaDefObject['associatedReturnables.totalPrice'] = {
+  type: Number, label: 'Price for returnable product', min: 0, optional: true,
+};
 
 const ProductSchema = new SimpleSchema(productsSchemaDefObject);
 

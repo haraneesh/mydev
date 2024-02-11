@@ -8,6 +8,47 @@ import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../modules/settings';
 import { extractNumber, extractString } from '../../../modules/helpers';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
+import OrderCommon from '../../../modules/both/orderCommon';
+
+const { costOfReturnable } = OrderCommon;
+
+const AddReturnable = ({
+  onReturnableAdd, quantitySelected, associatedReturnables, includeReturnables, parentProductId,
+  retQtySelected, retQtySelectedPrice, isCheckOut, onChange,
+}) => {
+  if (includeReturnables) {
+    return (
+      <div className="col justify-content-center">
+        <div className="form-check ps-5">
+          <label className="form-check-label text-left" htmlFor="addReturnCheck">
+            <div>
+              {`In ${associatedReturnables.name}`}
+              {(!isCheckOut) ? `Rs ${retQtySelectedPrice} Extra` : ''}
+            </div>
+          </label>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="addReturnCheck"
+            autoComplete="off"
+            checked={associatedReturnables.quantity && associatedReturnables.quantity > 0}
+            onChange={(e) => {
+              onReturnableAdd(e, onChange,
+                {
+                  isReturnable: true,
+                  parentProductId,
+                  parentProductQty: quantitySelected,
+                  returnableProductId: associatedReturnables._id,
+                  returnableProductQty: retQtySelected,
+                });
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+  return (<div />);
+};
 
 class ProductForAdmin extends React.Component {
   constructor(props, context) {
@@ -46,6 +87,15 @@ class ProductForAdmin extends React.Component {
     });
   }
 
+  onReturnableAdd(e, onChange, value) {
+    // onChange({ target: { name: controlName, value: 0 } });
+    const v = value;
+    if (!e.target.checked) {
+      v.returnableProductQty = 0;
+    }
+    onChange(e, v);
+  }
+
   render() {
     const {
       productId,
@@ -57,13 +107,21 @@ class ProductForAdmin extends React.Component {
       totQuantityOrdered,
       previousOrdQty,
       isBasket,
+      checkout,
+      associatedReturnables,
+      includeReturnables,
     } = this.props;
 
+    const { retQtySelected, retQtySelectedPrice } = includeReturnables
+      ? costOfReturnable(associatedReturnables.returnableUnitsForSelection, this.state.quantitySelected)
+      : { retQtySelected: 0, retQtySelectedPrice: 0 };
+
     return (
-      <Row className="p-0 product-item">
-        <Col sm={!isBasket ? 6 : 8}>
-          <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>
-          {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
+      <div className="pb-5">
+        <Row className="p-0 product-item">
+          <Col sm={!isBasket ? 6 : 8}>
+            <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>
+            {/* (this.state.quantitySelected > 0) && <InformProductUnavailability
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             excessQtyOrdered={
               calcExcessQtyOrdered(maxUnitsAvailableToOrder,
@@ -73,22 +131,22 @@ class ProductForAdmin extends React.Component {
               }
             />
             <p><small>{description}</small></p> */}
-        </Col>
+          </Col>
 
-        <Col sm={!isBasket ? 3 : 4}>
-          <div className="input-group">
-            <input
-              type="number"
-              name={productId}
-              ref={(productWeight) => (this.productWeight = productWeight)}
-              className="form-control"
-              value={extractNumber(unit) * this.state.quantitySelected}
-              onChange={this.handleWeightChange}
-            />
-            <span className="input-group-text">{`${extractString(unit)}`}</span>
-          </div>
-        </Col>
-        {!isBasket && (
+          <Col sm={!isBasket ? 3 : 4}>
+            <div className="input-group">
+              <input
+                type="number"
+                name={productId}
+                ref={(productWeight) => (this.productWeight = productWeight)}
+                className="form-control"
+                value={extractNumber(unit) * this.state.quantitySelected}
+                onChange={this.handleWeightChange}
+              />
+              <span className="input-group-text">{`${extractString(unit)}`}</span>
+            </div>
+          </Col>
+          {!isBasket && (
           <Col sm={3} className="text-right-not-xs">
             <p>
               {formatMoney(unitprice, accountSettings)}
@@ -96,8 +154,21 @@ class ProductForAdmin extends React.Component {
               {this.state.quantitySelected}
             </p>
           </Col>
+          )}
+        </Row>
+        {(includeReturnables && !!includeReturnables && checkout) && (
+        <AddReturnable
+          onChange={this.props.onChange}
+          onReturnableAdd={this.onReturnableAdd}
+          quantitySelected={this.state.quantitySelected}
+          includeReturnables={includeReturnables}
+          associatedReturnables={associatedReturnables}
+          parentProductId={productId}
+          retQtySelected={retQtySelected}
+          retQtySelectedPrice={retQtySelectedPrice}
+        />
         )}
-      </Row>
+      </div>
     );
   }
 }

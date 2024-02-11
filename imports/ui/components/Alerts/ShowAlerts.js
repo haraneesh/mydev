@@ -27,11 +27,11 @@ function ReturnAlerts() {
           Dear Suvaineers,
           {' '}
           <br />
-          Wish you and your family a very happy Vinayaka Chaturthi .
+          Wish you and your family a very Happy Pongal.
         </small>
         <br />
         <small>
-          On account of celebrations,
+          On account of Pongal celebrations,
           there will be
           <span style={{ color: '#EF0905' }}>
             {' '}
@@ -39,25 +39,25 @@ function ReturnAlerts() {
             {' '}
           </span>
           {' '}
-          deliveries on
+          deliveries from
           <span style={{ color: '#EF0905' }}>
             {' '}
-            Monday
+            Sunday
             {' '}
           </span>
-          18
+          14
           <sup>th</sup>
           {' '}
-          {/* and
+          to
           <span style={{ color: '#EF0905' }}>
             {' '}
-            Tuesday
+            Wednesday
             {' '}
           </span>
-          25
+          17
           <sup>th</sup>
-      {' '} */}
-          Sep.
+          {' ' }
+          January.
         </small>
       </Alert>
     )

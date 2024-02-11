@@ -74,7 +74,6 @@ class ViewOrderDetails extends React.Component {
 
 ViewOrderDetails.propTypes = {
   order: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default ViewOrderDetails;

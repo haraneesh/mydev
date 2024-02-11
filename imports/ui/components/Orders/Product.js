@@ -6,7 +6,7 @@ import ProductForNonAdmin from './ProductForNonAdmin';
 import './Product.scss';
 
 const Product = ({
-  updateProductQuantity, product, isAdmin, checkout, isShopOwner, isBasket, productClass, sliderView,
+  updateProductQuantity, product, isAdmin, checkout, isShopOwner, isBasket, productClass, sliderView, associatedReturnables, includeReturnables,
 }) => {
   let classes = (productClass) || '';
   if (product.displayAsSpecial && !(isAdmin || isShopOwner || checkout)) {
@@ -38,6 +38,8 @@ const Product = ({
           removedDuringCheckout={product.removedDuringCheckout}
           isBasket={isBasket}
           sliderView={sliderView}
+          associatedReturnables={product.associatedReturnables}
+          includeReturnables={product.includeReturnables}
         />
       )
         : (
@@ -59,6 +61,8 @@ const Product = ({
             isBasket={isBasket}
             isAdmin={isAdmin}
             checkout={checkout}
+            associatedReturnables={product.associatedReturnables}
+            includeReturnables={product.includeReturnables}
           />
         )}
     </div>

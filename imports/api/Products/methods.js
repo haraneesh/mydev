@@ -47,9 +47,16 @@ export const upsertProduct = new ValidatedMethod({
     const id = product._id;
     delete product._id;
     const { unitsForSelection } = product;
+    const { returnableUnitsForSelection } = product;
     product.unitsForSelection = (unitsForSelection) ? unitsForSelection.replace(/\s+/g, '') : '0,1,2,3,4,5,6,7,8,9,10';
+    product.returnableUnitsForSelection = (returnableUnitsForSelection) ? returnableUnitsForSelection.replace(/\s+/g, '') : '0=0, 0.5=5, 1=10';
     if (Meteor.isServer) {
       if ((product.unitsForSelection.split(',').every(isNumber))) {
+        if (product.includeReturnables
+          && !(product.associatedReturnables._id
+          && product.associatedReturnables.returnableUnitsForSelection.split(',').every((elem) => elem.trim().match(/^(\d+(\.\d+)?\s*)=(\s*\d+(\.\d+)?\s*)$/)))) {
+          throw new Meteor.Error(403, '1. Enter Returnable product and 2. Units of returnable product have to be numbers');
+        }
         return Products.upsert({ _id: id }, { $set: product });
       }
       throw new Meteor.Error(403, 'Units for Selection should be numbers');

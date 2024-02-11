@@ -16,7 +16,7 @@ const displayWithDivider = (displayArray, displayText) => (
       <div className="card-header p-3 text-start" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
         <small className="text-uppercase">{displayText}</small>
       </div>
-      <div className="card-body">
+      <div className="card-body p-0">
         {displayArray}
       </div>
     </div>

@@ -95,11 +95,12 @@ export default class Product extends React.Component {
   constructor(props, context) {
     super(props, context);
 
-    const { product, suppliers } = this.props;
+    const { product, suppliers, returnableProducts } = this.props;
     this.state = {
       product: { ...product },
       open: false,
-      supplierHash: this.retSupplierHash(suppliers),
+      supplierHash: this.retIdToObjHash(suppliers), // this.retSupplierHash(suppliers),
+      returnablesHash: this.retIdToObjHash(returnableProducts),
       showDetails: false,
     };
 
@@ -142,8 +143,8 @@ export default class Product extends React.Component {
     );
   }
 
-  retSupplierHash(suppliers /* _id, name */) {
-    return suppliers.reduce((map, obj) => {
+  retIdToObjHash(objArray /* _id, name */) {
+    return objArray.reduce((map, obj) => {
       map[obj._id] = obj;
       return map;
     }, {});
@@ -171,10 +172,9 @@ export default class Product extends React.Component {
   handleProductUpsert(event) {
     const selectedValue = event.target.value.trim();
     const field = event.target.name;
-    const { product, supplierHash } = this.state;
+    const { product, supplierHash, returnablesHash } = this.state;
 
     let valueToUpdate;
-
     switch (field) {
       case 'availableToOrder': valueToUpdate = !product.availableToOrder;
         break;
@@ -184,6 +184,8 @@ export default class Product extends React.Component {
         break;
       case 'frequentlyOrdered': valueToUpdate = !product.frequentlyOrdered;
         break;
+      case 'includeReturnables': valueToUpdate = !product.includeReturnables;
+        break;
       case 'associatedFoodGroups':
         valueToUpdate = retMultiSelectValueInArr(event.target.selectedOptions);
         break;
@@ -191,6 +193,11 @@ export default class Product extends React.Component {
         valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? [{
           ...supplierHash[selectedValue],
         }] : null;
+        break;
+      case 'associatedReturnables':
+        valueToUpdate = (selectedValue !== constants.SELECT_EMPTY_VALUE) ? {
+          ...returnablesHash[selectedValue],
+        } : null;
         break;
       default: valueToUpdate = selectedValue;
         break;
@@ -241,6 +248,15 @@ export default class Product extends React.Component {
     upsert.unitprice = parseFloat(upsert.unitprice);
     upsert.wSaleBaseUnitPrice = parseFloat(upsert.wSaleBaseUnitPrice);
     upsert.maxUnitsAvailableToOrder = parseFloat(upsert.maxUnitsAvailableToOrder);
+
+    const returnableUnitsForSelection = (upsert.returnableUnitsForSelection)
+      ? upsert.returnableUnitsForSelection
+      : '0=0, 0.5=100, 1=200';
+    delete upsert.returnableUnitsForSelection;
+    if (upsert.includeReturnables) {
+      upsert.associatedReturnables.returnableUnitsForSelection = returnableUnitsForSelection;
+    }
+
     // upsert.displayOrder = parseFloat(upsert.displayOrder);
     delete upsert.displayOrder;
 
@@ -510,6 +526,57 @@ export default class Product extends React.Component {
                 />
               </Col>
             </Row>
+            <Row>
+              <Col xs={1} />
+              <Col>
+                <Checkbox
+                  name="includeReturnables"
+                  checked={this.state.product.includeReturnables}
+                  onChange={this.handleProductUpsert}
+                >
+                  Include Returnables
+                </Checkbox>
+              </Col>
+              <Col>
+                {(this.state.product.includeReturnables) && (
+                <FieldGroup
+                  style={{ height: '170px' }}
+                  controlType="select"
+                  controlLabel="Returnable"
+                  controlName="associatedReturnables"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+
+                  defaultValue={
+                    product.associatedReturnables
+                    && product.associatedReturnables._id
+                      ? product.associatedReturnables._id : ''
+                  }
+
+                  choiceValues={this.props.returnableProducts}
+                  multiple
+                  help
+                />
+                )}
+              </Col>
+              <Col>
+                {(this.state.product.includeReturnables) && (
+                <FieldGroup
+                  controlType="text"
+                  controlLabel="Returnable Units For Selection"
+                  controlName="returnableUnitsForSelection"
+                  displayControlName="true"
+                  updateValue={this.handleProductUpsert}
+                  defaultValue={
+                    (product.associatedReturnables)
+                      ? product.associatedReturnables.returnableUnitsForSelection
+                      : ''
+                  }
+                  help
+                />
+                )}
+              </Col>
+            </Row>
             <Row className="py-2">
               <Col xs={1} />
               <Col>
@@ -560,4 +627,5 @@ Product.propTypes = {
   prodId: PropTypes.string.isRequired,
   product: PropTypes.object.isRequired,
   suppliers: PropTypes.array.isRequired,
+  returnableProducts: PropTypes.array.isRequired,
 };

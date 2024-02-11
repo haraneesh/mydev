@@ -4,7 +4,6 @@ settings-staging.json
 settings-production.json
 settings-development.json
 public/bg-new.jpg
-.meteor/.gitignore
 public/ignore
 imports/api/Reports/items.js
 imports/api/Reports/pos.js

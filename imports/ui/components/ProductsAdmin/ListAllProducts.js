@@ -14,10 +14,11 @@ import Tab from 'react-bootstrap/Tab';
 
 import Product, { ProductTableHeader } from './Product';
 import { upsertProductList } from '../../../api/ProductLists/methods';
+import constants from '/imports/modules/constants';
 
 const NewTab = 'New';
 
-const createProductRows = ({ suppliers, products }) => {
+const createProductRows = ({ suppliers, products, returnableProducts }) => {
   const productRows = [];
   productRows[NewTab] = [];
 
@@ -30,20 +31,33 @@ const createProductRows = ({ suppliers, products }) => {
       }
       productRows[sectionHeaderName].push(<ProductTableHeader />);
     }
-    productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} productIndex={index} key={`product-${index}`} />);
+    productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} returnableProducts={returnableProducts} productIndex={index} key={`product-${index}`} />);
   });
   return productRows;
+};
+
+const createReturnableProductsArray = (products) => {
+  const returnableProducts = [];
+  // return all products in category returnables
+  products.map((product, index) => {
+    if (product.type == constants.ReturnProductType.name) {
+      returnableProducts.push({ _id: product._id, name: product.name });
+    }
+  });
+
+  return returnableProducts;
 };
 
 class ListAllProducts extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    const returnableProducts = createReturnableProductsArray(props.products);
     this.state = {
       activeStartDate: null,
       activeEndDate: null,
       showEndDateError: false,
-      productRows: createProductRows({ products: props.products, suppliers: props.suppliers }),
+      productRows: createProductRows({ products: props.products, suppliers: props.suppliers, returnableProducts }),
       selectedHeaderKey: 1,
       isPublishingProductList: false,
     };
@@ -55,8 +69,9 @@ class ListAllProducts extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const returnableProducts = createReturnableProductsArray(nextProps.products);
     const productRows = createProductRows(
-      { products: nextProps.products, suppliers: nextProps.suppliers },
+      { products: nextProps.products, suppliers: nextProps.suppliers, returnableProducts },
     );
     if (productRows !== prevState.productRows) {
       return { productRows };

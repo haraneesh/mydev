@@ -65,15 +65,36 @@ const CartDetails = ({
     setDeletedProducts(deletedProductsList);
   };
 
-  const updateProductQuantity = (e) => {
-    const productId = e.target.name;
-    const quantity = parseFloat(e.target.value);
-    const product = cartState.cart.productsInCart[productId]
-      ? cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
-    product.quantity = quantity;
-    delete product.removedDuringCheckout;
-    updateDeletedProducts(quantity, productId, product);
+  const updateProductWithReturnableChoice = ({
+    parentProductId, parentProductQty, returnableProductQty,
+  }) => {
+    const product = cartState.cart.productsInCart[parentProductId]
+      ? cartState.cart.productsInCart[parentProductId] : deletedProducts.cart[parentProductId];
+
+    product.quantity = parentProductQty;
+    product.associatedReturnables.quantity = returnableProductQty;
+    updateDeletedProducts(parentProductQty, parentProductId, product);
     cartDispatch({ type: cartActions.updateCart, payload: { product } });
+  };
+
+  const updateProductQuantity = (e, args) => {
+    if (args && args.isReturnable) {
+      const {
+        parentProductId, parentProductQty, returnableProductQty,
+      } = args;
+      updateProductWithReturnableChoice({
+        parentProductId, parentProductQty, returnableProductQty,
+      });
+    } else {
+      const productId = e.target.name;
+      const quantity = parseFloat(e.target.value);
+      const product = cartState.cart.productsInCart[productId]
+        ? cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
+      product.quantity = quantity;
+      delete product.removedDuringCheckout;
+      updateDeletedProducts(quantity, productId, product);
+      cartDispatch({ type: cartActions.updateCart, payload: { product } });
+    }
   };
 
   const onSelectedChange = (newObject) => {
@@ -122,7 +143,7 @@ const CartDetails = ({
       setOrderUpdated(true);
       upsertOrder.call(order, (error, createdOrder) => {
         if (error) {
-          toast.error(error);
+          toast.error(error.reason);
           setOrderUpdated(false);
         } else if (!isLoggedInUserAdmin()) {
           toast.success('Order has been placed successfully!');
@@ -186,7 +207,8 @@ const CartDetails = ({
 
   const moveToOrderSubmitScreen = () => {
     cartDispatch({ type: cartActions.orderFlowComplete });
-    history.push(`/order/success/${successfullyPlacedOrderId}`);
+    // history.push(`/order/cart/${successfullyPlacedOrderId}`);
+    history.push(`/order/success/${successfullyPlacedOrderId || orderId}`);
   };
 
   const afterPaymentScreen = ({ action }) => {

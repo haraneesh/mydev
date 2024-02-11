@@ -1,6 +1,10 @@
 import React from 'react';
 import { saveInLocalStore, getFromLocalStore, removeFromLocalStore } from './localStorage';
 
+import OrderCommon from '../../modules/both/orderCommon';
+
+const { costOfReturnable } = OrderCommon;
+
 const StoreConstants = {
   CART: 'CARTV10',
   previousVersions: ['CART'],
@@ -12,6 +16,12 @@ const getTotalBillAmountAndCount = (selectedProducts) => {
   Object.keys(selectedProducts).forEach((key) => {
     const qty = selectedProducts[key].quantity ? selectedProducts[key].quantity : 0;
     totalBillAmount += qty * selectedProducts[key].unitprice;
+    // include the returnables selected
+    const { associatedReturnables } = selectedProducts[key];
+    if (associatedReturnables && associatedReturnables.quantity > 0) {
+      const { returnableUnitsForSelection } = associatedReturnables;
+      totalBillAmount += costOfReturnable(returnableUnitsForSelection, qty).retQtySelectedPrice * 1;
+    }
     countOfItems += 1;
   });
   return { totalBillAmount, countOfItems };

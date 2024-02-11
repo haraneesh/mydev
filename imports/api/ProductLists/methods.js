@@ -115,11 +115,15 @@ export const upsertProductList = new ValidatedMethod({
         map[obj._id] = obj;
         return map;
       }, {});
-      productList.products = updateWithTotQuantityOrdered(
+
+      const products = updateWithTotQuantityOrdered(
         orderableProducts, currentProductHashMap,
       );
 
-      const { products } = productList;
+      /* productList.products = updateWithTotQuantityOrdered(
+        orderableProducts, currentProductHashMap,
+        ); */
+      // const { products } = productList;
       productList.products = [];
 
       ProductLists.update({ _id: productListsId }, { $set: productList });

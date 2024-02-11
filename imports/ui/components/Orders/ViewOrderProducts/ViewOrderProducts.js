@@ -6,6 +6,9 @@ import { formatMoney } from 'accounting-js';
 import { accountSettings } from '../../../../modules/settings';
 import { displayUnitOfSale } from '../../../../modules/helpers';
 import Product from '../Product';
+import OrderCommon from '../../../../modules/both/orderCommon';
+
+const { costOfReturnable } = OrderCommon;
 
 export const ViewOrderProducts = ({ products }) => (
   <>
@@ -27,30 +30,42 @@ export const ViewOrderProducts = ({ products }) => (
     {products.map((product) => {
       if (product.quantity > 0) {
         return (
-          <Row key={product._id} className="p-2">
-            <Col xs={4}>
-              {`${product.name} ${product.unitOfSale}`}
-              {' '}
-              <br />
-              {/* <small>
+          <div>
+            <Row key={product._id} className="p-2">
+              <Col xs={4}>
+                {`${product.name} ${product.unitOfSale}`}
+                {' '}
+                <br />
+                {/* <small>
                 {' '}
                 {product.description}
                 {' '}
                </small> */}
-            </Col>
-            <Col xs={3} className="text-right-xs">
-              {formatMoney(product.unitprice, accountSettings)}
-            </Col>
-            <Col xs={2} className="text-right-xs">
-              {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
-            </Col>
-            <Col xs={3} className="text-right">
-              {formatMoney(
-                product.unitprice * product.quantity,
-                accountSettings,
-              )}
-            </Col>
-          </Row>
+              </Col>
+              <Col xs={3} className="text-right-xs">
+                {formatMoney(product.unitprice, accountSettings)}
+              </Col>
+              <Col xs={2} className="text-right-xs">
+                {`${displayUnitOfSale(product.quantity, product.unitOfSale)}`}
+              </Col>
+              <Col xs={3} className="text-right">
+                {formatMoney(
+                  product.unitprice * product.quantity,
+                  accountSettings,
+                )}
+              </Col>
+            </Row>
+            {(product.associatedReturnables && product.associatedReturnables.quantity && product.associatedReturnables.quantity > 0) && (
+            <Row className="ps-3 pe-2">
+              <Col>
+                {product.associatedReturnables.name}
+              </Col>
+              <Col xs={3} className="text-right">
+                {formatMoney(costOfReturnable(product.associatedReturnables.returnableUnitsForSelection, product.quantity).retQtySelectedPrice, accountSettings)}
+              </Col>
+            </Row>
+            )}
+          </div>
 
         );
       }

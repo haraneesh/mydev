@@ -18,7 +18,7 @@ export default class ProductsOrderMobile extends React.Component {
     this.state = {
       products: this.props.productsArray,
       totalBillAmount,
-      panelToFocus: '',
+      panelToFocus: 'spcl-header', // ''
       recommendations: this.props.recommendations,
       // recommendations: [], // do not show recommendations,
       scrollToLocation: false,
@@ -83,7 +83,7 @@ export default class ProductsOrderMobile extends React.Component {
     // const expanded = this.state.panelToFocus !== '';
     return (
       <div className="productOrderList">
-        <Accordion activeKey={this.state.activePanel} id="accordion">
+        <Accordion id="accordion" defaultActiveKey="2">
           {productRecommended.length > 0 && (
           <div id="fav-header">
             <Accordion.Item

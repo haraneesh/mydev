@@ -74,6 +74,18 @@ export const ProductSchemaDefObject = {
     optional: true,
   },
   'sourceSuppliers.$': SupplierSchema.omit('createdAt', 'updatedAt'),
+  includeReturnables: { type: Boolean, label: 'Is there an included returnable product?', optional: true },
+  associatedReturnables: {
+    type: Object, label: 'The default _id and name of the returnable product', optional: true,
+  },
+  'associatedReturnables._id': { type: String, label: 'Returnable product id', optional: true },
+  'associatedReturnables.name': { type: String, label: 'Return product name', optional: true },
+  'associatedReturnables.returnableUnitsForSelection': {
+    type: String,
+    label: 'Returnable Units and cost for selection.',
+    defaultValue: '0=0,0.5=15,1=20',
+    optional: true,
+  },
   // Force value to be current date (on server) upon update
   // and don't allow it to be set upon insert.
   createdAt: {
@@ -94,7 +106,8 @@ export const ProductSchemaDefObject = {
       }
     },
   },
-  zh_item_id: { type: String, label: 'Then item_id of the corresponding item saved in Zoho', optional: true },
+  zh_item_id: { type: String, label: 'The item_id of the corresponding item saved in Zoho', optional: true },
+  zh_intra_tax_percentage: { type: Number, label: 'The intra_tax_percentage of the corresponding item saved in Zoho', optional: true },
 };
 
 Products.schema = new SimpleSchema(ProductSchemaDefObject, {

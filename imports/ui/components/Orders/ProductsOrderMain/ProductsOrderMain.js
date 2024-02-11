@@ -42,9 +42,16 @@ const ProductsOrderMain = (props) => {
       const prdArray = {};
 
       products.forEach((product) => {
-        prdArray[product._id] = (cartState.cart.productsInCart[product._id])
+        prd = (cartState.cart.productsInCart[product._id])
           ? cartState.cart.productsInCart[product._id]
           : { ...product, quantity: 0 };
+
+        if (prd.associatedReturnables) {
+          prd.associatedReturnables.quantity = (prd.associatedReturnables.quantity)
+            ? prd.associatedReturnables.quantity : 0;
+        }
+
+        prdArray[product._id] = prd;
       });
 
       setProductsArray(prdArray);
@@ -148,10 +155,31 @@ const ProductsOrderMain = (props) => {
     cartDispatch({ type: cartActions.updateCart, payload: { product } });
   };
 
-  const changeProductQuantity = (e) => {
-    const productId = e.target.name;
-    const quantity = e.target.value;
-    updateProductQuantity(productId, quantity);
+  const updateProductWithReturnableChoice = ({
+    parentProductId, parentProductQty, returnableProductQty,
+  }) => {
+    const product = productsArray[parentProductId];
+    product.quantity = parentProductQty;
+    product.associatedReturnables.quantity = returnableProductQty;
+    cartDispatch({ type: cartActions.updateCart, payload: { product } });
+  };
+
+  const changeProductQuantity = (e, arg2 = {
+    isReturnable: false,
+  }) => {
+    const {
+      isReturnable, parentProductId, parentProductQty, returnableProductQty,
+    } = arg2;
+    if (isReturnable) {
+      // If returnable product handle
+      updateProductWithReturnableChoice({
+        parentProductId, parentProductQty, returnableProductQty,
+      });
+    } else {
+      const productId = e.target.name;
+      const quantity = e.target.value;
+      updateProductQuantity(productId, quantity);
+    }
   };
 
   const getProductsMatchingSearch = (searchString /* numOfElements */) => {
@@ -186,14 +214,14 @@ const ProductsOrderMain = (props) => {
     isMobile,
   ) => (
     <div className="productOrderList">
-      {(isRetailCustomer) && (
+      {/* (isRetailCustomer) && (
       <ProductListView
         menuList={productGroups.productSpecials}
         changeProductQuantity={changeProductQuantity}
         isAdmin={isAdmin}
         isShopOwner={isShopOwner}
       />
-      )}
+      ) */}
       {isMobile && (
       <ProductsOrderMobile
         productGroups={productGroups}

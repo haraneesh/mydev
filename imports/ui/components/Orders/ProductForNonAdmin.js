@@ -8,8 +8,13 @@ import Form from 'react-bootstrap/Form';
 import { formatMoney } from 'accounting-js';
 import Icon from '../Icon/Icon';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
+
 import { accountSettings } from '../../../modules/settings';
 import { displayUnitOfSale } from '../../../modules/helpers';
+
+import OrderCommon from '../../../modules/both/orderCommon';
+
+const { costOfReturnable } = OrderCommon;
 
 const QuantitySelectorWithPrice = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -58,7 +63,7 @@ const QuantitySelector = ({
     <Col xs={2} className="text-left ps-0">
       <Button
         variant="white"
-        className="m-0 p-0 text-center"
+        className="m-0 p-0 ps-1 text-center"
         onClick={() => { onChange({ target: { name: controlName, value: 0 } }); }}
       >
         <Icon
@@ -69,6 +74,56 @@ const QuantitySelector = ({
     </Col>
   </div>
 );
+
+function onReturnableAdd(e, onChange, value) {
+  // onChange({ target: { name: controlName, value: 0 } });
+  const v = value;
+  if (!e.target.checked) {
+    v.returnableProductQty = 0;
+  }
+  onChange(e, v);
+}
+const AddReturnable = ({
+  onChange, sliderView, quantitySelected, associatedReturnables, includeReturnables, parentProductId,
+  retQtySelected, retQtySelectedPrice, isCheckOut,
+}) => {
+  if (includeReturnables) {
+    return (
+      <div className={(!isCheckOut) ? '' : 'ps-2 ps-sm-3'}>
+        {(!isCheckOut) && (
+        <div className="row justify-content-center">
+          +
+        </div>
+        )}
+        <div className="form-check">
+          <label className="form-check-label text-left" htmlFor="addReturnCheck">
+            {`In ${associatedReturnables.name}`}
+            <br />
+            {(!isCheckOut) ? ` Rs ${retQtySelectedPrice} Extra` : ''}
+          </label>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id="addReturnCheck"
+            autoComplete="off"
+            checked={associatedReturnables.quantity && associatedReturnables.quantity > 0}
+            onChange={(e) => {
+              onReturnableAdd(e, onChange,
+                {
+                  isReturnable: true,
+                  parentProductId,
+                  parentProductQty: quantitySelected,
+                  returnableProductId: associatedReturnables._id,
+                  returnableProductQty: retQtySelected,
+                });
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+  return (<div />);
+};
 
 const ProductName = ({
   name,
@@ -105,14 +160,29 @@ const AddToCart = ({
   controlName,
   quantitySelected,
   maxUnitsAvailableToOrder,
+  associatedReturnables,
+  includeReturnables,
   sliderView,
+  retQtySelected,
+  retQtySelectedPrice,
 }) => {
   const target = { name: controlName, value: 0 };
   if (quantitySelected === 0) {
     target.value = parseFloat(values[1]);
     return (
       <div className="addToCart text-center-xs">
-        <Button className="btn-block btn-success" name={controlName} onClick={() => { onChange({ target }); }}> Add To Cart</Button>
+        <Button
+          className="btn-block btn-success"
+          name={controlName}
+          onClick={() => {
+            onChange({ target }, {
+              isReturnable: false,
+            });
+          }}
+        >
+          {' '}
+          Add To Cart
+        </Button>
       </div>
     );
   }
@@ -124,16 +194,28 @@ const AddToCart = ({
   */
 
   return (
-    <QuantitySelector
-      onChange={onChange}
-      unit={unit}
-      unitprice={unitprice}
-      controlName={controlName}
-      quantitySelected={quantitySelected}
-      values={values}
-      maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-      sliderView={sliderView}
-    />
+    <>
+      <QuantitySelector
+        onChange={onChange}
+        unit={unit}
+        unitprice={unitprice}
+        controlName={controlName}
+        quantitySelected={quantitySelected}
+        values={values}
+        maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+        sliderView={sliderView}
+      />
+      <AddReturnable
+        onChange={onChange}
+        quantitySelected={quantitySelected}
+        sliderView={sliderView}
+        includeReturnables={includeReturnables}
+        associatedReturnables={associatedReturnables}
+        parentProductId={controlName}
+        retQtySelected={retQtySelected}
+        retQtySelectedPrice={retQtySelectedPrice}
+      />
+    </>
   );
 };
 
@@ -154,6 +236,8 @@ const ProductForNonAdmin = ({
   checkout,
   isBasket,
   removedDuringCheckout,
+  associatedReturnables,
+  includeReturnables,
   sliderView,
 }) => {
   const firstNonZeroOrderQty = 1;
@@ -161,6 +245,10 @@ const ProductForNonAdmin = ({
   const lowestOrdQty = unitsForSelectionArray.length > 0
     ? unitsForSelectionArray[firstNonZeroOrderQty] : 0;
   const lowestOrdQtyPrice = unitprice * lowestOrdQty;
+
+  const { retQtySelected, retQtySelectedPrice } = includeReturnables
+    ? costOfReturnable(associatedReturnables.returnableUnitsForSelection, quantitySelected)
+    : { retQtySelected: 0, retQtySelectedPrice: 0 };
 
   const prodNameDesc = (
     <ProductName
@@ -207,8 +295,33 @@ const ProductForNonAdmin = ({
               values={unitsForSelectionArray}
               maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             />
+
           </Col>
         </div>
+        { !removedDuringCheckout && (
+        <Row className="addCartButton">
+          <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
+            <AddReturnable
+              onChange={onChange}
+              quantitySelected={quantitySelected}
+              sliderView={sliderView}
+              includeReturnables={includeReturnables}
+              associatedReturnables={associatedReturnables}
+              parentProductId={productId}
+              retQtySelected={retQtySelected}
+              retQtySelectedPrice={retQtySelectedPrice}
+              isCheckOut
+            />
+          </Col>
+          <div className="col" style={{ paddingLeft: '10px' }}>
+            { ((checkout && associatedReturnables.quantity && associatedReturnables.quantity > 0)) ? (
+              <span>
+                {`Rs. ${retQtySelectedPrice}`}
+              </span>
+            ) : '' }
+          </div>
+        </Row>
+        )}
       </Row>
     );
   }
@@ -244,7 +357,11 @@ const ProductForNonAdmin = ({
             quantitySelected={quantitySelected}
             values={unitsForSelectionArray}
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            associatedReturnables={associatedReturnables}
+            includeReturnables={includeReturnables}
             sliderView
+            retQtySelected={retQtySelected}
+            retQtySelectedPrice={retQtySelectedPrice}
           />
         </Col>
       </div>
@@ -289,6 +406,11 @@ const ProductForNonAdmin = ({
             quantitySelected={quantitySelected}
             values={unitsForSelectionArray}
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+            associatedReturnables={associatedReturnables}
+            includeReturnables={includeReturnables}
+            retQtySelected={retQtySelected}
+            retQtySelectedPrice={retQtySelectedPrice}
+
           />
         </Col>
 
@@ -303,6 +425,7 @@ ProductForNonAdmin.defaultProps = {
   description: '',
   unitsForSelection: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   removedDuringCheckout: false,
+  associatedReturnables: {},
 };
 
 ProductForNonAdmin.propTypes = {
@@ -320,6 +443,7 @@ ProductForNonAdmin.propTypes = {
   unitsForSelection: PropTypes.array,
   checkout: PropTypes.bool,
   removedDuringCheckout: PropTypes.bool,
+  associatedReturnables: PropTypes.object,
 };
 
 /*

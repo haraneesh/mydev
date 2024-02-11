@@ -21,14 +21,29 @@ const _createZohoItem = (product) => ({
   item_type: 'inventory',
 });
 
+const getItemIntratax = (item_tax_preferences) => ((item_tax_preferences && item_tax_preferences[0] && item_tax_preferences[0].tax_percentage)
+  ? item_tax_preferences[0].tax_percentage
+  : 0);
+
 const syncProductWithZoho = (prd, successResp, errorResp) => {
   const product = prd;
   const zhItem = _createZohoItem(product);
+
+  // Zoho api update is updating tax details to default on product update //
+  if (product.zh_item_id) {
+    const r = zh.getRecordById('items', product.zh_item_id);
+    if (r.code === 0 /* success */) {
+      const getItem = r.item;
+      zhItem.item_tax_preferences = getItem.item_tax_preferences;
+    }
+  }
+
   const r = (product.zh_item_id)
     ? zh.updateRecord('items', product.zh_item_id, zhItem)
     : zh.createRecord('items', zhItem);
   if (r.code === 0 /* Success */) {
     product.zh_item_id = r.item.item_id;
+    product.zh_intra_tax_percentage = getItemIntratax(r.item.item_tax_preferences);
     Products.update({ _id: product._id }, { $set: product });
     successResp.push(retResponse(r));
   } else {

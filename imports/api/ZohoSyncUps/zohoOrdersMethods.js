@@ -53,6 +53,7 @@ const createZohoSalesOrder = (order) => {
 
   const zhSalesOrder = {
     customer_id: _getZohoUserIdFromUserId(order.customer_details._id), // mandatory
+    is_inclusive_tax: true, // treat line item rates are inclusive of tax
     date: getZhDisplayDate(order.createdAt), // "2013-11-17"
     // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -
     notes,
@@ -68,6 +69,18 @@ const createZohoSalesOrder = (order) => {
       quantity: product.quantity,
       unit: product.unitOfSale,
     });
+
+    if (product.includeReturnables
+        && product.associatedReturnables
+        && product.associatedReturnables.quantity > 0) {
+      lineItems.push({
+        item_id: _getZohoItemIdFromProductId(product.associatedReturnables._id),
+        name: product.associatedReturnables.name,
+        description: `Deliver ${product.name} in ${product.associatedReturnables.name}`,
+        rate: product.associatedReturnables.totalPrice,
+        quantity: 1,
+      });
+    }
   });
 
   zhSalesOrder.line_items = lineItems;

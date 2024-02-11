@@ -118,6 +118,7 @@ cusers.forEach((u) => {
 // Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: 'blank_image.png' } }, { multi: true });
 // Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: '' } }, { multi: true });
 // Products.update({}, { $set: { frequentlyOrdered: false } }, { multi: true });
+
 // Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
 
 // Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });

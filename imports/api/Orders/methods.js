@@ -8,9 +8,11 @@ import constants from '../../modules/constants';
 import Products from '../Products/Products';
 import ProductLists from '../ProductLists/ProductLists';
 import rateLimit from '../../modules/rate-limit';
-import orderCommon from '../../modules/both/orderCommon';
 import handleMethodException from '../../modules/handle-method-exception';
 import { Emitter, Events } from '../Events/events';
+import OrderCommon from '../../modules/both/orderCommon';
+
+const { costOfReturnable } = OrderCommon;
 
 export const getPendingOrderDues = (usrId) => {
   const pendingOrders = Orders.find(
@@ -71,6 +73,17 @@ const calculateOrderTotal = (order, productListId, userId) => {
       }
     } else {
       totalBillAmount += quantity * product.unitprice;
+      // add cost of returnables
+      const { retQtySelected, retQtySelectedPrice } = (
+        product.includeReturnables
+        && product.associatedReturnables
+        && prd.associatedReturnables.quantity > 0)
+        ? costOfReturnable(product.associatedReturnables.returnableUnitsForSelection, quantity)
+        : { retQtySelected: 0, retQtySelectedPrice: 0 };
+
+      product.associatedReturnables = prd.associatedReturnables;
+      product.associatedReturnables.totalPrice = retQtySelectedPrice * 1;
+      totalBillAmount += retQtySelectedPrice * 1; // to number
     }
 
     product.quantity = quantity;
@@ -149,6 +162,7 @@ const addUpdateOrder = (order) => {
   order.expectedDeliveryDate = getDeliveryDate();
 
   order.customer_details.role = getOrderRole(order.customer_details._id);
+
   const response = Orders.upsert({ _id: order._id }, { $set: order });
 
   addNewOrderedQuantity(order);
@@ -159,7 +173,7 @@ const addUpdateOrder = (order) => {
   return response;
 };
 
-const getDeliveryDate = () => orderCommon.getTomorrowDateOnServer();
+const getDeliveryDate = () => OrderCommon.getTomorrowDateOnServer();
 
 export const upsertOrder = new ValidatedMethod({
   name: 'orders.upsert',
