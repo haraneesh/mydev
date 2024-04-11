@@ -14,6 +14,7 @@ const updatePassword = (userId, newPassword) => {
 const updateUser = (userId, { emailAddress, profile, settings }) => {
   try {
     const user = Meteor.users.findOne({ _id: userId });
+    const newProfile = { ...user.profile, ...profile };
     const presentEmailAddress = user && user.emails && user.emails[0].address;
 
     Meteor.users.update(userId, {
@@ -23,7 +24,7 @@ const updateUser = (userId, { emailAddress, profile, settings }) => {
         'emails.0.verified': (presentEmailAddress && presentEmailAddress === emailAddress)
           ? user.emails[0].verified : false,
         updatedAt: new Date(),
-        profile,
+        newProfile,
       },
     });
 

@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Row from 'react-bootstrap/Row';
@@ -11,8 +12,8 @@ import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
 import Icon from '../Icon/Icon';
 import {
-  DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, RowSelectedCell,
-  TextCell, DateCell,
+  DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, PorterStatusCell,
+  RowSelectedCell, TextCell, DateCell,
 } from '../Common/ShopTableCells';
 import constants from '../../../modules/constants';
 import {
@@ -26,6 +27,8 @@ import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
 import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
 import exportPackingPOsAsCSV from '../../../reports/client/GenerateWholeSalePackingPOs';
+import PorterApp from './PorterApp';
+import handleMethodException from '/imports/modules/handle-method-exception';
 
 const UpdateStatusButtons = ({
   title, statuses, onSelectCallBack, ignoreStatuses,
@@ -52,7 +55,9 @@ const UpdateStatusButtons = ({
   );
 };
 
-const writeRows = ({ dataList, onChecked, onRowClickCallBack }) => {
+const writeRows = ({
+  dataList, onChecked, onRowClickCallBack, onPorterStatusClickCallBack, onPorterAppAction,
+}) => {
   const rowList = [];
   rowList.push(<div />);
   for (let index = 0; index < dataList.getSize(); index += 1) {
@@ -64,6 +69,13 @@ const writeRows = ({ dataList, onChecked, onRowClickCallBack }) => {
         {<TextCell rowIndex={index} data={dataList} columnKey="whMobileNum" />}
         {<DateCell rowIndex={index} data={dataList} columnKey="date" />}
         {<AmountCell rowIndex={index} data={dataList} columnKey="amount" />}
+        {<PorterStatusCell
+          rowIndex={index}
+          data={dataList}
+          onClick={onPorterStatusClickCallBack}
+          columnKey="porterOrderStatus"
+
+        />}
         {<td>
           <Button size="sm" variant="link" onClick={(e) => { onRowClickCallBack(e, index); }} className="w-100 btn-block">
             <Icon icon="more_vert" type="mt" />
@@ -76,7 +88,8 @@ const writeRows = ({ dataList, onChecked, onRowClickCallBack }) => {
 };
 
 const OrderTable = ({
-  dataList, onChecked, colSortDirs, onRowClickCallBack, onSortChangeCallBack,
+  dataList, onChecked, colSortDirs, onRowClickCallBack,
+  onSortChangeCallBack, onPorterStatusClickCallBack, onPorterAppAction,
 }) => (
 
   <Table striped bordered hover responsive>
@@ -124,12 +137,21 @@ const OrderTable = ({
           columnKey="amount"
         />
 
+        <SortHeaderCell
+          onSortChange={onSortChangeCallBack}
+          sortDir={colSortDirs.amount}
+          cellName="Porter Order"
+          columnKey="porterOrderStatus"
+        />
+
         <th />
 
       </tr>
     </thead>
     <tbody>
-      {writeRows({ dataList, onChecked, onRowClickCallBack })}
+      {writeRows({
+        dataList, onChecked, onRowClickCallBack, onPorterStatusClickCallBack, onPorterAppAction,
+      })}
     </tbody>
   </Table>
 );
@@ -168,6 +190,10 @@ class ManageAllOrders extends React.Component {
     this.state = {
       sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList),
       colSortDirs: this.props.colSortDirs || {},
+      porterApp: {
+        porterOrder: null,
+        portAppShow: false,
+      },
     };
 
     autoBind(this);
@@ -182,6 +208,34 @@ class ManageAllOrders extends React.Component {
       this.groupSelectedRowsInUI(columnKey, sortDir);
     } else {
       this.props.changeSortOptions(columnKey, sortDir);
+    }
+  }
+
+  onPorterStatusClickCallBack(order) {
+    const mobileNumber = order.whMobileNum.toString();
+    Meteor.call('users.find', { mobileNumber }, (error, user) => {
+      if (error) {
+        toast.error(error.reason);
+      } else {
+        this.setState({
+          porterApp: {
+            porterOrder: order,
+            user,
+            portAppShow: true,
+          },
+        });
+      }
+    });
+  }
+
+  onPorterAppAction(appAction) {
+    if (appAction.action === 'cancel') {
+      this.setState({
+        porterApp: {
+          porterOrder: null,
+          portAppShow: false,
+        },
+      });
     }
   }
 
@@ -223,7 +277,7 @@ class ManageAllOrders extends React.Component {
   getTableDataList(orders) {
     const orderList = [];
     orders.map(({
-      _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details,
+      _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details, porterOrderStatus,
     }) => {
       orderList.push(
         {
@@ -233,6 +287,7 @@ class ManageAllOrders extends React.Component {
           amount: total_bill_amount,
           name: customer_details.name,
           whMobileNum: customer_details.mobilePhone,
+          porterOrderStatus,
           selected: false,
         },
       );
@@ -399,6 +454,14 @@ class ManageAllOrders extends React.Component {
   render() {
     return (
       <div>
+        {!!this.state.porterApp.portAppShow
+        && (
+        <PorterApp
+          order={this.state.porterApp.porterOrder}
+          user={this.state.porterApp.user}
+          passActionBack={this.onPorterAppAction}
+        />
+        )}
         <Row>
           <Col>
             <UpdateStatusButtons
@@ -474,6 +537,13 @@ class ManageAllOrders extends React.Component {
               Daily Inventory Update
             </Button>
             )}
+            <Button
+              size="sm"
+              className="m-2"
+              onClick={this.handlePorterConnect}
+            >
+              Porter App
+            </Button>
           </Col>
         </Row>
         <Row>
@@ -483,6 +553,8 @@ class ManageAllOrders extends React.Component {
             onChecked={this.handleCheckBoxClick}
             colSortDirs={this.state.colSortDirs}
             onSortChangeCallBack={this.onSortChange}
+            onPorterStatusClickCallBack={this.onPorterStatusClickCallBack}
+            onPorterAppAction={this.onPorterAppAction}
           />
 
         </Row>

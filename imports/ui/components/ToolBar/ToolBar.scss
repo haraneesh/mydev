@@ -6,6 +6,20 @@
     padding-bottom: 0px;
   }
 }
+.shoppingCartBubble {
+  background: #EF0905;
+  border-radius: 50%;
+  font-size: 11px;
+  position: absolute;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  display: inline-block;
+  min-width: 2em;
+  line-height: 1.9em;
+  margin-left: 17px;
+  margin-top: -5px;
+}
+
 .toolBar{
     left: 0;
     right:0;
@@ -41,22 +55,6 @@
 
   .box5{
     background-color: rgb(236, 226, 190);
-  }
-
-  .shoppingCartBubble {
-    background: #EF0905;
-    border-radius: 50%;
-    font-size: 11px;
-    position: absolute;
-    top: -8px;
-    color: rgb(255, 255, 255);
-    text-align: center;
-    display: inline-block;
-    min-width: 2em;
-    line-height: 1.9em;
-    padding-top: 2px;
-    letter-spacing: normal;
-    margin-left: 15px;
   }
 
   .alertBubble {

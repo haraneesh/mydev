@@ -254,9 +254,9 @@ const ProductsOrderMain = (props) => {
 
   const displayProductsAndSubmit = (isMobile, productGroups) => (
     products.length > 0 ? (
-      <Card className="m-1 mb-5">
+      <Card className="mb-5">
         <Row>
-          <Col xs={12} className="pt-0">
+          <Col xs={12} className="pt-0" id="search-section">
             <ProductSearch
               getProductsMatchingSearch={getProductsMatchingSearch}
               ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}

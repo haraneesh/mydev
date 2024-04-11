@@ -49,7 +49,7 @@ const QuantitySelector = ({
   sliderView,
 }) => (
   <div className="row justify-content-center">
-    <Col xs={10} className="p-0">
+    <Col xs={10} className="ps-2 ps-sm-3">
       <Form.Select name={controlName} onChange={onChange} value={quantitySelected} className={sliderView ? 'btn-block w-75' : ''}>
         {values.map((selectValue, index) => (
           <option value={parseFloat(selectValue)} key={`option-${index}`}>
@@ -63,7 +63,7 @@ const QuantitySelector = ({
     <Col xs={2} className="text-left ps-0">
       <Button
         variant="white"
-        className="m-0 p-0 ps-1 text-center"
+        className="m-0 p-0 text-center"
         onClick={() => { onChange({ target: { name: controlName, value: 0 } }); }}
       >
         <Icon
@@ -89,7 +89,7 @@ const AddReturnable = ({
 }) => {
   if (includeReturnables) {
     return (
-      <div className={(!isCheckOut) ? '' : 'ps-2 ps-sm-3'}>
+      <div className="ps-2 ps-sm-3">
         {(!isCheckOut) && (
         <div className="row justify-content-center">
           +
@@ -99,7 +99,7 @@ const AddReturnable = ({
           <label className="form-check-label text-left" htmlFor="addReturnCheck">
             {`In ${associatedReturnables.name}`}
             <br />
-            {(!isCheckOut) ? ` Rs ${retQtySelectedPrice} Extra` : ''}
+            {(!isCheckOut) ? `Rs ${retQtySelectedPrice} Extra` : ''}
           </label>
           <input
             type="checkbox"
@@ -369,17 +369,16 @@ const ProductForNonAdmin = ({
   }
 
   return (
-    <Row className="product-item text-center my-2">
+    <div className="product-item text-center my-2">
       <Col xs={12} className="item-image-container">
         {imageRow}
       </Col>
 
       <Col xs={12}>
-        <Row style={{ minHeight: '7em' }}>
+        <div style={{ minHeight: '5em' }}>
           <Col xs={12}>
             {prodNameDesc}
           </Col>
-
           <Col xs={12}>
             <p>
               {' '}
@@ -387,7 +386,7 @@ const ProductForNonAdmin = ({
               {' '}
             </p>
           </Col>
-        </Row>
+        </div>
         <Col className="mx-auto">
           {/* <QuantitySelector
               onChange={onChange}
@@ -413,10 +412,8 @@ const ProductForNonAdmin = ({
 
           />
         </Col>
-
       </Col>
-
-    </Row>
+    </div>
   );
 };
 

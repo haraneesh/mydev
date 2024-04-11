@@ -10,9 +10,9 @@ const Product = ({
 }) => {
   let classes = (productClass) || '';
   if (product.displayAsSpecial && !(isAdmin || isShopOwner || checkout)) {
-    classes += '  special-product-item d-flex align-items-end fix-product-height col-6 col-sm-3';
+    classes += '  special-product-item fix-product-height col-6 col-sm-3';
   } else {
-    classes += (!checkout && !isAdmin && !isShopOwner) ? ' col-6 col-sm-3 d-flex align-items-end fix-product-height' : ' col-12';
+    classes += (!checkout && !isAdmin && !isShopOwner) ? ' col-6 col-sm-3 fix-product-height' : ' col-12';
   }
 
   return (

@@ -111,6 +111,7 @@ Orders.schema = new SimpleSchema({
   zh_salesorder_number: { type: String, label: 'Corresponding Zoho Sales Order Number', optional: true },
   zh_salesorder_status: { type: String, label: 'Corresponding Zoho Sales Order Status', optional: true },
   zh_salesorder_order_status: { type: String, label: 'Corresponding Zoho Sales Order Order_Status', optional: true },
+  porterOrderStatus: { type: String, optional: true },
 });
 
 if (Meteor.isServer) {

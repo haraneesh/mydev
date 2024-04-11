@@ -1083,8 +1083,8 @@ $nav-tabs-link-active-bg:           $body-bg !default;
 $nav-tabs-link-active-border-color: $white $white $info !default;
 
 $nav-pills-border-radius:           $border-radius !default;
-$nav-pills-link-active-color:       $component-active-color !default;
-$nav-pills-link-active-bg:          $component-active-bg !default;
+$nav-pills-link-active-color:       var(--#{$prefix}link-color); //$component-active-color !default;
+$nav-pills-link-active-bg:          #faf4ef !default; //$component-active-bg !default;
 // scss-docs-end nav-variables
 
 

@@ -149,6 +149,45 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               <span className="small text-info">{isError.deliveryAddress}</span>
             )}
           </Row>
+          <Row className="py-2" validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+            <label>Delivery Pincode</label>
+            <Form.Control
+              onBlur={onValueChange}
+              name="deliveryPincode"
+              placeholder="Delivery Pincode."
+              type="text"
+              defaultValue={(user && user.profile.deliveryPincode) ? user.profile.deliveryPincode : ''}
+            />
+            {isError.deliveryPincode.length > 0 && (
+              <span className="small text-info">{isError.deliveryPincode}</span>
+            )}
+          </Row>
+          <Row className="py-2" validationState={isError.deliveryAddressLatitude.length > 0 ? 'error' : ''}>
+            <label>Delivery Address Latitude</label>
+            <Form.Control
+              onBlur={onValueChange}
+              type="text"
+              name="deliveryAddressLatitude"
+              placeholder="Add Latitude value from Google Maps."
+              defaultValue={(user) ? user.profile.deliveryAddressLatitude : ''}
+            />
+            {isError.deliveryAddressLatitude.length > 0 && (
+              <span className="small text-info">{isError.deliveryAddressLatitude}</span>
+            )}
+          </Row>
+          <Row className="py-2" validationState={isError.deliveryAddressLongitude.length > 0 ? 'error' : ''}>
+            <label>Delivery Address Longitude</label>
+            <Form.Control
+              onBlur={onValueChange}
+              type="text"
+              name="deliveryAddressLongitude"
+              placeholder="Add Latitude value from Google Maps."
+              defaultValue={(user) ? user.profile.deliveryAddressLongitude : ''}
+            />
+            {isError.deliveryAddressLongitude.length > 0 && (
+              <span className="small text-info">{isError.deliveryAddressLongitude}</span>
+            )}
+          </Row>
           <Row className="py-2" validationState={isError.password.length > 0 ? 'error' : ''}>
             <label>Password</label>
             <Form.Control
@@ -204,6 +243,9 @@ export const getUserData = () => {
       },
       whMobilePhone: document.querySelector('input[name="whMobilePhone"]').value,
       deliveryAddress: document.querySelector('[name="deliveryAddress"]').value,
+      deliveryPincode: document.querySelector('[name="deliveryPincode"]').value,
+      deliveryAddressLongitude: document.querySelector('[name="deliveryAddressLongitude"]').value,
+      deliveryAddressLatitude: document.querySelector('[name="deliveryAddressLatitude"]').value,
       salutation: document.querySelector('[name="salutation"]').selectedOptions[0].value,
     },
     // isAdmin: $('[name="checkBoxIsAdmin"]')[0].checked

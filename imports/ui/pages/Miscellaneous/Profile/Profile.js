@@ -96,6 +96,7 @@ class Profile extends React.Component {
       this.handleSubmit();
     } else {
       this.setState({ isError });
+      toast.error('Please address errors in form');
     }
   }
 
@@ -176,7 +177,7 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.firstName.length > 0 && (
-          <span className="small text-info">{isError.firstName}</span>
+          <span className="small text-danger">{isError.firstName}</span>
           )}
         </Row>
         <Row validationState={isError.lastName.length > 0 ? 'error' : ''} className="my-3">
@@ -190,7 +191,7 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.lastName.length > 0 && (
-          <span className="small text-info">{isError.lastName}</span>
+          <span className="small text-danger">{isError.lastName}</span>
           )}
         </Row>
         <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''} className="my-3">
@@ -213,7 +214,7 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.emailAddress.length > 0 && (
-          <span className="small text-info">{isError.emailAddress}</span>
+          <span className="small text-danger">{isError.emailAddress}</span>
           )}
         </Row>
         <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''} className="my-3">
@@ -228,7 +229,7 @@ class Profile extends React.Component {
             className="form-control"
           />
           {isError.whMobilePhone.length > 0 && (
-          <span className="small text-info">{isError.whMobilePhone}</span>
+          <span className="small text-danger">{isError.whMobilePhone}</span>
           )}
         </Row>
         <Row validationState={isError.packingPreference.length > 0 ? 'error' : ''} className="my-3">
@@ -247,7 +248,7 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.packingPreference.length > 0 && (
-          <span className="small text-info">{isError.packingPreference}</span>
+          <span className="small text-danger">{isError.packingPreference}</span>
           )}
         </Row>
         <Row validationState={isError.productUpdatePreference.length > 0 ? 'error' : ''} className="my-3">
@@ -266,7 +267,7 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.packingPreference.length > 0 && (
-          <span className="small text-info">{isError.productUpdatePreference}</span>
+          <span className="small text-danger">{isError.productUpdatePreference}</span>
           )}
         </Row>
         <Row validationState={isError.dietPreference.length > 0 ? 'error' : ''} className="my-3">
@@ -286,7 +287,7 @@ class Profile extends React.Component {
             ))}
           </select>
           {isError.dietPreference.length > 0 && (
-          <span className="small text-info">{isError.dietPreference}</span>
+          <span className="small text-danger">{isError.dietPreference}</span>
           )}
         </Row>
         <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''} className="my-3">
@@ -301,7 +302,7 @@ class Profile extends React.Component {
             onBlur={this.onValueChange}
           />
           {isError.deliveryAddress.length > 0 && (
-          <span className="small text-info">{isError.deliveryAddress}</span>
+          <span className="small text-danger">{isError.deliveryAddress}</span>
           )}
         </Row>
 
@@ -318,7 +319,7 @@ class Profile extends React.Component {
             onBlur={this.onValueChange}
           />
           {isError.deliveryPincode.length > 0 && (
-          <span className="small text-info">{isError.deliveryPincode}</span>
+          <span className="small text-danger">{isError.deliveryPincode}</span>
           )}
         </Row>
 
@@ -333,7 +334,7 @@ class Profile extends React.Component {
             onChange={this.onValueChange}
           />
           {isError.newPassword.length > 0 && (
-          <span className="small text-info">{isError.newPassword}</span>
+          <span className="small text-danger">{isError.newPassword}</span>
           )}
         </Row>
         <Row className="my-3">
@@ -348,7 +349,7 @@ class Profile extends React.Component {
                 onChange={this.onValueChange}
               />
               {isError.confirmPassword.length > 0 && (
-              <span className="small text-info">{isError.confirmPassword}</span>
+              <span className="small text-danger">{isError.confirmPassword}</span>
               )}
             </Row>
           </Col>

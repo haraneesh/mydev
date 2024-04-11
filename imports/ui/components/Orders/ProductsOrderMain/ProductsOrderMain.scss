@@ -117,9 +117,6 @@
     background-position: 25px -410px;
 }
 
-#productTabs > div.tab-content {
-    padding-top:1.5em;
-}
 
     .prodCatTitle{
         padding:0px 0px;
@@ -129,14 +126,11 @@
         padding-left: 0px;
     }
 
-    .productCatHead div{
+    .productCatHeadIcon{
         background-size: 3.28em;
         background-repeat: no-repeat;
         height: 47px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-    }
+    } 
 
     .productCategoryHeading {
         padding: 1em 0;

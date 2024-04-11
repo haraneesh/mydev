@@ -59,6 +59,8 @@ class AllOrders extends React.Component {
       case 'status':
         sortBy = { order_status: sortDirection };
         break;
+      case 'porterStatus':
+        sortBy = { porterStatus: sortDirection };
       default:
         sortBy = { createdAt: sortDirection };
         break;

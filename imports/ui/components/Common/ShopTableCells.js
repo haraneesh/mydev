@@ -96,6 +96,22 @@ export const OrderStatusCell = ({
   );
 };
 
+export const PorterStatusCell = ({
+  rowIndex, data, columnKey, onClick, ...props
+}) => {
+  const order = data.getObjectAt(rowIndex);
+  const porterStatus = order[columnKey] ? order[columnKey] : 'Not_Assigned';
+  const labelStyle = constants.PorterStatus[porterStatus].label;
+  const statusToDisplay = constants.PorterStatus[porterStatus].display_value;
+  return (
+    <td {...props}>
+      <Button variant={labelStyle} className="text-white" onClick={(e) => { e.stopPropagation(); onClick(order); }}>
+        { statusToDisplay }
+      </Button>
+    </td>
+  );
+};
+
 export const ImageCell = ({
   rowIndex, data, columnKey, ...props
 }) => (

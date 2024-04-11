@@ -199,6 +199,26 @@ const OrderStatus = {
   },
 };
 
+const PorterStatus = {
+  Not_Assigned: {
+    name: 'Not_Assigned',
+    display_value: '--',
+    label: 'info',
+  },
+  live: {
+    name: 'live',
+    display_value: 'Created',
+    label: 'success',
+  },
+  cancelled: {
+    name: 'cancelled',
+    display_value: 'Cancelled',
+    label: 'info',
+  },
+};
+
+PorterStatus.names = Object.keys(PorterStatus).map((cat) => PorterStatus[cat].name);
+
 const UserAccountStatus = {
   Active: { name: 'Active', status_display_value: 'Active', btn_display_name: 'Activate Account' },
   Disabled: { name: 'Disabled', status_display_value: 'Disabled', btn_display_name: 'Disable Account' },
@@ -461,6 +481,7 @@ const constants = {
   ProductType,
   ProductTypeName,
   OrderStatus,
+  PorterStatus,
   DaysFromTodayForward,
   StatementPeriod,
   ProductListStatus,

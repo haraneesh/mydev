@@ -2,9 +2,13 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import Accordion from 'react-bootstrap/Accordion';
+import Nav from 'react-bootstrap/Nav';
+import Tab from 'react-bootstrap/Tab';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
 import constants from '../../../../modules/constants';
-import { DisplayCategoryHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
+import { DisplayCategoryHeader, SideBarDisplayHeader } from '../ProductsOrderCommon/ProductsOrderCommon';
 import { isChennaiPinCode } from '../../../../modules/helpers';
 
 import './ProductsOrderMobile.scss';
@@ -18,7 +22,7 @@ export default class ProductsOrderMobile extends React.Component {
     this.state = {
       products: this.props.productsArray,
       totalBillAmount,
-      panelToFocus: 'spcl-header', // ''
+      panelToFocus: 'order-tab', // ''
       recommendations: this.props.recommendations,
       // recommendations: [], // do not show recommendations,
       scrollToLocation: false,
@@ -50,10 +54,12 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   handlePanelSelect(panelToFocus) {
+    document.getElementById('search-section').scrollIntoView({ behavior: 'smooth' });
+    { /*
     this.setState({
       panelToFocus: (this.state.panelToFocus === panelToFocus ? '' : panelToFocus),
       scrollToLocation: true,
-    });
+    }); */ }
   }
 
   displayProductsByType() {
@@ -82,374 +88,109 @@ export default class ProductsOrderMobile extends React.Component {
 
     // const expanded = this.state.panelToFocus !== '';
     return (
-      <div className="productOrderList">
-        <Accordion id="accordion" defaultActiveKey="2">
-          {productRecommended.length > 0 && (
-          <div id="fav-header">
-            <Accordion.Item
-              // onSelect={( === 'fav-header')}
-              eventKey="1"
-              className="stickyHeader my-1"
+      <div className="productOrderList" id="order-tab">
+        {/* side navigation */}
+        <Tab.Container id="order-tabb" defaultActiveKey="specials">
+          <Row style={{
+            alignItems: 'flex-start',
+          }}
+          >
+            <Col
+              xs={3}
+              sm={2}
+              style={{
+                borderColor: '#f1edf3',
+                boxShadow: '0px 0px 8px rgba(0,0,0,.08)',
+              }}
+              className="menuLeft sticky-top pb-5"
             >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="recommended_bk_ph"
-                  title="My Favourites"
-                  onclick={() => this.handlePanelSelect('fav-header')}
-                  isOpen={this.state.panelToFocus === 'fav-header'}
-                  tabHash={productGroups.productGroupMetaHash.productRecommended}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                { productRecommended }
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productSpecials.length > 0 && (
-            <div id="spcl-header">
-              <Accordion.Item
-                className="stickyHeader my-1"
-                // onSelect={( === 'spcl-header')}
-                eventKey="2"
-              >
-                <Accordion.Header>
-                  <DisplayCategoryHeader
-                    clName="specials_bk_ph"
-                    title="New Arrivals"
-                    isOpen={this.state.panelToFocus === 'spcl-header'}
-                    onclick={() => this.handlePanelSelect('spcl-header')}
-                    tabHash={productGroups.productGroupMetaHash.productSpecials}
-                  />
-                </Accordion.Header>
-                <Accordion.Body>
-                  <div className="row mb-4">
-                    { productSpecials }
-                  </div>
-                </Accordion.Body>
-
-              </Accordion.Item>
-            </div>
-          )}
-
-          {productGrains.length > 0 && (
-          <div id="grain-header">
-            <Accordion.Item
-              // id="grain-header"
-              // onSelect={( === 'grain-header')}
-              eventKey="3"
-              className="stickyHeader my-1"
-            >
-
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="grains_bk_ph"
-                  title={constants.ProductTypeName.Grains.display_name} // "Grains & Flour"
-                  onclick={() => this.handlePanelSelect('grain-header')}
-                  isOpen={this.state.panelToFocus === 'grain-header'}
-                  tabHash={productGroups.productGroupMetaHash.productGrains}
-                />
-              </Accordion.Header>
-
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productGrains }
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productDhals.length > 0 && (
-          <div id="dhals-header">
-            <Accordion.Item
-              // onSelect={( === 'dhals-header')}
-              eventKey="4"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="dhals_bk_ph"
-                  title={constants.ProductTypeName.Dhals.display_name} // "Pulses, Lentils & Dried Beans"
-                  onclick={() => this.handlePanelSelect('dhals-header')}
-                  isOpen={this.state.panelToFocus === 'dhals-header'}
-                  tabHash={productGroups.productGroupMetaHash.productDhals}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productDhals }
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productFlours.length > 0 && (
-          <div id="flours-header">
-            <Accordion.Item
-              // onSelect={( === 'flours-header')}
-              eventKey="5"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="flours_bk_ph"
-                  title={constants.ProductTypeName.Flours.display_name} // "Flours"
-                  onclick={() => this.handlePanelSelect('flours-header')}
-                  isOpen={this.state.panelToFocus === 'flours-header'}
-                  tabHash={productGroups.productGroupMetaHash.productFlours}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productFlours }
-
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productBatter.length > 0 && isDeliveryInChennai && (
-          <div id="batter-header">
-            <Accordion.Item
-              // onSelect={( === 'batter-header')}
-              eventKey="6"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="batter_bk_ph"
-                  title={constants.ProductTypeName.Batter.display_name} // "Batter"
-                  onclick={() => this.handlePanelSelect('batter-header')}
-                  isOpen={this.state.panelToFocus === 'batter-header'}
-                  tabHash={productGroups.productGroupMetaHash.productBatter}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productBatter }
-
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productVegetables.length > 0 && isDeliveryInChennai && (
-          <div id="veg-header">
-            <Accordion.Item
-              // onSelect={( === 'veg-header')}
-              eventKey="7"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="vegetables_bk_ph"
-                  title={constants.ProductTypeName.Vegetables.display_name} // "Vegetables"
-                  onclick={() => this.handlePanelSelect('veg-header')}
-                  isOpen={this.state.panelToFocus === 'veg-header'}
-                  tabHash={productGroups.productGroupMetaHash.productVegetables}
-                />
-
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productVegetables }
-
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productFruits.length > 0 && isDeliveryInChennai && (
-          <div id="fruits-header">
-            <Accordion.Item
-              // onSelect={( === 'fruits-header')}
-              eventKey="8"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="fruits_bk_ph"
-                  title={constants.ProductTypeName.Fruits.display_name} // "Fruits"
-                  onclick={() => this.handlePanelSelect('fruits-header')}
-                  isOpen={this.state.panelToFocus === 'fruits-header'}
-                  tabHash={productGroups.productGroupMetaHash.productFruits}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productFruits }
-
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productSpices.length > 0 && (
-          <div id="spices-header">
-            <Accordion.Item
-              // onSelect={( === 'spices-header')}
-              eventKey="9"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="spices_bk_ph"
-                  title={constants.ProductTypeName.Spices.display_name} // "Spices & Nuts"
-                  onclick={() => this.handlePanelSelect('spices-header')}
-                  isOpen={this.state.panelToFocus === 'spices-header'}
-                  tabHash={productGroups.productGroupMetaHash.productSpices}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productSpices }
-
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productOils.length > 0 && (
-          <div id="oils-header">
-            <Accordion.Item
-              // onSelect={( === 'oils-header')}
-              eventKey="10"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="oils_bk_ph"
-                  title={constants.ProductTypeName.Oils.display_name} // "Oils, Butter & Ghee"
-                  onclick={() => this.handlePanelSelect('oils-header')}
-                  isOpen={this.state.panelToFocus === 'oils-header'}
-                  tabHash={productGroups.productGroupMetaHash.productOils}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productOils}
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productSweetners.length > 0 && (
-          <div id="swt-header">
-            <Accordion.Item
-              // onSelect={( === 'swt-header')}
-              eventKey="11"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="swt_bk_ph"
-                  title={constants.ProductTypeName.Sweetners.display_name} // "Sweetners"
-                  onclick={() => this.handlePanelSelect('swt-header')}
-                  isOpen={this.state.panelToFocus === 'swt-header'}
-                  tabHash={productGroups.productGroupMetaHash.productSweetners}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productSweetners}
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productSnacks.length > 0 && (
-          <div id="snacks-header">
-            <Accordion.Item
-              // onSelect={( === 'snacks-header')}
-              eventKey="12"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="snack_bk_ph"
-                  title={constants.ProductTypeName.Snacks.display_name} // "Snacks"
-                  onclick={() => this.handlePanelSelect('snacks-header')}
-                  isOpen={this.state.panelToFocus === 'snacks-header'}
-                  tabHash={productGroups.productGroupMetaHash.productSnacks}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productSnacks}
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productPrepared.length > 0 && (
-          <div id="prepared-header">
-            <Accordion.Item
-              // onSelect={( === 'prepared-header')}
-              eventKey="13"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="prepared_bk_ph"
-                  title={constants.ProductTypeName.Prepared.display_name} // "Pickles & Podis"
-                  onclick={() => this.handlePanelSelect('prepared-header')}
-                  isOpen={this.state.panelToFocus === 'prepared-header'}
-                  tabHash={productGroups.productGroupMetaHash.productPrepared}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productPrepared}
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-          {productHygiene.length > 0 && (
-          <div id="hyg-header">
-            <Accordion.Item
-              // onSelect={( === 'hyg-header')}
-              eventKey="14"
-              className="stickyHeader my-1"
-            >
-              <Accordion.Header>
-                <DisplayCategoryHeader
-                  clName="hyg_bk_ph"
-                  title={constants.ProductTypeName.Hygiene.display_name} // "Personal & General Hygiene"
-                  onclick={() => this.handlePanelSelect('hyg-header')}
-                  isOpen={this.state.panelToFocus === 'hyg-header'}
-                  tabHash={productGroups.productGroupMetaHash.productHygiene}
-                />
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="row mb-4">
-                  { productHygiene }
-                </div>
-              </Accordion.Body>
-
-            </Accordion.Item>
-          </div>
-          )}
-
-        </Accordion>
+              <Nav variant="pills" className="flex-column">
+                <Nav.Item>
+                  <Nav.Link eventKey="specials" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="specials_bk_ph" title="New Arrivals" />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="grains" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="grains_bk_ph" title={constants.ProductTypeName.Grains.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="flours" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="flours_bk_ph" title={constants.ProductTypeName.Flours.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="dhals" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="dhals_bk_ph" title={constants.ProductTypeName.Dhals.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="batter" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="batter_bk_ph" title={constants.ProductTypeName.Batter.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="vegetables" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="vegetables_bk_ph" title={constants.ProductTypeName.Vegetables.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="fruits" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="fruits_bk_ph" title={constants.ProductTypeName.Fruits.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="spices" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="spices_bk_ph" title={constants.ProductTypeName.Spices.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="oils" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="oils_bk_ph" title={constants.ProductTypeName.Oils.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="sweetners" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="swt_bk_ph" title={constants.ProductTypeName.Sweetners.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="snack" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="snack_bk_ph" title={constants.ProductTypeName.Snacks.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="prepared" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="prepared_bk_ph" title={constants.ProductTypeName.Prepared.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="hygiene" style={{ padding: 0 }}>
+                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="hyg_bk_ph" title={constants.ProductTypeName.Hygiene.display_name} />
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Col>
+            <Col>
+              <Tab.Content className="mx-auto">
+                <Tab.Pane eventKey="specials"><Row>{productSpecials}</Row></Tab.Pane>
+                <Tab.Pane eventKey="grains"><Row>{productGrains}</Row></Tab.Pane>
+                <Tab.Pane eventKey="flours"><Row>{productFlours}</Row></Tab.Pane>
+                <Tab.Pane eventKey="dhals"><Row>{productDhals}</Row></Tab.Pane>
+                <Tab.Pane eventKey="batter"><Row>{productBatter}</Row></Tab.Pane>
+                <Tab.Pane eventKey="vegetables"><Row>{productVegetables}</Row></Tab.Pane>
+                <Tab.Pane eventKey="fruits"><Row>{productFruits}</Row></Tab.Pane>
+                <Tab.Pane eventKey="spices"><Row>{productSpices}</Row></Tab.Pane>
+                <Tab.Pane eventKey="oils"><Row>{productOils}</Row></Tab.Pane>
+                <Tab.Pane eventKey="sweetners"><Row>{productSweetners}</Row></Tab.Pane>
+                <Tab.Pane eventKey="snack"><Row>{productSnacks}</Row></Tab.Pane>
+                <Tab.Pane eventKey="prepared"><Row>{productPrepared}</Row></Tab.Pane>
+                <Tab.Pane eventKey="hygiene"><Row>{productHygiene}</Row></Tab.Pane>
+              </Tab.Content>
+            </Col>
+          </Row>
+        </Tab.Container>
       </div>
     );
   }

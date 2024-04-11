@@ -15,7 +15,7 @@ function Navigation(props) {
     <>
       <Container fluid="true" className="bg-white py-2">
         <Row>
-          <span className="text-left col-9 col-sm-3 ps-2" style={{ minWidth: '15em' }}>
+          <span className="text-left col col-sm-3 ps-2">
             {props.authenticated
         && (
 

@@ -9,7 +9,7 @@ import '../../ui/stylesheets/application.scss';
 Meteor.startup(() => {
   if ('serviceWorker' in navigator) {
     // const serviceWorkerUrl = (process.env.NODE_ENV === 'production') ? 'https://nammasuvai.com/js/sw.js' : '/sw.js';
-    navigator.serviceWorker.register(`${window.location.origin}/sw.js`)
+    navigator.serviceWorker.register(`${window.location.origin}/sw.js?v1`)
       .then(() => {})
       .catch((err) => console.log('ServiceWorker registration failed: ', err));
   }

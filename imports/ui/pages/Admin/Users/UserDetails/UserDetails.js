@@ -117,6 +117,8 @@ const ViewUserDetails = ({ match }) => {
                 {returnRow('Email Address', emails[0].address)}
                 {returnRow('Email verified?', emails[0].verified.toString())}
                 {returnRow('Delivery Address', profile.deliveryAddress)}
+                {returnRow('Delivery Address Latitude', profile.deliveryAddressLat)}
+                {returnRow('Delivery Address Longitude', profile.deliveryAddressLong)}
                 {returnRow('Wallet Balance', calculateWalletBalanceInRs(wallet))}
                 {returnRow('What does eating healthy mean to you?', eatingHealthyMeaning)}
 

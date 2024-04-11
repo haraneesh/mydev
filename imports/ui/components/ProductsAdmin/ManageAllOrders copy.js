@@ -160,6 +160,20 @@ const OrderTable = ({
       width={100}
       flexGrow={2}
     />
+    <Column
+      columnKey="date"
+      header={(
+        <SortHeaderCell
+          onSortChange={onSortChangeCallBack}
+          sortDir={colSortDirs.date}
+        >
+          Delivery Date
+        </SortHeaderCell>
+      )}
+      cell={<DateCell data={dataList} />}
+      width={100}
+      flexGrow={3}
+    />
   </Table>
 );
 
@@ -513,6 +527,13 @@ class ManageAllOrders extends React.Component {
               Daily Inventory Update
             </Button>
             )}
+            <Button
+              size="sm"
+              className="ms-2"
+              onClick={this.handlePorterConnect}
+            >
+              Show Porter App
+            </Button>
           </Col>
         </Row>
         <Row>

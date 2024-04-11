@@ -81,6 +81,8 @@ import '../../api/ZohoSyncUps/zohoProductsMethods';
 import '../../api/ZohoSyncUps/zohoSalesByItemsMethods';
 import '../../api/ZohoSyncUps/zohoOrdersMethods';
 
+import '../../api/PorterSyncUps/porterOrderMethods';
+
 import '../../api/Settings/methods';
 
 import '../../api/UpdateScripts/UpdateScript';

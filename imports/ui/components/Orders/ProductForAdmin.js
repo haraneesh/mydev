@@ -23,7 +23,7 @@ const AddReturnable = ({
           <label className="form-check-label text-left" htmlFor="addReturnCheck">
             <div>
               {`In ${associatedReturnables.name}`}
-              {(!isCheckOut) ? `Rs ${retQtySelectedPrice} Extra` : ''}
+              {(!isCheckOut) ? `, Rs ${retQtySelectedPrice} Extra` : ''}
             </div>
           </label>
           <input
@@ -117,7 +117,7 @@ class ProductForAdmin extends React.Component {
       : { retQtySelected: 0, retQtySelectedPrice: 0 };
 
     return (
-      <div className="pb-5">
+      <div className="pb-5 mx-4">
         <Row className="p-0 product-item">
           <Col sm={!isBasket ? 6 : 8}>
             <p className="product-name"><strong>{`${name} ${unit}`}</strong></p>

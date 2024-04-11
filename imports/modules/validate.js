@@ -8,6 +8,8 @@ export const formValChange = (e, isErrorState, fieldValues) => {
 
   const trimmedVal = value.trim();
   const isIndiaPincode = RegExp(/^[1-9][0-9]{5}$/);
+  const isLatitude = RegExp(/^\d+(\.\d+)?$/);
+  const isLongitude = RegExp(/^\d+(\.\d+)?$/);
 
   switch (true) {
     case name === 'amountToChargeInRs':
@@ -83,8 +85,18 @@ export const formValChange = (e, isErrorState, fieldValues) => {
       break;
     case name === 'dietPreference':
       isError.dietPreference = trimmedVal.length < 1
-        ? 'dietary preference is mandatory'
+        ? 'Dietary preference is mandatory'
         : '';
+      break;
+    case name === 'deliveryAddressLongitude':
+      isError.deliveryAddressLongitude = !isLongitude.test(trimmedVal)
+        ? ''
+        : 'Longitude value seems invalid, please provide a valid longitude value';
+      break;
+    case name === 'deliveryAddressLatitude':
+      isError.deliveryAddressLatitude = !isLatitude.test(trimmedVal)
+        ? ''
+        : 'Latitude value seems invalid, please provide a valid latitude value';
       break;
     default:
       break;

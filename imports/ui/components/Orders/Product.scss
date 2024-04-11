@@ -2,8 +2,8 @@
 
 .EditOrderDetails  {
 
-    .product-item {
-        // padding: 1em 1em;
+    .nav-item{
+        border-bottom: var(--ns-border-color-translucent) 1px solid;
     }
 
     .fix-product-height {
@@ -36,7 +36,9 @@
         margin: 0px auto;
         vertical-align: middle;
         max-height: 6em;
+        max-width: 10em;
         border-radius: 1em;
+        margin-bottom: 1rem;
     }
 
     .sliderProduct {
@@ -54,16 +56,19 @@
         }
     }
 
-    @media (max-width: breakpoint-min('sm')) {
-        .sliderProduct {
-            .product-item{
-                border-bottom: 0px solid transparent;
-                padding: 1em 2.7em 0em;
-                .addCartButton{
-                    padding: 0.25em 0.25em;
-                }
-            }
-        }
+    .menuLeft{
+        z-index: 800;
+        scrollbar-width: none;
+        overflow:auto;
+        height:100vh;
+    }
 
+    @media (max-width: 575.98px) {
+        .tab-content{
+            font-size:14px;
+        }
+        .menuLeft{
+            width: 22%;
+        }
     }
 }

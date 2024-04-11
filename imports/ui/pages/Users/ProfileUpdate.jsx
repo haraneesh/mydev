@@ -57,6 +57,9 @@ export default class ProfileUpdate extends React.Component {
         lastName: '',
         whMobilePhone: '',
         deliveryAddress: '',
+        deliveryPincode: '',
+        deliveryAddressLatitude: '',
+        deliveryAddressLongitude: '',
       },
     });
   }

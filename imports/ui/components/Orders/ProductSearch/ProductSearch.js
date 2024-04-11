@@ -16,6 +16,10 @@ class ProductSearch extends React.Component {
     this.onLostFocus = this.onLostFocus.bind(this);
   }
 
+  onsearchClick() {
+    document.getElementById('search-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
   onsearchStringChange() {
     const searchValue = this.searchBox.value;
 
@@ -69,6 +73,7 @@ class ProductSearch extends React.Component {
                 type="text"
                 placeholder="Search & Order"
                 value={this.state.searchString}
+                onClick={this.onsearchClick}
                 onChange={this.onsearchStringChange}
                 onBlur={this.onLostFocus}
                 ref={(searchBox) => (this.searchBox = searchBox)}

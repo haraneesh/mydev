@@ -81,7 +81,7 @@ const calculateOrderTotal = (order, productListId, userId) => {
         ? costOfReturnable(product.associatedReturnables.returnableUnitsForSelection, quantity)
         : { retQtySelected: 0, retQtySelectedPrice: 0 };
 
-      product.associatedReturnables = prd.associatedReturnables;
+      product.associatedReturnables = prd.associatedReturnables || {};
       product.associatedReturnables.totalPrice = retQtySelectedPrice * 1;
       totalBillAmount += retQtySelectedPrice * 1; // to number
     }

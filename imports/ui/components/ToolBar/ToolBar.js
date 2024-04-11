@@ -114,11 +114,11 @@ const ToolBar = ({
         <div className="col box4">
           <Button variant="white" onClick={onCartIconClick}>
             <Icon icon="local_mall" type="mt" className="fs-2" />
-            {(totalProductsInCount > 0) && (
+            {/* (totalProductsInCount > 0) && (
             <b className="alertMenu shoppingCartBubble">
               {totalProductsInCount}
             </b>
-            )}
+            ) */}
             <span style={fontProps}>Cart</span>
           </Button>
         </div>

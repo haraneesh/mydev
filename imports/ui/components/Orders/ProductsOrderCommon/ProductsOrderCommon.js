@@ -49,6 +49,21 @@ OrderFooter.propTypes = {
   submitButtonName: PropTypes.string.isRequired,
 };
 
+export const SideBarDisplayHeader = ({
+  clName, title, onclick,
+}) => (
+  <div onClick={onclick} className="productCatHead row pb-2">
+    <Col sm={3} className={`productCatHeadIcon productCat_${clName}`} />
+    <Col xs={12} sm={9} className="pe-1">
+      <p style={{ marginBottom: '0px', fontSize: '90%' }}>
+        <span style={{ verticalAlign: 'middle' }}>
+          {title}
+        </span>
+      </p>
+    </Col>
+  </div>
+);
+
 export const DisplayCategoryHeader = ({
   clName, title, onclick, isOpen, tabHash,
 }) => (
