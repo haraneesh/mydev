@@ -19,7 +19,7 @@ import Terms from '../pages/Miscellaneous/Terms/Terms';
 import Refund from '../pages/Miscellaneous/Refund/Refund';
 import Privacy from '../pages/Miscellaneous/Privacy/Privacy';
 // import SelfSignUp from '../pages/Miscellaneous/SignUp/SelfSignUp'; -- self sign up
-import SignUp from '../pages/Miscellaneous/SignUp/SignUp';
+import SignUp from '../pages/Miscellaneous/Signup/SignUp';
 import InviteSelf from '../pages/Invitations/InviteSelf';
 import ShowInterest from '../pages/Miscellaneous/ShowInterest/ShowInterest';
 import Login from '../pages/Miscellaneous/Login/Login';

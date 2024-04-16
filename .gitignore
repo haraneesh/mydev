@@ -7,3 +7,5 @@ public/bg-new.jpg
 public/ignore
 imports/api/Reports/items.js
 imports/api/Reports/pos.js
+settings-development.json-example
+settings-development.json-old.json
