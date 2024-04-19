@@ -27,11 +27,11 @@ function ReturnAlerts() {
           Dear Suvaineers,
           {' '}
           <br />
-          Wish you and your family a very Happy Pongal.
+          Suvai is closed on Friday, 19th for casting our valuable votes.
         </small>
         <br />
         <small>
-          On account of Pongal celebrations,
+          So,
           there will be
           <span style={{ color: '#EF0905' }}>
             {' '}
@@ -39,15 +39,15 @@ function ReturnAlerts() {
             {' '}
           </span>
           {' '}
-          deliveries from
+          deliveries on
           <span style={{ color: '#EF0905' }}>
             {' '}
-            Sunday
+            Friday
             {' '}
           </span>
-          14
+          19
           <sup>th</sup>
-          {' '}
+         {/* {' '}
           to
           <span style={{ color: '#EF0905' }}>
             {' '}
@@ -57,7 +57,7 @@ function ReturnAlerts() {
           17
           <sup>th</sup>
           {' ' }
-          January.
+      Friday.*/}
         </small>
       </Alert>
     )

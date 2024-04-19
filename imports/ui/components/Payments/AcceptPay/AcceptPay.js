@@ -151,7 +151,28 @@ function AcceptPay({
         <Row>
           <Col xs={12} sm={11} className="offset-sm-1">
             <h6 className="py-3">
-              1. UPI or Debit card,
+              1. Scan and Pay with any Bharath QR/UPI app,
+              <span className="underline"> No fee</span>
+            </h6>
+            <Row>
+              <Col xs={6} sm={6} className="text-center">
+                <h4>UPI</h4>
+                <img src="/pay/scan-pay-upi.jpg" style={{ width: '100%', maxWidth: '20em' }} alt="Scan and Pay via UPI" />
+              </Col>
+              <Col xs={6} sm={6} className="text-center">
+                <h4>SODEXO</h4>
+                <img src="/pay/scan-pay-sodexo.jpg" style={{ width: '100%', maxWidth: '20em' }} alt="Scan and Pay via Sodexo" />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row><span className="text-center text-muted bg-white mb-5 pt-4">   - - - - -   OR   - - - - -   </span></Row>
+
+        <Row>
+          <Col xs={12} sm={11} className="offset-sm-1">
+            <h6 className="py-3">
+              2. UPI or Debit card,
               <span className="underline"> No fee</span>
             </h6>
 
@@ -227,7 +248,7 @@ function AcceptPay({
               <Col xs={12} sm={11} className="offset-sm-1">
 
                 <h6 className="py-3">
-                  <div>2. NetBanking or Credit Card, 2% transaction fee </div>
+                  <div>3. NetBanking or Credit Card, 2% transaction fee </div>
                 </h6>
 
                 <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
