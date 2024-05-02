@@ -277,7 +277,9 @@ const ProductForNonAdmin = ({
           ) : name }
         </Col>
         <div className="col" style={{ paddingLeft: '10px' }}>
+
           <Col xs={12} className="p-0">
+
             {!isBasket && (
               <Col xs={12} className="p-0">
                 {formatMoney(
@@ -286,6 +288,7 @@ const ProductForNonAdmin = ({
                 )}
               </Col>
             )}
+
             <QuantitySelector
               onChange={onChange}
               unit={unit}
@@ -374,8 +377,8 @@ const ProductForNonAdmin = ({
         {imageRow}
       </Col>
 
-      <Col xs={12}>
-        <div style={{ minHeight: '5em' }}>
+      <Col xs={12} style={{ height: '8em' }}>
+        <div>
           <Col xs={12}>
             {prodNameDesc}
           </Col>
@@ -387,8 +390,9 @@ const ProductForNonAdmin = ({
             </p>
           </Col>
         </div>
-        <Col className="mx-auto">
-          {/* <QuantitySelector
+      </Col>
+      <Col className="mx-auto">
+        {/* <QuantitySelector
               onChange={onChange}
               unit={unit}
               unitprice={unitprice}
@@ -397,22 +401,21 @@ const ProductForNonAdmin = ({
               values={unitsForSelectionArray}
               maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
             /> */}
-          <AddToCart
-            onChange={onChange}
-            unit={unit}
-            unitprice={unitprice}
-            controlName={productId}
-            quantitySelected={quantitySelected}
-            values={unitsForSelectionArray}
-            maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-            associatedReturnables={associatedReturnables}
-            includeReturnables={includeReturnables}
-            retQtySelected={retQtySelected}
-            retQtySelectedPrice={retQtySelectedPrice}
-
-          />
-        </Col>
+        <AddToCart
+          onChange={onChange}
+          unit={unit}
+          unitprice={unitprice}
+          controlName={productId}
+          quantitySelected={quantitySelected}
+          values={unitsForSelectionArray}
+          maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+          associatedReturnables={associatedReturnables}
+          includeReturnables={includeReturnables}
+          retQtySelected={retQtySelected}
+          retQtySelectedPrice={retQtySelectedPrice}
+        />
       </Col>
+
     </div>
   );
 };

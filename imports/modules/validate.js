@@ -89,12 +89,12 @@ export const formValChange = (e, isErrorState, fieldValues) => {
         : '';
       break;
     case name === 'deliveryAddressLongitude':
-      isError.deliveryAddressLongitude = !isLongitude.test(trimmedVal)
+      isError.deliveryAddressLongitude = isLongitude.test(trimmedVal)
         ? ''
         : 'Longitude value seems invalid, please provide a valid longitude value';
       break;
     case name === 'deliveryAddressLatitude':
-      isError.deliveryAddressLatitude = !isLatitude.test(trimmedVal)
+      isError.deliveryAddressLatitude = isLatitude.test(trimmedVal)
         ? ''
         : 'Latitude value seems invalid, please provide a valid latitude value';
       break;

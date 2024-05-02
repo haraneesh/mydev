@@ -123,6 +123,8 @@ export const createNewUser = (user) => {
       deliveryAddress: user.profile.deliveryAddress,
       eatingHealthyMeaning: user.profile.eatingHealthyMeaning || '',
       deliveryPincode: user.profile.deliveryPincode,
+      deliveryAddressLatitude: user.profile.deliveryAddressLatitude,
+      deliveryAddressLongitude: user.profile.deliveryAddressLongitude,
     },
   };
 
@@ -180,6 +182,9 @@ export const createUser = new ValidatedMethod({
     'profile.name.first': { type: String },
     'profile.whMobilePhone': { type: String },
     'profile.deliveryAddress': { type: String },
+    'profile.deliveryPincode': { type: String },
+    'profile.deliveryAddressLatitude': { type: String },
+    'profile.deliveryAddressLongitude': { type: String },
     password: { type: Object, blackbox: true },
     role: { type: String },
     status: { type: Object },

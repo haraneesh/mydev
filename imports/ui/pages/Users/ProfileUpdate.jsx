@@ -68,7 +68,7 @@ export default class ProfileUpdate extends React.Component {
     const user = getUserData();
     createUser.call(user, (error, msg) => {
       if (error) {
-        toast.error(error.reason);
+        toast.error(error.message);
       } else {
         // msg comes as empty from client side method call
         toast.success(`${msg.profile.name.first} ${msg.profile.name.last} has been added.`);

@@ -262,7 +262,7 @@ const ProductsOrderMain = (props) => {
               ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}
             />
           </Col>
-          <Col xs={12}>
+          <Col xs={12} className="m-0 p-0">
             <ListGroup className="products-list">
               {
                 displayProductsByTypeStandardView(
