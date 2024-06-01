@@ -42,9 +42,10 @@ const ProductsOrderMain = (props) => {
       const prdArray = {};
 
       products.forEach((product) => {
+        const sale = (product.unitsForSelection.indexOf('%') !== -1);
         prd = (cartState.cart.productsInCart[product._id])
-          ? cartState.cart.productsInCart[product._id]
-          : { ...product, quantity: 0 };
+          ? { ...cartState.cart.productsInCart[product._id], sale }
+          : { ...product, quantity: 0, sale };
 
         if (prd.associatedReturnables) {
           prd.associatedReturnables.quantity = (prd.associatedReturnables.quantity)
@@ -86,7 +87,7 @@ const ProductsOrderMain = (props) => {
           id="btnSetDeliveryCode"
           title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? '  In Chennai  ' : ' Out of Chennai '}`}
           className="d-inline-flex bg-light"
-          variant="outline-primary"
+          variant="primary"
         >
           <Dropdown.Item
             onClick={() => {
@@ -262,7 +263,7 @@ const ProductsOrderMain = (props) => {
               ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}
             />
           </Col>
-          <Col xs={12} className="m-0 p-0">
+          <Col xs={12} className="p-0">
             <ListGroup className="products-list">
               {
                 displayProductsByTypeStandardView(
@@ -305,7 +306,7 @@ const ProductsOrderMain = (props) => {
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
-          <div className="py-sm-4 py-2 my-1 text-center">
+          <div className="py-sm-4 pt-2 m-0 mt-1 text-center">
             <h2>
               {formHeading}
             </h2>

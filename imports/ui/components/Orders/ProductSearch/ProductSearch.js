@@ -64,7 +64,7 @@ class ProductSearch extends React.Component {
       ? (this.props.getProductsMatchingSearch(searchString /* , 8 */)) : '';
 
     return (
-      <div className="productOrderSearch">
+      <div className="productOrderSearch border-bottom">
         <div className="mb-0 justify-content-center card">
           <div className="card-header">
             <div className="input-group px-sm-5">

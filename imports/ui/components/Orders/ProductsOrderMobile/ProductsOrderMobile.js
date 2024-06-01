@@ -97,7 +97,7 @@ export default class ProductsOrderMobile extends React.Component {
           >
             <Col
               xs={3}
-              className="menuLeft sticky-top pb-5 border-end border-top border-light m-0"
+              className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0"
             >
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>

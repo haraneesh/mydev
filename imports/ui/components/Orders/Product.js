@@ -40,6 +40,7 @@ const Product = ({
           sliderView={sliderView}
           associatedReturnables={product.associatedReturnables}
           includeReturnables={product.includeReturnables}
+          sale={product.sale}
         />
       )
         : (

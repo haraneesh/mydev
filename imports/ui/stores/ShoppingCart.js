@@ -3,6 +3,8 @@ import { saveInLocalStore, getFromLocalStore, removeFromLocalStore } from './loc
 
 import OrderCommon from '../../modules/both/orderCommon';
 
+import { calculateBulkDiscount } from '../../modules/helpers';
+
 const { costOfReturnable } = OrderCommon;
 
 const StoreConstants = {
@@ -10,12 +12,31 @@ const StoreConstants = {
   previousVersions: ['CART'],
 };
 
+const retHashQtyWithDiscount = (unitsForSelection) => {
+  // Step 1: Split the string by ','
+  const subElements = unitsForSelection.split(',');
+
+  // Initialize an empty object to store the key-value pairs
+  const keyValuePairs = {};
+
+  // Step 2 & 3: Split each sub-element by '=' and create the hash
+  subElements.forEach((subElement) => {
+    const [key, value] = subElement.split('=');
+    keyValuePairs[key] = value ? value.replace('%', '') : 0;
+  });
+
+  return keyValuePairs;
+};
+
 const getTotalBillAmountAndCount = (selectedProducts) => {
   let totalBillAmount = 0;
   let countOfItems = 0;
   Object.keys(selectedProducts).forEach((key) => {
     const qty = selectedProducts[key].quantity ? selectedProducts[key].quantity : 0;
-    totalBillAmount += qty * selectedProducts[key].unitprice;
+    const prd = selectedProducts[key];
+    prd.quantitySelected = qty;
+    totalBillAmount += calculateBulkDiscount(prd);
+
     // include the returnables selected
     const { associatedReturnables } = selectedProducts[key];
     if (associatedReturnables && associatedReturnables.quantity > 0) {

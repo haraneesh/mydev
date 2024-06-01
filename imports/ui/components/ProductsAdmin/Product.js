@@ -47,7 +47,16 @@ export const ProductTableHeader = () => (
 */
 
 function FieldGroup({
-  controlType, controlLabel, controlName, updateValue, defaultValue, unitOfSale, choiceValues, displayControlName = false, ...props
+  controlType,
+  controlLabel,
+  controlName,
+  updateValue,
+  defaultValue,
+  unitOfSale,
+  choiceValues,
+  displayControlName = false,
+  help,
+  ...props
 }) {
   const values = choiceValues && choiceValues.slice();
   if (values) {
@@ -86,6 +95,11 @@ function FieldGroup({
         as={controlType === 'textarea' ? 'textarea' : 'input'}
         {...props}
       />
+      {help && (
+      <Form.Text className="text-dark">
+        {help}
+      </Form.Text>
+      )}
 
     </Row>
   );
@@ -477,7 +491,7 @@ export default class Product extends React.Component {
                   displayControlName="true"
                   updateValue={this.handleProductUpsert}
                   defaultValue={product.unitsForSelection}
-                  help
+                  help="Example: 1,2,3=5%,4=10%,5=10%,6=12%"
                 />
               </Col>
             </Row>

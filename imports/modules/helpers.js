@@ -51,7 +51,56 @@ export function getDeliveryDay(date) {
   }
   return `Tomorrow (${weekday[day + 1]})`;
 }
+const retHashQtyWithDiscount = (unitsForSelection) => {
+  // Step 1: Split the string by ','
+  const subElements = unitsForSelection.split(',');
 
+  // Initialize an empty object to store the key-value pairs
+  const keyValuePairs = {};
+
+  // Step 2 & 3: Split each sub-element by '=' and create the hash
+  subElements.forEach((subElement) => {
+    const [key, value] = subElement.split('=');
+    keyValuePairs[key] = value ? value.replace('%', '') : 0;
+  });
+
+  return keyValuePairs;
+};
+function findLastSmallest(inputValue, object) {
+  let lastSmallestKey = null;
+
+  // Get the keys of the object and sort them in descending order
+  const sortedKeys = Object.keys(object).sort((a, b) => parseFloat(b) - parseFloat(a));
+
+  if (inputValue < sortedKeys[sortedKeys.length - 1]) {
+    return sortedKeys[sortedKeys.length - 1];
+  }
+  // Iterate through the sorted keys
+  sortedKeys.forEach((key) => {
+    // Convert key to number (assuming keys are numbers)
+    const keyNumber = parseFloat(key);
+
+    // If the key is smaller than the input value and it's the last smallest one found
+    if (keyNumber < inputValue && (lastSmallestKey === null || keyNumber > lastSmallestKey)) {
+      lastSmallestKey = keyNumber;
+    }
+  });
+
+  return lastSmallestKey;
+}
+export function calculateBulkDiscount(product) {
+  let qty = product.quantitySelected ? product.quantitySelected : 0;
+  const hashQtyDisc = retHashQtyWithDiscount(product.unitsForSelection);
+  const prdSelectionPrice = qty * product.unitprice;
+
+  if (!(qty in hashQtyDisc)) {
+    qty = findLastSmallest(qty, hashQtyDisc);
+  }
+
+  return prdSelectionPrice * (1 - (hashQtyDisc[qty] / 100));
+
+  // return prdSelectionPrice;
+}
 export function getProductUnitPrice(isShopOwnerPrice, productsArray) {
   if (!isShopOwnerPrice) {
     return productsArray.filter((product) => product.availableToOrder === true);

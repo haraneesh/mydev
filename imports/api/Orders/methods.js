@@ -11,6 +11,7 @@ import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 import { Emitter, Events } from '../Events/events';
 import OrderCommon from '../../modules/both/orderCommon';
+import { calculateBulkDiscount } from '../../modules/helpers';
 
 const { costOfReturnable } = OrderCommon;
 
@@ -72,7 +73,10 @@ const calculateOrderTotal = (order, productListId, userId) => {
         totalBillAmount += quantity * product.wSaleBaseUnitPrice;
       }
     } else {
-      totalBillAmount += quantity * product.unitprice;
+      // totalBillAmount += quantity * product.unitprice;
+      totalBillAmount += calculateBulkDiscount({ ...product, quantitySelected: quantity });
+      // calculate bulk discount
+      // console.log(product.unitsForSelection);
       // add cost of returnables
       const { retQtySelected, retQtySelectedPrice } = (
         product.includeReturnables

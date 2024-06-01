@@ -24,7 +24,7 @@ const callAPI = (
   const args = {};
   const accessToken = ZohoAuthenticate.getToken();
 
-  const apiBaseUrl = 'https://books.zoho.com/api/v3';
+  const apiBaseUrl = Meteor.settings.private.zoho.baseApiUrl; // 'https://books.zoho.com/api/v3';
   args.params = (connectionInfo) || setAPICall();
 
   args.headers = {

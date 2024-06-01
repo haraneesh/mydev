@@ -154,6 +154,13 @@ function AcceptPay({
               1. Scan and Pay with any Bharath QR/UPI app,
               <span className="underline"> No fee</span>
             </h6>
+            <p>
+              Do
+              {' '}
+              <b className="text-warning">share</b>
+              {' '}
+              your SODEXO card number with us before you pay for the first time.
+            </p>
             <Row>
               <Col xs={6} sm={6} className="text-center">
                 <h4>UPI</h4>
@@ -164,6 +171,7 @@ function AcceptPay({
                 <img src="/pay/scan-pay-sodexo.jpg" style={{ width: '100%', maxWidth: '20em' }} alt="Scan and Pay via Sodexo" />
               </Col>
             </Row>
+
           </Col>
         </Row>
 

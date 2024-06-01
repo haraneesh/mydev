@@ -39,6 +39,12 @@ function isNumber(value) {
   return !isNaN(value);
 }
 
+// Value can be 1,2,3=5%,6
+function isNumberorNumberPercent(value) {
+  const pattern = new RegExp(/^\d*\.?\d+=\d*\.?\d+%/);
+  return isNumber(value) || pattern.test(value);
+}
+
 export const upsertProduct = new ValidatedMethod({
   name: 'product.upsert',
   validate: Products.schema.validator(),
@@ -51,7 +57,7 @@ export const upsertProduct = new ValidatedMethod({
     product.unitsForSelection = (unitsForSelection) ? unitsForSelection.replace(/\s+/g, '') : '0,1,2,3,4,5,6,7,8,9,10';
     product.returnableUnitsForSelection = (returnableUnitsForSelection) ? returnableUnitsForSelection.replace(/\s+/g, '') : '0=0, 0.5=5, 1=10';
     if (Meteor.isServer) {
-      if ((product.unitsForSelection.split(',').every(isNumber))) {
+      if ((product.unitsForSelection.split(',').every(isNumberorNumberPercent))) {
         if (product.includeReturnables
           && !(product.associatedReturnables._id
           && product.associatedReturnables.returnableUnitsForSelection.split(',').every((elem) => elem.trim().match(/^(\d+(\.\d+)?\s*)=(\s*\d+(\.\d+)?\s*)$/)))) {
@@ -59,7 +65,7 @@ export const upsertProduct = new ValidatedMethod({
         }
         return Products.upsert({ _id: id }, { $set: product });
       }
-      throw new Meteor.Error(403, 'Units for Selection should be numbers');
+      throw new Meteor.Error(403, 'Units for Selection should be of pattern 1,2,3=5%,6');
     }
   },
 });

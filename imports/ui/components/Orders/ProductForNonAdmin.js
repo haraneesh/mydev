@@ -10,34 +10,11 @@ import Icon from '../Icon/Icon';
 import { calcExcessQtyOrdered, InformProductUnavailability } from './ProductFunctions';
 
 import { accountSettings } from '../../../modules/settings';
-import { displayUnitOfSale } from '../../../modules/helpers';
+import { displayUnitOfSale, calculateBulkDiscount } from '../../../modules/helpers';
 
 import OrderCommon from '../../../modules/both/orderCommon';
 
 const { costOfReturnable } = OrderCommon;
-
-const QuantitySelectorWithPrice = ({
-  values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  onChange,
-  unit,
-  unitprice,
-  controlName,
-  quantitySelected,
-}) => (
-  <Form.Select name={controlName} onChange={onChange} value={quantitySelected}>
-    {values.map((selectValue, index) => {
-      const value = parseFloat(selectValue);
-      const cost = formatMoney(value * unitprice, accountSettings);
-      return (
-        <option value={value} key={`option-${index}`}>
-          {' '}
-          {`${displayUnitOfSale(selectValue, unit)} ${cost}`}
-          {' '}
-        </option>
-      );
-    })}
-  </Form.Select>
-);
 
 const QuantitySelector = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -51,13 +28,17 @@ const QuantitySelector = ({
   <div className="row justify-content-center">
     <Col xs={10} className="ps-2 ps-sm-3">
       <Form.Select name={controlName} onChange={onChange} value={quantitySelected} className={sliderView ? 'btn-block w-75' : ''}>
-        {values.map((selectValue, index) => (
-          <option value={parseFloat(selectValue)} key={`option-${index}`}>
-            {' '}
-            {displayUnitOfSale(selectValue, unit)}
-            {' '}
-          </option>
-        ))}
+        {values.map((selectValue, index) => {
+          const slctValue = selectValue.split('=')[0]; // for entries that are like 0.5=5%
+          const discValue = selectValue.split('=')[1];
+          return (
+            <option value={parseFloat(slctValue)} key={`option-${index}`}>
+              {' '}
+              {`${displayUnitOfSale(slctValue, unit)} ${discValue ? ` ,${discValue} discount` : ''}`}
+              {' '}
+            </option>
+          );
+        })}
       </Form.Select>
     </Col>
     <Col xs={2} className="text-left ps-0">
@@ -239,6 +220,7 @@ const ProductForNonAdmin = ({
   associatedReturnables,
   includeReturnables,
   sliderView,
+  sale,
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
@@ -265,6 +247,8 @@ const ProductForNonAdmin = ({
   const imageRow = (<img src={imagePath} alt="" className="item-image no-aliasing-image img-responsive" />);
 
   if (checkout) {
+    const calculatedDiscountPrice = calculateBulkDiscount({ unitprice, unitsForSelection, quantitySelected });
+    const regularPrice = unitprice * quantitySelected;
     return (
       <Row className="pb-4">
         <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
@@ -282,9 +266,19 @@ const ProductForNonAdmin = ({
 
             {!isBasket && (
               <Col xs={12} className="p-0">
-                {formatMoney(
-                  unitprice * quantitySelected,
-                  accountSettings,
+                {formatMoney(calculatedDiscountPrice,
+                  accountSettings)}
+
+                {(calculatedDiscountPrice !== regularPrice) && (
+                <span className="text-muted">
+                  {' '}
+                  <del>
+                    {formatMoney(
+                      regularPrice,
+                      accountSettings,
+                    )}
+                  </del>
+                </span>
                 )}
               </Col>
             )}
@@ -373,6 +367,13 @@ const ProductForNonAdmin = ({
 
   return (
     <div className="product-item text-center my-2">
+      { sale && (
+      <Col xs={12} className="text-left  ps-sm-2 ps-1" style={{ position: 'absolute' }}>
+        <div className="badge bg-warning">
+          SALE
+        </div>
+      </Col>
+      )}
       <Col xs={12} className="item-image-container">
         {imageRow}
       </Col>
@@ -392,15 +393,6 @@ const ProductForNonAdmin = ({
         </div>
       </Col>
       <Col className="mx-auto">
-        {/* <QuantitySelector
-              onChange={onChange}
-              unit={unit}
-              unitprice={unitprice}
-              controlName={productId}
-              quantitySelected={quantitySelected}
-              values={unitsForSelectionArray}
-              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-            /> */}
         <AddToCart
           onChange={onChange}
           unit={unit}
