@@ -28,17 +28,26 @@ export const ListProducts = ({
   const {
     productVegetables,
     productFruits,
+    productGreens,
+    productRice,
+    productWheat,
+    productCereals,
+    productMillets,
     productDhals,
-    productGrains,
-    productSpices,
-    productOils,
-    productFlours,
-    productBatter,
-    productSnacks,
-    productPrepared,
-    productHygiene,
     productSweetners,
+    productSalts,
+    productSpices,
+    productNuts,
+    productDryFruits,
+    productOils,
+    productMilk,
+    productEggs,
+    productPrepared,
+    productDisposables,
+    productBeauty,
+    productRecommended,
     productsNoCategory,
+    productSpecials,
   } = displayProductsByType({
     products,
     isMobile,
@@ -82,19 +91,27 @@ export const ListProducts = ({
 
       {displayWithDivider(productVegetables, constants.ProductTypeName.Vegetables.display_name)}
       {displayWithDivider(productFruits, constants.ProductTypeName.Fruits.display_name)}
-      {displayWithDivider(productGrains, constants.ProductTypeName.Grains.display_name)}
+      {displayWithDivider(productGreens, constants.ProductTypeName.Greens.display_name)}
+      {displayWithDivider(productRice, constants.ProductTypeName.Rice.display_name)}
+      {displayWithDivider(productWheat, constants.ProductTypeName.Wheat.display_name)}
+      {displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_name)}
+      {displayWithDivider(productMillets, constants.ProductTypeName.Millets.display_name)}
       {displayWithDivider(productDhals, constants.ProductTypeName.Dhals.display_name)}
-      {displayWithDivider(productSpices, constants.ProductTypeName.Spices.display_name)}
-      {displayWithDivider(productOils, constants.ProductTypeName.Oils.display_name)}
-      {displayWithDivider(productFlours, constants.ProductTypeName.Flours.display_name)}
-      {displayWithDivider(productBatter, constants.ProductTypeName.Batter.display_name)}
-      {displayWithDivider(productSnacks, constants.ProductTypeName.Snacks.display_name)}
-      {displayWithDivider(productPrepared, constants.ProductTypeName.Prepared.display_name)}
       {displayWithDivider(productSweetners, constants.ProductTypeName.Sweetners.display_name)}
-      {displayWithDivider(productHygiene, constants.ProductTypeName.Hygiene.display_name)}
+      {displayWithDivider(productSalts, constants.ProductTypeName.Salts.display_name)}
+      {displayWithDivider(productSpices, constants.ProductTypeName.Spices.display_name)}
+      {displayWithDivider(productNuts, constants.ProductTypeName.Nuts.display_name)}
+      {displayWithDivider(productDryFruits, constants.ProductTypeName.DryFruits.display_name)}
+      {displayWithDivider(productOils, constants.ProductTypeName.Oils.display_name)}
+      {displayWithDivider(productMilk, constants.ProductTypeName.Milk.display_name)}
+      {displayWithDivider(productEggs, constants.ProductTypeName.Eggs.display_name)}
+      {displayWithDivider(productPrepared, constants.ProductTypeName.Prepared.display_name)}
+      {displayWithDivider(productDisposables, constants.ProductTypeName.Disposables.display_name)}
+      {displayWithDivider(productBeauty, constants.ProductTypeName.Beauty.display_name)}
+      {displayWithDivider(productsNoCategory, constants.ProductTypeName.NoCategory.display_name)}
+      {displayWithDivider(productSpecials, constants.ProductTypeName.Specials.display_name)}
       {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
-
     </Row>
   );
 };
@@ -279,7 +296,11 @@ OrderComment.propTypes = {
   comments: PropTypes.string.isRequired,
 };
 
-export const PrevOrderComplaint = ({ refPrevOrderComplaint, onPrevOrderComplaintChange, prevOrderComplaint }) => (
+export const PrevOrderComplaint = ({
+  refPrevOrderComplaint,
+  onPrevOrderComplaintChange,
+  prevOrderComplaint,
+}) => (
 
   <Row className="py-2">
     <Col className="offset-sm-2 mb-3" sm={8} xs={12}>

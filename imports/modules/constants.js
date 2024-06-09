@@ -62,9 +62,96 @@ DietaryPreferences.names = Object.keys(DietaryPreferences).map((cat) => DietaryP
 DietaryPreferences.displayNames = Object.keys(DietaryPreferences).map((cat) => DietaryPreferences[cat].displayName);
 
 // This for organizing tabs in the order screen
-// const ProductType = ['Vegetables', 'Groceries', 'Batter', 'Hygiene'];
+// const ProductType = ['Vegetables', 'Fruits', 'Greens', 'Rice', 'Wheat', 'Cereals', 'Millets', 'Dhals', 'Sweetners', 'Spices', 'Oils', 'Eggs', 'Flours', 'DryFruits', 'Nuts', 'Millets', 'Beauty', 'Disposables'];
 
 const ProductTypeName = {
+  New: {
+    name: 'New',
+    display_value: 'New',
+  },
+  Vegetables: {
+    name: 'Vegetables',
+    display_value: 'Vegetables',
+  },
+  Fruits: {
+    name: 'Fruits',
+    display_value: 'Fruits',
+  },
+  Greens: {
+    name: 'Greens',
+    display_value: 'Leafy Greens',
+  },
+  Rice: {
+    name: 'Rice',
+    display_value: 'Rice & Products',
+  },
+  Wheat: {
+    name: 'Wheat',
+    display_value: 'Wheat & Products',
+  },
+  Cereals: {
+    name: 'Cereals',
+    display_value: 'Minor Millets & Cereals',
+  },
+  Millets: {
+    name: 'Millets',
+    display_value: 'Millets & Products',
+  },
+  Dhals: {
+    name: 'Dhals',
+    display_value: 'Dals & Lentils',
+  },
+  Sweetners: {
+    name: 'Sweetners',
+    display_value: 'Sugars, Jaggery & Honey',
+  },
+  Salts: {
+    name: 'Salts',
+    display_value: 'Salts',
+  },
+  Spices: {
+    name: 'Spices',
+    display_value: 'Spices, Whole and Powders',
+  },
+  Nuts: {
+    name: 'Nuts',
+    display_value: 'Nuts',
+  },
+  DryFruits: {
+    name: 'DryFruits',
+    display_value: 'Dry Fruits',
+  },
+  Oils: {
+    name: 'Oils',
+    display_value: 'Oils',
+  },
+  Milk: {
+    name: 'Milk',
+    display_value: 'Milk & Milk Products',
+  },
+  Eggs: {
+    name: 'Eggs',
+    display_value: 'Eggs & Mushrooms',
+  },
+  Prepared: {
+    name: 'Prepared',
+    display_value: 'Prepared Foods',
+  },
+  Disposables: {
+    name: 'Disposables',
+    display_value: 'Disposables',
+  },
+  Beauty: {
+    name: 'Beauty',
+    display_value: 'Beauty Products',
+  },
+  Returnable: {
+    name: 'Returnable',
+    display_name: 'Returnable',
+  },
+};
+
+const ProductTypeName1 = {
   New: {
     name: 'New',
     display_value: 'New',

@@ -29,6 +29,7 @@ export default class ProductsOrderMobile extends React.Component {
     };
 
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
+    this.returnSideBarNavLink = this.returnSideBarNavLink.bind(this);
     this.displayProductsByTypeStandardView = this.displayProductsByTypeStandardView.bind(this);
   }
 
@@ -67,20 +68,39 @@ export default class ProductsOrderMobile extends React.Component {
     return this.displayProductsByTypeStandardView(productGroups);
   }
 
+  returnSideBarNavLink({ displayText, imgName, eventKey }) {
+    return (
+      <Nav.Item>
+        <Nav.Link eventKey={eventKey} style={{ padding: 0 }}>
+          <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="menuIcon" title={displayText} imgName={imgName} />
+        </Nav.Link>
+      </Nav.Item>
+    );
+  }
+
   displayProductsByTypeStandardView(productGroups) {
-    const { productVegetables } = productGroups;
-    const { productFruits } = productGroups;
-    const { productDhals } = productGroups;
-    const { productGrains } = productGroups;
-    const { productSpices } = productGroups;
-    const { productOils } = productGroups;
-    const { productPrepared } = productGroups;
-    const { productHygiene } = productGroups;
-    const { productSweetners } = productGroups;
-    const { productSpecials } = productGroups;
-    const { productFlours } = productGroups;
-    const { productBatter } = productGroups;
-    const { productSnacks } = productGroups;
+    const {
+      productVegetables,
+      productFruits,
+      productGreens,
+      productRice,
+      productWheat,
+      productCereals,
+      productMillets,
+      productDhals,
+      productSweetners,
+      productSalts,
+      productSpices,
+      productNuts,
+      productDryFruits,
+      productOils,
+      productMilk,
+      productEggs,
+      productPrepared,
+      productDisposables,
+      productBeauty,
+      productSpecials,
+    } = productGroups;
 
     const productRecommended = [];
 
@@ -100,88 +120,50 @@ export default class ProductsOrderMobile extends React.Component {
               className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0"
             >
               <Nav variant="pills" className="flex-column">
-                <Nav.Item>
-                  <Nav.Link eventKey="specials" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="specials_bk_ph" title="New Arrivals" />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="grains" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="grains_bk_ph" title={constants.ProductTypeName.Grains.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="flours" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="flours_bk_ph" title={constants.ProductTypeName.Flours.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="dhals" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="dhals_bk_ph" title={constants.ProductTypeName.Dhals.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="batter" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="batter_bk_ph" title={constants.ProductTypeName.Batter.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="vegetables" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="vegetables_bk_ph" title={constants.ProductTypeName.Vegetables.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="fruits" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="fruits_bk_ph" title={constants.ProductTypeName.Fruits.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="spices" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="spices_bk_ph" title={constants.ProductTypeName.Spices.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="oils" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="oils_bk_ph" title={constants.ProductTypeName.Oils.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="sweetners" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="swt_bk_ph" title={constants.ProductTypeName.Sweetners.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="snack" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="snack_bk_ph" title={constants.ProductTypeName.Snacks.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="prepared" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="prepared_bk_ph" title={constants.ProductTypeName.Prepared.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey="hygiene" style={{ padding: 0 }}>
-                    <SideBarDisplayHeader onclick={() => this.handlePanelSelect('order-tab')} clName="hyg_bk_ph" title={constants.ProductTypeName.Hygiene.display_name} />
-                  </Nav.Link>
-                </Nav.Item>
+                { (this.returnSideBarNavLink({ displayText: 'New Arrivals', imgName: 'imgSpecials', eventKey: 'specials' }))}
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Vegetables.display_value, imgName: 'imgVegetables', eventKey: 'vegetables' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Fruits.display_value, imgName: 'imgFruits', eventKey: 'fruits' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Greens.display_value, imgName: 'imgGreens', eventKey: 'greens' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Rice.display_value, imgName: 'imgRice', eventKey: 'rice' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Wheat.display_value, imgName: 'imgWheat', eventKey: 'wheat' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Cereals.display_value, imgName: 'imgCereals', eventKey: 'cereals' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Millets.display_value, imgName: 'imgMillets', eventKey: 'millets' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Dhals.display_value, imgName: 'imgDhals', eventKey: 'dhals' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Sweetners.display_value, imgName: 'imgSweetners', eventKey: 'sweetners' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Salts.display_value, imgName: 'imgSalts', eventKey: 'salts' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Spices.display_value, imgName: 'imgSpices', eventKey: 'spices' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Nuts.display_value, imgName: 'imgNuts', eventKey: 'nuts' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.DryFruits.display_value, imgName: 'imgDryFruits', eventKey: 'dryFruits' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Oils.display_value, imgName: 'imgOils', eventKey: 'oils' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Milk.display_value, imgName: 'imgMilk', eventKey: 'milk' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Eggs.display_value, imgName: 'imgEggs', eventKey: 'eggs' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Prepared.display_value, imgName: 'imgPrepared', eventKey: 'prepared' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Disposables.display_value, imgName: 'imgDisposables', eventKey: 'disposables' })) }
+                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Beauty.display_value, imgName: 'imgBeauty', eventKey: 'beauty' })) }
               </Nav>
             </Col>
             <Col>
               <Tab.Content className="mx-auto">
                 <Tab.Pane eventKey="specials"><Row>{productSpecials}</Row></Tab.Pane>
-                <Tab.Pane eventKey="grains"><Row>{productGrains}</Row></Tab.Pane>
-                <Tab.Pane eventKey="flours"><Row>{productFlours}</Row></Tab.Pane>
-                <Tab.Pane eventKey="dhals"><Row>{productDhals}</Row></Tab.Pane>
-                <Tab.Pane eventKey="batter"><Row>{productBatter}</Row></Tab.Pane>
                 <Tab.Pane eventKey="vegetables"><Row>{productVegetables}</Row></Tab.Pane>
                 <Tab.Pane eventKey="fruits"><Row>{productFruits}</Row></Tab.Pane>
-                <Tab.Pane eventKey="spices"><Row>{productSpices}</Row></Tab.Pane>
-                <Tab.Pane eventKey="oils"><Row>{productOils}</Row></Tab.Pane>
+                <Tab.Pane eventKey="greens"><Row>{productGreens}</Row></Tab.Pane>
+                <Tab.Pane eventKey="rice"><Row>{productRice}</Row></Tab.Pane>
+                <Tab.Pane eventKey="wheat"><Row>{productWheat}</Row></Tab.Pane>
+                <Tab.Pane eventKey="cereals"><Row>{productCereals}</Row></Tab.Pane>
+                <Tab.Pane eventKey="millets"><Row>{productMillets}</Row></Tab.Pane>
+                <Tab.Pane eventKey="dhals"><Row>{productDhals}</Row></Tab.Pane>
                 <Tab.Pane eventKey="sweetners"><Row>{productSweetners}</Row></Tab.Pane>
-                <Tab.Pane eventKey="snack"><Row>{productSnacks}</Row></Tab.Pane>
+                <Tab.Pane eventKey="salts"><Row>{productSalts}</Row></Tab.Pane>
+                <Tab.Pane eventKey="spices"><Row>{productSpices}</Row></Tab.Pane>
+                <Tab.Pane eventKey="nuts"><Row>{productNuts}</Row></Tab.Pane>
+                <Tab.Pane eventKey="dryFruits"><Row>{productDryFruits}</Row></Tab.Pane>
+                <Tab.Pane eventKey="oils"><Row>{productOils}</Row></Tab.Pane>
+                <Tab.Pane eventKey="milk"><Row>{productMilk}</Row></Tab.Pane>
+                <Tab.Pane eventKey="eggs"><Row>{productEggs}</Row></Tab.Pane>
                 <Tab.Pane eventKey="prepared"><Row>{productPrepared}</Row></Tab.Pane>
-                <Tab.Pane eventKey="hygiene"><Row>{productHygiene}</Row></Tab.Pane>
+                <Tab.Pane eventKey="disposables"><Row>{productDisposables}</Row></Tab.Pane>
+                <Tab.Pane eventKey="beauty"><Row>{productBeauty}</Row></Tab.Pane>
               </Tab.Content>
             </Col>
           </Row>

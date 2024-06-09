@@ -149,24 +149,34 @@ export function displayProductsByType({
 }) {
   let productGroupMetaHash = {};
   // Grouping product categories by tabs
+  // 'Vegetables', 'Fruits', 'Dhals', 'Greens', 'Spices', 'Oils', 'Rice', 'Wheat',
+  //  'Sweetners',   'Eggs', 'Flours', 'DryFruits', 'Nuts', 'Cereals',
+  // 'Millets', 'Beauty', 'Disposables'
   const productVegetables = [];
   const productFruits = [];
+  const productGreens = [];
+  const productRice = [];
+  const productWheat = [];
+  const productCereals = [];
+  const productMillets = [];
   const productDhals = [];
-  const productGrains = [];
-  const productSpices = [];
-  const productOils = [];
-  const productPrepared = [];
-  const productHygiene = [];
-  const productSpecials = [];
   const productSweetners = [];
-  const productFlours = [];
-  const productBatter = [];
-  const productSnacks = [];
+  const productSalts = [];
+  const productSpices = [];
+  const productNuts = [];
+  const productDryFruits = [];
+  const productOils = [];
+  const productMilk = [];
+  const productEggs = [];
+  const productPrepared = [];
+  const productDisposables = [];
+  const productBeauty = [];
   const productRecommended = [];
   const productsNoCategory = [];
+  const productSpecials = [];
 
   const checkout = !!(cartScreen);
-  // const ProductType = 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners';
+
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
@@ -219,55 +229,90 @@ export function displayProductsByType({
         tempKey = `fruit-${index}`;
         tempType = 'productFruits';
         break;
-      case (constants.ProductType[3] === product.type): // Dhals
+      case (constants.ProductType[3] === product.type): // Greens
+        tempProductList = productGreens;
+        tempKey = `green-${index}`;
+        tempType = 'productGreens';
+        break;
+      case (constants.ProductType[4] === product.type): // Rice
+        tempProductList = productRice;
+        tempKey = `rice-${index}`;
+        tempType = 'productRice';
+        break;
+      case (constants.ProductType[5] === product.type): // Wheat
+        tempProductList = productWheat;
+        tempKey = `wheat-${index}`;
+        tempType = 'productWheat';
+        break;
+      case (constants.ProductType[6] === product.type): // Cereals
+        tempProductList = productCereals;
+        tempKey = `cereals-${index}`;
+        tempType = 'productCereals';
+        break;
+      case (constants.ProductType[7] === product.type): // Millets
+        tempProductList = productMillets;
+        tempKey = `millets-${index}`;
+        tempType = 'productMillets';
+        break;
+      case (constants.ProductType[8] === product.type): // Dhals
         tempProductList = productDhals;
-        tempKey = `dhal-${index}`;
+        tempKey = `dhals-${index}`;
         tempType = 'productDhals';
-        break;
-      case (constants.ProductType[4] === product.type): // Grains
-        tempProductList = productGrains;
-        tempKey = `grain-${index}`;
-        tempType = 'productGrains';
-        break;
-      case (constants.ProductType[5] === product.type): // Spice
-        tempProductList = productSpices;
-        tempKey = `spice-${index}`;
-        tempType = 'productSpices';
-        break;
-      case (constants.ProductType[6] === product.type): // Oils
-        tempProductList = productOils;
-        tempKey = `oil-${index}`;
-        tempType = 'productOils';
-        break;
-      case (constants.ProductType[7] === product.type): // Prepared
-        tempProductList = productPrepared;
-        tempKey = `processed-${index}`;
-        tempType = 'productPrepared';
-        break;
-      case (constants.ProductType[8] === product.type): // Hygiene
-        tempProductList = productHygiene;
-        tempKey = `hygiene-${index}`;
-        tempType = 'productHygiene';
         break;
       case (constants.ProductType[9] === product.type): // Sweetners
         tempProductList = productSweetners;
         tempKey = `sweetners-${index}`;
         tempType = 'productSweetners';
         break;
-      case (constants.ProductType[10] === product.type): // Flours
-        tempProductList = productFlours;
-        tempKey = `flours-${index}`;
-        tempType = 'productFlours';
+      case (constants.ProductType[10] === product.type): // Salts
+        tempProductList = productSalts;
+        tempKey = `salts-${index}`;
+        tempType = 'productSalts';
         break;
-      case (constants.ProductType[11] === product.type): // Batter
-        tempProductList = productBatter;
-        tempKey = `batter-${index}`;
-        tempType = 'productBatter';
+      case (constants.ProductType[11] === product.type): // Spices
+        tempProductList = productSpices;
+        tempKey = `spices-${index}`;
+        tempType = 'productSpices';
         break;
-      case (constants.ProductType[12] === product.type): // Snacks
-        tempProductList = productSnacks;
-        tempKey = `snacks-${index}`;
-        tempType = 'productSnacks';
+      case (constants.ProductType[12] === product.type): // Nuts
+        tempProductList = productNuts;
+        tempKey = `nuts-${index}`;
+        tempType = 'productNuts';
+        break;
+      case (constants.ProductType[13] === product.type): // Dry Fruit
+        tempProductList = productDryFruits;
+        tempKey = `dryFruit-${index}`;
+        tempType = 'productDryFruits';
+        break;
+      case (constants.ProductType[14] === product.type): // Oils
+        tempProductList = productOils;
+        tempKey = `oils-${index}`;
+        tempType = 'productOils';
+        break;
+      case (constants.ProductType[15] === product.type): // Milk
+        tempProductList = productMilk;
+        tempKey = `milk-${index}`;
+        tempType = 'productMilk';
+        break;
+      case (constants.ProductType[16] === product.type): // Eggs
+        tempProductList = productEggs;
+        tempKey = `eggs-${index}`;
+        tempType = 'productEggs';
+        break;
+      case (constants.ProductType[17] === product.type): // Prepared
+        tempProductList = productPrepared;
+        tempKey = `prepared-${index}`;
+        tempType = 'productPrepared';
+        break;
+      case (constants.ProductType[18] === product.type): // Disposables
+        tempProductList = productDisposables;
+        tempKey = `disposables-${index}`;
+        tempType = 'productDisposables';
+        break;
+      case (constants.ProductType[19] === product.type): // Beauty
+        tempProductList = productBeauty;
+        tempKey = `beauty-${index}`;
+        tempType = 'productBeauty';
         break;
       default:
         tempProductList = productsNoCategory;
@@ -306,17 +351,23 @@ export function displayProductsByType({
   return {
     productVegetables,
     productFruits,
+    productGreens,
+    productRice,
+    productWheat,
+    productCereals,
+    productMillets,
     productDhals,
-    productGrains,
-    productSpices,
-    productOils,
-    productPrepared,
-    productHygiene,
-    productSpecials,
     productSweetners,
-    productFlours,
-    productBatter,
-    productSnacks,
+    productSalts,
+    productSpices,
+    productNuts,
+    productDryFruits,
+    productOils,
+    productEggs,
+    productMilk,
+    productDisposables,
+    productBeauty,
+    productSpecials,
     productRecommended,
     productsNoCategory,
     isMobile,
