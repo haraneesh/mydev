@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { isDeviceMobile } from '../../../../modules/helpers';
-import Product from '../Product';
 import constants from '../../../../modules/constants';
 
 export const OrderFooter = ({
@@ -50,11 +49,13 @@ OrderFooter.propTypes = {
 };
 
 export const SideBarDisplayHeader = ({
-  clName, title, onclick,
+  clName, title, onclick, imgName,
 }) => (
   <div onClick={onclick} className="productCatHead row pb-2">
-    <Col sm={3} className={`productCatHeadIcon productCat_${clName}`} />
-    <Col xs={12} sm={9} className="pe-1">
+    {/* <Col sm={3} className={`productCatHeadIcon productCat_${clName}`} /> */}
+    <img className="col-sm-3 col-xs-12 mx-auto productCatImg" src={`/app/${imgName}.png`} alt={`${title}`} />
+
+    <Col xs={12} sm={9} className="pe-1 mx-auto text-center-xs">
       <p style={{ marginBottom: '0px', fontSize: '90%' }}>
         <span style={{ verticalAlign: 'middle' }}>
           {title}
@@ -142,6 +143,10 @@ const incrementMetaWithOrderCount = (productGroupMetaHash, productType, product)
   return metaHash;
 };
 
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+}
+
 export function displayProductsByType({
   products, isMobile, isAdmin, isShopOwner, updateProductQuantity,
   wasProductOrderedPreviously, cartScreen, isBasket,
@@ -180,7 +185,16 @@ export function displayProductsByType({
   _.map(products, (product, index) => {
     if (!!wasProductOrderedPreviously && wasProductOrderedPreviously(product._id)) {
       productRecommended.push(
-        <Product isMobile={isMobile} key={`recommended-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
+        {
+          isMobile,
+          key: `recommended-${index}`,
+          updateProductQuantity,
+          product,
+          isAdmin,
+          isShopOwner,
+          checkout,
+          isBasket,
+        },
       );
       productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, 'productRecommended', product);
     }
@@ -194,22 +208,17 @@ export function displayProductsByType({
       }
 
       productSpecials.push(
-        <Product isMobile={isMobile} key={`special-${index}`} updateProductQuantity={updateProductQuantity} product={product} isAdmin={isAdmin || isShopOwner} checkout={checkout} isBasket={isBasket} />,
+        {
+          isMobile,
+          key: `special-${index}`,
+          updateProductQuantity,
+          product,
+          isAdmin,
+          isShopOwner,
+          checkout,
+          isBasket,
+        },
       );
-
-      /* if (!(isAdmin || isShopOwner)) {
-        if (isDeviceMobile() && productSpecials.length % 3 === 2) {
-          productSpecials.push(
-            <div className="clearfix nextRow" />,
-          );
-        }
-
-        if (!isDeviceMobile() && productSpecials.length % 5 === 4) {
-          productSpecials.push(
-            <div className="clearfix nextRow" />,
-          );
-        }
-      } */
 
       productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, 'productSpecials', product);
     }
@@ -219,97 +228,97 @@ export function displayProductsByType({
     let tempType = '';
 
     switch (true) {
-      case (constants.ProductType[1] === product.type): // Vegetables
+      case (constants.ProductTypeName.Vegetables.name === product.type): // Vegetables
         tempProductList = productVegetables;
         tempKey = `vegetable-${index}`;
         tempType = 'productVegetables';
         break;
-      case (constants.ProductType[2] === product.type): // Fruits
+      case (constants.ProductTypeName.Fruits.name === product.type): // Fruits
         tempProductList = productFruits;
         tempKey = `fruit-${index}`;
         tempType = 'productFruits';
         break;
-      case (constants.ProductType[3] === product.type): // Greens
+      case (constants.ProductTypeName.Greens.name === product.type): // Greens
         tempProductList = productGreens;
         tempKey = `green-${index}`;
         tempType = 'productGreens';
         break;
-      case (constants.ProductType[4] === product.type): // Rice
+      case (constants.ProductTypeName.Rice.name === product.type): // Rice
         tempProductList = productRice;
         tempKey = `rice-${index}`;
         tempType = 'productRice';
         break;
-      case (constants.ProductType[5] === product.type): // Wheat
+      case (constants.ProductTypeName.Wheat.name === product.type): // Wheat
         tempProductList = productWheat;
         tempKey = `wheat-${index}`;
         tempType = 'productWheat';
         break;
-      case (constants.ProductType[6] === product.type): // Cereals
+      case (constants.ProductTypeName.Cereals.name === product.type): // Cereals
         tempProductList = productCereals;
         tempKey = `cereals-${index}`;
         tempType = 'productCereals';
         break;
-      case (constants.ProductType[7] === product.type): // Millets
+      case (constants.ProductTypeName.Millets.name === product.type): // Millets
         tempProductList = productMillets;
         tempKey = `millets-${index}`;
         tempType = 'productMillets';
         break;
-      case (constants.ProductType[8] === product.type): // Dhals
+      case (constants.ProductTypeName.Dhals.name === product.type): // Dhals
         tempProductList = productDhals;
         tempKey = `dhals-${index}`;
         tempType = 'productDhals';
         break;
-      case (constants.ProductType[9] === product.type): // Sweetners
+      case (constants.ProductTypeName.Sweetners.name === product.type): // Sweetners
         tempProductList = productSweetners;
         tempKey = `sweetners-${index}`;
         tempType = 'productSweetners';
         break;
-      case (constants.ProductType[10] === product.type): // Salts
+      case (constants.ProductTypeName.Salts.name === product.type): // Salts
         tempProductList = productSalts;
         tempKey = `salts-${index}`;
         tempType = 'productSalts';
         break;
-      case (constants.ProductType[11] === product.type): // Spices
+      case (constants.ProductTypeName.Spices.name === product.type): // Spices
         tempProductList = productSpices;
         tempKey = `spices-${index}`;
         tempType = 'productSpices';
         break;
-      case (constants.ProductType[12] === product.type): // Nuts
+      case (constants.ProductTypeName.Nuts.name === product.type): // Nuts
         tempProductList = productNuts;
         tempKey = `nuts-${index}`;
         tempType = 'productNuts';
         break;
-      case (constants.ProductType[13] === product.type): // Dry Fruit
+      case (constants.ProductTypeName.DryFruits.name === product.type): // Dry Fruit
         tempProductList = productDryFruits;
         tempKey = `dryFruit-${index}`;
         tempType = 'productDryFruits';
         break;
-      case (constants.ProductType[14] === product.type): // Oils
+      case (constants.ProductTypeName.Oils.name === product.type): // Oils
         tempProductList = productOils;
         tempKey = `oils-${index}`;
         tempType = 'productOils';
         break;
-      case (constants.ProductType[15] === product.type): // Milk
+      case (constants.ProductTypeName.Milk.name === product.type):
         tempProductList = productMilk;
         tempKey = `milk-${index}`;
         tempType = 'productMilk';
         break;
-      case (constants.ProductType[16] === product.type): // Eggs
+      case (constants.ProductTypeName.Eggs.name === product.type): // Eggs
         tempProductList = productEggs;
         tempKey = `eggs-${index}`;
         tempType = 'productEggs';
         break;
-      case (constants.ProductType[17] === product.type): // Prepared
+      case (constants.ProductTypeName.Prepared.name === product.type): // Prepared
         tempProductList = productPrepared;
         tempKey = `prepared-${index}`;
         tempType = 'productPrepared';
         break;
-      case (constants.ProductType[18] === product.type): // Disposables
+      case (constants.ProductTypeName.Disposables.name === product.type): // Disposables
         tempProductList = productDisposables;
         tempKey = `disposables-${index}`;
         tempType = 'productDisposables';
         break;
-      case (constants.ProductType[19] === product.type): // Beauty
+      case (constants.ProductTypeName.Beauty.name === product.type): // Beauty
         tempProductList = productBeauty;
         tempKey = `beauty-${index}`;
         tempType = 'productBeauty';
@@ -322,29 +331,17 @@ export function displayProductsByType({
     }
 
     tempProductList.push(
-      <Product
-        isMobile={isMobile}
-        key={tempKey}
-        updateProductQuantity={updateProductQuantity}
-        product={product}
-        isAdmin={isAdmin || isShopOwner}
-        checkout={checkout}
-        isBasket={isBasket}
-      />,
+      {
+        isMobile,
+        key: tempKey,
+        updateProductQuantity,
+        product,
+        isAdmin,
+        isShopOwner,
+        checkout,
+        isBasket,
+      },
     );
-    /* if (!(isAdmin || isShopOwner)) {
-      if (isDeviceMobile() && tempProductList.length % 3 === 2) {
-        tempProductList.push(
-          <div className="clearfix nextRow" />,
-        );
-      }
-
-      if (!isDeviceMobile() && tempProductList.length % 5 === 4) {
-        tempProductList.push(
-          <div className="clearfix nextRow" />,
-        );
-      }
-    } */
     productGroupMetaHash = incrementMetaWithOrderCount(productGroupMetaHash, tempType, product);
   });
 

@@ -24,6 +24,17 @@ export function isChennaiPinCode(pinCode) {
   return false;
 }
 
+export function toTitleCase(str) {
+  // Remove leading and trailing white spaces
+  let trimmedStr = str.trim();
+
+  // Replace multiple spaces with a single space
+  trimmedStr = trimmedStr.replace(/\s+/g, ' ');
+
+  // Convert to title case
+  return trimmedStr.toLowerCase().split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
 export function daysInWeek() {
   const weekday = new Array(7);
   weekday[0] = 'Sunday';

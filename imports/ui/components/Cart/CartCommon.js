@@ -10,17 +10,35 @@ import constants from '../../../modules/constants';
 import { accountSettings } from '../../../modules/settings';
 import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
-const displayWithDivider = (displayArray, displayText) => (
-  displayArray && displayArray.length > 0 && (
+const displayWithDivider = (displayArray, displayText) => {
+  const displayBatch = [];
+  if (!(displayArray && displayArray.length > 0)) return (<></>);
+
+  displayArray.map((p) => {
+    displayBatch.push(
+      <Product
+        isMobile={p.isMobile}
+        key={p.tempKey}
+        updateProductQuantity={p.updateProductQuantity}
+        product={p.product}
+        isAdmin={p.isAdmin || p.isShopOwner}
+        checkout={p.checkout}
+        isBasket={p.isBasket}
+      />,
+    );
+  });
+
+  return (
     <div style={{ borderBottomWidth: '0px' }}>
       <div className="card-header p-3 text-start" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
         <small className="text-uppercase">{displayText}</small>
       </div>
       <div className="card-body p-0">
-        {displayArray}
+        {displayBatch}
       </div>
     </div>
-  ));
+  );
+};
 
 export const ListProducts = ({
   products, deletedProducts, updateProductQuantity, isMobile, isAdmin, isShopOwner, isDeliveryInChennai,
@@ -45,8 +63,8 @@ export const ListProducts = ({
     productPrepared,
     productDisposables,
     productBeauty,
-    productRecommended,
     productsNoCategory,
+    productRecommended,
     productSpecials,
   } = displayProductsByType({
     products,
@@ -63,14 +81,15 @@ export const ListProducts = ({
     const product = deletedProducts[key];
     if (product.quantity > 0 || product.removedDuringCheckout) {
       chosenButDeleted.push(
-        <Product
-          isMobile={isMobile}
-          key={`review-${index}`}
-          updateProductQuantity={updateProductQuantity}
-          product={product}
-          isAdmin={isAdmin || isShopOwner}
-          checkout
-        />,
+        {
+          isMobile,
+          key: `review-${index}`,
+          updateProductQuantity,
+          product,
+          isAdmin,
+          isShopOwner,
+          checkout: true,
+        },
       );
     }
   });
@@ -89,27 +108,25 @@ export const ListProducts = ({
         </Col>
       </Row>
 
-      {displayWithDivider(productVegetables, constants.ProductTypeName.Vegetables.display_name)}
-      {displayWithDivider(productFruits, constants.ProductTypeName.Fruits.display_name)}
-      {displayWithDivider(productGreens, constants.ProductTypeName.Greens.display_name)}
-      {displayWithDivider(productRice, constants.ProductTypeName.Rice.display_name)}
-      {displayWithDivider(productWheat, constants.ProductTypeName.Wheat.display_name)}
-      {displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_name)}
-      {displayWithDivider(productMillets, constants.ProductTypeName.Millets.display_name)}
-      {displayWithDivider(productDhals, constants.ProductTypeName.Dhals.display_name)}
-      {displayWithDivider(productSweetners, constants.ProductTypeName.Sweetners.display_name)}
-      {displayWithDivider(productSalts, constants.ProductTypeName.Salts.display_name)}
-      {displayWithDivider(productSpices, constants.ProductTypeName.Spices.display_name)}
-      {displayWithDivider(productNuts, constants.ProductTypeName.Nuts.display_name)}
-      {displayWithDivider(productDryFruits, constants.ProductTypeName.DryFruits.display_name)}
-      {displayWithDivider(productOils, constants.ProductTypeName.Oils.display_name)}
-      {displayWithDivider(productMilk, constants.ProductTypeName.Milk.display_name)}
-      {displayWithDivider(productEggs, constants.ProductTypeName.Eggs.display_name)}
-      {displayWithDivider(productPrepared, constants.ProductTypeName.Prepared.display_name)}
-      {displayWithDivider(productDisposables, constants.ProductTypeName.Disposables.display_name)}
-      {displayWithDivider(productBeauty, constants.ProductTypeName.Beauty.display_name)}
-      {displayWithDivider(productsNoCategory, constants.ProductTypeName.NoCategory.display_name)}
-      {displayWithDivider(productSpecials, constants.ProductTypeName.Specials.display_name)}
+      {displayWithDivider(productVegetables, constants.ProductTypeName.Vegetables.display_value)}
+      {displayWithDivider(productFruits, constants.ProductTypeName.Fruits.display_value)}
+      {displayWithDivider(productGreens, constants.ProductTypeName.Greens.display_value)}
+      {displayWithDivider(productRice, constants.ProductTypeName.Rice.display_value)}
+      {displayWithDivider(productWheat, constants.ProductTypeName.Wheat.display_value)}
+      {displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_value)}
+      {displayWithDivider(productMillets, constants.ProductTypeName.Millets.display_value)}
+      {displayWithDivider(productDhals, constants.ProductTypeName.Dhals.display_value)}
+      {displayWithDivider(productSweetners, constants.ProductTypeName.Sweetners.display_value)}
+      {displayWithDivider(productSalts, constants.ProductTypeName.Salts.display_value)}
+      {displayWithDivider(productSpices, constants.ProductTypeName.Spices.display_value)}
+      {displayWithDivider(productNuts, constants.ProductTypeName.Nuts.display_value)}
+      {displayWithDivider(productDryFruits, constants.ProductTypeName.DryFruits.display_value)}
+      {displayWithDivider(productOils, constants.ProductTypeName.Oils.display_value)}
+      {displayWithDivider(productMilk, constants.ProductTypeName.Milk.display_value)}
+      {displayWithDivider(productEggs, constants.ProductTypeName.Eggs.display_value)}
+      {displayWithDivider(productPrepared, constants.ProductTypeName.Prepared.display_value)}
+      {displayWithDivider(productDisposables, constants.ProductTypeName.Disposables.display_value)}
+      {displayWithDivider(productBeauty, constants.ProductTypeName.Beauty.display_value)}
       {displayWithDivider(productsNoCategory, 'Others')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
     </Row>
