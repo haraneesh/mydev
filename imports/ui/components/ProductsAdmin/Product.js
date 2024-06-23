@@ -420,7 +420,7 @@ export default class Product extends React.Component {
                   displayControlName="true"
                   updateValue={this.handleProductUpsert}
                   defaultValue={product.type}
-                  choiceValues={constants.ProductType}
+                  choiceValues={constants.ProductTypeNameArray}
                   help
                 />
               </Col>

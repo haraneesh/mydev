@@ -212,7 +212,7 @@ const ProductTypeName1 = {
 
 const ReturnProductType = { name: 'Returnable', value: 'Returnable' };
 // const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners', ReturnProductType.name];
-const ProductTypeNameArray = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].name);
+const ProductTypeNameArray = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].name).sort((a, b) => a.localeCompare(b));
 // const ProductTypeDisplayNames = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].displayName);
 /*
 Saved - customer saved the current selection, with the intent to resume.
