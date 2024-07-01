@@ -9,7 +9,7 @@ Meteor.methods({
 
     const searchRecord = {
       searchString,
-      userId: this.userId,
+      userId: (this.userId) ? this.userId : '',
     };
 
     const ifExistsSrch = Search.findOne(searchRecord);

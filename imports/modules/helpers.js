@@ -72,7 +72,7 @@ const retHashQtyWithDiscount = (unitsForSelection) => {
   // Step 2 & 3: Split each sub-element by '=' and create the hash
   subElements.forEach((subElement) => {
     const [key, value] = subElement.split('=');
-    keyValuePairs[key] = value ? value.replace('%', '') : 0;
+    keyValuePairs[parseFloat(key)] = value ? value.replace('%', '') : 0;
   });
 
   return keyValuePairs;
