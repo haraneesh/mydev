@@ -113,7 +113,7 @@ export const ListProducts = ({
       {displayWithDivider(productGreens, constants.ProductTypeName.Greens.display_value)}
       {displayWithDivider(productRice, constants.ProductTypeName.Rice.display_value)}
       {displayWithDivider(productWheat, constants.ProductTypeName.Wheat.display_value)}
-      {displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_value)}
+      {/* displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_value) */}
       {displayWithDivider(productMillets, constants.ProductTypeName.Millets.display_value)}
       {displayWithDivider(productDhals, constants.ProductTypeName.Dhals.display_value)}
       {displayWithDivider(productSweetners, constants.ProductTypeName.Sweetners.display_value)}

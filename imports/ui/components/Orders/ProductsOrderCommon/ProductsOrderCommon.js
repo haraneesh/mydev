@@ -253,11 +253,11 @@ export function displayProductsByType({
         tempKey = `wheat-${index}`;
         tempType = 'productWheat';
         break;
-      case (constants.ProductTypeName.Cereals.name === product.type): // Cereals
+      /* case (constants.ProductTypeName.Cereals.name === product.type): // Cereals
         tempProductList = productCereals;
         tempKey = `cereals-${index}`;
         tempType = 'productCereals';
-        break;
+        break; */
       case (constants.ProductTypeName.Millets.name === product.type): // Millets
         tempProductList = productMillets;
         tempKey = `millets-${index}`;
@@ -365,6 +365,7 @@ export function displayProductsByType({
     productDisposables,
     productBeauty,
     productSpecials,
+    productPrepared,
     productRecommended,
     productsNoCategory,
     isMobile,

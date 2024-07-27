@@ -89,10 +89,12 @@ const ProductTypeName = {
     name: 'Wheat',
     display_value: 'Wheat & Products',
   },
+  /*
   Cereals: {
     name: 'Cereals',
     display_value: 'Minor Millets & Cereals',
   },
+  */
   Millets: {
     name: 'Millets',
     display_value: 'Millets & Products',
@@ -127,7 +129,7 @@ const ProductTypeName = {
   },
   Milk: {
     name: 'Milk',
-    display_value: 'Milk & Milk Products',
+    display_value: 'Milk & Products',
   },
   Eggs: {
     name: 'Eggs',

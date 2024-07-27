@@ -184,10 +184,8 @@ export default class ProductsOrderMobile extends React.Component {
           }}
           >
             <Col
-              xs={3}
               className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0"
             >
-
               <Nav variant="pills" style={{ flexFlow: 'column' }}>
                 { (this.returnSideBarNavLink({ displayText: 'New Arrivals', imgName: 'imgSpecials', eventKey: 'specials' }))}
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Vegetables.display_value, imgName: 'imgVegetables', eventKey: 'vegetables' })) }
@@ -195,7 +193,7 @@ export default class ProductsOrderMobile extends React.Component {
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Greens.display_value, imgName: 'imgGreens', eventKey: 'greens' })) }
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Rice.display_value, imgName: 'imgRice', eventKey: 'rice' })) }
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Wheat.display_value, imgName: 'imgWheat', eventKey: 'wheat' })) }
-                { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Cereals.display_value, imgName: 'imgCereals', eventKey: 'cereals' })) }
+                { /* (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Cereals.display_value, imgName: 'imgCereals', eventKey: 'cereals' })) */ }
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Millets.display_value, imgName: 'imgMillets', eventKey: 'millets' })) }
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Dhals.display_value, imgName: 'imgDhals', eventKey: 'dhals' })) }
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Sweetners.display_value, imgName: 'imgSweetners', eventKey: 'sweetners' })) }
@@ -211,7 +209,7 @@ export default class ProductsOrderMobile extends React.Component {
                 { (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Beauty.display_value, imgName: 'imgBeauty', eventKey: 'beauty' })) }
               </Nav>
             </Col>
-            <Col>
+            <Col xs={9}>
               <Tab.Content>
                 <Tab.Pane eventKey="specials"><Row>{this.displayProductsWithCategories(productSpecials, 'specials')}</Row></Tab.Pane>
                 <Tab.Pane eventKey="vegetables"><Row>{this.displayProductsWithCategories(productVegetables, 'vegetables')}</Row></Tab.Pane>
@@ -219,7 +217,7 @@ export default class ProductsOrderMobile extends React.Component {
                 <Tab.Pane eventKey="greens"><Row>{this.displayProductsWithCategories(productGreens, 'greens')}</Row></Tab.Pane>
                 <Tab.Pane eventKey="rice">{this.displayProductsWithCategories(productRice, 'rice')}</Tab.Pane>
                 <Tab.Pane eventKey="wheat"><Row>{this.displayProductsWithCategories(productWheat, 'wheat')}</Row></Tab.Pane>
-                <Tab.Pane eventKey="cereals"><Row>{this.displayProductsWithCategories(productCereals, 'cereals')}</Row></Tab.Pane>
+                {/* <Tab.Pane eventKey="cereals"><Row>{this.displayProductsWithCategories(productCereals, 'cereals')}</Row></Tab.Pane> */}
                 <Tab.Pane eventKey="millets"><Row>{this.displayProductsWithCategories(productMillets, 'millets')}</Row></Tab.Pane>
                 <Tab.Pane eventKey="dhals"><Row>{this.displayProductsWithCategories(productDhals, 'dhals')}</Row></Tab.Pane>
                 <Tab.Pane eventKey="sweetners"><Row>{this.displayProductsWithCategories(productSweetners, 'sweetners')}</Row></Tab.Pane>
