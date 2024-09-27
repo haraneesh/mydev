@@ -39,8 +39,8 @@ standard-minifier-css@1.9.2
 mdg:validated-method
 meteorhacks:picker
 socialize:cloudinary
-fourseven:scss
+#fourseven:scss
 matb33:collection-hooks
-#jquery@3.0.0! # meteor chef dependency can be reduced
 alanning:roles
 react-meteor-data
+leonardoventurini:scss

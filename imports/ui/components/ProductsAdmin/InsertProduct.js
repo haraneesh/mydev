@@ -18,7 +18,7 @@ const handleInsertProduct = (event) => {
     const unitOfSale = '1Kg';
     const description = '';
     const image_path = '/blank_image.png';
-    const type = constants.ProductType[0]; // New
+    const type = constants.ProductTypeName.New.name;
     const availableToOrder = false;
     const availableToOrderWH = false;
     const maxUnitsAvailableToOrder = 99999;
@@ -46,6 +46,7 @@ const handleInsertProduct = (event) => {
         toast.error(error.reason);
       } else {
         toast.success('Product has been added!');
+        window.location.reload();
       }
     });
   } else {
