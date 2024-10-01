@@ -197,6 +197,8 @@ const App = (props) => (
               <PlaceOrderAuthenticated exact routeName="Order_Success" layout={MainLayout} path="/order/success/:orderId?" component={SuccessOrderPlaced} {...props} />
               <Authenticated exact routeName="Edit_Order_Details" layout={OrderLayout} path="/order/:_id" component={EditOrderDetails} {...props} />
               <Authenticated exact routeName="Choose_Basket_Prefill" path="/neworder/selectbasket" layout={OrderLayout} component={SelectBasket} {...props} />
+              <Public exact routeName="Place_Order_Category" path="/neworder/category/:category" layout={OrderLayout} component={PlaceOrder} {...props} />
+              <Public exact routeName="Place_Order_Category_subCategory" path="/neworder/category/:category/subcategory/:subcategory" layout={OrderLayout} component={PlaceOrder} {...props} />
               <Public exact routeName="Place_Order" path="/neworder/:basketId?" layout={OrderLayout} component={PlaceOrder} {...props} />
 
               {/* Users */}

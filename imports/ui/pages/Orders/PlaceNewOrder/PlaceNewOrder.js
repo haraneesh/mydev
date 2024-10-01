@@ -14,7 +14,7 @@ import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/Prod
 import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
 
 const PlaceNewOrder = ({
-  dateValue, name, products, productListId, history, basketId, loggedInUser,
+  dateValue, name, products, productListId, history, basketId, loggedInUser, category, subCategory,
 }) => {
   const [isBasketLoading, setIsLoading] = useState(true);
   const cartDispatch = useCartDispatch();
@@ -93,6 +93,8 @@ const PlaceNewOrder = ({
             dateValue={dateValue}
             loggedInUser={loggedInUser}
             basketId={basketId}
+            category={category}
+            subCategory={subCategory}
           />
         </div>
       );
@@ -104,6 +106,8 @@ const PlaceNewOrderWrapper = (props) => (props.loading ? (<Loading />)
 
 PlaceNewOrder.defaultProps = {
   basketId: '',
+  category: '',
+  subCategory: '',
 };
 
 PlaceNewOrder.propTypes = {
@@ -114,6 +118,8 @@ PlaceNewOrder.propTypes = {
   basketId: PropTypes.string,
   dateValue: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
+  category: PropTypes.string,
+  subCategory: PropTypes.string,
 };
 
 export default withTracker((args) => {
@@ -145,5 +151,7 @@ export default withTracker((args) => {
     dateValue: args.date,
     loggedInUser: args.loggedInUser,
     basketId: args.match.params.basketId,
+    category: args.match.params.category,
+    subCategory: args.match.params.subcategory,
   };
 })(PlaceNewOrderWrapper);

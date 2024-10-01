@@ -40,6 +40,10 @@ export default class ProductsOrderMobile extends React.Component {
         toast.error(error.reason);
       }
     });
+
+    const preFix = this.props.category;
+    const key = this.props.subCategory;
+    this.goToCategoryAndSubCategory(preFix, key);
   }
 
   componentDidUpdate() {
@@ -51,6 +55,23 @@ export default class ProductsOrderMobile extends React.Component {
       }
       this.setState({
         scrollToLocation: false,
+      });
+    }
+  }
+
+  goToCategoryAndSubCategory(preFix, key) {
+    if (preFix) {
+      const section = document.getElementById(`order-tabb-tab-${preFix}`);
+      if (!section) return;
+      section.click();
+      // If category and subcategory are set then roll to that section
+      setTimeout(() => {
+        const cardHeaderToMove = document.getElementById(`${preFix}-${key}`);
+        const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
+        if (cardHeaderToMove && stickyNavBar) {
+          const targetPosition = cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: targetPosition - stickyNavBar.offsetHeight, behavior: 'smooth' });
+        }
       });
     }
   }
@@ -112,9 +133,9 @@ export default class ProductsOrderMobile extends React.Component {
       catRow.push(
         <Nav.Item>
           <Nav.Link
-            event={key}
+            event={key.replace(' ', '').toLowerCase()}
             onClick={() => {
-              const cardHeaderToMove = document.getElementById(`${preFix}-${key}`);
+              const cardHeaderToMove = document.getElementById(`${preFix}-${key.replace(' ', '').toLowerCase()}`);
               const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
               const targetPosition = cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
               window.scrollTo({ top: targetPosition - stickyNavBar.offsetHeight, behavior: 'smooth' });
@@ -134,7 +155,7 @@ export default class ProductsOrderMobile extends React.Component {
         : key;
 
       productDisplayList.push(
-        <Row key={key} id={`${preFix}-${key}`}>
+        <Row key={key} id={`${preFix}-${key.replace(' ', '').toLowerCase()}`}>
           <div className="card-header text-start" style={{ borderRadius: '4px', fontWeight: 'bold' }}>
             <h6>{displayText}</h6>
           </div>

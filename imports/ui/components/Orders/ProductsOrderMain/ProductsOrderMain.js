@@ -234,6 +234,8 @@ const ProductsOrderMain = (props) => {
         dateValue={dateValue}
         history={history}
         deliveryPincode={cartState.cart.deliveryPincode}
+        category={props.category}
+        subCategory={props.subCategory}
       />
       )}
     </div>
