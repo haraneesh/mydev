@@ -12,8 +12,6 @@ import { Orders } from '../../../api/Orders/Orders';
 import ManageAllOrders from '../../components/ProductsAdmin/ManageAllOrders';
 import { SortTypes } from '../../components/Common/ShopTableCells';
 
-// import ManageAllOrders from '../../containers/Admin/ManageAllOrders';
-
 const reactVar = new ReactiveVar(
   {
     limit: constants.InfiniteScroll.DefaultLimitOrders,

@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { Roles } from 'meteor/alanning:roles';
 import ReconcileInventory from '../ReconcileInventory';
 import constants from '../../../modules/constants';
 
-Meteor.publish('reconcileInventory.list', function reconcileInventoryList(options) {
+Meteor.publish('reconcileInventory.list', async function reconcileInventoryList(options) {
    check(options, { limit: Number,
    skip: Number,
     sort: {
@@ -17,7 +18,7 @@ Meteor.publish('reconcileInventory.list', function reconcileInventoryList(option
 
   const skip = 0;
 
-  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  if (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
     const { limit, skip, sort } = options;
     return ReconcileInventory.find({}, {
       skip,

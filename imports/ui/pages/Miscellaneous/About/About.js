@@ -34,6 +34,7 @@ const About = () => {
   return (
 
     <Row className="about-page pb-3">
+
       <section>
         <Card className="my-3 py-4">
           <div className="about-section text-left row d-flex text-center">
@@ -54,6 +55,8 @@ const About = () => {
         </Card>
       </section>
 
+      <ContactUs />
+      
       <Card className="my-3">
         <OurFarm />
       </Card>
@@ -316,7 +319,6 @@ const About = () => {
 
       <Testimonials />
 
-      <ContactUs />
     </Row>
   );
 };

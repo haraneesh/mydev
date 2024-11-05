@@ -1,15 +1,15 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import PropTypes from 'prop-types';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
+import { formValChange, formValid } from '../../../../modules/validate';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
-import { formValChange, formValid } from '../../../../modules/validate';
 
 const defaultState = {
   signUpRequestSent: false,
@@ -39,19 +39,24 @@ class SignUp extends React.Component {
   onValueChange(e) {
     e.preventDefault();
     const { isError } = this.state;
-    const newState = formValChange(e,
+    const newState = formValChange(
+      e,
       { ...isError },
       {
         password: document.querySelector('[name="password"]').value.trim(),
-        confirmPassword: document.querySelector('[name="confirmPassword"]').value.trim(),
+        confirmPassword: document
+          .querySelector('[name="confirmPassword"]')
+          .value.trim(),
         whMobilePhone: this.whMobilePhone.value.trim(),
         confirmWhMobileNumber: this.confirmWhMobileNumber.value.trim(),
-      });
+      },
+    );
     this.setState(newState);
   }
 
   validateForm(e) {
     e.preventDefault();
+    this.onValueChange(e);
     const { isError } = this.state;
     if (formValid({ isError })) {
       this.handleSubmit();
@@ -85,7 +90,9 @@ class SignUp extends React.Component {
         if (error) {
           toast.error(error.reason);
         } else {
-          toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
+          toast.success(
+            `Welcome ${this.firstName.value} ${this.lastName.value}!`,
+          );
           history.push('/');
         }
       });
@@ -127,7 +134,7 @@ class SignUp extends React.Component {
   render() {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
-    return (!signUpRequestSent ? (
+    return !signUpRequestSent ? (
       <div className="Signup offset-sm-1 p-2">
         <div>
           <Col xs={12} sm={10}>
@@ -137,21 +144,19 @@ class SignUp extends React.Component {
                 <h2 className="text-info"> Welcome to Suvai </h2>
                 <br />
                 <p>
-                  Suvai is a community of like minded families who have been together for more than
-                  {' '}
-                  <b className="text-info h4">5 years</b>
+                  Suvai is a community of like minded families who have been
+                  together for more than <b className="text-info h4">5 years</b>
                   .
                 </p>
                 <p>
-                  We are committed to eating healthy and leaving behind a small ecological footprint.
+                  We are committed to eating healthy and leaving behind a small
+                  ecological footprint.
                 </p>
-                <p>
-                  We are happy to Welcome you, Please introduce yourself.
-                </p>
+                <p>We are happy to Welcome you, Please introduce yourself.</p>
               </Card>
             </div>
 
-            { /* <Row>
+            {/* <Row>
             <Col xs={12}>
               <OAuthLoginButtons
                 services={['facebook']}
@@ -161,22 +166,31 @@ class SignUp extends React.Component {
                 }}
               />
             </Col>
-          </Row> */ }
-            <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
+          </Row> */}
+            <form
+              ref={(form) => (this.form = form)}
+              onSubmit={this.validateForm}
+            >
               <div className="alert bg-white text-center p-3 mt-3">
                 <span>
-                  Are you an existing Suvaineer?
-                  <Button className="ms-3" variant="secondary" id="app-login" onClick={() => { this.props.history.push('/login'); }}>Log In</Button>
+                  Are you an existing customer?
+                  <Button
+                    className="ms-3"
+                    variant="secondary"
+                    id="app-login"
+                    onClick={() => {
+                      this.props.history.push('/login');
+                    }}
+                  >
+                    Log In
+                  </Button>
                   {/* <a href="/login" className="login-signup text-secondary p-2">Log In</a> */}
                 </span>
               </div>
 
               <Row className="pt-3">
                 <Col xs={6}>
-                  <Row
-                    validationState={isError.firstName.length > 0 ? 'error' : ''}
-                    style={{ paddingRight: '1px' }}
-                  >
+                  <Row style={{ paddingRight: '1px' }}>
                     <label>First Name</label>
                     <input
                       type="text"
@@ -185,16 +199,16 @@ class SignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
+
+                    {isError.firstName.length > 0 && (
+                      <span className="bg-white py-2  px-2 text-danger">
+                        {isError.firstName}
+                      </span>
+                    )}
                   </Row>
-                  {isError.firstName.length > 0 && (
-                  <span className="small text-danger">{isError.firstName}</span>
-                  )}
                 </Col>
                 <Col xs={6}>
-                  <Row
-                    validationState={isError.lastName.length > 0 ? 'error' : ''}
-                    style={{ paddingLeft: '1px' }}
-                  >
+                  <Row style={{ paddingLeft: '1px' }}>
                     <label>Last Name</label>
                     <input
                       type="text"
@@ -203,13 +217,16 @@ class SignUp extends React.Component {
                       onBlur={this.onValueChange}
                       className="form-control"
                     />
+
+                    {isError.lastName.length > 0 && (
+                      <span className="bg-white py-2  px-2 text-danger">
+                        {isError.lastName}
+                      </span>
+                    )}
                   </Row>
-                  {isError.lastName.length > 0 && (
-                  <span className="small text-danger">{isError.lastName}</span>
-                  )}
                 </Col>
               </Row>
-              <Row className="pt-3" validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>Email Address</label>
                 <input
                   type="email"
@@ -219,10 +236,12 @@ class SignUp extends React.Component {
                   className="form-control"
                 />
                 {isError.emailAddress.length > 0 && (
-                <span className="small text-danger">{isError.emailAddress}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.emailAddress}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-3" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>Whats App Mobile Number</label>
                 <input
                   type="text"
@@ -233,28 +252,38 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.whMobilePhone.length > 0 && (
-                <span className="small text-danger">{isError.whMobilePhone}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.whMobilePhone}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-2" validationState={isError.confirmWhMobileNumber.length > 0 ? 'error' : ''}>
+              <Row className="pt-2">
                 <label>Confirm Mobile Number</label>
                 <input
                   type="password"
-                  ref={(confirmWhMobileNumber) => (this.confirmWhMobileNumber = confirmWhMobileNumber)}
+                  ref={(confirmWhMobileNumber) =>
+                    (this.confirmWhMobileNumber = confirmWhMobileNumber)
+                  }
                   name="confirmWhMobileNumber"
                   placeholder="10 digit number example, 8787989897"
                   onBlur={this.onValueChange}
-                  onPaste={(e) => { e.preventDefault(); }}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                  }}
                   className="form-control"
                 />
                 {isError.confirmWhMobileNumber.length > 0 && (
-                <span className="small text-danger">{isError.confirmWhMobileNumber}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.confirmWhMobileNumber}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-3" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>Delivery Address</label>
                 <textarea
-                  ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
+                  ref={(deliveryAddress) =>
+                    (this.deliveryAddress = deliveryAddress)
+                  }
                   name="deliveryAddress"
                   placeholder="Complete address to deliver at, including Landmark, Pincode."
                   rows={6}
@@ -262,27 +291,35 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.deliveryAddress.length > 0 && (
-                <span className="small text-danger">{isError.deliveryAddress}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.deliveryAddress}
+                  </span>
                 )}
               </Row>
-              <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Delivery Address Pincode</Row>
                 <input
                   type="text"
-                  ref={(deliveryPincode) => (this.deliveryPincode = deliveryPincode)}
+                  ref={(deliveryPincode) =>
+                    (this.deliveryPincode = deliveryPincode)
+                  }
                   name="deliveryPincode"
                   placeholder="Enter Pincode of the delivery address"
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
                 {isError.deliveryPincode.length > 0 && (
-                <span className="small text-danger">{isError.deliveryPincode}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.deliveryPincode}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-3" validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>What does eating healthy mean to you?</label>
                 <textarea
-                  ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
+                  ref={(eatingHealthyMeaning) =>
+                    (this.eatingHealthyMeaning = eatingHealthyMeaning)
+                  }
                   name="eatingHealthyMeaning"
                   placeholder="You are never wrong, tell us what is in your mind."
                   rows={6}
@@ -290,10 +327,12 @@ class SignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.eatingHealthyMeaning.length > 0 && (
-                <span className="small text-danger">{isError.eatingHealthyMeaning}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.eatingHealthyMeaning}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-3" validationState={isError.password.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>Password</label>
                 <input
                   id="password"
@@ -305,28 +344,37 @@ class SignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="small text-danger">{isError.password}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.password}
+                  </span>
                 )}
               </Row>
-              <Row className="pt-3" validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+              <Row className="pt-3">
                 <label>Confirm Password</label>
                 <input
                   type="password"
                   name="confirmPassword"
-                  ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
+                  ref={(confirmPassword) =>
+                    (this.confirmPassword = confirmPassword)
+                  }
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="small text-danger">{isError.confirmPassword}</span>
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.confirmPassword}
+                  </span>
                 )}
               </Row>
               <p>
                 <small>
-                  By Signing up you are sharing your commitment towards healthy and sustainable lifestyle.
+                  By Signing up you are sharing your commitment towards healthy
+                  and sustainable lifestyle.
                 </small>
               </p>
-              <Button type="submit" variant="secondary">Sign Up</Button>
+              <Button type="submit" variant="secondary">
+                Sign Up
+              </Button>
             </form>
           </Col>
         </div>
@@ -337,20 +385,20 @@ class SignUp extends React.Component {
           <h3>Thanks for your interest in Suvai!</h3>
           <br />
           <p>
-            Please give us a few days for our admins to review the
-            request and send an invite to join our community.
+            Please give us a few days for our admins to review the request and
+            send an invite to join our community.
           </p>
         </Col>
         <Col xs={12} className="mt-2">
-          <p>
-            While you are waiting, here is our manifesto on Healthy Living.
-          </p>
+          <p>While you are waiting, here is our manifesto on Healthy Living.</p>
           <h4>
-            <a className="text-secondary" href="/healthprinciples"> Suvai's Health Principles</a>
+            <a className="text-secondary" href="/healthprinciples">
+              {' '}
+              Suvai's Health Principles
+            </a>
           </h4>
         </Col>
       </Card>
-    )
     );
   }
 }

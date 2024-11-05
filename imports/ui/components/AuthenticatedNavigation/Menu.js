@@ -75,6 +75,6 @@ const Menu = (props) => {
 export default Menu;
 
 Menu.propTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
 };

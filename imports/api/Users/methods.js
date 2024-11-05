@@ -1,17 +1,17 @@
-// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Meteor } from 'meteor/meteor';
-import { check, Match } from 'meteor/check';
-import SimpleSchema from 'simpl-schema';
-import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Accounts } from 'meteor/accounts-base';
+import { Match, check } from 'meteor/check';
+// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Meteor } from 'meteor/meteor';
+import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
-import rateLimit from '../../modules/rate-limit';
-import editProfile from './edit-profile';
 import handleMethodException from '../../modules/handle-method-exception';
-import UserSignUps from './UserSignUps';
-import { syncNewSignUpUserWithZoho } from '../ZohoSyncUps/zohoContactsMethods';
+import rateLimit from '../../modules/rate-limit';
 import { Emitter, Events } from '../Events/events';
+import { syncNewSignUpUserWithZoho } from '../ZohoSyncUps/zohoContactsMethods';
+import UserSignUps from './UserSignUps';
+import editProfile from './edit-profile';
 // import ZohoInventory from '../../zohoSyncUps/ZohoInventory';
 const NonEmptyString = (x, name) => {
   check(x, String);
@@ -24,11 +24,17 @@ const NonEmptyString = (x, name) => {
 if (Meteor.isServer) {
   Accounts.validateLoginAttempt((options) => {
     const { user } = options;
-    if (user && user.status
-    && user.status.accountStatus
-    && constants.UserAccountStatus.Disabled.name === user.status.accountStatus) {
+    if (
+      user &&
+      user.status &&
+      user.status.accountStatus &&
+      constants.UserAccountStatus.Disabled.name === user.status.accountStatus
+    ) {
       // return false;
-      throw new Meteor.Error('403', 'Your account appears to have been disabled. Please contact admin.');
+      throw new Meteor.Error(
+        '403',
+        'Your account appears to have been disabled. Please contact admin.',
+      );
     }
 
     return true;
@@ -63,9 +69,12 @@ export const editUserProfile = new ValidatedMethod({
       allowedValues: constants.ProductUpdatePreferences.names,
     },
   }).validator(),
-  run(profile) {
-    editProfile({ userId: this.userId, user: profile });
-    Emitter.emit(Events.USER_PROFILE_UPDATED, { userId: this.userId, user: profile });
+  async run(profile) {
+    await editProfile({ userId: this.userId, user: profile });
+    Emitter.emit(Events.USER_PROFILE_UPDATED, {
+      userId: this.userId,
+      user: profile,
+    });
   },
 });
 
@@ -74,15 +83,20 @@ export const findUser = new ValidatedMethod({
   validate: new SimpleSchema({
     mobileNumber: { type: String },
   }).validator(),
-  run(user) {
+  async run(user) {
     if (
-      Meteor.isServer
-      && Roles.userIsInRole(this.userId, constants.Roles.admin.name)
+      Meteor.isServer &&
+      (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
     ) {
-      const u = Meteor.users.findOne({ username: user.mobileNumber });
+      const u = await Meteor.users.findOneAsync({
+        username: user.mobileNumber,
+      });
       if (u) {
-        u.isAdmin = Roles.userIsInRole(u._id, constants.Roles.admin.name);
-        u.roles = Roles.getRolesForUser(u._id);
+        u.isAdmin = await Roles.userIsInRoleAsync(
+          u._id,
+          constants.Roles.admin.name,
+        );
+        u.roles = await Roles.getRolesForUserAsync(u._id);
       }
       return u;
     }
@@ -90,25 +104,25 @@ export const findUser = new ValidatedMethod({
   },
 });
 
-const assignUserRole = (userId, selectedRole) => {
+const assignUserRole = async (userId, selectedRole) => {
   switch (selectedRole) {
     case constants.Roles.admin.name:
-      Roles.setUserRoles(userId, [constants.Roles.admin.name]);
+      await Roles.setUserRolesAsync(userId, [constants.Roles.admin.name]);
       break;
     case constants.Roles.shopOwner.name:
-      Roles.setUserRoles(userId, [constants.Roles.shopOwner.name]);
+      await Roles.setUserRolesAsync(userId, [constants.Roles.shopOwner.name]);
       break;
     case constants.Roles.supplier.name:
-      Roles.setUserRoles(userId, [constants.Roles.supplier.name]);
+      await Roles.setUserRolesAsync(userId, [constants.Roles.supplier.name]);
       break;
     default:
-      Roles.setUserRoles(userId, [constants.Roles.customer.name]);
+      await Roles.setUserRolesAsync(userId, [constants.Roles.customer.name]);
       break;
   }
 };
 
 // used by supplier method to create supplier user
-export const createNewUser = (user) => {
+export const createNewUser = async (user) => {
   const cuser = {
     username: user.username,
     email: user.email || '',
@@ -136,38 +150,48 @@ export const createNewUser = (user) => {
     isEligibleForDiscount: false,
   };
 
-  const userExists = Meteor.users.findOne({ username: cuser.username });
+  const userExists = await Meteor.users.findOneAsync({
+    username: cuser.username,
+  });
 
   if (!userExists) {
-    const userId = Accounts.createUser(cuser);
+    const userId = await Accounts.createUserAsync(cuser);
     /* if (user.isAdmin) {
       Roles.addUsersToRoles(userId, [constants.Roles.admin.name]);
     } */
-    assignUserRole(userId, user.role);
-    Meteor.users.update({ username: cuser.username }, {
-      $set: {
-        wallet,
-        productReturnables: {},
-        updatedAt: new Date(),
-        'globalStatuses.lastVisitedMessageApp': new Date(),
-        status: {
-          accountStatus: constants.UserAccountStatus.Active.name,
-          statusUpdate: new Date(),
-        },
-        settings: {
-          productUpdatePreference: 'sendMeProductPhotosOnWhatsApp',
-          packingPreference: 'noPreference',
+    await assignUserRole(userId, user.role);
+    await Meteor.users.updateAsync(
+      { username: cuser.username },
+      {
+        $set: {
+          wallet,
+          productReturnables: {},
+          updatedAt: new Date(),
+          'globalStatuses.lastVisitedMessageApp': new Date(),
+          status: {
+            accountStatus: constants.UserAccountStatus.Active.name,
+            statusUpdate: new Date(),
+          },
+          settings: {
+            productUpdatePreference: 'sendMeProductPhotosOnWhatsApp',
+            packingPreference: 'noPreference',
+          },
         },
       },
-    });
+    );
 
     // New User, register with Zoho.
-    const userFromDB = Meteor.users.findOne({ username: cuser.username });
-    syncNewSignUpUserWithZoho(userFromDB);
+    const userFromDB = await Meteor.users.findOneAsync({
+      username: cuser.username,
+    });
+    await syncNewSignUpUserWithZoho(userFromDB);
     return userFromDB;
   }
 
-  throw new Meteor.Error('500', 'You are already registered with Suvai. Please Sign in to proceed further.');
+  throw new Meteor.Error(
+    '500',
+    'You are already registered with Suvai. Please Sign in to proceed further.',
+  );
 };
 
 export const createUser = new ValidatedMethod({
@@ -190,9 +214,12 @@ export const createUser = new ValidatedMethod({
     status: { type: Object },
     'status.accountStatus': { type: String },
   }).validator(),
-  run(user) {
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      return createNewUser(user);
+  async run(user) {
+    if (
+      Meteor.isServer &&
+      (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
+    ) {
+      return await createNewUser(user);
     }
   },
 });
@@ -202,13 +229,16 @@ export const updateDeliveryPincode = new ValidatedMethod({
   validate: new SimpleSchema({
     deliveryPincode: { type: String },
   }).validator(),
-  run({ deliveryPincode }) {
+  async run({ deliveryPincode }) {
     if (this.userId) {
-      Meteor.users.upsert({ _id: this.userId }, {
-        $set: {
-          'profile.deliveryPincode': deliveryPincode,
+      await Meteor.users.upsertAsync(
+        { _id: this.userId },
+        {
+          $set: {
+            'profile.deliveryPincode': deliveryPincode,
+          },
         },
-      });
+      );
     }
   },
 });
@@ -234,16 +264,19 @@ export const adminUpdateUser = new ValidatedMethod({
     status: { type: Object },
     'status.accountStatus': { type: String },
   }).validator(),
-  run(options) {
+  async run(options) {
     const user = { ...options };
     const userRole = options.role;
     delete user.role;
 
     if (
-      Meteor.isServer
-      && Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
+      Meteor.isServer &&
+      (await Roles.userIsInRoleAsync(
+        Meteor.userId(),
+        constants.Roles.admin.name,
+      ))
     ) {
-      const cuser = Meteor.users.findOne({ _id: user._id });
+      const cuser = await Meteor.users.findOneAsync({ _id: user._id });
 
       if (cuser) {
         delete user.email;
@@ -255,7 +288,7 @@ export const adminUpdateUser = new ValidatedMethod({
 
         // Set password
         if (user.password) {
-          Accounts.setPassword(cuser._id, user.password);
+          await Accounts.setPasswordAsync(cuser._id, user.password);
           delete user.password;
         }
 
@@ -265,9 +298,12 @@ export const adminUpdateUser = new ValidatedMethod({
 
         user.updatedAt = new Date();
         user.status.statusUpdate = new Date();
-        const u = Meteor.users.update({ _id: cuser._id }, { $set: user });
+        const u = await Meteor.users.updateAsync(
+          { _id: cuser._id },
+          { $set: user },
+        );
 
-        assignUserRole(cuser._id, userRole);
+        await assignUserRole(cuser._id, userRole);
         /*
         if (u && user.isAdmin) {
           Roles.addUsersToRoles(cuser._id, [constants.Roles.admin.name]);
@@ -284,7 +320,9 @@ const notifyUserSignUp = (content, subject, customerEmail) => {
   const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
   const fromEmail = Meteor.settings.private.fromInvitationEmail;
   if (Meteor.isDevelopment) {
-    console.log(`To Email: ${toEmail} From Email: ${fromEmail} Subject: ${subject} Content: ${content}`);
+    console.log(
+      `To Email: ${toEmail} From Email: ${fromEmail} Subject: ${subject} Content: ${content}`,
+    );
   } else {
     // Send email to admin
     Email.send({
@@ -309,10 +347,11 @@ const notifyUserSignUp = (content, subject, customerEmail) => {
 };
 
 Meteor.methods({
-  'users.getTotalUserCount': function getTotalUserCount() {
-    return Meteor.users.find({}).fetch().length;
+  'users.getTotalUserCount': async function getTotalUserCount() {
+    const users = await Meteor.users.find({}).fetchAsync();
+    return users.length;
   },
-  'users.getAllUsers': function getAllUsers(options) {
+  'users.getAllUsers': async function getAllUsers(options) {
     check(options, {
       limit: Number,
       skip: Number,
@@ -326,25 +365,32 @@ Meteor.methods({
       },
     });
 
-    if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      return Meteor.users.find({}, {
-        fields: {
-          createdAt: 1,
-          username: 1,
-          emails: 1,
-          profile: 1,
-          settings: 1,
-          wallet: 1,
-          productReturnables: 1,
-          status: 1,
-        },
-        sort: options.sort,
-        limit: options.limit,
-        skip: options.skip,
-      }).fetch();
+    if (
+      await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)
+    ) {
+      return await Meteor.users
+        .find(
+          {},
+          {
+            fields: {
+              createdAt: 1,
+              username: 1,
+              emails: 1,
+              profile: 1,
+              settings: 1,
+              wallet: 1,
+              productReturnables: 1,
+              status: 1,
+            },
+            sort: options.sort,
+            limit: options.limit,
+            skip: options.skip,
+          },
+        )
+        .fetchAsync();
     }
   },
-  'users.signUp': function userSelfSignUp(user) {
+  'users.signUp': async function userSelfSignUp(user) {
     check(user, {
       username: String,
       email: String,
@@ -368,10 +414,12 @@ Meteor.methods({
     NonEmptyString(user.profile.whMobilePhone, 'Mobile phone ');
     NonEmptyString(user.profile.deliveryAddress, 'Delivery address');
     NonEmptyString(user.profile.deliveryPincode, 'Delivery pincode');
+    NonEmptyString(user.password, 'Password');
 
-    const usr = createNewUser(user);
+    const usr = await createNewUser(user);
 
-    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
+    notifyUserSignUp(
+      `${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
     Last Name:  ${user.profile.name.last}
     Phone number: ${user.profile.whMobilePhone} 
@@ -379,52 +427,61 @@ Meteor.methods({
     eatingHealthyMeaning: ${user.profile.eatingHealthyMeaning}
     deliveryPincode: ${user.profile.deliveryPincode}
     has signed up. This user has been auto approved in the app.`,
-    'New user signup', user.email);
+      'New user signup',
+      user.email,
+    );
 
     return usr;
   },
-  'users.createSelfSignUpsForSpecials': function createSelfSignUpsForSpecials(user) {
-    check(user, {
-      username: String,
-      profile: {
-        name: {
-          last: String,
-          first: String,
+  'users.createSelfSignUpsForSpecials':
+    async function createSelfSignUpsForSpecials(user) {
+      check(user, {
+        username: String,
+        profile: {
+          name: {
+            last: String,
+            first: String,
+          },
+          whMobilePhone: String,
+          deliveryAddress: String,
+          deliveryPincode: String,
+          eatingHealthyMeaning: Match.Maybe(String),
         },
-        whMobilePhone: String,
-        deliveryAddress: String,
-        deliveryPincode: String,
-        eatingHealthyMeaning: Match.Maybe(String),
-      },
-      password: String,
-    });
+        password: String,
+      });
 
-    notifyUserSignUp(`${user.profile.name.first} ${user.profile.name.last}, 
+      notifyUserSignUp(
+        `${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
     Last Name:  ${user.profile.name.last}
     Phone number: ${user.profile.whMobilePhone} 
     deliveryAddress: ${user.profile.deliveryAddress}
     has ordered via specials page.`,
-    'Orders Via Special');
+        'Orders Via Special',
+      );
 
-    const u = Meteor.users.findOne({ username: user.username });
-    if (u) {
-      return u;
-    }
+      const u = await Meteor.users.findOneAsync({ username: user.username });
+      if (u) {
+        return u;
+      }
 
-    const newUser = { ...user };
-    newUser.role = constants.Roles.customer.name;
-    return createNewUser(newUser);
-  },
-  'users.accountStatusUpdate': function deactivateUser(args) {
+      const newUser = { ...user };
+      newUser.role = constants.Roles.customer.name;
+      return await createNewUser(newUser);
+    },
+  'users.accountStatusUpdate': async function deactivateUser(args) {
     check(args, { userId: String, accountStatus: String });
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      Meteor.users.update(
+    if (
+      Meteor.isServer &&
+      (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
+    ) {
+      await Meteor.users.updateAsync(
         { _id: args.userId },
         {
           $set: {
             status: {
-              accountStatus: constants.UserAccountStatus[args.accountStatus].name,
+              accountStatus:
+                constants.UserAccountStatus[args.accountStatus].name,
               statusUpdate: new Date(),
             },
           },
@@ -432,44 +489,64 @@ Meteor.methods({
       );
 
       if (constants.UserAccountStatus.Disabled.name === args.accountStatus) {
-        Meteor.users.update({ _id: args.userId }, { $set: { 'services.resume.loginTokens': [] } });
+        await Meteor.users.updateAsync(
+          { _id: args.userId },
+          { $set: { 'services.resume.loginTokens': [] } },
+        );
       }
     }
-    return Meteor.users.findOne({ _id: args.userId });
+    return await Meteor.users.findOneAsync({ _id: args.userId });
   },
-  'users.approveSignUp': function usersApproveSignUp(userSignUpId, status) {
+  'users.approveSignUp': async function usersApproveSignUp(
+    userSignUpId,
+    status,
+  ) {
     check(userSignUpId, String);
     check(status, String);
 
-    if (Meteor.isServer && Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      const usr = UserSignUps.findOne({ _id: userSignUpId });
+    if (
+      Meteor.isServer &&
+      (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
+    ) {
+      const usr = await UserSignUps.findOneAsync({ _id: userSignUpId });
       if (status === 'Approve') {
-        createNewUser(usr);
+        await createNewUser(usr);
       }
-      return UserSignUps.update({ _id: userSignUpId }, { $set: { status } });
+      return await UserSignUps.updateAsync(
+        { _id: userSignUpId },
+        { $set: { status } },
+      );
     }
   },
-  'users.sendVerificationEmail': function usersSendVerificationEmail(emailAddress) {
+  'users.sendVerificationEmail': async function usersSendVerificationEmail(
+    emailAddress,
+  ) {
     check(emailAddress, String);
     const { userId } = this;
-    Meteor.users.update({ _id: userId }, {
-      $set: {
-        'emails.0.address': emailAddress,
-        'emails.0.verified': false,
+    await Meteor.users.updateAsync(
+      { _id: userId },
+      {
+        $set: {
+          'emails.0.address': emailAddress,
+          'emails.0.verified': false,
+        },
       },
-    });
+    );
 
     return Accounts.sendVerificationEmail(userId);
   },
-  'users.visitedPlaceNewOrder': function lastVisitedPlaceNewOrder() {
+  'users.visitedPlaceNewOrder': async function lastVisitedPlaceNewOrder() {
     try {
       const { userId } = this;
       const updateDate = new Date();
-      Meteor.users.update({ _id: userId }, {
-        $set: {
-          'globalStatuses.lastVisitedPlaceNewOrder': updateDate,
+      await Meteor.users.updateAsync(
+        { _id: userId },
+        {
+          $set: {
+            'globalStatuses.lastVisitedPlaceNewOrder': updateDate,
+          },
         },
-      });
+      );
       Emitter.emit(Events.NAV_PLACEORDER_LANDING, { userId: this.userId });
     } catch (exception) {
       handleMethodException(exception);

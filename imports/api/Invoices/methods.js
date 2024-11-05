@@ -6,21 +6,21 @@ import zh from '../ZohoSyncUps/ZohoBooks';
 import handleMethodException from '../../modules/handle-method-exception';
 
 Meteor.methods({
-  'invoices.getAll': function getInvoices(invoiceIds) {
+  'invoices.getAll': async function getInvoices(invoiceIds) {
     check(invoiceIds, [String]);
 
     const invoices = [];
     if (Meteor.isServer) {
-      invoiceIds.forEach((invoiceId) => {
-        const r = zh.getRecordById('invoices', invoiceId);
+      for (const invoiceId of invoiceIds) {
+        const r = await zh.getRecordById('invoices', invoiceId);
         if (r.code === 0 /* success */) {
-          invoices.push(r.invoice);
+            invoices.push(r.invoice);
         } else {
-          handleMethodException(r.message, r.code);
+            handleMethodException(r.message, r.code);
         }
-      });
-    }
-    return invoices;
+      }
+      return invoices;
+   }
   },
 });
 

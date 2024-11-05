@@ -96,7 +96,8 @@ Meteor.methods({
     check(msgId, String);
 
     try {
-      return Messages.find({ _id: msgId }).fetch()[0];
+      const messages = Messages.find({ _id: msgId }).fetchAsync();
+      return messages[0];
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -155,7 +156,6 @@ Meteor.methods({
     });
 
     try {
-      // const message = Messages.find({ _id: comment.postId }).fetch()[0];
       const cmt = {
         ...options,
         owner: this.userId,
@@ -173,7 +173,7 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'messages.updateComment': function messagesUpdateComment(options) {
+  'messages.updateComment': async function messagesUpdateComment(options) {
     check(options, {
       commentId: String,
       postId: String,
@@ -181,10 +181,11 @@ Meteor.methods({
     });
 
     try {
-      const message = Messages.find({ _id: options.postId }).fetch()[0];
+      const messages = await Messages.find({ _id: options.postId }).fetchAsync();
+      const message = messages[0];
 
       if (message.owner === this.userId
-        || Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        || await Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
         const cmt = {
           ...options,
           owner: message.owner,
@@ -192,7 +193,7 @@ Meteor.methods({
           postType: constants.PostTypes.Messages.name,
         };
 
-        commentFunctions.commentUpdate(cmt);
+        commentFunctions.commentUpdateAsync(cmt);
       }
       return message;
     } catch (exception) {

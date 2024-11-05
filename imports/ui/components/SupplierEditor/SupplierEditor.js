@@ -111,7 +111,7 @@ class SupplierEditor extends React.Component {
             <option value="Miss"> Miss</option>
           </select>
         </Row>
-        <Row validationState={isError.firstName.length > 0 ? 'error' : ''}>
+        <Row>
           <label>First Name</label>
           <FormControl
             type="text"
@@ -121,10 +121,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.name.first : ''}
           />
           {isError.firstName.length > 0 && (
-          <span className="small text-info">{isError.firstName}</span>
+          <span className="bg-white text-danger">{isError.firstName}</span>
           )}
         </Row>
-        <Row validationState={isError.lastName.length > 0 ? 'error' : ''}>
+        <Row>
           <label>Last Name</label>
           <FormControl
             type="text"
@@ -134,10 +134,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.name.last : ''}
           />
           {isError.lastName.length > 0 && (
-          <span className="small text-info">{isError.lastName}</span>
+          <span className="bg-white text-danger">{isError.lastName}</span>
           )}
         </Row>
-        <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+        <Row>
           <label>Email Address</label>
           <FormControl
             type="text"
@@ -147,10 +147,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.email : ''}
           />
           {isError.emailAddress.length > 0 && (
-          <span className="small text-info">{isError.emailAddress}</span>
+          <span className="bg-white text-danger">{isError.emailAddress}</span>
           )}
         </Row>
-        <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+        <Row>
           <label>Mobile Number</label>
           <FormControl
             type="text"
@@ -160,10 +160,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user) ? user.profile.whMobilePhone : ''}
           />
           {isError.whMobilePhone.length > 0 && (
-          <span className="small text-info">{isError.whMobilePhone}</span>
+          <span className="bg-white text-danger">{isError.whMobilePhone}</span>
           )}
         </Row>
-        <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+        <Row >
           <label>Address</label>
           <FormControl
             componentClass="textarea"
@@ -174,10 +174,10 @@ class SupplierEditor extends React.Component {
             defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ''}
           />
           {isError.deliveryAddress.length > 0 && (
-          <span className="small text-info">{isError.deliveryAddress}</span>
+          <span className="bg-white text-danger">{isError.deliveryAddress}</span>
           )}
         </Row>
-        <Row validationState={isError.password.length > 0 ? 'error' : ''}>
+        <Row>
           <label>Password</label>
           <FormControl
             type="password"
@@ -186,11 +186,11 @@ class SupplierEditor extends React.Component {
             onBlur={this.onValueChange}
           />
           {isError.password.length > 0 && (
-          <span className="small text-info">{isError.password}</span>
+          <span className="bg-white text-danger">{isError.password}</span>
           )}
         </Row>
         <hr />
-        <Row validationState={isError.name.length > 0 ? 'error' : ''}>
+        <Row>
           <label>Supplier Name</label>
           <input
             type="text"
@@ -202,7 +202,7 @@ class SupplierEditor extends React.Component {
             placeholder="Name of the supplier."
           />
           {isError.name.length > 0 && (
-          <span className="small text-info">{isError.name}</span>
+          <span className="bg-white text-danger">{isError.name}</span>
           )}
         </Row>
         <Row>

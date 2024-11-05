@@ -41,13 +41,13 @@ export default class ImageUploader extends React.Component {
     });
   }
 
-  _fileUpload(event) {
+  async _fileUpload(event) {
     const fsFile = new FS.File(event.target.files[0]);
     fsFile.owner = Meteor.userId();
     fsFile.postType = constants.PostTypes.Recipe.name;
     fsFile.recipeId = this.props.id;
 
-    Media.insert(fsFile, (err, fileObj) => {
+    await Media.insertAsync(fsFile, (err, fileObj) => {
       if (err) {
         toast.error(err.message);
       } else {

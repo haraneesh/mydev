@@ -1,26 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
-import ListGroup from 'react-bootstrap/ListGroup';
+import React, { useState, useEffect } from 'react';
 import Alert from 'react-bootstrap/Alert';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Row from 'react-bootstrap/Row';
 import { toast } from 'react-toastify';
-import { Roles } from 'meteor/alanning:roles';
-import { isChennaiPinCode, isLoggedInUserAdmin } from '../../../../modules/helpers';
+import {
+  isChennaiPinCode,
+  isLoggedInUserAdmin,
+} from '../../../../modules/helpers';
 import Product from '../Product';
 import ProductListView from '../ProductsSlideView/ProductsSlideView';
 
+import {
+  updateMyOrderStatus,
+  upsertOrder,
+} from '../../../../api/Orders/methods';
 import constants from '../../../../modules/constants';
-import ProductSearch from '../ProductSearch/ProductSearch';
-import ProductsOrderMobile from '../ProductsOrderMobile/ProductsOrderMobile';
 import GenerateOrderList from '../../../../reports/client/GenerateOrderList';
-import { upsertOrder, updateMyOrderStatus } from '../../../../api/Orders/methods';
-import { OrderFooter, displayProductsByType } from '../ProductsOrderCommon/ProductsOrderCommon';
-import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
+import {
+  cartActions,
+  useCartDispatch,
+  useCartState,
+} from '../../../stores/ShoppingCart';
+import ProductSearch from '../ProductSearch/ProductSearch';
+import {
+  OrderFooter,
+  displayProductsByType,
+} from '../ProductsOrderCommon/ProductsOrderCommon';
+import ProductsOrderMobile from '../ProductsOrderMobile/ProductsOrderMobile';
 
 import './ProductsOrderMain.scss';
 
@@ -29,12 +42,19 @@ const ProductsOrderMain = (props) => {
   const cartDispatch = useCartDispatch();
   const [productsArray, setProductsArray] = useState({});
   const {
-    orderId, comments, products, history, dateValue, orderStatus, orderCustomerId,
+    orderId,
+    comments,
+    products,
+    history,
+    dateValue,
+    orderStatus,
+    orderCustomerId,
   } = props;
   const isAdmin = isLoggedInUserAdmin();
-  const isShopOwner = (isAdmin && orderCustomerId)
-    ? Roles.userIsInRole(orderCustomerId, constants.Roles.shopOwner.name)
-    : Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name);
+  const isShopOwner =
+    isAdmin && orderCustomerId
+      ? Roles.userIsInRole(orderCustomerId, constants.Roles.shopOwner.name)
+      : Roles.userIsInRole(props.loggedInUser, constants.Roles.shopOwner.name);
   const isRetailCustomer = !isAdmin && !isShopOwner;
 
   useEffect(() => {
@@ -42,14 +62,14 @@ const ProductsOrderMain = (props) => {
       const prdArray = {};
 
       products.forEach((product) => {
-        const sale = (product.unitsForSelection.indexOf('%') !== -1);
-        prd = (cartState.cart.productsInCart[product._id])
+        const sale = product.unitsForSelection.indexOf('%') !== -1;
+        const prd = cartState.cart.productsInCart[product._id]
           ? { ...cartState.cart.productsInCart[product._id], sale }
           : { ...product, quantity: 0, sale };
 
         if (prd.associatedReturnables) {
-          prd.associatedReturnables.quantity = (prd.associatedReturnables.quantity)
-            ? prd.associatedReturnables.quantity : 0;
+          const value = prd.associatedReturnables.quantity;
+          prd.associatedReturnables.quantity = value ? value : 0;
         }
 
         prdArray[product._id] = prd;
@@ -61,7 +81,9 @@ const ProductsOrderMain = (props) => {
 
   const handleCancel = (e) => {
     e.preventDefault();
-    if (confirm('Are you sure about cancelling this Order? This is permanent!')) {
+    if (
+      confirm('Are you sure about cancelling this Order? This is permanent!')
+    ) {
       const order = {
         orderId,
         updateToStatus: constants.OrderStatus.Cancelled.name,
@@ -82,34 +104,39 @@ const ProductsOrderMain = (props) => {
   const displayToolBar = (orderStatus) => (
     <div className="row text-center pt-2">
       <Col xs={12}>
-        {(!props.loggedInUser) && (
-        <DropdownButton
-          id="btnSetDeliveryCode"
-          title={`Delivery: ${(isChennaiPinCode(cartState.cart.deliveryPincode)) ? '  In Chennai  ' : ' Out of Chennai '}`}
-          className="d-inline-flex bg-light"
-          variant="primary"
-        >
-          <Dropdown.Item
-            onClick={() => {
-              cartDispatch({
-                type: cartActions.setDeliveryPinCode,
-                payload: { deliveryPincode: '' },
-              });
-            }}
+        {!props.loggedInUser && (
+          <DropdownButton
+            id="btnSetDeliveryCode"
+            title={`Delivery: ${isChennaiPinCode(cartState.cart.deliveryPincode) ? '  In Chennai  ' : ' Out of Chennai '}`}
+            className="d-inline-flex bg-light"
+            variant="primary"
           >
-            Change Delivery Location
-          </Dropdown.Item>
-        </DropdownButton>
+            <Dropdown.Item
+              onClick={() => {
+                cartDispatch({
+                  type: cartActions.setDeliveryPinCode,
+                  payload: { deliveryPincode: '' },
+                });
+              }}
+            >
+              Change Delivery Location
+            </Dropdown.Item>
+          </DropdownButton>
         )}
 
-        {
-        (orderStatus === constants.OrderStatus.Pending.name
-          || orderStatus === constants.OrderStatus.Saved.name)
-        && (<Button onClick={handleCancel} variant="info">Cancel Order</Button>)
-        }
+        {(orderStatus === constants.OrderStatus.Pending.name ||
+          orderStatus === constants.OrderStatus.Saved.name) && (
+          <Button onClick={handleCancel} variant="info">
+            Cancel Order
+          </Button>
+        )}
       </Col>
       <div>
-        {(isAdmin) && (<Button onClick={handlePrintProductList} variant="info">Print Order List</Button>)}
+        {isAdmin && (
+          <Button onClick={handlePrintProductList} variant="info">
+            Print Order List
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -134,7 +161,7 @@ const ProductsOrderMain = (props) => {
       order_status: saveStatus,
       deliveryPincode: cartState.cart.deliveryPincode,
       // totalBillAmount: this.state.totalBillAmount,
-      comments: (commentBox) ? commentBox.value : '',
+      comments: commentBox ? commentBox.value : '',
     };
 
     upsertOrder.call(order, (error) => {
@@ -157,7 +184,9 @@ const ProductsOrderMain = (props) => {
   };
 
   const updateProductWithReturnableChoice = ({
-    parentProductId, parentProductQty, returnableProductQty,
+    parentProductId,
+    parentProductQty,
+    returnableProductQty,
   }) => {
     const product = productsArray[parentProductId];
     product.quantity = parentProductQty;
@@ -165,16 +194,24 @@ const ProductsOrderMain = (props) => {
     cartDispatch({ type: cartActions.updateCart, payload: { product } });
   };
 
-  const changeProductQuantity = (e, arg2 = {
-    isReturnable: false,
-  }) => {
+  const changeProductQuantity = (
+    e,
+    arg2 = {
+      isReturnable: false,
+    },
+  ) => {
     const {
-      isReturnable, parentProductId, parentProductQty, returnableProductQty,
+      isReturnable,
+      parentProductId,
+      parentProductQty,
+      returnableProductQty,
     } = arg2;
     if (isReturnable) {
       // If returnable product handle
       updateProductWithReturnableChoice({
-        parentProductId, parentProductQty, returnableProductQty,
+        parentProductId,
+        parentProductQty,
+        returnableProductQty,
       });
     } else {
       const productId = e.target.name;
@@ -190,7 +227,8 @@ const ProductsOrderMain = (props) => {
     _.map(products, (product, index) => {
       if (product.name.toLowerCase().indexOf(lowerSearchString) > -1) {
         const prd = cartState.cart.productsInCart[product._id]
-          ? cartState.cart.productsInCart[product._id] : { ...product, quantity: 0 };
+          ? cartState.cart.productsInCart[product._id]
+          : { ...product, quantity: 0 };
 
         searchResults.push(
           <Product
@@ -210,10 +248,7 @@ const ProductsOrderMain = (props) => {
     // return searchResults.slice(0, numOfElements);
   };
 
-  const displayProductsByTypeStandardView = (
-    productGroups,
-    isMobile,
-  ) => (
+  const displayProductsByTypeStandardView = (productGroups, isMobile) => (
     <div className="productOrderList">
       {/* (isRetailCustomer) && (
       <ProductListView
@@ -224,19 +259,19 @@ const ProductsOrderMain = (props) => {
       />
       ) */}
       {isMobile && (
-      <ProductsOrderMobile
-        productGroups={productGroups}
-        productsArray={productsArray}
-        orderId={orderId}
-        orderStatus={orderStatus}
-        comments={comments}
-        totalBillAmount={cartState.cart.totalBillAmount}
-        dateValue={dateValue}
-        history={history}
-        deliveryPincode={cartState.cart.deliveryPincode}
-        category={props.category}
-        subCategory={props.subCategory}
-      />
+        <ProductsOrderMobile
+          productGroups={productGroups}
+          productsArray={productsArray}
+          orderId={orderId}
+          orderStatus={orderStatus}
+          comments={comments}
+          totalBillAmount={cartState.cart.totalBillAmount}
+          dateValue={dateValue}
+          history={history}
+          deliveryPincode={cartState.cart.deliveryPincode}
+          category={props.category}
+          subCategory={props.subCategory}
+        />
       )}
     </div>
   );
@@ -244,35 +279,32 @@ const ProductsOrderMain = (props) => {
   const displayOrderFooter = (isMobile) => (
     <OrderFooter
       totalBillAmount={cartState.cart.totalBillAmount}
-      onButtonClick={
-      () => {
+      onButtonClick={() => {
         history.push(`/cart/${orderId || ''}`);
-      }
-    }
+      }}
       submitButtonName="Checkout →"
-      onSecondButtonClick={() => { handleOrderSubmit(constants.OrderStatus.Saved.name); }}
+      onSecondButtonClick={() => {
+        handleOrderSubmit(constants.OrderStatus.Saved.name);
+      }}
       isMobile={isMobile}
     />
   );
 
-  const displayProductsAndSubmit = (isMobile, productGroups) => (
+  const displayProductsAndSubmit = (isMobile, productGroups) =>
     products.length > 0 ? (
       <Card className="mb-5">
         <Row>
           <Col xs={12} className="pt-0" id="search-section">
             <ProductSearch
               getProductsMatchingSearch={getProductsMatchingSearch}
-              ref={(productSearchCtrl) => (productSearchCtrl = productSearchCtrl)}
+              ref={(productSearchCtrl) =>
+                (productSearchCtrl = productSearchCtrl)
+              }
             />
           </Col>
           <Col xs={12} className="p-0">
             <ListGroup className="products-list">
-              {
-                displayProductsByTypeStandardView(
-                  productGroups,
-                  isMobile,
-                )
-              }
+              {displayProductsByTypeStandardView(productGroups, isMobile)}
             </ListGroup>
           </Col>
           <Col xs={12} className="bg-white pt-3">
@@ -280,38 +312,34 @@ const ProductsOrderMain = (props) => {
           </Col>
         </Row>
       </Card>
-    )
-      : (
-        <Alert variant="info">
-          Every day, List of available fresh items and their prices will be updated by 11 AM.
-          Please wait for the message in the group.
-        </Alert>
-      )
-  );
+    ) : (
+      <Alert variant="info">
+        Every day, List of available fresh items and their prices will be
+        updated by 11 AM. Please wait for the message in the group.
+      </Alert>
+    );
 
   // Grouping product categories by tabs
   const isMobile = true;
-  const formHeading = (orderStatus) ? 'Update Your Order' : ' Choose Your Products';
+  const formHeading = orderStatus
+    ? 'Update Your Order'
+    : ' Choose Your Products';
 
-  const productGroups = displayProductsByType(
-    {
-      products: productsArray,
-      isMobile,
-      isAdmin,
-      isShopOwner,
-      updateProductQuantity: changeProductQuantity,
-      isDeliveryInChennai: isChennaiPinCode(cartState.cart.deliveryPincode),
-    },
-  );
+  const productGroups = displayProductsByType({
+    products: productsArray,
+    isMobile,
+    isAdmin,
+    isShopOwner,
+    updateProductQuantity: changeProductQuantity,
+    isDeliveryInChennai: isChennaiPinCode(cartState.cart.deliveryPincode),
+  });
 
   return (
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
           <div className="py-sm-4 pt-2 m-0 mt-1 text-center">
-            <h2>
-              {formHeading}
-            </h2>
+            <h2>{formHeading}</h2>
             {displayToolBar(orderStatus)}
           </div>
           {displayProductsAndSubmit(isMobile, productGroups)}

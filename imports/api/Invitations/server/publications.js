@@ -13,9 +13,9 @@ Meteor.publish('invitations.view', (invitationId) => {
     });
 });
 
-Meteor.publish('invitations.list', function () {
+Meteor.publish('invitations.list', async function () {
    const loggedInUserId = this.userId
-   if (Roles.userIsInRole(loggedInUserId,['admin'])) {
+   if (await Roles.userIsInRoleAsync(loggedInUserId,['admin'])) {
      return Invitations.find()
    }
    
@@ -23,9 +23,9 @@ Meteor.publish('invitations.list', function () {
    
 });
 
-Meteor.publish('invitations.list.status', function(invitationStatuses){
+Meteor.publish('invitations.list.status', async function(invitationStatuses){
    check(invitationStatuses,[String])
-   if (Roles.userIsInRole(this.userId, ['admin'])) {
+   if (await Roles.userIsInRoleAsync(this.userId, ['admin'])) {
       return Invitations.find(
         {  invitation_status:{ $in: invitationStatuses }},
       )

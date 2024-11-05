@@ -3,10 +3,10 @@ import zh from '../ZohoSyncUps/ZohoBooks';
 import { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
 import { updateSyncAndReturn, retResponse, getZhDisplayDate } from '../ZohoSyncUps/zohoCommon';
 
-const getPODetailsFromZoho = (p) => {
+const getPODetailsFromZoho = async (p) => {
   let po = {};
   if (Meteor.isServer) {
-    const r = zh.getRecordById('purchaseorders', p.purchaseorder_id);
+    const r = await zh.getRecordById('purchaseorders', p.purchaseorder_id);
     if (r.code === 0 /* Success */) {
       po = r.purchaseorder;
     }
@@ -14,7 +14,7 @@ const getPODetailsFromZoho = (p) => {
   return po;
 };
 
-const getOpenPOsFromZoho = () => {
+const getOpenPOsFromZoho = async () => {
   const successResp = [];
   const errorResp = [];
 
@@ -22,7 +22,7 @@ const getOpenPOsFromZoho = () => {
 
   if (Meteor.isServer) {
     // const r = zh.getRecordsByParams('purchaseorders', {status:"billed", delivery_date: getZhDisplayDate(nowDate), });
-    const r = zh.getRecordsByParams('purchaseorders', { filter_by: 'Status.Open' });
+    const r = await zh.getRecordsByParams('purchaseorders', { filter_by: 'Status.Open' });
     if (r.code === 0 /* Success */) {
       successResp.push(retResponse(r));
       pos = r.purchaseorders;
@@ -33,7 +33,7 @@ const getOpenPOsFromZoho = () => {
       };
       errorResp.push(retResponse(res));
     }
-    updateSyncAndReturn('purchaseOrders', successResp, errorResp, new Date(), syncUpConstants.purchaseOrdersFromZoho);
+    await updateSyncAndReturn('purchaseOrders', successResp, errorResp, new Date(), syncUpConstants.purchaseOrdersFromZoho);
   }
   return pos;
 };
@@ -47,14 +47,17 @@ const addPOQuantities = (objToAdd, itemId, updateByCount, propertyToUpdate) => {
   return objToAdd;
 };
 
-const addPOOrderedQty = (pendingProductHash) => {
-  const pos = getOpenPOsFromZoho();
+const addPOOrderedQty = async (pendingProductHash) => {
+  const pos = await getOpenPOsFromZoho();
   const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
 
-  return pos.reduce((productHash, p) => {
+  let productHash = pendingProductHash;
+  for (let i = 0; i < pos.length; i++) {
+    const p = pos[i];
     let propertyToUpdate = 'none';
+
     switch (p.delivery_date) {
       case getZhDisplayDate(today):
         propertyToUpdate = 'poOrderedQtyForToday';
@@ -67,23 +70,18 @@ const addPOOrderedQty = (pendingProductHash) => {
     }
 
     if (propertyToUpdate !== 'none') {
-      const po = getPODetailsFromZoho(p);
+      const po = await getPODetailsFromZoho(p);
       if (po.line_items) {
-        productHash = po.line_items.reduce((map, item) => {
-          if (map[item.item_id]) {
-            map = addPOQuantities(map, item.item_id, item.quantity, propertyToUpdate);
-            /* if (map[item.item_id].poOrderedQuantity) {
-            map[item.item_id].poOrderedQuantity = map[item.item_id].poOrderedQuantity + item.quantity;
-          } else {
-            map[item.item_id].poOrderedQuantity = item.quantity;
-          } */
+          for (let j = 0; j < po.line_items.length; j++) {
+              const item = po.line_items[j];
+              if (productHash[item.item_id]) {
+                  productHash = addPOQuantities(productHash, item.item_id, item.quantity, propertyToUpdate);
+              }
           }
-          return map;
-        }, productHash);
       }
     }
-    return productHash;
-  }, pendingProductHash);
+  }
+  return productHash;
 };
 
 export default addPOOrderedQty;

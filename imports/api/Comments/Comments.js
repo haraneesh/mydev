@@ -1,8 +1,10 @@
+import { Meteor } from 'meteor/meteor';
 /* eslint-disable consistent-return */
 import { Mongo } from 'meteor/mongo';
-import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
+
+import 'meteor/aldeed:collection2/static';
 
 const Comments = new Mongo.Collection('Comments');
 export default Comments;
@@ -19,10 +21,14 @@ Comments.deny({
   remove: () => true,
 });
 
-const allowedValues = _.reduce(constants.CommentTypes, (arr, commentType) => {
-  arr.push(commentType.name);
-  return arr;
-}, []);
+const allowedValues = _.reduce(
+  constants.CommentTypes,
+  (arr, commentType) => {
+    arr.push(commentType.name);
+    return arr;
+  },
+  [],
+);
 
 Comments.schema = new SimpleSchema({
   postType: {
@@ -57,7 +63,8 @@ Comments.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } if (this.isUpsert) {
+      }
+      if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -78,7 +85,10 @@ Comments.schema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Comments.rawCollection().createIndex({ postId: 1, postType: 1 }, { name: 'postId_1_postType_1' });
+  Comments.rawCollection().createIndex(
+    { postId: 1, postType: 1 },
+    { name: 'postId_1_postType_1' },
+  );
 }
 
 Comments.attachSchema(Comments.schema);

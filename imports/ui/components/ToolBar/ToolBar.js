@@ -1,16 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import Button from 'react-bootstrap/Button';
-import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
+import { ReactiveVar } from 'meteor/reactive-var';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
 import Icon from '../Icon/Icon';
 import './ToolBar.scss';
 
 import { dMessages } from '../../apps/dynamicRoutes';
 
-import { useStore, GlobalStores } from '../../stores/GlobalStore';
+import { GlobalStores, useStore } from '../../stores/GlobalStore';
 
 import { useCartState } from '../../stores/ShoppingCart';
 
@@ -20,18 +20,22 @@ const fontProps = {
   display: 'none',
 };
 
-const reactVar = new ReactiveVar(
-  {
-    lastFetchDateTime: new Date(),
-  },
-);
-
-const PreLoad = [dMessages];
+const reactVar = new ReactiveVar({
+  lastFetchDateTime: new Date(),
+});
 
 const ToolBar = ({
-  history, countOfUnreadNotifications, authenticated, isAdmin, globalStatuses, appName, match,
+  history,
+  countOfUnreadNotifications,
+  authenticated,
+  isAdmin,
+  globalStatuses,
+  appName,
+  match,
 }) => {
-  const [numberOfAwaitingPayments, _] = useStore(GlobalStores.paymentNotification.name);
+  const [numberOfAwaitingPayments, _] = useStore(
+    GlobalStores.paymentNotification.name,
+  );
 
   const cartState = useCartState();
   const totalProductsInCount = cartState.newCartCountOfItems;
@@ -39,9 +43,12 @@ const ToolBar = ({
   useEffect(() => {
     if (appName !== 'messages') {
       const reactVarTemp = reactVar.get();
-      if (globalStatuses && globalStatuses.lastVisitedMessageApp
-        && (reactVarTemp.lastFetchDateTime.toUTCString()
-        !== globalStatuses.lastVisitedMessageApp.toUTCString())) {
+      if (
+        globalStatuses &&
+        globalStatuses.lastVisitedMessageApp &&
+        reactVarTemp.lastFetchDateTime.toUTCString() !==
+          globalStatuses.lastVisitedMessageApp.toUTCString()
+      ) {
         reactVar.set({
           lastFetchDateTime: globalStatuses.lastVisitedMessageApp,
         });
@@ -77,7 +84,8 @@ const ToolBar = ({
 
   function onMessageIconClick(isAdmin) {
     if (isAdmin) {
-      history.push('/messagesadmin');
+      // history.push('/messagesadmin');
+      window.open(`https://web.whatsapp.com/`, '_blank');
     } else {
       history.push('/messages');
     }
@@ -87,25 +95,39 @@ const ToolBar = ({
     return (
       <div id="toolBar" className="toolBar text-center">
         <div className="col box3">
-          <Button variant="white" onClick={() => { history.push('/myorders'); }}>
+          <Button
+            variant="white"
+            onClick={() => {
+              history.push('/myorders');
+            }}
+          >
             <Icon icon="home" type="mt" className="fs-1" />
             <span style={fontProps}>Home</span>
           </Button>
         </div>
 
         <div className="col box1">
-          <Button variant="white" onClick={() => { onMessageIconClick(isAdmin); }}>
-            { /* <Icon icon="comment" /> */}
-            <Icon icon="forum" type="mt" className={`fs-2 ${(match.url === '/messages') ? 'text-primary' : ''}`} />
+          <Button
+            variant="white"
+            onClick={() => {
+              onMessageIconClick(isAdmin);
+            }}
+          >
+            {/* <Icon icon="comment" /> */}
+            <Icon
+              icon="forum"
+              type="mt"
+              className={`fs-2 ${match.url === '/messages' ? 'text-primary' : ''}`}
+            />
             <div style={fontProps}>Message</div>
-            {(appName !== 'messages') && (countOfUnreadNotifications > 0) && (
-            <b className="alertMenu shoppingCartBubble">
-              {countOfUnreadNotifications}
-            </b>
+            {appName !== 'messages' && countOfUnreadNotifications > 0 && (
+              <b className="alertMenu shoppingCartBubble">
+                {countOfUnreadNotifications}
+              </b>
             )}
           </Button>
         </div>
-        { /* <div className="col box2">
+        {/* <div className="col box2">
           <Button variant="white" onClick={() => { history.push('/recipes'); }}>
             <Icon icon="restaurant" type="mt" className="fs-2" />
             <span style={fontProps}>Recipes</span>
@@ -123,10 +145,15 @@ const ToolBar = ({
           </Button>
         </div>
         <div className="col box5">
-          <Button variant="white" onClick={() => { history.push('/mywallet'); }}>
+          <Button
+            variant="white"
+            onClick={() => {
+              history.push('/mywallet');
+            }}
+          >
             <Icon icon="currency_rupee" type="mt" className="fs-2" />
-            { (numberOfAwaitingPayments > 0) && (
-            <b className="alertMenu alertBubble"> </b>
+            {numberOfAwaitingPayments > 0 && (
+              <b className="alertMenu alertBubble"> </b>
             )}
             <span style={fontProps}>Wallet</span>
           </Button>
@@ -134,7 +161,7 @@ const ToolBar = ({
       </div>
     );
   }
-  return (<div />);
+  return <div />;
 };
 
 ToolBar.defaultProps = {
@@ -142,8 +169,8 @@ ToolBar.defaultProps = {
 };
 
 ToolBar.propTypes = {
-  history: PropTypes.bool.isRequired,
-  countOfUnreadNotifications: PropTypes.bool,
+  history: PropTypes.object.isRequired,
+  countOfUnreadNotifications: PropTypes.number,
 };
 
 /*
@@ -153,7 +180,7 @@ export default withTracker((args) => ({
   countOfUnreadNotifications: 0,
 }))(ToolBar); */
 
-const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
+/* const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
 
 export default withTracker((args) => {
   const reactVarTemp = reactVar.get();
@@ -165,3 +192,6 @@ export default withTracker((args) => {
     countOfUnreadNotifications: CountOfMessages.find({}).fetch().length,
   };
 })(ToolBar);
+*/
+
+export default ToolBar;

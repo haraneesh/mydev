@@ -3,6 +3,8 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
+import 'meteor/aldeed:collection2/static';
+
 const UserSignUps = new Mongo.Collection('UserSignUps');
 
 UserSignUps.allow({
@@ -22,14 +24,15 @@ UserSignUps.schema = new SimpleSchema({
     type: String,
     label: 'The date a new user signed up.',
     autoValue() {
-      if (this.isInsert) return (new Date()).toISOString();
+      if (this.isInsert) return new Date().toISOString();
     },
   },
   updatedAt: {
     type: String,
     label: 'The date a new user signed up.',
     autoValue() {
-      if (this.isInsert || this.isUpdate || this.isUpsert) return (new Date()).toISOString();
+      if (this.isInsert || this.isUpdate || this.isUpsert)
+        return new Date().toISOString();
     },
   },
   username: { type: String, label: 'User Name' },
@@ -42,9 +45,17 @@ UserSignUps.schema = new SimpleSchema({
   'profile.whMobilePhone': { type: String, label: 'Mobile Phone' },
   'profile.deliveryAddress': { type: String, label: 'Delivery Address' },
   'profile.deliveryPincode': { type: String, label: 'Delivery Pincode.' },
-  'profile.eatingHealthyMeaning': { type: String, label: 'Eating Healthy Meaning', optional: true },
+  'profile.eatingHealthyMeaning': {
+    type: String,
+    label: 'Eating Healthy Meaning',
+    optional: true,
+  },
   password: { type: String, label: 'Password' },
-  status: { type: String, label: 'Status of the sign up request', optional: true },
+  status: {
+    type: String,
+    label: 'Status of the sign up request',
+    optional: true,
+  },
   /* settings: { type: Object },
   'settings.emailVerified': { type: Object },
   'settings.emailVerified.status': { type: Boolean, label: 'Email Verification'}, */

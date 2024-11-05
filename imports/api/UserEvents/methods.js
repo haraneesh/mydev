@@ -1,15 +1,15 @@
 import UserEvents from './UserEvents';
 import { Emitter, Events } from '../Events/events';
 
-Emitter.on(Events.NAV_PLACEORDER_LANDING, ({ userId }) => {
-  const lastRecord = UserEvents.find({
+Emitter.on(Events.NAV_PLACEORDER_LANDING, async ({ userId }) => {
+  const lastRecord = await UserEvents.find({
     eventType: Events.NAV_PLACEORDER_LANDING,
     owner: userId,
   },
   {
     sort: { createdAt: -1 },
     limit: 1,
-  }).fetch();
+  }).fetchAsync();
 
   if (lastRecord[0]) {
     const now = new Date();
@@ -24,7 +24,7 @@ Emitter.on(Events.NAV_PLACEORDER_LANDING, ({ userId }) => {
 
   const userIdToLog = (userId) || 'NotLogged';
 
-  UserEvents.insert(
+  await UserEvents.insertAsync(
     {
       eventType: Events.NAV_PLACEORDER_LANDING,
       owner: userIdToLog,

@@ -7,9 +7,7 @@ import {
 
 import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
-import Security from '../../modules/both/security';
 import App from './App';
-import SupplierApp from './SupplierApp';
 import Loading from '../components/Loading/Loading';
 
 const getUserName = (name) => ({
@@ -18,34 +16,13 @@ const getUserName = (name) => ({
 }[typeof name]);
 
 const RootWithRouter = (props) => {
-  const history = useHistory();
-  const currentRoute = useRef();
-  const { loggedInUserId } = props;
-
-  useEffect(() => {
-    history.listen((location) => {
-      if (location.pathname === '/messages'
-      || currentRoute.current === '/messages'
-      || location.pathname === '/messagesadmin'
-      || currentRoute.current === '/messagesadmin'
-      ) {
-        Meteor.call('messages.updateLastVisitedDate');
-      }
-    });
-  }, [history]);
-
   const location = useLocation();
   // Scroll to top if path changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  switch (true) {
-    case loggedInUserId && Security.checkBoolUserIsSupplier(loggedInUserId):
-      return (<SupplierApp {...props} />);
-    default:
-      return (<App {...props} />);
-  }
+  return (<App {...props} />);
 };
 
 RootWithRouter.propTypes = {

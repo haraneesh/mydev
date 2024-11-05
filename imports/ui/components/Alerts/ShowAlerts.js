@@ -1,16 +1,22 @@
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 
-const highLightText = (textToHighLight) => (
-  <span style={{ color: '#EF0905' }}>
-    {` ${textToHighLight} `}
-  </span>
-);
-
 function ReturnAlerts() {
+  const [alertHTML, setAlertHTML] = useState('<div></div>');
+
+  useEffect(() => {
+    if (Meteor.settings.public.ShowAlerts) {
+      Meteor.call('utility.getAlertHTML', (error, alrtHTML) => {
+        if (!error) {
+          setAlertHTML(alrtHTML);
+        }
+      });
+    }
+  }, []);
+
   return (
-    (Meteor.settings.public.ShowAlerts) && (
+    Meteor.settings.public.ShowAlerts && (
       <Alert
         variant="light"
         style={{
@@ -22,43 +28,10 @@ function ReturnAlerts() {
           textAlign: 'center',
         }}
       >
-        <small>
-          {' '}
-          Dear Suvaineers,
-          {' '}
-          <br />
-          Suvai is closed on Friday, 19th for casting our valuable votes.
-        </small>
-        <br />
-        <small>
-          So,
-          there will be
-          <span style={{ color: '#EF0905' }}>
-            {' '}
-            no
-            {' '}
-          </span>
-          {' '}
-          deliveries on
-          <span style={{ color: '#EF0905' }}>
-            {' '}
-            Friday
-            {' '}
-          </span>
-          19
-          <sup>th</sup>
-         {/* {' '}
-          to
-          <span style={{ color: '#EF0905' }}>
-            {' '}
-            Wednesday
-            {' '}
-          </span>
-          17
-          <sup>th</sup>
-          {' ' }
-      Friday.*/}
-        </small>
+        <div
+          className="Content"
+          dangerouslySetInnerHTML={{ __html: alertHTML }}
+        />
       </Alert>
     )
   );

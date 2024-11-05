@@ -1,2 +1,2 @@
 import './accountsConfig';
-import './cloudinaryConfig';
+// import './cloudinaryConfig';

@@ -1,6 +1,7 @@
 import xml from 'xml';
 import { Meteor } from 'meteor/meteor';
-import { Picker } from 'meteor/meteorhacks:picker';
+import { WebApp } from 'meteor/webapp';
+// import { Picker } from 'meteor/meteorhacks:picker';
 // import Documents from '../../api/Documents/Documents';
 import { iso } from '../../modules/dates.js';
 
@@ -13,16 +14,6 @@ const routes = [
   { base: 'about', priority: '0.5' },
   { base: 'vision', priority: '1.0' },
   { base: 'healthprinciples', priority: '1.0' },
-  { base: 'healthfaq', priority: '0.5' },
-
-  /* {
-    base: 'documents',
-    collection: Documents,
-    priority: '1.0',
-    // NOTE: Edit this query to limit what you publish.
-    query: {},
-    projection: { fields: { _id: 1, createdAt: 1 }, sort: { createdAt: -1 } },
-  }, */
 ];
 
 const sitemap = {
@@ -54,7 +45,17 @@ routes.forEach(({
   }
 });
 
+WebApp.handlers.get(
+  '/sitemap.xml',
+  async (request, response) => {
+    response.setHeader('content-type', 'application/rss+xml');
+    response.writeHead(200);
+    response.end(xml(sitemap, { declaration: { standalone: 'yes', encoding: 'utf-8' } }));
+  },
+);
+
+/*
 Picker.route('/sitemap.xml', (params, request, response) => {
   response.writeHead(200, { 'Content-Type': 'application/xml' });
   response.end(xml(sitemap, { declaration: { standalone: 'yes', encoding: 'utf-8' } }));
-});
+}); */

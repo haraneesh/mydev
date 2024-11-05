@@ -3,21 +3,21 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import handleMethodException from '../../modules/handle-method-exception';
 
-const updatePassword = (userId, newPassword) => {
+const updatePassword = async (userId, newPassword) => {
   try {
-    Accounts.setPassword(userId, newPassword, { logout: false });
+    await Accounts.setPasswordAsync(userId, newPassword, { logout: false });
   } catch (exception) {
     handleMethodException(exception);
   }
 };
 
-const updateUser = (userId, { emailAddress, profile, settings }) => {
+const updateUser = async (userId, { emailAddress, profile, settings }) => {
   try {
-    const user = Meteor.users.findOne({ _id: userId });
+    const user = await Meteor.users.findOneAsync({ _id: userId });
     const newProfile = { ...user.profile, ...profile };
     const presentEmailAddress = user && user.emails && user.emails[0].address;
 
-    Meteor.users.update(userId, {
+     let result = await Meteor.users.updateAsync({ _id: userId }, {
       $set: {
         username: profile.whMobilePhone,
         'emails.0.address': emailAddress,
@@ -29,22 +29,24 @@ const updateUser = (userId, { emailAddress, profile, settings }) => {
     });
 
     if (settings) {
-      Meteor.users.update(userId, {
+      result = await Meteor.users.updateAsync({ _id: userId }, {
         $set: {
           settings,
         },
       });
     }
+
+    return result;
   } catch (exception) {
     handleMethodException(exception);
   }
 };
 
-const editProfile = ({ userId, user }) => {
+const editProfile = async ({ userId, user }) => {
   try {
-    updateUser(userId, user);
+   await updateUser(userId, user);
     if (user.password && Object.keys(user.password).length !== 0) {
-      updatePassword(userId, user.password);
+     await updatePassword(userId, user.password);
     }
   } catch (exception) {
     handleMethodException(exception);

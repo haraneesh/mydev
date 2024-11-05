@@ -38,7 +38,7 @@ function retZohoPaymentObject(
 
 // Create a customer payment
 // POST /customerpayments	Create a payment made by your customer and you can also apply them to invoices either partially or fully.
-function createCustomerPayment(args) {
+async function createCustomerPayment(args) {
   const {
     zhCustomerId,
     paymentAmountInPaise,
@@ -56,13 +56,13 @@ function createCustomerPayment(args) {
     paymentDescription,
     zoho_fund_deposit_account_id,
   );
-  const response = zh.createRecord('customerpayments', zhPaymentObj);
+  const response = await zh.createRecord('customerpayments', zhPaymentObj);
 
   return response;
 }
 
-function getCustomerPayments(zhCustomerId){
-  const response = zh.getRecordsByParams('customerpayments', {
+async function getCustomerPayments(zhCustomerId){
+  const response = await zh.getRecordsByParams('customerpayments', {
     customer_id: zhCustomerId,
   });
   return response;

@@ -1,15 +1,15 @@
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 
 import { toast } from 'react-toastify';
 import { insertProduct } from '../../../api/Products/methods';
 import constants from '../../../modules/constants';
 
 const handleInsertProduct = (event) => {
-  const { target } = event;
+  event.preventDefault();
   const name = document.querySelector('[name="productName"]').value;
   if (name !== '') {
     const unitprice = 0;
@@ -28,27 +28,30 @@ const handleInsertProduct = (event) => {
       name: 'Healthy Farm Foods',
     };
 
-    insertProduct.call({
-      sku,
-      name,
-      unitOfSale,
-      wSaleBaseUnitPrice,
-      maxUnitsAvailableToOrder,
-      unitprice,
-      description,
-      image_path,
-      type,
-      availableToOrder,
-      availableToOrderWH,
-      vendor_details,
-    }, (error) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        toast.success('Product has been added!');
-        window.location.reload();
-      }
-    });
+    insertProduct.call(
+      {
+        sku,
+        name,
+        unitOfSale,
+        wSaleBaseUnitPrice,
+        maxUnitsAvailableToOrder,
+        unitprice,
+        description,
+        image_path,
+        type,
+        availableToOrder,
+        availableToOrderWH,
+        vendor_details,
+      },
+      (error) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          toast.success('Product has been added!');
+          //window.location.reload();
+        }
+      },
+    );
   } else {
     toast.info('Type in a Product Name.');
   }
@@ -64,7 +67,10 @@ const InsertProduct = () => (
       />
     </Col>
     <Col xs={5} sm={3} className="text-sm-start">
-      <Button onClick={handleInsertProduct} className="btn-block btn-secondary"> Add Product </Button>
+      <Button onClick={handleInsertProduct} className="btn-block btn-secondary">
+        {' '}
+        Add Product{' '}
+      </Button>
     </Col>
   </Row>
 );

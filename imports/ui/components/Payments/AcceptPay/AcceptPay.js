@@ -184,7 +184,7 @@ function AcceptPay({
               <span className="underline"> No fee</span>
             </h6>
 
-            <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+            <Form.Group>
               <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
                 {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                 <InputGroup>
@@ -212,7 +212,7 @@ function AcceptPay({
 
                 </InputGroup>
                 {isError.amountToChargeInRs.length > 0 && (
-                  <span className="small text-info">{isError.amountToChargeInRs}</span>
+                  <span className="text-info bg-white">{isError.amountToChargeInRs}</span>
                 )}
               </Col>
               <Col xs={12} sm={3} className="text-right-xs">
@@ -259,7 +259,7 @@ function AcceptPay({
                   <div>3. NetBanking or Credit Card, 2% transaction fee </div>
                 </h6>
 
-                <Form.Group validationState={isError.amountToChargeInRs.length > 0 ? 'error' : ''}>
+                <Form.Group >
                   <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
                     {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                     <InputGroup>
@@ -293,7 +293,7 @@ function AcceptPay({
                       </small>
                     </p>
                     {isError.amountToChargeInRs.length > 0 && (
-                      <span className="small text-info">{isError.amountToChargeInRs}</span>
+                      <span className="text-info bg-white">{isError.amountToChargeInRs}</span>
                     )}
                   </Col>
                   <Col xs={12} sm={3} className="text-right-xs">
@@ -343,7 +343,7 @@ AcceptPay.defaultProps = {
 
 AcceptPay.propTypes = {
   showWalletBalance: PropTypes.bool,
-  cartTotalBillAmount: PropTypes.string,
+  cartTotalBillAmount: PropTypes.number,
   userWallet: PropTypes.shape({
     unused_retainer_payments_InPaise: PropTypes.number.isRequired,
     unused_credits_receivable_amount_InPaise: PropTypes.number.isRequired,

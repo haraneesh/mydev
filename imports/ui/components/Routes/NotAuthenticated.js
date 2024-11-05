@@ -15,16 +15,19 @@ const NotAuthenticated = ({ layout: Layout, authenticated, component, ...rest })
   />
 ); */
 
-const NotAuthenticated = ({ layout: Layout, authenticated, component: Component, ...rest }) => (
+const NotAuthenticated = ({
+  layout: Layout, authenticated, component: Component, ...rest
+}) => (
   <Route
     {...rest}
-    render={props => (
-      !authenticated ?
-      (<Layout {...props} authenticated={false} {...rest} >
-        <Component {...props} authenticated={false} {...rest} />
-      </Layout>)
-      :
-      (<Redirect to="/" />)
+    render={(props) => (
+      !authenticated
+        ? (
+          <Layout {...props} authenticated={false} {...rest}>
+            <Component {...props} authenticated={false} {...rest} />
+          </Layout>
+        )
+        : (<Redirect to="/" />)
     )}
   />
 );

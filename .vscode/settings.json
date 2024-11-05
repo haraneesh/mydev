@@ -1,26 +1,8 @@
-// Place your settings in this file to overwrite default and user settings.
 {
-    // Configure glob patterns for excluding files and folders.
-    
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    },
-  "eslint.validate": ["javascript"],
-
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/.DS_Store": true,
-    "**/.meteor":true,
-    "**/node_modules":true,
-    "files.eol": "\n"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "eslint.validate": [
-    "javascript"
-  ]
+    "editor.defaultFormatter": "biomejs.biome",
+    "emmet.preferences": {
+        "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+      }
+    }
 }
-

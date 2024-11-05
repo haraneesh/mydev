@@ -7,21 +7,29 @@ organization_id=****
 authtoken=****
 */
 
-import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Meteor } from 'meteor/meteor';
+import constants from '../../modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit.js';
+import Products from '../Products/Products';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
-import constants from '../../modules/constants';
-import { updateSyncAndReturn, retResponse, getZhDisplayDate } from './zohoCommon';
-import Products from '../Products/Products';
-import rateLimit from '../../modules/rate-limit.js';
-import handleMethodException from '../../modules/handle-method-exception';
+import {
+  getZhDisplayDate,
+  retResponse,
+  updateSyncAndReturn,
+} from './zohoCommon';
 
-function updateReturnableDetails(details, product) {
-  details.forEach((salesDetail) => {
-    const usr = Meteor.users.findOne({ zh_contact_id: salesDetail.customer_id });
+async function updateReturnableDetails(details, product) {
+  for (const salesDetail of details) {
+    const usr = await Meteor.users.findOneAsync({
+      zh_contact_id: salesDetail.customer_id,
+    });
     if (usr) {
-      const productReturnables = (usr.productReturnables) ? usr.productReturnables : {};
+      const productReturnables = usr.productReturnables
+        ? usr.productReturnables
+        : {};
       productReturnables[product._id] = {
         productName: product.name,
         quantitySold: salesDetail.quantity_sold,
@@ -30,15 +38,15 @@ function updateReturnableDetails(details, product) {
         zh_amount: salesDetail.amount,
         zh_averagePrice: salesDetail.average_price,
       };
-      Meteor.users.update(usr._id, { $set: { productReturnables } });
+      await Meteor.users.updateAsync(usr._id, { $set: { productReturnables } });
     }
-  });
+  }
 }
 
 const getSalesDetailsByItemFromZoho = new ValidatedMethod({
   name: 'reports.getSalesDetailsByItemFromZoho',
   validate() {},
-  run() {
+  async run() {
     try {
       const today = new Date();
       const fromYear = new Date();
@@ -47,27 +55,34 @@ const getSalesDetailsByItemFromZoho = new ValidatedMethod({
       const errorResp = [];
 
       if (Meteor.isServer) {
-        const returnableProducts = Products.find(
+        const returnableProducts = await Products.find(
           { type: constants.ReturnProductType.name },
           {
             fields: {
-              _id: 1, sku: 1, zh_item_id: 1, name: 1, image_path: 1,
+              _id: 1,
+              sku: 1,
+              zh_item_id: 1,
+              name: 1,
+              image_path: 1,
             },
           },
-        ).fetch();
+        ).fetchAsync();
 
-        returnableProducts.forEach((product) => {
+        for (const product of returnableProducts) {
           let page = 1;
           let hasMorePages = true;
 
           while (hasMorePages) {
-            const r = zh.getRecordsByParams('reports/salesdetailsbyitem', {
-              from_date: getZhDisplayDate(fromYear),
-              to_date: getZhDisplayDate(today),
-              item_id: product.zh_item_id,
-              per_page: 1000,
-              page,
-            });
+            const r = await zh.getRecordsByParams(
+              'reports/salesdetailsbyitem',
+              {
+                from_date: getZhDisplayDate(fromYear),
+                to_date: getZhDisplayDate(today),
+                item_id: product.zh_item_id,
+                per_page: 1000,
+                page,
+              },
+            );
             if (r.code === 0) {
               successResp.push(retResponse(r));
               updateReturnableDetails(r.sales, product);
@@ -82,9 +97,15 @@ const getSalesDetailsByItemFromZoho = new ValidatedMethod({
               errorResp.push(retResponse(res));
             }
           }
-        });
+        }
 
-        return updateSyncAndReturn('salesdetailsbyitem', successResp, errorResp, today, syncUpConstants.salesDetailsByItemFromZoho);
+        return await updateSyncAndReturn(
+          'salesdetailsbyitem',
+          successResp,
+          errorResp,
+          today,
+          syncUpConstants.salesDetailsByItemFromZoho,
+        );
       }
     } catch (exception) {
       handleMethodException(exception);
@@ -95,9 +116,7 @@ const getSalesDetailsByItemFromZoho = new ValidatedMethod({
 export default getSalesDetailsByItemFromZoho;
 
 rateLimit({
-  methods: [
-    getSalesDetailsByItemFromZoho,
-  ],
+  methods: [getSalesDetailsByItemFromZoho],
   limit: 5,
   timeRange: 1000,
 });

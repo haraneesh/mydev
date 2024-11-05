@@ -1,13 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import amplitude from 'amplitude-js';
-import Security from '../../../modules/both/security';
+import { Roles } from 'meteor/alanning:roles';
+import constants from '/imports/modules/constants';
 import Events from './Events';
 
 class analyticsFunctions {
     static analyticsApiKey = Meteor.settings.public.analyticsSettings.amplitude.apiKey;
 
     static initialize(loggedInUser) {
-      if (!Security.checkBoolUserIsAdmin(Meteor.userId())) {
+      const isAdmin = Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name);
+      if (!isAdmin) {
         const userName = loggedInUser.username;
         amplitude.getInstance().init(this.analyticsApiKey, userName);
         amplitude.getInstance().setUserProperties({
@@ -35,7 +37,8 @@ class analyticsFunctions {
     static logEvent({ event, eventProperties }) {
       const userId = Meteor.userId();
       const eventName = (Meteor.isProduction) ? event : `Dev_${event}`;
-      if (!Security.checkBoolUserIsAdmin(userId)) {
+      const isAdmin = Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name)
+      if (!isAdmin) {
         if (eventProperties) {
           amplitude.getInstance().logEvent(eventName, eventProperties);
         } else {

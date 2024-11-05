@@ -4,24 +4,25 @@ import { Roles } from 'meteor/alanning:roles';
 import Comments from './Comments';
 import handleMethodException from '../../modules/handle-method-exception';
 
-function getUser(userId) {
-  const usr = Meteor.users.find(userId, {
+async function getUser(userId) {
+  const usr = await Meteor.users.findOneAsync(userId, {
     fields: {
       profile: 1,
       roles: 1,
     },
-  }).fetch()[0];
+  });
 
   const ownerName = `${usr.profile.salutation ? usr.profile.salutation : 'Mrs'} ${[usr.profile.name.last, usr.profile.name.first].filter(Boolean).join(', ')}`;
 
+  const roles = await Roles.getRolesForUserAsync(userId);
   return {
     owner: userId,
     ownerName,
-    ownerRole: Roles.getRolesForUser(userId)[0],
+    ownerRole: roles[0],
   };
 }
 
-function commentInsert(comment) {
+async function commentInsert(comment) {
   check(comment, {
     postId: String,
     postType: String,
@@ -40,13 +41,13 @@ function commentInsert(comment) {
       status: comment.commentStatus,
     };
 
-    return Comments.insert(cmt);
+    return await Comments.insertAsync(cmt);
   } catch (exception) {
     handleMethodException(exception);
   }
 }
 
-function commentUpdate(comment) {
+async function commentUpdate(comment) {
   check(comment, {
     commentId: String,
     postId: String,
@@ -66,26 +67,26 @@ function commentUpdate(comment) {
       status: comment.commentStatus,
     };
 
-    Comments.update({ _id: comment.commentId }, { $set: cmt });
+    await Comments.updateAsync({ _id: comment.commentId }, { $set: cmt });
     return comment.commentId;
   } catch (exception) {
     handleMethodException(exception);
   }
 }
 
-function getComments(postId) {
+async function getComments(postId) {
   check(postId, String);
-  return Comments.find({ postId }).fetch();
+  return await Comments.find({ postId }).fetchAsync();
 }
 
-function commentDelete(commentId) {
+async function commentDelete(commentId) {
   check(commentId, String);
-  Comments.remove({ _id: commentId });
+  await Comments.removeAsync({ _id: commentId });
 }
 
-function allCommentsOfPost(postId) {
+async function allCommentsOfPost(postId) {
   check(postId, String);
-  Comments.remove({ postId });
+  await Comments.removeAsync({ postId });
 }
 
 export default {

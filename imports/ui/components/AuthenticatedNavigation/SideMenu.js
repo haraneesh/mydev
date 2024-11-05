@@ -81,7 +81,7 @@ const SideMenu = (props) => {
 };
 
 SideMenu.propTypes = {
-  history: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired,
   authenticated: PropTypes.bool.isRequired,
 };
 

@@ -4,7 +4,7 @@ import rateLimit from '../../modules/rate-limit';
 import Search from './Search';
 
 Meteor.methods({
-  'search.captureSearchString': function captureSearchString(searchString) {
+  'search.captureSearchString': async function captureSearchString(searchString) {
     check(searchString, String);
 
     const searchRecord = {
@@ -12,12 +12,12 @@ Meteor.methods({
       userId: (this.userId) ? this.userId : '',
     };
 
-    const ifExistsSrch = Search.findOne(searchRecord);
+    const ifExistsSrch = await Search.findOneAsync(searchRecord);
 
     if (!ifExistsSrch) {
-      return Search.insert({ ...searchRecord, count: 0 });
+      return await Search.insertAsync({ ...searchRecord, count: 0 });
     }
-    return Search.update({ _id: ifExistsSrch._id }, { $inc: { count: 1 } });
+    return await Search.updateAsync({ _id: ifExistsSrch._id }, { $inc: { count: 1 } });
   },
 });
 

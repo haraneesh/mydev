@@ -38,16 +38,6 @@ Meteor.publish('messages.notifications', function searchSeries(lastFetchDateTime
 
   const { userId } = this;
   const isAdmin = Roles.userIsInRole(userId, [constants.Roles.admin.name]);
-  /*
-  const usr = Meteor.users.find(userId, {
-    fields: {
-      globalStatuses: 1,
-    },
-  }).fetch()[0];
-
-  const lasVisitedDateTime = (usr.globalStatuses && usr.globalStatuses.lastVisitedMessageApp)
-    ? (usr.globalStatuses && usr.globalStatuses.lastVisitedMessageApp) : new Date('1/1/2001');
-  */
 
   const adminQuery = {
     $and: [

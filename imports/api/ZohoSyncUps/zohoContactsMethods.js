@@ -15,10 +15,10 @@ import handleMethodException from '../../modules/handle-method-exception';
 
 const fs = require('fs');
 
-const createZohoBooksContact = (usr) => ({
+const createZohoBooksContact = async(usr) => ({
   contact_name: `${usr.profile.name.first} ${usr.profile.name.last}`,
-  customer_sub_type: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
-  // gst_treatment: (Roles.userIsInRole(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
+  customer_sub_type: (await Roles.userIsInRoleAsync(usr._id, constants.Roles.shopOwner.name)) ? 'business' : 'individual',
+  // gst_treatment: (Roles.userIsInRoleAsync(usr._id, constants.Roles.shopOwner.name)) ? 'business_gst' : 'consumer',
   billing_address: {
     address: usr.profile.deliveryAddress,
     city: 'chennai',
@@ -38,14 +38,14 @@ const createZohoBooksContact = (usr) => ({
   }],
 });
 
-const _syncUsersWithZoho = (usr, successResp, errorResp) => {
+const _syncUsersWithZoho = async (usr, successResp, errorResp) => {
   const user = usr;
   const zhContact = createZohoBooksContact(user);
   const r = (user.zh_contact_id)
-    ? zh.updateRecord('contacts', user.zh_contact_id, zhContact)
-    : zh.createRecord('contacts', zhContact);
+    ? await zh.updateRecord('contacts', user.zh_contact_id, zhContact)
+    : await zh.createRecord('contacts', zhContact);
   if (r.code === 0 /* Success */) {
-    Meteor.users.update({ _id: user._id }, { $set: { zh_contact_id: r.contact.contact_id } });
+    await Meteor.users.updateAsync({ _id: user._id }, { $set: { zh_contact_id: r.contact.contact_id } });
     successResp.push(retResponse(r));
   } else {
     const res = {
@@ -56,18 +56,21 @@ const _syncUsersWithZoho = (usr, successResp, errorResp) => {
   }
 };
 
-export function syncNewSignUpUserWithZoho(user) {
+export async function syncNewSignUpUserWithZoho(user) {
   const successResp = [];
   const errorResp = [];
-  _syncUsersWithZoho(user, successResp, errorResp);
-  return updateSyncAndReturn(syncUpConstants.users, successResp, errorResp, new Date());
+  await _syncUsersWithZoho(user, successResp, errorResp);
+  return await updateSyncAndReturn(syncUpConstants.users, successResp, errorResp, new Date());
 }
 
 export const bulkSyncUsersZoho = new ValidatedMethod({
   name: 'users.bulkSyncUsersZoho',
   validate() { },
-  run() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  async run() {
+
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       throw new Meteor.Error(401, 'Access denied');
     }
@@ -76,19 +79,20 @@ export const bulkSyncUsersZoho = new ValidatedMethod({
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
-      const syncDT = ZohoSyncUps.findOne({ syncEntity: syncUpConstants.users }).syncDateTime;
+      const syncDT = await ZohoSyncUps.findOneAsync({ syncEntity: syncUpConstants.users }).syncDateTime;
       const query = { updatedAt: { $gte: syncDT } };
-      const users = Meteor.users.find(query).fetch(); // Change based on update date
-      users.forEach((usr) => {
-        _syncUsersWithZoho(usr, successResp, errorResp);
-      });
+      const users = await Meteor.users.find(query).fetchAsync(); // Change based on update date
+
+      for (const usr of users) {
+        await _syncUsersWithZoho(usr, successResp, errorResp);
+      }
     }
-    return updateSyncAndReturn(syncUpConstants.users, successResp, errorResp, nowDate);
+    return await updateSyncAndReturn(syncUpConstants.users, successResp, errorResp, nowDate);
   },
 });
 
-export const updateUserWallet = (user) => {
-  const zhContactResponse = zh.getRecordById('contacts', user.zh_contact_id);
+export const updateUserWallet = async (user) => {
+  const zhContactResponse = await zh.getRecordById('contacts', user.zh_contact_id);
 
   let newWallet;
 
@@ -103,7 +107,7 @@ export const updateUserWallet = (user) => {
       lastZohoSync: new Date(),
     };
 
-    Meteor.users.update({ _id: user._id }, {
+    await Meteor.users.updateAsync({ _id: user._id }, {
       $set: {
         wallet: newWallet,
       },
@@ -115,13 +119,13 @@ export const updateUserWallet = (user) => {
   };
 };
 
-const sendMessage = ({
+const sendMessage = async ({
   user, zhStartDate, zhEndDate, zhGeneratedDate, emailAddress,
 }) => {
   const salutation = user.profile.salutation || '';
   const firstName = user.profile.name.first;
 
-  const zhContactResponse = zh.postRecordByIdAndParams({
+  const zhContactResponse = await zh.postRecordByIdAndParams({
     module: 'contacts',
     id: user.zh_contact_id,
     submodule: 'statements/email',
@@ -193,13 +197,15 @@ function returnStartandEndDates(periodSelected) {
   return { zhStartDate, zhEndDate, zhGeneratedDate };
 }
 
-export function retWalletAndSyncIfNecessary(userId) {
-  const user = Meteor.users.find(userId).fetch({}, {
+export async function  retWalletAndSyncIfNecessary(userId) {
+  const users = await Meteor.users.find({ _id: userId }, {
     fields: {
       zh_contact_id: 1,
       wallet: 1,
     },
-  })[0];
+  }).fetchAsync();
+
+  const user = users[0];
 
   const userSyncedWithZoho = user && user.zh_contact_id;
   if (Meteor.isServer && userSyncedWithZoho) {
@@ -211,13 +217,13 @@ export function retWalletAndSyncIfNecessary(userId) {
     const days = duration.asDays();
 
     if (days > 1) {
-      const { zohoResponse } = updateUserWallet(user);
+      const { zohoResponse } = await updateUserWallet(user);
 
       if (zohoResponse.code !== 0) {
         handleMethodException(zohoResponse, zohoResponse.code);
       }
 
-      const { error } = getUserOrdersAndInvoicesFromZoho(userId);
+      const { error } = await getUserOrdersAndInvoicesFromZoho(userId);
 
       if (error.erroResp && error.erroResp.length > 0) {
         handleMethodException(error.errorResp[0], error.errorResp[0].code);
@@ -234,36 +240,37 @@ export function retWalletAndSyncIfNecessary(userId) {
 export const getUserWallet = new ValidatedMethod({
   name: 'users.getUserWallet',
   validate() { },
-  run() {
-    return retWalletAndSyncIfNecessary(this.userId);
+  async run() {
+    return await retWalletAndSyncIfNecessary(this.userId);
   },
 });
 
 Meteor.methods({
-  'customer.getUserWalletWithoutCheck': function getUserWalletWithoutCheck() {
-    const user = Meteor.users.find(this.userId).fetch({}, {
+  'customer.getUserWalletWithoutCheck': async function getUserWalletWithoutCheck() {
+    const users = await Meteor.users.find({_id: this.userId}, {
       fields: {
         zh_contact_id: 1,
         wallet: 1,
       },
-    })[0];
+    }).fetchAsync();
 
+    const user = users[0];
     const userSyncedWithZoho = user && user.zh_contact_id;
     if (Meteor.isServer && userSyncedWithZoho) {
-      const { zohoResponse } = updateUserWallet(user);
+      const { zohoResponse } = await updateUserWallet(user);
 
       if (zohoResponse.code !== 0) {
         handleMethodException(zohoResponse, zohoResponse.code);
       }
     }
   },
-  'customer.sendStatement': function sendStatement(params) {
+  'customer.sendStatement': async function sendStatement(params) {
     check(params, {
       periodSelected: String,
     });
 
     if (Meteor.isServer) {
-      const user = Meteor.users.findOne({ _id: this.userId });
+      const user = await Meteor.users.findOneAsync({ _id: this.userId });
       if (!user.emails[0].verified) {
         return {
           message: 'Email Address is Not Verified',
@@ -295,7 +302,7 @@ Meteor.methods({
       }
     }
   },
-  'customer.getStatement': function getStatement(params) {
+  'customer.getStatement': async function getStatement(params) {
     check(params, {
       periodSelected: String,
     });
@@ -307,13 +314,9 @@ Meteor.methods({
           zhEndDate,
         } = returnStartandEndDates(params.periodSelected);
 
-        const user = Meteor.users.find(this.userId).fetch({}, {
-          fields: {
-            zh_contact_id: 1,
-          },
-        })[0];
+        const user = await Meteor.users.findOneAsync({_id:this.userId}, {fields: { zh_contact_id: 1}});
 
-        const zhContactResponse = zh.getRecordByIdAndParams({
+        const zhContactResponse = await zh.getRecordByIdAndParams({
           module: 'customers',
           id: user.zh_contact_id,
           submodule: 'statements',

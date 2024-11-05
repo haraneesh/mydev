@@ -1,21 +1,22 @@
 import React from 'react';
 
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
-import { Link } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
-import { formValid, formValChange } from '../../../../modules/validate';
+import { formValChange, formValid } from '../../../../modules/validate';
 import { clearEntireLocalStore } from '../../../stores/localStorage';
 
 const showPasswordButtonPositions = {
-  position: 'relative',
-  top: '-45px',
+  position: 'absolute',
+  right: '0px',
+  top: '42px',
   padding: '10px',
   fontSize: '76%',
   width: '75px',
@@ -82,7 +83,7 @@ class Login extends React.Component {
         <Col xs={12} sm={6} md={5} lg={4}>
           <h2 className="py-4">Sign in</h2>
           <form onSubmit={this.validateForm}>
-            <Row className="py-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
+            <Row className="py-2">
               <label className="control-label">Mobile Number</label>
               <input
                 type="text"
@@ -93,16 +94,20 @@ class Login extends React.Component {
                 onBlur={this.onValueChange}
               />
               {isError.whMobilePhone.length > 0 && (
-                <span className="small text-info">{isError.whMobilePhone}</span>
+                <span className="bg-white text-danger p-2">
+                  {isError.whMobilePhone}
+                </span>
               )}
             </Row>
-            <Row className="py-2" validationState={isError.password.length > 0 ? 'error' : null} style={{ position: 'relative' }}>
+            <Row className="py-2" style={{ position: 'relative' }}>
               <label className="clearfix control-label">
                 <span>Password</span>
-                <Link className="float-end" to="/recover-password">Forgot password?</Link>
+                <Link className="float-end" to="/recover-password">
+                  Forgot password?
+                </Link>
               </label>
               <input
-                type={(this.state.showPassword ? 'text' : 'password')}
+                type={this.state.showPassword ? 'text' : 'password'}
                 name="password"
                 className="form-control"
                 placeholder="Password"
@@ -118,28 +123,31 @@ class Login extends React.Component {
                 >
                   {this.state.showPassword ? 'Hide' : 'Show'}
                 </Button>
-
-                {isError.password.length > 0 && (
-                <span className="small text-info">{isError.password}</span>
-                )}
-
-                <Button
-                  type="submit"
-                  variant="secondary"
-                  className="my-2 mb-4 loginBtn d-block"
-                >
-                  Log In
-
-                </Button>
               </div>
+              {isError.password.length > 0 && (
+                <span className="bg-white text-danger p-2">
+                  {isError.password}
+                </span>
+              )}
+              <Button
+                type="submit"
+                variant="secondary"
+                className="my-2 mb-4 loginBtn d-block"
+              >
+                Log In
+              </Button>
             </Row>
             <div className="text-center alert bg-body py-3">
               <span>
                 {'New to Suvai? '}
-                <a href="/signup" className="login-signup text-secondary h4 ps-1">Create an account</a>
+                <a
+                  href="/signup"
+                  className="login-signup text-secondary h4 ps-1"
+                >
+                  Create an account
+                </a>
               </span>
             </div>
-
           </form>
           {/* } <Row>
             <p>- Or - </p>

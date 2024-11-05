@@ -126,7 +126,6 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
           <Row>
             <Col xs={6}>
               <Row
-                validationState={isError.firstName.length > 0 ? 'error' : ''}
                 className="pe-1"
               >
                 <label>First Name</label>
@@ -138,12 +137,11 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
                 />
               </Row>
               {isError.firstName.length > 0 && (
-                <span className="small text-muted">{isError.firstName}</span>
+                <span className="bg-white text-danger">{isError.firstName}</span>
               )}
             </Col>
             <Col xs={6}>
               <Row
-                validationState={isError.lastName.length > 0 ? 'error' : ''}
                 className="ps-1"
               >
                 <label>Last Name</label>
@@ -155,12 +153,12 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
                 />
               </Row>
               {isError.lastName.length > 0 && (
-                <span className="small text-muted">{isError.lastName}</span>
+                <span className="bg-white text-danger">{isError.lastName}</span>
               )}
             </Col>
           </Row>
 
-          <Row className="pt-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+          <Row className="pt-2">
             <label>Whats App Mobile Number</label>
             <input
               type="text"
@@ -170,10 +168,10 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
               onBlur={onValueChange}
             />
             {isError.whMobilePhone.length > 0 && (
-            <span className="small text-muted">{isError.whMobilePhone}</span>
+            <span className="bg-white text-danger">{isError.whMobilePhone}</span>
             )}
           </Row>
-          <Row className="pt-2" validationState={isError.confirmWhMobileNumber.length > 0 ? 'error' : ''}>
+          <Row className="pt-2">
             <label>Confirm Mobile Number</label>
             <input
               type="password"
@@ -184,10 +182,10 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
               className="form-control"
             />
             {isError.confirmWhMobileNumber.length > 0 && (
-            <span className="small text-muted">{isError.confirmWhMobileNumber}</span>
+            <span className="bg-white text-danger">{isError.confirmWhMobileNumber}</span>
             )}
           </Row>
-          <Row className="pt-2" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+          <Row className="pt-2">
             <label>Delivery Address</label>
             <textarea
               name="deliveryAddress"
@@ -197,7 +195,7 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
               onBlur={onValueChange}
             />
           </Row>
-          <Row className="pt-2" validationState={isError.password.length > 0 ? 'error' : ''}>
+          <Row className="pt-2">
             <label>Create Password</label>
             <input
               id="password"
@@ -208,10 +206,10 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
             />
             <InputHint>Use at least six characters.</InputHint>
             {isError.password.length > 0 && (
-            <span className="small text-muted">{isError.password}</span>
+            <span className="bg-white text-danger">{isError.password}</span>
             )}
           </Row>
-          <Row className="pt-2" validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+          <Row className="pt-2">
             <label>Confirm Password</label>
             <input
               type="password"
@@ -221,7 +219,7 @@ const SpecialOrderDeliveryDetails = forwardRef((props, ref) => {
               onPaste={(e) => { e.preventDefault(); }}
             />
             {isError.confirmPassword.length > 0 && (
-            <span className="small text-muted">{isError.confirmPassword}</span>
+            <span className="bg-white text-danger">{isError.confirmPassword}</span>
             )}
           </Row>
         </Col>

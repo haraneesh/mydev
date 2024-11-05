@@ -1,14 +1,14 @@
 import zh from './ZohoBooks';
 
-function getCustomerCreditNotes(zhCustomerId){
-  const response = zh.getRecordsByParams('creditnotes', {
+async function getCustomerCreditNotes(zhCustomerId){
+  const response = await zh.getRecordsByParams('creditnotes', {
     customer_id: zhCustomerId,
   });
   return response;
 }
 
-function getCreditNote(creditNoteId){
-  const response = zh.getRecordById('creditnotes', creditNoteId);
+async function getCreditNote(creditNoteId){
+  const response = await zh.getRecordById('creditnotes', creditNoteId);
   return response;
 }
 

@@ -5,7 +5,6 @@ const _callType = {
   GET: 'GET',
   PUT: 'PUT',
   DELETE: 'DELETE',
-
 };
 
 const _setAPICall = () => ({
@@ -13,75 +12,83 @@ const _setAPICall = () => ({
   organization_id: Meteor.settings.private.zoho_organization_id,
 });
 
-const _callAPI = (requestType, endpoint, params) => {
+const _callAPI = async (requestType, endpoint, params) => {
   const args = {};
   const apiBaseUrl = 'https://inventory.zoho.com/api/v1';
   args.params = _setAPICall();
-  if ((requestType === _callType.POST || requestType === _callType.PUT) && params) {
+  if (
+    (requestType === _callType.POST || requestType === _callType.PUT) &&
+    params
+  ) {
     args.params.JSONString = JSON.stringify(params);
-      // _data = params;
-      // args.content = { JSONString: JSON.stringify(params) };
   }
 
-  const _callUrl = `${apiBaseUrl}/${endpoint}`;
+  const callUrl = `${apiBaseUrl}/${endpoint}`;
   try {
-    const result = HTTP.call(requestType, _callUrl, args);
-    return result.data;
+    const response = await fetch(callUrl, {
+      method: requestType, // *GET, POST, PUT, DELETE, etc.
+      headers: args.headers,
+      body: requestType !== _callType.GET ? args.params.JSONString : null, // body data type must match "Content-Type" header
+    });
+    if (!response.ok) {
+      console.log('---------------Error---------------------');
+      console.log(response);
+      throw new Error('Return response has an error');
+    }
+    return await response.json();
   } catch (e) {
     // Got a network error, timeout, or HTTP error in the 400 or 500 range.
     /* console.log('--------------------------------------');
      console.error(e);
      console.log('--------------------------------------');*/
-    const argMsg = (args.params.JSONString) ? args.params.JSONString:' '
-     if (e.response) {
-       //return e.response.data; 
-       return {
-         code:e.response.data.code,
-         message:e.response.data.message + ' ' + argMsg
-       }
-     }
-      else {
-        return {
-          code:-1,
-          message: e.code + ' ' + e.errno + '  ' + argMsg
-        }
+    const argMsg = args.params.JSONString ? args.params.JSONString : ' ';
+    if (e.response) {
+      //return e.response.data;
+      return {
+        code: e.response.code,
+        message: e.response.message + ' ' + argMsg,
+      };
+    } else {
+      return {
+        code: -1,
+        message: e.code + ' ' + e.errno + '  ' + argMsg,
+      };
     }
-    
   }
 };
 
-const createRecord = (module, params) => {
-    // check
+const createRecord = async (module, params) => {
+  // check
   const endpoint = module;
-  return _callAPI(_callType.POST, endpoint, params);
+  return await _callAPI(_callType.POST, endpoint, params);
 };
 
-const updateRecord = (module, id, params) => {
+const updateRecord = async (module, id, params) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.PUT, endpoint, params);
+  return await _callAPI(_callType.PUT, endpoint, params);
 };
 
-const getRecords = (module) => {
+const getRecords = async (module) => {
   const endpoint = module;
-  return _callAPI(_callType.GET, endpoint);
+  return await _callAPI(_callType.GET, endpoint);
 };
 
-const getRecordById = (module, id) => {
+const getRecordById = async (module, id) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.GET, endpoint);
+  return await _callAPI(_callType.GET, endpoint);
 };
 
-
-const deleteRecord = (module, id) => {
+const deleteRecord = async (module, id) => {
   const endpoint = `${module}/${id}`;
-  return _callAPI(_callType.DELETE, endpoint);
+  return await _callAPI(_callType.DELETE, endpoint);
 };
 
-
-export default ZohoInventory = {
+const ZohoInventory = {
   createRecord,
   updateRecord,
   getRecords,
   deleteRecord,
   getRecordById,
 };
+
+export default ZohoInventory;

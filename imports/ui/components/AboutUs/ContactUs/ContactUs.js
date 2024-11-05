@@ -9,8 +9,8 @@ const WhatsAppSupport = Meteor.settings.public.Support_Numbers.whatsapp;
 const LandLineSupport = Meteor.settings.public.Support_Numbers.landline;
 
 const ContactUs = () => (
-  <Card className="ContactUs text-center my-3 py-3">
-    <p><h3>Contact Us</h3></p>
+  <Card className="ContactUs text-center my-3 py-4">
+    <p className="py-3"><h1>Contact Us</h1></p>
     <Row>
       <Col xs={12} sm={6}>
         <address>

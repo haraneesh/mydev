@@ -166,7 +166,7 @@ class Profile extends React.Component {
             <option value="Miss"> Miss</option>
           </select>
         </Row>
-        <Row validationState={isError.firstName.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>First Name</label>
           <input
             type="text"
@@ -180,7 +180,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.firstName}</span>
           )}
         </Row>
-        <Row validationState={isError.lastName.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Last Name</label>
           <input
             type="text"
@@ -194,7 +194,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.lastName}</span>
           )}
         </Row>
-        <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <Row>
             <Col xs={6}>
               <label>Email Address</label>
@@ -217,7 +217,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.emailAddress}</span>
           )}
         </Row>
-        <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Mobile Number</label>
           <input
             type="text"
@@ -232,7 +232,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.whMobilePhone}</span>
           )}
         </Row>
-        <Row validationState={isError.packingPreference.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Packing Preference</label>
           <select
             name="packingPreference"
@@ -251,7 +251,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.packingPreference}</span>
           )}
         </Row>
-        <Row validationState={isError.productUpdatePreference.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Product Update Preference</label>
           <select
             name="packingPreference"
@@ -270,7 +270,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.productUpdatePreference}</span>
           )}
         </Row>
-        <Row validationState={isError.dietPreference.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Dietary Preference</label>
           <select
             name="dietPreference"
@@ -290,7 +290,7 @@ class Profile extends React.Component {
           <span className="small text-danger">{isError.dietPreference}</span>
           )}
         </Row>
-        <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Delivery Address</label>
           <textarea
             ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
@@ -306,7 +306,7 @@ class Profile extends React.Component {
           )}
         </Row>
 
-        <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>Delivery Address Pincode</label>
           <input
             type="text"
@@ -323,7 +323,7 @@ class Profile extends React.Component {
           )}
         </Row>
 
-        <Row validationState={isError.newPassword.length > 0 ? 'error' : ''} className="my-3">
+        <Row className="my-3">
           <label>New Password</label>
           <input
             id="newPassword"
@@ -339,7 +339,7 @@ class Profile extends React.Component {
         </Row>
         <Row className="my-3">
           <Col xs={12}>
-            <Row validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+            <Row>
               <label>Confirm New Password</label>
               <input
                 type="password"
@@ -356,8 +356,7 @@ class Profile extends React.Component {
         </Row>
         <div>
           <Button
-            type="submit"
-            bsStyle="primary"
+            type="submit" className="btn btn-primary"
           >
             Save Profile
           </Button>

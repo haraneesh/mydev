@@ -7,20 +7,20 @@ import Badge from 'react-bootstrap/Badge';
 import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
 import constants from '../../../modules/constants';
-import { removeInvitation } from '../../../api/Invitations/methods';
+//import { removeInvitation } from '../../../api/Invitations/methods';
 
-const _handleRevokeInvitation = (e, invitationId) => {
+const _handleRevokeInvitation = async (e, invitationId) => {
   event.preventDefault();
   if (confirm('Are you sure about revoking this invitation? This is permanent.')) {
-    removeInvitation.call({
-      _id: invitationId,
-    }, (error) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
+     
+      try {
+        const data = await Meteor.callAsync('invitations.remove',{_id:invitationId}); 
         toast.success('Invitation has been revoked');
+        // render data
+      } catch (error) {
+        // render error
+        toast.error(error.reason);
       }
-    });
   }
 };
 
@@ -45,7 +45,7 @@ const InvitationList = ({ invitations }) => {
           <p>
             {
           (invitation_status === constants.InvitationStatus.Sent.name)
-            ? <Button bsSize="small" onClick={(e) => _handleRevokeInvitation(e, _id)}> Revoke </Button> : ' '
+            ? <Button size="sm" onClick={(e) => _handleRevokeInvitation(e, _id)}> Revoke </Button> : ' '
           }
           </p>
         </Col>

@@ -1,7 +1,7 @@
 import constants from '../../modules/constants';
+import { Orders } from '../Orders/Orders';
 import zh from './ZohoBooks';
 import { retResponse } from './zohoCommon';
-import { Orders } from '../Orders/Orders';
 
 const areAllItemsInvoiced = (zhSalesOrder) => {
   const lineItems = zhSalesOrder.line_items;
@@ -136,21 +136,27 @@ const deriveOrderStatusFromInvoices = (zhInvoices) => {
   }
 };
 
-export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
+export const processInvoicesFromZoho = async (
+  awaitOrd,
+  successResp,
+  errorResp,
+) => {
   const order = awaitOrd;
   // const r = zh.getRecordsByParams('invoices', { reference_number: order.zh_salesorder_number });
-  const r = zh.getRecordsByParams('invoices', {
+  const r = await zh.getRecordsByParams('invoices', {
     reference_number_contains: order.zh_salesorder_number,
   });
 
   if (r.code === 0 /* Success */) {
+    console.log('------- Invoices -----------');
+    console.log(JSON.stringify(r));
+
     const zhInvoices = r.invoices;
 
     let orderStatus;
 
-    const derivedOrderStatusFromInvoices = deriveOrderStatusFromInvoices(
-      zhInvoices,
-    );
+    const derivedOrderStatusFromInvoices =
+      deriveOrderStatusFromInvoices(zhInvoices);
 
     switch (derivedOrderStatusFromInvoices) {
       case 'overdue':
@@ -177,7 +183,7 @@ export const processInvoicesFromZoho = (awaitOrd, successResp, errorResp) => {
         break;
     }
     const invoices = getInvoices(order._id, zhInvoices);
-    Orders.update(
+    await Orders.updateAsync(
       { _id: order._id },
       { $set: { order_status: orderStatus, invoices } },
     );

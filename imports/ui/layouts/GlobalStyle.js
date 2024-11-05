@@ -71,7 +71,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   /* Removes unnecessary bottom padding on .container */
-  body > #react-root > div > .container {
+  body > #react-target > div > .container {
     padding-bottom: 0;
   }
 

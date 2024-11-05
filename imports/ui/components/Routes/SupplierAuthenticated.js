@@ -27,7 +27,7 @@ const SupplierAuthenticated = ({
 
 SupplierAuthenticated.propTypes = {
   authenticated: PropTypes.bool.isRequired,
-  component: PropTypes.func.isRequired,
+  component: PropTypes.object.isRequired,
   roles: PropTypes.array.isRequired,
   layout: PropTypes.node.isRequired,
 };

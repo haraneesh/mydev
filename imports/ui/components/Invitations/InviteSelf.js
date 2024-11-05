@@ -68,7 +68,7 @@ export default function InviteSelf({ history }) {
     <div className="send-invitation">
       <Row>
         <Col xs={12}>
-          <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : null}>
+          <Row>
             <Form.Label> STEP 1. Enter Mobile Number to receive OTP </Form.Label>
             <p />
             <Form.Control
@@ -78,7 +78,7 @@ export default function InviteSelf({ history }) {
               pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
             />
             {isError.whMobilePhone.length > 0 && (
-            <span className="small text-info">{isError.whMobilePhone}</span>
+            <span className="bg-white text-danger">{isError.whMobilePhone}</span>
             )}
             <p />
             <Button type="submit" variant="default" onClick={sendInvitation}>
@@ -88,7 +88,7 @@ export default function InviteSelf({ history }) {
             </Button>
           </Row>
           <hr />
-          <Row validationState={isError.otp.length > 0 ? 'error' : null}>
+          <Row>
             <Form.Label>
               STEP 2. Enter OTP that was last sent to your Mobile Number
             </Form.Label>
@@ -104,7 +104,7 @@ export default function InviteSelf({ history }) {
             />
 
             {isError.otp.length > 0 && (
-            <span className="small text-info">{isError.otp}</span>
+            <span className="bg-white text-danger">{isError.otp}</span>
             )}
             <p />
             <Button type="submit" variant="primary" onClick={confirmOTP}>

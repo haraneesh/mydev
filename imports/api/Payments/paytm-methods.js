@@ -1,35 +1,42 @@
-import { Meteor } from 'meteor/meteor';
+import { Match, check } from 'meteor/check';
+import { fetch } from 'meteor/fetch';
 import { HTTP } from 'meteor/http';
-import { check, Match } from 'meteor/check';
-import PaytmChecksum from './PaytmChecksum';
-import Payments from './Payments';
-import zohoPayments from '../ZohoSyncUps/zohoPayments';
-import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
-import rateLimit from '../../modules/rate-limit';
+import { Meteor } from 'meteor/meteor';
 import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit';
+import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
+import zohoPayments from '../ZohoSyncUps/zohoPayments';
+import Payments from './Payments';
+import PaytmChecksum from './PaytmChecksum';
 
 const STATUS = {
   TXN_SUCCESS: 'TXN_SUCCESS',
   TXN_FAILURE: 'TXN_FAILURE',
 };
 
-function updatePaymentTransactionError(orderId, errorObject) {
-  const payment = Payments.find({ orderId }).fetch();
-  const paymentErrorObject = (payment.errorObject) ? payment.errorObject : [];
+async function updatePaymentTransactionError(orderId, errorObject) {
+  const payment = await Payments.find({ orderId }).fetchAsync();
+  const paymentErrorObject = payment.errorObject ? payment.errorObject : [];
   paymentErrorObject.push(errorObject);
-  Payments.update({ orderId }, {
-    $set: {
-      errorObject: paymentErrorObject,
+  await Payments.updateAsync(
+    { orderId },
+    {
+      $set: {
+        errorObject: paymentErrorObject,
+      },
     },
-  });
+  );
 }
 
 Meteor.methods({
-  'payment.paytm.paymentTransactionError': async function paymentTransactionError(error) {
-    check(error, Match.Any);
-    updatePaymentTransactionError(error.ORDERID, error.errorObject);
-  },
-  'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus) {
+  'payment.paytm.paymentTransactionError':
+    async function paymentTransactionError(error) {
+      check(error, Match.Any);
+      await updatePaymentTransactionError(error.ORDERID, error.errorObject);
+    },
+  'payment.paytm.completeTransaction': async function completeTransaction(
+    paymentStatus,
+  ) {
     check(paymentStatus, {
       STATUS: String,
       TXNAMOUNT: String,
@@ -42,16 +49,18 @@ Meteor.methods({
     });
 
     if (Meteor.isServer) {
-      Payments.update({ orderId: paymentStatus.ORDERID },
+      await Payments.updateAsync(
+        { orderId: paymentStatus.ORDERID },
         {
           $set: {
             paymentApiResponseObject: paymentStatus,
             owner: this.userId,
           },
-        });
+        },
+      );
 
       if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
-        const paidUser = Meteor.users.findOne({ _id: this.userId });
+        const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
 
         const zhResponse = zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
@@ -59,7 +68,8 @@ Meteor.methods({
           paymentMode: paymentStatus.PAYMENTMODE,
           razorPaymentId: paymentStatus.ORDERID,
           paymentDescription: `Paid via PayTm, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
-          zoho_fund_deposit_account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id,
+          zoho_fund_deposit_account_id:
+            Meteor.settings.private.PayTM.zoho_fund_deposit_account_id,
         });
 
         if (Meteor.isDevelopment) {
@@ -68,7 +78,7 @@ Meteor.methods({
         }
 
         // Update Payment record history with the updated payment record
-        Payments.update(
+        await Payments.updateAsync(
           { orderId: paymentStatus.ORDERID },
           { $set: { paymentZohoResponseObject: zhResponse } },
         );
@@ -77,16 +87,18 @@ Meteor.methods({
           handleMethodException(zhResponse, zhResponse.code);
         }
 
-        const zhContactResponse = updateUserWallet(paidUser);
+        const zhContactResponse = await updateUserWallet(paidUser);
 
         if (Meteor.isDevelopment) {
           console.log(zhContactResponse);
         }
 
         // Update Payment record with the latest contact information
-        Payments.update(
+        await Payments.updateAsync(
           { orderId: paymentStatus.ORDERID },
-          { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
+          {
+            $set: { contactZohoResponseObject: zhContactResponse.zohoResponse },
+          },
         );
 
         if (zhContactResponse.zohoResponse.code !== 0) {
@@ -106,11 +118,13 @@ Meteor.methods({
     }
   },
   'payment.paytm.simulatePayment': async function simulatePayment() {
-    const paidUser = Meteor.users.findOne({ _id: this.userId });
-    const zhContactResponse = updateUserWallet(paidUser);
+    const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
+    const zhContactResponse = await updateUserWallet(paidUser);
     return zhContactResponse.wallet;
   },
-  'payment.paytm.initiateTransaction': async function initiateTransaction(params) {
+  'payment.paytm.initiateTransaction': async function initiateTransaction(
+    params,
+  ) {
     check(params, {
       amount: String,
       mobile: String,
@@ -122,19 +136,19 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       try {
-      // make initiate call
+        // make initiate call
 
         /*
          * Generate checksum by parameters we have in body
          * Find your Merchant Key in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys
-        */
+         */
 
         const { merchantKey, websiteName } = Meteor.settings.private.PayTM;
         const { hostName, merchantId } = Meteor.settings.public.PayTM;
         const now = new Date();
         const suvaiTransactionId = `${this.userId}_${now.getTime().toString()}`;
         const orderId = suvaiTransactionId;
-        const user = Meteor.users.findOne({ _id: this.userId });
+        const user = await Meteor.users.findOneAsync({ _id: this.userId });
 
         const paytmParams = {};
 
@@ -154,34 +168,37 @@ Meteor.methods({
             firstName: params.firstName,
             lastName: params.lastName,
           },
-          enablePaymentMode: (!params.showOptionsWithFee)
+          enablePaymentMode: !params.showOptionsWithFee
             ? ['UPI', 'DEBIT_CARD']
             : ['NET_BANKING', 'CREDIT_CARD'],
         };
 
         const checksum = await PaytmChecksum.generateSignature(
-          JSON.stringify(paytmParams.body), merchantKey,
+          JSON.stringify(paytmParams.body),
+          merchantKey,
         );
 
         paytmParams.head = {
           signature: checksum,
         };
 
-        const response = HTTP.call(
-          'POST',
-          `https://${hostName}/theia/api/v1/initiateTransaction`,
+        const response = await fetch(
+          `https://${hostName}/theia/api/v1/initiateTransaction?${new URLSearchParams({ mid: merchantId, orderId: orderId }).toString()}`,
           {
-            params: {
-              mid: merchantId,
-              orderId,
-            },
-            data: paytmParams,
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paytmParams), // body data type must match "Content-Type" header
           },
         );
 
-        const result = response.data;
+        if (!response.ok) {
+          console.log('---------------Error---------------------');
+          console.log(response);
+          throw new Error('Return response has an error');
+        }
+        const result = await response.json();
 
-        Payments.insert({
+        await Payments.insertAsync({
           orderId,
           owner: this.userId,
           paymentApiInitiationResponseObject: {
@@ -190,12 +207,13 @@ Meteor.methods({
             cartTotalBillAmount: params.cartTotalBillAmount,
             userWallet: user.wallet,
           },
-
         });
 
-        if (result.head.signature
-                  && result.body.resultInfo.resultStatus
-                  && result.body.resultInfo.resultStatus === 'S') {
+        if (
+          result.head.signature &&
+          result.body.resultInfo.resultStatus &&
+          result.body.resultInfo.resultStatus === 'S'
+        ) {
           return {
             status: 'S',
             txToken: result.body.txnToken,
@@ -216,7 +234,9 @@ Meteor.methods({
       }
     }
   },
-  'payment.paytm.getSavedCreditCards': async function getSavedCreditCards(params) {
+  'payment.paytm.getSavedCreditCards': async function getSavedCreditCards(
+    params,
+  ) {
     check(params, {
       mobile: String,
       token: String,
@@ -238,7 +258,8 @@ Meteor.methods({
         };
 
         const checksum = await PaytmChecksum.generateSignature(
-          JSON.stringify(paytmParams.body), merchantKey,
+          JSON.stringify(paytmParams.body),
+          merchantKey,
         );
 
         paytmParams.head = {
@@ -253,15 +274,12 @@ Meteor.methods({
         console.log('paytm params');
         console.log(paytmParams);
 
-        const response = HTTP.call(
-          'POST',
-          `https://${hostName}/savedcardservice/vault/cards/fetchCardByMidCustId`,
+        const response = await fetch(
+          `https://${hostName}/savedcardservice/vault/cards/fetchCardByMidCustId?${new URLSearchParams({ mid: merchantId, requestId: params.suvaiTransactionId }).toString()}`,
           {
-            params: {
-              mid: merchantId,
-              requestId: params.suvaiTransactionId,
-            },
-            data: paytmParams,
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paytmParams), // body data type must match "Content-Type" header
           },
         );
 
@@ -277,7 +295,11 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['payment.paytm.initiateTransaction', 'payment.paytm.completeTransaction', 'payment.paytm.paymentTransactionError'],
+  methods: [
+    'payment.paytm.initiateTransaction',
+    'payment.paytm.completeTransaction',
+    'payment.paytm.paymentTransactionError',
+  ],
   limit: 5,
   timeRange: 1000,
 });

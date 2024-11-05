@@ -1,9 +1,11 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-const Invitations = new Meteor.Collection('Invitations');
-export default Invitations;
+import 'meteor/aldeed:collection2/static';
+
+const Invitations = new Mongo.Collection('Invitations');
 
 Invitations.allow({
   insert: () => false,
@@ -17,7 +19,7 @@ Invitations.deny({
   remove: () => true,
 });
 
-const InvitationsSchema = new SimpleSchema({
+Invitations.schema = new SimpleSchema({
   sentUserId: {
     type: String,
     label: 'User id of the user who sent the invitation',
@@ -51,7 +53,8 @@ const InvitationsSchema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } if (this.isUpsert) {
+      }
+      if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -81,8 +84,13 @@ const InvitationsSchema = new SimpleSchema({
 });
 
 if (Meteor.isServer) {
-  Invitations.rawCollection().createIndex({ _Id: 1, invitation_status: 1, sentUserId: 1 });
+  Invitations.rawCollection().createIndex({
+    _Id: 1,
+    invitation_status: 1,
+    sentUserId: 1,
+  });
   Invitations.rawCollection().createIndex({ token: 1, invitation_status: 1 });
 }
 
-Invitations.attachSchema(InvitationsSchema);
+Invitations.attachSchema(Invitations.schema);
+export default Invitations;

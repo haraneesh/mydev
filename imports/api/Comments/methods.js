@@ -36,11 +36,11 @@ export const upsertComment = new ValidatedMethod({
     postId: { type: String, optional: true },
     owner: { type: String, optional: true },
   }).validator(),
-  run(commentt) {
+  async run(commentt) {
     const comment = commentt;
     comment.status = constants.CommentTypes.Approved.name;
     try {
-      const response = Comments.upsert({ _id: comment._id }, { $set: comment });
+      const response = await Comments.upsertAsync({ _id: comment._id }, { $set: comment });
       /*  if (constants.PostTypes.Order.name === comment.postType && Meteor.isServer) {
         const correspondingOrder = Orders.findOne({ _id: comment.postId });
         const customer = Meteor.users.findOne({ _id: comment.owner });
@@ -68,8 +68,8 @@ export const removeComment = new ValidatedMethod({
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ _id }) {
-    Comments.remove(_id);
+  async run({ _id }) {
+    await Comments.removeAsync(_id);
   },
 });
 

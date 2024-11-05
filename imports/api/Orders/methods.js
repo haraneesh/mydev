@@ -15,8 +15,8 @@ import { calculateBulkDiscount } from '../../modules/helpers';
 
 const { costOfReturnable } = OrderCommon;
 
-export const getPendingOrderDues = (usrId) => {
-  const pendingOrders = Orders.find(
+export const getPendingOrderDues = async (usrId) => {
+  const pendingOrders = await Orders.find(
     {
       $and: [
         { 'customer_details._id': usrId },
@@ -27,7 +27,7 @@ export const getPendingOrderDues = (usrId) => {
         total_bill_amount: 1,
       },
     },
-  ).fetch();
+  ).fetchAsync();
 
   const pendingDuesTotal = pendingOrders.reduce((sum, pendingOrd) => sum + pendingOrd.total_bill_amount, 0);
 
@@ -37,14 +37,14 @@ export const getPendingOrderDues = (usrId) => {
   };
 };
 
-const calculateOrderTotal = (order, productListId, userId) => {
+const calculateOrderTotal = async (order, productListId, userId) => {
   // Get Product List for cost
   // Get Order for list of items
   // calculate Total and return
 
-  const isShopOwner = Roles.userIsInRole(userId, constants.Roles.shopOwner.name);
+  const isShopOwner = await Roles.userIsInRoleAsync(userId, constants.Roles.shopOwner.name);
 
-  const productList = ProductLists.findOne({ _id: productListId });
+  const productList = await ProductLists.findOneAsync({ _id: productListId });
 
   const productArray = productList.products.reduce((map, obj) => {
     map[obj._id] = obj;
@@ -53,12 +53,13 @@ const calculateOrderTotal = (order, productListId, userId) => {
 
   let totalBillAmount = 0;
   const productsToUpdate = [];
-  order.products.forEach((prd) => {
+
+  for (const prd of  order.products) {
     const key = prd._id;
     let product = productArray[key];
     if (!product) { /* product removed from product List after use chose it */
       product = prd;
-      const findProduct = Products.findOne({ _id: key });
+      const findProduct = await Products.findOneAsync({ _id: key });
       product.unitprice = findProduct.unitprice;
       product.wSaleBaseUnitPrice = findProduct.wSaleBaseUnitPrice;
     }
@@ -89,59 +90,55 @@ const calculateOrderTotal = (order, productListId, userId) => {
       product.associatedReturnables.totalPrice = retQtySelectedPrice * 1;
       totalBillAmount += retQtySelectedPrice * 1; // to number
     }
-
     product.quantity = quantity;
     productsToUpdate.push(product);
-  });
-
-  Orders.update({ _id: order._id }, { $set: { products: productsToUpdate } });
-
+  }
+  await Orders.updateAsync({ _id: order._id }, { $set: { products: productsToUpdate } });
   return totalBillAmount;
-};
+}
 
-const removePreviousOrderedQuantity = (existingOrder) => {
+const removePreviousOrderedQuantity = async (existingOrder) => {
   const productListId = existingOrder.productOrderListId;
 
   // clear previous order counts
-
-  existingOrder.products.forEach((product) => {
-    ProductLists.update(
+  for (const product of  existingOrder.products) {
+    await ProductLists.updateAsync(
       { _id: productListId, 'products._id': product._id },
       { $inc: { 'products.$.totQuantityOrdered': -1 * product.quantity } },
     );
-  });
+  }
 };
 
-const addNewOrderedQuantity = (order) => {
+const addNewOrderedQuantity = async (order) => {
   const productListId = order.productOrderListId;
   // update new order count
-  order.products.forEach((product) => {
-    ProductLists.update(
+  for (const product of  order.products) {
+    await ProductLists.updateAsync(
       { _id: productListId, 'products._id': product._id },
       { $inc: { 'products.$.totQuantityOrdered': product.quantity } },
     );
-  });
-};
+  }
+}
 
-const addUpdateOrder = (order) => {
+const addUpdateOrder = async (order) => {
   const isUpdate = !!order._id;
   const { loggedInUserId } = order;
   if (isUpdate) {
     // delete order.customer_details
     // delete order.productOrderListId
-    const existingOrder = Orders.findOne(order._id);
-    if (loggedInUserId === existingOrder.customer_details._id || Roles.userIsInRole(Meteor.userId(), ['admin'])) {
+    const existingOrder = await Orders.findOneAsync(order._id);
+    if (loggedInUserId === existingOrder.customer_details._id || await Roles.userIsInRoleAsync(Meteor.userId(), ['admin'])) {
       order.customer_details = existingOrder.customer_details;
       order.productOrderListId = existingOrder.productOrderListId;
       order.order_status = order.order_status ? order.order_status : existingOrder.order_status;
-      order.total_bill_amount = calculateOrderTotal(order, existingOrder.productOrderListId, existingOrder.customer_details._id);
+      order.total_bill_amount = await calculateOrderTotal(order, existingOrder.productOrderListId, existingOrder.customer_details._id);
     } else {
       throw new Meteor.Error(401, 'Access denied');
     }
-    removePreviousOrderedQuantity(existingOrder);
+    await removePreviousOrderedQuantity(existingOrder);
   } else {
     const today = new Date();
-    const productListActiveToday = ProductLists.findOne(
+    const productListActiveToday = await ProductLists.findOneAsync(
       {
         $and: [
           { activeStartDateTime: { $lte: today } },
@@ -151,12 +148,14 @@ const addUpdateOrder = (order) => {
     );
     order.productOrderListId = productListActiveToday._id;
     order.order_status = constants.OrderStatus.Pending.name;
-    order.total_bill_amount = calculateOrderTotal(order, order.productOrderListId, loggedInUserId);
-    const loggedInUser = Meteor.users.find({ _id: loggedInUserId }).fetch()[0];
+    order.total_bill_amount = await calculateOrderTotal(order, order.productOrderListId, loggedInUserId);
+    const loggedInUser = await Meteor.users.findOneAsync({ _id: loggedInUserId });
+    //const loggedInUserRoles = await Roles.getRolesForUserAsync(loggedInUserId);
+
     order.customer_details = {
       _id: loggedInUserId,
       name: `${loggedInUser.profile.name.first} ${loggedInUser.profile.name.last}`,
-      role: Roles.getRolesForUser(loggedInUserId)[0],
+      //role: loggedInUserRoles[0],
       email: (loggedInUser.emails && loggedInUser.emails[0]) ? loggedInUser.emails[0].address : '',
       mobilePhone: loggedInUser.profile.whMobilePhone,
       deliveryAddress: loggedInUser.profile.deliveryAddress,
@@ -165,13 +164,13 @@ const addUpdateOrder = (order) => {
 
   order.expectedDeliveryDate = getDeliveryDate();
 
-  order.customer_details.role = getOrderRole(order.customer_details._id);
+  order.customer_details.role = await getOrderRole(order.customer_details._id);
 
-  const response = Orders.upsert({ _id: order._id }, { $set: order });
+  const response = await Orders.upsertAsync({ _id: order._id }, { $set: order });
 
-  addNewOrderedQuantity(order);
+  await addNewOrderedQuantity(order);
   if (response.insertedId) {
-    ProductLists.update({ _id: order.productOrderListId },
+    await ProductLists.updateAsync({ _id: order.productOrderListId },
       { $addToSet: { order_ids: response.insertedId } });
   }
   return response;
@@ -197,15 +196,15 @@ export const upsertOrder = new ValidatedMethod({
     'onBehalf.postUserId': { type: String },
     'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
   }).validator(),
-  run(order) {
+  async run(order) {
     if (Meteor.isServer) {
-      return addUpdateOrder(order);
+      return await addUpdateOrder(order);
     }
   },
 });
 
-const getOrderRole = (customerId) => {
-  if (Roles.userIsInRole(customerId, constants.Roles.customer.name)) {
+const getOrderRole = async (customerId) => {
+  if (await Roles.userIsInRoleAsync(customerId, constants.Roles.customer.name)) {
     return constants.Roles.customer.name;
   }
 
@@ -217,21 +216,21 @@ export const removeOrder = new ValidatedMethod({
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ _id }) {
-    const order = Orders.findOne(_id);
-    removePreviousOrderedQuantity(order);
-    Orders.remove(_id);
+  async run({ _id }) {
+    const order = await Orders.findOneAsync(_id);
+    await removePreviousOrderedQuantity(order);
+    await Orders.removeAsync(_id);
   },
 });
 
 export const getOrderDetails = new ValidatedMethod({
   name: 'orders.getOrderDetails',
   validate: new SimpleSchema({ orderId: { type: String } }).validator(),
-  run({ orderId }) {
-    const ord = Orders.find({
+  async run({ orderId }) {
+    const ords = await Orders.find({
       $and: [{ _id: orderId }, { 'customer_details._id': this.userId }],
-    }).fetch()[0];
-    return ord;
+    }).fetchAsync();
+    return ords[0];
   },
 });
 
@@ -241,13 +240,13 @@ export const updateMyOrderStatus = new ValidatedMethod({
     orderId: { type: String },
     updateToStatus: { type: String },
   }).validator(),
-  run({ orderId, updateToStatus }) {
-    const order = Orders.findOne({ _id: orderId, 'customer_details._id': this.userId });
+  async run({ orderId, updateToStatus }) {
+    const order = await Orders.findOneAsync({ _id: orderId, 'customer_details._id': this.userId });
     if (order) {
       if (updateToStatus === constants.OrderStatus.Cancelled.name) {
-        removePreviousOrderedQuantity(order);
+        await removePreviousOrderedQuantity(order);
       }
-      return Orders.update({ _id: orderId }, { $set: { order_status: updateToStatus } });
+      return await Orders.updateAsync({ _id: orderId }, { $set: { order_status: updateToStatus } });
     }
     // user not authorized. do not publish secrets
     throw new Meteor.Error(401, 'Access denied');
@@ -261,23 +260,25 @@ export const updateExpectedDeliveryDate = new ValidatedMethod({
     'orderIds.$': { type: String },
     incrementDeliveryDateBy: { type: Number },
   }).validator(),
-  run({ orderIds, incrementDeliveryDateBy }) {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  async run({ orderIds, incrementDeliveryDateBy }) {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+
+    if (!isAdmin) {
       handleMethodException('Access denied', 403);
     }
 
-    const orders = Orders.find({
+    const orders = await Orders.find({
       _id: { $in: orderIds },
       order_status: constants.OrderStatus.Pending.name,
-    }, { _id: 1 }).fetch();
+    }, { _id: 1 }).fetchAsync();
 
     if (orderIds.length !== orders.length) {
       handleMethodException(`Please select only orders in '${constants.OrderStatus.Pending.display_value}' status.`, 403);
     }
 
-    const newExpectedDeliveryDate = orderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy);
+    const newExpectedDeliveryDate = OrderCommon.getIncrementedDateOnServer(new Date(), incrementDeliveryDateBy);
 
-    return Orders.update(
+    return await Orders.updateAsync(
       { _id: { $in: orderIds } },
       { $set: { expectedDeliveryDate: newExpectedDeliveryDate } },
       { multi: true },
@@ -292,31 +293,33 @@ export const updateOrderStatus = new ValidatedMethod({
     'orderIds.$': { type: String },
     updateToStatus: { type: String },
   }).validator(),
-  run({ orderIds, updateToStatus }) {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  async run({ orderIds, updateToStatus }) {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       throw new Meteor.Error(401, 'Access denied');
     }
-    const orders = Orders.find({ _id: { $in: orderIds } }).fetch();
+    const orders = await Orders.find({ _id: { $in: orderIds } }).fetchAsync();
 
-    orders.forEach((order) => {
+   
+    for (const order of orders){
       if (updateToStatus !== order.order_status) {
         switch (true) {
           // current status is cancelled now we are changing to a live status
           case (order.order_status === constants.OrderStatus.Cancelled.name):
-            addNewOrderedQuantity(order);
+            await addNewOrderedQuantity(order);
             break;
           // new status is cancelled
           case (updateToStatus === constants.OrderStatus.Cancelled.name):
-            removePreviousOrderedQuantity(order);
+            await removePreviousOrderedQuantity(order);
             break;
           default:
             break;
         }
       }
-    });
+    }  
 
-    return Orders.update(
+    return await Orders.updateAsync(
       { _id: { $in: orderIds } },
       { $set: { order_status: updateToStatus } },
       { multi: true },
@@ -330,9 +333,10 @@ export const getOrders = new ValidatedMethod({
     orderIds: { type: Array },
     'orderIds.$': { type: String },
   }).validator(),
-  run({ orderIds }) {
-    if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
-      return Orders.find({ _id: { $in: orderIds } }).fetch();
+  async run({ orderIds }) {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+    if (isAdmin) {
+      return await Orders.find({ _id: { $in: orderIds } }).fetchAsync();
     }
   },
 });
@@ -340,9 +344,12 @@ export const getOrders = new ValidatedMethod({
 export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMethod({
   name: 'order.getProductQuantityForOrdersAwaitingFullFillmentNEW',
   validate: new SimpleSchema({ isWholeSale: { type: Boolean } }).validator(),
-  run({ isWholeSale }) {
+  async run({ isWholeSale }) {
     if (Meteor.isServer) {
-      if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+
+      const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)
+
+      if (isAdmin) {
         const selectQuery = (isWholeSale)
           ? [
             { order_status: 'Awaiting_Fulfillment' },
@@ -353,7 +360,8 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
             { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
           ];
 
-        return Orders.aggregate([{
+        const OrdersRawCollection = Orders.rawCollection();
+        return OrdersRawCollection.aggregate([{
           // $match: { order_status: 'Awaiting_Fulfillment' },
           $match: {
             $and: selectQuery,
@@ -392,9 +400,12 @@ export const getProductQuantityForOrderAwaitingFullFillmentNEW = new ValidatedMe
 export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMethod({
   name: 'order.getProductQuantityForOrdersAwaitingFullFillment',
   validate: new SimpleSchema({ isWholeSale: { type: Boolean } }).validator(),
-  run({ isWholeSale }) {
+  async run({ isWholeSale }) {
     if (Meteor.isServer) {
-      if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+
+      const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)
+
+      if (isAdmin) {
         const selectQuery = (isWholeSale)
           ? [
             { order_status: 'Awaiting_Fulfillment' },
@@ -404,8 +415,8 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
             { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $not: { $eq: constants.Roles.shopOwner.name } } },
           ];
-
-        return Orders.aggregate([{
+        const OrdersRawCollection = Orders.rawCollection();
+        return OrdersRawCollection.aggregate([{
           $match: {
             $and: selectQuery,
           },
@@ -428,7 +439,7 @@ export const getProductQuantityForOrderAwaitingFullFillment = new ValidatedMetho
 });
 
 Meteor.methods({
-  'admin.fetchOrderCount': function adminFetchOrders(options) { // eslint-disable-line
+  'admin.fetchOrderCount': async function adminFetchOrders(options) { // eslint-disable-line
 
     check(options, { isWholeSale: Boolean });
 
@@ -438,9 +449,9 @@ Meteor.methods({
     }
 
     try {
-      if (Roles.userIsInRole(this.userId, 'admin')) {
+      if (await Roles.userIsInRoleAsync(this.userId, 'admin')) {
         return {
-          total: Orders.find({ 'customer_details.role': { $in: customerRoles } }).count(),
+          total: await Orders.find({ 'customer_details.role': { $in: customerRoles } }).countAsync(),
         };
       }
 
@@ -450,13 +461,13 @@ Meteor.methods({
     }
   },
 
-  'admin.fetchDetailsForPO': function adminFetchDetailsForPO(options) { // eslint-disable-line
+  'admin.fetchDetailsForPO': async function adminFetchDetailsForPO(options) { // eslint-disable-line
     check(options, { orderIds: Array, includeBuyer: Boolean });
     // check(orderIds, Array);
 
     try {
       if (Meteor.isServer) {
-        if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+        if (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
           const selectQuery = [
             // { order_status: 'Awaiting_Fulfillment' },
             { 'customer_details.role': { $eq: constants.Roles.shopOwner.name } },
@@ -475,8 +486,8 @@ Meteor.methods({
             customerId: '$customer_details._id',
             customerName: '$customer_details.name',
           };
-
-          return Orders.aggregate([{
+          const OrdersRawCollection = Orders.rawCollection();
+          return OrdersRawCollection.aggregate([{
             $match: {
               $and: selectQuery,
             },

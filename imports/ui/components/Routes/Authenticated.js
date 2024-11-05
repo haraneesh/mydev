@@ -49,7 +49,7 @@ Authenticated.propTypes = {
   routeName: PropTypes.string.isRequired,
   roles: PropTypes.array.isRequired,
   authenticated: PropTypes.bool.isRequired,
-  component: PropTypes.func.isRequired,
+  component: PropTypes.object.isRequired,
   layout: PropTypes.node.isRequired,
 };
 

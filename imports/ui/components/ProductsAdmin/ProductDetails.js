@@ -1,55 +1,44 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import RichTextEditor, { EditorValue } from 'react-rte';
-import { EditorState } from 'draft-js';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { toast } from 'react-toastify';
-import { stateToHTML } from 'draft-js-export-html';
-import { stateFromHTML } from 'draft-js-import-html';
-import constants from '../../../modules/constants';
-import FieldGroup from '../Common/FieldGroup';
 
-import './ProductDetails.scss';
+import RichTextEditor from '/imports/ui/components/RichTextEditor/RichTextEditor';
+
+import FieldGroup from '/imports/ui/components/Common/FieldGroup';
 
 function EditProductDetails({ productId, closeFunction }) {
   // Declare a new state variable, which we'll call "count"
   const [productDetailsState, setProductDetailsState] = useState({});
-  const [descriptionValue, setDescriptionValue] = useState(RichTextEditor.createEmptyValue());
-
-  function onRichTextEditorChange(v) {
-    setDescriptionValue(v);
-  }
+  const [descriptionValue, setDescriptionValue] = useState('<div></div>');
 
   function onValueChange(event) {
     // +Text converts it to a number
     const productDetailsl = { ...productDetailsState };
-    productDetailsl[event.target.name] = (event.target.name === 'displayOrder')
-      ? +event.target.value
-      : event.target.value;
+    productDetailsl[event.target.name] =
+      event.target.name === 'displayOrder'
+        ? +event.target.value
+        : event.target.value;
 
     setProductDetailsState(productDetailsl);
   }
 
   function initialize() {
-    Meteor.call('productDetails.getProductDetails', productId, (error, productDetails) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        let editorValue = RichTextEditor.createEmptyValue();
-        if (productDetails && productDetails.description) {
-          editorValue = EditorValue.createFromState(
-            EditorState.createWithContent(
-              stateFromHTML(productDetails.description),
-            ),
-          );
+    Meteor.call(
+      'productDetails.getProductDetails',
+      productId,
+      (error, productDetails) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          setProductDetailsState({ ...{ productId }, ...productDetails });
+          setDescriptionValue(productDetails.description);
         }
-        setProductDetailsState({ ...{ productId }, ...productDetails });
-        setDescriptionValue(editorValue);
-      }
-    });
+      },
+    );
   }
 
   useEffect(() => {
@@ -57,36 +46,47 @@ function EditProductDetails({ productId, closeFunction }) {
   }, []);
 
   function deleteProductDetails() {
-    if (confirm('Are you sure, you want to delete this Product\'s Details? This is permanent!')) {
-      Meteor.call('productDetails.removeProductDetails', productDetailsState.productId,
+    if (
+      confirm(
+        "Are you sure, you want to delete this Product's Details? This is permanent!",
+      )
+    ) {
+      Meteor.call(
+        'productDetails.removeProductDetails',
+        productDetailsState.productId,
         (err) => {
           if (err) {
             toast.error(err.reason);
           } else {
-            toast.success('Product\'s details have been deleted!');
+            toast.success("Product's details have been deleted!");
             closeFunction();
           }
-        });
+        },
+      );
     }
   }
 
-  function updateProductDetails(productDetailsNew) {
-    Meteor.call('productDetails.upsertProductDetails', productDetailsNew, (error) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        const message = 'Product\'s Details have been Saved!';
-        toast.success(message);
-      }
-    });
+  async function updateProductDetails(productDetailsNew) {
+    try {
+      await Meteor.callAsync(
+        'productDetails.upsertProductDetails',
+        productDetailsNew,
+      );
+      const message = "Product's Details have been Saved!";
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.reason);
+    }
+  }
+
+  function onRichTextEditorChange(descriptionValue) {
+    setDescriptionValue(descriptionValue);
   }
 
   function saveOrUpdateProductDetails() {
     const productDetailsl = { ...productDetailsState };
 
-    productDetailsl.description = stateToHTML(
-      descriptionValue.getEditorState().getCurrentContent(),
-    );
+    productDetailsl.description = descriptionValue;
 
     updateProductDetails(productDetailsl);
   }
@@ -94,7 +94,6 @@ function EditProductDetails({ productId, closeFunction }) {
   if (productDetailsState) {
     return (
       <Row className={`productDetailsCard-${productDetailsState.colorTheme}`}>
-
         <Col xs={12}>
           <Row>
             <FieldGroup
@@ -108,12 +107,13 @@ function EditProductDetails({ productId, closeFunction }) {
           </Row>
           <div
             className="view-productDetailss-image"
-            style={{ backgroundImage: `url('${productDetailsState.imageUrl}')` }}
+            style={{
+              backgroundImage: `url('${productDetailsState.imageUrl}')`,
+            }}
           />
         </Col>
 
         <Col xs={12}>
-
           <FieldGroup
             controlType="text"
             controlLabel="Title"
@@ -126,11 +126,9 @@ function EditProductDetails({ productId, closeFunction }) {
           <Row>
             <h4>Description</h4>
             <RichTextEditor
-              value={descriptionValue} // productDetailsState.value
+              nameSpace="product_details"
+              savedHTMLCode={descriptionValue}
               onChange={onRichTextEditorChange}
-              toolbarConfig={constants.RichEditorToolbarConfig}
-              placeholder="Type Special Announcement Text"
-              className="richTextEditor"
             />
           </Row>
         </Col>
@@ -145,13 +143,18 @@ function EditProductDetails({ productId, closeFunction }) {
             Save
           </Button>
 
-          <Button size="sm" className="btn-block col-2" onClick={deleteProductDetails}>Delete</Button>
+          <Button
+            size="sm"
+            className="btn-block col-2"
+            onClick={deleteProductDetails}
+          >
+            Delete
+          </Button>
         </Col>
       </Row>
-
     );
   }
-  return (<div />);
+  return <div />;
 }
 
 export default EditProductDetails;

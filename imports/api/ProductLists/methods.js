@@ -1,14 +1,13 @@
-import { Meteor } from 'meteor/meteor';
-import { Match, check } from 'meteor/check';
-import SimpleSchema from 'simpl-schema';
 import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import ProductLists from './ProductLists';
-import Suppliers from '../Suppliers/Suppliers';
-import Products from '../Products/Products';
-import rateLimit from '../../modules/rate-limit';
+import { Match, check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
+import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
 import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit';
+import Products from '../Products/Products';
+import ProductLists from './ProductLists';
 
 const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   const newOrderableProducts = [];
@@ -18,23 +17,12 @@ const updateWithTotQuantityOrdered = (products, currentProductHash) => {
   products.forEach((product) => {
     const key = product._id;
     const prod = { ...product };
-    prod.totQuantityOrdered = (
-      currentProductHash
-      && currentProductHash[key]
-      && currentProductHash[key].totQuantityOrdered
-    ) ? currentProductHash[key].totQuantityOrdered : 0;
-
-    const newSupplierArray = [];
-
-    if (product.sourceSuppliers) {
-      product.sourceSuppliers.map((supplier) => {
-        const currSupplier = Suppliers.findOne({ _id: supplier._id });
-        if (currSupplier) {
-          newSupplierArray.push(currSupplier);
-        }
-      });
-      prod.sourceSuppliers = newSupplierArray;
-    }
+    prod.totQuantityOrdered =
+      currentProductHash &&
+      currentProductHash[key] &&
+      currentProductHash[key].totQuantityOrdered
+        ? currentProductHash[key].totQuantityOrdered
+        : 0;
 
     newOrderableProducts.push(prod);
   });
@@ -46,13 +34,16 @@ export const removeProductList = new ValidatedMethod({
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ _id }) {
-    if (Roles.userIsInRole(this.userId, ['view-secrets', 'admin'])) {
-      const productList = ProductLists.findOne({ _id });
+  async run({ _id }) {
+    if (await Roles.userIsInRoleAsync(this.userId, ['view-secrets', 'admin'])) {
+      const productList = await ProductLists.findOneAsync({ _id });
       if (productList.order_ids && productList.order_ids.length > 0) {
-        throw new Meteor.Error(403, 'Product list cannot be deleted. There are orders associated with this product list.');
+        throw new Meteor.Error(
+          403,
+          'Product list cannot be deleted. There are orders associated with this product list.',
+        );
       }
-      ProductLists.remove(_id);
+      await ProductLists.removeAsync(_id);
     } else {
       // user not authorized. do not publish secrets
       throw new Meteor.Error(401, 'Access denied');
@@ -70,9 +61,14 @@ export const upsertProductList = new ValidatedMethod({
     activeStartDateTime: { type: Date },
     activeEndDateTime: { type: Date },
   }).validator(),
-  run(params) {
+  async run(params) {
     if (Meteor.isServer) {
-      if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      if (
+        !(await Roles.userIsInRoleAsync(
+          this.userId,
+          constants.Roles.admin.name,
+        ))
+      ) {
         // user not authorized. do not publish secrets
         handleMethodException('Access denied', 401);
       }
@@ -81,43 +77,56 @@ export const upsertProductList = new ValidatedMethod({
       const endDate = params.activeEndDateTime;
       const productListsId = params._id;
 
-      const orderableProducts = Products.find(
+      const orderableProducts = await Products.find(
         { $or: [{ availableToOrder: true }, { availableToOrderWH: true }] },
         {
           sort: {
-            type: 1, category: 1, /* displayOrder: 1, */ name: 1,
+            type: 1,
+            category: 1,
+            /* displayOrder: 1, */ name: 1,
           },
         },
-      ).fetch();
+      ).fetchAsync();
 
       const productList = {
         activeStartDateTime: params.activeStartDateTime,
         activeEndDateTime: params.activeEndDateTime,
       };
 
+      console.log('Product List Id ' + productListsId);
+
       if (!productListsId) {
-        const overlappingProductList = ProductLists.findOne(
-          {
-            $and: [{ activeStartDateTime: { $lte: endDate } },
-              { activeEndDateTime: { $gte: startDate } }],
-          },
-        );
+        const overlappingProductList = await ProductLists.findOneAsync({
+          $and: [
+            { activeStartDateTime: { $lte: endDate } },
+            { activeEndDateTime: { $gte: startDate } },
+          ],
+        });
 
         if (overlappingProductList) {
-          handleMethodException(' Another Product List is active during this period. Product List was not created.', 417);
+          handleMethodException(
+            ' Another Product List is active during this period. Product List was not created.',
+            417,
+          );
         }
         productList.products = updateWithTotQuantityOrdered(orderableProducts);
-        return ProductLists.insert(productList);
+        return await ProductLists.insertAsync(productList);
       }
 
-      const currentProductList = ProductLists.findOne({ _id: productListsId });
-      const currentProductHashMap = currentProductList.products.reduce((map, obj) => {
-        map[obj._id] = obj;
-        return map;
-      }, {});
+      const currentProductList = await ProductLists.findOneAsync({
+        _id: productListsId,
+      });
+      const currentProductHashMap = currentProductList.products.reduce(
+        (map, obj) => {
+          map[obj._id] = obj;
+          return map;
+        },
+        {},
+      );
 
       const products = updateWithTotQuantityOrdered(
-        orderableProducts, currentProductHashMap,
+        orderableProducts,
+        currentProductHashMap,
       );
 
       /* productList.products = updateWithTotQuantityOrdered(
@@ -126,15 +135,21 @@ export const upsertProductList = new ValidatedMethod({
       // const { products } = productList;
       productList.products = [];
 
-      ProductLists.update({ _id: productListsId }, { $set: productList });
+      await ProductLists.updateAsync(
+        { _id: productListsId },
+        { $set: productList },
+      );
 
-      products.forEach((prod) => {
-        ProductLists.update({ _id: productListsId }, { $push: { products: prod } });
-      });
+      for (const prod of products) {
+        await ProductLists.updateAsync(
+          { _id: productListsId },
+          { $push: { products: prod } },
+        );
+      }
 
       /* Meteor.defer(() => {
         console.log(`start ${new Date()}`);
-        ProductLists.upsert({ _id: productListsId }, { $set: productList });
+        await ProductLists.upsertAsync({ _id: productListsId }, { $set: productList });
         console.log(`end ${new Date()}`);
       });
 
@@ -145,10 +160,13 @@ export const upsertProductList = new ValidatedMethod({
 });
 
 Meteor.methods({
-  'getProductList.view': function getProductsList(productListId) {
+  'getProductList.view': async function getProductsList(productListId) {
     check(productListId, String);
     try {
-      return ProductLists.findOne({ _id: productListId }, { fields: { products: 1 } });
+      return await ProductLists.findOneAsync(
+        { _id: productListId },
+        { fields: { products: 1 } },
+      );
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -162,17 +180,13 @@ export const updateProductListWithOrderId = new ValidatedMethod({
     orderId: { type: String },
     productListId: { type: String },
   }).validator(),
-  run({ orderId, productListId }) {
-      ProductLists.update( { _id:productListId }, { $addToSet:{ order_ids:orderId } })
+  async run({ orderId, productListId }) {
+      await ProductLists.updateAsync( { _id:productListId }, { $addToSet:{ order_ids:orderId } })
   },
 }) */
 
 rateLimit({
-  methods: [
-    removeProductList,
-    upsertProductList,
-    'getProductList.view',
-  ],
+  methods: [removeProductList, upsertProductList, 'getProductList.view'],
   limit: 5,
   timeRange: 1000,
 });

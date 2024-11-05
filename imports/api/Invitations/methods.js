@@ -1,14 +1,15 @@
-import { Meteor } from 'meteor/meteor';
-import { fetch, Headers } from 'meteor/fetch';
+import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import SimpleSchema from 'simpl-schema';
+import { Headers, fetch } from 'meteor/fetch';
+import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
+import SimpleSchema from 'simpl-schema';
 
+import { Match, check } from 'meteor/check';
 import { Email } from 'meteor/email';
-import { check, Match } from 'meteor/check';
-import rateLimit from '../../modules/rate-limit';
-import handleMethodException from '../../modules/handle-method-exception';
 import constants from '../../modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit';
 import Invitations from './Invitations';
 import InvitationTemplate from './invitation_template';
 
@@ -23,17 +24,21 @@ async function postData(url, data, var1, var2, mobileNumber) {
         authorization: data.authorization,
         'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(
-        {
-          sender_id: data.sender_id,
-          message: data.message,
-          route: 'dlt',
-          variables_values: `${var1}|${var2}`,
-          numbers: mobileNumber,
-        },
-      ), // body data type must match "Content-Type" header
+      body: JSON.stringify({
+        sender_id: data.sender_id,
+        message: data.message,
+        route: 'dlt',
+        variables_values: `${var1}|${var2}`,
+        numbers: mobileNumber,
+      }), // body data type must match "Content-Type" header
     });
-    return response.json();
+
+    if (!response.ok) {
+      console.log('---------------Error---------------------');
+      console.log(response);
+      throw new Error('Return response has an error');
+    }
+    return await response.json();
   } catch (error) {
     console.log(`Error Making Call: ${error}`);
     return {
@@ -43,9 +48,15 @@ async function postData(url, data, var1, var2, mobileNumber) {
   }
 }
 
-const sendSMS = (var1, var2, mobileNumber) => {
+const sendSMS = async (var1, var2, mobileNumber) => {
   const { fast2SMS } = Meteor.settings.private.SMS;
-  const response = postData(fast2SMS.urlToCall, fast2SMS, var1, var2, mobileNumber);
+  const response = await postData(
+    fast2SMS.urlToCall,
+    fast2SMS,
+    var1,
+    var2,
+    mobileNumber,
+  );
 
   if (response.status_code) {
     console.log(`Error: ${JSON.stringify(response)}`);
@@ -54,19 +65,17 @@ const sendSMS = (var1, var2, mobileNumber) => {
 
   return true;
 };
-const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
+const addInvitation = async (phoneNumber, sentUserId, sentRole, otp) => {
   let invitation;
   let returnOTP = otp;
 
   if (phoneNumber) {
-    invitation = Invitations.findOne(
-      {
-        $and: [
-          { receiverPhoneNumber: phoneNumber },
-          { invitation_status: constants.InvitationStatus.Sent.name },
-        ],
-      },
-    );
+    invitation = await Invitations.findOneAsync({
+      $and: [
+        { receiverPhoneNumber: phoneNumber },
+        { invitation_status: constants.InvitationStatus.Sent.name },
+      ],
+    });
   }
 
   if (!invitation) {
@@ -80,7 +89,7 @@ const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
     invitation.receiverPhoneNumber = phoneNumber;
     invitation.invitation_status = constants.InvitationStatus.Sent.name;
 
-    Invitations.insert(invitation);
+    await Invitations.insertAsync(invitation);
   }
   const { domain } = Meteor.settings.private;
   return {
@@ -90,19 +99,26 @@ const addInvitation = (phoneNumber, sentUserId, sentRole, otp) => {
 };
 
 Meteor.methods({
-  'invitation.getInvitation': function invitationCreate(phoneNumber) {
+  'invitation.getInvitation': async function invitationCreate(phoneNumber) {
     check(phoneNumber, Match.Maybe(String));
     try {
-      const obj = addInvitation(phoneNumber, Meteor.userId(), constants.Roles.customer.name, '');
+      const obj = await addInvitation(
+        phoneNumber,
+        Meteor.userId(),
+        constants.Roles.customer.name,
+        '',
+      );
       return obj.url;
     } catch (exception) {
       handleMethodException(exception);
     }
   },
-  'invitations.confirmToken': function confirmToken(confirmationToken) {
+  'invitations.confirmToken': async function confirmToken(confirmationToken) {
     check(confirmationToken, String);
     try {
-      const invitation = Invitations.findOne({ token: confirmationToken });
+      const invitation = await Invitations.findOneAsync({
+        token: confirmationToken,
+      });
       if (invitation) {
         return invitation.receiverPhoneNumber;
       }
@@ -111,40 +127,54 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'invitation.sendOTP': function invitationSendOTP(phoneNumber) {
+  'invitation.sendOTP': async function invitationSendOTP(phoneNumber) {
     check(phoneNumber, String);
     const indiaMobilePhoneRegExp = RegExp(/^[6789]\d{9}$/);
     try {
       if (indiaMobilePhoneRegExp.test(phoneNumber)) {
         const otp = Math.floor(1000 + Math.random() * 9000);
 
-        const isPhoneNumberRegistered = Meteor.users.findOne({ username: phoneNumber });
+        const isPhoneNumberRegistered = await Meteor.users.findOneAsync({
+          username: phoneNumber,
+        });
         if (isPhoneNumberRegistered) {
-          throw new Meteor.Error(404, 'Please check you phone number. You are either a registered user or the phone number is invalid.');
+          throw new Meteor.Error(
+            404,
+            'Please check you phone number. You are either a registered user or the phone number is invalid.',
+          );
         }
 
-        const adminUser = Meteor.users.findOne({ username: '9999999999' }); // admin
+        const adminUser = await Meteor.users.findOneAsync({
+          username: '9999999999',
+        }); // admin
         const otpSent = addInvitation(phoneNumber, adminUser._id, 'self', otp);
 
         if (Meteor.isDevelopment) {
           console.log(otpSent);
         } else {
-          sendSMS(otpSent.returnOTP, Meteor.settings.public.Support_Numbers.whatsapp, phoneNumber);
+          sendSMS(
+            otpSent.returnOTP,
+            Meteor.settings.public.Support_Numbers.whatsapp,
+            phoneNumber,
+          );
         }
 
         return true;
       }
 
-      throw new Meteor.Error(403, 'The phone number is not a valid India Mobile Number');
+      throw new Meteor.Error(
+        403,
+        'The phone number is not a valid India Mobile Number',
+      );
     } catch (exception) {
       handleMethodException(exception);
     }
     return false;
   },
-  'invitation.isValidOTP': function isValidOTP(otp) {
+  'invitation.isValidOTP': async function isValidOTP(otp) {
     check(otp, String);
     try {
-      const invitation = Invitations.findOne({ otp });
+      const invitation = await Invitations.findOneAsync({ otp });
       if (invitation) {
         return { token: invitation.token };
       }
@@ -162,7 +192,7 @@ export const sendInvitation = new ValidatedMethod({
     name: { type: String },
     email: { type: String, regEx: SimpleSchema.RegEx.Email },
   }).validator(),
-  run(invitation) {
+  async run(invitation) {
     invitation.sentUserId = Meteor.userId();
     invitation.token = Random.hexString(16);
     invitation.role = 'member';
@@ -171,7 +201,7 @@ export const sendInvitation = new ValidatedMethod({
 
     /* let query
         switch (true){
-          case (Roles.userIsInRole(loggedInUserId, ['admin']) || !(invitation._id)):
+          case (await Roles.userIsInRoleAsync(loggedInUserId, ['admin']) || !(invitation._id)):
              query = { _id: invitation._id }
              break;
           default:
@@ -183,13 +213,17 @@ export const sendInvitation = new ValidatedMethod({
       } */
 
     if (Meteor.isServer) {
-      const user = Meteor.users.findOne(this.userId);
+      const user = await Meteor.users.findOneAsync(this.userId);
       const fromName = `${user.profile.name.first} ${user.profile.name.last}`;
       const email = prepareEmail(invitation.token, invitation.name, fromName);
       this.unblock();
-      sendEmail(invitation.email, email, `${fromName} has Invited you to Suvai Community`);
+      sendEmail(
+        invitation.email,
+        email,
+        `${fromName} has Invited you to Suvai Community`,
+      );
     }
-    Invitations.insert(invitation);
+    await Invitations.insertAsync(invitation);
   },
 });
 
@@ -200,7 +234,11 @@ const prepareEmail = (token, name, fromName) => {
   // SSR.compileTemplate('invitation', Assets.getText('email/templates/invitation.html'));
   // const html = SSR.render('invitation', { url, nameOfInvited: name, nameOfInvitee: fromName });
 
-  const html = InvitationTemplate({ url, nameOfInvited: name, nameOfInvitee: fromName });
+  const html = InvitationTemplate({
+    url,
+    nameOfInvited: name,
+    nameOfInvitee: fromName,
+  });
   return html;
 };
 
@@ -213,11 +251,11 @@ const sendEmail = (email, content, subject) => {
   });
 };
 
-const createUser = (user) => {
-  const userId = Accounts.createUser(user);
+const createUser = async (user) => {
+  const userId = await Accounts.createUserAsync(user);
 
   if (userId) {
-    Meteor.users.update(
+    await Meteor.users.updateAsync(
       { _id: userId },
       {
         $set: {
@@ -237,8 +275,8 @@ const createUser = (user) => {
   }
 };
 
-const getInvitation = (token) => {
-  const invitation = Invitations.findOne({
+const getInvitation = async (token) => {
+  const invitation = await Invitations.findOneAsync({
     $and: [
       { token }, // token
       { invitation_status: constants.InvitationStatus.Sent.name }, // constants.InvitationStatus.Sent.name
@@ -250,13 +288,16 @@ const getInvitation = (token) => {
   }
 };
 
-const updateInvitation = (token, userId) => {
-  Invitations.update({ token }, {
-    $set: {
-      invitation_status: constants.InvitationStatus.Accepted.name,
-      receivedUserId: userId,
+const updateInvitation = async (token, userId) => {
+  await Invitations.updateAsync(
+    { token },
+    {
+      $set: {
+        invitation_status: constants.InvitationStatus.Accepted.name,
+        receivedUserId: userId,
+      },
     },
-  });
+  );
 };
 
 export const acceptInvitation = new ValidatedMethod({
@@ -265,19 +306,20 @@ export const acceptInvitation = new ValidatedMethod({
     token: { type: String },
     user: { type: Object, blackbox: true },
   }).validator(),
-  run(options) {
+  async run(options) {
     if (Meteor.isServer) {
-      const invitation = getInvitation(options.token);
+      const invitation = await getInvitation(options.token);
       const cUser = { ...options.user };
       cUser.username = invitation.receiverPhoneNumber;
       cUser.profile.whMobilePhone = invitation.receiverPhoneNumber;
 
       if (invitation) {
-        const userId = createUser(cUser);
+        const userId = await createUser(cUser);
         if (userId) {
-          updateInvitation(options.token, userId);
+          await updateInvitation(options.token, userId);
 
-          const toEmail = Meteor.settings.private.toOrderCommentsEmail.split(',');
+          const toEmail =
+            Meteor.settings.private.toOrderCommentsEmail.split(',');
           const fromEmail = Meteor.settings.private.fromInvitationEmail;
           if (!Meteor.isProduction) {
             // Send email to admin
@@ -301,10 +343,10 @@ export const removeInvitation = new ValidatedMethod({
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ _id }) {
+  async run({ _id }) {
     let query;
     switch (true) {
-      case Roles.userIsInRole(this.userId, ['admin']):
+      case await Roles.userIsInRoleAsync(this.userId, ['admin']):
         query = {
           $and: [
             { _id },
@@ -322,7 +364,7 @@ export const removeInvitation = new ValidatedMethod({
         };
         break;
     }
-    Invitations.remove(query, { justOne: true });
+    await Invitations.removeAsync(query, { justOne: true });
   },
 });
 

@@ -1,17 +1,23 @@
-import { composeWithTracker } from 'react-komposer';
-import { Meteor } from 'meteor/meteor';
+import React from 'react';
+import { useTracker, useSubscribe } from 'meteor/react-meteor-data'; 
 import DisplayProductLists from '../../components/ProductLists/ProductLists';
 import ProductLists from '../../../api/ProductLists/ProductLists';
 import Loading from '../../components/Loading/Loading';
 import constants from '../../../modules/constants';
 
-const composer = (params, onData) => {
-  const subscription = Meteor.subscribe('productLists.list');
-  if (subscription.ready()) {
-    const productLists = ProductLists.find({},
-      { sort: { activeStartDateTime: constants.Sort.DESCENDING } }).fetch();
-    onData(null, { productLists, history: params.history });
+const compose = (params) => {
+  const isLoading = useSubscribe('productLists.list');
+
+  const productLists = useTracker(() => ProductLists.find({},
+    { sort: { activeStartDateTime: constants.Sort.DESCENDING } }).fetch()
+);
+
+  if (isLoading()) {
+    return (<Loading />);
   }
+
+  return (<DisplayProductLists productLists={productLists} history={params.history}/>);
+ 
 };
 
-export default composeWithTracker(composer, Loading)(DisplayProductLists);
+export default compose;

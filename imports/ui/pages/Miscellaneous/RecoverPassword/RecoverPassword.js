@@ -63,7 +63,7 @@ class RecoverPassword extends React.Component {
               Enter your email address below to receive a link to reset your password.
             </Alert>
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-              <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+              <Row>
                 <label>Email Address</label>
                 <input
                   type="email"

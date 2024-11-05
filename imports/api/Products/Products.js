@@ -2,7 +2,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
-import { SupplierSchemaDefObject } from '../Suppliers/Suppliers';
 
 const Products = new Mongo.Collection('Products');
 export default Products;
@@ -18,9 +17,6 @@ Products.deny({
   update: () => true,
   remove: () => true,
 });
-
-const supplierSchemaDefObject = _.clone(SupplierSchemaDefObject);
-const SupplierSchema = new SimpleSchema(supplierSchemaDefObject);
 
 export const ProductSchemaDefObject = {
   _id: { type: String, label: 'The default _id of the product', optional: true },
@@ -52,28 +48,6 @@ export const ProductSchemaDefObject = {
   'vendor_details.id': { type: Number, label: 'The vendor details of the product.' },
   'vendor_details.slug': { type: String, label: 'The vendor slug of the product.' },
   'vendor_details.name': { type: String, label: 'The vendor name of the product.' },
-  associatedIngredient: {
-    type: Object,
-    label: 'Associated Ingredient',
-    optional: true,
-    blackbox: true,
-  },
-  associatedFoodGroups: {
-    type: Array,
-    label: 'The list of food groups this product belongs to.',
-    optional: true,
-  },
-  'associatedFoodGroups.$': {
-    type: String,
-    label: 'A food group',
-    optional: true,
-  },
-  sourceSuppliers: {
-    type: Array,
-    label: 'The list of suppliers to which this product belongs to',
-    optional: true,
-  },
-  'sourceSuppliers.$': SupplierSchema.omit('createdAt', 'updatedAt'),
   includeReturnables: { type: Boolean, label: 'Is there an included returnable product?', optional: true },
   associatedReturnables: {
     type: Object, label: 'The default _id and name of the returnable product', optional: true,

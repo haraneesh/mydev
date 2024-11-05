@@ -3,7 +3,7 @@
 // import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import Ingredients from '../Ingredients/Ingredients';
+// import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
 import constants from '../../modules/constants';
 import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
@@ -136,7 +136,7 @@ const zohoSyncUp = {
   syncEntity: 'invoices-last-modified-time-from-zoho',
   syncedForUser: 'All',
 };
-ZohoSyncUps.upsert({ syncEntity: 'invoices-last-modified-time-from-zoho' }, { $set: zohoSyncUp });
+await ZohoSyncUps.upsertAsync({ syncEntity: 'invoices-last-modified-time-from-zoho' }, { $set: zohoSyncUp });
 
 syncDate.setDate(syncDate.getDate() - 32);
 const zohoSyncUp2 = {
@@ -147,11 +147,11 @@ const zohoSyncUp2 = {
   syncEntity: 'invoice-details-from-zoho',
   syncedForUser: 'All',
 };
-ZohoSyncUps.upsert({ syncEntity: 'invoice-details-from-zoho' }, { $set: zohoSyncUp2 });
+await ZohoSyncUps.upsertAsync({ syncEntity: 'invoice-details-from-zoho' }, { $set: zohoSyncUp2 });
 */
 /*
 Orders.find({}).fetch().forEach(order => {
-  const role = Roles.getRolesForUser(order.customer_details._id)[0];
+  const role = await Roles.getRolesForUserAsync(order.customer_details._id)[0];
   Orders.update({ _id: order._id }, { $set: { 'customer_details.role': role } });
 }); */
 
@@ -161,7 +161,7 @@ Orders.find({}).fetch().forEach(order => {
 // Roles._forwardMigrate2();
 
 /* db.users.find({"settings.packingPreference":{$exists:false}}); */
-Meteor.users.update(
+Meteor.users.updateAsync(
   { 'settings.packingPreference': { $exists: false } },
   {
     $set: {
@@ -171,7 +171,7 @@ Meteor.users.update(
   { multi: true },
 );
 
-Meteor.users.update(
+Meteor.users.updateAsync(
   { 'settings.productUpdatePreference': { $exists: false } },
   {
     $set: {
@@ -182,12 +182,14 @@ Meteor.users.update(
 );
 
 // clean up some junk accounts
-Meteor.users.remove({ _id: 'D37aYoxgCMgbngr9f' });
-Meteor.users.remove({ username: '9987876223' });
-Meteor.users.remove({ username: '9884854633' });
-Meteor.users.remove({ username: '9884854634' });
-Meteor.users.remove({ username: '9884854635' });
-Meteor.users.remove({ username: '9884854636' });
-Meteor.users.remove({ username: '8734486932' });
-Meteor.users.remove({ username: '8754486933' });
-Meteor.users.remove({ username: '8734486933' });
+/*
+Meteor.users.removeAsync({ _id: 'D37aYoxgCMgbngr9f' });
+Meteor.users.removeAsync({ username: '9987876223' });
+Meteor.users.removeAsync({ username: '9884854633' });
+Meteor.users.removeAsync({ username: '9884854634' });
+Meteor.users.removeAsync({ username: '9884854635' });
+Meteor.users.removeAsync({ username: '9884854636' });
+Meteor.users.removeAsync({ username: '8734486932' });
+Meteor.users.removeAsync({ username: '8754486933' });
+Meteor.users.removeAsync({ username: '8734486933' });
+*/

@@ -63,7 +63,6 @@ Navigation.propTypes = {
   history: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   showEasyNav: PropTypes.bool.isRequired,
-  containerWidth: PropTypes.bool.isRequired,
 };
 
 export default Navigation;

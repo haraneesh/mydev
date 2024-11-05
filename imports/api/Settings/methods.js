@@ -1,13 +1,13 @@
 import Settings from './Settings';
 
-function getValue(keyValue) {
-  const keyRow = Settings.findOne({ key: keyValue });
+async function getValue(keyValue) {
+  const keyRow = await Settings.findOneAsync({ key: keyValue });
   if (keyRow) { return keyRow.value; }
   return {};
 }
 
-function setValue(keyValue, value) {
-  Settings.upsert({ key: keyValue }, { $set: { value } });
+async function setValue(keyValue, value) {
+   Settings.upsertAsync({ key: keyValue }, { $set: { value } });
 }
 
 export default { getValue, setValue };

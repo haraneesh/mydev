@@ -66,7 +66,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               <option value="Miss"> Miss</option>
             </select>
           </Row>
-          <Row className="py-2" validationState={isError.firstName.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>First Name</label>
             <Form.Control
               onBlur={onValueChange}
@@ -76,10 +76,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user) ? user.profile.name.first : ''}
             />
             {isError.firstName.length > 0 && (
-              <span className="small text-info">{isError.firstName}</span>
+              <span className="bg-white text-danger">{isError.firstName}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.lastName.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Last Name</label>
             <Form.Control
               onBlur={onValueChange}
@@ -89,7 +89,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user) ? user.profile.name.last : ''}
             />
             {isError.lastName.length > 0 && (
-              <span className="small text-info">{isError.lastName}</span>
+              <span className="bg-white text-danger">{isError.lastName}</span>
             )}
           </Row>
           <Row className="py-2">
@@ -109,7 +109,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
                 }
             </select>
           </Row>
-          <Row className="py-2" validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Email Address</label>
             <Form.Control
               onBlur={onValueChange}
@@ -119,10 +119,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user && user.emails) ? user.emails[0].address : ''}
             />
             {isError.emailAddress.length > 0 && (
-              <span className="small text-info">{isError.emailAddress}</span>
+              <span className="bg-white text-danger">{isError.emailAddress}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Mobile Number</label>
             <Form.Control
               onBlur={onValueChange}
@@ -132,10 +132,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user) ? user.profile.whMobilePhone : ''}
             />
             {isError.whMobilePhone.length > 0 && (
-              <span className="small text-info">{isError.whMobilePhone}</span>
+              <span className="bg-white text-danger">{isError.whMobilePhone}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Delivery Address</label>
             <textarea
               className="form-control"
@@ -146,10 +146,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user && user.profile.deliveryAddress) ? user.profile.deliveryAddress : ''}
             />
             {isError.deliveryAddress.length > 0 && (
-              <span className="small text-info">{isError.deliveryAddress}</span>
+              <span className="bg-white text-danger">{isError.deliveryAddress}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Delivery Pincode</label>
             <Form.Control
               onBlur={onValueChange}
@@ -159,10 +159,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user && user.profile.deliveryPincode) ? user.profile.deliveryPincode : ''}
             />
             {isError.deliveryPincode.length > 0 && (
-              <span className="small text-info">{isError.deliveryPincode}</span>
+              <span className="bg-white text-danger">{isError.deliveryPincode}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.deliveryAddressLatitude.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Delivery Address Latitude</label>
             <Form.Control
               onBlur={onValueChange}
@@ -172,10 +172,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user) ? user.profile.deliveryAddressLatitude : ''}
             />
             {isError.deliveryAddressLatitude.length > 0 && (
-              <span className="small text-info">{isError.deliveryAddressLatitude}</span>
+              <span className="bg-white text-danger">{isError.deliveryAddressLatitude}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.deliveryAddressLongitude.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Delivery Address Longitude</label>
             <Form.Control
               onBlur={onValueChange}
@@ -185,10 +185,10 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               defaultValue={(user) ? user.profile.deliveryAddressLongitude : ''}
             />
             {isError.deliveryAddressLongitude.length > 0 && (
-              <span className="small text-info">{isError.deliveryAddressLongitude}</span>
+              <span className="bg-white text-danger">{isError.deliveryAddressLongitude}</span>
             )}
           </Row>
-          <Row className="py-2" validationState={isError.password.length > 0 ? 'error' : ''}>
+          <Row className="py-2" >
             <label>Password</label>
             <Form.Control
               onBlur={onValueChange}
@@ -197,7 +197,7 @@ export const userProfileForm = (user, isError, onValueChange, callBack) => (
               placeholder="Password"
             />
             {isError.password.length > 0 && (
-              <span className="small text-info">{isError.password}</span>
+              <span className="bg-white text-danger">{isError.password}</span>
             )}
           </Row>
           <Row className="py-2">

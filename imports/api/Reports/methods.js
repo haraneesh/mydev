@@ -15,17 +15,17 @@ import handleMethodException from '../../modules/handle-method-exception';
 
 // import { configure, getLogger } from 'log4js';
 
-const getPreviousOrdersByProduct = (val, forDate, nextDate, label) => {
+const getPreviousOrdersByProduct = async (val, forDate, nextDate, label) => {
   // const forDateIst = new Date(forDate);
   // forDateIst.setHours(0, 0, 0, 0);
-  const orders = Orders.find({
+  const orders = await Orders.find({
     createdAt:
     {
       $gte: forDate.toJSDate(),
       $lt: nextDate.toJSDate(),
     },
     'customer_details.role': constants.Roles.customer.name,
-  }).fetch();
+  }).fetchAsync();
 
   const returnValue = orders.reduce((acc, order) => {
     acc = order.products.reduce((map, product) => {
@@ -51,18 +51,19 @@ const getPreviousOrdersByProduct = (val, forDate, nextDate, label) => {
   return returnValue;
 };
 
-function customerOrderPreferences() {
-  const orders = Orders.find({
+async function customerOrderPreferences() {
+  const orders = await Orders.find({
     $or: [
       { order_status: constants.OrderStatus.Pending.name },
       { order_status: constants.OrderStatus.Processing.name },
       { order_status: constants.OrderStatus.Awaiting_Fulfillment.name },
     ],
-  }).fetch();
+  }).fetchAsync();
 
   const orderPreferences = [];
-  orders.forEach((order) => {
-    const user = Meteor.users.findOne({ _id: order.customer_details._id });
+
+  for (const order of orders) {
+    const user = await Meteor.users.findOneAsync({ _id: order.customer_details._id });
     orderPreferences.push(
       {
         name: order.customer_details.name,
@@ -78,8 +79,9 @@ function customerOrderPreferences() {
         issuesWithPreviousOrder: order.issuesWithPreviousOrder,
         comments: order.comments,
       },
-    );
-  });
+    );  
+  }
+
 
   return orderPreferences.sort((a, b) => {
     const nameA = a.packingPreference.toUpperCase(); // ignore upper and lowercase
@@ -95,8 +97,8 @@ function customerOrderPreferences() {
   });
 }
 
-const addStockOnHand = (productsHash) => {
-  const itemsListFromZoho = getActiveItemsFromZoho();
+const addStockOnHand = async (productsHash) => {
+  const itemsListFromZoho = await getActiveItemsFromZoho();
 
   return itemsListFromZoho.reduce((map, item) => {
     if (map[item.item_id]) {
@@ -107,8 +109,8 @@ const addStockOnHand = (productsHash) => {
   }, productsHash);
 };
 
-const getProductsFrmAwaitingFullOrders = () => {
-  const awaitingFullFillMentOrders = Orders.find({ order_status: constants.OrderStatus.Awaiting_Fulfillment.name }).fetch();
+const getProductsFrmAwaitingFullOrders = async () => {
+  const awaitingFullFillMentOrders = await Orders.find({ order_status: constants.OrderStatus.Awaiting_Fulfillment.name }).fetchAsync();
   let returnValue = {};
   if (awaitingFullFillMentOrders) {
     returnValue = awaitingFullFillMentOrders.reduce((acc, order) => {
@@ -143,19 +145,20 @@ const writeFile = (pendingProductsHash) => {
 */
 
 Meteor.methods({
-  'reports.generateDaysSummary': function generateDaySummary() {
+  'reports.generateDaysSummary': async function generateDaySummary() {
     // check(day, Date);
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
     try {
       // const pendingProductsHash = daysSummary;
 
-      let awaitingFullFillmentProductsHash = getProductsFrmAwaitingFullOrders();
+      let awaitingFullFillmentProductsHash = await getProductsFrmAwaitingFullOrders();
       if (Object.keys(awaitingFullFillmentProductsHash).length > 0) {
-        awaitingFullFillmentProductsHash = addStockOnHand(awaitingFullFillmentProductsHash);
-        awaitingFullFillmentProductsHash = addPOOrderedQty(awaitingFullFillmentProductsHash);
+        awaitingFullFillmentProductsHash = await addStockOnHand(awaitingFullFillmentProductsHash);
+        awaitingFullFillmentProductsHash = await addPOOrderedQty(awaitingFullFillmentProductsHash);
       }
       //  writeFile(awaitingFullFillmentProductsHash);
 
@@ -165,45 +168,52 @@ Meteor.methods({
     }
     return { };
   },
-  'reports.getInvoices': function getInvoices() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  'reports.getInvoices': async function getInvoices() {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
     try {
-      return getInvoicesFromZoho();
+      return await getInvoicesFromZoho();
     } catch (exception) {
       handleMethodException(exception);
     }
     return { };
   },
-  'reports.getAllUsers': function getAllUsers() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  'reports.getAllUsers': async function getAllUsers() {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
 
     try {
-      return Meteor.users.find({}, { fields: { services: 0, _id: 0 } }).fetch();
+      return await Meteor.users.find({}, { fields: { services: 0, _id: 0 } }).fetchAsync();
     } catch (exception) {
       handleMethodException(exception);
     }
     return [];
   },
-  'reports.reportCustomerOrderPreferences': function reportCustomerOrderPreferences() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  'reports.reportCustomerOrderPreferences': async function reportCustomerOrderPreferences() {
+
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
 
     try {
-      return customerOrderPreferences();
+      return await customerOrderPreferences();
     } catch (exception) {
       handleMethodException(exception);
     }
     return [];
   },
-  'reports.getPreviousSalesByProduct': function getPreviousSalesByProduct(reportForDayInWeek) {
+  'reports.getPreviousSalesByProduct': async function getPreviousSalesByProduct(reportForDayInWeek) {
     check(reportForDayInWeek, String);
 
     const allDaysInWeek = daysInWeek();
@@ -216,7 +226,8 @@ Meteor.methods({
       return false;
     });
 
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
@@ -232,8 +243,8 @@ Meteor.methods({
       const twoWeekSameDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr + 7) }).set({ hour: 0, minute: 0, second: 0 });
       const twoWeekNextDay = DateTime.now().setZone('Asia/Kolkata').minus({ days: (incr + 6) }).set({ hour: 0, minute: 0, second: 0 });
 
-      let val = getPreviousOrdersByProduct({}, lastWeekSameDay, lastWeekNextDay, 'firstWeek');
-      val = getPreviousOrdersByProduct(val, twoWeekSameDay, twoWeekNextDay, 'secondWeek');
+      let val = await getPreviousOrdersByProduct({}, lastWeekSameDay, lastWeekNextDay, 'firstWeek');
+      val = await getPreviousOrdersByProduct(val, twoWeekSameDay, twoWeekNextDay, 'secondWeek');
 
       return {
         val,

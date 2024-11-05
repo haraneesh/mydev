@@ -17,11 +17,11 @@ export const reconcileInventoryUpsert = new ValidatedMethod({
     'products.$.unit': String,
     'products.$.differenceQty': Number,
   }).validator(),
-  run(doc) {
+  async run(doc) {
     try {
       const record = doc;
       record.updatedBy = this.userId;
-      return ReconcileInventory.upsert({ createdOn: record.createdOn }, { $set: record });
+      return await ReconcileInventory.upsertAsync({ createdOn: record.createdOn }, { $set: record });
       // Return _id so we can redirect to document after update.
     } catch (exception) {
       handleMethodException(exception);

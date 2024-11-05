@@ -5,19 +5,19 @@ import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 
 Meteor.methods({
-  'documents.insert': function documentsInsert(doc) {
+  'documents.insert': async function documentsInsert(doc) {
     check(doc, {
       title: String,
       body: String,
     });
 
     try {
-      return Documents.insert({ owner: this.userId, ...doc });
+      return await Documents.insertAsync({ owner: this.userId, ...doc });
     } catch (exception) {
       handleMethodException(exception);
     }
   },
-  'documents.update': function documentsUpdate(doc) {
+  'documents.update': async function documentsUpdate(doc) {
     check(doc, {
       _id: String,
       title: String,
@@ -26,17 +26,17 @@ Meteor.methods({
 
     try {
       const documentId = doc._id;
-      Documents.update(documentId, { $set: doc });
+      await Documents.updateAsync(documentId, { $set: doc });
       return documentId; // Return _id so we can redirect to document after update.
     } catch (exception) {
       handleMethodException(exception);
     }
   },
-  'documents.remove': function documentsRemove(documentId) {
+  'documents.remove': async function documentsRemove(documentId) {
     check(documentId, String);
 
     try {
-      return Documents.remove(documentId);
+      return await Documents.removeAsync(documentId);
     } catch (exception) {
       handleMethodException(exception);
     }

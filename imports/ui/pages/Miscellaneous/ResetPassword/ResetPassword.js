@@ -66,12 +66,12 @@ class ResetPassword extends React.Component {
         <Row>
           <Col xs={12} sm={6} md={4}>
             <h2 className="py-4">Reset Password</h2>
-            <Alert bsStyle="info">
+            <Alert variant="info">
               To reset your password, enter a new one below. You will be logged in
               with your new password.
             </Alert>
             <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-              <Row validationState={isError.newPassword.length > 0 ? 'error' : ''}>
+              <Row >
                 <label>New Password</label>
                 <input
                   type="password"
@@ -82,10 +82,10 @@ class ResetPassword extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.newPassword.length > 0 && (
-                <span className="small text-info">{isError.newPassword}</span>
+                <span className="bg-white text-danger">{isError.newPassword}</span>
                 )}
               </Row>
-              <Row validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+              <Row >
                 <label>Repeat New Password</label>
                 <input
                   type="password"
@@ -96,10 +96,10 @@ class ResetPassword extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="small text-info">{isError.confirmPassword}</span>
+                <span className="bg-white text-danger">{isError.confirmPassword}</span>
                 )}
               </Row>
-              <Button type="submit" bsStyle="primary">Reset Password &amp; Login</Button>
+              <Button type="submit" variant="primary">Reset Password &amp; Login</Button>
             </form>
           </Col>
         </Row>

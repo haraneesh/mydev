@@ -4,7 +4,7 @@ import { check, Match } from 'meteor/check';
 import { Orders } from '../Orders';
 import constants from '../../../modules/constants';
 
-Meteor.publish('orders.list', function ordersList(options) {
+Meteor.publish('orders.list', async function ordersList(options) {
   check(options, {
     isWholeSale: Boolean,
     limit: Number,
@@ -18,7 +18,7 @@ Meteor.publish('orders.list', function ordersList(options) {
     },
   });
 
-  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  if (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
     const {
       limit = constants.InfiniteScroll.DefaultLimitOrders, sort, skip, isWholeSale,
     } = options;
@@ -60,9 +60,9 @@ Meteor.publish('orders.mylist', function ordersMylist() {
     });
 });
 
-Meteor.publish('orders.orderDetails', function orderDetails(id) {
+Meteor.publish('orders.orderDetails', async function orderDetails(id) {
   check(id, String);
-  if (Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  if (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
     return Orders.find(id);
     /* return Orders.aggregate([
         {

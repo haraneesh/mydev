@@ -1,16 +1,22 @@
-import { Meteor } from 'meteor/meteor';
-import { composeWithTracker } from 'react-komposer';
+import React from 'react';
+import { useTracker, useSubscribe } from 'meteor/react-meteor-data'; 
+import DisplayProductLists from '../../components/ProductLists/ProductLists';
 import ProductLists from '../../../api/ProductLists/ProductLists';
-import ViewProductListDetails from '../../components/ProductLists/ViewProductListDetails';
 import Loading from '../../components/Loading/Loading';
+import ViewProductListDetails from '../../components/ProductLists/ViewProductListDetails';
 
-const composer = ({ match, history }, onData) => {
-  const subscription = Meteor.subscribe('productList.view', match.params._id);
 
-  if (subscription.ready()) {
-    const productList = ProductLists.findOne();
-    onData(null, { productList, history });
+const compose = ({ match, history }) => {
+  const isLoading = useSubscribe('productList.view', match.params._id);
+
+  const productList = useTracker(() => ProductLists.findOne());
+
+  if (isLoading()) {
+    return (<Loading />);
   }
+
+  return (<ViewProductListDetails productList={productList} history={history}/>);
+ 
 };
 
-export default composeWithTracker(composer, Loading)(ViewProductListDetails);
+export default compose;

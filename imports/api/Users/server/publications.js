@@ -48,13 +48,13 @@ Meteor.publish('users.userWallet', function user() {
 
   /* const pendingOrderSummary = getPendingOrderDues(this.userId);
 
-  Meteor.users.update({ _id: this.userId }, {
+  await Meteor.users.updateAsync({ _id: this.userId }, {
     $set: {
       pendingOrderSummary,
     },
   }); */
 
-  return Meteor.users.find(this.userId, {
+  return Meteor.users.find({ _id: this.userId }, {
     fields: {
       wallet: 1,
       pendingOrderSummary: 1,

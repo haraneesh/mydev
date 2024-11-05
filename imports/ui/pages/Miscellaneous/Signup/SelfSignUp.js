@@ -176,7 +176,6 @@ class SelfSignUp extends React.Component {
               <Row>
                 <Col xs={6}>
                   <Row
-                    validationState={isError.firstName.length > 0 ? 'error' : ''}
                     style={{ paddingRight: '1px' }}
                   >
                     <Row>First Name</Row>
@@ -191,7 +190,6 @@ class SelfSignUp extends React.Component {
                 </Col>
                 <Col xs={6}>
                   <Row
-                    validationState={isError.lastName.length > 0 ? 'error' : ''}
                     style={{ paddingLeft: '1px' }}
                   >
                     <Row>Last Name</Row>
@@ -205,7 +203,7 @@ class SelfSignUp extends React.Component {
                   </Row>
                 </Col>
               </Row>
-              <Row validationState={isError.emailAddress.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Email Address</Row>
                 <input
                   type="email"
@@ -216,7 +214,7 @@ class SelfSignUp extends React.Component {
                 />
               </Row>
 
-              <Row validationState={isError.whMobilePhone.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Whatsapp Mobile Number</Row>
                 <input
                   type="text"
@@ -230,7 +228,7 @@ class SelfSignUp extends React.Component {
                 <Button style={{ marginTop: '0.5em' }} onClick={() => { this.props.history.push('/signup'); }}> Change Phone Number </Button>
 
               </Row>
-              <Row validationState={isError.deliveryAddress.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Delivery Address</Row>
                 <textarea
                   ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
@@ -241,7 +239,7 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
               </Row>
-              <Row validationState={isError.deliveryPincode.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Delivery Address Pincode</Row>
                 <input
                   type="text"
@@ -252,7 +250,7 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
               </Row>
-              <Row validationState={isError.eatingHealthyMeaning.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>What does eating healthy mean to you?</Row>
                 <textarea
                   ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
@@ -263,7 +261,7 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
               </Row>
-              <Row validationState={isError.password.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Password</Row>
                 <input
                   id="password"
@@ -275,10 +273,10 @@ class SelfSignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="small text-info">{isError.password}</span>
+                <span className="bg-white text-danger">{isError.password}</span>
                 )}
               </Row>
-              <Row validationState={isError.confirmPassword.length > 0 ? 'error' : ''}>
+              <Row>
                 <Row>Confirm Password</Row>
                 <input
                   type="password"
@@ -288,7 +286,7 @@ class SelfSignUp extends React.Component {
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="small text-info">{isError.confirmPassword}</span>
+                <span className="bg-white text-danger">{isError.confirmPassword}</span>
                 )}
               </Row>
               <p>

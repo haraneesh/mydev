@@ -1,14 +1,27 @@
 /* eslint-disable camelcase */
 import { Meteor } from 'meteor/meteor';
+import { ZhInvoices } from '../Invoices/Invoices';
 import zh from '../ZohoSyncUps/ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
-import { ZhInvoices } from '../Invoices/Invoices';
-import { updateSyncAndReturn, retResponse, getZhDisplayDate } from '../ZohoSyncUps/zohoCommon';
+import {
+  getZhDisplayDate,
+  retResponse,
+  updateSyncAndReturn,
+} from '../ZohoSyncUps/zohoCommon';
 
 const createLineItemObject = (line_item) => {
   const {
-    line_item_id, item_id, item_type, name, item_order,
-    bcy_rate, rate, quantity, unit, discount_amount, discount,
+    line_item_id,
+    item_id,
+    item_type,
+    name,
+    item_order,
+    bcy_rate,
+    rate,
+    quantity,
+    unit,
+    discount_amount,
+    discount,
   } = line_item;
 
   return {
@@ -28,8 +41,17 @@ const createLineItemObject = (line_item) => {
 
 const createZhInvoiceObject = (invoice) => {
   const {
-    invoice_id, date, status, due_date, last_payment_date, reference_number,
-    balance, customer_id, created_time, last_modified_time, invoice_url,
+    invoice_id,
+    date,
+    status,
+    due_date,
+    last_payment_date,
+    reference_number,
+    balance,
+    customer_id,
+    created_time,
+    last_modified_time,
+    invoice_url,
   } = invoice;
 
   return {
@@ -49,22 +71,25 @@ const createZhInvoiceObject = (invoice) => {
 
 const createZohoInvoiceObject = (invoice) => {
   const inv = createZhInvoiceObject(invoice);
-  const lineItemsArray = invoice.line_items.map((lineItem) => createLineItemObject(lineItem));
+  const lineItemsArray = invoice.line_items.map((lineItem) =>
+    createLineItemObject(lineItem),
+  );
   inv.line_items = lineItemsArray;
 
   return inv;
 };
 
-const callGetInvoiceDetailsFromZoho = (invoices) => {
+const callGetInvoiceDetailsFromZoho = async (invoices) => {
   const successResp = [];
   const errorResp = [];
   let returnSuccess = true;
 
-  invoices.every((invoice) => {
-    const r = zh.getRecordById('invoices', invoice.invoice_id);
+  for (const invoice of invoices) {
+    const r = await zh.getRecordById('invoices', invoice.invoice_id);
     if (r.code === 0 /* Success */) {
-      ZhInvoices.upsert(
-        { invoice_id: r.invoice.invoice_id }, { $set: createZohoInvoiceObject(r.invoice) },
+      await ZhInvoices.upsertAsync(
+        { invoice_id: r.invoice.invoice_id },
+        { $set: createZohoInvoiceObject(r.invoice) },
       );
       successResp.push(retResponse(r));
     } else {
@@ -75,11 +100,9 @@ const callGetInvoiceDetailsFromZoho = (invoices) => {
       errorResp.push(retResponse(res));
       returnSuccess = false;
     }
+  }
 
-    return returnSuccess;
-  });
-
-  updateSyncAndReturn(
+  await updateSyncAndReturn(
     'invoices',
     successResp,
     errorResp,
@@ -90,7 +113,7 @@ const callGetInvoiceDetailsFromZoho = (invoices) => {
   return returnSuccess;
 };
 
-const callGetInvoicesFromZoho = (lastNoErrorSyncDate) => {
+const callGetInvoicesFromZoho = async (lastNoErrorSyncDate) => {
   const successResp = [];
   const errorResp = [];
 
@@ -103,11 +126,14 @@ const callGetInvoicesFromZoho = (lastNoErrorSyncDate) => {
     let page = 1;
     let hasMorePages = true;
 
-    // const syncDT = ZohoSyncUps.findOne({ syncEntity: syncUpConstants.users }).syncDateTime;
+    // const syncDT = await ZohoSyncUps.findOneAsync({ syncEntity: syncUpConstants.users }).syncDateTime;
 
     // page<10, 10 is arbitrary if it goes to more than 10 pages want to break out, may be something is wrong
     while (hasMorePages && page < 10) {
-      const r = zh.getRecordsByParams('invoices', { last_modified_time: `${getZhDisplayDate(lastNoErrorSyncDate)}T00:00:00+0000` /* last_modified_time: '2020-02-04T00:00:00+0000' */, page });
+      const r = await zh.getRecordsByParams('invoices', {
+        last_modified_time: `${getZhDisplayDate(lastNoErrorSyncDate)}T00:00:00+0000` /* last_modified_time: '2020-02-04T00:00:00+0000' */,
+        page,
+      });
       if (r.code === 0 /* Success */) {
         successResp.push(retResponse(r));
         invoices = invoices.concat(r.invoices);
@@ -127,13 +153,13 @@ const callGetInvoicesFromZoho = (lastNoErrorSyncDate) => {
     // get Invoices
     let wasSuccessFull = false;
     if (errorResp.length < 1) {
-      wasSuccessFull = callGetInvoiceDetailsFromZoho(invoices);
+      wasSuccessFull = await callGetInvoiceDetailsFromZoho(invoices);
     }
-    const noErrorSyncDate = (wasSuccessFull) ? new Date() : lastNoErrorSyncDate;
+    const noErrorSyncDate = wasSuccessFull ? new Date() : lastNoErrorSyncDate;
 
     console.log(`${getZhDisplayDate(lastNoErrorSyncDate)}T00:00:00+0000`);
 
-    updateSyncAndReturn(
+    await updateSyncAndReturn(
       'invoices',
       successResp,
       errorResp,
@@ -145,12 +171,12 @@ const callGetInvoicesFromZoho = (lastNoErrorSyncDate) => {
   return invoices;
 };
 
-const getInvoicesFromZoho = () => {
+const getInvoicesFromZoho = async () => {
   if (Meteor.isServer) {
-    const { noErrorSyncDate } = ZohoSyncUps.findOne(
-      { syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho },
-    );
-    return callGetInvoicesFromZoho(noErrorSyncDate);
+    const { noErrorSyncDate } = await ZohoSyncUps.findOneAsync({
+      syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+    });
+    return await callGetInvoicesFromZoho(noErrorSyncDate);
   }
 };
 

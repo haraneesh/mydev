@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import { useDropzone } from 'react-dropzone';
-import { Cloudinary } from 'meteor/socialize:cloudinary';
+// import { Cloudinary } from 'meteor/socialize:cloudinary';
 
 import { Image, Placeholder, Transformation } from 'cloudinary-react';
 

@@ -1,24 +1,24 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { toast } from 'react-toastify';
+import React from 'react';
 import Datetime from 'react-datetime';
+import { toast } from 'react-toastify';
 import 'react-datetime/css/react-datetime.css';
-import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Tabs from 'react-bootstrap/Tabs';
+import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
-import Product, { ProductTableHeader } from './Product';
-import { upsertProductList } from '../../../api/ProductLists/methods';
 import constants from '/imports/modules/constants';
+import { upsertProductList } from '../../../api/ProductLists/methods';
+import Product, { ProductTableHeader } from './Product';
 
 const NewTab = 'New';
 
-const createProductRows = ({ suppliers, products, returnableProducts }) => {
+const createProductRows = ({ products, returnableProducts }) => {
   const productRows = [];
   productRows[NewTab] = [];
 
@@ -31,7 +31,15 @@ const createProductRows = ({ suppliers, products, returnableProducts }) => {
       }
       productRows[sectionHeaderName].push(<ProductTableHeader />);
     }
-    productRows[sectionHeaderName].push(<Product prodId={product._id} product={product} suppliers={suppliers} returnableProducts={returnableProducts} productIndex={index} key={`product-${index}`} />);
+    productRows[sectionHeaderName].push(
+      <Product
+        prodId={product._id}
+        product={product}
+        returnableProducts={returnableProducts}
+        productIndex={index}
+        key={`product-${index}`}
+      />,
+    );
   });
   return productRows;
 };
@@ -57,7 +65,10 @@ class ListAllProducts extends React.Component {
       activeStartDate: null,
       activeEndDate: null,
       showEndDateError: false,
-      productRows: createProductRows({ products: props.products, suppliers: props.suppliers, returnableProducts }),
+      productRows: createProductRows({
+        products: props.products,
+        returnableProducts,
+      }),
       selectedHeaderKey: 1,
       isPublishingProductList: false,
     };
@@ -69,10 +80,13 @@ class ListAllProducts extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const returnableProducts = createReturnableProductsArray(nextProps.products);
-    const productRows = createProductRows(
-      { products: nextProps.products, suppliers: nextProps.suppliers, returnableProducts },
+    const returnableProducts = createReturnableProductsArray(
+      nextProps.products,
     );
+    const productRows = createProductRows({
+      products: nextProps.products,
+      returnableProducts,
+    });
     if (productRows !== prevState.productRows) {
       return { productRows };
     }
@@ -91,7 +105,8 @@ class ListAllProducts extends React.Component {
   }
 
   checkValidEndDate(current) {
-    const isEndDateAfterCurrent = this.state.activeStartDate && current.isAfter(this.state.activeStartDate);
+    const isEndDateAfterCurrent =
+      this.state.activeStartDate && current.isAfter(this.state.activeStartDate);
     this.setState({
       activeEndDate: isEndDateAfterCurrent ? current : null,
       showEndDateError: !isEndDateAfterCurrent,
@@ -100,7 +115,9 @@ class ListAllProducts extends React.Component {
 
   publishProductList() {
     if (this.state.showEndDateError) {
-      toast.error('Your dates are not quiet right, do correct them and publish');
+      toast.error(
+        'Your dates are not quiet right, do correct them and publish',
+      );
       return;
     }
 
@@ -117,12 +134,16 @@ class ListAllProducts extends React.Component {
     upsertProductList.call(params, (error) => {
       if (error) {
         if (error.error === 'invocation-failed') {
-          toast.success('Update is running in the background. Product List will be updated.');
+          toast.success(
+            'Update is running in the background. Product List will be updated.',
+          );
         } else {
           toast.error(error.reason || error.message);
         }
       } else {
-        const successMsg = (params._id) ? 'ProductList has been updated!' : 'ProductList has been created!';
+        const successMsg = params._id
+          ? 'ProductList has been updated!'
+          : 'ProductList has been created!';
         toast.success(successMsg);
       }
       this.setState({ isPublishingProductList: false });
@@ -134,7 +155,10 @@ class ListAllProducts extends React.Component {
     return (
       <Card className="p-2 m-2">
         <h3> Publish Product List for Users to order </h3>
-        <p className="text-info">Select dates during which this product list will be available for the users to order</p>
+        <p className="text-info">
+          Select dates during which this product list will be available for the
+          users to order
+        </p>
         <Row>
           <Col xs={6}>
             <label> Active start date </label>
@@ -158,26 +182,29 @@ class ListAllProducts extends React.Component {
               onChange={this.checkValidEndDate}
             />
             {showEndDateError && (
-            <Alert variant="danger">
-              End date and time should be greater than start date.
-            </Alert>
+              <Alert variant="danger">
+                End date and time should be greater than start date.
+              </Alert>
             )}
           </Col>
         </Row>
         <Row>
           <Col xs={12} className="text-end mt-2">
-            { !isPublishingProductList && (
-            <Button variant="secondary" onClick={() => { this.publishProductList(); }}>
-              Publish Product List
-            </Button>
+            {!isPublishingProductList && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  this.publishProductList();
+                }}
+              >
+                Publish Product List
+              </Button>
             )}
-            {
-              !!isPublishingProductList && (
-                <Button variant="secondary" disabled>
-                  Product List is being Published ...
-                </Button>
-              )
-            }
+            {!!isPublishingProductList && (
+              <Button variant="secondary" disabled>
+                Product List is being Published ...
+              </Button>
+            )}
           </Col>
         </Row>
       </Card>
@@ -195,38 +222,34 @@ class ListAllProducts extends React.Component {
     const productKeys = Object.keys(productRows);
     const { selectedHeaderKey } = this.state;
 
-    return (
-      productKeys.length > 0
-        ? (
-          <ListGroup className="product-list">
-            {productKeys.forEach((key) => {
-              sectionCount += 1;
-              productsDisplay.push(
-                <Tab eventKey={sectionCount} title={key} className="text-start">
-                  {/* (sectionCount === selectedHeaderKey) && productRows[key] */}
-                  { productRows[key]}
-                </Tab>,
-              );
-            })}
+    return productKeys.length > 0 ? (
+      <ListGroup className="product-list">
+        {productKeys.forEach((key) => {
+          sectionCount += 1;
+          productsDisplay.push(
+            <Tab eventKey={sectionCount} title={key} className="text-start">
+              {/* (sectionCount === selectedHeaderKey) && productRows[key] */}
+              {productRows[key]}
+            </Tab>,
+          );
+        })}
 
-            <Tabs
-              id="adminProductList"
-             // activeKey={selectedHeaderKey}
-             // onSelect={this.tabOnClick}
-            >
-              {productsDisplay}
-            </Tabs>
+        <Tabs
+          id="adminProductList"
+          // activeKey={selectedHeaderKey}
+          // onSelect={this.tabOnClick}
+        >
+          {productsDisplay}
+        </Tabs>
 
-            <hr />
-            {this.publishSection()}
-          </ListGroup>
-        )
-        : (
-          <Alert variant="info">
-            The product list is empty.
-            You can add products by typing in the name of the product in the above box.
-          </Alert>
-        )
+        <hr />
+        {this.publishSection()}
+      </ListGroup>
+    ) : (
+      <Alert variant="info">
+        The product list is empty. You can add products by typing in the name of
+        the product in the above box.
+      </Alert>
     );
   }
 }

@@ -26,9 +26,9 @@ export const insertProduct = new ValidatedMethod({
     "vendor_details.name" : { type:String  },
   }).validator(), */
   validate: Products.schema.omit('createdAt', 'updatedAt').validator(),
-  run(product) {
+  async run(product) {
     try {
-      Products.insert(product);
+      await Products.insertAsync(product);
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -48,7 +48,7 @@ function isNumberorNumberPercent(value) {
 export const upsertProduct = new ValidatedMethod({
   name: 'product.upsert',
   validate: Products.schema.validator(),
-  run(prod) {
+  async run(prod) {
     const product = prod;
     const id = product._id;
     delete product._id;
@@ -63,7 +63,7 @@ export const upsertProduct = new ValidatedMethod({
           && product.associatedReturnables.returnableUnitsForSelection.split(',').every((elem) => elem.trim().match(/^(\d+(\.\d+)?\s*)=(\s*\d+(\.\d+)?\s*)$/)))) {
           throw new Meteor.Error(403, '1. Enter Returnable product and 2. Units of returnable product have to be numbers');
         }
-        return Products.upsert({ _id: id }, { $set: product });
+        return await Products.upsertAsync({ _id: id }, { $set: product });
       }
       throw new Meteor.Error(403, 'Units for Selection should be of pattern 1,2,3=5%,6');
     }
@@ -75,17 +75,17 @@ export const removeProduct = new ValidatedMethod({
   validate: new SimpleSchema({
     _id: { type: String },
   }).validator(),
-  run({ _id }) {
-    Products.remove(_id);
-    ProductDetails.remove({ productId: _id });
+  async run({ _id }) {
+    await Products.removeAsync(_id);
+    await ProductDetails.removeAsync({ productId: _id });
   },
 });
 
 Meteor.methods({
-  'products.getSpecialsToOrder': function getSpecialsToOrder() {
+  'products.getSpecialsToOrder': async function getSpecialsToOrder() {
     try {
       if (Meteor.isServer) {
-        const activeProductList = getActiveProductList().fetch();
+        const activeProductList = await getActiveProductList().fetchAsync();
         if (activeProductList[0]) {
           const allProducts = activeProductList[0].products;
           let countOfSpecialProducts = 0;
@@ -111,9 +111,9 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'products.getItemsFromZoho': function getItemsFromZoho() {
+  'products.getItemsFromZoho': async function getItemsFromZoho() {
     try {
-      return getActiveItemsFromZoho();
+      return await getActiveItemsFromZoho();
     } catch (exception) {
       handleMethodException(exception);
     }
@@ -131,7 +131,7 @@ Meteor.methods({
       handleMethodException(exception);
     }
 
-    if (/* Meteor.isServer && */ Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+    if (/* Meteor.isServer && */ await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
       try {
         const bulk = Products.rawCollection().initializeOrderedBulkOp();
 

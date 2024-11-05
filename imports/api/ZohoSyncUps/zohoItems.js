@@ -3,7 +3,7 @@ import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
 import { updateSyncAndReturn, retResponse } from './zohoCommon';
 
-const getItemsFromZoho = (status) => {
+const getItemsFromZoho = async (status) => {
   const nowDate = new Date();
   const successResp = [];
   const errorResp = [];
@@ -15,7 +15,7 @@ const getItemsFromZoho = (status) => {
     let hasMorePages = true;
 
     while (hasMorePages) {
-      const r = zh.getRecordsByParams('items', { filter_by: status, page });
+      const r = await zh.getRecordsByParams('items', { filter_by: status, page });
       if (r.code === 0 /* Success */) {
         successResp.push(retResponse(r));
         items = items.concat(r.items);
@@ -29,7 +29,7 @@ const getItemsFromZoho = (status) => {
         hasMorePages = false;
         errorResp.push(retResponse(res));
       }
-      updateSyncAndReturn('items', successResp, errorResp, nowDate, syncUpConstants.itemsFromZoho);
+      await updateSyncAndReturn('items', successResp, errorResp, nowDate, syncUpConstants.itemsFromZoho);
     }
   }
   return items;

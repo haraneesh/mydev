@@ -178,7 +178,7 @@ ProductForAdmin.defaultProps = {
 };
 
 ProductForAdmin.propTypes = {
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   unit: PropTypes.string.isRequired,
   unitprice: PropTypes.number.isRequired,

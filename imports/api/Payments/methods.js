@@ -56,14 +56,14 @@ Razor Pay
 
 */
 Meteor.methods({
-  'payments.getPayments': function getPayments() {
+  'payments.getPayments': async function getPayments() {
     try {
       if (Meteor.isServer) {
         const query = { _id: this.userId };
-        const user = Meteor.users.find(query).fetch();
+        const user = await Meteor.users.find(query).fetchAsync();
 
         if (user[0].zh_contact_id) {
-          const r = zohoPayments.getCustomerPayments(user[0].zh_contact_id);
+          const r = await zohoPayments.getCustomerPayments(user[0].zh_contact_id);
 
           if (r.code !== 0) {
             handleMethodException(r, r.code);
@@ -93,16 +93,16 @@ Meteor.methods({
           console.log(paymentResponse);
         }
 
-        const paymentId = Payments.insert({
+        const paymentId = await Payments.insertAsync({
           paymentApiResponseObject: paymentResponse,
           owner: this.userId,
         });
 
-        const paidUser = Meteor.users.find({ _id: this.userId }).fetch()[0];
+        const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
 
         const amountAfterFeeTax = paymentResponse.amount - paymentResponse.fee - paymentResponse.tax;
 
-        const zhResponse = zohoPayments.createCustomerPayment({
+        const zhResponse = await zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id,
           paymentAmountInPaise: paymentResponse.amount, // amountAfterFeeTax,
           paymentMode: paymentResponse.method,
@@ -120,7 +120,7 @@ Meteor.methods({
         }
 
         // Update Payment record history with the updated payment record
-        Payments.update(
+        await Payments.updateAsync(
           { _id: paymentId },
           { $set: { paymentZohoResponseObject: zhResponse } },
         );
@@ -129,14 +129,14 @@ Meteor.methods({
           handleMethodException(zhResponse, zhResponse.code);
         }
 
-        const zhContactResponse = updateUserWallet(paidUser);
+        const zhContactResponse = await updateUserWallet(paidUser);
 
         if (Meteor.isDevelopment) {
           console.log(zhContactResponse);
         }
 
         // Update Payment record with the latest contact information
-        Payments.update(
+        await Payments.updateAsync(
           { _id: paymentId },
           { $set: { contactZohoResponseObject: zhContactResponse.zohoResponse } },
         );

@@ -1,15 +1,15 @@
-import { composeWithTracker } from 'react-komposer';
-import { Meteor } from 'meteor/meteor';
+import React from 'react';
+import { useTracker, useSubscribe } from 'meteor/react-meteor-data'; 
 import Invitations from '../../../api/Invitations/Invitations';
 import InvitationList from '../../components/Invitations/InvitationList';
 import Loading from '../../components/Loading/Loading';
 
-const composer = (params, onData) => {
-  const subscription = Meteor.subscribe('invitations.list');
-  if (subscription.ready()) {
-    const invitations = Invitations.find().fetch();
-    onData(null, { invitations, history: params.history });
-  }
-};
+export default function (args) {
+  const isLoading = useSubscribe('invitations.list');
+  const invitations = useTracker(() => Invitations.find({}).fetch());
+   if (isLoading()) {
+    return (<Loading />);
+   }
 
-export default composeWithTracker(composer, Loading)(InvitationList);
+ return (<InvitationList invitations={invitations} />);
+}

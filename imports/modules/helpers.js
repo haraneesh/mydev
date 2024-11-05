@@ -6,8 +6,8 @@ import { Roles } from 'meteor/alanning:roles';
 import constants from './constants';
 import { accountSettings, dateSettings } from './settings';
 
-export function isCustomer(userId) {
-  return Roles.userIsInRole(userId, constants.Roles.customer.name);
+export async function isCustomer(userId) {
+  return await Roles.userIsInRoleAsync(userId, constants.Roles.customer.name);
 }
 
 export function isDeviceMobile() {
@@ -183,6 +183,16 @@ export function getLoggedInUserDisplayUserName() {
   return user ? `${name.first} ${name.last}` : '';
 }
 
+// server side
+export async function isLoggedInUserAdminAsync() {
+  const loggedInUser = Meteor.user();
+  if (loggedInUser && await Roles.userIsInRoleAsync(loggedInUser, constants.Roles.admin.name)) {
+    return true;
+  }
+  return false;
+}
+
+// ui
 export function isLoggedInUserAdmin() {
   const loggedInUser = Meteor.user();
   if (loggedInUser && Roles.userIsInRole(loggedInUser, constants.Roles.admin.name)) {

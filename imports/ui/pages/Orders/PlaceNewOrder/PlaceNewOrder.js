@@ -1,21 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Meteor } from 'meteor/meteor';
-import { toast } from 'react-toastify';
-import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
-import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
-import SelectDeliveryLocation from '../../../components/Orders/ProductsOrderCommon/SelectDeliveryLocation';
+import { Meteor } from 'meteor/meteor';
+import { useSubscribe, withTracker } from 'meteor/react-meteor-data';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import Loading from '/imports/ui/components/Loading/Loading';
+import ProductsOrderFromDetails from '/imports/ui/components/Orders/ProductOrderFromDetails/ProductOrderFromDetails';
+import SelectDeliveryLocation from '/imports/ui/components/Orders/ProductsOrderCommon/SelectDeliveryLocation';
+import ProductsOrderMain from '/imports/ui/components/Orders/ProductsOrderMain/ProductsOrderMain';
 import ProductLists from '../../../../api/ProductLists/ProductLists';
-import { getProductUnitPrice } from '../../../../modules/helpers';
+import RecommendationsCollection from '../../../../api/Recommendations/Recommendations';
 import constants from '../../../../modules/constants';
-import Loading from '../../../components/Loading/Loading';
-import ProductsOrderMain from '../../../components/Orders/ProductsOrderMain/ProductsOrderMain';
-import { cartActions, useCartState, useCartDispatch } from '../../../stores/ShoppingCart';
+import { getProductUnitPrice } from '../../../../modules/helpers';
+import {
+  cartActions,
+  useCartDispatch,
+  useCartState,
+} from '../../../stores/ShoppingCart';
 
-const PlaceNewOrder = ({
-  dateValue, name, products, productListId, history, basketId, loggedInUser, category, subCategory,
-}) => {
+const PlaceNewOrder = (props) => {
+  const {
+    dateValue,
+    name,
+    products,
+    productListId,
+    history,
+    basketId,
+    loggedInUser,
+    category,
+    subCategory,
+    productName,
+  } = props;
+
   const [isBasketLoading, setIsLoading] = useState(true);
   const cartDispatch = useCartDispatch();
   const cartState = useCartState();
@@ -33,7 +49,10 @@ const PlaceNewOrder = ({
       if (inBasketProductsHash[product._id]) {
         productCount += 1;
         product.quantity = inBasketProductsHash[product._id].quantity;
-        cartDispatch({ type: cartActions.updateCart, payload: { product, basketId } });
+        cartDispatch({
+          type: cartActions.updateCart,
+          payload: { product, basketId },
+        });
       }
     });
 
@@ -43,10 +62,12 @@ const PlaceNewOrder = ({
   useEffect(() => {
     let deliveryPincode = '';
     switch (true) {
-      case (cartState.cart && !!cartState.cart.deliveryPincode):
+      case cartState.cart && !!cartState.cart.deliveryPincode:
         deliveryPincode = cartState.cart.deliveryPincode;
         break;
-      case (loggedInUser && loggedInUser.profile && !!loggedInUser.profile.deliveryPincode):
+      case loggedInUser &&
+        loggedInUser.profile &&
+        !!loggedInUser.profile.deliveryPincode:
         deliveryPincode = loggedInUser.profile.deliveryPincode;
         break;
       default:
@@ -64,15 +85,14 @@ const PlaceNewOrder = ({
 
     if (basketId) {
       setIsLoading(true);
-      Meteor.call('baskets.getOne', basketId,
-        (error, basketDetails) => {
-          if (error) {
-            toast.error(error.reason);
-          } else {
-            updateNewCart(basketDetails.products, products, basketId);
-            setIsLoading(false);
-          }
-        });
+      Meteor.call('baskets.getOne', basketId, (error, basketDetails) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          updateNewCart(basketDetails.products, products, basketId);
+          setIsLoading(false);
+        }
+      });
     } else {
       setIsLoading(false);
     }
@@ -81,10 +101,30 @@ const PlaceNewOrder = ({
   switch (true) {
     case isBasketLoading:
       return <Loading />;
+    case !!productName:
+      return (
+        <>
+          <SelectDeliveryLocation
+            loggedInUser={loggedInUser}
+            history={history}
+          />
+          <ProductsOrderFromDetails
+            products={products}
+            history={history}
+            productName={productName}
+            name={name}
+            dateValue={dateValue}
+            loggedInUser={loggedInUser}
+          />
+        </>
+      );
     default:
       return (
         <div className="OrderHomePage">
-          <SelectDeliveryLocation loggedInUser={loggedInUser} history={history} />
+          <SelectDeliveryLocation
+            loggedInUser={loggedInUser}
+            history={history}
+          />
           <ProductsOrderMain
             products={products}
             history={history}
@@ -101,13 +141,14 @@ const PlaceNewOrder = ({
   }
 };
 
-const PlaceNewOrderWrapper = (props) => (props.loading ? (<Loading />)
-  : (<PlaceNewOrder {...props} />));
+const PlaceNewOrderWrapper = (props) =>
+  props.loading ? <Loading /> : <PlaceNewOrder {...props} />;
 
 PlaceNewOrder.defaultProps = {
   basketId: '',
   category: '',
   subCategory: '',
+  productName: '',
 };
 
 PlaceNewOrder.propTypes = {
@@ -120,30 +161,27 @@ PlaceNewOrder.propTypes = {
   history: PropTypes.object.isRequired,
   category: PropTypes.string,
   subCategory: PropTypes.string,
+  productName: PropTypes.string,
 };
 
 export default withTracker((args) => {
   // const recSubscription = Meteor.subscribe('recommendations.view');
-
-  const prdSubscription = Meteor.subscribe('productOrderList.view');
-
+  // const prdSubscription = Meteor.subscribe('productOrderList.view');
+  const isLoading = useSubscribe('productOrderList.view');
   // const recommendations = RecommendationsCollection.find().fetch();
 
   const productList = ProductLists.findOne();
-  const prds = (productList) ? productList.products : [];
-  const productListId = (productList) ? productList._id : '';
+  const prds = productList ? productList.products : [];
+  const productListId = productList ? productList._id : '';
   const products = getProductUnitPrice(
-    Roles.userIsInRole(
-      args.loggedInUserId,
-      constants.Roles.shopOwner.name,
-    ),
+    Roles.userIsInRole(args.loggedInUserId, constants.Roles.shopOwner.name),
     prds,
   );
 
   return {
     // loading: !recSubscription.ready() || !prdSubscription.ready(),
     // recommendations,
-    loading: !prdSubscription.ready(),
+    loading: isLoading(),
     productListId,
     products,
     name: args.name,
@@ -151,6 +189,7 @@ export default withTracker((args) => {
     dateValue: args.date,
     loggedInUser: args.loggedInUser,
     basketId: args.match.params.basketId,
+    productName: args.match.params.productName,
     category: args.match.params.category,
     subCategory: args.match.params.subcategory,
   };

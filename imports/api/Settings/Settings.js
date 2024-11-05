@@ -3,8 +3,9 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
+import 'meteor/aldeed:collection2/static';
+
 const Settings = new Mongo.Collection('Settings');
-export default Settings;
 
 Settings.allow({
   insert: () => false,
@@ -34,7 +35,8 @@ Settings.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } if (this.isUpsert) {
+      }
+      if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -56,4 +58,7 @@ Settings.schema = new SimpleSchema({
 if (Meteor.isServer) {
   Settings.rawCollection().createIndex({ key: 1 });
 }
+
 Settings.attachSchema(Settings.schema);
+
+export default Settings;

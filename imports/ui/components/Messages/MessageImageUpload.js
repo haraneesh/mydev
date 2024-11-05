@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Cloudinary } from 'meteor/socialize:cloudinary';
+// import { Cloudinary } from 'meteor/socialize:cloudinary';
 import { Image, Placeholder, Transformation } from 'cloudinary-react';
 
 const config = {
@@ -13,9 +13,10 @@ const config = {
 const uploadImage = async ({ imageData, imageId }) => {
   const cnf = { ...config };
   cnf.options.public_id = imageId;
-  const val = await Cloudinary.uploadFile(imageData, cnf);
-  const { public_id } = val;
-  return public_id;
+  // const val = await Cloudinary.uploadFile(imageData, cnf);
+  // const { public_id } = val;
+  // return public_id;
+  return 1;
 };
 
 export const MessageImageViewHero = ({ cloudImageId }) => (
@@ -60,7 +61,7 @@ export const MessageImageViewHeroExpand = ({ cloudImageId }) => (
     <Transformation flags="progressive.progressive:semi" />
   </Image>
 );
-
+[];
 export const deleteImage = async (imageId) => Cloudinary.delete(imageId);
 
 export default uploadImage;

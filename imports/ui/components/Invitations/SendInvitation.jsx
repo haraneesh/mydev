@@ -13,15 +13,18 @@ export default function SendInvitation() {
     whMobilePhone: '',
   });
 
-  function sendInvitation(phoneNumber) {
-    Meteor.call('invitation.getInvitation', phoneNumber, (error, getJoinLink) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        const msg = encodeURI(`${Meteor.settings.public.MessageInvitation} ${getJoinLink}`);
-        window.open(`https://wa.me/91${phoneNumber}?text=${msg}`);
-      }
-    });
+  async function sendInvitation(phoneNumber) {
+
+    try{
+    const getJoinLink = await Meteor.callAsync('invitation.getInvitation', phoneNumber);
+    const msg = encodeURI(`${Meteor.settings.public.MessageInvitation} ${getJoinLink}`);
+    const handle = window.open(`https://wa.me/91${phoneNumber}?text=${msg}`);
+    if (!handle){
+      toast.error('We are unable to launch a new window, please check your browser settings and try again.');
+    }
+    } catch(error) {
+      toast.error(error.reason);
+    }
   }
 
   function handleSubmit(event) {
@@ -54,10 +57,10 @@ export default function SendInvitation() {
                 pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
               />
               {isError.whMobilePhone.length > 0 && (
-              <span className="small text-info">{isError.whMobilePhone}</span>
+              <span className="bg-white text-danger">{isError.whMobilePhone}</span>
               )}
             </Row>
-            <Button type="submit" bsStyle="primary" onClick={handleSubmit}> Invite </Button>
+            <Button type="submit" onClick={handleSubmit}> Invite </Button>
           </form>
         </Col>
       </Row>

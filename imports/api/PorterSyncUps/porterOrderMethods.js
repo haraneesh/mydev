@@ -45,18 +45,20 @@ curl --location --request GET 'https://{porter_host}/v1/get_quote
    }'
 */
 
-import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
+import constants from '/imports/modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit';
 import { Orders } from '../Orders/Orders';
-import { PorterOrder } from './PorterOrder';
-import handleMethodException from '../../modules/handle-method-exception';
 import porter from './PorterApi.js';
-import constants from '/imports/modules/constants';
+import { PorterOrder } from './PorterOrder';
 
-const getQuoteFromPorter = (orderId) => {
-  const order = Orders.findOne({ _id: orderId });
-  const u = Meteor.users.findOne({ username: order.customer_details.mobilePhone.toString() });
+const getQuoteFromPorter = async (orderId) => {
+  const order = await Orders.findOneAsync({ _id: orderId });
+  const u = await Meteor.users.findOneAsync({
+    username: order.customer_details.mobilePhone.toString(),
+  });
   const porterParams = {
     pickup_details: {
       lat: Meteor.settings.public.suvaiLocation.latitude,
@@ -75,21 +77,33 @@ const getQuoteFromPorter = (orderId) => {
     },
   };
 
-  const r = porter.postRecordsByParams('/v1/get_quote', porterParams);
+  if (
+    porterParams.drop_details.lat.length == 0 ||
+    porterParams.drop_details.lng.length == 0
+  ) {
+    handleMethodException(
+      ' Drop location Latitude and Longitude has to be set in user profile',
+    );
+  }
+
+  const r = await porter.postRecordsByParams('v1/get_quote', porterParams);
   return r;
 };
 
-function updatePorterOrderStatus(orderId, status) {
-  Orders.update({ _id: orderId }, { $set: { porterOrderStatus: status } });
-  PorterOrder.update({ orderId }, { $set: { orderStatus: status } });
+async function updatePorterOrderStatus(orderId, status) {
+  await Orders.updateAsync(
+    { _id: orderId },
+    { $set: { porterOrderStatus: status } },
+  );
+  await PorterOrder.updateAsync({ orderId }, { $set: { orderStatus: status } });
 }
 
 Meteor.methods({
-  'porter.getQuote': function getQuote(orderId) {
+  'porter.getQuote': async function getQuote(orderId) {
     check(orderId, String);
     if (Meteor.isServer) {
       try {
-        const result = getQuoteFromPorter(orderId);
+        const result = await getQuoteFromPorter(orderId);
         return result;
       } catch (exception) {
         handleMethodException(exception);
@@ -98,12 +112,14 @@ Meteor.methods({
       throw new Meteor.Error(403, 'Access Denied');
     }
   },
-  'porter.cancelOrder': function cancelOrder(orderId) {
+  'porter.cancelOrder': async function cancelOrder(orderId) {
     check(orderId, String);
     if (Meteor.isServer) {
       try {
-        const porterOrder = PorterOrder.findOne({ orderId });
-        const result = porter.postRecordsByParams(`/v1/orders/${porterOrder.porterOrderId}/cancel`);
+        const porterOrder = await PorterOrder.findOneAsync({ orderId });
+        const result = porter.postRecordsByParams(
+          `v1/orders/${porterOrder.porterOrderId}/cancel`,
+        );
         updatePorterOrderStatus(orderId, constants.PorterStatus.cancelled.name);
         return result;
       } catch (exception) {
@@ -114,13 +130,16 @@ Meteor.methods({
       }
     }
   },
-  'porter.getStatus': function getStatus(orderId) {
+  'porter.getStatus': async function getStatus(orderId) {
     check(orderId, String);
     if (Meteor.isServer) {
       try {
-        const porterOrder = PorterOrder.findOne({ orderId });
+        const porterOrder = await PorterOrder.findOneAsync({ orderId });
         // const result = getStatusFromPorter(porterOrder.porterOrderId);
-        const result = porter.getRecordById('v1.1/orders', porterOrder.porterOrderId);
+        const result = await porter.getRecordById(
+          'v1.1/orders',
+          porterOrder.porterOrderId,
+        );
         return result;
       } catch (exception) {
         handleMethodException(exception);
@@ -129,16 +148,21 @@ Meteor.methods({
       throw new Meteor.Error(403, 'Access Denied');
     }
   },
-  'porter.createOrder': function createOrder(orderId) {
+  'porter.createOrder': async function createOrder(orderId) {
     check(orderId, String);
     if (Meteor.isServer) {
       try {
-        const porterOrder = PorterOrder.findOne({ orderId });
+        const porterOrder = await PorterOrder.findOneAsync({ orderId });
         if (porterOrder && porterOrder.orderStatus !== 'cancelled') {
-          throw new Meteor.Error('403', 'A Porter Order is live for this order');
+          throw new Meteor.Error(
+            '403',
+            'A Porter Order is live for this order',
+          );
         }
-        const order = Orders.findOne({ _id: orderId });
-        const u = Meteor.users.findOne({ username: order.customer_details.mobilePhone.toString() });
+        const order = await Orders.findOneAsync({ _id: orderId });
+        const u = await Meteor.users.findOneAsync({
+          username: order.customer_details.mobilePhone.toString(),
+        });
 
         const dropAddress = u.profile.deliveryAddress.trim();
 
@@ -192,14 +216,19 @@ Meteor.methods({
               lng: Meteor.settings.public.suvaiLocation.longitude,
               contact_details: {
                 name: 'Suvai Manager',
-                phone_number: Meteor.settings.public.Support_Numbers.whatsapp.replace('+91', '').trim(),
+                phone_number: Meteor.settings.public.Support_Numbers.whatsapp
+                  .replace('+91', '')
+                  .trim(),
                 // api throws an error when the number has +91
               },
             },
           },
         };
 
-        const result = porter.postRecordsByParams('/v1/orders/create', buildParams);
+        const result = await porter.postRecordsByParams(
+          'v1/orders/create',
+          buildParams,
+        );
 
         // if success
         const porterResponse = {
@@ -211,11 +240,14 @@ Meteor.methods({
           orderStatus: constants.PorterStatus.live.name,
         };
 
-        PorterOrder.upsert({
-          orderId,
-        }, { $set: porterResponse });
+        await PorterOrder.upsertAsync(
+          {
+            orderId,
+          },
+          { $set: porterResponse },
+        );
 
-        Orders.update(
+        await Orders.updateAsync(
           { _id: orderId },
           { $set: { porterOrderStatus: constants.PorterStatus.live.name } },
         );

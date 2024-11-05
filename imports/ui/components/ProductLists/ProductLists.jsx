@@ -50,5 +50,6 @@ export const ProductListTitleRow = ({ dateRangeToDisplay, labelStyle, statusToDi
 
 DisplayProductLists.propTypes = {
   productLists: PropTypes.array,
+  history: PropTypes.object,
 };
 export default DisplayProductLists;

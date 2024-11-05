@@ -4,6 +4,6 @@ import './fixtures';
 import './email';
 // import './browserPolicy';
 import './securityHeaders.js';
-import './cloudinary';
+// import './cloudinary';
 // import './jobs';
 import './sitemap';

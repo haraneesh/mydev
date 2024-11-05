@@ -274,13 +274,14 @@ ProductsOrderMobile.defaultProps = {
   comments: '',
   totalBillAmount: 0,
   dateValue: new Date(),
+  recommendations: [],
 };
 
 ProductsOrderMobile.propTypes = {
-  productGroups: PropTypes.array.isRequired,
+  productGroups: PropTypes.object.isRequired,
   productsArray: PropTypes.object.isRequired,
   productGroupSelected: PropTypes.number,
-  recommendations: PropTypes.array.isRequired,
+  recommendations: PropTypes.array,
   orderId: PropTypes.string,
   orderStatus: PropTypes.string,
   comments: PropTypes.string,

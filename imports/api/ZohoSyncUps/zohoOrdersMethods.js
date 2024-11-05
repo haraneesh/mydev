@@ -1,18 +1,21 @@
-import { Meteor } from 'meteor/meteor';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { check } from 'meteor/check';
-import rateLimit from '../../modules/rate-limit';
-import Products from '../Products/Products';
-import { Orders } from '../Orders/Orders';
+import { Meteor } from 'meteor/meteor';
 import constants from '../../modules/constants';
+import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit';
+import { Orders } from '../Orders/Orders';
+import Products from '../Products/Products';
 import zh from './ZohoBooks';
 import { syncUpConstants } from './ZohoSyncUps';
 import {
-  updateSyncAndReturn, retResponse, updateUserSyncAndReturn, getZhDisplayDate,
+  getZhDisplayDate,
+  retResponse,
+  updateSyncAndReturn,
+  updateUserSyncAndReturn,
 } from './zohoCommon';
 import { processInvoicesFromZoho } from './zohoInvoices';
-import handleMethodException from '../../modules/handle-method-exception';
 // import orderCommon from '../../modules/both/orderCommon';
 
 // TODO May have to be a seperate table
@@ -36,23 +39,29 @@ const _orderStatusToZohoSalesOrderStatus = {
   Shipped: { zh_status: 'invoiced' },
 };
 
-const _getZohoSalesOrderStatus = (status) => _orderStatusToZohoSalesOrderStatus[status].zh_status;
+const getZohoSalesOrderStatus = (status) =>
+  _orderStatusToZohoSalesOrderStatus[status].zh_status;
 
-const _getZohoUserIdFromUserId = (userId) =>
+const getZohoUserIdFromUserId = async (userId) => {
   // mongo collections have only meteor ids
-  Meteor.users.findOne({ _id: userId }, { zh_contact_id: 1 }).zh_contact_id || '';
+  const user = await Meteor.users.findOneAsync({ _id: userId });
+  return user.zh_contact_id || '';
+};
 
-const _getZohoItemIdFromProductId = (productId) => Products.findOne({ _id: productId }, { zh_item_id: 1 }).zh_item_id || '';
+const getZohoItemIdFromProductId = async (productId) => {
+  const product = await Products.findOneAsync({ _id: productId });
+  return product.zh_item_id || '';
+};
 
-const createZohoSalesOrder = (order) => {
+const createZohoSalesOrder = async (order) => {
   const notes = ` ${order.comments || ''} 
   | ${order.issuesWithPreviousOrder || ''} 
-  | ${(order.payCashWithThisDelivery) ? ' Customer wants to pay cash, please collect with this delivery' : ''}
-  | ${(order.collectRecyclablesWithThisDelivery) ? ' Customer wants to pick up bootles, or bags with this delivery' : ''}
+  | ${order.payCashWithThisDelivery ? ' Customer wants to pay cash, please collect with this delivery' : ''}
+  | ${order.collectRecyclablesWithThisDelivery ? ' Customer wants to pick up bootles, or bags with this delivery' : ''}
   `;
 
   const zhSalesOrder = {
-    customer_id: _getZohoUserIdFromUserId(order.customer_details._id), // mandatory
+    customer_id: await getZohoUserIdFromUserId(order.customer_details._id), // mandatory
     is_inclusive_tax: true, // treat line item rates are inclusive of tax
     date: getZhDisplayDate(order.createdAt), // "2013-11-17"
     // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -
@@ -60,9 +69,11 @@ const createZohoSalesOrder = (order) => {
   };
 
   const lineItems = [];
-  order.products.forEach((product) => {
+
+  for (const product of order.products) {
+    const itemId = await getZohoItemIdFromProductId(product._id);
     lineItems.push({
-      item_id: product.zh_item_id || _getZohoItemIdFromProductId(product._id), // mandatory
+      item_id: product.zh_item_id || itemId, // mandatory
       name: product.name,
       description: product.description || '',
       rate: product.unitprice,
@@ -70,63 +81,85 @@ const createZohoSalesOrder = (order) => {
       unit: product.unitOfSale,
     });
 
-    if (product.includeReturnables
-        && product.associatedReturnables
-        && product.associatedReturnables.quantity > 0) {
+    if (
+      product.includeReturnables &&
+      product.associatedReturnables &&
+      product.associatedReturnables.quantity > 0
+    ) {
+      const itemId = await getZohoItemIdFromProductId(
+        product.associatedReturnables._id,
+      );
       lineItems.push({
-        item_id: _getZohoItemIdFromProductId(product.associatedReturnables._id),
+        item_id: itemId,
         name: product.associatedReturnables.name,
         description: `Deliver ${product.name} in ${product.associatedReturnables.name}`,
         rate: product.associatedReturnables.totalPrice,
         quantity: 1,
       });
     }
-  });
+  }
 
   zhSalesOrder.line_items = lineItems;
   return zhSalesOrder;
 };
 
-const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
+const syncOrdersWithZoho = async (pendOrd, successResp, errorResp) => {
   const order = pendOrd;
-  const zhSalesOrder = createZohoSalesOrder(order);
+  const zhSalesOrder = await createZohoSalesOrder(order);
 
   let r = {};
-  if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
-    r = (order.zh_salesorder_id)
-      ? zh.updateRecord('deliverychallans', order.zh_salesorder_id, zhSalesOrder)
-      : zh.createRecord('deliverychallans', zhSalesOrder);
+  if (
+    order.customer_details.role &&
+    order.customer_details.role === constants.Roles.shopOwner.name
+  ) {
+    r = order.zh_salesorder_id
+      ? await zh.updateRecord(
+          'deliverychallans',
+          order.zh_salesorder_id,
+          zhSalesOrder,
+        )
+      : await zh.createRecord('deliverychallans', zhSalesOrder);
   } else {
-    r = (order.zh_salesorder_id)
-      ? zh.updateRecord('salesorders', order.zh_salesorder_id, zhSalesOrder)
-      : zh.createRecord('salesorders', zhSalesOrder);
+    r = order.zh_salesorder_id
+      ? await zh.updateRecord(
+          'salesorders',
+          order.zh_salesorder_id,
+          zhSalesOrder,
+        )
+      : await zh.createRecord('salesorders', zhSalesOrder);
   }
 
   if (r.code === 0 /* Success */) {
     if (r.salesorder) {
-      Orders.update({ _id: order._id }, {
-        $set: {
-          zh_sales_type: 'salesorder',
-          zh_salesorder_id: r.salesorder.salesorder_id,
-          zh_salesorder_number: r.salesorder.salesorder_number,
-          order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+      await Orders.updateAsync(
+        { _id: order._id },
+        {
+          $set: {
+            zh_sales_type: 'salesorder',
+            zh_salesorder_id: r.salesorder.salesorder_id,
+            zh_salesorder_number: r.salesorder.salesorder_number,
+            order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+          },
         },
-      });
+      );
     } else {
-      Orders.update({ _id: order._id }, {
-        $set: {
-          zh_sales_type: 'deliverychallan',
-          zh_salesorder_id: r.deliverychallan.deliverychallan_id,
-          zh_salesorder_number: r.deliverychallan.deliverychallan_number,
-          order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+      await Orders.updateAsync(
+        { _id: order._id },
+        {
+          $set: {
+            zh_sales_type: 'deliverychallan',
+            zh_salesorder_id: r.deliverychallan.deliverychallan_id,
+            zh_salesorder_number: r.deliverychallan.deliverychallan_number,
+            order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+          },
         },
-      });
+      );
     }
     successResp.push(retResponse(r));
   } else {
     const res = {
       code: r.code,
-      message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id}`,
+      message: `${r.message}: zoho salesOrder id = ${order.zh_salesorder_id} : order Id = ${order._id} : order details = ${JSON.stringify(order)}`,
     };
     errorResp.push(retResponse(res));
   }
@@ -134,9 +167,14 @@ const syncOrdersWithZoho = (pendOrd, successResp, errorResp) => {
 
 export const syncBulkOrdersWithZoho = new ValidatedMethod({
   name: 'orders.syncBulkOrdersWithZoho',
-  validate() { },
-  run() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  validate() {},
+  async run() {
+    const isAdmin = await Roles.userIsInRoleAsync(
+      this.userId,
+      constants.Roles.admin.name,
+    );
+
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
@@ -149,32 +187,47 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
         order_status: constants.OrderStatus.Processing.name,
         // expectedDeliveryDate: { $lte: orderCommon.getTomorrowDateOnServer() },
       };
-      const orders = Orders.find(query).fetch(); // change to get products updated after sync date
+      const orders = await Orders.find(query).fetchAsync(); // change to get products updated after sync date
 
-      orders.forEach((ord) => {
-        syncOrdersWithZoho(ord, successResp, errorResp);
-      });
+      for (let i = 0; i < orders.length; i++) {
+        const ord = orders[i];
+        await syncOrdersWithZoho(ord, successResp, errorResp);
+      }
     }
-    return updateSyncAndReturn('orders', successResp, errorResp, nowDate, syncUpConstants.ordersToZoho);
+    const result = await updateSyncAndReturn(
+      'orders',
+      successResp,
+      errorResp,
+      nowDate,
+      syncUpConstants.ordersToZoho,
+    );
+
+    console.log('------- order result -----');
+    console.log(result);
+
+    return result;
   },
 });
 
 // Zoho status = Allowed Values: draft, open, invoiced, partially_invoiced, void and overdue.
 // Zoho order_status = draft, open, closed, void
-const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
+const updateOrderStatusFromZoho = async (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
   let getInvoices = false;
 
   let r = {};
   let dcOrSo = 'salesorder';
 
-  if (order.customer_details.role && (order.customer_details.role === constants.Roles.shopOwner.name)) {
+  if (
+    order.customer_details.role &&
+    order.customer_details.role === constants.Roles.shopOwner.name
+  ) {
     dcOrSo = 'deliverychallan';
     // r = zh.getRecordById('deliverychallans', order.zh_salesorder_id);
     getInvoices = true;
   } else {
     dcOrSo = 'salesorder';
-    r = zh.getRecordById('salesorders', order.zh_salesorder_id);
+    r = await zh.getRecordById('salesorders', order.zh_salesorder_id);
 
     if (r.code === 0 /* Success */) {
       const orderQuery = {
@@ -188,7 +241,7 @@ const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
         getInvoices = true;
       }
 
-      Orders.update({ _id: order._id }, { $set: orderQuery });
+      await Orders.updateAsync({ _id: order._id }, { $set: orderQuery });
       successResp.push(retResponse(r));
     } else {
       const res = {
@@ -202,7 +255,7 @@ const updateOrderStatusFromZoho = (awaitOrd, successResp, errorResp) => {
   return getInvoices;
 };
 
-export const getUserOrdersAndInvoicesFromZoho = (userId) => {
+export const getUserOrdersAndInvoicesFromZoho = async (userId) => {
   const nowDate = new Date();
   const successResp = [];
   const errorResp = [];
@@ -216,24 +269,41 @@ export const getUserOrdersAndInvoicesFromZoho = (userId) => {
         { order_status: { $ne: constants.OrderStatus.Processing.name } },
       ],
     };
-    const orders = Orders.find(query).fetch();
-    orders.forEach((ord) => {
+
+    const orders = await Orders.find(query).fetchAsync();
+    for (const ord of orders) {
       if (ord.zh_salesorder_id) {
-        const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+        const getInvoices = await updateOrderStatusFromZoho(
+          ord,
+          successResp,
+          errorResp,
+        );
+
         if (getInvoices && ord.zh_salesorder_number) {
-          processInvoicesFromZoho(ord, successResp, errorResp);
+          await processInvoicesFromZoho(ord, successResp, errorResp);
         }
       }
-    });
+    }
   }
-  return updateUserSyncAndReturn('invoices', userId, successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
+  return await updateUserSyncAndReturn(
+    'invoices',
+    userId,
+    successResp,
+    errorResp,
+    nowDate,
+    syncUpConstants.invoicesFromZoho,
+  );
 };
 
 export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
   name: 'orders.getOrdersAndInvoicesFromZoho',
-  validate() { },
-  run() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  validate() {},
+  async run() {
+    const isAdmin = await Roles.userIsInRoleAsync(
+      this.userId,
+      constants.Roles.admin.name,
+    );
+    if (!isAdmin) {
       // user not authorized. do not publish secrets
       handleMethodException('Access denied', 403);
     }
@@ -247,28 +317,44 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
           { order_status: { $ne: constants.OrderStatus.Completed.name } },
           { order_status: { $ne: constants.OrderStatus.Pending.name } },
           { order_status: { $ne: constants.OrderStatus.Processing.name } },
-          { order_status: { $ne: constants.OrderStatus.Awaiting_Payment.name } },
+          {
+            order_status: { $ne: constants.OrderStatus.Awaiting_Payment.name },
+          },
         ],
       };
-      const orders = Orders.find(query).fetch();
-      orders.forEach((ord) => {
+      const orders = await Orders.find(query).fetchAsync();
+      for (const ord of orders) {
         if (ord.zh_salesorder_id) {
-          const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+          const getInvoices = await updateOrderStatusFromZoho(
+            ord,
+            successResp,
+            errorResp,
+          );
           if (getInvoices && ord.zh_salesorder_number) {
-            processInvoicesFromZoho(ord, successResp, errorResp);
+            await processInvoicesFromZoho(ord, successResp, errorResp);
           }
         }
-      });
+      }
     }
-    return updateSyncAndReturn('invoices', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
+    return await updateSyncAndReturn(
+      'invoices',
+      successResp,
+      errorResp,
+      nowDate,
+      syncUpConstants.invoicesFromZoho,
+    );
   },
 });
 
 export const syncOfflinePaymentDetails = new ValidatedMethod({
   name: 'orders.syncOfflinePaymentDetails',
-  validate() { },
-  run() {
-    if (!Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+  validate() {},
+  async run() {
+    const isAdmin = await Roles.userIsInRoleAsync(
+      this.userId,
+      constants.Roles.admin.name,
+    );
+    if (!isAdmin) {
       handleMethodException('Access denied', 403);
     }
     const nowDate = new Date();
@@ -278,103 +364,121 @@ export const syncOfflinePaymentDetails = new ValidatedMethod({
       const query = {
         order_status: constants.OrderStatus.Awaiting_Payment.name,
       };
-      const orders = Orders.find(query).fetch();
-      orders.forEach((ord) => {
+      const orders = await Orders.find(query).fetchAsync();
+
+      for (const ord of orders) {
         if (ord.zh_salesorder_id) {
-          const getInvoices = updateOrderStatusFromZoho(ord, successResp, errorResp);
+          const getInvoices = await updateOrderStatusFromZoho(
+            ord,
+            successResp,
+            errorResp,
+          );
           if (getInvoices && ord.zh_salesorder_number) {
-            processInvoicesFromZoho(ord, successResp, errorResp);
+            await processInvoicesFromZoho(ord, successResp, errorResp);
           }
         }
-      });
+      }
     }
-    return updateSyncAndReturn('invoicesPayment', successResp, errorResp, nowDate, syncUpConstants.invoicesFromZoho);
+    return await updateSyncAndReturn(
+      'invoicesPayment',
+      successResp,
+      errorResp,
+      nowDate,
+      syncUpConstants.invoicesFromZoho,
+    );
   },
 });
 
 Meteor.methods({
-  'orders.getOrdersBetweenJul6Jul18': function getOrdersBetweenJul6Jul18() {
-    if (Meteor.isServer) {
-      try {
-        const date_after = '2021-07-05';
-        const date_before = '2021-07-19';
+  'orders.getOrdersBetweenJul6Jul18':
+    async function getOrdersBetweenJul6Jul18() {
+      if (Meteor.isServer) {
+        try {
+          const date_after = '2021-07-05';
+          const date_before = '2021-07-19';
 
-        const zhSOResponse = zh.getRecordsByParams(
-          'salesorders',
-          {
+          const zhSOResponse = await zh.getRecordsByParams('salesorders', {
             date_after,
             date_before,
-          },
-        );
-
-        // insert lost orders
-        const salesOrders = zhSOResponse.salesorders;
-        salesOrders.forEach((salesorder) => {
-          // get customer id
-          const user = Meteor.users.findOne({
-            zh_contact_id: salesorder.customer_id,
           });
 
-          if (user) {
-          // get products placed in the order
-
-            const zhSalesOrder = zh.getRecordById('salesorders', salesorder.salesorder_id);
-
-            const soProducts = zhSalesOrder.salesorder.line_items;
-
-            const productArray = [];
-            soProducts.forEach((soOrderDetails) => {
-              const product = Products.findOne({ zh_item_id: soOrderDetails.item_id });
-              if (product) {
-                delete product.createdAt;
-                delete product.updatedAt;
-                delete product.availableToOrderWH;
-                delete product.frequentlyOrdered;
-                delete product.sourceSuppliers;
-                product.quantity = soOrderDetails.quantity;
-                productArray.push(product);
-              }
+          // insert lost orders
+          const salesOrders = zhSOResponse.salesorders;
+          for (const salesorder of salesOrders) {
+            // get customer id
+            const user = await Meteor.users.findOneAsync({
+              zh_contact_id: salesorder.customer_id,
             });
 
-            const insertId = Orders.upsert(
-              { zh_salesorder_id: salesorder.salesorder_id },
-              {
-                $set: {
-                  products: productArray,
-                  productOrderListId: '1',
-                  customer_details: {
-                    role: constants.Roles.customer.name,
-                    _id: user._id,
-                    name: user.profile.name.first,
-                    email: user.emails[0].address,
-                    mobilePhone: user.username,
-                    deliveryAddress: user.profile.deliveryAddress,
+            if (user) {
+              // get products placed in the order
+
+              const zhSalesOrder = await zh.getRecordById(
+                'salesorders',
+                salesorder.salesorder_id,
+              );
+
+              const soProducts = zhSalesOrder.salesorder.line_items;
+
+              const productArray = [];
+
+              for (let i = 0; i < soProducts.length; i += 1) {
+                const soOrderDetails = soProducts[i];
+
+                const product = await Products.findOneAsync({
+                  zh_item_id: soOrderDetails.item_id,
+                });
+                if (product) {
+                  delete product.createdAt;
+                  delete product.updatedAt;
+                  delete product.availableToOrderWH;
+                  delete product.frequentlyOrdered;
+                  delete product.sourceSuppliers;
+                  product.quantity = soOrderDetails.quantity;
+                  productArray.push(product);
+                }
+              }
+
+              const insertId = await Orders.upsertAsync(
+                { zh_salesorder_id: salesorder.salesorder_id },
+                {
+                  $set: {
+                    products: productArray,
+                    productOrderListId: '1',
+                    customer_details: {
+                      role: constants.Roles.customer.name,
+                      _id: user._id,
+                      name: user.profile.name.first,
+                      email: user.emails[0].address,
+                      mobilePhone: user.username,
+                      deliveryAddress: user.profile.deliveryAddress,
+                    },
+                    createdAt: salesorder.date,
+                    zh_sales_type: 'salesorder',
+                    zh_salesorder_id: salesorder.salesorder_id,
+                    zh_salesorder_number: salesorder.salesorder_number,
+                    order_status:
+                      constants.OrderStatus.Awaiting_Fulfillment.name,
+                    total_bill_amount: salesorder.total,
+                    comments: '** Restored from backup **',
                   },
-                  createdAt: salesorder.date,
-                  zh_sales_type: 'salesorder',
-                  zh_salesorder_id: salesorder.salesorder_id,
-                  zh_salesorder_number: salesorder.salesorder_number,
-                  order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
-                  total_bill_amount: salesorder.total,
-                  comments: '** Restored from backup **',
                 },
-              },
-            );
-            console.log(insertId);
-          } else {
-            console.log('---------------');
-            console.log(`- SO Id ${salesorder.salesorder_id} -`);
-            console.log(`- Customer Id ${salesorder.customer_id} -`);
-            console.log(`- Customer Name ${salesorder.customer_name} -`);
-            console.log('---------------');
+              );
+              // console.log(insertId);
+            } else {
+              console.log('---------------');
+              console.log(`- SO Id ${salesorder.salesorder_id} -`);
+              console.log(`- Customer Id ${salesorder.customer_id} -`);
+              console.log(`- Customer Name ${salesorder.customer_name} -`);
+              console.log('---------------');
+            }
           }
-        });
-      // return zhSOResponse;
-      } catch (exception) {
-        console.log(exception);
+          // return zhSOResponse;
+        } catch (exception) {
+          console.log(exception);
+        }
       }
-    }
-  },
+    },
 });
 
 rateLimit({
