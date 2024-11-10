@@ -1,43 +1,59 @@
 // eslint-disable-next-line max-classes-per-file
 import { Meteor } from 'meteor/meteor';
-import React from 'react';
 import PropTypes from 'prop-types';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Dropdown from 'react-bootstrap/Dropdown';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import React from 'react';
 import autoBind from 'react-autobind/lib/autoBind';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import { toast } from 'react-toastify';
-import Icon from '../Icon/Icon';
+import handleMethodException from '/imports/modules/handle-method-exception';
 import {
-  DataListStore, SortTypes, SortHeaderCell, AmountCell, OrderStatusCell, PorterStatusCell,
-  RowSelectedCell, TextCell, DateCell,
-} from '../Common/ShopTableCells';
-import constants from '../../../modules/constants';
-import {
-  updateOrderStatus, getOrders, updateExpectedDeliveryDate,
+  getOrders,
   getProductQuantityForOrderAwaitingFullFillment,
   getProductQuantityForOrderAwaitingFullFillmentNEW,
-}
-  from '../../../api/Orders/methods';
-import generateOrderBills from '../../../reports/client/GenerateOrderBills';
+  updateExpectedDeliveryDate,
+  updateOrderStatus,
+} from '../../../api/Orders/methods';
+import constants from '../../../modules/constants';
 import generateOPL from '../../../reports/client/GenerateOPL';
 import generateOPLByProductType from '../../../reports/client/GenerateOPLByProductType';
+import generateOrderBills from '../../../reports/client/GenerateOrderBills';
 import exportPOsAsCSV from '../../../reports/client/GenerateWholeSalePOs';
 import exportPackingPOsAsCSV from '../../../reports/client/GenerateWholeSalePackingPOs';
+import {
+  AmountCell,
+  DataListStore,
+  DateCell,
+  OrderStatusCell,
+  PorterStatusCell,
+  RowSelectedCell,
+  SortHeaderCell,
+  SortTypes,
+  TextCell,
+} from '../Common/ShopTableCells';
+import Icon from '../Icon/Icon';
 import PorterApp from './PorterApp';
-import handleMethodException from '/imports/modules/handle-method-exception';
 
 const UpdateStatusButtons = ({
-  title, statuses, onSelectCallBack, ignoreStatuses,
+  title,
+  statuses,
+  onSelectCallBack,
+  ignoreStatuses,
 }) => {
   const rows = [];
   _.each(statuses, (value, key) => {
     if (!ignoreStatuses[key]) {
       rows.push(
-        <Dropdown.Item href="#" onClick={() => { onSelectCallBack(key); }}>
+        <Dropdown.Item
+          href="#"
+          onClick={() => {
+            onSelectCallBack(key);
+          }}
+        >
           {`to ${value.display_value}`}
         </Dropdown.Item>,
       );
@@ -48,39 +64,64 @@ const UpdateStatusButtons = ({
       <Dropdown.Toggle size="sm" id="updateButtons">
         {title}
       </Dropdown.Toggle>
-      <Dropdown.Menu>
-        {rows}
-      </Dropdown.Menu>
+      <Dropdown.Menu>{rows}</Dropdown.Menu>
     </Dropdown>
   );
 };
 
 const writeRows = ({
-  dataList, onChecked, onRowClickCallBack, onPorterStatusClickCallBack, onPorterAppAction,
+  dataList,
+  onChecked,
+  onRowClickCallBack,
+  onPorterStatusClickCallBack,
+  onPorterAppAction,
 }) => {
   const rowList = [];
   rowList.push(<div />);
   for (let index = 0; index < dataList.getSize(); index += 1) {
     rowList.push(
       <tr>
-        {<RowSelectedCell rowIndex={index} data={dataList} onChecked={onChecked} columnKey="selected" />}
-        {<OrderStatusCell rowIndex={index} data={dataList} columnKey="status" />}
+        {
+          <RowSelectedCell
+            rowIndex={index}
+            data={dataList}
+            onChecked={onChecked}
+            columnKey="selected"
+          />
+        }
+        {
+          <OrderStatusCell
+            rowIndex={index}
+            data={dataList}
+            columnKey="status"
+          />
+        }
         {<TextCell rowIndex={index} data={dataList} columnKey="name" />}
         {<TextCell rowIndex={index} data={dataList} columnKey="whMobileNum" />}
         {<DateCell rowIndex={index} data={dataList} columnKey="date" />}
         {<AmountCell rowIndex={index} data={dataList} columnKey="amount" />}
-        {<PorterStatusCell
-          rowIndex={index}
-          data={dataList}
-          onClick={onPorterStatusClickCallBack}
-          columnKey="porterOrderStatus"
-
-        />}
-        {<td>
-          <Button size="sm" variant="link" onClick={(e) => { onRowClickCallBack(e, index); }} className="w-100 btn-block">
-            <Icon icon="more_vert" type="mt" />
-          </Button>
-         </td>}
+        {
+          <PorterStatusCell
+            rowIndex={index}
+            data={dataList}
+            onClick={onPorterStatusClickCallBack}
+            columnKey="porterOrderStatus"
+          />
+        }
+        {
+          <td>
+            <Button
+              size="sm"
+              variant="link"
+              onClick={(e) => {
+                onRowClickCallBack(e, index);
+              }}
+              className="w-100 btn-block"
+            >
+              <Icon icon="more_vert" type="mt" />
+            </Button>
+          </td>
+        }
       </tr>,
     );
   }
@@ -88,10 +129,14 @@ const writeRows = ({
 };
 
 const OrderTable = ({
-  dataList, onChecked, colSortDirs, onRowClickCallBack,
-  onSortChangeCallBack, onPorterStatusClickCallBack, onPorterAppAction,
+  dataList,
+  onChecked,
+  colSortDirs,
+  onRowClickCallBack,
+  onSortChangeCallBack,
+  onPorterStatusClickCallBack,
+  onPorterAppAction,
 }) => (
-
   <Table striped bordered hover responsive>
     <thead>
       <tr>
@@ -105,7 +150,7 @@ const OrderTable = ({
         <SortHeaderCell
           onSortChange={onSortChangeCallBack}
           sortDir={colSortDirs.status}
-          cellName="Statue"
+          cellName="Status"
           columnKey="status"
         />
 
@@ -145,12 +190,15 @@ const OrderTable = ({
         />
 
         <th />
-
       </tr>
     </thead>
     <tbody>
       {writeRows({
-        dataList, onChecked, onRowClickCallBack, onPorterStatusClickCallBack, onPorterAppAction,
+        dataList,
+        onChecked,
+        onRowClickCallBack,
+        onPorterStatusClickCallBack,
+        onPorterAppAction,
       })}
     </tbody>
   </Table>
@@ -167,9 +215,7 @@ class DataListWrapper {
   }
 
   getObjectAt(index) {
-    return this._data.getObjectAt(
-      this._indexMap[index],
-    );
+    return this._data.getObjectAt(this._indexMap[index]);
   }
 }
 
@@ -177,7 +223,8 @@ class ManageAllOrders extends React.Component {
   constructor(props) {
     super(props);
 
-    this.reportPopupAllowMsg = 'Requested report has generated successfully. If you do not see it, please ensure that you have disabled pop up blocker for this website.';
+    this.reportPopupAllowMsg =
+      'Requested report has generated successfully. If you do not see it, please ensure that you have disabled pop up blocker for this website.';
 
     this._dataList = this.getTableDataList(this.props.orders);
 
@@ -188,7 +235,10 @@ class ManageAllOrders extends React.Component {
     }
 
     this.state = {
-      sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList),
+      sortedDataList: new DataListWrapper(
+        this._defaultSortIndexes,
+        this._dataList,
+      ),
       colSortDirs: this.props.colSortDirs || {},
       porterApp: {
         porterOrder: null,
@@ -267,7 +317,10 @@ class ManageAllOrders extends React.Component {
     this._defaultSortIndexes = sortIndexes.slice();
 
     this.setState({
-      sortedDataList: new DataListWrapper(this._defaultSortIndexes, this._dataList),
+      sortedDataList: new DataListWrapper(
+        this._defaultSortIndexes,
+        this._dataList,
+      ),
       colSortDirs: {
         [columnKey]: sortDir,
       },
@@ -276,11 +329,16 @@ class ManageAllOrders extends React.Component {
 
   getTableDataList(orders) {
     const orderList = [];
-    orders.map(({
-      _id, order_status, expectedDeliveryDate, total_bill_amount, customer_details, porterOrderStatus,
-    }) => {
-      orderList.push(
-        {
+    orders.map(
+      ({
+        _id,
+        order_status,
+        expectedDeliveryDate,
+        total_bill_amount,
+        customer_details,
+        porterOrderStatus,
+      }) => {
+        orderList.push({
           id: _id,
           status: order_status,
           date: expectedDeliveryDate,
@@ -289,9 +347,9 @@ class ManageAllOrders extends React.Component {
           whMobileNum: customer_details.mobilePhone,
           porterOrderStatus,
           selected: false,
-        },
-      );
-    });
+        });
+      },
+    );
     return new DataListStore(orderList);
   }
 
@@ -301,25 +359,31 @@ class ManageAllOrders extends React.Component {
   }
 
   handleGenerateOPL() {
-    getProductQuantityForOrderAwaitingFullFillment.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        generateOPL(aggr, this.props.isWholeSale);
-        toast.info(this.reportPopupAllowMsg);
-      }
-    });
+    getProductQuantityForOrderAwaitingFullFillment.call(
+      { isWholeSale: this.props.isWholeSale },
+      (error, aggr) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          generateOPL(aggr, this.props.isWholeSale);
+          toast.info(this.reportPopupAllowMsg);
+        }
+      },
+    );
   }
 
   handleGenerateOPLNew() {
-    getProductQuantityForOrderAwaitingFullFillmentNEW.call({ isWholeSale: this.props.isWholeSale }, (error, aggr) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        generateOPLByProductType(aggr, this.props.isWholeSale);
-        toast.info(this.reportPopupAllowMsg);
-      }
-    });
+    getProductQuantityForOrderAwaitingFullFillmentNEW.call(
+      { isWholeSale: this.props.isWholeSale },
+      (error, aggr) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          generateOPLByProductType(aggr, this.props.isWholeSale);
+          toast.info(this.reportPopupAllowMsg);
+        }
+      },
+    );
   }
 
   handleGenerateBills() {
@@ -336,33 +400,43 @@ class ManageAllOrders extends React.Component {
 
   handleGeneratePOsAsCSV() {
     const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
-    Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: false }, (error, poDetails) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        exportPOsAsCSV(poDetails);
-        toast.success('PO Details Downloaded');
-      }
-    });
+    Meteor.call(
+      'admin.fetchDetailsForPO',
+      { orderIds: selectedWholeSaleOrderIds, includeBuyer: false },
+      (error, poDetails) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          exportPOsAsCSV(poDetails);
+          toast.success('PO Details Downloaded');
+        }
+      },
+    );
   }
 
   handleGeneratePackingPOs() {
     const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
 
-    Meteor.call('admin.fetchDetailsForPO', { orderIds: selectedWholeSaleOrderIds, includeBuyer: true }, (error, poDetails) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        exportPackingPOsAsCSV(poDetails);
-        toast.success('PO Details Downloaded');
-      }
-    });
+    Meteor.call(
+      'admin.fetchDetailsForPO',
+      { orderIds: selectedWholeSaleOrderIds, includeBuyer: true },
+      (error, poDetails) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          exportPackingPOsAsCSV(poDetails);
+          toast.success('PO Details Downloaded');
+        }
+      },
+    );
   }
 
   handleRowClick(e, rowIndex) {
     e.preventDefault();
     // this.props.history.push("/order/" + this.state.sortedDataList[rowIndex].id)
-    this.props.history.push(`/order/${this.state.sortedDataList.getObjectAt(rowIndex).id}`);
+    this.props.history.push(
+      `/order/${this.state.sortedDataList.getObjectAt(rowIndex).id}`,
+    );
   }
 
   handleCheckBoxClick(e, rowIndex) {
@@ -376,7 +450,8 @@ class ManageAllOrders extends React.Component {
 
     // const sortedDataList = _.clone(this.state.sortedDataList);
     const sortedDataList = Object.create(this.state.sortedDataList);
-    sortedDataList.getObjectAt(rowIndex).selected = !sortedDataList.getObjectAt(rowIndex).selected;
+    sortedDataList.getObjectAt(rowIndex).selected =
+      !sortedDataList.getObjectAt(rowIndex).selected;
     // this._dataList.getObjectAt(rowIndex)["selected"] = !this._dataList.getObjectAt(rowIndex)["selected"]
     this.setState({
       sortedDataList,
@@ -413,27 +488,35 @@ class ManageAllOrders extends React.Component {
 
   handleDeliveryDateUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
-      toast.error(`Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`);
+      toast.error(
+        `Please select order(s) to update the delivery date to ${constants.DaysFromTodayForward[eventKey].display_value}`,
+      );
     } else {
       const orderIds = [...this.selectedOrderIds];
-      const incrementDeliveryDateBy = constants.DaysFromTodayForward[eventKey].increment;
-      updateExpectedDeliveryDate.call({ orderIds, incrementDeliveryDateBy }, (error) => {
-        const confirmation = `Delivery date of selected order(s) have been updated to ${
-          constants.DaysFromTodayForward[eventKey].display_value
-        } successfully!`;
-        if (error) {
-          toast.error(error.reason);
-        } else {
-          this.resetSelectedOrderIds();
-          toast.success(confirmation);
-        }
-      });
+      const incrementDeliveryDateBy =
+        constants.DaysFromTodayForward[eventKey].increment;
+      updateExpectedDeliveryDate.call(
+        { orderIds, incrementDeliveryDateBy },
+        (error) => {
+          const confirmation = `Delivery date of selected order(s) have been updated to ${
+            constants.DaysFromTodayForward[eventKey].display_value
+          } successfully!`;
+          if (error) {
+            toast.error(error.reason);
+          } else {
+            this.resetSelectedOrderIds();
+            toast.success(confirmation);
+          }
+        },
+      );
     }
   }
 
   handleStatusUpdate(eventKey) {
     if (this.selectedOrderIds.length <= 0) {
-      toast.error(`Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`);
+      toast.error(
+        `Please select order(s) to update the status to ${constants.OrderStatus[eventKey].display_value}`,
+      );
     } else {
       const orderIds = [...this.selectedOrderIds];
       const updateToStatus = constants.OrderStatus[eventKey].name;
@@ -454,13 +537,12 @@ class ManageAllOrders extends React.Component {
   render() {
     return (
       <div>
-        {!!this.state.porterApp.portAppShow
-        && (
-        <PorterApp
-          order={this.state.porterApp.porterOrder}
-          user={this.state.porterApp.user}
-          passActionBack={this.onPorterAppAction}
-        />
+        {!!this.state.porterApp.portAppShow && (
+          <PorterApp
+            order={this.state.porterApp.porterOrder}
+            user={this.state.porterApp.user}
+            passActionBack={this.onPorterAppAction}
+          />
         )}
         <Row>
           <Col>
@@ -477,65 +559,61 @@ class ManageAllOrders extends React.Component {
               ignoreStatuses={{}}
             />
             {!this.props.isWholeSale && (
-            <Button
-              size="sm"
-              className="m-2"
-              onClick={this.handleGenerateBills}
-            >
-              Generate Bills
-            </Button>
+              <Button
+                size="sm"
+                className="m-2"
+                onClick={this.handleGenerateBills}
+              >
+                Generate Bills
+              </Button>
             )}
 
             {!this.props.isWholeSale && (
-            <Button
-              size="sm"
-              className="m-2"
-              onClick={this.handleGenerateOPL}
-            >
-              Generate OPL
-            </Button>
+              <Button
+                size="sm"
+                className="m-2"
+                onClick={this.handleGenerateOPL}
+              >
+                Generate OPL
+              </Button>
             )}
 
             {!this.props.isWholeSale && (
-            <Button
-              size="sm"
-              className="m-2"
-              onClick={this.handleGenerateOPLNew}
-            >
-              Generate OPL New
-            </Button>
+              <Button
+                size="sm"
+                className="m-2"
+                onClick={this.handleGenerateOPLNew}
+              >
+                Generate OPL New
+              </Button>
             )}
 
             {!!this.props.isWholeSale && (
-            <Button
-              variant="success"
-              size="sm"
-              className="m-2"
-              onClick={this.handleGeneratePackingPOs}
-            >
-              Export Packing POs
-            </Button>
+              <Button
+                variant="success"
+                size="sm"
+                className="m-2"
+                onClick={this.handleGeneratePackingPOs}
+              >
+                Export Packing POs
+              </Button>
             )}
 
             {!!this.props.isWholeSale && (
-            <Button
-              variant="success"
-              size="sm"
-              className="m-2"
-              onClick={this.handleGeneratePOsAsCSV}
-            >
-              Export POs
-            </Button>
+              <Button
+                variant="success"
+                size="sm"
+                className="m-2"
+                onClick={this.handleGeneratePOsAsCSV}
+              >
+                Export POs
+              </Button>
             )}
 
             {!this.props.isWholeSale && (
-            <Button
-              size="sm"
-              className="m-2"
-              href="/reconcileInventory"
-            >
-              Daily Inventory Update
-            </Button>
+              <Button size="sm" className="m-2" href="/reconcileInventory">
+                Daily Inventory Update
+              </Button>
             )}
             <Button
               size="sm"
@@ -556,7 +634,6 @@ class ManageAllOrders extends React.Component {
             onPorterStatusClickCallBack={this.onPorterStatusClickCallBack}
             onPorterAppAction={this.onPorterAppAction}
           />
-
         </Row>
       </div>
     );

@@ -1,13 +1,13 @@
+import { Roles } from 'meteor/alanning:roles';
 // upgrade to 2.0.0 - to support recipes
 // add measures to ingredients
 // import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
-import { Roles } from 'meteor/alanning:roles';
+import constants from '../../modules/constants';
+import { Orders } from '../Orders/Orders';
 // import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
-import constants from '../../modules/constants';
 import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
-// import { Orders } from '../Orders/Orders';
 // import Messages from '../Messages/Messages';
 // import constants from '../../modules/constants';
 
@@ -161,7 +161,7 @@ Orders.find({}).fetch().forEach(order => {
 // Roles._forwardMigrate2();
 
 /* db.users.find({"settings.packingPreference":{$exists:false}}); */
-Meteor.users.updateAsync(
+/*Meteor.users.updateAsync(
   { 'settings.packingPreference': { $exists: false } },
   {
     $set: {
@@ -179,7 +179,18 @@ Meteor.users.updateAsync(
     },
   },
   { multi: true },
-);
+);*/
+
+/*
+Orders.updateAsync(
+  { order_status: constants.OrderStatus.Awaiting_Payment.name },
+  {
+    $set: {
+      order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+    },
+  },
+  { multi: true },
+);*/
 
 // clean up some junk accounts
 /*

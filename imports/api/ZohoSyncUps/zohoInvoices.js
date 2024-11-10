@@ -148,9 +148,6 @@ export const processInvoicesFromZoho = async (
   });
 
   if (r.code === 0 /* Success */) {
-    console.log('------- Invoices -----------');
-    console.log(JSON.stringify(r));
-
     const zhInvoices = r.invoices;
 
     let orderStatus;

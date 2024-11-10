@@ -9,18 +9,21 @@
         "./*"
       ],
       "meteor/mongo": [
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/local_collection_driver.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/collection.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/connection_options.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/doc_fetcher.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/mongo_driver.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/mongo_utils.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/observe_multiplex.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/oplog_observe_driver.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/oplog_tailing.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/oplog_v2_converter.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/polling_observe_driver.js",
-        "/Users/charaneesh/.meteor/packages/mongo/2.0.2/web.browser/remote_collection_driver.js"
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/local_collection_driver.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/collection.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/asynchronous_cursor.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/doc_fetcher.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/mongo_common.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/mongo_connection.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/mongo_driver.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/mongo_utils.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/oplog_observe_driver.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/oplog_v2_converter.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/collection_utils.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/methods_async.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/methods_index.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/methods_replication.js",
+        "/Users/charaneesh/.meteor/packages/mongo/2.0.3-beta310.0/web.browser/collection/methods_sync.js"
       ],
       "meteor/reactive-var": [
         "/Users/charaneesh/.meteor/packages/reactive-var/1.0.13/web.browser/reactive-var.js"
@@ -100,7 +103,7 @@
         "/Users/charaneesh/.meteor/packages/perak_joins/1.2.0/web.browser/lib/joins.js"
       ],
       "meteor/email": [
-        "/Users/charaneesh/.meteor/packages/email/3.1.0/web.browser/email.js"
+        "/Users/charaneesh/.meteor/packages/email/3.1.1-beta310.0/web.browser/email.js"
       ],
       "meteor/underscore": [
         "/Users/charaneesh/.meteor/packages/underscore/1.6.4/web.browser/pre.js",

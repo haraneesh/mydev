@@ -25,7 +25,7 @@ const callAPI = async (
   const accessToken = await ZohoAuthenticate.getToken();
 
   const apiBaseUrl = Meteor.settings.private.zoho.baseApiUrl; // 'https://books.zoho.com/api/v3';
-  args.params = connectionInfo || setAPICall();
+  let urlParams = connectionInfo || setAPICall();
 
   args.headers = {
     'Content-Type': 'application/json',
@@ -39,10 +39,14 @@ const callAPI = async (
   }
 
   if (getParamsWithPost) {
-    args.params = Object.assign(args.params, getParamsWithPost);
+    urlParams = Object.assign(urlParams, getParamsWithPost);
   }
 
-  callUrl = `${callUrl}?${new URLSearchParams(args.params)}`;
+  if (requestType === _callType.GET && params) {
+    urlParams = Object.assign(urlParams, params);
+  }
+
+  callUrl = `${callUrl}?${new URLSearchParams(urlParams)}`;
 
   if (Meteor.isDevelopment) {
     console.log('---------------Call Url-----------------------');
