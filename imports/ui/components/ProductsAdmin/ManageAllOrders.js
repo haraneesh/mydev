@@ -416,7 +416,6 @@ class ManageAllOrders extends React.Component {
 
   handleGeneratePackingPOs() {
     const selectedWholeSaleOrderIds = [...this.selectedOrderIds];
-
     Meteor.call(
       'admin.fetchDetailsForPO',
       { orderIds: selectedWholeSaleOrderIds, includeBuyer: true },
@@ -615,13 +614,6 @@ class ManageAllOrders extends React.Component {
                 Daily Inventory Update
               </Button>
             )}
-            <Button
-              size="sm"
-              className="m-2"
-              onClick={this.handlePorterConnect}
-            >
-              Porter App
-            </Button>
           </Col>
         </Row>
         <Row>

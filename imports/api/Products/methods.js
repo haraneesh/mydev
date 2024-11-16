@@ -1,15 +1,15 @@
-import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
 import { Roles } from 'meteor/alanning:roles';
-import SimpleSchema from 'simpl-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
+import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
-import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit.js';
-import { getActiveProductList } from '../ProductLists/commonFunctions';
-import Products from './Products';
 import ProductDetails from '../ProductDetails/ProductDetails';
+import { getActiveProductList } from '../ProductLists/commonFunctions';
+import getActiveItemsFromZoho from '../ZohoSyncUps/zohoItems';
+import Products from './Products';
 
 export const insertProduct = new ValidatedMethod({
   name: 'products.insert',
@@ -54,18 +54,36 @@ export const upsertProduct = new ValidatedMethod({
     delete product._id;
     const { unitsForSelection } = product;
     const { returnableUnitsForSelection } = product;
-    product.unitsForSelection = (unitsForSelection) ? unitsForSelection.replace(/\s+/g, '') : '0,1,2,3,4,5,6,7,8,9,10';
-    product.returnableUnitsForSelection = (returnableUnitsForSelection) ? returnableUnitsForSelection.replace(/\s+/g, '') : '0=0, 0.5=5, 1=10';
+    product.unitsForSelection = unitsForSelection
+      ? unitsForSelection.replace(/\s+/g, '')
+      : '0,1,2,3,4,5,6,7,8,9,10';
+    product.returnableUnitsForSelection = returnableUnitsForSelection
+      ? returnableUnitsForSelection.replace(/\s+/g, '')
+      : '0=0, 0.5=5, 1=10';
     if (Meteor.isServer) {
-      if ((product.unitsForSelection.split(',').every(isNumberorNumberPercent))) {
-        if (product.includeReturnables
-          && !(product.associatedReturnables._id
-          && product.associatedReturnables.returnableUnitsForSelection.split(',').every((elem) => elem.trim().match(/^(\d+(\.\d+)?\s*)=(\s*\d+(\.\d+)?\s*)$/)))) {
-          throw new Meteor.Error(403, '1. Enter Returnable product and 2. Units of returnable product have to be numbers');
+      if (product.unitsForSelection.split(',').every(isNumberorNumberPercent)) {
+        if (
+          product.includeReturnables &&
+          !(
+            product.associatedReturnables._id &&
+            product.associatedReturnables.returnableUnitsForSelection
+              .split(',')
+              .every((elem) =>
+                elem.trim().match(/^(\d+(\.\d+)?\s*)=(\s*\d+(\.\d+)?\s*)$/),
+              )
+          )
+        ) {
+          throw new Meteor.Error(
+            403,
+            '1. Enter Returnable product and 2. Units of returnable product have to be numbers',
+          );
         }
         return await Products.upsertAsync({ _id: id }, { $set: product });
       }
-      throw new Meteor.Error(403, 'Units for Selection should be of pattern 1,2,3=5%,6');
+      throw new Meteor.Error(
+        403,
+        'Units for Selection should be of pattern 1,2,3=5%,6',
+      );
     }
   },
 });
@@ -89,14 +107,17 @@ Meteor.methods({
         if (activeProductList[0]) {
           const allProducts = activeProductList[0].products;
           let countOfSpecialProducts = 0;
-          const specialProductsMap = allProducts.reduce((specialProductObj, product) => {
-            const obj = specialProductObj;
-            if (product.displayAsSpecial && product.availableToOrder) {
-              obj[product._id] = product;
-              countOfSpecialProducts += 1;
-            }
-            return obj;
-          }, {});
+          const specialProductsMap = allProducts.reduce(
+            (specialProductObj, product) => {
+              const obj = specialProductObj;
+              if (product.displayAsSpecial && product.availableToOrder) {
+                obj[product._id] = product;
+                countOfSpecialProducts += 1;
+              }
+              return obj;
+            },
+            {},
+          );
 
           if (countOfSpecialProducts > 0) {
             return {
@@ -118,25 +139,40 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
-  'products.bulkUpdatePrices': async function bulkUpdateProductPrices(productPricesArray) {
+  'products.bulkUpdatePrices': async function bulkUpdateProductPrices(
+    productPricesArray,
+  ) {
     try {
-      check(productPricesArray,
-        [{
+      check(productPricesArray, [
+        {
           _id: String,
           name: String,
           unitprice: String,
           wSaleBaseUnitPrice: String,
-        }]);
+        },
+      ]);
     } catch (exception) {
       handleMethodException(exception);
     }
 
-    if (/* Meteor.isServer && */ await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name)) {
+    const isAdmin = await Roles.userIsInRoleAsync(
+      this.userId,
+      constants.Roles.admin.name,
+    );
+
+    if (/* Meteor.isServer && */ isAdmin) {
       try {
         const bulk = Products.rawCollection().initializeOrderedBulkOp();
 
         productPricesArray.forEach((row) => {
-          bulk.find({ _id: row._id }).update({ $set: { unitprice: row.unitprice, wSaleBaseUnitPrice: row.wSaleBaseUnitPrice } });
+          bulk
+            .find({ _id: row._id })
+            .update({
+              $set: {
+                unitprice: row.unitprice,
+                wSaleBaseUnitPrice: row.wSaleBaseUnitPrice,
+              },
+            });
         });
 
         const bulkWriteResult = await bulk.execute();
