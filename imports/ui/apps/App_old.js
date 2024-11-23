@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import { Route, Routes, redirect } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import AdminAuthenticated from '../components/Routes/AdminAuthenticated';
 import Authenticated from '../components/Routes/Authenticated';
 import NotAuthenticated from '../components/Routes/NotAuthenticated';
@@ -80,6 +80,8 @@ import dMyWallet from '../pages/Wallet/MyWallet';
 
 import { CartProvider } from '../stores/ShoppingCart';
 
+import Loading from '../components/Loading/Loading';
+
 import ReturnAlerts from '../components/Alerts/ReturnAlerts';
 import ShowAlerts from '../components/Alerts/ShowAlerts';
 import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
@@ -87,603 +89,322 @@ import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
 const App = (props) => (
   <>
     {!props.loading ? (
-      <div className="App">
-        {props.authenticated && <ShowAlerts />}
-        {props.authenticated && <ReturnAlerts />}
-        {props.authenticated && (
-          <PwaInstallPopupIOS
-            delay={3}
-            lang="en"
-            appIcon="apple-touch-icon-precomposed.png"
-          />
-        )}
-        {/* props.authenticated && (
+      <Suspense fallback={<Loading />}>
+        <div className="App">
+          {props.authenticated && <ShowAlerts />}
+          {props.authenticated && <ReturnAlerts />}
+          {props.authenticated && (
+            <PwaInstallPopupIOS
+              delay={3}
+              lang="en"
+              appIcon="apple-touch-icon-precomposed.png"
+            />
+          )}
+          {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}
         />
       ) */}
-        <CartProvider>
-          <Routes>
-            {/* <Authenticated routeName="My_Orders" layout={MainLayout} exact path="/" component={MyOrders} {...props} /> */}
-
-            <Route
-              path="/"
-              element={
-                <Public
-                  routeName="Cart"
-                  layout={OrderLayout}
-                  component={Cart}
-                  {...props}
+          <CartProvider>
+            <Routes>
+              <Route element={<MainLayout />}>
+                {/* <Authenticated routeName="My_Orders" layout={MainLayout}  path="/" component={MyOrders} {...props} /> */}
+                <Route
+                  path="/myorders"
+                  element={
+                    <Authenticated
+                      routeName="My_Orders"
+                      layout={MainLayout}
+                      component={MyOrders}
+                      {...props}
+                    />
+                  }
                 />
-              }
-            />
-
-            <Route
-              path="/myorders"
-              element={
-                <Authenticated
-                  routeName="My_Orders"
-                  layout={MainLayout}
-                  component={MyOrders}
-                  {...props}
-                />
-              }
-            />
-            {/*
-          <Authenticated routeName="Documents" exact path="/documents" component={Documents} {...props} />
-          <Authenticated routeName="New document" exact path="/documents/new" component={NewDocument} {...props} />
-          <Authenticated routeName="View document" exact path="/documents/:_id" component={ViewDocument} {...props} />
-          <Authenticated routeName="Edit document" exact path="/documents/:_id/edit" component={EditDocument} {...props} />
-          <Authenticated routeName="Profile" exact path="/profile" component={Profile} {...props} />
+                {/*
+          <Authenticated routeName="Documents"  path="/documents" component={Documents} {...props} />
+          <Authenticated routeName="New document"  path="/documents/new" component={NewDocument} {...props} />
+          <Authenticated routeName="View document"  path="/documents/:_id" component={ViewDocument} {...props} />
+          <Authenticated routeName="Edit document"  path="/documents/:_id/edit" component={EditDocument} {...props} />
+          <Authenticated routeName="Profile"  path="/profile" component={Profile} {...props} />
           */}
-            <Route
-              path="/profile"
-              element={
                 <Authenticated
                   routeName="Profile"
                   layout={MainLayout}
+                  path="/profile"
                   component={Profile}
                   {...props}
                 />
-              }
-            />
 
-            {/* Invitations */}
-            <Route
-              path="/invitations"
-              element={
+                {/* Invitations */}
                 <Authenticated
                   routeName="My_Invitations"
                   layout={MainLayout}
+                  path="/invitations"
                   component={dInvitations}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/invitations/new"
-              element={
                 <Authenticated
                   routeName="New_Invitation"
                   layout={MainLayout}
+                  path="/invitations/new"
                   component={dNewInvitation}
                   {...props}
                 />
-              }
-            />
 
-            {/* Sign Up */}
-            <Route
-              path="/invitations/:token"
-              element={
+                {/* Sign Up */}
                 <Public
                   routeName="Accept_Invitation"
                   layout={MainLayout}
+                  path="/invitations/:token"
                   component={SignUp}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/signup"
-              element={
                 <NotAuthenticated
                   routeName={RouteNames.SIGNUP}
                   layout={MainLayout}
+                  path="/signup"
                   component={SignUp}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/approvesignups"
-              element={
                 <AdminAuthenticated
                   routeName="Approve_Sign_Ups"
                   layout={MainLayout}
+                  path="/approvesignups"
                   component={dApproveUserSignUps}
                   {...props}
                 />
-              }
-            />
 
-            {/* Self Sign Up
+                {/* Self Sign Up
               <Public routeName="Accept_Invitation" layout={MainLayout} path="/invitations/:token" component={SelfSignUp} {...props} />
               <NotAuthenticated routeName={RouteNames.SIGNUP} layout={MainLayout} path="/signup" component={InviteSelf} {...props} />
               Self Sign Up */}
 
-            {/* Signups */}
-            <Route
-              path="/login"
-              element={
+                {/* Signups */}
                 <NotAuthenticated
                   routeName="Login"
                   layout={MainLayout}
+                  path="/login"
                   component={Login}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/logout"
-              element={
                 <NotAuthenticated
                   routeName="Logout"
                   layout={MainLayout}
+                  path="/logout"
                   component={Logout}
                   {...props}
                 />
-              }
-            />
 
-            {/* Order */}
-            <Route
-              path="/order/success/:orderId?"
-              element={
                 <PlaceOrderAuthenticated
                   routeName="Order_Success"
                   layout={MainLayout}
+                  path="/order/success/:orderId?"
                   component={SuccessOrderPlaced}
                   {...props}
                 />
-              }
-            />
 
-            <Route
-              path="/order/:_id"
-              element={
-                <Authenticated
-                  routeName="Edit_Order_Details"
-                  layout={OrderLayout}
-                  component={EditOrderDetails}
-                  {...props}
-                />
-              }
-            />
-
-            <Route
-              path="/neworder/selectbasket"
-              element={
-                <Authenticated
-                  routeName="Choose_Basket_Prefill"
-                  layout={OrderLayout}
-                  component={SelectBasket}
-                  {...props}
-                />
-              }
-            />
-
-            <Route
-              path="/neworder/product/:productName"
-              element={
-                <Public
-                  routeName="Place_Order_Product_Details"
-                  layout={OrderLayout}
-                  component={PlaceOrder}
-                  {...props}
-                />
-              }
-            />
-
-            <Route
-              path="/neworder"
-              element={
-                <Public
-                  routeName="Place_Order_Product"
-                  layout={OrderLayout}
-                  component={PlaceOrder}
-                  {...props}
-                />
-              }
-            />
-
-            {/* Page not found */}
-            <Route
-              path="*"
-              element={
-                <Public
-                  routeName="Place_Order_Product"
-                  layout={OrderLayout}
-                  component={PlaceOrder}
-                  {...props}
-                />
-              }
-            />
-
-            {/* <Public
-                exact
-                routeName="Place_Order_Category"
-                path="/neworder/category/:category"
-                layout={OrderLayout}
-                component={PlaceOrder}
-                {...props}
-              /> */}
-
-            <Route
-              path="/neworder/category/:category/subcategory/:subcategory"
-              element={
-                <Public
-                  routeName="Place_Order_Category_subCategory"
-                  layout={OrderLayout}
-                  component={PlaceOrder}
-                  {...props}
-                />
-              }
-            />
-
-            {/* Users */}
-            <Route
-              path="/allusers"
-              element={
+                {/* Users */}
                 <AdminAuthenticated
                   routeName="Users"
                   layout={MainLayout}
+                  path="/allusers"
                   component={dUsers}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/allusers/:userMobilePhone"
-              element={
                 <AdminAuthenticated
                   routeName="User_Details"
                   layout={MainLayout}
+                  path="/allusers/:userMobilePhone"
                   component={dUserDetails}
                   {...props}
                 />
-              }
-            />
-            {/* Update Other User's Profile */}
-            <Route
-              path="/updateProfile"
-              element={
+                {/* Update Other User's Profile */}
                 <AdminAuthenticated
                   routeName="Update_Profile"
                   layout={MainLayout}
+                  path="/updateProfile"
                   component={dProfileUpdate}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/updateProfile/:userMobilePhone"
-              element={
                 <AdminAuthenticated
                   routeName="Update_Profile"
                   layout={MainLayout}
+                  path="/updateProfile/:userMobilePhone"
                   component={dProfileUpdate}
                   {...props}
                 />
-              }
-            />
 
-            {/* CartHome */}
-            <Route
-              path="/collectPay"
-              element={
-                <Public
-                  routeName="CollectPayment"
-                  layout={OrderLayout}
-                  component={CollectOrderPaymentHome}
-                  {...props}
-                />
-              }
-            />
-
-            <Route
-              path="/cart/:id?"
-              element={
-                <Public
-                  routeName="Cart"
-                  layout={OrderLayout}
-                  component={Cart}
-                  {...props}
-                />
-              }
-            />
-
-            <Route
-              path="/orderspecials"
-              element={
                 <Public
                   routeName="Order Specials"
+                  path="/orderspecials"
                   layout={MainLayout}
                   component={OrderSpecials}
                   {...props}
                 />
-              }
-            />
 
-            {/* Messages */}
+                {/* Messages */}
 
-            <Route
-              path="/messages"
-              element={
                 <Authenticated
                   routeName="Messages"
                   layout={MainLayout}
+                  path="/messages"
                   component={dMessagesHome}
                   {...props}
                 />
-              }
-            />
-            {/* Accept Payment */}
-            <Route
-              path="/mywallet"
-              element={
+                {/* Accept Payment */}
                 <Authenticated
                   routeName="My_Wallet"
                   layout={MainLayout}
+                  path="/mywallet"
                   component={dMyWallet}
                   {...props}
                 />
-              }
-            />
-            {/* Product */}
-
-            <Route
-              path="/products"
-              element={
+                {/* Product */}
                 <AdminAuthenticated
                   routeName="View_Products_Admin"
                   layout={MainLayout}
+                  path="/products"
                   component={dProductsAdmin}
                   {...props}
                 />
-              }
-            />
 
-            {/* Admin */
-            /* ProductLists */}
-            <Route
-              path="/productLists/:_id/edit"
-              element={
+                {/* Admin */
+                /* ProductLists */}
                 <AdminAuthenticated
                   routeName="Edit_Products_Admin"
                   layout={MainLayout}
+                  path="/productLists/:_id/edit"
                   component={dProductsAdmin}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/productLists/:_id"
-              element={
                 <AdminAuthenticated
                   routeName="View_Product_List_Details_Admin"
                   layout={MainLayout}
+                  path="/productLists/:_id"
                   component={dViewProductListDetails}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/productLists"
-              element={
                 <AdminAuthenticated
                   routeName="View_Product_Lists_Admin"
                   layout={MainLayout}
+                  path="/productLists"
                   component={dProductLists}
                   {...props}
                 />
-              }
-            />
 
-            {/* Orders
+                {/* Orders
           <Route routeName="View All Orders Admin" path="/allorders" component={AllOrders} onEnter={authenticate} /> */}
 
-            <Route
-              path="/allorders"
-              element={
                 <AdminAuthenticated
                   routeName="View_All_Orders_Admin"
                   layout={MainLayout}
+                  path="/allorders"
                   component={dAllOrders}
                   {...props}
                 />
-              }
-            />
-            {/* Zoho Sync */}
-            <Route
-              path="/zohoSync"
-              element={
+                {/* Zoho Sync */}
                 <AdminAuthenticated
                   routeName="Zoho_Sync"
                   layout={MainLayout}
+                  path="/zohoSync"
                   component={dZohoSyncUp}
                   {...props}
                 />
-              }
-            />
-            {/* end admin */}
+                {/* end admin */}
 
-            {/* <Public exact routeName="About" path="/" component={About} {...props} /> */}
-
-            <Route
-              path="/about"
-              element={
+                {/* <Public  routeName="About" path="/" component={About} {...props} /> */}
                 <Public
                   routeName="About"
                   layout={MainLayout}
+                  path="/about"
                   component={About}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/verify-email/:token"
-              element={
                 <Public
                   routeName="Verify_Email"
                   layout={MainLayout}
+                  path="/verify-email/:token"
                   component={VerifyEmail}
                 />
-              }
-            />
-
-            <Route
-              path="/recover-password"
-              element={
                 <Public
                   routeName="Recover_Password"
                   layout={MainLayout}
+                  path="/recover-password"
                   component={RecoverPassword}
                 />
-              }
-            />
-
-            <Route
-              path="/reset-password/:token"
-              element={
                 <Public
                   routeName="Reset_Password"
                   layout={MainLayout}
+                  path="/reset-password/:token"
                   component={ResetPassword}
                 />
-              }
-            />
-
-            <Route
-              path="/pages/terms"
-              element={
                 <Public
                   routeName="Terms"
                   layout={MainLayout}
+                  path="/pages/terms"
                   component={Terms}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/pages/privacy"
-              element={
                 <Public
                   routeName="Privacy"
                   layout={MainLayout}
+                  path="/pages/privacy"
                   component={Privacy}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/pages/refund"
-              element={
                 <Public
                   routeName="Refund"
                   layout={MainLayout}
+                  path="/pages/refund"
                   component={Refund}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/vision"
-              element={
                 <Public
                   routeName="Vision"
                   layout={MainLayout}
+                  path="/vision"
                   component={dVision}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/healthprinciples"
-              element={
                 <Public
                   routeName="Health_Principles"
                   layout={MainLayout}
+                  path="/healthprinciples"
                   component={dHealthPrinciples}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              path="/healthfaq"
-              element={
                 <Public
                   routeName="Health_Principles_FAQ"
                   layout={MainLayout}
+                  path="/healthfaq"
                   component={dHealthFAQ}
                   {...props}
                 />
-              }
-            />
-            {/* Ad */}
-            <Route
-              path="/interest/:adType"
-              element={
+                {/* Ad */}
                 <Public
                   routeName={RouteNames.ADINTEREST}
                   layout={MainLayout}
+                  path="/interest/:adType"
                   component={ShowInterest}
                   {...props}
                 />
-              }
-            />
-            {/* Admin Reports */}
-            <Route
-              path="/reports"
-              element={
+                {/* Admin Reports */}
                 <AdminAuthenticated
                   routeName="Reports_Home"
                   layout={MainLayout}
+                  path="/reports"
                   component={dReportsHome}
                   {...props}
                 />
-              }
-            />
 
-            {/* Reconcile Products */}
-            <Route
-              path="/reconcileInventoryList"
-              element={
+                {/* Reconcile Products */}
                 <AdminAuthenticated
                   routeName="Reconcile_Inventory_List"
                   layout={MainLayout}
+                  path="/reconcileInventoryList"
                   component={ReconcileInventoryList}
                   {...props}
                 />
-              }
-            />
-
-            <Route
-              element={
                 <AdminAuthenticated
                   routeName="Reconcile_Inventory"
                   layout={MainLayout}
@@ -691,12 +412,82 @@ const App = (props) => (
                   component={dReconcileInventory}
                   {...props}
                 />
-              }
-            />
-          </Routes>
-          <Footer {...props} />
-        </CartProvider>
-      </div>
+              </Route>
+              <Route element={<OrderLayout />}>
+                {/* Order */}
+                <Public
+                  routeName="Cart"
+                  path="/"
+                  layout={OrderLayout}
+                  component={Cart}
+                  {...props}
+                />
+
+                <Authenticated
+                  routeName="Edit_Order_Details"
+                  layout={OrderLayout}
+                  path="/order/:_id"
+                  component={EditOrderDetails}
+                  {...props}
+                />
+                <Authenticated
+                  routeName="Choose_Basket_Prefill"
+                  path="/neworder/selectbasket"
+                  layout={OrderLayout}
+                  component={SelectBasket}
+                  {...props}
+                />
+                <Public
+                  routeName="Place_Order_Product_Details"
+                  path="/neworder/product/:productName"
+                  layout={OrderLayout}
+                  component={PlaceOrder}
+                  {...props}
+                />
+                {/* <Public
+                
+                routeName="Place_Order_Category"
+                path="/neworder/category/:category"
+                layout={OrderLayout}
+                component={PlaceOrder}
+                {...props}
+              /> */}
+                <Public
+                  routeName="Place_Order_Category_subCategory"
+                  path="/neworder/category/:category/subcategory/:subcategory"
+                  layout={OrderLayout}
+                  component={PlaceOrder}
+                  {...props}
+                />
+                <Public
+                  routeName="Place_Order"
+                  path="/neworder/:basketId?"
+                  layout={OrderLayout}
+                  component={PlaceOrder}
+                  {...props}
+                />
+                {/* CartHome */}
+                <Public
+                  routeName="CollectPayment"
+                  path="/collectPay"
+                  layout={OrderLayout}
+                  component={CollectOrderPaymentHome}
+                  {...props}
+                />
+                <Public
+                  routeName="Cart"
+                  path="/cart/:id?"
+                  layout={OrderLayout}
+                  component={Cart}
+                  {...props}
+                />
+              </Route>
+            </Routes>
+
+            <Footer {...props} />
+          </CartProvider>
+        </div>
+      </Suspense>
     ) : (
       ''
     )}

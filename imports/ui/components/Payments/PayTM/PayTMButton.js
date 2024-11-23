@@ -1,24 +1,39 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import Loading from '../../Loading/Loading';
 import Spinner from '../../Common/Spinner/Spinner';
+import Loading from '../../Loading/Loading';
 import CONFIG from './config';
 import loadCheckOutPayTM from './loadCheckOutPayTM';
 
 function PayTMButton({
-  buttonText, paymentDetails, paymentResponseSuccess, showOptionsWithFee,
+  buttonText = 'Pay Now',
+  paymentDetails = {
+    moneyToChargeInRs: 0,
+    description: '',
+    prefill: {
+      firstName: '',
+      lastName: '',
+      mobile: '',
+    },
+  },
+  paymentResponseSuccess,
+  showOptionsWithFee = true,
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function notifyMerchantHandler(eventName, data, orderId) {
-    Meteor.call('payment.paytm.paymentTransactionError',
-      { ORDERID: orderId, errorObject: { eventName, data } });
+    Meteor.call('payment.paytm.paymentTransactionError', {
+      ORDERID: orderId,
+      errorObject: { eventName, data },
+    });
   }
 
   useEffect(() => {
-    loadCheckOutPayTM(() => { console.log('loaded'); });
+    loadCheckOutPayTM(() => {
+      console.log('loaded');
+    });
   }, []);
 
   function transactionStatus(paymentStatus) {
@@ -40,22 +55,24 @@ function PayTMButton({
     // return;
     // }
 
-    Meteor.call('payment.paytm.completeTransaction', transactionDetails, (error, result) => {
-      if (error) {
-        toast.error(error.reason);
-      } else {
-        if (window.Paytm && window.Paytm.CheckoutJS) {
-          // after successfully updating configuration, invoke JS Checkout
-          window.Paytm.CheckoutJS.close();
+    Meteor.call(
+      'payment.paytm.completeTransaction',
+      transactionDetails,
+      (error, result) => {
+        if (error) {
+          toast.error(error.reason);
+        } else {
+          if (window.Paytm && window.Paytm.CheckoutJS) {
+            // after successfully updating configuration, invoke JS Checkout
+            window.Paytm.CheckoutJS.close();
+          }
+          paymentResponseSuccess(result);
         }
-        paymentResponseSuccess(result);
-      }
-    });
+      },
+    );
   }
 
-  function showPayScreen({
-    txToken, amount, suvaiTransactionId,
-  }) {
+  function showPayScreen({ txToken, amount, suvaiTransactionId }) {
     const config = CONFIG({
       txToken,
       amount,
@@ -67,15 +84,20 @@ function PayTMButton({
 
     if (window.Paytm && window.Paytm.CheckoutJS) {
       // initialize configuration using init method
-      window.Paytm.CheckoutJS.init(config).then(() => {
-        // after successfully updating configuration, invoke JS Checkout
-        window.Paytm.CheckoutJS.invoke();
-        setIsLoading(false);
-      }).catch((error) => {
-        Meteor.call('payment.paytm.paymentTransactionError', { ORDERID: suvaiTransactionId, errorObject: error });
-        // console.log('PayTM Button error: ', error);
-        setIsLoading(false);
-      });
+      window.Paytm.CheckoutJS.init(config)
+        .then(() => {
+          // after successfully updating configuration, invoke JS Checkout
+          window.Paytm.CheckoutJS.invoke();
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          Meteor.call('payment.paytm.paymentTransactionError', {
+            ORDERID: suvaiTransactionId,
+            errorObject: error,
+          });
+          // console.log('PayTM Button error: ', error);
+          setIsLoading(false);
+        });
     }
   }
 
@@ -86,9 +108,11 @@ function PayTMButton({
       suvaiTransactionId,
     };
 
-    Meteor.call('payment.paytm.getSavedCreditCards', transactionObject, (error, result) => {
-
-    });
+    Meteor.call(
+      'payment.paytm.getSavedCreditCards',
+      transactionObject,
+      (error, result) => {},
+    );
   }
 
   function initiateTransaction() {
@@ -102,31 +126,35 @@ function PayTMButton({
       firstName: paymentDetails.prefill.firstName,
       lastName: paymentDetails.prefill.lastName,
       showOptionsWithFee,
-      cartTotalBillAmount: (paymentDetails.cartTotalBillAmount)
+      cartTotalBillAmount: paymentDetails.cartTotalBillAmount
         ? paymentDetails.cartTotalBillAmount * 100
         : 0,
     };
-    Meteor.call('payment.paytm.initiateTransaction', transactionObject, (error, result) => {
-      if (result && result.status === 'S') {
-        // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId);
-        // to delete
+    Meteor.call(
+      'payment.paytm.initiateTransaction',
+      transactionObject,
+      (error, result) => {
+        if (result && result.status === 'S') {
+          // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId);
+          // to delete
 
-        showPayScreen({
-          txToken: result.txToken,
-          amount,
-          suvaiTransactionId: result.suvaiTransactionId,
-        });
-      } else if (result && result.status === 'F') {
-        toast.error(result.errorMsg);
-      } else if (error) {
-        toast.error(error.reason);
-      }
-    });
+          showPayScreen({
+            txToken: result.txToken,
+            amount,
+            suvaiTransactionId: result.suvaiTransactionId,
+          });
+        } else if (result && result.status === 'F') {
+          toast.error(result.errorMsg);
+        } else if (error) {
+          toast.error(error.reason);
+        }
+      },
+    );
   }
 
   return (
     <div>
-      {(isLoading) && (<Loading />)}
+      {isLoading && <Loading />}
 
       <button
         type="button"
@@ -134,29 +162,11 @@ function PayTMButton({
         onClick={initiateTransaction}
         disabled={!!isLoading}
       >
-        {buttonText}
-        {' '}
-        {(isLoading) && <Spinner />}
+        {buttonText} {isLoading && <Spinner />}
       </button>
-
     </div>
-
   );
 }
-
-PayTMButton.defaultProps = {
-  buttonText: 'Pay Now',
-  showOptionsWithFee: true,
-  paymentDetails: {
-    moneyToChargeInRs: 0,
-    description: '',
-    prefill: {
-      firstName: '',
-      lastName: '',
-      mobile: '',
-    },
-  },
-};
 
 PayTMButton.propTypes = {
   paymentDetails: PropTypes.object,

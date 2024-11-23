@@ -1,34 +1,35 @@
-/* eslint-disable max-len, no-return-assign */
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
+/* eslint-disable max-len, no-return-assign */
+import React from 'react';
 import { toast } from 'react-toastify';
 
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import Alert from 'react-bootstrap/Alert';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
+import { useNavigate } from 'react-router-dom';
+import constants from '../../../../modules/constants';
+import { getNumDaysBetween } from '../../../../modules/helpers';
+import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
 import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
-import { getNumDaysBetween } from '../../../../modules/helpers';
-import constants from '../../../../modules/constants';
-import OrderSummaryRow from './OrderSummaryRow';
-import AddToWallet from './AddToWallet';
-import ShowReturnables from './ShowReturnables';
-import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
 import ShowStatement from '../../Payments/Statement';
+import AddToWallet from './AddToWallet';
+import OrderSummaryRow from './OrderSummaryRow';
+import ShowReturnables from './ShowReturnables';
 
 import './MyOrdersList.scss';
 
 const feedBackPeriodInDays = 3000; // was 30 before
 
-export default class MyOrderList extends React.Component {
+class MyOrderList extends React.Component {
   constructor(props) {
     super(props);
     const { loggedInUser } = this.props;
@@ -145,8 +146,10 @@ export default class MyOrderList extends React.Component {
       return false;
     });
 
-    if (!lastDate || (!latestOrder.receivedFeedBack
-        && getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
+    if (
+      !lastDate ||
+      (!latestOrder.receivedFeedBack &&
+        getNumDaysBetween(new Date(), lastDate) > feedBackPeriodInDays)
     ) {
       return latestOrder._id;
     }
@@ -154,7 +157,7 @@ export default class MyOrderList extends React.Component {
   }
 
   render() {
-    const { orders } = this.props;
+    const { orders = [] } = this.props;
     this.feedBackPostId = this.showFeedBack(orders);
     // const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
     const showFeedBackForm = false; // disable for now
@@ -174,9 +177,14 @@ export default class MyOrderList extends React.Component {
         },
         index,
       ) => {
-      /* <ListGroupItem key={_id} href={`/order/${_id}`}> */
+        /* <ListGroupItem key={_id} href={`/order/${_id}`}> */
         displayOrderRows.push(
-          <ListGroupItem key={_id} onClick={() => { this.props.history.push(`/order/${_id}`); }}>
+          <ListGroupItem
+            key={_id}
+            onClick={() => {
+              this.props.navigate(`/order/${_id}`);
+            }}
+          >
             <OrderSummaryRow
               orderDate={createdAt}
               orderAmount={total_bill_amount}
@@ -194,11 +202,14 @@ export default class MyOrderList extends React.Component {
       },
     );
 
-    const { productReturnables, history } = this.props;
+    const { productReturnables = [] } = this.props;
 
     return (
       <div>
-        <AddToWallet userWallet={this.state.wallet} numberOfAwaitingPayments={numberOfAwaitingPayments} history={history} />
+        <AddToWallet
+          userWallet={this.state.wallet}
+          numberOfAwaitingPayments={numberOfAwaitingPayments}
+        />
 
         <Row className="my-2 pb-3 MyOrderList">
           <Tabs defaultActiveKey={1}>
@@ -208,57 +219,64 @@ export default class MyOrderList extends React.Component {
                   <Button
                     variant="link"
                     className={this.setClasses('Active')}
-                    onClick={(e) => { this.onFilterChange(e, 'Active'); }}
+                    onClick={(e) => {
+                      this.onFilterChange(e, 'Active');
+                    }}
                     name="Active"
                   >
                     Active
                   </Button>
                 </li>
-                <li className="nav-item" style={{ paddingTop: '8px' }}>/</li>
+                <li className="nav-item" style={{ paddingTop: '8px' }}>
+                  /
+                </li>
                 <li className="nav-item text-center">
                   <Button
                     variant="link"
                     className={this.setClasses('All')}
-                    onClick={(e) => { this.onFilterChange(e, 'All'); }}
+                    onClick={(e) => {
+                      this.onFilterChange(e, 'All');
+                    }}
                     name="All"
                   >
                     All
                   </Button>
                 </li>
               </ul>
-              {
-              orders.length > 0 ? (
+              {orders.length > 0 ? (
                 <div>
                   {showFeedBackForm && (
-                    <ProductFit
-                      onClose={this.receiveProductFit}
-                    />
+                    <ProductFit onClose={this.receiveProductFit} />
                   )}
 
                   <ListGroup className="orders-list">
                     {displayOrderRows}
                   </ListGroup>
-
                 </div>
               ) : (
                 <Alert variant="light">
                   You do not have any active orders.
                 </Alert>
-              )
-            }
+              )}
             </Tab>
-            <Tab eventKey={2} title="Statements" tabClassName="text-center px-2">
+            <Tab
+              eventKey={2}
+              title="Statements"
+              tabClassName="text-center px-2"
+            >
               <ShowStatement
                 emailVerified={this.props.emailVerified}
                 loggedInUserId={this.props.loggedInUserId}
                 emailAddress={this.props.emailAddress}
-                history={this.props.history}
               />
             </Tab>
-            <Tab eventKey={3} title="Refund Details" tabClassName="text-center px-2">
+            <Tab
+              eventKey={3}
+              title="Refund Details"
+              tabClassName="text-center px-2"
+            >
               <ListCreditNotes />
             </Tab>
-
           </Tabs>
         </Row>
       </div>
@@ -278,7 +296,14 @@ MyOrderList.propTypes = {
   orderFilter: PropTypes.string.isRequired,
 };
 
-MyOrderList.defaultProps = {
-  orders: [],
-  productReturnables: {},
+export const withRouter = (Component) => {
+  const Wrapper = (props) => {
+    const navigate = useNavigate();
+
+    return <Component navigate={navigate} {...props} />;
+  };
+
+  return Wrapper;
 };
+
+export default withRouter(MyOrderList);

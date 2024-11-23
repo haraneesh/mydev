@@ -24,7 +24,6 @@ const PlaceNewOrder = (props) => {
     name,
     products,
     productListId,
-    history,
     basketId,
     loggedInUser,
     category,
@@ -104,13 +103,9 @@ const PlaceNewOrder = (props) => {
     case !!productName:
       return (
         <>
-          <SelectDeliveryLocation
-            loggedInUser={loggedInUser}
-            history={history}
-          />
+          <SelectDeliveryLocation loggedInUser={loggedInUser} />
           <ProductsOrderFromDetails
             products={products}
-            history={history}
             productName={productName}
             name={name}
             dateValue={dateValue}
@@ -121,13 +116,9 @@ const PlaceNewOrder = (props) => {
     default:
       return (
         <div className="OrderHomePage">
-          <SelectDeliveryLocation
-            loggedInUser={loggedInUser}
-            history={history}
-          />
+          <SelectDeliveryLocation loggedInUser={loggedInUser} />
           <ProductsOrderMain
             products={products}
-            history={history}
             productListId={productListId}
             name={name}
             dateValue={dateValue}
@@ -142,14 +133,19 @@ const PlaceNewOrder = (props) => {
 };
 
 const PlaceNewOrderWrapper = (props) =>
-  props.loading ? <Loading /> : <PlaceNewOrder {...props} />;
-
-PlaceNewOrder.defaultProps = {
-  basketId: '',
-  category: '',
-  subCategory: '',
-  productName: '',
-};
+  props.loading ? (
+    <Loading />
+  ) : (
+    <PlaceNewOrder
+      {...{
+        basketId: '',
+        category: '',
+        subCategory: '',
+        productName: '',
+      }}
+      {...props}
+    />
+  );
 
 PlaceNewOrder.propTypes = {
   loggedInUser: PropTypes.object.isRequired,
@@ -158,7 +154,6 @@ PlaceNewOrder.propTypes = {
   name: PropTypes.string.isRequired,
   basketId: PropTypes.string,
   dateValue: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
   category: PropTypes.string,
   subCategory: PropTypes.string,
   productName: PropTypes.string,
@@ -185,7 +180,6 @@ export default withTracker((args) => {
     productListId,
     products,
     name: args.name,
-    history: args.history,
     dateValue: args.date,
     loggedInUser: args.loggedInUser,
     basketId: args.match.params.basketId,

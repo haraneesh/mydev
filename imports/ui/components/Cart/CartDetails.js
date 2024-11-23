@@ -1,53 +1,70 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
+import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React, { useEffect, useState, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Icon from '../Icon/Icon';
 import { upsertOrder } from '../../../api/Orders/methods';
-import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
-import { isChennaiPinCode, isLoggedInUserAdmin } from '../../../modules/helpers';
 import constants from '../../../modules/constants';
+import {
+  isChennaiPinCode,
+  isLoggedInUserAdmin,
+} from '../../../modules/helpers';
+import {
+  cartActions,
+  useCartDispatch,
+  useCartState,
+} from '../../stores/ShoppingCart';
+import Icon from '../Icon/Icon';
+import Loading from '../Loading/Loading';
 import OnBehalf from '../OnBehalf/OnBehalf';
 import {
-  ListProducts, OrderComment, PrevOrderComplaint, OrderFooter,
+  ListProducts,
+  OrderComment,
+  OrderFooter,
+  PrevOrderComplaint,
 } from './CartCommon';
-import { cartActions, useCartState, useCartDispatch } from '../../stores/ShoppingCart';
-import Loading from '../Loading/Loading';
+import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
 
 const isOrderAmountGreaterThanMinimum = (orderAmt) => {
   if (
-    Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt
-      || isLoggedInUserAdmin()
+    Meteor.settings.public.CART_ORDER.MINIMUM_ORDER_AMT <= orderAmt ||
+    isLoggedInUserAdmin()
   ) {
     return true;
   }
   return false;
 };
 
-const CartDetails = ({
-  history, orderId, loggedInUser, roles,
-}) => {
+const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
   const refComment = useRef();
+  const navigate = useNavigate();
   const emptyDeletedProductsState = { countOfItems: 0, cart: {} };
   const [onBehalfUserInfoError, setOnBehalfUserInfoError] = useState(false);
-  const [successfullyPlacedOrderId, setSuccessfullyPlacedOrderId] = useState('');
+  const [successfullyPlacedOrderId, setSuccessfullyPlacedOrderId] =
+    useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [deletedProducts, setDeletedProducts] = useState(emptyDeletedProductsState);
+  const [deletedProducts, setDeletedProducts] = useState(
+    emptyDeletedProductsState,
+  );
   const [onBehalfUser, setOnBehalfUser] = useState({
-    isNecessary: !orderId && roles.includes(constants.Roles.admin.name), user: {},
+    isNecessary: !orderId && roles.includes(constants.Roles.admin.name),
+    user: {},
   });
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
 
-  const activeCartId = (!orderId || orderId === 'NEW') ? 'NEW' : orderId;
+  const activeCartId = !orderId || orderId === 'NEW' ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
-    cartDispatch({ type: cartActions.activateCart, payload: { cartIdToActivate: activeCartId } });
+    cartDispatch({
+      type: cartActions.activateCart,
+      payload: { cartIdToActivate: activeCartId },
+    });
   }
 
   const updateDeletedProducts = (quantity, productId, product) => {
@@ -66,10 +83,13 @@ const CartDetails = ({
   };
 
   const updateProductWithReturnableChoice = ({
-    parentProductId, parentProductQty, returnableProductQty,
+    parentProductId,
+    parentProductQty,
+    returnableProductQty,
   }) => {
     const product = cartState.cart.productsInCart[parentProductId]
-      ? cartState.cart.productsInCart[parentProductId] : deletedProducts.cart[parentProductId];
+      ? cartState.cart.productsInCart[parentProductId]
+      : deletedProducts.cart[parentProductId];
 
     product.quantity = parentProductQty;
     product.associatedReturnables.quantity = returnableProductQty;
@@ -79,17 +99,18 @@ const CartDetails = ({
 
   const updateProductQuantity = (e, args) => {
     if (args && args.isReturnable) {
-      const {
-        parentProductId, parentProductQty, returnableProductQty,
-      } = args;
+      const { parentProductId, parentProductQty, returnableProductQty } = args;
       updateProductWithReturnableChoice({
-        parentProductId, parentProductQty, returnableProductQty,
+        parentProductId,
+        parentProductQty,
+        returnableProductQty,
       });
     } else {
       const productId = e.target.name;
       const quantity = parseFloat(e.target.value);
       const product = cartState.cart.productsInCart[productId]
-        ? cartState.cart.productsInCart[productId] : deletedProducts.cart[productId];
+        ? cartState.cart.productsInCart[productId]
+        : deletedProducts.cart[productId];
       product.quantity = quantity;
       delete product.removedDuringCheckout;
       updateDeletedProducts(quantity, productId, product);
@@ -105,9 +126,13 @@ const CartDetails = ({
   };
 
   const handleOrderSubmit = () => {
-    if (onBehalfUser.isNecessary && !(
-      constants.OrderReceivedType.allowedValues.includes(onBehalfUser.orderReceivedAs)
-        && 'profile' in onBehalfUser.user)
+    if (
+      onBehalfUser.isNecessary &&
+      !(
+        constants.OrderReceivedType.allowedValues.includes(
+          onBehalfUser.orderReceivedAs,
+        ) && 'profile' in onBehalfUser.user
+      )
     ) {
       setOnBehalfUserInfoError(true);
       return;
@@ -125,8 +150,10 @@ const CartDetails = ({
         _id: orderId && orderId !== 'NEW' ? orderId : '',
         comments: cartState.cart.comments || '',
         issuesWithPreviousOrder: cartState.cart.issuesWithPreviousOrder || '',
-        payCashWithThisDelivery: cartState.cart.payCashWithThisDelivery || false,
-        collectRecyclablesWithThisDelivery: cartState.cart.collectRecyclablesWithThisDelivery || false,
+        payCashWithThisDelivery:
+          cartState.cart.payCashWithThisDelivery || false,
+        collectRecyclablesWithThisDelivery:
+          cartState.cart.collectRecyclablesWithThisDelivery || false,
         basketId: cartState.cart.basketId || '',
         loggedInUserId: loggedInUser._id,
         deliveryPincode: cartState.cart.deliveryPincode,
@@ -149,9 +176,7 @@ const CartDetails = ({
           toast.success('Order has been placed successfully!');
 
           setSuccessfullyPlacedOrderId(
-            (createdOrder.insertedId)
-              ? createdOrder.insertedId
-              : orderId,
+            createdOrder.insertedId ? createdOrder.insertedId : orderId,
           );
 
           Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
@@ -170,12 +195,16 @@ const CartDetails = ({
       });
     } else {
       // Sign up
-      history.push('/signup');
+      navigate('/signup');
     }
   };
 
   const clearCart = () => {
-    if (confirm('All the items in the cart will be removed, do you want to continue?')) {
+    if (
+      confirm(
+        'All the items in the cart will be removed, do you want to continue?',
+      )
+    ) {
       cartDispatch({ type: cartActions.emptyCart });
       setDeletedProducts(emptyDeletedProductsState);
     }
@@ -183,48 +212,48 @@ const CartDetails = ({
 
   const handleAddItems = () => {
     if (loggedInUser && orderId) {
-      history.push(`/order/${orderId}`);
+      navigate(`/order/${orderId}`);
     } else {
-      history.push('/neworder/');
+      navigate('/neworder/');
     }
   };
 
   const handleCommentChange = (e) => {
-    cartDispatch({ type: cartActions.setCartComments, payload: { comments: e.target.value } });
+    cartDispatch({
+      type: cartActions.setCartComments,
+      payload: { comments: e.target.value },
+    });
   };
 
   const handleIssuesWithPreviousOrderChange = (e) => {
-    cartDispatch({ type: cartActions.setIssuesWithPreviousOrder, payload: { issuesWithPreviousOrder: e.target.value } });
+    cartDispatch({
+      type: cartActions.setIssuesWithPreviousOrder,
+      payload: { issuesWithPreviousOrder: e.target.value },
+    });
   };
 
   const handlePayCashWithThisDeliveryChange = (value) => {
-    cartDispatch({ type: cartActions.setPayCashWithThisDelivery, payload: { payCashWithThisDelivery: value } });
+    cartDispatch({
+      type: cartActions.setPayCashWithThisDelivery,
+      payload: { payCashWithThisDelivery: value },
+    });
   };
 
   const handleCollectRecyclablesWithThisDeliveryChange = (value) => {
-    cartDispatch({ type: cartActions.setCollectRecyclablesWithThisDelivery, payload: { collectRecyclablesWithThisDelivery: value } });
+    cartDispatch({
+      type: cartActions.setCollectRecyclablesWithThisDelivery,
+      payload: { collectRecyclablesWithThisDelivery: value },
+    });
   };
 
   const moveToOrderSubmitScreen = () => {
     cartDispatch({ type: cartActions.orderFlowComplete });
-    // history.push(`/order/cart/${successfullyPlacedOrderId}`);
-    history.push(`/order/success/${successfullyPlacedOrderId || orderId}`);
+    // navigate(`/order/cart/${successfullyPlacedOrderId}`);
+    navigate(`/order/success/${successfullyPlacedOrderId || orderId}`);
   };
 
   const afterPaymentScreen = ({ action }) => {
     moveToOrderSubmitScreen();
-    { /*
-    if (action === 'PAYONDELIVERY') {
-      moveToOrderSubmitScreen();
-    } else if (action === 'DEDUCTFROMWALLET') {
-      // handleOrderSubmit({ dontShowPaymentProceed: true });
-      moveToOrderSubmitScreen();
-    } else if (action === 'ADDEDTOWALLETMORETHANBALANCE') {
-      // handleOrderSubmit({ dontShowPaymentProceed: true });
-      moveToOrderSubmitScreen();
-      // Meteor would auto refresh loggedInUser
-    }
-    */ }
   };
 
   useEffect(() => {
@@ -235,51 +264,52 @@ const CartDetails = ({
   });
 
   switch (true) {
-    case (!cartState.cart): {
-      history.push('/');
-      return (<Loading />);
+    case !cartState.cart: {
+      return <Navigate to="/" replace={true} />;
     }
-    case (cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0 && !!orderId): {
-      history.push(`/order/${orderId}`);
-      return (<div />);
+    case cartState.cart.countOfItems === 0 &&
+      deletedProducts.countOfItems === 0 &&
+      !!orderId: {
+      return <Navigate to={`/order/${orderId}`} replace={true} />;
     }
-    case (!orderId && cartState.cart.countOfItems === 0 && deletedProducts.countOfItems === 0): {
-      history.push('/neworder');
-      return (<div />);
-      { /*
+    case !orderId &&
+      cartState.cart.countOfItems === 0 &&
+      deletedProducts.countOfItems === 0: {
+      return <Navigate to="/neworder" replace={true} />;
+    }
+    case showPaymentModal:
       return (
-        <Row className="m-3">
-          <Col xs={12}>
-            <h2 className="py-4 text-center">Your Cart</h2>
-          </Col>
-          <Col className="bg-white m-3 p-3">
-            <h4 className="pb-2"> Cart is Empty! </h4>
-            <Button className="mb-2" onClick={() => { handleAddItems(); }}> Add Items</Button>
-          </Col>
-        </Row>
-      );
-      */ }
-    }
-    case (showPaymentModal):
-      return (
-        <CollectOrderPayment loggedInUser={loggedInUser} callFuncAfterPay={afterPaymentScreen} />
+        <CollectOrderPayment
+          loggedInUser={loggedInUser}
+          callFuncAfterPay={afterPaymentScreen}
+        />
       );
     default: {
       return (
         <Row>
           <Col xs={12}>
-            <h2 className="py-4 text-center">{orderId ? 'Update Order' : 'Your Cart'}</h2>
+            <h2 className="py-4 text-center">
+              {orderId ? 'Update Order' : 'Your Cart'}
+            </h2>
           </Col>
           <Card className="mt-3">
-            <h3 className="card-header" style={{ textAlign: 'center' }}> Cart Details </h3>
+            <h3 className="card-header" style={{ textAlign: 'center' }}>
+              {' '}
+              Cart Details{' '}
+            </h3>
             <ListProducts
               products={cartState.cart.productsInCart}
               deletedProducts={deletedProducts.cart}
               updateProductQuantity={updateProductQuantity}
               isMobile
               isAdmin={isLoggedInUserAdmin()}
-              isShopOwner={Roles.userIsInRole(loggedInUser, constants.Roles.shopOwner.name)}
-              isDeliveryInChennai={isChennaiPinCode(cartState.cart.deliveryPincode)}
+              isShopOwner={Roles.userIsInRole(
+                loggedInUser,
+                constants.Roles.shopOwner.name,
+              )}
+              isDeliveryInChennai={isChennaiPinCode(
+                cartState.cart.deliveryPincode,
+              )}
             />
             <Row>
               <Col
@@ -292,7 +322,9 @@ const CartDetails = ({
               >
                 <Button
                   variant="primary"
-                  onClick={() => { handleAddItems(); }}
+                  onClick={() => {
+                    handleAddItems();
+                  }}
                   style={{
                     marginRight: '.5em',
                   }}
@@ -303,7 +335,9 @@ const CartDetails = ({
 
                 <Button
                   variant="info"
-                  onClick={() => { clearCart(); }}
+                  onClick={() => {
+                    clearCart();
+                  }}
                   style={{ marginRight: '.5em' }}
                 >
                   Clear Cart
@@ -311,15 +345,13 @@ const CartDetails = ({
               </Col>
             </Row>
 
-            {(Meteor.settings.public.ShowReturnBottles) && (
+            {Meteor.settings.public.ShowReturnBottles && (
               <div className="row alert alert-info py-3">
                 <p className="offset-sm-1">
                   Let's Reduce, Renew and Recycle.
                   <br />
                   Please return
-                  <span style={{ color: '#EF0905' }}>
-                    {' all glass '}
-                  </span>
+                  <span style={{ color: '#EF0905' }}>{' all glass '}</span>
                   bottles and crates to the delivery person.
                 </p>
               </div>
@@ -331,19 +363,24 @@ const CartDetails = ({
               prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
             />
             */}
-            {(isOrderBeingUpdated) && <Loading />}
+            {isOrderBeingUpdated && <Loading />}
           </Card>
           <Card className="mb-5">
             {onBehalfUser.isNecessary && (
-            <OnBehalf
-              onSelectedChange={onSelectedChange}
-              showMandatoryFields={onBehalfUserInfoError}
-            />
+              <OnBehalf
+                onSelectedChange={onSelectedChange}
+                showMandatoryFields={onBehalfUserInfoError}
+              />
             )}
 
-            <OrderComment refComment={refComment} onCommentChange={handleCommentChange} />
+            <OrderComment
+              refComment={refComment}
+              onCommentChange={handleCommentChange}
+            />
 
-            {!isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount) && (
+            {!isOrderAmountGreaterThanMinimum(
+              cartState.cart.totalBillAmount,
+            ) && (
               <div className="offset-1 col-10 alert alert-info py-3">
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
               </div>
@@ -351,22 +388,29 @@ const CartDetails = ({
 
             <OrderFooter
               totalBillAmount={cartState.cart.totalBillAmount}
-              onButtonClick={() => { handleOrderSubmit(cartState); }}
+              onButtonClick={() => {
+                handleOrderSubmit(cartState);
+              }}
               submitButtonName={
-                    isOrderBeingUpdated ? 'Checking Wallet Balance ...'
-                      : orderId ? 'Update Order'
-                        : 'Place Order →'
-                }
+                isOrderBeingUpdated
+                  ? 'Checking Wallet Balance ...'
+                  : orderId
+                    ? 'Update Order'
+                    : 'Place Order →'
+              }
               showWaiting={
-                  isOrderBeingUpdated
-                  || !(isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount))
-                }
-              history={history}
+                isOrderBeingUpdated ||
+                !isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount)
+              }
               orderId={orderId}
               payCash={cartState.cart.payCashWithThisDelivery}
-              collectRecyclables={cartState.cart.collectRecyclablesWithThisDelivery}
+              collectRecyclables={
+                cartState.cart.collectRecyclablesWithThisDelivery
+              }
               onPayCash={handlePayCashWithThisDeliveryChange}
-              onCollectRecyclables={handleCollectRecyclablesWithThisDeliveryChange}
+              onCollectRecyclables={
+                handleCollectRecyclablesWithThisDeliveryChange
+              }
             />
           </Card>
         </Row>
@@ -375,12 +419,7 @@ const CartDetails = ({
   }
 };
 
-CartDetails.defaultProps = {
-  loggedUserId: Meteor.userId(),
-};
-
 CartDetails.propTypes = {
-  history: PropTypes.object.isRequired,
   orderId: PropTypes.string.isRequired,
   loggedUserId: PropTypes.string,
   loggedInUser: PropTypes.object.isRequired,

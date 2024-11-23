@@ -12,6 +12,7 @@ import { dMessages } from '../../apps/dynamicRoutes';
 
 import { GlobalStores, useStore } from '../../stores/GlobalStore';
 
+import { useNavigate } from 'react-router-dom';
 import { useCartState } from '../../stores/ShoppingCart';
 
 const fontProps = {
@@ -25,8 +26,7 @@ const reactVar = new ReactiveVar({
 });
 
 const ToolBar = ({
-  history,
-  countOfUnreadNotifications,
+  countOfUnreadNotifications = 0,
   authenticated,
   isAdmin,
   globalStatuses,
@@ -38,6 +38,7 @@ const ToolBar = ({
   );
 
   const cartState = useCartState();
+  const navigate = useNavigate();
   const totalProductsInCount = cartState.newCartCountOfItems;
 
   useEffect(() => {
@@ -75,19 +76,19 @@ const ToolBar = ({
 
   function onCartIconClick() {
     if (totalProductsInCount > 0) {
-      history.push('/cart');
+      navigate('/cart');
     } else {
-      history.push('/neworder');
-      // history.push('/neworder/selectbasket');
+      navigate('/neworder');
+      // navigate('/neworder/selectbasket');
     }
   }
 
   function onMessageIconClick(isAdmin) {
     if (isAdmin) {
-      // history.push('/messagesadmin');
+      // navigate('/messagesadmin');
       window.open(`https://web.whatsapp.com/`, '_blank');
     } else {
-      history.push('/messages');
+      navigate('/messages');
     }
   }
 
@@ -98,7 +99,7 @@ const ToolBar = ({
           <Button
             variant="white"
             onClick={() => {
-              history.push('/myorders');
+              navigate('/myorders');
             }}
           >
             <Icon icon="home" type="mt" className="fs-1" />
@@ -128,7 +129,7 @@ const ToolBar = ({
           </Button>
         </div>
         {/* <div className="col box2">
-          <Button variant="white" onClick={() => { history.push('/recipes'); }}>
+          <Button variant="white" onClick={() => { navigate('/recipes'); }}>
             <Icon icon="restaurant" type="mt" className="fs-2" />
             <span style={fontProps}>Recipes</span>
           </Button>
@@ -148,7 +149,7 @@ const ToolBar = ({
           <Button
             variant="white"
             onClick={() => {
-              history.push('/mywallet');
+              navigate('/mywallet');
             }}
           >
             <Icon icon="currency_rupee" type="mt" className="fs-2" />
@@ -164,12 +165,7 @@ const ToolBar = ({
   return <div />;
 };
 
-ToolBar.defaultProps = {
-  countOfUnreadNotifications: 0,
-};
-
 ToolBar.propTypes = {
-  history: PropTypes.object.isRequired,
   countOfUnreadNotifications: PropTypes.number,
 };
 

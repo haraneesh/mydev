@@ -1,13 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import OtpInput from 'react-otp-input';
-import Spinner from '../Common/Spinner/Spinner';
+import { toast } from 'react-toastify';
 import { formValChange, formValid } from '../../../modules/validate';
+import Spinner from '../Common/Spinner/Spinner';
+
+import { useNavigate } from 'react-router-dom';
 
 export default function InviteSelf({ history }) {
   const defaultErrorState = {
@@ -17,14 +19,21 @@ export default function InviteSelf({ history }) {
   const [isError, setIsError] = useState(defaultErrorState);
   const [otpValue, setOTPValue] = useState('');
   const [isSendingSMSInProgress, setSendingSMSInProgress] = useState(false);
-  const [isOTPValidationInProgress, setOTPValidationInProgress] = useState(false);
+  const [isOTPValidationInProgress, setOTPValidationInProgress] =
+    useState(false);
+  const navigate = useNavigate();
 
   function sendInvitation(event) {
     // send fast2sms
     event.preventDefault();
-    const phoneNumber = document.querySelector('input[name="whMobilePhone"]').value;
+    const phoneNumber = document.querySelector(
+      'input[name="whMobilePhone"]',
+    ).value;
 
-    const newErrorState = formValChange({ target: { name: 'whMobilePhone', value: phoneNumber } }, defaultErrorState);
+    const newErrorState = formValChange(
+      { target: { name: 'whMobilePhone', value: phoneNumber } },
+      defaultErrorState,
+    );
     setIsError(newErrorState.isError);
 
     if (formValid({ ...newErrorState })) {
@@ -43,7 +52,10 @@ export default function InviteSelf({ history }) {
   function confirmOTP(event) {
     event.preventDefault();
 
-    const newErrorState = formValChange({ target: { name: 'otp', value: otpValue } }, defaultErrorState);
+    const newErrorState = formValChange(
+      { target: { name: 'otp', value: otpValue } },
+      defaultErrorState,
+    );
     setIsError(newErrorState.isError);
 
     if (formValid({ ...newErrorState })) {
@@ -52,7 +64,7 @@ export default function InviteSelf({ history }) {
         if (error) {
           toast.error(error.reason);
         } else {
-          history.push(`/invitations/${result.token}/`);
+          navigate(`/invitations/${result.token}/`);
           // toast.success('OTP has been sent to your phone number');
         }
         setOTPValidationInProgress(false);
@@ -69,7 +81,10 @@ export default function InviteSelf({ history }) {
       <Row>
         <Col xs={12}>
           <Row>
-            <Form.Label> STEP 1. Enter Mobile Number to receive OTP </Form.Label>
+            <Form.Label>
+              {' '}
+              STEP 1. Enter Mobile Number to receive OTP{' '}
+            </Form.Label>
             <p />
             <Form.Control
               type="tel"
@@ -78,13 +93,13 @@ export default function InviteSelf({ history }) {
               pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
             />
             {isError.whMobilePhone.length > 0 && (
-            <span className="bg-white text-danger">{isError.whMobilePhone}</span>
+              <span className="bg-white text-danger">
+                {isError.whMobilePhone}
+              </span>
             )}
             <p />
             <Button type="submit" variant="default" onClick={sendInvitation}>
-              Send OTP
-              {' '}
-              {(isSendingSMSInProgress) && <Spinner />}
+              Send OTP {isSendingSMSInProgress && <Spinner />}
             </Button>
           </Row>
           <hr />
@@ -104,13 +119,11 @@ export default function InviteSelf({ history }) {
             />
 
             {isError.otp.length > 0 && (
-            <span className="bg-white text-danger">{isError.otp}</span>
+              <span className="bg-white text-danger">{isError.otp}</span>
             )}
             <p />
             <Button type="submit" variant="primary" onClick={confirmOTP}>
-              Verify OTP
-              {' '}
-              {(isOTPValidationInProgress) && <Spinner />}
+              Verify OTP {isOTPValidationInProgress && <Spinner />}
             </Button>
           </Row>
           <Row>
@@ -118,13 +131,14 @@ export default function InviteSelf({ history }) {
               <h4>
                 <p>Do you have any questions?</p>
                 <p>send us a Whatsapp Message or call us at </p>
-                <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
+                <a href="tel:+919361032849" className="text-primary">
+                  +91 9361032849
+                </a>
               </h4>
             </Col>
           </Row>
         </Col>
       </Row>
-
     </div>
   );
 }

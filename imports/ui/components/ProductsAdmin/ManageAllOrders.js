@@ -9,8 +9,8 @@ import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import handleMethodException from '/imports/modules/handle-method-exception';
 import {
   getOrders,
   getProductQuantityForOrderAwaitingFullFillment,
@@ -433,7 +433,7 @@ class ManageAllOrders extends React.Component {
   handleRowClick(e, rowIndex) {
     e.preventDefault();
     // this.props.history.push("/order/" + this.state.sortedDataList[rowIndex].id)
-    this.props.history.push(
+    this.props.navigate(
       `/order/${this.state.sortedDataList.getObjectAt(rowIndex).id}`,
     );
   }
@@ -632,6 +632,11 @@ class ManageAllOrders extends React.Component {
   }
 }
 
+export default function (props) {
+  const navigate = useNavigate();
+  return <ManageAllOrders {...props} navigate={navigate} />;
+}
+
 ManageAllOrders.propTypes = {
   orders: PropTypes.array,
   colSortDirs: PropTypes.object,
@@ -641,6 +646,3 @@ ManageAllOrders.propTypes = {
   changeSortOptions: PropTypes.func.isRequired,
   isWholeSale: PropTypes.bool.isRequired,
 };
-
-export default ManageAllOrders;
-// export default Dimensions()(ManageAllOrders);

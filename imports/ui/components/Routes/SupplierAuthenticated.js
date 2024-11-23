@@ -1,35 +1,34 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Route, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import constants from '../../../modules/constants';
 
 const SupplierAuthenticated = ({
-  layout: Layout, authenticated, roles, component: Component, ...rest
-}) => (
-  <Route
-    {...rest}
-    render={(props) => (
-      authenticated && roles.indexOf(constants.Roles.supplier.name) !== -1
-        ? (
-          <Layout
-            {...props}
-            isSupplier
-            authenticated
-            {...rest}
-          >
-            <Component {...props} authenticated {...rest} roles={roles} />
-          </Layout>
-        )
-        : (<Redirect to="/login" />)
-    )}
-  />
-);
+  layout: Layout,
+  authenticated,
+  roles,
+  component: Component,
+  ...rest
+}) => {
+  if (!(authenticated && roles.indexOf(constants.Roles.supplier.name) !== -1)) {
+    return <Navigate to="/login" replace={true} />;
+  }
+
+  return (
+    <Layout isSupplier authenticated {...rest}>
+      <Component authenticated {...rest} roles={roles} />
+    </Layout>
+  );
+};
 
 SupplierAuthenticated.propTypes = {
   authenticated: PropTypes.bool.isRequired,
-  component: PropTypes.object.isRequired,
+  component: PropTypes.oneOfType([
+    PropTypes.object.isRequired,
+    PropTypes.func.isRequired,
+  ]),
   roles: PropTypes.array.isRequired,
-  layout: PropTypes.node.isRequired,
+  layout: PropTypes.func.isRequired,
 };
 
 export default SupplierAuthenticated;

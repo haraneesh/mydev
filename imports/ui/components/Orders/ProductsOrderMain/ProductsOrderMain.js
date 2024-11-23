@@ -36,18 +36,19 @@ import {
 import ProductsOrderMobile from '../ProductsOrderMobile/ProductsOrderMobile';
 
 import './ProductsOrderMain.scss';
+import { useNavigate } from 'react-router-dom';
 
 const ProductsOrderMain = (props) => {
   const cartState = useCartState();
   const cartDispatch = useCartDispatch();
+  const navigate = useNavigate();
   const [productsArray, setProductsArray] = useState({});
   const {
-    orderId,
-    comments,
+    orderId = '',
+    comments = '',
     products,
-    history,
-    dateValue,
-    orderStatus,
+    dateValue = new Date(),
+    orderStatus = '',
     orderCustomerId,
   } = props;
   const isAdmin = isLoggedInUserAdmin();
@@ -95,7 +96,7 @@ const ProductsOrderMain = (props) => {
           toast.error(error.reason);
         } else {
           toast.success(confirmation);
-          history.push('/');
+          navigate('/');
         }
       });
     }
@@ -108,7 +109,7 @@ const ProductsOrderMain = (props) => {
           <DropdownButton
             id="btnSetDeliveryCode"
             title={`Delivery: ${isChennaiPinCode(cartState.cart.deliveryPincode) ? '  In Chennai  ' : ' Out of Chennai '}`}
-            className="d-inline-flex bg-light"
+            className="d-inline-flex"
             variant="primary"
           >
             <Dropdown.Item
@@ -171,7 +172,7 @@ const ProductsOrderMain = (props) => {
       } else {
         toast.success(confirmation);
         cartDispatch({ type: cartActions.emptyCart });
-        history.push('/');
+        navigate('/');
       }
     });
   };
@@ -267,7 +268,6 @@ const ProductsOrderMain = (props) => {
           comments={comments}
           totalBillAmount={cartState.cart.totalBillAmount}
           dateValue={dateValue}
-          history={history}
           deliveryPincode={cartState.cart.deliveryPincode}
           category={props.category}
           subCategory={props.subCategory}
@@ -280,7 +280,7 @@ const ProductsOrderMain = (props) => {
     <OrderFooter
       totalBillAmount={cartState.cart.totalBillAmount}
       onButtonClick={() => {
-        history.push(`/cart/${orderId || ''}`);
+        navigate(`/cart/${orderId || ''}`);
       }}
       submitButtonName="Checkout →"
       onSecondButtonClick={() => {
@@ -349,18 +349,8 @@ const ProductsOrderMain = (props) => {
   );
 };
 
-ProductsOrderMain.defaultProps = {
-  orderId: '',
-  orderStatus: '',
-  comments: '',
-  dateValue: new Date(),
-  orderedProducts: [],
-  addItemsFromCart: false,
-};
-
 ProductsOrderMain.propTypes = {
   products: PropTypes.array.isRequired,
-  history: PropTypes.object.isRequired,
   loggedInUser: PropTypes.object.isRequired,
   addItemsFromCart: PropTypes.bool,
   orderedProducts: PropTypes.array,

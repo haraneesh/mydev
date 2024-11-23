@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 function ShowInterest() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    history.push('/about');
+    navigate('/about');
   }, []);
 
-  return (
-    <div className="ShowInterest"> At Show Interest Page </div>
-  );
+  return <div className="ShowInterest"> At Show Interest Page </div>;
 }
 
 export default ShowInterest;

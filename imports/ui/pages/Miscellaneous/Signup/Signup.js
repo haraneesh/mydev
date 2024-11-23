@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
 import { formValChange, formValid } from '../../../../modules/validate';
@@ -179,7 +180,7 @@ class SignUp extends React.Component {
                     variant="secondary"
                     id="app-login"
                     onClick={() => {
-                      this.props.history.push('/login');
+                      this.props.navigate('/login');
                     }}
                   >
                     Log In
@@ -408,4 +409,8 @@ SignUp.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default SignUp;
+export default function (props) {
+  const navigate = useNavigate();
+
+  return <SignUp {...props} navigate={navigate} />;
+}

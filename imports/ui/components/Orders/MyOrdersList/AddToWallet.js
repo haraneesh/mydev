@@ -1,14 +1,15 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import Card from 'react-bootstrap/Card';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
 import { formatMoney } from 'accounting-js';
-import { accountSettings } from '../../../../modules/settings';
-import { useStore, GlobalStores } from '../../../stores/GlobalStore';
+import { useNavigate } from 'react-router-dom';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
+import { accountSettings } from '../../../../modules/settings';
+import { GlobalStores, useStore } from '../../../stores/GlobalStore';
 
 const displayWalletSummary = (amountInWalletInRs) => {
   let textClassName = '';
@@ -31,14 +32,17 @@ const displayWalletSummary = (amountInWalletInRs) => {
 };
 
 const updateGlobalStore = (walletBalanceInRs, numberOfAwaitingPayments) => {
-  const [currentValue, setPaymentNotification] = useStore(GlobalStores.paymentNotification.name);
-  if ((currentValue !== numberOfAwaitingPayments) && (walletBalanceInRs < 0)) {
+  const [currentValue, setPaymentNotification] = useStore(
+    GlobalStores.paymentNotification.name,
+  );
+  if (currentValue !== numberOfAwaitingPayments && walletBalanceInRs < 0) {
     setPaymentNotification(numberOfAwaitingPayments);
   }
 };
 
-const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
+const AddToWallet = ({ userWallet, numberOfAwaitingPayments = 0 }) => {
   const walletBalanceInRs = calculateWalletBalanceInRs(userWallet);
+  const navigate = useNavigate();
   updateGlobalStore(walletBalanceInRs, numberOfAwaitingPayments);
 
   return (
@@ -49,11 +53,18 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
             <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
           </Col>
           <Col xs={6} sm={4} className="text-right-xs">
-            {(userWallet) ? (displayWalletSummary(walletBalanceInRs)) : (displayWalletSummary(0))}
+            {userWallet
+              ? displayWalletSummary(walletBalanceInRs)
+              : displayWalletSummary(0)}
           </Col>
           <Col xs={12} sm={3} className="text-right">
-            <Button variant="secondary" onClick={() => { history.push('/mywallet'); }}>
-              {(walletBalanceInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
+            <Button
+              variant="secondary"
+              onClick={() => {
+                navigate('/mywallet');
+              }}
+            >
+              {walletBalanceInRs >= 0 ? 'Pay Advance' : 'Pay Due'}
             </Button>
           </Col>
         </Row>
@@ -65,14 +76,9 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments, history }) => {
   );
 };
 
-AddToWallet.defaultProps = {
-  numberOfAwaitingPayments: 0,
-};
-
 AddToWallet.propTypes = {
   userWallet: PropTypes.object.isRequired,
   numberOfAwaitingPayments: PropTypes.number,
-  history: PropTypes.object.isRequired,
 };
 
 export default AddToWallet;

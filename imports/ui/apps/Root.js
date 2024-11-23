@@ -1,37 +1,35 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {
-  BrowserRouter, useHistory, useLocation,
-} from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
-import { withTracker } from 'meteor/react-meteor-data';
 import { Roles } from 'meteor/alanning:roles';
-import App from './App';
+import { withTracker } from 'meteor/react-meteor-data';
 import Loading from '../components/Loading/Loading';
+import App from './App';
 
-const getUserName = (name) => ({
-  string: name,
-  object: `${name.first} ${name.last}`,
-}[typeof name]);
+const getUserName = (name) =>
+  ({
+    string: name,
+    object: `${name.first} ${name.last}`,
+  })[typeof name];
 
-const RootWithRouter = (props) => {
-  const location = useLocation();
+function RootWithRouter(props) {
   // Scroll to top if path changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  return (<App {...props} />);
-};
+  return <App {...props} />;
+}
 
 RootWithRouter.propTypes = {
   loggedInUserId: PropTypes.string.isRequired,
 };
 
-const Root = (props) => {
+function Root(props) {
   if (props.loading) {
-    return (<Loading />);
+    return <Loading />;
   }
 
   return (
@@ -41,7 +39,7 @@ const Root = (props) => {
       </BrowserRouter>
     </React.StrictMode>
   );
-};
+}
 
 export default withTracker(() => {
   const loggingIn = Meteor.loggingIn();
@@ -52,7 +50,8 @@ export default withTracker(() => {
   const user = Meteor.user();
   const userId = Meteor.userId();
 
-  const name = user && user.profile && user.profile.name && getUserName(user.profile.name);
+  const name =
+    user && user.profile && user.profile.name && getUserName(user.profile.name);
   const emailAddress = user && user.emails && user.emails[0].address;
   const emailVerified = user && user.emails && user.emails[0].verified;
   const productReturnables = user && user.productReturnables;

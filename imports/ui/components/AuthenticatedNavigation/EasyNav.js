@@ -1,9 +1,12 @@
 import React from 'react';
 import Nav from 'react-bootstrap/Nav';
-import { NavLink, Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export const EasyNavNarrowScreen = (props) => (
-  <ul className="sec-menu-bar d-sm-none pt-4 row" style={{ listStyleType: 'none' }}>
+  <ul
+    className="sec-menu-bar d-sm-none pt-4 row"
+    style={{ listStyleType: 'none' }}
+  >
     <li className="col-4 text-center">
       <Link to="/myorders">My Orders</Link>
     </li>
@@ -27,18 +30,18 @@ export const EasyNavNarrowScreen = (props) => (
 );
 
 export const EasyNavWideScreen = (props) => (
-  <div className="d-none d-md-block text-center col">
+  <div className="d-none d-md-block text-center col-sm-7">
     <span className="col text-center  px-2">
-      <NavLink exact to="/myorders"> My Orders</NavLink>
+      <NavLink to="/myorders"> My Orders</NavLink>
     </span>
     <span className="col text-center px-2">
-      { /* <NavLink to="/neworder/selectbasket"> Place Order</NavLink> */}
+      {/* <NavLink to="/neworder/selectbasket"> Place Order</NavLink> */}
       <Link to="/neworder"> Place Order </Link>
     </span>
     {!!props.authenticated && (
-    <span className="col text-center  px-2">
-      <NavLink to="/mywallet"> My Wallet </NavLink>
-    </span>
+      <span className="col text-center  px-2">
+        <NavLink to="/mywallet"> My Wallet </NavLink>
+      </span>
     )}
     <span className="col text-center  px-2">
       <NavLink to="/about">About Us</NavLink>

@@ -1,9 +1,10 @@
 import React from 'react';
-import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { sendInvitation } from '../../../api/Invitations/methods';
 
 const validateSendInvitationForm = (onSuccess) => {
@@ -26,11 +27,13 @@ const validateSendInvitationForm = (onSuccess) => {
         email: 'An email address must be in the format of name@domain.com',
       },
     },
-    submitHandler() { onSuccess(); },
+    submitHandler() {
+      onSuccess();
+    },
   });
 };
 
-export default class SendInvitation extends React.Component {
+class SendInvitation extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -53,7 +56,7 @@ export default class SendInvitation extends React.Component {
       } else {
         const message = `${invitation.name} has been invited!`;
         toast.success(message);
-        this.props.history.push('/invitations');
+        this.props.navigate('/invitations');
       }
     });
   }
@@ -66,7 +69,9 @@ export default class SendInvitation extends React.Component {
             <form
               name="form-send-Invitation"
               className="form-send-invitation"
-              onSubmit={(event) => { event.preventDefault(); }}
+              onSubmit={(event) => {
+                event.preventDefault();
+              }}
             >
               <Row>
                 <label>Name</label>
@@ -86,11 +91,22 @@ export default class SendInvitation extends React.Component {
                   placeholder="divyaKumari@gmail.com"
                 />
               </Row>
-              <Button type="submit" variant="primary" onClick={this.handleSubmit}>Invite</Button>
+              <Button
+                type="submit"
+                variant="primary"
+                onClick={this.handleSubmit}
+              >
+                Invite
+              </Button>
             </form>
           </Col>
         </Row>
       </div>
     );
   }
+}
+
+export default function (props) {
+  const navigate = useNavigate();
+  return <SendInvitation {...props} navigate={navigate} />;
 }

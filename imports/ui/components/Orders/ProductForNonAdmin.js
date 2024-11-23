@@ -225,20 +225,20 @@ const ProductForNonAdmin = ({
   // <Col sm = { 2 }><Image  src={ image } className = "order-image" responsive /> </Col>
   productId,
   name,
-  description,
+  description = '',
   unit,
   unitprice,
   onChange,
   quantitySelected,
-  unitsForSelection,
+  unitsForSelection = '0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10',
   maxUnitsAvailableToOrder,
   totQuantityOrdered,
   previousOrdQty,
   image,
-  checkout,
+  checkout = false,
   isBasket,
-  removedDuringCheckout,
-  associatedReturnables,
+  removedDuringCheckout = false,
+  associatedReturnables = {},
   includeReturnables,
   sliderView,
   sale,
@@ -431,14 +431,6 @@ const ProductForNonAdmin = ({
       </Col>
     </div>
   );
-};
-
-ProductForNonAdmin.defaultProps = {
-  checkout: false,
-  description: '',
-  unitsForSelection: '0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10',
-  removedDuringCheckout: false,
-  associatedReturnables: {},
 };
 
 ProductForNonAdmin.propTypes = {

@@ -1,18 +1,18 @@
-import React from 'react';
+import { formatMoney } from 'accounting-js';
 import PropTypes from 'prop-types';
+import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import { formatMoney } from 'accounting-js';
-import { accountSettings } from '../../../../modules/settings';
-import { displayUnitOfSale } from '../../../../modules/helpers';
-import Product from '../Product';
 import OrderCommon from '../../../../modules/both/orderCommon';
+import { displayUnitOfSale } from '../../../../modules/helpers';
+import { accountSettings } from '../../../../modules/settings';
+import Product from '../Product';
 
 const { costOfReturnable } = OrderCommon;
 
 export const ViewOrderProducts = ({ products }) => (
   <>
-    <Row className="bg-light p-3">
+    <Row className="p-3">
       <Col xs={4}>
         <strong> Name </strong>
       </Col>
@@ -33,9 +33,7 @@ export const ViewOrderProducts = ({ products }) => (
           <div>
             <Row key={product._id} className="p-2">
               <Col xs={4}>
-                {`${product.name} ${product.unitOfSale}`}
-                {' '}
-                <br />
+                {`${product.name} ${product.unitOfSale}`} <br />
                 {/* <small>
                 {' '}
                 {product.description}
@@ -55,18 +53,24 @@ export const ViewOrderProducts = ({ products }) => (
                 )}
               </Col>
             </Row>
-            {(product.associatedReturnables && product.associatedReturnables.quantity && product.associatedReturnables.quantity > 0) && (
-            <Row className="ps-3 pe-2">
-              <Col>
-                {product.associatedReturnables.name}
-              </Col>
-              <Col xs={3} className="text-right">
-                {formatMoney(costOfReturnable(product.associatedReturnables.returnableUnitsForSelection, product.quantity).retQtySelectedPrice, accountSettings)}
-              </Col>
-            </Row>
-            )}
+            {product.associatedReturnables &&
+              product.associatedReturnables.quantity &&
+              product.associatedReturnables.quantity > 0 && (
+                <Row className="ps-3 pe-2">
+                  <Col>{product.associatedReturnables.name}</Col>
+                  <Col xs={3} className="text-right">
+                    {formatMoney(
+                      costOfReturnable(
+                        product.associatedReturnables
+                          .returnableUnitsForSelection,
+                        product.quantity,
+                      ).retQtySelectedPrice,
+                      accountSettings,
+                    )}
+                  </Col>
+                </Row>
+              )}
           </div>
-
         );
       }
     })}
@@ -78,7 +82,10 @@ ViewOrderProducts.propTypes = {
 };
 
 export const ReviewOrder = ({
-  products, updateProductQuantity, isMobile, isAdmin,
+  products,
+  updateProductQuantity,
+  isMobile,
+  isAdmin,
 }) => (
   <Row className="order-details-products p-2">
     <Row>

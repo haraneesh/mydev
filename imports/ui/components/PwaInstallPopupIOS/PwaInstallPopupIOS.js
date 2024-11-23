@@ -1,20 +1,15 @@
 // https://github.com/guillaumegustin/react-pwa-installer-ios/tree/master/src/PwaInstallPopupIOS
 // https://github.com/chrisdancee/react-ios-pwa-prompt - icons from here
 
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
-import ShareIcon from './ShareIcon';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import HomeScreenIcon from './HomeScreenIcon';
+import ShareIcon from './ShareIcon';
 
 import translations from './locales.json';
 
-import {
-  isIos,
-  isIPad,
-  isInStandaloneMode,
-  isSafari,
-} from './browser';
+import { isIPad, isInStandaloneMode, isIos, isSafari } from './browser';
 
 import './styles.scss';
 
@@ -47,12 +42,12 @@ const removeClickListener = (clickListener) => {
 
 const PwaInstallPopupIOS = ({
   lang,
-  appIcon,
-  appName,
-  styles,
-  delay,
-  children,
-  force,
+  styles = null,
+  appName = null,
+  force = false,
+  children = null,
+  appIcon = null,
+  delay = DEFAULT_DELAY_FOR_DISPLAY_SECONDS,
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isOpen, setOpened] = useState(false);
@@ -81,8 +76,8 @@ const PwaInstallPopupIOS = ({
         console.log('checkLastPwaDisplay: ', checkLastPwaDisplay());
       }
       if (
-        force
-        || (isIos() && !isInStandaloneMode() && checkLastPwaDisplay())
+        force ||
+        (isIos() && !isInStandaloneMode() && checkLastPwaDisplay())
       ) {
         setOpened(true);
       }
@@ -121,7 +116,6 @@ const PwaInstallPopupIOS = ({
                     apppNameLabel,
                   )}
                 </small>
-
               </h4>
             </div>
             <div className="col-12 offset-sm-2">
@@ -132,17 +126,11 @@ const PwaInstallPopupIOS = ({
             </div>
             <div className="col-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART3}
-              <ShareIcon
-                className="pwaPromptShareIcon"
-                modern
-              />
+              <ShareIcon className="pwaPromptShareIcon" modern />
             </div>
             <div className="col-12 offset-sm-2">
               {translations[languageCode].PWA_POPUP_PART4}
-              <HomeScreenIcon
-                className="pwaPromptHomeIcon"
-                modern
-              />
+              <HomeScreenIcon className="pwaPromptHomeIcon" modern />
             </div>
           </div>
         </div>
@@ -159,15 +147,6 @@ PwaInstallPopupIOS.propTypes = {
   appIcon: PropTypes.string,
   delay: PropTypes.number,
   appName: PropTypes.string,
-};
-
-PwaInstallPopupIOS.defaultProps = {
-  styles: null,
-  appName: null,
-  force: false,
-  children: null,
-  appIcon: null,
-  delay: DEFAULT_DELAY_FOR_DISPLAY_SECONDS,
 };
 
 export default PwaInstallPopupIOS;

@@ -1,15 +1,16 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import Card from 'react-bootstrap/Card';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { acceptInvitation } from '../../../../api/Invitations/methods';
+import { formValChange, formValid } from '../../../../modules/validate';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
-import { formValChange, formValid } from '../../../../modules/validate';
 
 const defaultState = {
   signUpRequestSent: false,
@@ -42,12 +43,15 @@ class SelfSignUp extends React.Component {
   onValueChange(e) {
     e.preventDefault();
     const { isError } = this.state;
-    const newState = formValChange(e,
+    const newState = formValChange(
+      e,
       { ...isError },
       {
         password: document.querySelector('[name="password"]').value,
-        confirmPassword: document.querySelector('[name="confirmPassword"]').value,
-      });
+        confirmPassword: document.querySelector('[name="confirmPassword"]')
+          .value,
+      },
+    );
     this.setState(newState);
   }
 
@@ -66,14 +70,19 @@ class SelfSignUp extends React.Component {
     const { history } = this.props;
     const { match } = this.props;
 
-    Meteor.call('invitations.confirmToken', match.params.token, (error, whMobileNumber) => {
-      if (error) {
-        toast.error(error.reason);
-        history.push('/signup');
-      } else {
-        document.querySelector('[name="whMobilePhone"]').value = whMobileNumber;
-      }
-    });
+    Meteor.call(
+      'invitations.confirmToken',
+      match.params.token,
+      (error, whMobileNumber) => {
+        if (error) {
+          toast.error(error.reason);
+          history.push('/signup');
+        } else {
+          document.querySelector('[name="whMobilePhone"]').value =
+            whMobileNumber;
+        }
+      },
+    );
   }
 
   handleSubmit() {
@@ -102,7 +111,9 @@ class SelfSignUp extends React.Component {
           history.push('/signup');
           toast.error(error.reason);
         } else {
-          toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
+          toast.success(
+            `Welcome ${this.firstName.value} ${this.lastName.value}!`,
+          );
           setTimeout(() => {
             history.push('/login');
           }, 3000);
@@ -117,7 +128,9 @@ class SelfSignUp extends React.Component {
         if (error) {
           toast.error(error.reason);
         } else {
-          toast.success(`Welcome ${this.firstName.value} ${this.lastName.value}!`);
+          toast.success(
+            `Welcome ${this.firstName.value} ${this.lastName.value}!`,
+          );
           this.setState({
             signUpRequestSent: true,
           });
@@ -129,7 +142,7 @@ class SelfSignUp extends React.Component {
   render() {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
-    return (!signUpRequestSent ? (
+    return !signUpRequestSent ? (
       <div className="Signup offset-sm-1">
         <div>
           <Col xs={12} sm={10}>
@@ -139,21 +152,19 @@ class SelfSignUp extends React.Component {
                 <h2 className="text-info"> Welcome to Suvai </h2>
                 <br />
                 <p>
-                  Suvai is a community of like minded families who have been together for more than
-                  {' '}
-                  <b className="text-info h4">5 years</b>
+                  Suvai is a community of like minded families who have been
+                  together for more than <b className="text-info h4">5 years</b>
                   .
                 </p>
                 <p>
-                  We are committed to eating healthy and leaving behind a small ecological footprint.
+                  We are committed to eating healthy and leaving behind a small
+                  ecological footprint.
                 </p>
-                <p>
-                  We are happy to Welcome you, Please introduce yourself.
-                </p>
+                <p>We are happy to Welcome you, Please introduce yourself.</p>
               </div>
             </div>
 
-            { /* <Row>
+            {/* <Row>
             <Col xs={12}>
               <OAuthLoginButtons
                 services={['facebook']}
@@ -163,21 +174,23 @@ class SelfSignUp extends React.Component {
                 }}
               />
             </Col>
-          </Row> */ }
-            <form ref={(form) => (this.form = form)} onSubmit={this.validateForm}>
-
+          </Row> */}
+            <form
+              ref={(form) => (this.form = form)}
+              onSubmit={this.validateForm}
+            >
               <div className="alert alert-info text-center p-3 mt-3">
                 <span>
                   {'Already have an account? '}
-                  <a href="/login" className="login-signup text-secondary">Log In</a>
+                  <a href="/login" className="login-signup text-secondary">
+                    Log In
+                  </a>
                 </span>
               </div>
 
               <Row>
                 <Col xs={6}>
-                  <Row
-                    style={{ paddingRight: '1px' }}
-                  >
+                  <Row style={{ paddingRight: '1px' }}>
                     <Row>First Name</Row>
                     <input
                       type="text"
@@ -189,9 +202,7 @@ class SelfSignUp extends React.Component {
                   </Row>
                 </Col>
                 <Col xs={6}>
-                  <Row
-                    style={{ paddingLeft: '1px' }}
-                  >
+                  <Row style={{ paddingLeft: '1px' }}>
                     <Row>Last Name</Row>
                     <input
                       type="text"
@@ -225,13 +236,22 @@ class SelfSignUp extends React.Component {
                   disabled
                 />
 
-                <Button style={{ marginTop: '0.5em' }} onClick={() => { this.props.history.push('/signup'); }}> Change Phone Number </Button>
-
+                <Button
+                  style={{ marginTop: '0.5em' }}
+                  onClick={() => {
+                    this.props.navigate('/signup');
+                  }}
+                >
+                  {' '}
+                  Change Phone Number{' '}
+                </Button>
               </Row>
               <Row>
                 <Row>Delivery Address</Row>
                 <textarea
-                  ref={(deliveryAddress) => (this.deliveryAddress = deliveryAddress)}
+                  ref={(deliveryAddress) =>
+                    (this.deliveryAddress = deliveryAddress)
+                  }
                   name="deliveryAddress"
                   placeholder="Complete address to deliver at, including Landmark."
                   rows={6}
@@ -243,7 +263,9 @@ class SelfSignUp extends React.Component {
                 <Row>Delivery Address Pincode</Row>
                 <input
                   type="text"
-                  ref={(deliveryPincode) => (this.deliveryPincode = deliveryPincode)}
+                  ref={(deliveryPincode) =>
+                    (this.deliveryPincode = deliveryPincode)
+                  }
                   name="deliveryPincode"
                   placeholder="Enter Pincode of the delivery address"
                   className="form-control"
@@ -253,7 +275,9 @@ class SelfSignUp extends React.Component {
               <Row>
                 <Row>What does eating healthy mean to you?</Row>
                 <textarea
-                  ref={(eatingHealthyMeaning) => (this.eatingHealthyMeaning = eatingHealthyMeaning)}
+                  ref={(eatingHealthyMeaning) =>
+                    (this.eatingHealthyMeaning = eatingHealthyMeaning)
+                  }
                   name="eatingHealthyMeaning"
                   placeholder="You are never wrong, tell us what is in your mind."
                   rows={6}
@@ -273,7 +297,9 @@ class SelfSignUp extends React.Component {
                 />
                 <InputHint>Use at least six characters.</InputHint>
                 {isError.password.length > 0 && (
-                <span className="bg-white text-danger">{isError.password}</span>
+                  <span className="bg-white text-danger">
+                    {isError.password}
+                  </span>
                 )}
               </Row>
               <Row>
@@ -281,21 +307,27 @@ class SelfSignUp extends React.Component {
                 <input
                   type="password"
                   name="confirmPassword"
-                  ref={(confirmPassword) => (this.confirmPassword = confirmPassword)}
+                  ref={(confirmPassword) =>
+                    (this.confirmPassword = confirmPassword)
+                  }
                   className="form-control"
                   onBlur={this.onValueChange}
                 />
                 {isError.confirmPassword.length > 0 && (
-                <span className="bg-white text-danger">{isError.confirmPassword}</span>
+                  <span className="bg-white text-danger">
+                    {isError.confirmPassword}
+                  </span>
                 )}
               </Row>
               <p>
                 <small>
-                  By Signing up you are sharing your commitment towards healthy and sustainable lifestyle.
+                  By Signing up you are sharing your commitment towards healthy
+                  and sustainable lifestyle.
                 </small>
               </p>
-              <Button type="submit" variant="secondary">Sign Up</Button>
-
+              <Button type="submit" variant="secondary">
+                Sign Up
+              </Button>
             </form>
           </Col>
         </div>
@@ -307,8 +339,8 @@ class SelfSignUp extends React.Component {
             <h2>Thanks for your interest in Suvai!</h2>
             <br />
             <p>
-              Please give us a few days for our admins to review the
-              request and send an invite to join our community.
+              Please give us a few days for our admins to review the request and
+              send an invite to join our community.
             </p>
           </Col>
           <Col xs={12} style={{ marginTop: '2rem' }}>
@@ -316,12 +348,14 @@ class SelfSignUp extends React.Component {
               While you are waiting, here is our manifesto on Healthy Living.
             </p>
             <h4>
-              <a className="text-primary" href="/healthprinciples"> Suvai's Health Principles</a>
+              <a className="text-primary" href="/healthprinciples">
+                {' '}
+                Suvai's Health Principles
+              </a>
             </h4>
           </Col>
         </Row>
       </Card>
-    )
     );
   }
 }
@@ -331,4 +365,7 @@ SelfSignUp.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default SelfSignUp;
+export default function (props) {
+  const navigate = useNavigate();
+  return <SelfSignUp {...props} navigate={navigate} />;
+}

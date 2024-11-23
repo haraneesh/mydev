@@ -1,66 +1,68 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import Container from 'react-bootstrap/Container';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {
+  EasyNavNarrowScreen,
+  EasyNavWideScreen,
+} from '../AuthenticatedNavigation/EasyNav';
+import SideMenu from '../AuthenticatedNavigation/SideMenu';
 import Icon from '../Icon/Icon';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
-import SideMenu from '../AuthenticatedNavigation/SideMenu';
-import { EasyNavWideScreen, EasyNavNarrowScreen } from '../AuthenticatedNavigation/EasyNav';
 
 function Navigation(props) {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <>
       <Container fluid="true" className="bg-white py-2">
         <Row>
-          <span className="text-left col col-sm-3 ps-2">
-            {props.authenticated
-        && (
+          {props.authenticated && (
+            <span className="text-left col-1">
+              <Button
+                variant="white"
+                onClick={() => {
+                  navigate(-1, { replace: true });
+                }}
+                className="backButton"
+                id="backIcon"
+              >
+                <Icon icon="arrow_back" className="fs-2" type="mt" />
+              </Button>
+            </span>
+          )}
 
-        <Button
-          variant="white"
-          onClick={() => { history.goBack(); }}
-          className="backButton"
-          id="backIcon"
-        >
-          <Icon icon="arrow_back" className="fs-2" type="mt" />
-        </Button>
-
-        )}
-
+          <span className="text-left col ps-1">
             <img
               className="brand-logo ms-3"
               src="/logo.svg?v200"
               alt="Suvai"
-              style={{ maxHeight: '3.6em' }}
-              onClick={() => { history.push('/'); }}
+              style={{ maxWidth: '8em' }}
+              onClick={() => {
+                navigate('/');
+              }}
             />
           </span>
 
-          { /*! props.authenticated && <PublicNavigation {...props} /> */ }
-          { <EasyNavWideScreen isAdmin={props.isAdmin} {...props} /> }
+          {/*! props.authenticated && <PublicNavigation {...props} /> */}
+          {<EasyNavWideScreen isAdmin={props.isAdmin} {...props} />}
 
-          { <SideMenu {...props} /> }
+          {<SideMenu {...props} />}
         </Row>
         {/*  </header> */}
         <Row>
-          { !!props.authenticated && props.showEasyNav && <EasyNavNarrowScreen isAdmin={props.isAdmin} /> }
+          {!!props.authenticated && props.showEasyNav && (
+            <EasyNavNarrowScreen isAdmin={props.isAdmin} />
+          )}
         </Row>
       </Container>
-
     </>
   );
 }
 
-Navigation.defaultProps = {
-  name: '',
-};
-
 Navigation.propTypes = {
   authenticated: PropTypes.bool.isRequired,
-  history: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   showEasyNav: PropTypes.bool.isRequired,
 };

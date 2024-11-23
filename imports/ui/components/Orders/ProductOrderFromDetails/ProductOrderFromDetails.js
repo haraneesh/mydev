@@ -2,7 +2,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import constants from '../../../../modules/constants';
 import {
@@ -28,7 +28,7 @@ function ProductsOrderFromDetails(props) {
   const cartDispatch = useCartDispatch();
   const [product, setProduct] = useState({});
   const [productDetails, setProductDetails] = useState({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const {
     orderId,
     comments,
@@ -88,7 +88,7 @@ function ProductsOrderFromDetails(props) {
     const prod = { ...product };
     cartDispatch({ type: cartActions.updateCart, payload: { product: prod } });
     // go to
-    history.push('/cart');
+    navigate('/cart');
   }
 
   if (!product.name) {
@@ -180,7 +180,6 @@ ProductsOrderFromDetails.propTypes = {
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   name: PropTypes.string.isRequired,
   dateValue: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
   productId: PropTypes.string,
 };
 

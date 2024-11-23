@@ -7,7 +7,6 @@ import RouteNames from '../apps/RouteNames';
 import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';
 import Navigation from '../components/Navigation/Navigation';
 import ToolBar from '../components/ToolBar/ToolBar';
-import GlobalStyle from './GlobalStyle';
 
 const trackPageViews = ({ loggedInUser, routeName, match }) => {
   if (Meteor.isProduction) {
@@ -78,7 +77,6 @@ export const RecipeLayout = (props) => {
         <title>{`${props.routeName.replace(/_/g, ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <ThemeProvider theme={{}}>
-        <GlobalStyle />
         <Navigation showEasyNav={false} {...props} />
         <Container fluid="true" className="recipesApp">
           {props.children}
@@ -111,7 +109,6 @@ export const SupplierLayout = (props) => {
         <title>{`${props.routeName.replace(/_/g, ' ')} | ${Meteor.settings.public.App_Name}`}</title>
       </Helmet>
       <ThemeProvider theme={{}}>
-        <GlobalStyle />
         <Navigation showEasyNav={false} {...props} />
         <Container className="supplierApp">{props.children}</Container>
       </ThemeProvider>

@@ -1,15 +1,14 @@
-import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import PropTypes from 'prop-types';
 import { formatMoney } from 'accounting-js';
-import { accountSettings } from '../../../../modules/settings';
+import PropTypes from 'prop-types';
+import React from 'react';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { displayUnitOfSale } from '../../../../modules/helpers';
+import { accountSettings } from '../../../../modules/settings';
 
 const DisplayOrderProducts = ({ products, total }) => (
   <Row className="order-details-products px-sm-4">
-
-    <Row className="bg-light py-2">
+    <Row className="py-2">
       <Col xs={4}>
         <strong> Name </strong>
       </Col>
@@ -38,28 +37,18 @@ const DisplayOrderProducts = ({ products, total }) => (
               {`${displayUnitOfSale(product.quantity, product.unit)}`}
             </Col>
             <Col xs={3} className="text-right">
-              {formatMoney(
-                product.rate * product.quantity,
-                accountSettings,
-              )}
+              {formatMoney(product.rate * product.quantity, accountSettings)}
             </Col>
           </Row>
-
         );
       }
     })}
 
-    <Row className="py-3 pe-2 bg-light">
+    <Row className="py-3 pe-2">
       <Col xs={12} className="text-right">
-        Amount:
-        {' '}
-        {' '}
-        <strong>
-          {formatMoney(total, accountSettings)}
-        </strong>
+        Amount: <strong>{formatMoney(total, accountSettings)}</strong>
       </Col>
     </Row>
-
   </Row>
 );
 
@@ -68,17 +57,15 @@ const ViewInvoice = ({ invoice }) => (
     <Row>
       <Col xs={12}>
         <h4>
-          {invoice.invoice_number}
-          {' '}
-          -
-          {' '}
-          <span className="text-muted">
-            {' '}
-            {invoice.status}
-            {' '}
-          </span>
+          {invoice.invoice_number} -{' '}
+          <span className="text-muted"> {invoice.status} </span>
         </h4>
-        { invoice.line_items && <DisplayOrderProducts products={invoice.line_items} total={invoice.total} /> }
+        {invoice.line_items && (
+          <DisplayOrderProducts
+            products={invoice.line_items}
+            total={invoice.total}
+          />
+        )}
       </Col>
     </Row>
     <div>
