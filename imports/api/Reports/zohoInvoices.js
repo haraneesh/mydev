@@ -126,7 +126,8 @@ const callGetInvoicesFromZoho = async (lastNoErrorSyncDate) => {
     let page = 1;
     let hasMorePages = true;
 
-    // const syncDT = await ZohoSyncUps.findOneAsync({ syncEntity: syncUpConstants.users }).syncDateTime;
+    // const syncDTRec = await ZohoSyncUps.findOneAsync({ syncEntity: syncUpConstants.users });
+    // const syncDT = syncDTRec.syncDateTime;
 
     // page<10, 10 is arbitrary if it goes to more than 10 pages want to break out, may be something is wrong
     while (hasMorePages && page < 10) {

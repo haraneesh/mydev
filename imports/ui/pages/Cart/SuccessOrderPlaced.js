@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Roles } from 'meteor/alanning:roles';
+import { Navigate } from 'react-router-dom';
 // import { getDeliveryDay } from '../../../modules/helpers';
 import { toast } from 'react-toastify';
 import { getOrderDetails } from '../../../api/Orders/methods';
@@ -48,14 +49,14 @@ const RegisterInvitation = () => {
 };
 
 const SuccessOrderPlaced = ({
-  history, match: { params }, loggedInUser, productReturnables,
+   match: { params }, loggedInUser, productReturnables,
 }) => {
   const { profile } = loggedInUser;
   const { orderId } = params;
   const [order, setOrder] = useState({});
 
   if (!orderId) {
-    history.push('/');
+    return <Navigate to="/" />;
   }
   useEffect(() => {
     if (orderId) {
@@ -145,7 +146,6 @@ SuccessOrderPlaced.defaultProps = {
 };
 
 SuccessOrderPlaced.propTypes = {
-  history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   loggedInUser: PropTypes.object,
 };

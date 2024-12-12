@@ -28,6 +28,7 @@ import {
   OrderFooter,
   PrevOrderComplaint,
 } from './CartCommon';
+import GetUserPhoneNumber from './GetUserPhoneNumber';
 import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
 
 const isOrderAmountGreaterThanMinimum = (orderAmt) => {
@@ -50,6 +51,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   const [successfullyPlacedOrderId, setSuccessfullyPlacedOrderId] =
     useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [getUserMobileNumber, setGetUserMobileNumber] = useState(false);
   const [deletedProducts, setDeletedProducts] = useState(
     emptyDeletedProductsState,
   );
@@ -125,6 +127,11 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     setOnBehalfUser(onBehalfUserTemp);
   };
 
+  const placeOrderSuvaiMobileNumber = ({userId}) => {
+    setGetUserMobileNumber(false);
+    placeOrder({loggedInUserId: userId, onBehalfUser: onBehalfUser});
+  }
+
   const handleOrderSubmit = () => {
     if (
       onBehalfUser.isNecessary &&
@@ -138,8 +145,18 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       return;
     }
 
+    if (!loggedInUser) {
+      setGetUserMobileNumber(true);
+    }
+
     if (loggedInUser) {
-      const products = [];
+      placeOrder({loggedInUserId: loggedInUser._id, onBehalfUser: onBehalfUser});
+    }
+  };
+
+  function placeOrder({loggedInUserId, onBehalfUser}){
+
+    const products = [];
 
       Object.keys(cartState.cart.productsInCart).map((key) => {
         products.push(cartState.cart.productsInCart[key]);
@@ -155,14 +172,14 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
         collectRecyclablesWithThisDelivery:
           cartState.cart.collectRecyclablesWithThisDelivery || false,
         basketId: cartState.cart.basketId || '',
-        loggedInUserId: loggedInUser._id,
+        loggedInUserId: loggedInUserId,
         deliveryPincode: cartState.cart.deliveryPincode,
       };
 
       if (onBehalfUser.isNecessary) {
         order.loggedInUserId = onBehalfUser.user._id;
         order.onBehalf = {
-          postUserId: loggedInUser._id,
+          postUserId: loggedInUserId,
           orderReceivedAs: onBehalfUser.orderReceivedAs,
         };
       }
@@ -172,7 +189,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
         if (error) {
           toast.error(error.reason);
           setOrderUpdated(false);
-        } else if (!isLoggedInUserAdmin()) {
+        } else if (!isLoggedInUserAdmin() && loggedInUser) {
           toast.success('Order has been placed successfully!');
 
           setSuccessfullyPlacedOrderId(
@@ -189,15 +206,15 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             setOrderUpdated(false);
           });
           setShowPaymentModal(true);
-        } else {
+          moveToOrderSubmitScreen();
+        } 
+        else{
+          toast.success('Order has been placed successfully!');
           moveToOrderSubmitScreen();
         }
       });
-    } else {
-      // Sign up
-      navigate('/signup');
-    }
-  };
+
+  }
 
   const clearCart = () => {
     if (
@@ -287,6 +304,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     default: {
       return (
         <Row>
+          <GetUserPhoneNumber handlePlaceOrder={placeOrderSuvaiMobileNumber} showMobileNumberForm={getUserMobileNumber}/>
           <Col xs={12}>
             <h2 className="py-4 text-center">
               {orderId ? 'Update Order' : 'Your Cart'}
@@ -420,9 +438,9 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
 };
 
 CartDetails.propTypes = {
-  orderId: PropTypes.string.isRequired,
+  orderId: PropTypes.string,
   loggedUserId: PropTypes.string,
-  loggedInUser: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object,
   roles: PropTypes.array.isRequired,
 };
 

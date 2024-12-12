@@ -36,7 +36,6 @@ export default withTracker((args) => {
   return {
     loading: !subscription.ready(),
     selectedOrder: order,
-    history: args.history,
     loggedInUser: args.loggedInUser,
   };
 })(CreateBasket);

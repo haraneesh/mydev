@@ -54,6 +54,8 @@ const callAPI = async (
     console.log(callUrl);
     console.log('---------------Args-----------------------');
     console.log(args);
+    console.log('---Request Type-----------------------');
+    console.log(requestType);
   }
 
   try {

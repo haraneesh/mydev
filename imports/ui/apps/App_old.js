@@ -26,7 +26,7 @@ import Refund from '../pages/Miscellaneous/Refund/Refund';
 import ResetPassword from '../pages/Miscellaneous/ResetPassword/ResetPassword';
 import ShowInterest from '../pages/Miscellaneous/ShowInterest/ShowInterest';
 // import SelfSignUp from '../pages/Miscellaneous/SignUp/SelfSignUp'; -- self sign up
-import SignUp from '../pages/Miscellaneous/Signup/SignUp';
+import SignUp from '../pages/Miscellaneous/SignUp/SignUp';
 import Terms from '../pages/Miscellaneous/Terms/Terms';
 import VerifyEmail from '../pages/Miscellaneous/VerifyEmail';
 

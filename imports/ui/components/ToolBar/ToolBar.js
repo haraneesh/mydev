@@ -169,25 +169,4 @@ ToolBar.propTypes = {
   countOfUnreadNotifications: PropTypes.number,
 };
 
-/*
-export default withTracker((args) => ({
-  history: args.history,
-  loading: false,
-  countOfUnreadNotifications: 0,
-}))(ToolBar); */
-
-/* const CountOfMessages = new Mongo.Collection('countOfUnreadMsgs');
-
-export default withTracker((args) => {
-  const reactVarTemp = reactVar.get();
-
-  const subscription = Meteor.subscribe('messages.notifications', reactVarTemp.lastFetchDateTime.toUTCString());
-  return {
-    history: args.history,
-    loading: !subscription.ready(),
-    countOfUnreadNotifications: CountOfMessages.find({}).fetch().length,
-  };
-})(ToolBar);
-*/
-
 export default ToolBar;

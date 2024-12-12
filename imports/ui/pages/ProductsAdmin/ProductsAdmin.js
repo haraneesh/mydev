@@ -38,7 +38,6 @@ const ProductsAdmin = withTracker((props) => {
     loading: !subscriptionProducts.ready(),
     products: Products.find({}, { sort: { type: 1, name: 1 } }).fetch(),
     productListId: props.match.params._id,
-    history: props.history,
   };
 })(ProductsAdminDetail);
 

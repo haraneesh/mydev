@@ -35,7 +35,6 @@ export default withTracker((args) => {
   return {
     loading: !prdSubscription.ready(),
     products,
-    history: args.history,
     loggedInUser: args.loggedInUser,
   };
 })(NewBasket);

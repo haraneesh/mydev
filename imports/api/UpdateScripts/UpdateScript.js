@@ -203,4 +203,9 @@ Meteor.users.removeAsync({ username: '9884854636' });
 Meteor.users.removeAsync({ username: '8734486932' });
 Meteor.users.removeAsync({ username: '8754486933' });
 Meteor.users.removeAsync({ username: '8734486933' });
+
+
+Products.updateAsync({ sku: 'VLO000570' }, { $set: { zh_item_id: '702207000099462029' } }); // Chives
+Products.updateAsync({ sku: 'VLG000019' }, { $set: { zh_item_id: '702207000000087121' } }); // Agathi Keerai
+Products.updateAsync({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } }); // 100 ML
 */

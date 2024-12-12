@@ -104,6 +104,22 @@ export const findUser = new ValidatedMethod({
   },
 });
 
+
+export const findUserNotLoggedIn = new ValidatedMethod({
+  name: 'usersNotLoggedIn.find',
+  validate: new SimpleSchema({
+    mobileNumber: { type: String },
+  }).validator(),
+  async run(user) {
+  
+      const u = await Meteor.users.findOneAsync({
+        username: user.mobileNumber,
+      });
+      return u;
+  },
+});
+
+
 const assignUserRole = async (userId, selectedRole) => {
   switch (selectedRole) {
     case constants.Roles.admin.name:
@@ -219,7 +235,8 @@ export const createUser = new ValidatedMethod({
       Meteor.isServer &&
       (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
     ) {
-      return await createNewUser(user);
+      const newUser  = await createNewUser(user);
+      return newUser;
     }
   },
 });
@@ -467,7 +484,8 @@ Meteor.methods({
 
       const newUser = { ...user };
       newUser.role = constants.Roles.customer.name;
-      return await createNewUser(newUser);
+      const usr = await createNewUser(newUser);
+      return usr;
     },
   'users.accountStatusUpdate': async function deactivateUser(args) {
     check(args, { userId: String, accountStatus: String });
@@ -562,6 +580,7 @@ rateLimit({
     'users.getAllUsers',
     'users.approveSignUp',
     'users.getTotalUserCount',
+    'usersNotLoggedIn.find',
     adminUpdateUser,
     updateDeliveryPincode,
     findUser,

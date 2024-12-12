@@ -45,20 +45,20 @@ export const formValChange = (e, isErrorState, fieldValues) => {
 
     case name === 'name':
       isError.name =
-        trimmedVal.length < 5
+        trimmedVal.length < 4
           ? 'first name should be atleast 4 characters long'
           : '';
       break;
 
     case name === 'firstName':
       isError.firstName =
-        trimmedVal.length < 5
+        trimmedVal.length < 4
           ? 'first name should be atleast 4 characters long'
           : '';
       break;
     case name === 'lastName':
       isError.lastName =
-        trimmedVal.length < 5
+        trimmedVal.length < 4
           ? 'last name should be atleast 4 characters long'
           : '';
       break;

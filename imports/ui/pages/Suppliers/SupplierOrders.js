@@ -125,7 +125,6 @@ export default withTracker((args) => {
 
   return {
     loading: !subscription.ready(),
-    history: args.history,
     showLoadMore: suppOrders.length >= limit,
     suppOrders,
   };

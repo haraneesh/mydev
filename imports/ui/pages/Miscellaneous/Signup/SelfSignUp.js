@@ -76,7 +76,7 @@ class SelfSignUp extends React.Component {
       (error, whMobileNumber) => {
         if (error) {
           toast.error(error.reason);
-          history.push('/signup');
+          this.props.navigate('/signup');
         } else {
           document.querySelector('[name="whMobilePhone"]').value =
             whMobileNumber;
@@ -86,7 +86,6 @@ class SelfSignUp extends React.Component {
   }
 
   handleSubmit() {
-    const { history } = this.props;
     const { match } = this.props;
 
     const user = {
@@ -108,19 +107,19 @@ class SelfSignUp extends React.Component {
     if (match.params.token) {
       acceptInvitation.call({ user, token: match.params.token }, (error) => {
         if (error) {
-          history.push('/signup');
+          this.props.navigate('/signup');
           toast.error(error.reason);
         } else {
           toast.success(
             `Welcome ${this.firstName.value} ${this.lastName.value}!`,
           );
           setTimeout(() => {
-            history.push('/login');
+            this.props.navigate('/login');
           }, 3000);
         }
       });
     } else {
-      history.push('/signup');
+      this.props.navigate('/signup');
 
       // Sign Up
 
@@ -142,6 +141,7 @@ class SelfSignUp extends React.Component {
   render() {
     const { signUpRequestSent } = this.state;
     const { isError } = this.state;
+
     return !signUpRequestSent ? (
       <div className="Signup offset-sm-1">
         <div>

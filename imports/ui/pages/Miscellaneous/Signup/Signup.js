@@ -35,6 +35,7 @@ class SignUp extends React.Component {
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { ...defaultState };
+    window.scrollTo(0, 0);  
   }
 
   onValueChange(e) {
@@ -405,7 +406,6 @@ class SignUp extends React.Component {
 }
 
 SignUp.propTypes = {
-  history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
 };
 

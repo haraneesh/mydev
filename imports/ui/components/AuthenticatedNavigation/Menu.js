@@ -16,7 +16,7 @@ const Menu = (props) => {
 
   return (
     <>
-      <div className="text-end col-5 col-sm-2">
+      <div className="text-end col">
         <Button
           variant="white"
           onClick={() => {

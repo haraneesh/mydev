@@ -75,15 +75,18 @@ export const bulkSyncProductsZoho = new ValidatedMethod({
     const successResp = [];
     const errorResp = [];
     if (Meteor.isServer) {
-      const syncDT = await ZohoSyncUps.findOneAsync({
+      const syncDTRec = await ZohoSyncUps.findOneAsync({
         syncEntity: syncUpConstants.products,
-      }).syncDateTime;
+      });
+
+      const syncDT = syncDTRec.syncDateTime;
       const query = {
         $or: [
           { zh_item_id: { $exists: false } },
           { updatedAt: { $gte: syncDT } },
         ],
       };
+
       const products = await Products.find(query).fetchAsync(); // change to get products updated after sync date
 
       for (const prd of products) {

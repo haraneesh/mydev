@@ -10,7 +10,7 @@ const composer = (params, onData) => {
 
   if (subscription.ready()) {
     const orders = Orders.find({}, { sort: { createdAt: constants.Sort.DESCENDING } }).fetch();
-    onData(null, { orders, history: params.history });
+    onData(null, { orders });
   }
 };
 

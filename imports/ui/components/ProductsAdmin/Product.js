@@ -247,6 +247,7 @@ export default function Product(props) {
 
     //upsert.sourceSuppliers = this.removeDeletedSourceSuppliers(upsert.sourceSuppliers);
     delete upsert.sourceSuppliers;
+    delete upsert.associatedFoodGroups;
 
     upsertProduct.call(upsert, (error) => {
       if (error) {
@@ -470,6 +471,7 @@ export default function Product(props) {
               />
             </Col>
           </Row>
+          {/*}
           <Row className="py-2">
             <Col xs={1} />
             <Col>
@@ -486,7 +488,7 @@ export default function Product(props) {
                 help
               />
             </Col>
-          </Row>
+          </Row>*/}
           <Row>
             <Col xs={1} />
             <Col>

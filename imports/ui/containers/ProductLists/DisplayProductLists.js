@@ -16,7 +16,7 @@ const compose = (params) => {
     return (<Loading />);
   }
 
-  return (<DisplayProductLists productLists={productLists} history={params.history}/>);
+  return (<DisplayProductLists productLists={productLists}/>);
  
 };
 

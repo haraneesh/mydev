@@ -41,7 +41,6 @@ export default withTracker((args) => {
   return {
     loading: !userWallet.ready(),
     loggedInUser: args.loggedInUser,
-    userWallet: args.loggedInUser.wallet,
-    history: args.history,
+    userWallet: args.loggedInUser.wallet
   };
 })(MyWallet);
