@@ -9,7 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
 import { formValChange } from '/imports/modules/validate';
 
-function GetUserPhoneNumber({handlePlaceOrder, showMobileNumberForm}){
+function GetUserPhoneNumber({handlePlaceOrder, showMobileNumberForm, handleClose}){
     const navigate = useNavigate();
     const [isError, setErrorState] = useState({whMobilePhone:''});
     const [userEnteredPhoneNumber, setUserEnteredPhoneNumber] = useState('');
@@ -46,11 +46,14 @@ function GetUserPhoneNumber({handlePlaceOrder, showMobileNumberForm}){
     }
 
     return (
-        <Modal show={showMobileNumberForm} className="modalFeedBack">
+        <Modal show={showMobileNumberForm} className="modalFeedBack" onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Complete Order</Modal.Title>
+          </Modal.Header>
         <Modal.Body>
           <Row>
             <Col xs={12}>
-              <p><h7>Please Enter Your Suvai Mobile Number:</h7></p>
+              <p><h7>Enter Your Registered Mobile Number</h7></p>
               <input 
               type="number" 
               name="whMobilePhone" 

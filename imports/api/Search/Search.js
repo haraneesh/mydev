@@ -25,6 +25,7 @@ Search.schema = new SimpleSchema({
   userId: {
     type: String,
     label: 'The user id',
+    optional: true,
   },
   count: {
     type: Number,

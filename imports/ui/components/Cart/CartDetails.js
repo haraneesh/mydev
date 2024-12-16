@@ -132,6 +132,10 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     placeOrder({loggedInUserId: userId, onBehalfUser: onBehalfUser});
   }
 
+  const handleGetUserMobileNumberClose = () => {
+    setGetUserMobileNumber(false);
+  }
+
   const handleOrderSubmit = () => {
     if (
       onBehalfUser.isNecessary &&
@@ -304,7 +308,11 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     default: {
       return (
         <Row>
-          <GetUserPhoneNumber handlePlaceOrder={placeOrderSuvaiMobileNumber} showMobileNumberForm={getUserMobileNumber}/>
+          <GetUserPhoneNumber 
+            handlePlaceOrder={placeOrderSuvaiMobileNumber} 
+            showMobileNumberForm={getUserMobileNumber}
+            handleClose={handleGetUserMobileNumberClose}
+            />
           <Col xs={12}>
             <h2 className="py-4 text-center">
               {orderId ? 'Update Order' : 'Your Cart'}
@@ -399,7 +407,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             {!isOrderAmountGreaterThanMinimum(
               cartState.cart.totalBillAmount,
             ) && (
-              <div className="offset-1 col-10 alert alert-info py-3">
+              <div className="offset-1 col-10 alert alert-info py-3 text-center">
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
               </div>
             )}
@@ -416,10 +424,13 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
                     ? 'Update Order'
                     : 'Place Order →'
               }
+              /*
               showWaiting={
                 isOrderBeingUpdated ||
                 !isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount)
               }
+              */
+             showWaiting={isOrderBeingUpdated}
               orderId={orderId}
               payCash={cartState.cart.payCashWithThisDelivery}
               collectRecyclables={
