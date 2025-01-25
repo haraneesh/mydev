@@ -5,7 +5,7 @@ function OurPromise() {
   return (
     <div className="py-4 text-center p-0">
       <h1 className="pb-3">
-        Our promise to you
+          Quality that Surpasses Price
       </h1>
       <p>
         We believe living well begins with eating well.

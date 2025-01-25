@@ -71,7 +71,7 @@ class ProductSearch extends React.Component {
               <input
                 className="form-control"
                 type="text"
-                placeholder="Search & Order"
+                placeholder="Search for 'Kullakar Rice' or 'Bansi Wheat' or 'Thinai'"
                 value={this.state.searchString}
                 onClick={this.onsearchClick}
                 onChange={this.onsearchStringChange}

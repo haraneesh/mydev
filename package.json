@@ -71,7 +71,7 @@
     "xml": "^1.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.3",
+    "@biomejs/biome": "^1.8.3",
     "@types/meteor": "^2.9.8",
     "@types/mocha": "^9.1.1",
     "@types/react": "^18.3.3",

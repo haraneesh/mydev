@@ -29,7 +29,7 @@ async function getToken() {
   }
 
   const data = await generateToken();
-  if (data.access_token) {
+  if (data.access_token && data.access_token != '') {
     Settings.setValue(ACCTOKEN, {
       access_token: data.access_token,
       expireDate: moment(Date.now())
@@ -53,19 +53,20 @@ async function generateToken() {
     refresh_token: refreshToken,
   };
 
+  try {
   const response = await fetch(
     'https://accounts.zoho.com/oauth/v2/token?' + new URLSearchParams(params),
     {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(2000), // 2000 milliseconds
     },
   );
 
-  if (!response.ok) {
-    console.log('---------------Error---------------------');
-    console.log(response);
-    throw new Error('Return response has an error');
+  if (!response.ok) { // Check if the response is successful
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+
   const authReq = await response.json();
 
   if (authReq && authReq.access_token) {
@@ -74,7 +75,12 @@ async function generateToken() {
 
   // error
   console.log(`error ${JSON.stringify(authReq)}`);
-  return { access_token: '' };
+
+}catch(err) {
+    console.log('Fetch failed:', err);
+};
+
+ return { access_token: '' };
 }
 
 const ZohoAuthentication = {

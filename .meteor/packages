@@ -42,3 +42,4 @@ matb33:collection-hooks@2.0.0-rc.3
 react-meteor-data
 alanning:roles
 fetch@0.1.5
+browser-policy

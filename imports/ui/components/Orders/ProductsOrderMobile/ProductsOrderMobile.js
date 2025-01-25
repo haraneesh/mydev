@@ -6,6 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 import { toast } from 'react-toastify';
+import SubCategoryRow  from '../SubCategoryRow/SubCategoryRow';
 import constants from '../../../../modules/constants';
 import { isChennaiPinCode, toTitleCase } from '../../../../modules/helpers';
 import Product from '../Product';
@@ -150,9 +151,9 @@ export default class ProductsOrderMobile extends React.Component {
 
     const productDisplayList = [];
     const subCategorys = Object.keys(productsBySubCategory).sort();
-    const catRow = [];
+    const subCatRowItems = [];
     subCategorys.forEach((key) => {
-      catRow.push(
+      subCatRowItems.push(
         <Nav.Item>
           <Nav.Link
             event={key.replace(' ', '').toLowerCase()}
@@ -175,13 +176,14 @@ export default class ProductsOrderMobile extends React.Component {
       );
     });
 
+    const subCatRowId = `${preFix}-cat-row`;
     productDisplayList.push(
       <Nav
         variant="pills bg-white border-bottom border-2 border-light border-opacity-50"
         className="sticky-top"
-        id={`${preFix}-cat-row`}
+        id={subCatRowId}
       >
-        {catRow}
+        <SubCategoryRow items={subCatRowItems} />
       </Nav>,
     );
 
@@ -189,6 +191,8 @@ export default class ProductsOrderMobile extends React.Component {
       const displayText = constants.ProductTypeName[key]
         ? constants.ProductTypeName[key].display_value
         : key;
+
+      ;
 
       productDisplayList.push(
         <Row key={key} id={`${preFix}-${key.replace(' ', '').toLowerCase()}`}>
@@ -238,7 +242,7 @@ export default class ProductsOrderMobile extends React.Component {
     return (
       <div className="productOrderList" id="order-tab">
         {/* side navigation */}
-        <Tab.Container id="order-tabb" defaultActiveKey="specials">
+        <Tab.Container id="order-tabb" defaultActiveKey={ Meteor.settings.public.PRODUCT_ORDER.PAGE_TO_OPEN_DEFAULT}>
           <Row
             style={{
               alignItems: 'flex-start',
@@ -354,7 +358,7 @@ export default class ProductsOrderMobile extends React.Component {
                   <Row>
                     {this.displayProductsWithCategories(
                       productSpecials,
-                      'specials',
+                      'specials'
                     )}
                   </Row>
                 </Tab.Pane>
@@ -362,7 +366,7 @@ export default class ProductsOrderMobile extends React.Component {
                   <Row>
                     {this.displayProductsWithCategories(
                       productVegetables,
-                      'vegetables',
+                      'vegetables'
                     )}
                   </Row>
                 </Tab.Pane>

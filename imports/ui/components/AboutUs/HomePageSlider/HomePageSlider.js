@@ -94,9 +94,9 @@ function HomePageSlider() {
 
   return (
     <div className="carousel-health py-4">
-      <h2 className="py-2">
-        True wealth is health
-      </h2>
+      <h1 className="py-2">
+        Greatest wealth is health
+      </h1>
       <div id="cc1" className="carousel pb-2">
         <div className="carousel-cell">
           <img src="about/feedingx640.jpg?v5" alt="Feeding a baby" />

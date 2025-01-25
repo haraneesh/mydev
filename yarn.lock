@@ -659,7 +659,7 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@biomejs/biome@1.8.3":
+"@biomejs/biome@^1.8.3":
   version "1.8.3"
   resolved "https://registry.npmjs.org/@biomejs/biome/-/biome-1.8.3.tgz"
   integrity sha512-/uUV3MV+vyAczO+vKrPdOW0Iaet7UnJMU4bNMinggGJTAnBPjCoLEYcyYtYHNnUNYlv4xZMH6hVIQCAozq8d5w==
@@ -672,6 +672,11 @@
     "@biomejs/cli-linux-x64-musl" "1.8.3"
     "@biomejs/cli-win32-arm64" "1.8.3"
     "@biomejs/cli-win32-x64" "1.8.3"
+
+"@biomejs/cli-darwin-arm64@1.8.3":
+  version "1.8.3"
+  resolved "https://registry.npmjs.org/@biomejs/cli-darwin-arm64/-/cli-darwin-arm64-1.8.3.tgz"
+  integrity sha512-9DYOjclFpKrH/m1Oz75SSExR8VKvNSSsLnVIqdnKexj6NwmiMlKk94Wa1kZEdv6MCOHGHgyyoV57Cw8WzL5n3A==
 
 "@biomejs/cli-darwin-x64@1.8.3":
   version "1.8.3"
@@ -1822,9 +1827,9 @@ camelize@^1.0.0:
   integrity sha1-FkpUg+Yw+kMh5a8HAg5TGDGyYJs=
 
 caniuse-lite@^1.0.30001669:
-  version "1.0.30001680"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001680.tgz"
-  integrity sha512-rPQy70G6AGUMnbwS1z6Xg+RkHYPAi18ihs47GH0jcxIG7wArmPgY3XbS2sRdBbxJljp3thdT8BIqv9ccCypiPA==
+  version "1.0.30001695"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001695.tgz"
+  integrity sha512-vHyLade6wTgI2u1ec3WQBxv+2BrTERV28UXQu9LO6lZ9pYeMk34vjXFLOxo1A4UBA8XTL4njRQZdno/yYaSmWw==
 
 caseless@~0.12.0:
   version "0.12.0"

@@ -51,7 +51,7 @@ const RegisterInvitation = () => {
 const SuccessOrderPlaced = ({
    match: { params }, loggedInUser, productReturnables,
 }) => {
-  const { profile } = loggedInUser;
+  const profile  = (loggedInUser)?loggedInUser.profile : null;
   const { orderId } = params;
   const [order, setOrder] = useState({});
 
@@ -82,8 +82,7 @@ const SuccessOrderPlaced = ({
         <section className="px-2 py-3" style={{ backgroundColor: '#faf4ef', borderColor: '#e4dfdb' }}>
           <h4 className="py-2 pt-4">
             {' '}
-            Hello
-            {` ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)},`}
+            {profile && ` Hello ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)},`}
           </h4>
           <h4 className="py-2">Thank you for Ordering on Suvai.</h4>
 
@@ -118,10 +117,10 @@ const SuccessOrderPlaced = ({
         </section>
 
         <section className="mb-4">
-          <ShowReturnables productReturnables={productReturnables} />
+          {productReturnables && (<ShowReturnables productReturnables={productReturnables} />)}
         </section>
 
-        {!Roles.userIsInRole(loggedInUser._id, constants.Roles.shopOwner.name) && (
+        {(
           <section className="card  text-center">
             <Col xs={12}>
               <div className="card-header p-4 mb-4">

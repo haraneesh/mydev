@@ -193,13 +193,12 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
         if (error) {
           toast.error(error.reason);
           setOrderUpdated(false);
-        } else if (!isLoggedInUserAdmin() && loggedInUser) {
+        } else { 
+          const createdUpdatedOrderId = createdOrder.insertedId ? createdOrder.insertedId : orderId;
+          setSuccessfullyPlacedOrderId(createdUpdatedOrderId);
+
+          if (!isLoggedInUserAdmin() && loggedInUser) {
           toast.success('Order has been placed successfully!');
-
-          setSuccessfullyPlacedOrderId(
-            createdOrder.insertedId ? createdOrder.insertedId : orderId,
-          );
-
           Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
             setOrderUpdated(false);
             if (error) {
@@ -210,12 +209,13 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             setOrderUpdated(false);
           });
           setShowPaymentModal(true);
-          moveToOrderSubmitScreen();
+          moveToOrderSubmitScreen(createdUpdatedOrderId);
         } 
         else{
           toast.success('Order has been placed successfully!');
-          moveToOrderSubmitScreen();
+          moveToOrderSubmitScreen(createdUpdatedOrderId); 
         }
+      }
       });
 
   }
@@ -267,10 +267,9 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     });
   };
 
-  const moveToOrderSubmitScreen = () => {
+  const moveToOrderSubmitScreen = (createdUpdatedOrderId) => {
     cartDispatch({ type: cartActions.orderFlowComplete });
-    // navigate(`/order/cart/${successfullyPlacedOrderId}`);
-    navigate(`/order/success/${successfullyPlacedOrderId || orderId}`);
+    navigate(`/order/success/${createdUpdatedOrderId || successfullyPlacedOrderId || orderId}`);
   };
 
   const afterPaymentScreen = ({ action }) => {

@@ -24,6 +24,19 @@ const callAPI = async (
   const args = {};
   const accessToken = await ZohoAuthenticate.getToken();
 
+  if (accessToken == ''){
+    //unable to fetch access token
+    const errMsg = 'Unable to obtain access token';
+    if (Meteor.isDevelopment) {
+      console.log('---------------Error Text---------------------');
+      console.log(errMsg);
+    }
+    return {
+      code: -1,
+      message: errMsg,
+    };
+  }
+
   const apiBaseUrl = Meteor.settings.private.zoho.baseApiUrl; // 'https://books.zoho.com/api/v3';
   let urlParams = connectionInfo || setAPICall();
 
