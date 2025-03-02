@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import SelectSalesPerson from '/imports/ui/components/SelectSalesPerson/SelectSalesPerson';
 import { upsertOrder } from '../../../api/Orders/methods';
 import constants from '../../../modules/constants';
 import {
@@ -59,6 +60,10 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     isNecessary: !orderId && roles.includes(constants.Roles.admin.name),
     user: {},
   });
+
+  const [selectedSalesPerson, setSelectSalesPerson] = useState('');
+  const [selectedSalespersonError, setSelectSalesPersonError] = useState(false);
+
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
 
   const activeCartId = !orderId || orderId === 'NEW' ? 'NEW' : orderId;
@@ -127,14 +132,19 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     setOnBehalfUser(onBehalfUserTemp);
   };
 
-  const placeOrderSuvaiMobileNumber = ({userId}) => {
+  const onSelectSalesPersonChange = (nameOfSalesPerson) => {
+    setSelectSalesPerson(nameOfSalesPerson);
+    setSelectSalesPersonError(false);
+  };
+
+  const placeOrderSuvaiMobileNumber = ({ userId }) => {
     setGetUserMobileNumber(false);
-    placeOrder({loggedInUserId: userId, onBehalfUser: onBehalfUser});
-  }
+    placeOrder({ loggedInUserId: userId, onBehalfUser: onBehalfUser });
+  };
 
   const handleGetUserMobileNumberClose = () => {
     setGetUserMobileNumber(false);
-  }
+  };
 
   const handleOrderSubmit = () => {
     if (
@@ -149,55 +159,70 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       return;
     }
 
+    if (
+      onBehalfUser.isNecessary &&
+      (!selectedSalesPerson ||
+        selectedSalesPerson.salesperson_zoho_id.trim() === '')
+    ) {
+      setSelectSalesPersonError(true);
+      return;
+    }
+
     if (!loggedInUser) {
       setGetUserMobileNumber(true);
     }
 
     if (loggedInUser) {
-      placeOrder({loggedInUserId: loggedInUser._id, onBehalfUser: onBehalfUser});
+      placeOrder({
+        loggedInUserId: loggedInUser._id,
+        onBehalfUser: onBehalfUser,
+        zohoSalesPerson: selectedSalesPerson,
+      });
     }
   };
 
-  function placeOrder({loggedInUserId, onBehalfUser}){
-
+  function placeOrder({ loggedInUserId, onBehalfUser, zohoSalesPerson }) {
     const products = [];
 
-      Object.keys(cartState.cart.productsInCart).map((key) => {
-        products.push(cartState.cart.productsInCart[key]);
-      });
+    Object.keys(cartState.cart.productsInCart).map((key) => {
+      products.push(cartState.cart.productsInCart[key]);
+    });
 
-      const order = {
-        products,
-        _id: orderId && orderId !== 'NEW' ? orderId : '',
-        comments: cartState.cart.comments || '',
-        issuesWithPreviousOrder: cartState.cart.issuesWithPreviousOrder || '',
-        payCashWithThisDelivery:
-          cartState.cart.payCashWithThisDelivery || false,
-        collectRecyclablesWithThisDelivery:
-          cartState.cart.collectRecyclablesWithThisDelivery || false,
-        basketId: cartState.cart.basketId || '',
-        loggedInUserId: loggedInUserId,
-        deliveryPincode: cartState.cart.deliveryPincode,
+    const order = {
+      products,
+      _id: orderId && orderId !== 'NEW' ? orderId : '',
+      comments: cartState.cart.comments || '',
+      issuesWithPreviousOrder: cartState.cart.issuesWithPreviousOrder || '',
+      payCashWithThisDelivery: cartState.cart.payCashWithThisDelivery || false,
+      collectRecyclablesWithThisDelivery:
+        cartState.cart.collectRecyclablesWithThisDelivery || false,
+      basketId: cartState.cart.basketId || '',
+      loggedInUserId: loggedInUserId,
+      deliveryPincode: cartState.cart.deliveryPincode,
+    };
+
+    if (onBehalfUser.isNecessary) {
+      order.loggedInUserId = onBehalfUser.user._id;
+      order.zohoSalesPerson = zohoSalesPerson;
+      order.onBehalf = {
+        postUserId: loggedInUserId,
+        orderReceivedAs: onBehalfUser.orderReceivedAs,
       };
+    }
 
-      if (onBehalfUser.isNecessary) {
-        order.loggedInUserId = onBehalfUser.user._id;
-        order.onBehalf = {
-          postUserId: loggedInUserId,
-          orderReceivedAs: onBehalfUser.orderReceivedAs,
-        };
-      }
+    setOrderUpdated(true);
 
-      setOrderUpdated(true);
-      upsertOrder.call(order, (error, createdOrder) => {
-        if (error) {
-          toast.error(error.reason);
-          setOrderUpdated(false);
-        } else { 
-          const createdUpdatedOrderId = createdOrder.insertedId ? createdOrder.insertedId : orderId;
-          setSuccessfullyPlacedOrderId(createdUpdatedOrderId);
+    upsertOrder.call(order, (error, createdOrder) => {
+      if (error) {
+        toast.error(error.reason);
+        setOrderUpdated(false);
+      } else {
+        const createdUpdatedOrderId = createdOrder.insertedId
+          ? createdOrder.insertedId
+          : orderId;
+        setSuccessfullyPlacedOrderId(createdUpdatedOrderId);
 
-          if (!isLoggedInUserAdmin() && loggedInUser) {
+        if (!isLoggedInUserAdmin() && loggedInUser) {
           toast.success('Order has been placed successfully!');
           Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
             setOrderUpdated(false);
@@ -210,14 +235,12 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
           });
           setShowPaymentModal(true);
           moveToOrderSubmitScreen(createdUpdatedOrderId);
-        } 
-        else{
+        } else {
           toast.success('Order has been placed successfully!');
-          moveToOrderSubmitScreen(createdUpdatedOrderId); 
+          moveToOrderSubmitScreen(createdUpdatedOrderId);
         }
       }
-      });
-
+    });
   }
 
   const clearCart = () => {
@@ -269,7 +292,9 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
 
   const moveToOrderSubmitScreen = (createdUpdatedOrderId) => {
     cartDispatch({ type: cartActions.orderFlowComplete });
-    navigate(`/order/success/${createdUpdatedOrderId || successfullyPlacedOrderId || orderId}`);
+    navigate(
+      `/order/success/${createdUpdatedOrderId || successfullyPlacedOrderId || orderId}`,
+    );
   };
 
   const afterPaymentScreen = ({ action }) => {
@@ -307,11 +332,11 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     default: {
       return (
         <Row>
-          <GetUserPhoneNumber 
-            handlePlaceOrder={placeOrderSuvaiMobileNumber} 
+          <GetUserPhoneNumber
+            handlePlaceOrder={placeOrderSuvaiMobileNumber}
             showMobileNumberForm={getUserMobileNumber}
             handleClose={handleGetUserMobileNumberClose}
-            />
+          />
           <Col xs={12}>
             <h2 className="py-4 text-center">
               {orderId ? 'Update Order' : 'Your Cart'}
@@ -392,10 +417,17 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
           </Card>
           <Card className="mb-5">
             {onBehalfUser.isNecessary && (
-              <OnBehalf
-                onSelectedChange={onSelectedChange}
-                showMandatoryFields={onBehalfUserInfoError}
-              />
+              <div>
+                <OnBehalf
+                  onSelectedChange={onSelectedChange}
+                  showMandatoryFields={onBehalfUserInfoError}
+                />
+                <SelectSalesPerson
+                  onSelectSalesPersonChange={onSelectSalesPersonChange}
+                  selectedSalesPerson={selectedSalesPerson.name}
+                  showMandatoryFields={selectedSalespersonError}
+                />
+              </div>
             )}
 
             <OrderComment
@@ -429,7 +461,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
                 !isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount)
               }
               */
-             showWaiting={isOrderBeingUpdated}
+              showWaiting={isOrderBeingUpdated}
               orderId={orderId}
               payCash={cartState.cart.payCashWithThisDelivery}
               collectRecyclables={

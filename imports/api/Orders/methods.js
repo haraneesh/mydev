@@ -232,6 +232,9 @@ export const upsertOrder = new ValidatedMethod({
     collectRecyclablesWithThisDelivery: { type: Boolean, optional: true },
     products: { type: Array, optional: true },
     'products.$': { type: Object, blackbox: true, optional: true },
+    zohoSalesPerson: { type: Object, optional: true },
+    'zohoSalesPerson.salesperson_zoho_id': { type: String },
+    'zohoSalesPerson.salesperson_zoho_name': { type: String },
     onBehalf: { type: Object, optional: true },
     'onBehalf.postUserId': { type: String },
     'onBehalf.orderReceivedAs': {
@@ -241,6 +244,8 @@ export const upsertOrder = new ValidatedMethod({
   }).validator(),
   async run(order) {
     if (Meteor.isServer) {
+      console.log('Order');
+      console.log(JSON.stringify(order));
       return await addUpdateOrder(order);
     }
   },

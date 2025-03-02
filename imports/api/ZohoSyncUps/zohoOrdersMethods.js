@@ -62,6 +62,14 @@ const createZohoSalesOrder = async (order) => {
 
   const zhSalesOrder = {
     customer_id: await getZohoUserIdFromUserId(order.customer_details._id), // mandatory
+    salesperson_id:
+      order.zohoSalesPerson && order.zohoSalesPerson.salesperson_zoho_id
+        ? order.zohoSalesPerson.salesperson_zoho_id
+        : null,
+    salesperson_name:
+      order.zohoSalesPerson && order.zohoSalesPerson.salesperson_zoho_name
+        ? order.zohoSalesPerson.salesperson_zoho_name
+        : null,
     is_inclusive_tax: true, // treat line item rates are inclusive of tax
     date: getZhDisplayDate(order.createdAt), // "2013-11-17"
     // hide for books status: _getZohoSalesOrderStatus(order.order_status), // possible values -

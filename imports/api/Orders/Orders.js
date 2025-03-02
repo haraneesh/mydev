@@ -1,11 +1,11 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
 import { Random } from 'meteor/random';
+import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
-import { ProductSchemaDefObject } from '../Products/Products';
 import InvoiceSchemaDefObj from '../Invoices/Invoices';
+import { ProductSchemaDefObject } from '../Products/Products';
 
 export const Orders = new Mongo.Collection('Orders');
 
@@ -22,14 +22,24 @@ Orders.deny({
 });
 
 const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
-productsSchemaDefObject.quantity = { type: Number, label: 'The quantity of a particular product that was ordered', min: 0.00001 };
+productsSchemaDefObject.quantity = {
+  type: Number,
+  label: 'The quantity of a particular product that was ordered',
+  min: 0.00001,
+};
 // const { associatedReturnables } = ProductSchemaDefObject.getObjectSchema('associatedReturnables');
 
 productsSchemaDefObject['associatedReturnables.quantity'] = {
-  type: Number, label: 'Returnable quantity selected', min: 0, optional: true,
+  type: Number,
+  label: 'Returnable quantity selected',
+  min: 0,
+  optional: true,
 };
 productsSchemaDefObject['associatedReturnables.totalPrice'] = {
-  type: Number, label: 'Price for returnable product', min: 0, optional: true,
+  type: Number,
+  label: 'Price for returnable product',
+  min: 0,
+  optional: true,
 };
 
 const ProductSchema = new SimpleSchema(productsSchemaDefObject);
@@ -40,7 +50,8 @@ Orders.schema = new SimpleSchema({
     autoValue() {
       if (this.isInsert) {
         return new Date();
-      } if (this.isUpsert) {
+      }
+      if (this.isUpsert) {
         return { $setOnInsert: new Date() };
       }
       this.unset(); // Prevent user from supplying their own value
@@ -75,48 +86,110 @@ Orders.schema = new SimpleSchema({
   },
   'customer_details._id': { type: String, label: 'The customer id.' },
   'customer_details.name': { type: String, label: 'The customer name.' },
-  'customer_details.email': { type: String, label: 'The customer email address.', optional: true },
+  'customer_details.email': {
+    type: String,
+    label: 'The customer email address.',
+    optional: true,
+  },
   'customer_details.mobilePhone': { type: Number, label: 'The customer name.' },
-  'customer_details.deliveryAddress': { type: String, label: 'The customer\'s delivery address.' },
+  'customer_details.deliveryAddress': {
+    type: String,
+    label: "The customer's delivery address.",
+  },
   order_status: { type: String, label: 'Status of the order.' },
-  comments: { type: String, label: 'Comments added by the user to this order.', optional: true },
-  issuesWithPreviousOrder: { type: String, label: 'Issues with previous order.', optional: true },
-  payCashWithThisDelivery: { type: Boolean, label: 'Pay cash with this delivery.', optional: true },
-  collectRecyclablesWithThisDelivery: { type: Boolean, label: 'Collect recyclables with this delivery', optional: true },
+  comments: {
+    type: String,
+    label: 'Comments added by the user to this order.',
+    optional: true,
+  },
+  issuesWithPreviousOrder: {
+    type: String,
+    label: 'Issues with previous order.',
+    optional: true,
+  },
+  payCashWithThisDelivery: {
+    type: Boolean,
+    label: 'Pay cash with this delivery.',
+    optional: true,
+  },
+  collectRecyclablesWithThisDelivery: {
+    type: Boolean,
+    label: 'Collect recyclables with this delivery',
+    optional: true,
+  },
   total_bill_amount: { type: Number, label: 'The total bill amount.', min: 1 },
   // Whenever the "_id" field is updated, automatically store
-  productOrderListId: { type: String, label: 'The Id of the product list from which the order was made.' },
+  productOrderListId: {
+    type: String,
+    label: 'The Id of the product list from which the order was made.',
+  },
   invoice_Id: {
     type: String,
     optional: true,
     autoValue() {
       if (this.isInsert) {
         return `INV-${Random.id()}`;
-      } if (this.isUpsert) {
+      }
+      if (this.isUpsert) {
         return { $setOnInsert: `INV-${Random.id()}` };
       }
       this.unset(); // Prevent user from supplying their own value
     },
   },
-  deliveryPincode: { type: String, label: 'The order\'s delivery pin code.' },
+  deliveryPincode: { type: String, label: "The order's delivery pin code." },
   basketId: { type: String, optional: true },
+  zohoSalesPerson: { type: Object, optional: true },
+  'zohoSalesPerson.salesperson_zoho_id': { type: String },
+  'zohoSalesPerson.salesperson_zoho_name': { type: String },
   onBehalf: { type: Object, optional: true },
   'onBehalf.postUserId': { type: String },
-  'onBehalf.orderReceivedAs': { type: String, allowedValues: constants.OrderReceivedType.allowedValues },
-  receivedFeedBack: { type: Boolean, label: 'Received customer feedback on the Order', optional: true },
-  zh_sales_type: {
-    type: String, label: 'Zoho Sales Type', allowedValues: ['salesorder', 'deliverychallan'], optional: true,
+  'onBehalf.orderReceivedAs': {
+    type: String,
+    allowedValues: constants.OrderReceivedType.allowedValues,
   },
-  zh_salesorder_id: { type: String, label: 'Corresponding Zoho Sales Order Id', optional: true },
-  zh_salesorder_number: { type: String, label: 'Corresponding Zoho Sales Order Number', optional: true },
-  zh_salesorder_status: { type: String, label: 'Corresponding Zoho Sales Order Status', optional: true },
-  zh_salesorder_order_status: { type: String, label: 'Corresponding Zoho Sales Order Order_Status', optional: true },
+  receivedFeedBack: {
+    type: Boolean,
+    label: 'Received customer feedback on the Order',
+    optional: true,
+  },
+  zh_sales_type: {
+    type: String,
+    label: 'Zoho Sales Type',
+    allowedValues: ['salesorder', 'deliverychallan'],
+    optional: true,
+  },
+  zh_salesorder_id: {
+    type: String,
+    label: 'Corresponding Zoho Sales Order Id',
+    optional: true,
+  },
+  zh_salesorder_number: {
+    type: String,
+    label: 'Corresponding Zoho Sales Order Number',
+    optional: true,
+  },
+  zh_salesorder_status: {
+    type: String,
+    label: 'Corresponding Zoho Sales Order Status',
+    optional: true,
+  },
+  zh_salesorder_order_status: {
+    type: String,
+    label: 'Corresponding Zoho Sales Order Order_Status',
+    optional: true,
+  },
   porterOrderStatus: { type: String, optional: true },
 });
 
 if (Meteor.isServer) {
-  Orders.rawCollection().createIndex({ order_status: 1, 'customer_details._id': 1 }, { unique: false });
-  Orders.rawCollection().createIndex({ 'products.name': 1, 'products.unitOfSale': 1 }, { unique: false });
+  Orders.rawCollection().createIndex(
+    { order_status: 1, 'customer_details._id': 1 },
+    { unique: false },
+  );
+  Orders.rawCollection().createIndex(
+    { 'products.name': 1, 'products.unitOfSale': 1 },
+    { unique: false },
+  );
 }
 
 Orders.attachSchema(Orders.schema);
