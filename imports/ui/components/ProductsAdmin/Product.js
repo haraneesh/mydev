@@ -1,3 +1,4 @@
+import { Roles } from 'meteor/alanning:roles';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
@@ -259,6 +260,10 @@ export default function Product(props) {
     });
   }
 
+  const isSuperAdmin = Roles.userIsInRole(
+    Meteor.userId(),
+    constants.Roles.superAdmin.name,
+  );
   return (
     <ListGroupItem>
       <Row>
@@ -270,6 +275,7 @@ export default function Product(props) {
             controlName="name"
             updateValue={handleProductUpsert}
             defaultValue={product.name}
+            disabled={!isSuperAdmin}
             help
           />
         </Col>
@@ -280,6 +286,7 @@ export default function Product(props) {
             controlName="unitprice"
             updateValue={handleProductUpsert}
             defaultValue={product.unitprice}
+            disabled={!isSuperAdmin}
             help
           />
         </Col>
@@ -311,6 +318,7 @@ export default function Product(props) {
             defaultValue={product.wSaleBaseUnitPrice}
             // defaultValue={this.props.product.sourceSupplier ? this.props.product.sourceSupplier._id : ''}
             // choiceValues={this.props.suppliers}
+            disabled={!isSuperAdmin}
             help
           />
         </Col>

@@ -92,10 +92,10 @@ export const findUser = new ValidatedMethod({
         username: user.mobileNumber,
       });
       if (u) {
-        u.isAdmin = await Roles.userIsInRoleAsync(
-          u._id,
+        u.isAdmin = await Roles.userIsInRoleAsync(u._id, [
+          constants.Roles.superAdmin.name,
           constants.Roles.admin.name,
-        );
+        ]);
         u.roles = await Roles.getRolesForUserAsync(u._id);
       }
       return u;
@@ -104,26 +104,29 @@ export const findUser = new ValidatedMethod({
   },
 });
 
-
 export const findUserNotLoggedIn = new ValidatedMethod({
   name: 'usersNotLoggedIn.find',
   validate: new SimpleSchema({
     mobileNumber: { type: String },
   }).validator(),
   async run(user) {
-  
-      const u = await Meteor.users.findOneAsync({
-        username: user.mobileNumber,
-      });
-      return u;
+    const u = await Meteor.users.findOneAsync({
+      username: user.mobileNumber,
+    });
+    return u;
   },
 });
-
 
 const assignUserRole = async (userId, selectedRole) => {
   switch (selectedRole) {
     case constants.Roles.admin.name:
       await Roles.setUserRolesAsync(userId, [constants.Roles.admin.name]);
+      break;
+    case constants.Roles.superAdmin.name:
+      await Roles.addUsersToRolesAsync(userId, [
+        constants.Roles.admin.name,
+        constants.Roles.superAdmin.name,
+      ]);
       break;
     case constants.Roles.shopOwner.name:
       await Roles.setUserRolesAsync(userId, [constants.Roles.shopOwner.name]);
@@ -235,7 +238,7 @@ export const createUser = new ValidatedMethod({
       Meteor.isServer &&
       (await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name))
     ) {
-      const newUser  = await createNewUser(user);
+      const newUser = await createNewUser(user);
       return newUser;
     }
   },

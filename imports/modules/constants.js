@@ -397,10 +397,12 @@ const ProductListStatus = {
 };
 
 const Roles = {
+  superAdmin: { name: 'superAdmin', display_value: 'Super Admin' },
   admin: { name: 'admin', display_value: 'Admin' },
   shopOwner: { name: 'shopOwner', display_value: 'Shop Owner' },
   supplier: { name: 'supplier', display_value: 'Supplier' },
   customer: { name: 'customer', display_value: 'Customer' },
+
 };
 
 Roles.allowedValues = [Roles.shopOwner.name, Roles.customer.name];

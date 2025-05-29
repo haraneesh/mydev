@@ -10,7 +10,12 @@ const AdminAuthenticated = ({
   component: Component,
   ...rest
 }) => {
-  if (!(authenticated && roles.indexOf('admin') !== -1)) {
+  if (
+    !(
+      (authenticated && roles.indexOf('admin') !== -1) ||
+      roles.indexOf('superAdmin') !== -1
+    )
+  ) {
     return <Navigate to="/login" replace={true} />;
   }
 

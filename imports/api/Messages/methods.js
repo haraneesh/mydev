@@ -1,17 +1,17 @@
+import { Roles } from 'meteor/alanning:roles';
+import { Match, check } from 'meteor/check';
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
-import { Match, check } from 'meteor/check';
-import { Roles } from 'meteor/alanning:roles';
-import Messages from './Messages';
-import commentFunctions from '../Comments/commentFunctions';
 import constants from '../../modules/constants';
-import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
+import rateLimit from '../../modules/rate-limit';
+import commentFunctions from '../Comments/commentFunctions';
+import Messages from './Messages';
 import msgUsers from './msgConstants';
 
 const messageTo = (messageType) => {
   switch (true) {
-    case (constants.MessageTypes.Message.name === messageType):
+    case constants.MessageTypes.Message.name === messageType:
       return constants.Roles.customer.name; // visible to all customers
     default:
       return constants.Roles.admin.name;
@@ -35,13 +35,20 @@ Meteor.methods({
     });
 
     try {
-      const isAdmin = Roles.userIsInRole(this.userId, constants.Roles.admin.name);
-      const userObj = (isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId)
-        ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
-        : commentFunctions.getUser(this.userId);
+      const isAdmin = Roles.userIsInRole(this.userId, [
+        constants.Roles.admin.name,
+        constants.Roles.superAdmin.name,
+      ]);
+      const userObj =
+        isAdmin && msg.onBehalf && msg.onBehalf.onBehalfUserId
+          ? commentFunctions.getUser(msg.onBehalf.onBehalfUserId)
+          : commentFunctions.getUser(this.userId);
 
       const message = {
-        ...msg, messageStatus: constants.MessageStatus.Open.name, ...userObj, commentCount: 0,
+        ...msg,
+        messageStatus: constants.MessageStatus.Open.name,
+        ...userObj,
+        commentCount: 0,
       };
       delete message.onBehalf;
 
@@ -117,7 +124,9 @@ Meteor.methods({
     try {
       const { userId } = this;
       const message = Messages.findOne({ _id: messageId });
-      const updatedLikeMemberId = (message.likeMemberId) ? message.likeMemberId : [];
+      const updatedLikeMemberId = message.likeMemberId
+        ? message.likeMemberId
+        : [];
 
       const memberIdLocation = updatedLikeMemberId.indexOf(userId);
 
@@ -127,7 +136,10 @@ Meteor.methods({
         updatedLikeMemberId.push(userId);
       }
 
-      Messages.update({ _id: messageId }, { $set: { likeMemberId: updatedLikeMemberId } });
+      Messages.update(
+        { _id: messageId },
+        { $set: { likeMemberId: updatedLikeMemberId } },
+      );
       return updatedLikeMemberId;
     } catch (exception) {
       handleMethodException(exception);
@@ -181,11 +193,15 @@ Meteor.methods({
     });
 
     try {
-      const messages = await Messages.find({ _id: options.postId }).fetchAsync();
+      const messages = await Messages.find({
+        _id: options.postId,
+      }).fetchAsync();
       const message = messages[0];
 
-      if (message.owner === this.userId
-        || await Roles.userIsInRole(this.userId, constants.Roles.admin.name)) {
+      if (
+        message.owner === this.userId ||
+        (await Roles.userIsInRole(this.userId, constants.Roles.admin.name))
+      ) {
         const cmt = {
           ...options,
           owner: message.owner,

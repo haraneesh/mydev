@@ -1,29 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { Roles } from 'meteor/alanning:roles';
+import { formatMoney } from 'accounting-js';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
-import { formatMoney } from 'accounting-js';
-import { Roles } from 'meteor/alanning:roles';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Loading from '../../Loading/Loading';
-import { formValChange } from '../../../../modules/validate';
-import { accountSettings } from '../../../../modules/settings';
 import constants from '../../../../modules/constants';
+import { accountSettings } from '../../../../modules/settings';
+import { formValChange } from '../../../../modules/validate';
+import Loading from '../../Loading/Loading';
 import PayTMButton from '../PayTM/PayTMButton';
 
-import { calculateGateWayFee, prepareState, SignUpForDiscountMessage } from '../../../../modules/both/walletHelpers';
+import {
+  SignUpForDiscountMessage,
+  calculateGateWayFee,
+  prepareState,
+} from '../../../../modules/both/walletHelpers';
 
 function AcceptPay({
-  userWallet, loggedInUser, showWalletBalance, callCollectPayFuncAfterPay, cartTotalBillAmount,
+  userWallet,
+  loggedInUser,
+  showWalletBalance,
+  callCollectPayFuncAfterPay,
+  cartTotalBillAmount,
 }) {
   const userWalletBeforeUpdate = prepareState(userWallet);
   const [walletState, setWalletState] = useState(userWalletBeforeUpdate);
-  const [textValue, setTextValue] = useState(userWalletBeforeUpdate.amountToChargeInRs);
+  const [textValue, setTextValue] = useState(
+    userWalletBeforeUpdate.amountToChargeInRs,
+  );
 
   useEffect(() => {
     setWalletState(prepareState(userWallet));
@@ -52,16 +62,19 @@ function AcceptPay({
   }
 
   function paymentResponseSuccess(result) {
-    if (callCollectPayFuncAfterPay) { callCollectPayFuncAfterPay(result); }
+    if (callCollectPayFuncAfterPay) {
+      callCollectPayFuncAfterPay(result);
+    }
     toast.success('Payment has been successfully processed');
   }
 
   function calculateTotalAmountWithGatewayFee(wallet) {
     const { amountToChargeInRs, gateWayFee } = wallet;
-    const amtToCharge = Math.ceil(
-      (parseFloat(amountToChargeInRs) + parseFloat(gateWayFee)) * 100,
-    ) / 100;
-    return (amtToCharge).toString();
+    const amtToCharge =
+      Math.ceil(
+        (parseFloat(amountToChargeInRs) + parseFloat(gateWayFee)) * 100,
+      ) / 100;
+    return amtToCharge.toString();
   }
 
   function simulatePayment() {
@@ -78,8 +91,10 @@ function AcceptPay({
   const { isError } = walletState;
 
   function optionValuesForWalletUpdate() {
-    const maxWalletAddAmt = (userWalletBeforeUpdate.amountToChargeInRs < 10000)
-      ? 10000 : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
+    const maxWalletAddAmt =
+      userWalletBeforeUpdate.amountToChargeInRs < 10000
+        ? 10000
+        : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
 
     const chargeOptions = [];
     if (userWalletBeforeUpdate.amountToChargeInRs > 0) {
@@ -98,15 +113,18 @@ function AcceptPay({
   }
 
   function dropDownValuesForWalletUpdate() {
-    const maxWalletAddAmt = (userWalletBeforeUpdate.amountToChargeInRs < 10000)
-      ? 10000 : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
+    const maxWalletAddAmt =
+      userWalletBeforeUpdate.amountToChargeInRs < 10000
+        ? 10000
+        : Math.ceil(userWalletBeforeUpdate.amountToChargeInRs);
 
     const chargeOptions = [];
     if (userWalletBeforeUpdate.amountToChargeInRs > 0) {
       chargeOptions.push(
-        <Dropdown.Item onClick={() => {
-          amountToChargeOnChange(userWalletBeforeUpdate.amountToChargeInRs);
-        }}
+        <Dropdown.Item
+          onClick={() => {
+            amountToChargeOnChange(userWalletBeforeUpdate.amountToChargeInRs);
+          }}
         >
           {userWalletBeforeUpdate.amountToChargeInRs}
         </Dropdown.Item>,
@@ -115,9 +133,10 @@ function AcceptPay({
     for (let i = 500; i <= maxWalletAddAmt; i += 500) {
       if (userWalletBeforeUpdate.amountToChargeInRs < i) {
         chargeOptions.push(
-          <Dropdown.Item onClick={() => {
-            amountToChargeOnChange(i);
-          }}
+          <Dropdown.Item
+            onClick={() => {
+              amountToChargeOnChange(i);
+            }}
           >
             {i}
           </Dropdown.Item>,
@@ -129,23 +148,23 @@ function AcceptPay({
 
   return (
     <div>
-      {walletState.paymentInProcess && (<Loading />)}
-      {(!!showWalletBalance) && (
-      <Card className="py-4 my-4">
-        <Row>
-          <Col xs={12} className="text-center">
-            <h4 className="m-2">
-              {`Wallet Balance is${' '}`}
-              <span className={walletState.balanceAmountClass}>
-                {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
-              </span>
-            </h4>
-            <p className="text-info small">
-              Only delivered orders are considered.
-            </p>
-          </Col>
-        </Row>
-      </Card>
+      {walletState.paymentInProcess && <Loading />}
+      {!!showWalletBalance && (
+        <Card className="py-4 my-4">
+          <Row>
+            <Col xs={12} className="text-center">
+              <h4 className="m-2">
+                {`Wallet Balance is${' '}`}
+                <span className={walletState.balanceAmountClass}>
+                  {`${formatMoney(walletState.netAmountInWalletInRs, accountSettings)}`}
+                </span>
+              </h4>
+              <p className="text-info small">
+                Only delivered orders are considered.
+              </p>
+            </Col>
+          </Row>
+        </Card>
       )}
       <div className="p-2 py-4 bg-white">
         <Row>
@@ -154,28 +173,36 @@ function AcceptPay({
               1. Scan and Pay with any Bharath QR/UPI app,
               <span className="underline"> No fee</span>
             </h6>
-            <p>
+            {/* <p>
               Do
               {' '}
               <b className="text-warning">share</b>
               {' '}
               your SODEXO card number with us before you pay for the first time.
-            </p>
+            </p> */}
             <Row>
-              <Col xs={6} sm={6} className="text-center">
+              <Col xs={12} sm={6} className="text-center">
                 <h4>UPI</h4>
-                <img src="/pay/scan-pay-upi.jpg" style={{ width: '100%', maxWidth: '20em' }} alt="Scan and Pay via UPI" />
+                <img
+                  src="/pay/scan-pay-upi.jpg"
+                  style={{ width: '100%', maxWidth: '20em' }}
+                  alt="Scan and Pay via UPI"
+                />
               </Col>
-              <Col xs={6} sm={6} className="text-center">
+              {/*} <Col xs={6} sm={6} className="text-center">
                 <h4>SODEXO</h4>
                 <img src="/pay/scan-pay-sodexo.jpg" style={{ width: '100%', maxWidth: '20em' }} alt="Scan and Pay via Sodexo" />
-              </Col>
+              </Col> */}
             </Row>
-
           </Col>
         </Row>
 
-        <Row><span className="text-center text-muted bg-white mb-5 pt-4">   - - - - -   OR   - - - - -   </span></Row>
+        <Row>
+          <span className="text-center text-muted bg-white mb-5 pt-4">
+            {' '}
+            - - - - - OR - - - - -{' '}
+          </span>
+        </Row>
 
         <Row>
           <Col xs={12} sm={11} className="offset-sm-1">
@@ -185,7 +212,13 @@ function AcceptPay({
             </h6>
 
             <Form.Group>
-              <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
+              <Col
+                xs={12}
+                sm={8}
+                smOffset={1}
+                style={{ marginBottom: '1rem' }}
+                className="pr-2"
+              >
                 {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                 <InputGroup>
                   <InputGroup.Text>Rs.</InputGroup.Text>
@@ -193,7 +226,9 @@ function AcceptPay({
                     type="text"
                     className="form-control"
                     value={textValue}
-                    onChange={(e) => { amountToChargeOnChange(e.target.value); }}
+                    onChange={(e) => {
+                      amountToChargeOnChange(e.target.value);
+                    }}
                   />
                   <Dropdown align="end">
                     <Dropdown.Toggle
@@ -209,16 +244,21 @@ function AcceptPay({
                       </div>
                     </Dropdown.Menu>
                   </Dropdown>
-
                 </InputGroup>
                 {isError.amountToChargeInRs.length > 0 && (
-                  <span className="text-info bg-white">{isError.amountToChargeInRs}</span>
+                  <span className="text-info bg-white">
+                    {isError.amountToChargeInRs}
+                  </span>
                 )}
               </Col>
               <Col xs={12} sm={3} className="text-right-xs">
                 {/* <button onClick={simulatePayment}> Test Payment </button> */}
                 <PayTMButton
-                  buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
+                  buttonText={
+                    walletState.netAmountInWalletInRs >= 0
+                      ? 'Pay Advance'
+                      : 'Pay Due'
+                  }
                   showOptionsWithFee={false}
                   paymentDetails={{
                     cartTotalBillAmount,
@@ -248,19 +288,29 @@ function AcceptPay({
         </Row>
       </div>
 
-      { (Roles.userIsInRole(loggedInUser, constants.Roles.customer.name)) && (
+      {Roles.userIsInRole(loggedInUser, constants.Roles.customer.name) && (
         <>
           <div className="p-2 py-4 bg-white">
-            <Row><span className="text-center text-muted bg-white mb-5">   - - - - -   OR   - - - - -   </span></Row>
+            <Row>
+              <span className="text-center text-muted bg-white mb-5">
+                {' '}
+                - - - - - OR - - - - -{' '}
+              </span>
+            </Row>
             <Row>
               <Col xs={12} sm={11} className="offset-sm-1">
-
                 <h6 className="py-3">
                   <div>3. NetBanking or Credit Card, 2% transaction fee </div>
                 </h6>
 
-                <Form.Group >
-                  <Col xs={12} sm={8} smOffset={1} style={{ marginBottom: '1rem' }} className="pr-2">
+                <Form.Group>
+                  <Col
+                    xs={12}
+                    sm={8}
+                    smOffset={1}
+                    style={{ marginBottom: '1rem' }}
+                    className="pr-2"
+                  >
                     {/* <SignUpForDiscountMessage wallet={loggedInUser.wallet} /> */}
                     <InputGroup>
                       <InputGroup.Text>Rs.</InputGroup.Text>
@@ -268,7 +318,9 @@ function AcceptPay({
                         type="text"
                         className="form-control"
                         value={textValue}
-                        onChange={(e) => { amountToChargeOnChange(e.target.value); }}
+                        onChange={(e) => {
+                          amountToChargeOnChange(e.target.value);
+                        }}
                       />
                       <Dropdown align="end">
                         <Dropdown.Toggle
@@ -279,12 +331,13 @@ function AcceptPay({
                           }}
                         />
                         <Dropdown.Menu className="border border-primary">
-                          <div style={{ maxHeight: '10em', overflow: 'scroll' }}>
+                          <div
+                            style={{ maxHeight: '10em', overflow: 'scroll' }}
+                          >
                             {dropDownValuesForWalletUpdate()}
                           </div>
                         </Dropdown.Menu>
                       </Dropdown>
-
                     </InputGroup>
                     <p>
                       <small>
@@ -293,16 +346,23 @@ function AcceptPay({
                       </small>
                     </p>
                     {isError.amountToChargeInRs.length > 0 && (
-                      <span className="text-info bg-white">{isError.amountToChargeInRs}</span>
+                      <span className="text-info bg-white">
+                        {isError.amountToChargeInRs}
+                      </span>
                     )}
                   </Col>
                   <Col xs={12} sm={3} className="text-right-xs">
                     <PayTMButton
-                      buttonText={(walletState.netAmountInWalletInRs >= 0) ? 'Pay Advance' : 'Pay Due'}
+                      buttonText={
+                        walletState.netAmountInWalletInRs >= 0
+                          ? 'Pay Advance'
+                          : 'Pay Due'
+                      }
                       showOptionsWithFee
                       paymentDetails={{
                         cartTotalBillAmount,
-                        moneyToChargeInRs: calculateTotalAmountWithGatewayFee(walletState),
+                        moneyToChargeInRs:
+                          calculateTotalAmountWithGatewayFee(walletState),
                         description: 'Add to Wallet',
                         prefill: {
                           firstName: loggedInUser.profile.name.first,

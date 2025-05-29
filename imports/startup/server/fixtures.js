@@ -1,6 +1,7 @@
 import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import { createNewUser } from '/imports/api/Users/methods';
 
 const users = [
   {
@@ -12,31 +13,26 @@ const users = [
       whMobilePhone: '9999999999',
       deliveryAddress: 'Office Address  Admin Account',
     },
-    roles: ['admin'],
+    role: 'admin',
   },
-  /* Temporary Users */
   {
-    username: '7555881466',
-    email: 'h1@yahoo.com',
-    password: 'password',
+    username: '6666666666',
+    email: 'h1111@yahoo.com',
+    password: 'password12',
     profile: {
-      name: { first: 'Ajit', last: 'S' },
-      whMobilePhone: '7555881466',
-      deliveryAddress: 'Office Address',
+      name: {
+        first: 'Super',
+        last: 'Admin',
+      },
+      salutation: 'Mrs',
+      whMobilePhone: '6666666666',
+      deliveryAddress: 'Super Admin',
+      eatingHealthyMeaning: '',
+      deliveryPincode: '600087',
+      deliveryAddressLatitude: '87978.89',
+      deliveryAddressLongitude: '87978.89',
     },
-    roles: ['customer'],
-  },
-
-  {
-    username: '9855561654',
-    email: 'h2@yahoo.com',
-    password: 'password',
-    profile: {
-      name: { first: 'Balambal', last: 'G' },
-      whMobilePhone: '9855561654',
-      deliveryAddress: 'Office Address',
-    },
-    roles: ['customer'],
+    role: 'superAdmin',
   },
 ];
 
@@ -47,13 +43,16 @@ async function createUsers(users) {
     const userExists = await Meteor.users.findOneAsync({ username });
 
     if (!userExists) {
+      await Roles.createRoleAsync(user.role, { unlessExists: true });
+      await createNewUser(user);
+      /*
       const userId = await Accounts.createUserAsync({
         username,
         email,
         password,
         profile,
       });
-      await Roles.addUsersToRoles(userId, roles);
+      await Roles.addUsersToRoles(userId, roles); */
     }
   }
 }

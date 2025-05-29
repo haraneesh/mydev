@@ -7,12 +7,12 @@ import RouteNames from '../apps/RouteNames';
 import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';
 import Navigation from '../components/Navigation/Navigation';
 import ToolBar from '../components/ToolBar/ToolBar';
-import useFacebookPixel from './facebookPixelHook';
+//import useFacebookPixel from './facebookPixelHook';
 
 const trackPageViews = ({ loggedInUser, routeName, match }) => {
   if (Meteor.isProduction) {
     //Add facebook pixel tracker
-    useFacebookPixel(Meteor.settings.public.analyticsSettings.facebookPixel.pixelId);
+    //useFacebookPixel(Meteor.settings.public.analyticsSettings.facebookPixel.pixelId);
     switch (true) {
       case !!loggedInUser:
         SuvaiAnalytics.analyticsFunctions.initialize(loggedInUser);

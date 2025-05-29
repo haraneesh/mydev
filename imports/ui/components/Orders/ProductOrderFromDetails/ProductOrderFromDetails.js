@@ -86,9 +86,20 @@ function ProductsOrderFromDetails(props) {
 
   function addToCart() {
     const prod = { ...product };
-    cartDispatch({ type: cartActions.updateCart, payload: { product: prod } });
-    // go to
-    navigate('/cart');
+    if (prod.quantity !== 0 && prod.quantity !== '0') {
+      cartDispatch({
+        type: cartActions.updateCart,
+        payload: { product: prod },
+      });
+      navigate('/cart');
+    } else {
+      toast.warn('Please select quantity you would like to order.');
+    }
+  }
+
+  function startWhatsApp() {
+    const prod = { ...product };
+    window.location.href = 'https://wa.link/chew75';
   }
 
   if (!product.name) {
@@ -143,8 +154,12 @@ function ProductsOrderFromDetails(props) {
                   displayDelete={false}
                 />
                 <div className="d-flex flex-row col-10 mt-4">
-                  <button className="btn btn-success" onClick={addToCart}>
-                    Add To Cart
+                  <button
+                    id="addToCart"
+                    className="btn btn-success"
+                    onClick={startWhatsApp}
+                  >
+                    Place Order
                   </button>
                 </div>
               </div>
