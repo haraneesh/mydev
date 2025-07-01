@@ -27,8 +27,48 @@ const _productTypeToZohoGroupIdMap = {
 
 const _getZohoGroupId = (type) => _productTypeToZohoGroupIdMap[type];
 
-// Sales Order - draft, open, invoiced, partially_invoiced, void and overdue
+/**
+ * Parses a unitsForSelection string and returns the corresponding value
+ * based on a given quantity. The unitsForSelection string can contain
+ * simple numeric values or key-value pairs (e.g., "0.5=5%").
+ *
+ * @param {string} unitsForSelection - A comma-separated string of units,
+ * e.g., "0,0.25,0.5=5%,0.75=10%,1".
+ * @param {number} quantity - The numeric quantity to match against.
+ * @param {number} fullPrice - The full price of the product.
+ * @returns {number|string|null} The matched value (e.g., 10, "0.5") or null if no match is found.
+ */
+function getDiscountedPrice(unitsForSelection, quantity, fullPrice) {
+  let result = 0;
 
+  // Split the string into individual options
+  const options = unitsForSelection.split(',');
+
+  // Iterate through the options to find the match
+  for (const option of options) {
+    if (option.includes('=')) {
+      // This option has a mapped value (e.g., "0.5=5%")
+      const [value, mappedValue] = option.split('=');
+      // Use parseFloat for robust numeric comparison
+      if (parseFloat(value) === quantity) {
+        // If the mapped value ends with '%', remove it and parse as an integer
+        if (mappedValue.endsWith('%')) {
+          result = parseInt(mappedValue);
+        }
+        break; // Found the match, exit the loop
+      }
+    } else if (parseFloat(option) === quantity) {
+      break;
+    }
+  }
+  if (result > 0) {
+    const discountedAmount = (fullPrice * result) / 100;
+    return fullPrice - discountedAmount;
+  }
+  return fullPrice;
+}
+
+// Sales Order - draft, open, invoiced, partially_invoiced, void and overdue
 const _orderStatusToZohoSalesOrderStatus = {
   Pending: { zh_status: 'draft' },
   Processing: { zh_status: 'open' },
@@ -84,7 +124,11 @@ const createZohoSalesOrder = async (order) => {
       item_id: product.zh_item_id || itemId, // mandatory
       name: product.name,
       description: product.description || '',
-      rate: product.unitprice,
+      rate: getDiscountedPrice(
+        product.unitsForSelection,
+        product.quantity,
+        product.unitprice,
+      ),
       quantity: product.quantity,
       unit: product.unitOfSale,
     });

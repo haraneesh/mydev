@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 
 const loadCheckOutPayTM = (callback) => {
-  const { hostName, merchantId } = Meteor.settings.public.PayTM;
+  const { hostName, merchantId, scriptID } = Meteor.settings.public.PayTM;
 
-  const SCRIPTID = 'payTMScript1234567';
+  const SCRIPTID = scriptID;
   const isScriptExist = document.getElementById(SCRIPTID);
 
   if (!isScriptExist) {

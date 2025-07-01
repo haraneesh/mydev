@@ -300,7 +300,7 @@ function AcceptPay({
             <Row>
               <Col xs={12} sm={11} className="offset-sm-1">
                 <h6 className="py-3">
-                  <div>3. NetBanking or Credit Card, 2% transaction fee </div>
+                  <div>3. NetBanking or Credit Card, 2.3% transaction fee </div>
                 </h6>
 
                 <Form.Group>

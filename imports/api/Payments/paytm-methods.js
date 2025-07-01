@@ -2,6 +2,7 @@ import { Match, check } from 'meteor/check';
 import { fetch } from 'meteor/fetch';
 import { HTTP } from 'meteor/http';
 import { Meteor } from 'meteor/meteor';
+import { calculateGateWayFee } from '/imports/modules/both/walletHelpers';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit';
 import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
@@ -59,12 +60,19 @@ Meteor.methods({
         },
       );
 
+      //https://www.paytmpayments.com/docs/jscheckout-verify-payment?ref=jsCheckoutdoc
+      const txnAmountInPaise = parseFloat(paymentStatus.TXNAMOUNT) * 100;
+      const paymentAmountDeductingFee =
+        paymentStatus.PAYMENTMODE == 'CC' || paymentStatus.PAYMENTMODE == 'NB'
+          ? txnAmountInPaise - calculateGateWayFee(txnAmountInPaise)
+          : txnAmountInPaise;
+
       if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
         const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
 
         const zhResponse = zohoPayments.createCustomerPayment({
           zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
-          paymentAmountInPaise: paymentStatus.TXNAMOUNT * 100,
+          paymentAmountInPaise: paymentAmountDeductingFee.toString(),
           paymentMode: paymentStatus.PAYMENTMODE,
           razorPaymentId: paymentStatus.ORDERID,
           paymentDescription: `Paid via PayTm, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
