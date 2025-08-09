@@ -61,14 +61,16 @@ import {
   dProfileUpdate,
   dReconcileInventory,
   dReconcileInventoryList,
-  // razorPayChargesInPaisedZohoSyncUp,
-  dReportsHome,
-  dUserDetails,
-  dUsers,
+  dViewInvoice,
   dViewProductListDetails,
   dVision,
   dZohoSyncUp,
+  dUsers,
+  dUserDetails,
+  dReportsHome
 } from './dynamicRoutes';
+
+import { InvoiceViewWrapper } from '../components/Orders/Invoices/InvoiceViewWrapper';
 
 import dApproveUserSignUps from '../pages/Miscellaneous/ApproveSignUps';
 
@@ -241,6 +243,17 @@ const App = (props) => (
             />
 
             {/* Order */}
+            <Route
+              path="/invoices/:id"
+              element={
+                <Authenticated
+                  routeName="View_Invoice"
+                  layout={MainLayout}
+                  component={InvoiceViewWrapper}
+                  {...props}
+                />
+              }
+            />
             <Route
               path="/order/success/:orderId?"
               element={

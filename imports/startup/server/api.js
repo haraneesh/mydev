@@ -33,6 +33,8 @@ import '../../api/Recommendations/server/publications';
 
 import '../../api/Invoices/methods';
 
+import '../../api/ZhInvoices';
+
 import '../../api/Comments/methods';
 import '../../api/Comments/server/publications';
 

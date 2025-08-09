@@ -19,27 +19,34 @@ export default class ZohoSync extends React.Component {
     this.state = {
       isSyncingHappening: false,
       syncStatus: 'success',
-      // successResult: [],
-      // errorResult: [],
     };
 
+    // Initialize as empty arrays to prevent undefined errors
     this._errorResult = [];
     this._successResult = [];
     this.handleSyncClick = this.handleSyncClick.bind(this);
   }
 
   handleSyncClick() {
+    // Reset error and success results
+    this._errorResult = [];
+    this._successResult = [];
+    
     const args = this.props.syncArgs || {};
     this.props.syncFunction.call(args, (err, result) => {
       const syncObj = { isSyncingHappening: false };
       if (err) {
-        toast.error(err.reason);
+        console.error('Sync error:', err);
+        toast.error(err.reason || 'An error occurred during sync');
         syncObj.syncStatus = 'error';
+        // Ensure _errorResult is an array
+        this._errorResult = Array.isArray(err.details) ? err.details : [{ code: 'error', message: err.reason || 'Unknown error' }];
       } else {
         toast.success('Sync Up Complete!');
         syncObj.syncStatus = 'success';
-        this._errorResult = result.error;
-        this._successResult = result.success;
+        // Ensure we always have arrays
+        this._errorResult = Array.isArray(result?.error) ? result.error : [];
+        this._successResult = Array.isArray(result?.success) ? result.success : [];
       }
       this.setState(syncObj);
     });

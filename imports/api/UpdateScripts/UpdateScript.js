@@ -7,7 +7,7 @@ import constants from '../../modules/constants';
 import { Orders } from '../Orders/Orders';
 // import Ingredients from '../Ingredients/Ingredients';
 import Products from '../Products/Products';
-import ZohoSyncUps from '../ZohoSyncUps/ZohoSyncUps';
+import ZohoSyncUps, { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
 // import Messages from '../Messages/Messages';
 // import constants from '../../modules/constants';
 
@@ -35,6 +35,59 @@ if (IngWeights.findOne()) {
 
 // update products to have displayOrder
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
+
+const runInitializationScripts = async () => {
+  // Initialize invoicesLastModifiedTimeFromZoho if it doesn't exist
+
+  const existingSync = await ZohoSyncUps.findOneAsync({
+    syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+  });
+
+  const august5_2025 = new Date('2025-08-07T00:00:00.000Z');
+
+    await ZohoSyncUps.updateAsync({
+      syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+    },{$set:{
+        syncDateTime: august5_2025,
+        noErrorSyncDate: august5_2025,
+        errorRecords: [],
+        successRecords: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        syncedForUser: 'All'
+    }});
+
+  if (!existingSync) {
+    console.log(
+      'Initializing invoicesLastModifiedTimeFromZoho to August 5th, 2025',
+    );
+
+    const august5_2025 = new Date('2025-08-07T00:00:00.000Z');
+
+    await ZohoSyncUps.insertAsync({
+      syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+      syncDateTime: august5_2025,
+      noErrorSyncDate: august5_2025,
+      errorRecords: [],
+      successRecords: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      syncedForUser: 'All'
+    });
+  } else {
+    console.log(
+      'invoicesLastModifiedTimeFromZoho already exists with date:',
+      existingSync.syncDateTime,
+    );
+  }
+};
+
+// Run the initialization
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    runInitializationScripts();
+  });
+}
 
 /*
 

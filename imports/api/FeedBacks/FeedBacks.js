@@ -27,6 +27,7 @@ FeedBacks.schema = new SimpleSchema({
   postId: {
     type: String,
     label: 'The ID of the post for which this feedback was given.',
+    optional: true,
   },
   postType: {
     type: String,

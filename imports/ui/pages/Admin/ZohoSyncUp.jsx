@@ -2,7 +2,8 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { syncBulkOrdersWithZoho, getOrdersAndInvoicesFromZoho, syncOfflinePaymentDetails } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
+import { syncBulkOrdersWithZoho, syncOfflinePaymentDetails } from '../../../api/ZohoSyncUps/zohoOrdersMethods';
+import { getInvoicesFromZohoByLastModifiedTime } from '../../../api/ZohoSyncUps/zohoInvoices';
 import { bulkSyncProductsZoho } from '../../../api/ZohoSyncUps/zohoProductsMethods';
 import { bulkSyncUsersZoho } from '../../../api/ZohoSyncUps/zohoContactsMethods';
 import getSalesDetailsByItemFromZoho from '../../../api/ZohoSyncUps/zohoSalesByItemsMethods';
@@ -44,9 +45,9 @@ const ZohoSyncUp = () => (
         <hr />
         <ZohoSync
           orderSequence={4}
-          syncFunction={getOrdersAndInvoicesFromZoho} // {getOrdersFromZoho}
-          syncName="< Get Invoices "
-          syncDescription="Get invoice details of orders from Zoho"
+          syncFunction={getInvoicesFromZohoByLastModifiedTime}
+          syncName="< Get Updated Invoices"
+          syncDescription="Get invoice details modified since last sync from Zoho"
         />
         <ZohoSync
           orderSequence={5}

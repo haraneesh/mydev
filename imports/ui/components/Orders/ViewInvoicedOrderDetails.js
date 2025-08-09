@@ -62,24 +62,8 @@ class ViewInvoicedOrderDetails extends React.Component {
       ));
 
       return (
-        <div className="ViewOrderDetails ">
-          <div className="py-4 ps-2">
-            <Row>
-              <Col xs={12}>
-                <h2>
-                  {moment(order.createdAt)
-                    .tz(dateSettings.timeZone)
-                    .format(dateSettings.format)}
-                </h2>
-              </Col>
-            </Row>
-          </div>
-          <Row className="bg-body p-2">
-            <Col xs={12}>
-              <Badge bg={constants.OrderStatus[order.order_status].label}>
-                {constants.OrderStatus[order.order_status].display_value}
-              </Badge>
-            </Col>
+        <div className="ViewOrderDetails container-fluid">
+          <Row>
             { viewInvoiceComponents }
           </Row>
           {((itemIds.length > 0) && (

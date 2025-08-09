@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
@@ -20,7 +21,11 @@ function RootWithRouter(props) {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  return <App {...props} />;
+  return (
+    <HelmetProvider>
+      <App {...props} />
+    </HelmetProvider>
+  );
 }
 
 RootWithRouter.propTypes = {

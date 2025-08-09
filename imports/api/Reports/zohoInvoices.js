@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Meteor } from 'meteor/meteor';
-import { ZhInvoices } from '../Invoices/Invoices';
+import { ZhInvoices } from '../ZhInvoices/ZhInvoices';
 import zh from '../ZohoSyncUps/ZohoBooks';
 import ZohoSyncUps, { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
 import {

@@ -62,3 +62,6 @@ export const dApproveUserSignUps = lazy(() => import('../pages/Miscellaneous/App
 // Messages
 export const dMessagesHome = lazy(() => import('../pages/Messages/Messages'));
 
+// Invoice View
+export const dViewInvoice = lazy(() => import('../components/Orders/Invoices/ViewInvoice'));
+

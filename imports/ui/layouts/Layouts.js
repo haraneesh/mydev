@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import Container from 'react-bootstrap/Container';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { ThemeProvider } from 'styled-components';
 import RouteNames from '../apps/RouteNames';
 import SuvaiAnalytics from '../components/Analytics/SuvaiAnalytics';

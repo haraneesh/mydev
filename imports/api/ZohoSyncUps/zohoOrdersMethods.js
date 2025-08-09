@@ -263,7 +263,7 @@ export const syncBulkOrdersWithZoho = new ValidatedMethod({
 
 // Zoho status = Allowed Values: draft, open, invoiced, partially_invoiced, void and overdue.
 // Zoho order_status = draft, open, closed, void
-const updateOrderStatusFromZoho = async (awaitOrd, successResp, errorResp) => {
+export const updateOrderStatusFromZoho = async (awaitOrd, successResp, errorResp) => {
   const order = awaitOrd;
   let getInvoices = false;
 
@@ -332,7 +332,7 @@ export const getUserOrdersAndInvoicesFromZoho = async (userId) => {
         );
 
         if (getInvoices && ord.zh_salesorder_number) {
-          await processInvoicesFromZoho(ord, successResp, errorResp);
+          await processInvoicesFromZoho(ord, successResp, errorResp, null);
         }
       }
     }
@@ -383,7 +383,7 @@ export const getOrdersAndInvoicesFromZoho = new ValidatedMethod({
             errorResp,
           );
           if (getInvoices && ord.zh_salesorder_number) {
-            await processInvoicesFromZoho(ord, successResp, errorResp);
+            await processInvoicesFromZoho(ord, successResp, errorResp, null);
           }
         }
       }
@@ -426,7 +426,7 @@ export const syncOfflinePaymentDetails = new ValidatedMethod({
             errorResp,
           );
           if (getInvoices && ord.zh_salesorder_number) {
-            await processInvoicesFromZoho(ord, successResp, errorResp);
+            await processInvoicesFromZoho(ord, successResp, errorResp, null);
           }
         }
       }

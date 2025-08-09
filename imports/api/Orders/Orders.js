@@ -4,7 +4,9 @@ import { Mongo } from 'meteor/mongo';
 import { Random } from 'meteor/random';
 import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
-import InvoiceSchemaDefObj from '../Invoices/Invoices';
+// Import the schema from the appropriate location if needed
+// This was previously importing a SimpleSchema from Invoices.js
+// Please ensure the correct schema is being used for orders
 import { ProductSchemaDefObject } from '../Products/Products';
 
 export const Orders = new Mongo.Collection('Orders');
@@ -77,7 +79,18 @@ Orders.schema = new SimpleSchema({
   products: { type: Array },
   'products.$': ProductSchema.omit('createdAt', 'updatedAt'),
   invoices: { type: Array, optional: true },
-  'invoices.$': InvoiceSchemaDefObj,
+  'invoices.$': new SimpleSchema({
+    invoice_id: String,
+    date: Date,
+    status: String,
+    total: Number,
+    balance: { type: Number, optional: true },
+    reference_number: { type: String, optional: true },
+    invoice_number: { type: String, optional: true },
+    invoice_url: { type: String, optional: true },
+    created_time: { type: Date, optional: true },
+    last_modified_time: { type: Date, optional: true },
+  }),
   customer_details: { type: Object },
   'customer_details.role': {
     type: String,

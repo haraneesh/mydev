@@ -95,7 +95,7 @@ class AllOrders extends React.Component {
       !loading ? (
         <Row>
           <Col xs={12}>
-            <h2 className="py-4">All Orders</h2>
+            <h2 className="py-4">Completed Orders</h2>
             <ManageAllOrders
               history={history}
               orders={orders}

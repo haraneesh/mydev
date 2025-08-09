@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Meteor } from 'meteor/meteor';
 import PropTypes from 'prop-types';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Orders } from '../../../../api/Orders/Orders';
+import { Orders } from '/imports/api/Orders/Orders';
+import { getUserInvoices } from '/imports/api/ZhInvoices/methods';
 import MyOrderList from '../../../components/Orders/MyOrdersList/MyOrdersList';
 import Loading from '../../../components/Loading/Loading';
 import constants from '../../../../modules/constants';
@@ -27,32 +28,64 @@ const MyOrders = ({
   loggedInUserId,
   emailAddress,
   productReturnables,
-}) => (!loading ? (
-  <div>
-    <Row>
-      <Col xs={12}>
-        <WelcomeMessage loggedInUser={loggedInUser} />
-      </Col>
-    </Row>
-    <Row>
-      <h2 className="py-4 text-center">My Orders</h2>
-    </Row>
-    <Row>
-      <MyOrderList
-        loggedInUser={loggedInUser}
-        orders={orders}
-        history={history}
-        loggedInUserId={loggedInUserId}
-        emailVerified={emailVerified}
-        emailAddress={emailAddress}
-        myOrderViewFilter={myOrderViewFilter}
-        orderFilter={reactVarFilter.get()}
-        productReturnables={productReturnables}
-      />
+}) => {
+  const [invoices, setInvoices] = useState([]);
+  const [invoicesLoading, setInvoicesLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('orders');
 
-    </Row>
-  </div>
-) : <Loading />);
+  //const handleTabClick = useCallback(async (tab) => {
+  async function handleTabClick (tab) {
+    setActiveTab(tab);
+    
+    if (tab === 'invoices') {
+      try {
+        setInvoicesLoading(true);
+        // Call the method to get invoices using async/await
+        const result = await Meteor.callAsync('zhInvoices.getUserInvoices');
+        setInvoices(result);
+      } catch (error) {
+        console.error('Error loading invoices:', error);
+        // Handle error (e.g., show error toast)
+      } finally {
+        setInvoicesLoading(false);
+      }
+    }
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  return (
+    <div>
+      <Row>
+        <Col xs={12}>
+          <WelcomeMessage loggedInUser={loggedInUser} />
+        </Col>
+      </Row>
+      <Row>
+        <h2 className="py-4 text-center">My Orders</h2>
+      </Row>
+      <Row>
+        <MyOrderList
+          loggedInUser={loggedInUser}
+          orders={orders}
+          history={history}
+          loggedInUserId={loggedInUserId}
+          emailVerified={emailVerified}
+          emailAddress={emailAddress}
+          myOrderViewFilter={myOrderViewFilter}
+          orderFilter={reactVarFilter.get()}
+          productReturnables={productReturnables}
+          invoices={invoices}
+          invoicesLoading={invoicesLoading}
+          onTabSelect={handleTabClick}
+          activeTab={activeTab}
+        />
+      </Row>
+    </div>
+  );
+};
 
 MyOrders.propTypes = {
   emailVerified: PropTypes.bool.isRequired,
@@ -60,8 +93,12 @@ MyOrders.propTypes = {
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
-  loggedInUserId: PropTypes.string.isRequired,
+  productReturnables: PropTypes.array.isRequired,
   emailAddress: PropTypes.string.isRequired,
+};
+
+MyOrders.defaultProps = {
+  productReturnables: [],
 };
 
 export default withTracker((args) => {
@@ -89,6 +126,6 @@ export default withTracker((args) => {
     emailVerified: args.emailVerified,
     loggedInUserId: args.loggedInUserId,
     emailAddress: args.emailAddress,
-    productReturnables: args.productReturnables,
+    productReturnables: args.productReturnables || [],
   };
 })(MyOrders);
