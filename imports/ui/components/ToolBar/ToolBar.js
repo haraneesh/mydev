@@ -9,11 +9,9 @@ import Icon from '../Icon/Icon';
 import './ToolBar.scss';
 
 import { dMessages } from '../../apps/dynamicRoutes';
-
-import { GlobalStores, useStore } from '../../stores/GlobalStore';
-
 import { useNavigate } from 'react-router-dom';
 import { useCartState } from '../../stores/ShoppingCart';
+import { calculateWalletBalanceInRs } from '../../../modules/both/walletHelpers';
 
 const fontProps = {
   fontWeight: '700',
@@ -32,7 +30,10 @@ const ToolBar = ({
   globalStatuses,
   appName,
   match,
+  userWallet,
 }) => {
+  const walletBalanceInRs = userWallet ? calculateWalletBalanceInRs(userWallet) : 0;
+  const showWalletAlert = walletBalanceInRs < 0;
 
   const cartState = useCartState();
   const navigate = useNavigate();
@@ -150,6 +151,9 @@ const ToolBar = ({
             }}
           >
             <Icon icon="currency_rupee" type="mt" className="fs-2" />
+            {showWalletAlert && (
+              <b className="alertMenu alertBubble"> </b>
+            )}
             <span style={fontProps}>Wallet</span>
           </Button>
         </div>
@@ -161,6 +165,12 @@ const ToolBar = ({
 
 ToolBar.propTypes = {
   countOfUnreadNotifications: PropTypes.number,
+  userWallet: PropTypes.object,
+  authenticated: PropTypes.bool,
+  isAdmin: PropTypes.bool,
+  globalStatuses: PropTypes.object,
+  appName: PropTypes.string,
+  match: PropTypes.object,
 };
 
 export default ToolBar;
