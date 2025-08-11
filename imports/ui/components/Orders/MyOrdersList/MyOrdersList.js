@@ -1,11 +1,11 @@
+import { format } from 'date-fns';
 import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 /* eslint-disable max-len, no-return-assign */
 import React from 'react';
 import { toast } from 'react-toastify';
-import { withTracker } from 'meteor/react-meteor-data';
 import { ZhInvoices } from '../../../../api/ZhInvoices/ZhInvoices';
-import { format } from 'date-fns';
 
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
@@ -26,9 +26,9 @@ import ProductFit from '../../FeedBacks/ProductFit/ProductFit';
 import ListPayments from '../../Payments/ListPayments/ListPayments';
 import ShowStatement from '../../Payments/Statement';
 import AddToWallet from './AddToWallet';
+import InvoiceListItem from './InvoiceListItem';
 import OrderSummaryRow from './OrderSummaryRow';
 import ShowReturnables from './ShowReturnables';
-import InvoiceListItem from './InvoiceListItem';
 
 import './MyOrdersList.scss';
 
@@ -41,6 +41,8 @@ class MyOrderList extends React.Component {
     this.state = {
       showFeedBackForm: false, // disable for now
       wallet: loggedInUser.wallet,
+      invoicesTabLoaded: false, // Track if invoices tab has been loaded
+      activeTabKey: '1', // Track active tab
     };
     this.feedBackPostId = '';
     this.receiveFeedBack = this.receiveFeedBack.bind(this);
@@ -162,48 +164,84 @@ class MyOrderList extends React.Component {
   }
 
   handleTabSelect = (key) => {
-    // Call the appropriate handler based on the selected tab
-    if (this.props.onTabSelect) {
-      if (key === '1') {
-        this.props.onTabSelect('orders');
-      } else if (key === '4') {
+    // Update active tab state
+    this.setState({ activeTabKey: key });
+
+    // Only load invoices data when the invoices tab is first accessed
+    if (key === '4' && !this.state.invoicesTabLoaded) {
+      this.setState({ invoicesTabLoaded: true });
+
+      // Call parent's onTabSelect for data loading
+      if (this.props.onTabSelect) {
         this.props.onTabSelect('invoices');
       }
+    } else if (key === '1' && this.props.onTabSelect) {
+      this.props.onTabSelect('orders');
     }
   };
 
+  // Create skeleton loader for invoices
+  renderInvoicesSkeleton() {
+    const skeletonRows = Array.from({ length: 5 }, (_, index) => (
+      <ListGroupItem key={`skeleton-${index}`} className="py-3">
+        <Row>
+          <Col xs={4} md={3}>
+            <div className="placeholder-glow">
+              <span className="placeholder col-8"></span>
+            </div>
+          </Col>
+          <Col xs={4} md={4}>
+            <div className="placeholder-glow">
+              <span className="placeholder col-10"></span>
+            </div>
+          </Col>
+          <Col xs={3} md={4} className="text-end pe-0">
+            <div className="placeholder-glow">
+              <span className="placeholder col-6"></span>
+            </div>
+          </Col>
+          <Col xs={1} />
+        </Row>
+      </ListGroupItem>
+    ));
+
+    return skeletonRows;
+  }
+
   render() {
-    const { showFeedBackForm } = this.state;
+    const { showFeedBackForm, invoicesTabLoaded, activeTabKey } = this.state;
     const {
-      orders = [], 
-      productReturnables = [], 
+      orders = [],
+      productReturnables = [],
       loggedInUser = {},
-      invoices = [], 
+      invoices = [],
       invoicesLoading = false,
-      orderFilter = 'Active'
+      orderFilter = 'Active',
     } = this.props;
-    
+
     this.feedBackPostId = this.showFeedBack(orders);
     // const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
 
     // Filter orders based on the current filter
     const filteredOrders = orders.filter((order) => {
       if (orderFilter === 'All') return true;
-      return order.order_status !== 'Delivered' && order.order_status !== 'Cancelled';
+      return (
+        order.order_status !== 'Delivered' && order.order_status !== 'Cancelled'
+      );
     });
-    
+
     // Calculate number of awaiting payments
     const numberOfAwaitingPayments = orders.filter(
-      (order) => order.paymentStatus === 'Pending'
+      (order) => order.paymentStatus === 'Pending',
     ).length;
-    
+
     // Sort invoices by date in descending order
     const sortedInvoices = [...invoices].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : 0;
       const dateB = b.date ? new Date(b.date).getTime() : 0;
       return dateB - dateA;
     });
-    
+
     // Prepare order rows for rendering
     const displayOrderRows = filteredOrders.map((order) => (
       <ListGroupItem
@@ -231,12 +269,14 @@ class MyOrderList extends React.Component {
         />
 
         <Row className="my-2 pb-3 MyOrderList">
-          <Tabs 
-            
-            id="orders-tabs" 
+          <Tabs
+            id="orders-tabs"
+            activeKey={activeTabKey}
             onSelect={this.handleTabSelect}
+            mountOnEnter={false}
+            unmountOnExit={false}
           >
-            <Tab eventKey={1} title="Orders" tabClassName="text-center px-2">
+            <Tab eventKey="1" title="Orders" tabClassName="text-center px-2">
               <ul className="nav justify-content-end bg-body py-1">
                 <li className="nav-item text-center">
                   <Button
@@ -282,9 +322,9 @@ class MyOrderList extends React.Component {
                 </Alert>
               )}
             </Tab>
-          {/*
+            {/*
             <Tab
-              eventKey={2}
+              eventKey="2"
               title="Statements"
               tabClassName="text-center px-2"
             >
@@ -295,26 +335,39 @@ class MyOrderList extends React.Component {
               />
             </Tab>
             */}
-            <Tab eventKey={4} title="Invoices" tabClassName="text-center px-2">
+            <Tab eventKey="4" title="Invoices" tabClassName="text-center px-2">
               <div className="invoices-list card">
                 <ListGroup>
-                  <ListGroupItem className="bg-light fw-bold">
+                  <ListGroupItem className="fw-bold">
                     <Row>
-                      <Col xs={4} md={3}>Status</Col>
-                      <Col xs={4} md={4}>Date</Col>
-                      <Col xs={3} md={4} className="text-end pe-0">Amount</Col>
+                      <Col xs={4} md={3}>
+                        Status
+                      </Col>
+                      <Col xs={4} md={4}>
+                        Date
+                      </Col>
+                      <Col xs={3} md={4} className="text-end pe-0">
+                        Amount
+                      </Col>
                       <Col xs={1} />
                     </Row>
                   </ListGroupItem>
-                  {invoicesLoading ? (
+                  {/* Only load invoices data if tab has been accessed */}
+                  {!invoicesTabLoaded ? (
                     <ListGroupItem className="text-center py-4">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                      <div className="text-muted">
+                        Click to load invoices...
                       </div>
                     </ListGroupItem>
+                  ) : invoicesLoading ? (
+                    // Use skeleton loading instead of spinner
+                    this.renderInvoicesSkeleton()
                   ) : sortedInvoices.length > 0 ? (
                     sortedInvoices.map((invoice) => (
-                      <InvoiceListItem key={invoice._id || invoice.invoice_id} invoice={invoice} />
+                      <InvoiceListItem
+                        key={invoice._id || invoice.invoice_id}
+                        invoice={invoice}
+                      />
                     ))
                   ) : (
                     <ListGroupItem className="text-center py-4">
@@ -325,7 +378,7 @@ class MyOrderList extends React.Component {
               </div>
             </Tab>
             <Tab
-              eventKey={3}
+              eventKey="3"
               title="Refund Details"
               tabClassName="text-center px-2"
             >
