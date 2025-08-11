@@ -13,11 +13,11 @@ import constants from '../../../../modules/constants';
 import FivePlusOne from '/imports/ui/components/Payments/Coupons/FivePlusOne';
 import WelcomeMessage from '../../../components/WelcomeMessage/WelcomeMessage';
 
-const reactVarFilter = new ReactiveVar('Active');
+/*const reactVarFilter = new ReactiveVar('Active');
 
 const myOrderViewFilter = (filter) => {
   reactVarFilter.set(filter);
-};
+};*/
 
 const MyOrders = ({
   history,
@@ -74,8 +74,8 @@ const MyOrders = ({
           loggedInUserId={loggedInUserId}
           emailVerified={emailVerified}
           emailAddress={emailAddress}
-          myOrderViewFilter={myOrderViewFilter}
-          orderFilter={reactVarFilter.get()}
+          //myOrderViewFilter={myOrderViewFilter}
+          //orderFilter={reactVarFilter.get()}
           productReturnables={productReturnables}
           invoices={invoices}
           invoicesLoading={invoicesLoading}
@@ -103,18 +103,27 @@ MyOrders.defaultProps = {
 
 export default withTracker((args) => {
   const userWallet = Meteor.subscribe('users.userWallet');
-  const orderFilter = reactVarFilter.get();
+ /* const orderFilter = reactVarFilter.get();
 
   const orderStatusArray = (orderFilter === 'Active')
     ? [
       constants.OrderStatus.Pending.name,
       constants.OrderStatus.Processing.name,
       constants.OrderStatus.Awaiting_Fulfillment.name,
-      constants.OrderStatus.Awaiting_Payment.name,
+      //constants.OrderStatus.Awaiting_Payment.name,
       constants.OrderStatus.Shipped.name,
       constants.OrderStatus.Partially_Completed.name,
     ]
-    : Object.keys(constants.OrderStatus).map((cat) => constants.OrderStatus[cat].name);
+    : Object.keys(constants.OrderStatus).map((cat) => constants.OrderStatus[cat].name); */
+
+  const orderStatusArray =[
+    constants.OrderStatus.Pending.name,
+    constants.OrderStatus.Processing.name,
+    constants.OrderStatus.Awaiting_Fulfillment.name,
+    //constants.OrderStatus.Awaiting_Payment.name,
+    constants.OrderStatus.Shipped.name,
+    constants.OrderStatus.Partially_Completed.name,
+  ];
 
   const orderSub = Meteor.subscribe('orders.list.status', orderStatusArray);
 

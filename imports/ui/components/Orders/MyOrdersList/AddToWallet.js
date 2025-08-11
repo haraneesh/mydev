@@ -9,7 +9,6 @@ import { formatMoney } from 'accounting-js';
 import { useNavigate } from 'react-router-dom';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 import { accountSettings } from '../../../../modules/settings';
-import { GlobalStores, useStore } from '../../../stores/GlobalStore';
 
 const displayWalletSummary = (amountInWalletInRs) => {
   let textClassName = '';
@@ -31,19 +30,9 @@ const displayWalletSummary = (amountInWalletInRs) => {
   );
 };
 
-const updateGlobalStore = (walletBalanceInRs, numberOfAwaitingPayments) => {
-  const [currentValue, setPaymentNotification] = useStore(
-    GlobalStores.paymentNotification.name,
-  );
-  if (currentValue !== numberOfAwaitingPayments && walletBalanceInRs < 0) {
-    setPaymentNotification(numberOfAwaitingPayments);
-  }
-};
-
-const AddToWallet = ({ userWallet, numberOfAwaitingPayments = 0 }) => {
+const AddToWallet = ({ userWallet }) => {
   const walletBalanceInRs = calculateWalletBalanceInRs(userWallet);
   const navigate = useNavigate();
-  updateGlobalStore(walletBalanceInRs, numberOfAwaitingPayments);
 
   return (
     <Card>
@@ -77,8 +66,7 @@ const AddToWallet = ({ userWallet, numberOfAwaitingPayments = 0 }) => {
 };
 
 AddToWallet.propTypes = {
-  userWallet: PropTypes.object.isRequired,
-  numberOfAwaitingPayments: PropTypes.number,
+  userWallet: PropTypes.object,
 };
 
 export default AddToWallet;

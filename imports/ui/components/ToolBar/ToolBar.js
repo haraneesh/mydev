@@ -33,9 +33,6 @@ const ToolBar = ({
   appName,
   match,
 }) => {
-  const [numberOfAwaitingPayments, _] = useStore(
-    GlobalStores.paymentNotification.name,
-  );
 
   const cartState = useCartState();
   const navigate = useNavigate();
@@ -153,9 +150,6 @@ const ToolBar = ({
             }}
           >
             <Icon icon="currency_rupee" type="mt" className="fs-2" />
-            {numberOfAwaitingPayments > 0 && (
-              <b className="alertMenu alertBubble"> </b>
-            )}
             <span style={fontProps}>Wallet</span>
           </Button>
         </div>

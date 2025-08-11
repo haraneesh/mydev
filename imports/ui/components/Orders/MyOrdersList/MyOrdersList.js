@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { Meteor } from 'meteor/meteor';
+import orderCommon from '../../../../modules/both/orderCommon';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 /* eslint-disable max-len, no-return-assign */
@@ -27,6 +28,8 @@ import ListPayments from '../../Payments/ListPayments/ListPayments';
 import ShowStatement from '../../Payments/Statement';
 import AddToWallet from './AddToWallet';
 import InvoiceListItem from './InvoiceListItem';
+import { FaChevronRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import OrderSummaryRow from './OrderSummaryRow';
 import ShowReturnables from './ShowReturnables';
 
@@ -216,24 +219,10 @@ class MyOrderList extends React.Component {
       loggedInUser = {},
       invoices = [],
       invoicesLoading = false,
-      orderFilter = 'Active',
     } = this.props;
 
     this.feedBackPostId = this.showFeedBack(orders);
     // const showFeedBackForm = this.state.showFeedBackForm && this.feedBackPostId;
-
-    // Filter orders based on the current filter
-    const filteredOrders = orders.filter((order) => {
-      if (orderFilter === 'All') return true;
-      return (
-        order.order_status !== 'Delivered' && order.order_status !== 'Cancelled'
-      );
-    });
-
-    // Calculate number of awaiting payments
-    const numberOfAwaitingPayments = orders.filter(
-      (order) => order.paymentStatus === 'Pending',
-    ).length;
 
     // Sort invoices by date in descending order
     const sortedInvoices = [...invoices].sort((a, b) => {
@@ -242,31 +231,9 @@ class MyOrderList extends React.Component {
       return dateB - dateA;
     });
 
-    // Prepare order rows for rendering
-    const displayOrderRows = filteredOrders.map((order) => (
-      <ListGroupItem
-        key={order._id}
-        onClick={() => {
-          this.props.navigate(`/order/${order._id}`);
-        }}
-        style={{ cursor: 'pointer' }}
-      >
-        <OrderSummaryRow
-          orderDate={order.createdAt}
-          orderAmount={order.total_bill_amount}
-          order_status={order.order_status}
-          invoices={order.invoices}
-          userWallet={this.state.wallet}
-        />
-      </ListGroupItem>
-    ));
-
     return (
       <div>
-        <AddToWallet
-          userWallet={this.state.wallet}
-          numberOfAwaitingPayments={numberOfAwaitingPayments}
-        />
+        <AddToWallet userWallet={this.state.wallet} />
 
         <Row className="my-2 pb-3 MyOrderList">
           <Tabs
@@ -277,43 +244,83 @@ class MyOrderList extends React.Component {
             unmountOnExit={false}
           >
             <Tab eventKey="1" title="Orders" tabClassName="text-center px-2">
-              <ul className="nav justify-content-end bg-body py-1">
-                <li className="nav-item text-center">
-                  <Button
-                    variant="link"
-                    className={this.setClasses('Active')}
-                    onClick={(e) => {
-                      this.onFilterChange(e, 'Active');
-                    }}
-                    name="Active"
-                  >
-                    Active
-                  </Button>
-                </li>
-                <li className="nav-item" style={{ paddingTop: '8px' }}>
-                  /
-                </li>
-                <li className="nav-item text-center">
-                  <Button
-                    variant="link"
-                    className={this.setClasses('All')}
-                    onClick={(e) => {
-                      this.onFilterChange(e, 'All');
-                    }}
-                    name="All"
-                  >
-                    All
-                  </Button>
-                </li>
-              </ul>
               {orders.length > 0 ? (
                 <div>
                   {showFeedBackForm && (
                     <ProductFit onClose={this.receiveProductFit} />
                   )}
 
-                  <ListGroup className="orders-list">
-                    {displayOrderRows}
+                  <ListGroup variant="flush" className="border-bottom">
+                    <ListGroupItem className="py-2">
+                      <Row className="fw-bold">
+                        <Col xs={4} md={3}>Status</Col>
+                        <Col xs={4} md={4}>Date</Col>
+                        <Col xs={4} md={5} className="text-end pe-4">Amount</Col>
+                      </Row>
+                    </ListGroupItem>
+                    {orders.map((order) => {
+                      const invoiceTotals = order.invoices && orderCommon.getInvoiceTotals(order.invoices);
+                      const displayAmount = invoiceTotals
+                        ? invoiceTotals.totalInvoicedAmount
+                        : order.total_bill_amount || 0;
+                      
+                      const orderStatus = constants.OrderStatus[order.order_status] || {};
+                      
+                      const formatDate = (dateString) => {
+                        try {
+                          return new Date(dateString).toLocaleDateString('en-IN', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          });
+                        } catch (error) {
+                          return 'Invalid date';
+                        }
+                      };
+                      
+                      const formatCurrency = (amount) => {
+                        return new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'INR',
+                          minimumFractionDigits: 2,
+                        }).format(amount || 0);
+                      };
+                      
+                      return (
+                        <ListGroupItem key={order._id} className="py-3 px-3" action>
+                          <Link 
+                            to={`/order/${order._id}`} 
+                            className="text-decoration-none text-dark d-block"
+                          >
+                            <Row className="align-items-center g-0">
+                              <Col xs={4} md={3} className="pe-2">
+                                <span 
+                                  className={`badge bg-${orderStatus.label || 'secondary'} text-capitalize`}
+                                  style={{ 
+                                    whiteSpace: 'nowrap', 
+                                    overflow: 'hidden', 
+                                    textOverflow: 'ellipsis', 
+                                    display: 'inline-block', 
+                                    maxWidth: '100%' 
+                                  }}
+                                >
+                                  {orderStatus.display_value || order.order_status}
+                                </span>
+                              </Col>
+                              <Col xs={4} md={4} className="text-truncate pe-2">
+                                {formatDate(order.createdAt)}
+                              </Col>
+                              <Col xs={3} md={4} className="text-end pe-2">
+                                {formatCurrency(displayAmount)}
+                              </Col>
+                              <Col xs={1} className="text-end">
+                                <FaChevronRight className="text-muted" />
+                              </Col>
+                            </Row>
+                          </Link>
+                        </ListGroupItem>
+                      );
+                    })}
                   </ListGroup>
                 </div>
               ) : (
