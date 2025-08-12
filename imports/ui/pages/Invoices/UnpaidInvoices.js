@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
@@ -11,15 +12,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 import Loading from '/imports/ui/components/Loading/Loading';
-import { FaChevronRight } from 'react-icons/fa';
+import { FaChevronRight, FaCheckCircle, FaWallet } from 'react-icons/fa';
+import Modal from 'react-bootstrap/Modal';
 import { accountSettings } from '/imports/modules/settings';
+import PropTypes from 'prop-types';
 
-const UnpaidInvoices = () => {
+const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoices, setSelectedInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,32 +69,34 @@ const UnpaidInvoices = () => {
       .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
   };
 
-  const handlePaySelected = async () => {
+  const handlePayClick = () => {
     if (selectedInvoices.length === 0) {
       toast.warning('Please select at least one invoice to pay.');
       return;
     }
+    setShowPaymentModal(true);
+  };
 
-    if (window.confirm(`Are you sure you want to pay the selected ${selectedInvoices.length} invoice(s)?`)) {
-      try {
-        setProcessing(true);
-        const result = await Meteor.callAsync('invoices.payInvoices', { invoiceIds: selectedInvoices });
-        
-        if (result.success) {
-          toast.success('Payment processed successfully!');
-          // Refresh the list
-          const updatedInvoices = await Meteor.callAsync('invoices.getUnpaidInvoices');
-          setInvoices(updatedInvoices || []);
-          setSelectedInvoices([]);
-        } else {
-          throw new Error(result.error || 'Payment failed');
-        }
-      } catch (error) {
-        console.error('Error processing payment:', error);
-        toast.error(error.reason || error.message || 'Failed to process payment. Please try again.');
-      } finally {
-        setProcessing(false);
+  const handleConfirmPayment = async () => {
+    setShowPaymentModal(false);
+    try {
+      setProcessing(true);
+      const result = await Meteor.callAsync('invoices.payInvoices', { invoiceIds: selectedInvoices });
+      
+      if (result.success) {
+        toast.success('Payment processed successfully!');
+        // Refresh the list
+        const updatedInvoices = await Meteor.callAsync('invoices.getUnpaidInvoices');
+        setInvoices(updatedInvoices || []);
+        setSelectedInvoices([]);
+      } else {
+        throw new Error(result.error || 'Payment failed');
       }
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      toast.error(error.reason || error.message || 'Failed to process payment. Please try again.');
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -99,7 +106,79 @@ const UnpaidInvoices = () => {
 
   return (
     <Container fluid>
-      <h2 className="px-2 pt-4 text-center">Unpaid Invoices</h2>
+      {/* Wallet Balance Section */}
+      <Row className="my-4">
+        <Col xs={12} md={8} lg={6} className="mx-auto">
+          <Card className="mb-4">
+            <Card.Body className="p-3">
+              <Row className="align-items-center">
+                {/* Left Column - Wallet Icon */}
+                <Col xs="auto" className="pe-0">
+                  <div className="bg-primary bg-opacity-10 p-3 rounded-circle">
+                    <FaWallet className="text-primary" size={24} />
+                  </div>
+                </Col>
+                
+                {/* Right Column - Due Amount and Wallet Balance */}
+                <Col className="ps-3 ps-sm-6">
+                  {userWallet?.outstanding_receivable_amount_InPaise > 0 ? (
+                    <>
+                      <Row className="mb-2 g-0">
+                        <Col xs={6} className="pe-2">
+                          <span className="fw-medium">Due Amount:</span>
+                        </Col>
+                        <Col xs={6} className="text-end">
+                          <span className="fw-medium">
+                            {formatMoney(userWallet.outstanding_receivable_amount_InPaise / 100, accountSettings)}
+                          </span>
+                        </Col>
+                      </Row>
+                      
+                      <Row className="mb-2 g-0">
+                        <Col xs={6} className="pe-2">
+                          <span className="fw-medium">Wallet Balance:</span>
+                        </Col>
+                        <Col xs={6} className="text-end">
+                          <span className={userWallet?.balance < 0 ? 'text-danger' : ''}>
+                            {userWallet ? formatMoney(userWallet.balance || 0, accountSettings) : formatMoney(0, accountSettings)}
+                          </span>
+                        </Col>
+                      </Row>
+                      
+                      <Row className="mb-0 g-0 border-top pt-2">
+                        <Col xs={6} className="pe-2">
+                          <span className="fw-bold">Balance Due:</span>
+                        </Col>
+                        <Col xs={6} className="text-end">
+                          <span className={userWallet.outstanding_receivable_amount_InPaise > ((userWallet.balance || 0)  * 100) ? 'text-danger fw-bold' : 'text-success fw-bold'}>
+                            {formatMoney(
+                              Math.max(0, userWallet.outstanding_receivable_amount_InPaise / 100 - ((userWallet.balance || 0))), 
+                              accountSettings
+                            )}
+                          </span>
+                        </Col>
+                      </Row>
+                    </>
+                  ) : (
+                    <Row className="mb-0 g-0">
+                      <Col xs={6} className="pe-2">
+                        <span className="fw-medium">Wallet Balance:</span>
+                      </Col>
+                      <Col xs={6} className="text-end">
+                        <span className={userWallet?.balance < 0 ? 'text-danger' : ''}>
+                          {userWallet ? formatMoney(userWallet.balance || 0, accountSettings) : formatMoney(0, accountSettings)}
+                        </span>
+                      </Col>
+                    </Row>
+                  )}
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <h2 className="px-2 pt-2 text-center">Unpaid Invoices</h2>
       <Row className="my-4 bg-body">
         <Col xs={12}>
           {invoices.length === 0 ? (
@@ -182,8 +261,8 @@ const UnpaidInvoices = () => {
               {invoices.length > 0 && (
                 <div className="d-flex justify-content-end m-2">
                   <Button
-                    variant="primary"
-                    onClick={handlePaySelected}
+                    variant="secondary"
+                    onClick={handlePayClick}
                     disabled={selectedInvoices.length === 0 || processing}
                   >
                     {processing ? (
@@ -208,8 +287,60 @@ const UnpaidInvoices = () => {
           )}
         </Col>
       </Row>
+
+      {/* Payment Confirmation Modal */}
+      <Modal show={showPaymentModal} onHide={() => !processing && setShowPaymentModal(false)} centered>
+        <Modal.Header closeButton={!processing} closeVariant={processing ? 'white' : undefined}>
+          <Modal.Title>Confirm Payment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="text-center mb-4">
+            <FaCheckCircle size={48} className="text-success mb-3" />
+            <h4>Payment Summary</h4>
+            <p className="text-muted">You are about to pay the following amount:</p>
+            <h2 className="my-3">{formatMoney(calculateTotal(), accountSettings)}</h2>
+            <p className="text-muted small">
+              {selectedInvoices.length} invoice(s) selected
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowPaymentModal(false)}
+            disabled={processing}
+          >
+            Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleConfirmPayment}
+            disabled={processing}
+          >
+            {processing ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing...
+              </>
+            ) : 'Confirm Payment'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
 
-export default UnpaidInvoices;
+UnpaidInvoices.propTypes = {
+  loggedInUser: PropTypes.object.isRequired,
+  userWallet: PropTypes.object,
+};
+
+export default withTracker(() => {
+  const userWallet = Meteor.subscribe('users.userWallet');
+  const user = Meteor.user();
+  
+  return {
+    loggedInUser: user,
+    userWallet: user?.wallet || { balance: 0 },
+  };
+})(UnpaidInvoices);

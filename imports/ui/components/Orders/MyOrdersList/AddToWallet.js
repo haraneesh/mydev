@@ -4,29 +4,19 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import { FaWallet } from 'react-icons/fa';
 
 import { formatMoney } from 'accounting-js';
 import { useNavigate } from 'react-router-dom';
 import { calculateWalletBalanceInRs } from '../../../../modules/both/walletHelpers';
 import { accountSettings } from '../../../../modules/settings';
 
-const displayWalletSummary = (amountInWalletInRs) => {
-  let textClassName = '';
-
-  if (amountInWalletInRs > 0) {
-    textClassName = 'text-success';
-  }
-
-  if (amountInWalletInRs < 0) {
-    textClassName = 'text-danger';
-  }
-
+const formatAmount = (amount) => {
+  const amountNum = typeof amount === 'number' ? amount : 0;
   return (
-    <div>
-      <h4 className={textClassName}>
-        {`${formatMoney(amountInWalletInRs, accountSettings)}`}
-      </h4>
-    </div>
+    <span>
+      {formatMoney(amountNum / 100, accountSettings)}
+    </span>
   );
 };
 
@@ -34,32 +24,103 @@ const AddToWallet = ({ userWallet }) => {
   const walletBalanceInRs = calculateWalletBalanceInRs(userWallet);
   const navigate = useNavigate();
 
+  if (!userWallet) {
+    return null;
+  }
+
+  const {
+    unused_credits_receivable_amount_InPaise = 0,
+    unused_retainer_payments_InPaise = 0,
+    outstanding_receivable_amount_InPaise = 0,
+  } = userWallet;
+
+  // Calculate due amount (positive value of outstanding_receivable_amount_InPaise)
+  const dueAmount = Math.max(0, outstanding_receivable_amount_InPaise);
+  
+  // Calculate wallet balance as sum of retainer payments and credits
+  const walletBalance = (unused_retainer_payments_InPaise + unused_credits_receivable_amount_InPaise) / 100;
+  
+  // Check if due amount is critical (when outstanding is greater than available balance)
+  const isDueAmountCritical = outstanding_receivable_amount_InPaise > 0;
+
   return (
-    <Card>
-      <Card.Body>
-        <Row className="px-2">
-          <Col xs={6} sm={5}>
-            <h4 style={{ paddingRight: '5px' }}>Wallet Balance</h4>
+    <Card className="mb-4 mx-auto col-lg-8 col-sm-10 col-12">
+      <Card.Body className="p-3">
+        <Row className="align-items-center">
+          {/* Left Column - Wallet Icon */}
+          <Col xs="auto" className="pe-0">
+            <div className="bg-primary bg-opacity-10 p-3 rounded-circle">
+              <FaWallet className="text-primary" size={24} />
+            </div>
           </Col>
-          <Col xs={6} sm={4} className="text-right-xs">
-            {userWallet
-              ? displayWalletSummary(walletBalanceInRs)
-              : displayWalletSummary(0)}
-          </Col>
-          <Col xs={12} sm={3} className="text-right">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                navigate(walletBalanceInRs >= 0 ? '/mywallet' : '/unpaid-invoices');
-              }}
-            >
-              {walletBalanceInRs >= 0 ? 'Pay Advance' : 'Pay Due'}
-            </Button>
+          
+          {/* Right Column - Due Amount and Wallet Balance */}
+          <Col className="ps-3 ps-sm-4">
+            {dueAmount > 0 && (
+              <>
+                <Row className="mb-2 g-0">
+                  <Col xs={6} className="pe-2">
+                    <span className="fw-medium">Due Amount:</span>
+                  </Col>
+                  <Col xs={6} className="text-end">
+                    <span className="fw-medium">
+                      {formatAmount(dueAmount)}
+                    </span>
+                  </Col>
+                </Row>
+                
+                <Row className="mb-2 g-0">
+                  <Col xs={6} className="pe-2">
+                    <span className="fw-medium">Wallet Balance:</span>
+                  </Col>
+                  <Col xs={6} className="text-end">
+                    <span>
+                      {formatAmount(walletBalance * 100)}
+                    </span>
+                  </Col>
+                </Row>
+                
+                <Row className="mb-0 g-0 border-top pt-2">
+                  <Col xs={6} className="pe-2">
+                    <span className="fw-bold">Balance Due:</span>
+                  </Col>
+                  <Col xs={6} className="text-end">
+                    <span className={dueAmount > walletBalance * 100 ? 'text-danger fw-bold' : 'text-success fw-bold'}>
+                      {formatAmount(Math.max(0, dueAmount - (walletBalance * 100)))}
+                    </span>
+                  </Col>
+                </Row>
+              </>
+            )}
+            
+            {!dueAmount && (
+              <Row className="mb-0 g-0">
+                <Col xs={6} className="pe-2">
+                  <span className="fw-medium">Wallet Balance:</span>
+                </Col>
+                <Col xs={6} className="text-end">
+                  <span className={walletBalance < 0 ? 'text-danger' : ''}>
+                    {formatAmount(walletBalance * 100, walletBalance < 0)}
+                  </span>
+                </Col>
+              </Row>
+            )}
           </Col>
         </Row>
-        <p className="text-info text-center small pt-3">
-          Only delivered orders are considered.
-        </p>
+
+  
+        <div className="d-flex justify-content-end mt-4">
+          <Button
+            variant={walletBalanceInRs >= 0 ? 'primary' : 'secondary'}
+            onClick={() => {
+              navigate(walletBalanceInRs >= 0 ? '/mywallet' : '/unpaid-invoices');
+            }}
+            className="px-4"
+          >
+            {walletBalanceInRs >= 0 ? 'Add to Wallet' : 'Pay Due Amount'}
+          </Button>
+        </div>
+
       </Card.Body>
     </Card>
   );
