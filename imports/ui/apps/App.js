@@ -40,6 +40,7 @@ import SelectBasket from '../pages/Orders/PlaceNewOrder/SelectBasket';
 // import EditOrderDetails from '../containers/Orders/EditOrder';
 import EditOrderDetails from '../pages/Orders/EditOrderDetails/EditOrderDetails';
 import MyOrders from '../pages/Orders/MyOrders/MyOrders';
+import UnpaidInvoices from '../pages/Invoices/UnpaidInvoices';
 
 /* layout */
 import { MainLayout, OrderLayout, RecipeLayout } from '../layouts/Layouts';
@@ -127,6 +128,17 @@ const App = (props) => (
                   routeName="My_Orders"
                   layout={MainLayout}
                   component={MyOrders}
+                  {...props}
+                />
+              }
+            />
+            <Route
+              path="/unpaid-invoices"
+              element={
+                <Authenticated
+                  routeName="Unpaid_Invoices"
+                  layout={MainLayout}
+                  component={UnpaidInvoices}
                   {...props}
                 />
               }

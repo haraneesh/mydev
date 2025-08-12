@@ -50,7 +50,7 @@ const AddToWallet = ({ userWallet }) => {
             <Button
               variant="secondary"
               onClick={() => {
-                navigate('/mywallet');
+                navigate(walletBalanceInRs >= 0 ? '/mywallet' : '/unpaid-invoices');
               }}
             >
               {walletBalanceInRs >= 0 ? 'Pay Advance' : 'Pay Due'}
