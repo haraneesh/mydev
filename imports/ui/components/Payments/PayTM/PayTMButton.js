@@ -17,6 +17,7 @@ function PayTMButton({
       lastName: '',
       mobile: '',
     },
+    cartTotalBillAmount: 0,
   },
   paymentResponseSuccess,
   showOptionsWithFee = true,

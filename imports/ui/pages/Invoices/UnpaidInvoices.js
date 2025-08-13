@@ -4,6 +4,10 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { formatMoney } from 'accounting-js';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { formValChange } from '../../../modules/validate';
+import PayTMButton from '../../components/Payments/PayTM/PayTMButton';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table';
@@ -14,17 +18,130 @@ import Container from 'react-bootstrap/Container';
 import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 import Loading from '/imports/ui/components/Loading/Loading';
-import { FaChevronRight, FaCheckCircle, FaWallet } from 'react-icons/fa';
+import { FaChevronRight, FaCheckCircle, FaWallet, FaCreditCard, FaRupeeSign, FaQrcode, FaExternalLinkAlt } from 'react-icons/fa';
 import Modal from 'react-bootstrap/Modal';
 import { accountSettings } from '/imports/modules/settings';
 import PropTypes from 'prop-types';
 
 const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
+  // State for payment amount input
+  const [walletState, setWalletState] = useState({
+    amountToChargeInRs: '0',
+    isError: { amountToChargeInRs: '' },
+    gateWayFee: 0,
+  });
+  const [textValue, setTextValue] = useState('0');
+
+  // Handle amount input change
+  const amountToChargeOnChange = (value) => {
+    const { isError } = walletState;
+    const e = {
+      target: {
+        name: 'amountToChargeInRs',
+        value: value.toString(),
+      },
+    };
+
+    setTextValue(value);
+
+    const newErrorState = formValChange(e, { ...isError });
+
+    const newWalletState = { ...walletState };
+
+    newWalletState.amountToChargeInRs = e.target.value;
+    newWalletState.isError = newErrorState.isError;
+    newWalletState.gateWayFee = calculateGateWayFee(e.target.value);
+
+    setWalletState(newWalletState);
+  };
+
+  // Calculate gateway fee
+  const calculateGateWayFee = (amount) => {
+    const amt = parseFloat(amount) || 0;
+    return Math.ceil(amt * 2.3) / 100; // 2.3% fee
+  };
+
+  // Calculate total amount of selected invoices
+  const calculateTotal = () => {
+    if (!invoices || !selectedInvoices || selectedInvoices.length === 0) return 0;
+    
+    return invoices
+      .filter(invoice => selectedInvoices.includes(invoice._id))
+      .reduce((sum, invoice) => {
+        const amount = parseFloat(invoice.amount) || parseFloat(invoice.total) || 0;
+        return sum + amount;
+      }, 0)
+      .toFixed(2);
+  };
+  
+
+  
+  // Format currency with proper type handling
+  const formatCurrency = (amount) => {
+    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return formatMoney(numericAmount || 0, accountSettings);
+  };
+  
+  // Get payment amount as number
+  const getPaymentAmount = (withFee = false) => {
+    const minAmount = calculateTotal();
+    const enteredAmount = parseFloat(customAmount);
+    const baseAmount = (customAmount && !isNaN(enteredAmount) && enteredAmount >= minAmount) 
+      ? enteredAmount 
+      : minAmount;
+    return withFee ? calculateTotalWithFee(baseAmount) : baseAmount;
+  };
+  
+  // Check if custom amount is valid
+  const isCustomAmountValid = () => {
+    if (!customAmount) return true; // Use default amount if no custom amount
+    const amount = parseFloat(customAmount);
+    return !isNaN(amount) && amount >= calculateTotal();
+  };
+  
+  // Calculate total with gateway fee (2.3%)
+  const calculateTotalWithFee = (baseAmount = null) => {
+    const total = baseAmount !== null ? parseFloat(baseAmount) : parseFloat(calculateTotal());
+    const fee = Math.ceil(total * 2.3) / 100;
+    return parseFloat((total + fee).toFixed(2));
+  };
+  
+  // Format payment amount as string
+  const getPaymentAmountString = (withFee = false) => {
+    return withFee ? calculateTotalWithFee().toString() : calculateTotal().toString();
+  };
+
+  // Function to fetch unpaid invoices
+  const fetchUnpaidInvoices = async () => {
+    try {
+      setLoading(true);
+      const result = await Meteor.callAsync('invoices.getUnpaidInvoices');
+      const unpaidInvoices = result || [];
+      setInvoices(unpaidInvoices);
+      setSelectedInvoices(unpaidInvoices.map(invoice => invoice._id));
+    } catch (error) {
+      console.error('Error fetching unpaid invoices:', error);
+      toast.error('Failed to load unpaid invoices. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle payment success
+  const paymentResponseSuccess = (result) => {
+    toast.success('Payment has been successfully processed');
+    setShowPaymentModal(false);
+    // Refresh the invoices list
+    fetchUnpaidInvoices();
+  };
+
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoices, setSelectedInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showFee, setShowFee] = useState(false);
+  const [customAmount, setCustomAmount] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,11 +180,7 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
     }
   };
 
-  const calculateTotal = () => {
-    return invoices
-      .filter(invoice => selectedInvoices.includes(invoice._id))
-      .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
-  };
+
 
   const handlePayClick = () => {
     if (selectedInvoices.length === 0) {
@@ -78,9 +191,15 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
   };
 
   const handleConfirmPayment = async () => {
-    setShowPaymentModal(false);
     try {
       setProcessing(true);
+      const amountToPay = parseFloat(customAmount) || calculateTotal();
+      
+      if (isNaN(amountToPay) || amountToPay < calculateTotal()) {
+        toast.error('Please enter a valid amount greater than or equal to the minimum required');
+        setProcessing(false);
+        return;
+      }
       const result = await Meteor.callAsync('invoices.payInvoices', { invoiceIds: selectedInvoices });
       
       if (result.success) {
@@ -289,42 +408,161 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
       </Row>
 
       {/* Payment Confirmation Modal */}
-      <Modal show={showPaymentModal} onHide={() => !processing && setShowPaymentModal(false)} centered>
+      <Modal 
+        show={showPaymentModal} 
+        onHide={() => !processing && setShowPaymentModal(false)} 
+        centered
+        size="lg"
+      >
         <Modal.Header closeButton={!processing} closeVariant={processing ? 'white' : undefined}>
-          <Modal.Title>Confirm Payment</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4">
+          {/* Payment Summary */}
           <div className="text-center mb-4">
             <FaCheckCircle size={48} className="text-success mb-3" />
-            <h4>Payment Summary</h4>
-            <p className="text-muted">You are about to pay the following amount:</p>
-            <h2 className="my-3">{formatMoney(calculateTotal(), accountSettings)}</h2>
-            <p className="text-muted small">
-              {selectedInvoices.length} invoice(s) selected
+            <h4 className="mb-3">Payment Summary</h4>
+            <div className="d-flex justify-content-center align-items-center mb-3">
+              <span className="h3 mb-0 me-2">Rs</span>
+              <input
+                type="number"
+                className="form-control form-control-lg text-center d-inline-block"
+                style={{ maxWidth: '200px' }}
+                min={calculateTotal()}
+                step="10"
+                value={customAmount || calculateTotal()}
+                onChange={(e) => setCustomAmount(e.target.value)}
+                onFocus={(e) => e.target.select()}
+              />
+            </div>
+            <p className="small mb-2">
+              {selectedInvoices.length} invoice(s) selected 
+            </p>
+            <p className="small">
+              <span className={parseFloat(customAmount || calculateTotal()) < parseFloat(calculateTotal()) ? 'text-danger' : 'text-muted'}>
+                Minimum: {formatCurrency(calculateTotal())}
+              </span>
             </p>
           </div>
+
+          {/* Payment Methods */}
+          <div className="payment-methods mt-4">
+            {/* Scan and Pay with any UPI App */}
+            <Card className="mb-3">
+              <Card.Body>
+                <Row className="align-items-center">
+                  <Col xs={12} md={8}>
+                    <h6 className="mb-2">
+                      <FaQrcode className="me-2 text-primary" />
+                      Scan and Pay with any UPI App
+                    </h6>
+                    <p className="text-muted small mb-0">
+                      Scan the QR code with any UPI app to complete your payment.
+                      Please note it may take up to 2 business days to reflect in your account.
+                    </p>
+                  </Col>
+                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-center">
+                    <div className="d-flex flex-column align-items-center">
+                      <img 
+                        src="/pay/scan-pay-upi.jpg" 
+                        alt="Scan to Pay with UPI" 
+                        className="img-fluid mb-2"
+                        style={{ maxHeight: '200px' }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+
+            {/* UPI Payment Option */}
+            <Card className="mb-3">
+              <Card.Body>
+                <Row className="align-items-center">
+                  <Col xs={12} md={8}>
+                    <h6 className="mb-2">
+                      <FaRupeeSign className="me-2 text-primary" />
+                      UPI or Debit card,<span className="underline">No fee</span>
+                    </h6>
+                  </Col>
+                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-md-end">
+                    <div className="d-grid gap-2">
+                      <div className="d-flex flex-column w-100">
+                        <div className="mb-1 text-center">
+                          {formatCurrency(getPaymentAmount(false))}
+                        </div>
+                        <div className="mb-1 text-center">
+                        <PayTMButton
+                          buttonText={
+                            processing ? 'Processing...' : 'Pay via UPI'
+                          }
+                          showOptionsWithFee={false}
+                          paymentDetails={{
+                            moneyToChargeInRs: getPaymentAmount(false),
+                            description: `Payment for ${selectedInvoices.length} invoice(s)`,
+                            prefill: {
+                              firstName: loggedInUser?.profile?.name?.first || '',
+                              lastName: loggedInUser?.profile?.name?.last || '',
+                              email: loggedInUser?.emails?.[0]?.address || '',
+                              mobile: loggedInUser?.profile?.whMobilePhone || ''
+                            },
+                            cartTotalBillAmount: parseFloat(getPaymentAmount(false))
+                          }}
+                          paymentResponseSuccess={paymentResponseSuccess}
+                          disabled={processing || !isCustomAmountValid()}
+                        />
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+
+            {/* Card/NetBanking Option */}
+            <Card>
+              <Card.Body>
+                <Row className="align-items-center">
+                  <Col xs={12} md={8}>
+                    <h6 className="mb-2">
+                      <FaCreditCard className="me-2 text-primary" />
+                      Credit Card or NetBanking, 2.3% transaction fee 
+                    </h6>
+                  </Col>
+                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-md-end">
+                    <div className="d-grid gap-2">
+                      <div className="d-flex flex-column w-100">
+                        <div className="mb-1 text-center">
+                          {formatCurrency(getPaymentAmount(true))}
+                        </div>
+                        <div className="mb-1 text-center">
+                        <PayTMButton
+                          buttonText={
+                            processing ? 'Processing...' : 'Pay By Card'
+                          }
+                          showOptionsWithFee={true}
+                          paymentDetails={{
+                            moneyToChargeInRs: getPaymentAmount(true),
+                            description: `Payment for ${selectedInvoices.length} invoice(s)`,
+                            prefill: {
+                              firstName: loggedInUser?.profile?.name?.first || '',
+                              lastName: loggedInUser?.profile?.name?.last || '',
+                              email: loggedInUser?.emails?.[0]?.address || '',
+                              mobile: loggedInUser?.profile?.whMobilePhone || ''
+                            },
+                            cartTotalBillAmount: parseFloat(getPaymentAmount(true))
+                          }}
+                          paymentResponseSuccess={paymentResponseSuccess}
+                          disabled={processing || !isCustomAmountValid()}
+                        />
+                        </div>
+                        </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button 
-            variant="secondary" 
-            onClick={() => setShowPaymentModal(false)}
-            disabled={processing}
-          >
-            Cancel
-          </Button>
-          <Button 
-            variant="primary" 
-            onClick={handleConfirmPayment}
-            disabled={processing}
-          >
-            {processing ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Processing...
-              </>
-            ) : 'Confirm Payment'}
-          </Button>
-        </Modal.Footer>
       </Modal>
     </Container>
   );
