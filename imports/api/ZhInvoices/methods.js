@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { Match, check } from 'meteor/check';
+import { Meteor } from 'meteor/meteor';
 import { ZhInvoices } from './ZhInvoices';
-import { check, Match } from 'meteor/check';
 
 // Type definitions for user object
 /**
@@ -77,25 +77,34 @@ const upsertZhInvoice = new ValidatedMethod({
     if (args.invoice && args.invoice.status != null) {
       args.invoice.status = String(args.invoice.status);
     }
-    
+
     check(args, {
       invoice: Match.ObjectIncluding({
         invoice_id: Match.Optional(String),
         _id: Match.Optional(String),
+        invoice_number: Match.Optional(String),
         reference_number: Match.OneOf(String, Number, null, undefined),
         date: Match.OneOf(String, Date, null),
         status: Match.Optional(String),
         total: Match.Optional(Number),
         customer: Match.Optional(Object),
         line_items: Match.Optional(Array),
-      })
+      }),
     });
-    
+
     const { invoice } = args;
-    
+
+    // Normalize invoice_number to ensure it's a string if provided
+    if (invoice.invoice_number !== undefined) {
+      invoice.invoice_number = String(invoice.invoice_number);
+    }
+
     // Check for required fields
     if (!invoice.invoice_id && !invoice._id) {
-      throw new Meteor.Error('validation-error', 'Invoice must have either invoice_id or _id');
+      throw new Meteor.Error(
+        'validation-error',
+        'Invoice must have either invoice_id or _id',
+      );
     }
   },
   /**
@@ -104,15 +113,18 @@ const upsertZhInvoice = new ValidatedMethod({
    */
   async run({ invoice }) {
     if (!this.userId) {
-      throw new Meteor.Error('not-authorized', 'You must be logged in to update invoices');
+      throw new Meteor.Error(
+        'not-authorized',
+        'You must be logged in to update invoices',
+      );
     }
 
     const now = new Date();
     const { invoice_id } = invoice;
-    
+
     // Check if invoice already exists
     const existingInvoice = await ZhInvoices.findOneAsync({ invoice_id });
-    
+
     // Clean the invoice data to match the schema
     const invoiceData = {
       // Ensure invoice_id is always a string
@@ -140,6 +152,7 @@ const upsertZhInvoice = new ValidatedMethod({
         return String(status);
       })(),
       total: Number(parseFloat(invoice.total) || 0),
+      balance: Number(parseFloat(invoice.balance) || 0),
       customer: (() => {
         // Safely extract and type customer properties
         const customer = invoice.customer || {};
@@ -150,36 +163,45 @@ const upsertZhInvoice = new ValidatedMethod({
         };
       })(),
       // Process line items with proper type checking
-      line_items: (Array.isArray(invoice.line_items) ? invoice.line_items : []).map(/** @param {any} item */ (item) => {
-        // Ensure all item properties have the correct types
-        const lineItem = item || {};
-        const parsedItem = {
-          item_id: '',
-          name: '',
-          quantity: 0,
-          rate: 0,
-          total: 0,
-        };
-        
-        if (lineItem.item_id != null) parsedItem.item_id = String(lineItem.item_id);
-        if (lineItem.name != null) parsedItem.name = String(lineItem.name);
-        if (lineItem.quantity != null) parsedItem.quantity = Number(parseFloat(lineItem.quantity)) || 0;
-        if (lineItem.rate != null) parsedItem.rate = Number(parseFloat(lineItem.rate)) || 0;
-        if (lineItem.total != null) parsedItem.total = Number(parseFloat(lineItem.total)) || 0;
-        
-        return parsedItem;
-      }),
+      line_items: (Array.isArray(invoice.line_items)
+        ? invoice.line_items
+        : []
+      ).map(
+        /** @param {any} item */ (item) => {
+          // Ensure all item properties have the correct types
+          const lineItem = item || {};
+          const parsedItem = {
+            item_id: '',
+            name: '',
+            quantity: 0,
+            rate: 0,
+            total: 0,
+          };
+
+          if (lineItem.item_id != null)
+            parsedItem.item_id = String(lineItem.item_id);
+          if (lineItem.name != null) parsedItem.name = String(lineItem.name);
+          if (lineItem.quantity != null)
+            parsedItem.quantity = Number(parseFloat(lineItem.quantity)) || 0;
+          if (lineItem.rate != null)
+            parsedItem.rate = Number(parseFloat(lineItem.rate)) || 0;
+          if (lineItem.total != null)
+            parsedItem.total = Number(parseFloat(lineItem.total)) || 0;
+
+          return parsedItem;
+        },
+      ),
       updatedAt: now,
     };
 
     if (existingInvoice) {
       // Preserve the original createdAt date
       invoiceData.createdAt = existingInvoice.createdAt;
-      
+
       // Update existing invoice
       await ZhInvoices.updateAsync(
         { _id: existingInvoice._id },
-        { $set: invoiceData }
+        { $set: invoiceData },
       );
       return existingInvoice._id;
     } else {
@@ -203,7 +225,10 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
   },
   async run({ invoices }) {
     if (!this.userId) {
-      throw new Meteor.Error('not-authorized', 'You must be logged in to update invoices');
+      throw new Meteor.Error(
+        'not-authorized',
+        'You must be logged in to update invoices',
+      );
     }
 
     const now = new Date();
@@ -223,7 +248,11 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
 
         // Format the invoice data to match the schema
         const invoiceData = {
-          invoice_id: invoice.invoice_id != null ? String(invoice.invoice_id) : '',
+          invoice_id:
+            invoice.invoice_id != null ? String(invoice.invoice_id) : '',
+          invoice_number: invoice.invoice_number
+            ? String(invoice.invoice_number)
+            : '',
           reference_number: (() => {
             const ref = invoice.reference_number;
             if (ref == null) return '';
@@ -236,6 +265,7 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
             if (typeof status === 'string') return status;
             return String(status);
           })(),
+          balance: Number(parseFloat(invoice.balance) || 0),
           total: Number(parseFloat(invoice.total) || 0),
           customer: (() => {
             // Ensure customer object exists and has required fields
@@ -250,7 +280,10 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
             };
           })(),
           // Process line items with proper type checking
-          line_items: (Array.isArray(invoice.line_items) ? invoice.line_items : []).map((item) => {
+          line_items: (Array.isArray(invoice.line_items)
+            ? invoice.line_items
+            : []
+          ).map((item) => {
             const lineItem = item || {};
             const parsedItem = {
               item_id: '',
@@ -259,13 +292,17 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
               rate: 0,
               total: 0,
             };
-            
-            if (lineItem.item_id != null) parsedItem.item_id = String(lineItem.item_id);
+
+            if (lineItem.item_id != null)
+              parsedItem.item_id = String(lineItem.item_id);
             if (lineItem.name != null) parsedItem.name = String(lineItem.name);
-            if (lineItem.quantity != null) parsedItem.quantity = Number(parseFloat(lineItem.quantity)) || 0;
-            if (lineItem.rate != null) parsedItem.rate = Number(parseFloat(lineItem.rate)) || 0;
-            if (lineItem.total != null) parsedItem.total = Number(parseFloat(lineItem.total)) || 0;
-            
+            if (lineItem.quantity != null)
+              parsedItem.quantity = Number(parseFloat(lineItem.quantity)) || 0;
+            if (lineItem.rate != null)
+              parsedItem.rate = Number(parseFloat(lineItem.rate)) || 0;
+            if (lineItem.total != null)
+              parsedItem.total = Number(parseFloat(lineItem.total)) || 0;
+
             return parsedItem;
           }),
           updatedAt: now,
@@ -278,7 +315,7 @@ const bulkUpsertZhInvoices = new ValidatedMethod({
           invoiceData.createdAt = existingInvoice.createdAt;
           await ZhInvoices.updateAsync(
             { _id: existingInvoice._id },
-            { $set: invoiceData }
+            { $set: invoiceData },
           );
         } else {
           // Insert new invoice with current timestamp
@@ -311,17 +348,20 @@ const getUserInvoices = new ValidatedMethod({
   },
   async run() {
     if (!this.userId) {
-      throw new Meteor.Error('not-authorized', 'You must be logged in to view invoices');
+      throw new Meteor.Error(
+        'not-authorized',
+        'You must be logged in to view invoices',
+      );
     }
 
     // Get the current user with just the zh_contact_id field using findOneAsync
     const user = await Meteor.users.findOneAsync(this.userId, {
-      fields: { 'zh_contact_id': 1 }
+      fields: { zh_contact_id: 1 },
     });
 
     // Safely access the zh_contact_id
     const zhContactId = user?.zh_contact_id;
-    
+
     if (!zhContactId) {
       console.log('No zh_contact_id found for user', this.userId);
       return [];
@@ -334,41 +374,45 @@ const getUserInvoices = new ValidatedMethod({
         console.error('Contact ID is null or undefined');
         return [];
       }
-      
+
       // Convert to string if it's a number, otherwise use as is
-      contactId = typeof zhContactId === 'number' ? zhContactId.toString() : zhContactId;
-      
+      contactId =
+        typeof zhContactId === 'number' ? zhContactId.toString() : zhContactId;
+
       console.log('Contact ID:', contactId);
 
-
       // Find invoices where customer.id matches the user's zh_contact_id
-      return ZhInvoices.find({
-        'customer.id': contactId
-      }, {
-        sort: { date: -1 }, // Most recent first
-        limit: 1000, // Reasonable limit to prevent performance issues
-        fields: {
-          invoice_id: 1,
-          reference_number: 1,
-          date: 1,
-          status: 1,
-          total: 1,
-          balance: 1,
-          'customer.name': 1,
-          'customer.email': 1,
-          'customer.id': 1,
-          line_items: 1,
-          notes: 1,
-          terms: 1,
-          createdAt: 1,
-          updatedAt: 1
-        }
-      }).fetch();
+      return ZhInvoices.find(
+        {
+          'customer.id': contactId,
+        },
+        {
+          sort: { date: -1 }, // Most recent first
+          limit: 1000, // Reasonable limit to prevent performance issues
+          fields: {
+            invoice_id: 1,
+            invoice_number:1,
+            reference_number: 1,
+            date: 1,
+            status: 1,
+            total: 1,
+            balance: 1,
+            'customer.name': 1,
+            'customer.email': 1,
+            'customer.id': 1,
+            line_items: 1,
+            notes: 1,
+            terms: 1,
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        },
+      ).fetch();
     } catch (error) {
       console.error('Error fetching user invoices:', error);
       throw new Meteor.Error('fetch-failed', 'Failed to fetch invoices');
     }
-  }
+  },
 });
 
 import ZohoBooks from '../ZohoSyncUps/ZohoBooks';
@@ -385,51 +429,66 @@ const getInvoiceById = new ValidatedMethod({
   },
   async run({ invoiceId }) {
     if (!this.userId) {
-      throw new Meteor.Error('not-authorized', 'You must be logged in to view invoices');
+      throw new Meteor.Error(
+        'not-authorized',
+        'You must be logged in to view invoices',
+      );
     }
 
     try {
       // First, check if we have a local copy of the invoice
-      const localInvoice = await ZhInvoices.findOneAsync({ invoice_id: invoiceId });
-      
+      const localInvoice = await ZhInvoices.findOneAsync({
+        invoice_id: invoiceId,
+      });
+
       if (!localInvoice) {
-        throw new Meteor.Error('not-found', 'Invoice not found in local database');
+        throw new Meteor.Error(
+          'not-found',
+          'Invoice not found in local database',
+        );
       }
 
       // Check authorization using local invoice data
       /** @type {ExtendedUser} */
       const user = await Meteor.users.findOneAsync(this.userId, {
-        fields: { 
-          'zh_contact_id': 1, 
-          'profile': 1, 
-          'roles': 1 
-        }
+        fields: {
+          zh_contact_id: 1,
+          profile: 1,
+          roles: 1,
+        },
       });
-      
+
       if (!user) {
         throw new Meteor.Error('user-not-found', 'User not found');
       }
-      
+
       const zhContactId = user.zh_contact_id;
       // Check for admin role
-      const isAdmin = (user.roles && user.roles.includes('admin')) || 
-                     (user.profile?.roles && user.profile.roles.includes('admin'));
-      
+      const isAdmin =
+        (user.roles && user.roles.includes('admin')) ||
+        (user.profile?.roles && user.profile.roles.includes('admin'));
+
       if (localInvoice.customer.id !== zhContactId && !isAdmin) {
-        throw new Meteor.Error('not-authorized', 'You are not authorized to view this invoice');
+        throw new Meteor.Error(
+          'not-authorized',
+          'You are not authorized to view this invoice',
+        );
       }
 
       // If authorized, fetch the full invoice details from Zoho Books
       try {
         const response = await ZohoBooks.getRecordById('invoices', invoiceId, {
-          organization_id: Meteor.settings.private.zoho_organization_id
+          organization_id: Meteor.settings.private.zoho_organization_id,
         });
-        
+
         if (!response || response.code === -1 || !response.invoice) {
           console.error('Error fetching invoice from Zoho:', response);
-          throw new Meteor.Error('api-error', response?.message || 'Failed to fetch invoice from Zoho');
+          throw new Meteor.Error(
+            'api-error',
+            response?.message || 'Failed to fetch invoice from Zoho',
+          );
         }
-        
+
         // Return the full invoice details
         return response.invoice;
       } catch (error) {
@@ -443,5 +502,79 @@ const getInvoiceById = new ValidatedMethod({
   },
 });
 
+/**
+ * Update invoice payment status and add payment history
+ * @param {string} invoiceId - The invoice_id to update
+ * @param {Object} paymentStatus - Payment status object from payment gateway
+ * @param {number} amount - Payment amount
+ */
+const updateInvoicePaymentStatus = new ValidatedMethod({
+  name: 'zhInvoices.updatePaymentStatus',
+  validate({ invoiceId, paymentStatus, amount }) {
+    check(invoiceId, String);
+    check(paymentStatus, Object);
+    check(amount, Number);
+  },
+  async run({ invoiceId, paymentStatus, amount }) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in to update invoice status');
+    }
+
+    // Get the current invoice
+    const invoice = await ZhInvoices.findOneAsync({ invoice_id: invoiceId });
+    
+    if (!invoice) {
+      throw new Meteor.Error('not-found', 'Invoice not found');
+    }
+
+    // Calculate new balance
+    const currentBalance = parseFloat(invoice.balance) || 0;
+    const newBalance = currentBalance - amount;
+    
+    // Determine status based on payment amount
+    let status = invoice.status;
+    if (amount >= currentBalance) {
+      status = 'paid';
+    } else if (amount > 0) {
+      status = 'partially_paid';
+    }
+
+    // Update the invoice with new status and balance
+    await ZhInvoices.updateAsync(
+      { invoice_id: invoiceId },
+      {
+        $set: {
+          status: status,
+          balance: Math.max(0, newBalance), // Ensure balance doesn't go below 0
+        },
+        $push: {
+          payment_history: {
+            payment_id: paymentStatus.ORDERID,
+            amount: amount,
+            date: new Date(),
+            payment_mode: paymentStatus.PAYMENTMODE,
+            reference_number: paymentStatus.ORDERID,
+            description: `Payment of ${amount} received via ${paymentStatus.PAYMENTMODE}`,
+            gateway_response: paymentStatus
+          }
+        }
+      }
+    );
+
+    return {
+      success: true,
+      status,
+      previousBalance: currentBalance,
+      newBalance: Math.max(0, newBalance)
+    };
+  }
+});
+
 // Export all methods
-export { upsertZhInvoice, bulkUpsertZhInvoices, getUserInvoices, getInvoiceById };
+export {
+  updateInvoicePaymentStatus,
+  upsertZhInvoice,
+  bulkUpsertZhInvoices,
+  getUserInvoices,
+  getInvoiceById,
+};

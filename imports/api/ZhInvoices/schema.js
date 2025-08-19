@@ -22,6 +22,7 @@
 /**
  * @typedef {Object} ZohoInvoice
  * @property {string} [invoice_id]
+ * @property {string} [invoice_number]
  * @property {string} [_id]
  * @property {string|number} [reference_number] - The reference number which can be a string or number
  * @property {Date|string} [date]
@@ -37,5 +38,5 @@
 export const Types = {
   ZohoCustomer: {},
   ZohoInvoiceLineItem: {},
-  ZohoInvoice: {}
+  ZohoInvoice: {},
 };

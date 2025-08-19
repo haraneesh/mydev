@@ -19,9 +19,12 @@ function PayTMButton({
     },
     cartTotalBillAmount: 0,
   },
+  invoicesToPay = [],
   paymentResponseSuccess,
   showOptionsWithFee = true,
+  disabled = false,
 }) {
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   function notifyMerchantHandler(eventName, data, orderId) {
@@ -38,35 +41,40 @@ function PayTMButton({
   }, []);
 
   function transactionStatus(paymentStatus) {
+    // Ensure paymentStatus is an object
+    const status = typeof paymentStatus === 'string' ? JSON.parse(paymentStatus) : paymentStatus;
+    
     const transactionDetails = {
-      STATUS: paymentStatus.STATUS,
-      TXNAMOUNT: paymentStatus.TXNAMOUNT,
-      TXNID: paymentStatus.TXNID,
-      CHECKSUMHASH: paymentStatus.CHECKSUMHASH,
-      RESPCODE: paymentStatus.RESPCODE,
-      RESPMSG: paymentStatus.RESPMSG,
-      ORDERID: paymentStatus.ORDERID,
-      PAYMENTMODE: paymentStatus.PAYMENTMODE,
+      STATUS: status.STATUS || status.status,
+      TXNAMOUNT: status.TXNAMOUNT || status.txnamount || status.amount,
+      TXNID: status.TXNID || status.txnid,
+      CHECKSUMHASH: status.CHECKSUMHASH || status.checksumhash,
+      RESPCODE: status.RESPCODE || status.respcode,
+      RESPMSG: status.RESPMSG || status.respmsg || status.message,
+      ORDERID: status.ORDERID || status.orderid,
+      PAYMENTMODE: status.PAYMENTMODE || status.paymentmode || 'OTHER',
     };
 
-    // if (paymentStatus.STATUS === 'TXN_FAILURE') {
-    // Meteor.call('payment.paytm.paymentTransactionError',
-    // { ORDERID: paymentStatus.ORDERID, errorObject: paymentStatus.RESPMSG });
-    // toast.error(paymentStatus.RESPMSG);
-    // return;
-    // }
+    // Set loading state to true when starting the transaction
+    setIsProcessing(true);
 
     Meteor.call(
       'payment.paytm.completeTransaction',
       transactionDetails,
+      invoicesToPay,
       (error, result) => {
-        if (error) {
-          toast.error(error.reason);
+        // Always set loading to false when operation completes
+        setIsProcessing(false);
+        
+        if (window.Paytm && window.Paytm.CheckoutJS) {
+          // after successfully updating configuration, invoke JS Checkout
+          window.Paytm.CheckoutJS.close();
+        }
+
+        if (error || !result.success) {
+          const msg = (error)? error.reason : result.message;
+          toast.error(msg);
         } else {
-          if (window.Paytm && window.Paytm.CheckoutJS) {
-            // after successfully updating configuration, invoke JS Checkout
-            window.Paytm.CheckoutJS.close();
-          }
           paymentResponseSuccess(result);
         }
       },
@@ -154,16 +162,24 @@ function PayTMButton({
   }
 
   return (
-    <div>
-      {isLoading && <Loading />}
-
+    <div className="position-relative">
+      {isProcessing && (
+        <div className="loading-overlay">
+          <Loading />
+        </div>
+      )}
       <button
         type="button"
-        className={`btn ${!showOptionsWithFee ? 'btn-secondary' : 'btn-primary'}`}
-        onClick={initiateTransaction}
-        disabled={!!isLoading}
+        className="btn btn-primary"
+        onClick={() => {
+          if (!disabled) {
+            setIsLoading(true);
+            initiateTransaction();
+          }
+        }}
+        disabled={isProcessing || disabled || isLoading}
       >
-        {buttonText} {isLoading && <Spinner />}
+        {isLoading ? <><Spinner /> Processing...</> : buttonText}
       </button>
     </div>
   );
@@ -174,6 +190,7 @@ PayTMButton.propTypes = {
   paymentResponseSuccess: PropTypes.func.isRequired,
   buttonText: PropTypes.string,
   showOptionsWithFee: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default PayTMButton;

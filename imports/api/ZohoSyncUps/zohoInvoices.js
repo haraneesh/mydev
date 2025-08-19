@@ -184,12 +184,12 @@ const deriveOrderStatusFromInvoices = (zhInvoices) => {
   // Define status priority (from highest to lowest)
   const statusPriority = [
     'overdue',
-    'void',
-    'partially_paid',
     'unpaid',
+    'partially_paid',
     'sent',
     'paid',
-    'draft'
+    'draft',
+    'void'
   ];
 
   // Check if all invoices have the same status
@@ -339,6 +339,7 @@ const getInvoicesFromZohoByLastModifiedTime = new ValidatedMethod({
               if (order) {
                 try {
                   // First update the order status from Zoho
+                  console.log('Updating order status from Zoho for sales order number:', salesOrderNumber);
                    await updateOrderStatusFromZoho(
                     order,
                     successResp,
@@ -569,7 +570,7 @@ const processInvoicesFromZoho = async (
       const update = {
         $set: {
           zh_invoice_ids: invoiceIds,
-          zh_order_status: orderStatus,
+          order_status: orderStatus,
           updatedAt: now,
           lastSyncTime: now,
         },
@@ -609,7 +610,7 @@ const processInvoicesFromZoho = async (
         salesOrderNumber,
         status: 'success',
         message: 'No invoices to process',
-        orderStatus: order.zh_order_status || 'pending',
+        orderStatus: order.order_status || 'pending',
       });
     }
   } catch (error) {

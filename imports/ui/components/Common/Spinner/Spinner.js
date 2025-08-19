@@ -3,7 +3,7 @@ import React from 'react';
 
 function Spinner() {
   return (
-    <span className="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" />
+    <span className="spinner-border spinner-border-sm mx-2" role="status" aria-hidden="true" />
   );
   /* return (
     <svg className="spinner ms-1" viewBox="0 0 50 50">

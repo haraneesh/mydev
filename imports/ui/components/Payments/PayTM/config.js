@@ -39,7 +39,7 @@ const CONFIG = ({
     merchant: {
       mid: merchantId,
       name: merchantName,
-      logo: '/logo.png',
+      logo: '/logo_paytm.png',
       redirect: false,
       hidePaytmBranding: true,
     },

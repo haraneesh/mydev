@@ -49,8 +49,8 @@ const AddToWallet = ({ userWallet }) => {
         <Row className="align-items-center">
           {/* Left Column - Wallet Icon */}
           <Col xs="auto" className="pe-0">
-            <div className="bg-primary bg-opacity-10 p-3 rounded-circle">
-              <FaWallet className="text-primary" size={24} />
+            <div className="p-3 rounded-circle">
+              <FaWallet className="text-primary" size={48} />
             </div>
           </Col>
           
@@ -80,7 +80,7 @@ const AddToWallet = ({ userWallet }) => {
                   </Col>
                 </Row>
                 
-                <Row className="mb-0 g-0 border-top pt-2">
+                <Row className="mb-0 g-0 pt-2">
                   <Col xs={6} className="pe-2">
                     <span className="fw-bold">Balance Due:</span>
                   </Col>
@@ -113,7 +113,7 @@ const AddToWallet = ({ userWallet }) => {
           <Button
             variant={walletBalanceInRs >= 0 ? 'primary' : 'secondary'}
             onClick={() => {
-              navigate(walletBalanceInRs >= 0 ? '/mywallet' : '/unpaid-invoices');
+              navigate('/unpaid-invoices');
             }}
             className="px-4"
           >

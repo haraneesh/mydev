@@ -1,11 +1,8 @@
-import { Roles } from 'meteor/alanning:roles';
-// upgrade to 2.0.0 - to support recipes
-// add measures to ingredients
-// import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 import constants from '../../modules/constants';
 import { Orders } from '../Orders/Orders';
-// import Ingredients from '../Ingredients/Ingredients';
+import Payments from '../Payments/Payments';
 import Products from '../Products/Products';
 import ZohoSyncUps, { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
 // import Messages from '../Messages/Messages';
@@ -36,33 +33,112 @@ if (IngWeights.findOne()) {
 // update products to have displayOrder
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
 
+// Migration: Add new fields to Payments collection
+const migratePaymentsSchema = async () => {
+  try {
+    const batchSize = 100;
+    const count = await Payments.find().countAsync();
+    const batches = Math.ceil(count / batchSize);
+
+    console.log(`Starting Payments schema migration for ${count} documents...`);
+
+    for (let i = 0; i < batches; i++) {
+      const payments = await Payments.find(
+        {},
+        {
+          skip: i * batchSize,
+          limit: batchSize,
+          fields: { _id: 1, paymentApiResponseObject: 1 },
+        },
+      ).fetchAsync();
+
+      const bulk = Payments.rawCollection().initializeUnorderedBulkOp();
+
+      for (const payment of payments) {
+        const updates = {};
+        const paymentResponse = payment.paymentApiResponseObject || {};
+
+        // Set status based on payment response
+        if (paymentResponse.STATUS === 'TXN_SUCCESS') {
+          updates.status = 'completed';
+        } else if (paymentResponse.STATUS === 'TXN_FAILURE') {
+          updates.status = 'failed';
+        } else {
+          updates.status = 'pending';
+        }
+
+        // Set payment method if available
+        if (paymentResponse.PAYMENTMODE) {
+          updates.paymentMethod = paymentResponse.PAYMENTMODE;
+        }
+
+        // Set total amount if available
+        if (paymentResponse.TXNAMOUNT) {
+          updates.totalAmount = parseFloat(paymentResponse.TXNAMOUNT);
+        }
+
+        // Only update if we have changes
+        if (Object.keys(updates).length > 0) {
+          bulk.find({ _id: payment._id }).updateOne({ $set: updates });
+        }
+      }
+
+      if (bulk.batches.length > 0) {
+        await bulk.execute();
+        console.log(`Processed batch ${i + 1}/${batches}`);
+      }
+    }
+
+    // Create indexes
+    await Payments.rawCollection().createIndex({ status: 1 });
+    await Payments.rawCollection().createIndex({ paymentMethod: 1 });
+    await Payments.rawCollection().createIndex({ totalAmount: 1 });
+
+    console.log('Payments schema migration completed successfully');
+  } catch (error) {
+    console.error('Error during Payments schema migration:', error);
+    throw error;
+  }
+};
+
 const runInitializationScripts = async () => {
+  // Run payments migration first
+  try {
+    await migratePaymentsSchema();
+  } catch (error) {
+    console.error('Failed to run payments migration:', error);
+  }
+
   // Initialize invoicesLastModifiedTimeFromZoho if it doesn't exist
 
   const existingSync = await ZohoSyncUps.findOneAsync({
     syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
   });
 
-  const august5_2025 = new Date('2025-08-07T00:00:00.000Z');
+  const august5_2025 = new Date('2025-08-17T00:00:00.000Z');
 
-    await ZohoSyncUps.updateAsync({
+  await ZohoSyncUps.updateAsync(
+    {
       syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
-    },{$set:{
+    },
+    {
+      $set: {
         syncDateTime: august5_2025,
         noErrorSyncDate: august5_2025,
         errorRecords: [],
         successRecords: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-        syncedForUser: 'All'
-    }});
+        syncedForUser: 'All',
+      },
+    },
+  );
 
   if (!existingSync) {
     console.log(
       'Initializing invoicesLastModifiedTimeFromZoho to August 5th, 2025',
     );
 
-    const august5_2025 = new Date('2025-08-07T00:00:00.000Z');
 
     await ZohoSyncUps.insertAsync({
       syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
@@ -72,7 +148,7 @@ const runInitializationScripts = async () => {
       successRecords: [],
       createdAt: new Date(),
       updatedAt: new Date(),
-      syncedForUser: 'All'
+      syncedForUser: 'All',
     });
   } else {
     console.log(

@@ -22,7 +22,7 @@ const formatDate = (dateString) => {
   }
 };
 
-const DisplayOrderProducts = ({ products, total }) => (
+const DisplayOrderProducts = ({ products, total, invoice }) => (
   <Row className="order-details-products px-sm-4">
     <Row className="py-2">
       <Col xs={4}>
@@ -60,9 +60,16 @@ const DisplayOrderProducts = ({ products, total }) => (
       }
     })}
 
-    <Row className="py-3 pe-2">
-      <Col xs={12} className="text-right">
-        Amount: <strong>{formatMoney(total, accountSettings)}</strong>
+    <Row className="pt-3 pe-2">
+      <Col xs={12} className="text-end">
+        <h4>Amount: <strong>{formatMoney(total, accountSettings)}</strong></h4>
+      </Col>
+    </Row>
+    <Row className="pt-2 pe-2">
+      <Col xs={12} className="text-end">
+        {total !== invoice.balance && (
+          <h4>Balance Due: <strong className="text-danger">{formatMoney(invoice.balance || total, accountSettings)}</strong></h4>
+        )}
       </Col>
     </Row>
   </Row>
@@ -113,6 +120,7 @@ const ViewInvoice = ({ invoice }) => (
               <DisplayOrderProducts
                 products={invoice.line_items}
                 total={invoice.total}
+                invoice={invoice}
               />
 
             </>

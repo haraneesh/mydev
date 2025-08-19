@@ -1,29 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import { formatMoney } from 'accounting-js';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { formatMoney } from 'accounting-js';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import { formValChange } from '../../../modules/validate';
-import PayTMButton from '../../components/Payments/PayTM/PayTMButton';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect, useCallback } from 'react';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import Alert from 'react-bootstrap/Alert';
-import Spinner from 'react-bootstrap/Spinner';
-import Loading from '/imports/ui/components/Loading/Loading';
-import { FaChevronRight, FaCheckCircle, FaWallet, FaCreditCard, FaRupeeSign, FaQrcode, FaExternalLinkAlt } from 'react-icons/fa';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import Modal from 'react-bootstrap/Modal';
+import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
+import Table from 'react-bootstrap/Table';
+import {
+  FaCheckCircle,
+  FaChevronRight,
+  FaCreditCard,
+  FaExternalLinkAlt,
+  FaQrcode,
+  FaRupeeSign,
+  FaWallet,
+} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { accountSettings } from '/imports/modules/settings';
-import PropTypes from 'prop-types';
+import Loading from '/imports/ui/components/Loading/Loading';
+import { formValChange } from '../../../modules/validate';
+import PaymentConfirmationModal from '../../components/Payments/AcceptPayFromUnPaidInvoices/PaymentConfirmationModal';
+import PayTMButton from '../../components/Payments/PayTM/PayTMButton';
 
-const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
+const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
   // State for payment amount input
   const [walletState, setWalletState] = useState({
     amountToChargeInRs: '0',
@@ -63,76 +72,52 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
 
   // Calculate total amount of selected invoices
   const calculateTotal = () => {
-    if (!invoices || !selectedInvoices || selectedInvoices.length === 0) return 0;
-    
+    if (!invoices || !selectedInvoices || selectedInvoices.length === 0)
+      return 0;
+
     return invoices
-      .filter(invoice => selectedInvoices.includes(invoice._id))
+      .filter((invoice) => selectedInvoices.includes(invoice._id))
       .reduce((sum, invoice) => {
-        const amount = parseFloat(invoice.amount) || parseFloat(invoice.total) || 0;
+        const amount =
+          parseFloat(invoice.balance) || 0;
         return sum + amount;
       }, 0)
       .toFixed(2);
   };
-  
 
-  
   // Format currency with proper type handling
   const formatCurrency = (amount) => {
-    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    const numericAmount =
+      typeof amount === 'string' ? parseFloat(amount) : amount;
     return formatMoney(numericAmount || 0, accountSettings);
   };
-  
+
   // Get payment amount as number
   const getPaymentAmount = (withFee = false) => {
     const minAmount = calculateTotal();
     const enteredAmount = parseFloat(customAmount);
-    const baseAmount = (customAmount && !isNaN(enteredAmount) && enteredAmount >= minAmount) 
-      ? enteredAmount 
-      : minAmount;
+    const baseAmount =
+      customAmount && !isNaN(enteredAmount) && enteredAmount >= minAmount
+        ? enteredAmount
+        : minAmount;
     return withFee ? calculateTotalWithFee(baseAmount) : baseAmount;
   };
-  
+
   // Check if custom amount is valid
   const isCustomAmountValid = () => {
     if (!customAmount) return true; // Use default amount if no custom amount
     const amount = parseFloat(customAmount);
     return !isNaN(amount) && amount >= calculateTotal();
   };
-  
+
   // Calculate total with gateway fee (2.3%)
   const calculateTotalWithFee = (baseAmount = null) => {
-    const total = baseAmount !== null ? parseFloat(baseAmount) : parseFloat(calculateTotal());
+    const total =
+      baseAmount !== null
+        ? parseFloat(baseAmount)
+        : parseFloat(calculateTotal());
     const fee = Math.ceil(total * 2.3) / 100;
     return parseFloat((total + fee).toFixed(2));
-  };
-  
-  // Format payment amount as string
-  const getPaymentAmountString = (withFee = false) => {
-    return withFee ? calculateTotalWithFee().toString() : calculateTotal().toString();
-  };
-
-  // Function to fetch unpaid invoices
-  const fetchUnpaidInvoices = async () => {
-    try {
-      setLoading(true);
-      const result = await Meteor.callAsync('invoices.getUnpaidInvoices');
-      const unpaidInvoices = result || [];
-      setInvoices(unpaidInvoices);
-      setSelectedInvoices(unpaidInvoices.map(invoice => invoice._id));
-    } catch (error) {
-      console.error('Error fetching unpaid invoices:', error);
-      toast.error('Failed to load unpaid invoices. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle payment success
-  const paymentResponseSuccess = (result) => {
-    toast.success('Payment has been successfully processed');
-    setShowPaymentModal(false);
-    // Refresh the invoices list
-    fetchUnpaidInvoices();
   };
 
   const [invoices, setInvoices] = useState([]);
@@ -144,43 +129,51 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
   const [customAmount, setCustomAmount] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUnpaidInvoices = async () => {
-      try {
-        setLoading(true);
-        const result = await Meteor.callAsync('invoices.getUnpaidInvoices');
-        const unpaidInvoices = result || [];
-        setInvoices(unpaidInvoices);
-        // Select all invoices by default
-        setSelectedInvoices(unpaidInvoices.map(invoice => invoice._id));
-      } catch (error) {
-        console.error('Error fetching unpaid invoices:', error);
-        toast.error('Failed to load unpaid invoices. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUnpaidInvoices();
+  // Function to fetch unpaid invoices
+  const fetchUnpaidInvoices = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await Meteor.callAsync('invoices.getUnpaidInvoices');
+      const unpaidInvoices = result || [];
+      setInvoices(unpaidInvoices);
+      // Select all invoices by default
+      setSelectedInvoices(unpaidInvoices.map((invoice) => invoice._id));
+      return unpaidInvoices;
+    } catch (error) {
+      console.error('Error fetching unpaid invoices:', error);
+      toast.error('Failed to load unpaid invoices. Please try again.');
+      return [];
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  // Initial data load
+  useEffect(() => {
+    fetchUnpaidInvoices();
+  }, [fetchUnpaidInvoices]);
+
+  // Handle payment success
+  const paymentResponseSuccess = async (result) => {
+    toast.success('Payment has been successfully processed');
+    setShowPaymentModal(false);
+    // Refresh the invoices list
+    await fetchUnpaidInvoices();
+  };
+
   const handleSelectInvoice = (invoiceId, isChecked) => {
-    setSelectedInvoices(prev => 
-      isChecked 
-        ? [...prev, invoiceId] 
-        : prev.filter(id => id !== invoiceId)
+    setSelectedInvoices((prev) =>
+      isChecked ? [...prev, invoiceId] : prev.filter((id) => id !== invoiceId),
     );
   };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedInvoices(invoices.map(invoice => invoice._id));
+      setSelectedInvoices(invoices.map((invoice) => invoice._id));
     } else {
       setSelectedInvoices([]);
     }
   };
-
-
 
   const handlePayClick = () => {
     if (selectedInvoices.length === 0) {
@@ -190,36 +183,8 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
     setShowPaymentModal(true);
   };
 
-  const handleConfirmPayment = async () => {
-    try {
-      setProcessing(true);
-      const amountToPay = parseFloat(customAmount) || calculateTotal();
-      
-      if (isNaN(amountToPay) || amountToPay < calculateTotal()) {
-        toast.error('Please enter a valid amount greater than or equal to the minimum required');
-        setProcessing(false);
-        return;
-      }
-      const result = await Meteor.callAsync('invoices.payInvoices', { invoiceIds: selectedInvoices });
-      
-      if (result.success) {
-        toast.success('Payment processed successfully!');
-        // Refresh the list
-        const updatedInvoices = await Meteor.callAsync('invoices.getUnpaidInvoices');
-        setInvoices(updatedInvoices || []);
-        setSelectedInvoices([]);
-      } else {
-        throw new Error(result.error || 'Payment failed');
-      }
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      toast.error(error.reason || error.message || 'Failed to process payment. Please try again.');
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  if (loading) {
+  // Show loading state while subscription is not ready
+  if (walletLoading || !userWallet) {
     return <Loading />;
   }
 
@@ -233,11 +198,11 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
               <Row className="align-items-center">
                 {/* Left Column - Wallet Icon */}
                 <Col xs="auto" className="pe-0">
-                  <div className="bg-primary bg-opacity-10 p-3 rounded-circle">
-                    <FaWallet className="text-primary" size={24} />
+                  <div className="p-3 rounded-circle">
+                    <FaWallet className="text-primary" size={48} />
                   </div>
                 </Col>
-                
+
                 {/* Right Column - Due Amount and Wallet Balance */}
                 <Col className="ps-3 ps-sm-6">
                   {userWallet?.outstanding_receivable_amount_InPaise > 0 ? (
@@ -248,31 +213,56 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                         </Col>
                         <Col xs={6} className="text-end">
                           <span className="fw-medium">
-                            {formatMoney(userWallet.outstanding_receivable_amount_InPaise / 100, accountSettings)}
+                            {formatMoney(
+                              userWallet.outstanding_receivable_amount_InPaise /
+                                100,
+                              accountSettings,
+                            )}
                           </span>
                         </Col>
                       </Row>
-                      
+
                       <Row className="mb-2 g-0">
                         <Col xs={6} className="pe-2">
                           <span className="fw-medium">Wallet Balance:</span>
                         </Col>
                         <Col xs={6} className="text-end">
-                          <span className={userWallet?.balance < 0 ? 'text-danger' : ''}>
-                            {userWallet ? formatMoney(userWallet.balance || 0, accountSettings) : formatMoney(0, accountSettings)}
+                          <span
+                            className={
+                              userWallet?.balance < 0 ? 'text-danger' : ''
+                            }
+                          >
+                            {userWallet
+                              ? formatMoney(
+                                  userWallet.balance || 0,
+                                  accountSettings,
+                                )
+                              : formatMoney(0, accountSettings)}
                           </span>
                         </Col>
                       </Row>
-                      
-                      <Row className="mb-0 g-0 border-top pt-2">
+
+                      <Row className="mb-0 g-0 pt-2">
                         <Col xs={6} className="pe-2">
                           <span className="fw-bold">Balance Due:</span>
                         </Col>
                         <Col xs={6} className="text-end">
-                          <span className={userWallet.outstanding_receivable_amount_InPaise > ((userWallet.balance || 0)  * 100) ? 'text-danger fw-bold' : 'text-success fw-bold'}>
+                          <span
+                            className={
+                              userWallet.outstanding_receivable_amount_InPaise >
+                              (userWallet.balance || 0) * 100
+                                ? 'text-danger fw-bold'
+                                : 'text-success fw-bold'
+                            }
+                          >
                             {formatMoney(
-                              Math.max(0, userWallet.outstanding_receivable_amount_InPaise / 100 - ((userWallet.balance || 0))), 
-                              accountSettings
+                              Math.max(
+                                0,
+                                userWallet.outstanding_receivable_amount_InPaise /
+                                  100 -
+                                  (userWallet.balance || 0),
+                              ),
+                              accountSettings,
                             )}
                           </span>
                         </Col>
@@ -284,8 +274,17 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                         <span className="fw-medium">Wallet Balance:</span>
                       </Col>
                       <Col xs={6} className="text-end">
-                        <span className={userWallet?.balance < 0 ? 'text-danger' : ''}>
-                          {userWallet ? formatMoney(userWallet.balance || 0, accountSettings) : formatMoney(0, accountSettings)}
+                        <span
+                          className={
+                            userWallet?.balance < 0 ? 'text-danger' : ''
+                          }
+                        >
+                          {userWallet
+                            ? formatMoney(
+                                userWallet.balance || 0,
+                                accountSettings,
+                              )
+                            : formatMoney(0, accountSettings)}
                         </span>
                       </Col>
                     </Row>
@@ -298,7 +297,7 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
       </Row>
 
       <h2 className="px-2 pt-2 text-center">Unpaid Invoices</h2>
-      <Row className="my-4 bg-body">
+      <Row className="my-4">
         <Col xs={12}>
           {invoices.length === 0 ? (
             <Alert variant="info" className="text-center">
@@ -306,6 +305,7 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
             </Alert>
           ) : (
             <>
+            <Card>
               <div className="table-responsive">
                 <Table hover className="mb-0">
                   <thead>
@@ -313,14 +313,17 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                       <th style={{ width: '40px' }}>
                         <Form.Check
                           type="checkbox"
-                          checked={selectedInvoices.length === invoices.length && invoices.length > 0}
+                          checked={
+                            selectedInvoices.length === invoices.length &&
+                            invoices.length > 0
+                          }
                           onChange={handleSelectAll}
                           className="m-0"
                         />
                       </th>
                       <th>Date</th>
+                      <th>Invoice</th>
                       <th>Balance</th>
-                      <th>Amount</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -331,24 +334,24 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                           <Form.Check
                             type="checkbox"
                             checked={selectedInvoices.includes(invoice._id)}
-                            onChange={(e) => handleSelectInvoice(invoice._id, e.target.checked)}
+                            onChange={(e) =>
+                              handleSelectInvoice(invoice._id, e.target.checked)
+                            }
                             className="m-0"
                           />
                         </td>
+                        <td>{new Date(invoice.date).toLocaleDateString()}</td>
+                        <td>{invoice.invoice_number || ''}</td>
                         <td>
-                          {new Date(invoice.date).toLocaleDateString()}
+                          {formatMoney(invoice.balance || 0, accountSettings)}
                         </td>
                         <td>
-                          {formatMoney(invoice.balance || invoice.total || 0, accountSettings)}
-                        </td>
-                        <td>
-                          {formatMoney(invoice.total || 0, accountSettings)}
-                        </td>
-                        <td>
-                          <Button 
-                            variant="link" 
-                            size="sm" 
-                            onClick={() => navigate(`/invoices/${invoice.invoice_id}`)}
+                          <Button
+                            variant="link"
+                            size="sm"
+                            onClick={() =>
+                              navigate(`/invoices/${invoice.invoice_id}`)
+                            }
                             className="p-0 text-muted"
                           >
                             <FaChevronRight />
@@ -359,9 +362,9 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                   </tbody>
                 </Table>
               </div>
-              
+
               {selectedInvoices.length > 0 && (
-                <div className="p-3 pb-0 rounded">
+                <div className="p-3 rounded">
                   <Row className="align-items-center">
                     <Col md={8}>
                       <h5 className="mb-0">
@@ -376,7 +379,7 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
                   </Row>
                 </div>
               )}
-              
+            </Card> 
               {invoices.length > 0 && (
                 <div className="d-flex justify-content-end m-2">
                   <Button
@@ -408,162 +411,27 @@ const UnpaidInvoices = ({ loggedInUser, userWallet }) => {
       </Row>
 
       {/* Payment Confirmation Modal */}
-      <Modal 
-        show={showPaymentModal} 
-        onHide={() => !processing && setShowPaymentModal(false)} 
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton={!processing} closeVariant={processing ? 'white' : undefined}>
-        </Modal.Header>
-        <Modal.Body className="p-4">
-          {/* Payment Summary */}
-          <div className="text-center mb-4">
-            <FaCheckCircle size={48} className="text-success mb-3" />
-            <h4 className="mb-3">Payment Summary</h4>
-            <div className="d-flex justify-content-center align-items-center mb-3">
-              <span className="h3 mb-0 me-2">Rs</span>
-              <input
-                type="number"
-                className="form-control form-control-lg text-center d-inline-block"
-                style={{ maxWidth: '200px' }}
-                min={calculateTotal()}
-                step="10"
-                value={customAmount || calculateTotal()}
-                onChange={(e) => setCustomAmount(e.target.value)}
-                onFocus={(e) => e.target.select()}
-              />
-            </div>
-            <p className="small mb-2">
-              {selectedInvoices.length} invoice(s) selected 
-            </p>
-            <p className="small">
-              <span className={parseFloat(customAmount || calculateTotal()) < parseFloat(calculateTotal()) ? 'text-danger' : 'text-muted'}>
-                Minimum: {formatCurrency(calculateTotal())}
-              </span>
-            </p>
-          </div>
-
-          {/* Payment Methods */}
-          <div className="payment-methods mt-4">
-            {/* Scan and Pay with any UPI App */}
-            <Card className="mb-3">
-              <Card.Body>
-                <Row className="align-items-center">
-                  <Col xs={12} md={8}>
-                    <h6 className="mb-2">
-                      <FaQrcode className="me-2 text-primary" />
-                      Scan and Pay with any UPI App
-                    </h6>
-                    <p className="text-muted small mb-0">
-                      Scan the QR code with any UPI app to complete your payment.
-                      Please note it may take up to 2 business days to reflect in your account.
-                    </p>
-                  </Col>
-                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-center">
-                    <div className="d-flex flex-column align-items-center">
-                      <img 
-                        src="/pay/scan-pay-upi.jpg" 
-                        alt="Scan to Pay with UPI" 
-                        className="img-fluid mb-2"
-                        style={{ maxHeight: '200px' }}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-
-            {/* UPI Payment Option */}
-            <Card className="mb-3">
-              <Card.Body>
-                <Row className="align-items-center">
-                  <Col xs={12} md={8}>
-                    <h6 className="mb-2">
-                      <FaRupeeSign className="me-2 text-primary" />
-                      UPI or Debit card,<span className="underline">No fee</span>
-                    </h6>
-                  </Col>
-                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-md-end">
-                    <div className="d-grid gap-2">
-                      <div className="d-flex flex-column w-100">
-                        <div className="mb-1 text-center">
-                          {formatCurrency(getPaymentAmount(false))}
-                        </div>
-                        <div className="mb-1 text-center">
-                        <PayTMButton
-                          buttonText={
-                            processing ? 'Processing...' : 'Pay via UPI'
-                          }
-                          showOptionsWithFee={false}
-                          paymentDetails={{
-                            moneyToChargeInRs: getPaymentAmount(false),
-                            description: `Payment for ${selectedInvoices.length} invoice(s)`,
-                            prefill: {
-                              firstName: loggedInUser?.profile?.name?.first || '',
-                              lastName: loggedInUser?.profile?.name?.last || '',
-                              email: loggedInUser?.emails?.[0]?.address || '',
-                              mobile: loggedInUser?.profile?.whMobilePhone || ''
-                            },
-                            cartTotalBillAmount: parseFloat(getPaymentAmount(false))
-                          }}
-                          paymentResponseSuccess={paymentResponseSuccess}
-                          disabled={processing || !isCustomAmountValid()}
-                        />
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-
-            {/* Card/NetBanking Option */}
-            <Card>
-              <Card.Body>
-                <Row className="align-items-center">
-                  <Col xs={12} md={8}>
-                    <h6 className="mb-2">
-                      <FaCreditCard className="me-2 text-primary" />
-                      Credit Card or NetBanking, 2.3% transaction fee 
-                    </h6>
-                  </Col>
-                  <Col xs={12} md={4} className="mt-3 mt-md-0 text-md-end">
-                    <div className="d-grid gap-2">
-                      <div className="d-flex flex-column w-100">
-                        <div className="mb-1 text-center">
-                          {formatCurrency(getPaymentAmount(true))}
-                        </div>
-                        <div className="mb-1 text-center">
-                        <PayTMButton
-                          buttonText={
-                            processing ? 'Processing...' : 'Pay By Card'
-                          }
-                          showOptionsWithFee={true}
-                          paymentDetails={{
-                            moneyToChargeInRs: getPaymentAmount(true),
-                            description: `Payment for ${selectedInvoices.length} invoice(s)`,
-                            prefill: {
-                              firstName: loggedInUser?.profile?.name?.first || '',
-                              lastName: loggedInUser?.profile?.name?.last || '',
-                              email: loggedInUser?.emails?.[0]?.address || '',
-                              mobile: loggedInUser?.profile?.whMobilePhone || ''
-                            },
-                            cartTotalBillAmount: parseFloat(getPaymentAmount(true))
-                          }}
-                          paymentResponseSuccess={paymentResponseSuccess}
-                          disabled={processing || !isCustomAmountValid()}
-                        />
-                        </div>
-                        </div>
-                    </div>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </div>
-        </Modal.Body>
-      </Modal>
+      <PaymentConfirmationModal
+        show={showPaymentModal}
+        onHide={() => !processing && setShowPaymentModal(false)}
+        processing={processing}
+        calculateTotal={calculateTotal}
+        formatCurrency={formatCurrency}
+        getPaymentAmount={getPaymentAmount}
+        isCustomAmountValid={isCustomAmountValid}
+        paymentResponseSuccess={paymentResponseSuccess}
+        selectedInvoicesCount={selectedInvoices.length}
+        loggedInUser={loggedInUser}
+        customAmount={customAmount}
+        setCustomAmount={setCustomAmount}
+        invoicesToPay={invoices
+          .filter((invoice) => selectedInvoices.includes(invoice._id))
+          .map(({ _id, invoice_id, balance }) => ({
+            _id,
+            invoice_id,
+            total: parseFloat(balance) || 0,
+          }))}
+      />
     </Container>
   );
 };
@@ -574,11 +442,24 @@ UnpaidInvoices.propTypes = {
 };
 
 export default withTracker(() => {
-  const userWallet = Meteor.subscribe('users.userWallet');
+  const userWalletSub = Meteor.subscribe('users.userWallet');
   const user = Meteor.user();
+  const walletLoading = !userWalletSub.ready();
   
+  // Calculate the wallet balance by summing unused_credits_receivable_amount_InPaise and unused_retainer_payments_InPaise
+  const wallet = user?.wallet || {};
+  const balanceInPaise = (wallet.unused_credits_receivable_amount_InPaise || 0) + 
+                        (wallet.unused_retainer_payments_InPaise || 0);
+  
+  // Convert paise to rupees and create the wallet object with the calculated balance
+  const userWallet = {
+    ...wallet,
+    balance: balanceInPaise / 100, // Convert paise to rupees
+  };
+
   return {
+    walletLoading,
     loggedInUser: user,
-    userWallet: user?.wallet || { balance: 0 },
+    userWallet,
   };
 })(UnpaidInvoices);

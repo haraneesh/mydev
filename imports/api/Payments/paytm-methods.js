@@ -2,12 +2,13 @@ import { Match, check } from 'meteor/check';
 import { fetch } from 'meteor/fetch';
 import { HTTP } from 'meteor/http';
 import { Meteor } from 'meteor/meteor';
-import { calculateGateWayFee } from '/imports/modules/both/walletHelpers';
+import { calculateAmountMinusGateWayFee } from '/imports/modules/both/walletHelpers';
 import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit';
 import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
 import Payments from './Payments';
+import Invoices from '../Invoices/invoices';
 import PaytmChecksum from './PaytmChecksum';
 
 const STATUS = {
@@ -35,94 +36,154 @@ Meteor.methods({
       check(error, Match.Any);
       await updatePaymentTransactionError(error.ORDERID, error.errorObject);
     },
-  'payment.paytm.completeTransaction': async function completeTransaction(
-    paymentStatus,
-  ) {
+  'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus, invoicesToPay = []) {
     check(paymentStatus, {
       STATUS: String,
       TXNAMOUNT: String,
-      TXNID: String,
+      TXNID: Match.Maybe(String),
       CHECKSUMHASH: String,
       RESPCODE: String,
       RESPMSG: String,
       ORDERID: String,
       PAYMENTMODE: String,
     });
+    check(invoicesToPay, Match.Where(invoices => {
+      // Allow empty array
+      if (invoices.length === 0) return true;
+      
+      // Check each item in the array
+      return Array.isArray(invoices) && invoices.every(invoice => {
+        return invoice && 
+               typeof invoice._id === 'string' &&
+               typeof invoice.invoice_id === 'string' &&
+               typeof invoice.total === 'number';
+      });
+    }));
 
-    if (Meteor.isServer) {
-      await Payments.updateAsync(
-        { orderId: paymentStatus.ORDERID },
-        {
-          $set: {
-            paymentApiResponseObject: paymentStatus,
-            owner: this.userId,
-          },
-        },
-      );
+    if (!Meteor.isServer) return;
 
-      //https://www.paytmpayments.com/docs/jscheckout-verify-payment?ref=jsCheckoutdoc
-      const txnAmountInPaise = parseFloat(paymentStatus.TXNAMOUNT) * 100;
-      const paymentAmountDeductingFee =
-        paymentStatus.PAYMENTMODE == 'CC' || paymentStatus.PAYMENTMODE == 'NB'
-          ? txnAmountInPaise - calculateGateWayFee(txnAmountInPaise)
-          : txnAmountInPaise;
+    try {
+      // 1. Update payment record with status and invoice references
+      const updateData = {
+        paymentApiResponseObject: paymentStatus,
+        owner: this.userId,
+        status: paymentStatus.STATUS === 'TXN_SUCCESS' ? 'completed' : 'failed',
+        paymentMethod: paymentStatus.PAYMENTMODE,
+        totalAmount: parseFloat(paymentStatus.TXNAMOUNT) || 0,
+        updatedAt: new Date()
+      };
 
-      if (STATUS.TXN_SUCCESS === paymentStatus.STATUS) {
-        const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
-
-        const zhResponse = zohoPayments.createCustomerPayment({
-          zhCustomerId: paidUser.zh_contact_id, // 702207000000089425
-          paymentAmountInPaise: paymentAmountDeductingFee.toString(),
-          paymentMode: paymentStatus.PAYMENTMODE,
-          razorPaymentId: paymentStatus.ORDERID,
-          paymentDescription: `Paid via PayTm, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
-          zoho_fund_deposit_account_id:
-            Meteor.settings.private.PayTM.zoho_fund_deposit_account_id,
-        });
-
-        if (Meteor.isDevelopment) {
-          console.log(zhResponse);
-          console.log(paymentStatus);
-        }
-
-        // Update Payment record history with the updated payment record
-        await Payments.updateAsync(
-          { orderId: paymentStatus.ORDERID },
-          { $set: { paymentZohoResponseObject: zhResponse } },
-        );
-
-        if (zhResponse.code !== 0) {
-          handleMethodException(zhResponse, zhResponse.code);
-        }
-
-        const zhContactResponse = await updateUserWallet(paidUser);
-
-        if (Meteor.isDevelopment) {
-          console.log(zhContactResponse);
-        }
-
-        // Update Payment record with the latest contact information
-        await Payments.updateAsync(
-          { orderId: paymentStatus.ORDERID },
-          {
-            $set: { contactZohoResponseObject: zhContactResponse.zohoResponse },
-          },
-        );
-
-        if (zhContactResponse.zohoResponse.code !== 0) {
-          handleMethodException(
-            zhContactResponse.zohoResponse,
-            zhContactResponse.zohoResponse.code,
-          );
-        }
-        return zhContactResponse.wallet;
+      if (invoicesToPay.length > 0) {
+        updateData.relatedInvoices = invoicesToPay.map(inv => inv._id);
+        updateData.invoiceCount = invoicesToPay.length;
       }
 
-      const errorMsg = paymentStatus.RESPMSG
-        ? paymentStatus.RESPMSG
-        : 'An error occured when processing the payment. Please let the Suvai team to know if you are not sure of the reason.';
+      await Payments.updateAsync(
+        { orderId: paymentStatus.ORDERID },
+        { $set: updateData }
+      );
 
-      handleMethodException(errorMsg, paymentStatus.STATUS);
+      // 2. If payment failed, log and return early
+      if (paymentStatus.STATUS !== 'TXN_SUCCESS') {
+        console.log(`Payment failed for order ${paymentStatus.ORDERID}: ${paymentStatus.RESPMSG}`);
+        return { success: false, status: 'failed', message: paymentStatus.RESPMSG };
+      }
+
+      // 3. Process payment with Zoho
+      console.log('transaction amount ' + paymentStatus.TXNAMOUNT);
+      const txnAmountInPaise = parseFloat(paymentStatus.TXNAMOUNT) * 100;
+      const paymentAmountDeductingFee = 
+        paymentStatus.PAYMENTMODE === 'CC' || paymentStatus.PAYMENTMODE === 'NB'
+          ? calculateAmountMinusGateWayFee(txnAmountInPaise)
+          : txnAmountInPaise;
+
+      const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
+      if (!paidUser) {
+        throw new Meteor.Error('user-not-found', 'User not found');
+      }
+
+      // 4. Process Zoho payment
+      const paymentData = {
+        customer_id: paidUser.zh_contact_id,
+        payment_mode: paymentStatus.PAYMENTMODE === 'CC' ? 'creditcard' : 
+                     paymentStatus.PAYMENTMODE === 'NB' ? 'banktransfer' : 'other',
+        amount: paymentAmountDeductingFee / 100,
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+        reference_number: paymentStatus.ORDERID,
+        description: `Paid via PayTM, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
+        invoices: invoicesToPay.map(invoice => ({
+          invoice_id: invoice.invoice_id,
+          amount_applied: invoice.total || 0
+        })),
+      };
+
+      const zhResponse = await zohoPayments.createCustomerPayment(paymentData);
+
+      if (Meteor.isDevelopment) {
+        console.log('Zoho Payment Response:', zhResponse);
+      }
+
+      // 5. Update ZhInvoices status to paid using the dedicated method
+      if (invoicesToPay.length > 0 && zhResponse.code == 0) {
+        const { updateInvoicePaymentStatus } = await import('/imports/api/ZhInvoices/methods');
+        
+        for (const invoice of invoicesToPay) {
+          const amount = invoice.total || 0;
+          
+          await updateInvoicePaymentStatus.call({
+            invoiceId: invoice.invoice_id,
+            paymentStatus,
+            amount
+          });
+        }
+      }
+
+      // 6. Update payment record with Zoho response
+      await Payments.updateAsync(
+        { orderId: paymentStatus.ORDERID },
+        { 
+          $set: { 
+            paymentZohoResponseObject: zhResponse,
+            processedAt: new Date()
+          } 
+        }
+      );
+
+      // 7. Update user's wallet information
+      const user = await Meteor.users.findOneAsync(this.userId);
+      if (user && user.zh_contact_id) {
+        try {
+          await updateUserWallet(user);
+        } catch (walletError) {
+          console.error('Error updating user wallet:', walletError);
+          // Don't fail the whole operation if wallet update fails
+        }
+      }
+
+      return { 
+        success: true, 
+        status: 'completed',
+        orderId: paymentStatus.ORDERID,
+        processedAt: new Date()
+      };
+
+    } catch (error) {
+      console.error('Error in completeTransaction:', error);
+      
+      // Update payment record with error
+      await Payments.updateAsync(
+        { orderId: paymentStatus.ORDERID },
+        { 
+          $set: { 
+            status: 'failed',
+            error: error.message,
+            errorDetails: error.reason || error.details,
+            updatedAt: new Date()
+          } 
+        }
+      );
+      
+      throw new Meteor.Error('payment-processing-failed', error.message);
     }
   },
   'payment.paytm.simulatePayment': async function simulatePayment() {
