@@ -62,6 +62,8 @@ export const newWallet = ({ wallet, add_outstanding_receivable_amount_InPaise })
 
 export const calculateAmountMinusGateWayFee = (amount) => (Math.ceil(amount * 100/(100+2.3)));
 
+export const calculateGateWayFee = (amount) => (amount - calculateAmountMinusGateWayFee(amount));
+
 
 export const prepareState = (wallet) => {
   let balanceAmountClass = '';

@@ -205,90 +205,35 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
 
                 {/* Right Column - Due Amount and Wallet Balance */}
                 <Col className="ps-3 ps-sm-6">
-                  {userWallet?.outstanding_receivable_amount_InPaise > 0 ? (
-                    <>
+                  <>
+                    {userWallet?.outstanding_receivable_amount_InPaise > 0 && (
                       <Row className="mb-2 g-0">
                         <Col xs={6} className="pe-2">
-                          <span className="fw-medium">Due Amount:</span>
+                          <span className="fw-medium">Invoice Dues:</span>
                         </Col>
                         <Col xs={6} className="text-end">
-                          <span className="fw-medium">
+                          <span className="fw-medium text-danger">
                             {formatMoney(
-                              userWallet.outstanding_receivable_amount_InPaise /
-                                100,
+                              userWallet.outstanding_receivable_amount_InPaise / 100,
                               accountSettings,
                             )}
                           </span>
                         </Col>
                       </Row>
-
-                      <Row className="mb-2 g-0">
-                        <Col xs={6} className="pe-2">
-                          <span className="fw-medium">Wallet Balance:</span>
-                        </Col>
-                        <Col xs={6} className="text-end">
-                          <span
-                            className={
-                              userWallet?.balance < 0 ? 'text-danger' : ''
-                            }
-                          >
-                            {userWallet
-                              ? formatMoney(
-                                  userWallet.balance || 0,
-                                  accountSettings,
-                                )
-                              : formatMoney(0, accountSettings)}
-                          </span>
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-0 g-0 pt-2">
-                        <Col xs={6} className="pe-2">
-                          <span className="fw-bold">Balance Due:</span>
-                        </Col>
-                        <Col xs={6} className="text-end">
-                          <span
-                            className={
-                              userWallet.outstanding_receivable_amount_InPaise >
-                              (userWallet.balance || 0) * 100
-                                ? 'text-danger fw-bold'
-                                : 'text-success fw-bold'
-                            }
-                          >
-                            {formatMoney(
-                              Math.max(
-                                0,
-                                userWallet.outstanding_receivable_amount_InPaise /
-                                  100 -
-                                  (userWallet.balance || 0),
-                              ),
-                              accountSettings,
-                            )}
-                          </span>
-                        </Col>
-                      </Row>
-                    </>
-                  ) : (
-                    <Row className="mb-0 g-0">
+                    )}
+                    <Row className="mb-2 g-0">
                       <Col xs={6} className="pe-2">
                         <span className="fw-medium">Wallet Balance:</span>
                       </Col>
                       <Col xs={6} className="text-end">
-                        <span
-                          className={
-                            userWallet?.balance < 0 ? 'text-danger' : ''
-                          }
-                        >
+                        <span className={userWallet?.balance < 0 ? 'text-danger' : ''}>
                           {userWallet
-                            ? formatMoney(
-                                userWallet.balance || 0,
-                                accountSettings,
-                              )
+                            ? formatMoney(userWallet.balance || 0, accountSettings)
                             : formatMoney(0, accountSettings)}
                         </span>
                       </Col>
                     </Row>
-                  )}
+                  </>
                 </Col>
               </Row>
             </Card.Body>
@@ -381,11 +326,22 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
               )}
             </Card> 
               {invoices.length > 0 && (
-                <div className="d-flex justify-content-end m-2">
+                <div className="d-flex justify-content-end">
+                 
+                    <Button
+                      variant="primary"
+                      onClick={() => toast.info('Request Extension functionality will be implemented here')}
+                      disabled={processing || invoices.length === 0}
+                      className="me-2 mt-2"
+                    >
+                      PAY FROM WALLET
+                    </Button>
+                
                   <Button
                     variant="secondary"
                     onClick={handlePayClick}
-                    disabled={selectedInvoices.length === 0 || processing}
+                    disabled={processing || selectedInvoices.length === 0}
+                    className="ms-2 mt-2"
                   >
                     {processing ? (
                       <>

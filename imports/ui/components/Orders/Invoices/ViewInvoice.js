@@ -62,13 +62,13 @@ const DisplayOrderProducts = ({ products, total, invoice }) => (
 
     <Row className="pt-3 pe-2">
       <Col xs={12} className="text-end">
-        <h4>Amount: <strong>{formatMoney(total, accountSettings)}</strong></h4>
+        <h4>Invoice Amount: <strong>{formatMoney(total, accountSettings)}</strong></h4>
       </Col>
     </Row>
     <Row className="pt-2 pe-2">
       <Col xs={12} className="text-end">
         {total !== invoice.balance && (
-          <h4>Balance Due: <strong className="text-danger">{formatMoney(invoice.balance || total, accountSettings)}</strong></h4>
+          <h4>Balance Due Amount: <strong className="text-danger">{formatMoney(invoice.balance || total, accountSettings)}</strong></h4>
         )}
       </Col>
     </Row>

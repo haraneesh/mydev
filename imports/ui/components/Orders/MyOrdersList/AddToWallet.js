@@ -60,10 +60,10 @@ const AddToWallet = ({ userWallet }) => {
               <>
                 <Row className="mb-2 g-0">
                   <Col xs={6} className="pe-2">
-                    <span className="fw-medium">Due Amount:</span>
+                    <span className="fw-medium">Invoice Dues:</span>
                   </Col>
                   <Col xs={6} className="text-end">
-                    <span className="fw-medium">
+                    <span className={`fw-medium ${dueAmount > 0 ? 'text-danger' : ''}`}>
                       {formatAmount(dueAmount)}
                     </span>
                   </Col>
@@ -80,16 +80,7 @@ const AddToWallet = ({ userWallet }) => {
                   </Col>
                 </Row>
                 
-                <Row className="mb-0 g-0 pt-2">
-                  <Col xs={6} className="pe-2">
-                    <span className="fw-bold">Balance Due:</span>
-                  </Col>
-                  <Col xs={6} className="text-end">
-                    <span className={dueAmount > walletBalance * 100 ? 'text-danger fw-bold' : 'text-success fw-bold'}>
-                      {formatAmount(Math.max(0, dueAmount - (walletBalance * 100)))}
-                    </span>
-                  </Col>
-                </Row>
+
               </>
             )}
             
@@ -117,7 +108,7 @@ const AddToWallet = ({ userWallet }) => {
             }}
             className="px-4"
           >
-            {walletBalanceInRs >= 0 ? 'Add to Wallet' : 'Pay Due Amount'}
+            {walletBalanceInRs >= 0 ? 'Add to Wallet' : 'Pay Invoice Dues'}
           </Button>
         </div>
 
