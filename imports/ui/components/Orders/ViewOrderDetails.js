@@ -37,9 +37,16 @@ class ViewOrderDetails extends React.Component {
         <Card>
           <Row>
             <Col xs={12} className="p-2">
-              <Badge bg={constants.OrderStatus[order.order_status].label}>
-                {constants.OrderStatus[order.order_status].display_value}
-              </Badge>
+              {(() => {
+                const statusObj = order.order_status ? constants.OrderStatus[order.order_status] : undefined;
+                const label = statusObj ? statusObj.label : 'secondary';
+                const text = statusObj ? statusObj.display_value : (order.order_status || '--');
+                return (
+                  <Badge bg={label}>
+                    {text}
+                  </Badge>
+                );
+              })()}
             </Col>
           </Row>
           <div className="orderDetails">

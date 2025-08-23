@@ -70,7 +70,7 @@ Meteor.methods({
       console.error('Error in getUnpaidInvoices:', error);
       throw new Meteor.Error(
         'server-error',
-        'Failed to retrieve unpaid invoices',
+        'Failed to retrieve open invoices',
       );
     }
   },

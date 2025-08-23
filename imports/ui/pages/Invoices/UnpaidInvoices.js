@@ -29,6 +29,7 @@ import { toast } from 'react-toastify';
 import { accountSettings } from '/imports/modules/settings';
 import Loading from '/imports/ui/components/Loading/Loading';
 import { formValChange } from '../../../modules/validate';
+import { calculateGateWayFee } from '../../../modules/both/walletHelpers';
 import PaymentConfirmationModal from '../../components/Payments/AcceptPayFromUnPaidInvoices/PaymentConfirmationModal';
 import PayTMButton from '../../components/Payments/PayTM/PayTMButton';
 
@@ -50,7 +51,6 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
         value: value.toString(),
       },
     };
-
     setTextValue(value);
 
     const newErrorState = formValChange(e, { ...isError });
@@ -64,11 +64,47 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
     setWalletState(newWalletState);
   };
 
-  // Calculate gateway fee
-  const calculateGateWayFee = (amount) => {
-    const amt = parseFloat(amount) || 0;
-    return Math.ceil(amt * 2.3) / 100; // 2.3% fee
+  // Pay from wallet: apply available credits/payments to selected invoices
+  const handlePayFromWallet = async () => {
+    if (selectedInvoices.length === 0) {
+      toast.warning('Please select at least one invoice to pay.');
+      return;
+    }
+    try {
+      setProcessing(true);
+      const invoicesPayload = invoices
+        .filter((invoice) => selectedInvoices.includes(invoice._id))
+        .map((inv) => ({
+          invoice_id: inv.invoice_id,
+          amount: Number(inv.balance) || 0,
+        }))
+        .filter((x) => x.invoice_id && x.amount > 0);
+
+      if (invoicesPayload.length === 0) {
+        toast.info('No payable amount found for selected invoices.');
+        setProcessing(false);
+        return;
+      }
+
+      const res = await Meteor.callAsync('payments.payFromWallet', {
+        invoices: invoicesPayload,
+      });
+
+      if (res?.message === 'success') {
+        toast.success('Wallet payment applied successfully');
+      } else {
+        toast.info(res?.message || 'Completed with messages');
+      }
+    } catch (error) {
+      console.error('Pay from wallet failed:', error);
+      toast.error(error?.reason || error?.message || 'Failed to pay from wallet');
+    } finally {
+      // Always refresh invoices after completion; wallet updates via subscription
+      await fetchUnpaidInvoices();
+      setProcessing(false);
+    }
   };
+
 
   // Calculate total amount of selected invoices
   const calculateTotal = () => {
@@ -129,7 +165,7 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
   const [customAmount, setCustomAmount] = useState('');
   const navigate = useNavigate();
 
-  // Function to fetch unpaid invoices
+  // Function to fetch open invoices
   const fetchUnpaidInvoices = useCallback(async () => {
     try {
       setLoading(true);
@@ -140,8 +176,8 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
       setSelectedInvoices(unpaidInvoices.map((invoice) => invoice._id));
       return unpaidInvoices;
     } catch (error) {
-      console.error('Error fetching unpaid invoices:', error);
-      toast.error('Failed to load unpaid invoices. Please try again.');
+      console.error('Error fetching open invoices:', error);
+      toast.error('Failed to load open invoices. Please try again.');
       return [];
     } finally {
       setLoading(false);
@@ -241,12 +277,12 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
         </Col>
       </Row>
 
-      <h2 className="px-2 pt-2 text-center">Unpaid Invoices</h2>
+      <h2 className="px-2 pt-2 text-center">Open Invoices</h2>
       <Row className="my-4">
         <Col xs={12}>
           {invoices.length === 0 ? (
             <Alert variant="info" className="text-center">
-              You don't have any unpaid invoices.
+              You don't have any open invoices.
             </Alert>
           ) : (
             <>
@@ -330,11 +366,25 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
                  
                     <Button
                       variant="primary"
-                      onClick={() => toast.info('Request Extension functionality will be implemented here')}
-                      disabled={processing || invoices.length === 0}
+                      onClick={handlePayFromWallet}
+                      disabled={processing || selectedInvoices.length === 0}
                       className="me-2 mt-2"
                     >
-                      PAY FROM WALLET
+                      {processing ? (
+                        <>
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            className="me-2"
+                          />
+                          Processing...
+                        </>
+                      ) : (
+                        'PAY FROM WALLET'
+                      )}
                     </Button>
                 
                   <Button

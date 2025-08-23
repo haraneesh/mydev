@@ -284,7 +284,7 @@ const OrderStatus = {
   Partially_Completed: {
     name: 'Partially_Completed',
     display_value: 'Partially Completed',
-    label: 'info',
+    label: 'danger',
   },
 };
 

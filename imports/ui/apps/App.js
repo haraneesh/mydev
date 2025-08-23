@@ -133,10 +133,10 @@ const App = (props) => (
               }
             />
             <Route
-              path="/unpaid-invoices"
+              path="/open_invoices"
               element={
                 <Authenticated
-                  routeName="Unpaid_Invoices"
+                  routeName="Open Invoices"
                   layout={MainLayout}
                   component={UnpaidInvoices}
                   {...props}

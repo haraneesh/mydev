@@ -104,7 +104,7 @@ const AddToWallet = ({ userWallet }) => {
           <Button
             variant={walletBalanceInRs >= 0 ? 'primary' : 'secondary'}
             onClick={() => {
-              navigate('/unpaid-invoices');
+              navigate('/open_invoices');
             }}
             className="px-4"
           >

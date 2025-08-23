@@ -131,6 +131,28 @@ const InvoiceStatuses = {
   partially_paid: { value: 'partially_paid' },
 };
 
+// Map Zoho invoice aggregate status to app OrderStatus names
+const mapInvoiceStatusToOrderStatus = (invoiceStatus) => {
+  switch (invoiceStatus) {
+    case 'paid':
+      return constants.OrderStatus.Completed.name;
+    case 'partially_paid':
+      return constants.OrderStatus.Partially_Completed.name;
+    case 'overdue':
+    case 'unpaid': // safeguard
+      return constants.OrderStatus.Awaiting_Payment.name;
+    case 'sent':
+    case 'due':
+      return constants.OrderStatus.Awaiting_Fulfillment.name;
+    case 'void':
+      return constants.OrderStatus.Cancelled.name;
+    case 'draft':
+      return constants.OrderStatus.Saved.name;
+    default:
+      return constants.OrderStatus.Processing.name;
+  }
+};
+
 /**
  * Creates an array of invoice objects from Zoho invoice data
  * @param {string} orderId - The ID of the order these invoices belong to
@@ -561,8 +583,9 @@ const processInvoicesFromZoho = async (
     if (Array.isArray(zhInvoices) && zhInvoices.length > 0) {
       console.log(`Processing ${zhInvoices.length} invoices for order ${salesOrderNumber}`);
       
-      // Derive the order status based on the invoices
-      const orderStatus = deriveOrderStatusFromInvoices(zhInvoices);
+      // Derive invoice aggregate status and map to app-specific order status
+      const invoiceAggregateStatus = deriveOrderStatusFromInvoices(zhInvoices);
+      const orderStatus = mapInvoiceStatusToOrderStatus(invoiceAggregateStatus);
       const invoiceIds = zhInvoices.map((invoice) => invoice.invoice_id).filter(Boolean);
       const now = new Date();
 
@@ -586,13 +609,14 @@ const processInvoicesFromZoho = async (
         const result = await Orders.updateAsync({ _id: orderId }, update);
         
         if (result > 0) {
-          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices`);
+          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices (invoiceAggStatus=${invoiceAggregateStatus}, mappedOrderStatus=${orderStatus})`);
           successResp.push({
             orderId,
             salesOrderNumber,
             status: 'success',
             message: `Updated order with ${zhInvoices.length} invoices`,
-            orderStatus,
+            orderStatus, // app-mapped status
+            invoiceAggregateStatus, // raw aggregate status
             invoiceCount: zhInvoices.length,
             updatedAt: now,
           });

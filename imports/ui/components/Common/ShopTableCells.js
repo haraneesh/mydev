@@ -85,8 +85,9 @@ export const OrderStatusCell = ({
   rowIndex, data, columnKey, ...props
 }) => {
   const order_status = data.getObjectAt(rowIndex)[columnKey];
-  const labelStyle = constants.OrderStatus[order_status].label;
-  const statusToDisplay = constants.OrderStatus[order_status].display_value;
+  const statusObj = order_status ? constants.OrderStatus[order_status] : undefined;
+  const labelStyle = statusObj ? statusObj.label : 'secondary';
+  const statusToDisplay = statusObj ? statusObj.display_value : (order_status || '--');
   return (
     <td {...props}>
       <Badge bg={labelStyle}>

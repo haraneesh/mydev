@@ -60,10 +60,17 @@ export const newWallet = ({ wallet, add_outstanding_receivable_amount_InPaise })
 
 });
 
-export const calculateAmountMinusGateWayFee = (amount) => (Math.ceil(amount * 100/(100+2.3)));
+// amountPaise is the final total in paise
+export const calculateAmountMinusGateWayFee = (amountPaise) => {
+  const totalPaise = Math.round(amountPaise);
+  const feePaise = Math.ceil((totalPaise * 2.3) / 102.3);
+  return totalPaise - feePaise; // net/base in paise
+};
 
-export const calculateGateWayFee = (amount) => (amount - calculateAmountMinusGateWayFee(amount));
-
+export const calculateGateWayFee = (amountPaise) => {
+  const totalPaise = Math.round(amountPaise);
+  return Math.ceil((totalPaise * 2.3) / 102.3);
+};
 
 export const prepareState = (wallet) => {
   let balanceAmountClass = '';
