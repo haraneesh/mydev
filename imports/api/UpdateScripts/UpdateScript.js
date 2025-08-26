@@ -34,6 +34,7 @@ if (IngWeights.findOne()) {
 // Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
 
 // Migration: Add new fields to Payments collection
+/*
 const migratePaymentsSchema = async () => {
   try {
     const batchSize = 100;
@@ -164,7 +165,7 @@ if (Meteor.isServer) {
     runInitializationScripts();
   });
 }
-
+*/
 /*
 
 702207000050765962	VEV000425

@@ -11,7 +11,7 @@ export const EasyNavNarrowScreen = (props) => (
       <Link to="/myorders">My Orders</Link>
     </li>
     <li className="col-4 text-center">
-      <Link to="/mywallet">My Wallet</Link>
+      <Link to="/openinvoices">My Wallet</Link>
     </li>
     <li className="col-4 text-center">
       {/* <Link to="/neworder/selectbasket"> Place Order </Link> */}
@@ -40,7 +40,7 @@ export const EasyNavWideScreen = (props) => (
     </span>
     {!!props.authenticated && (
       <span className="col text-center  px-2">
-        <NavLink to="/mywallet"> My Wallet </NavLink>
+        <NavLink to="/openinvoices"> My Wallet </NavLink>
       </span>
     )}
     <span className="col text-center  px-2">

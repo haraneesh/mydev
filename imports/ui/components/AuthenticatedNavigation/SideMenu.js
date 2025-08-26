@@ -51,7 +51,7 @@ const SideMenu = (props) => {
           </li>
           <br />
           <li className="p-1">
-            <NavLink to="/mywallet" onClick={handleClose}>
+            <NavLink to="/openinvoices" onClick={handleClose}>
               {' '}
               My Wallet{' '}
             </NavLink>

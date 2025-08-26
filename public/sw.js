@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Caching of files and offline support
  */
@@ -12,7 +13,7 @@ const debug = false;
 const OFFLINE_HTML = '/not-connected.html';
 const MANIFEST = '/manifest.json';
 const PROJECT_NAME = 'Suvai';
-const VERSION = 'v3';
+const VERSION = 'v5';
 
 /**
  * Web Worker Constants
@@ -24,6 +25,13 @@ const isBundleFile = (str) => /_resource=true/.test(str);
 const isJSBundleFile = (str) => /_js_|meteor_runtime_config/.test(str);
 const filesToCacheOnInstall = [OFFLINE_HTML, MANIFEST, '/?homescreen=1'];
 // const assetsRegex = /activitree\.com\/activities\/|activitree\.com\/audio|activitree\.com\/cdn/
+
+// Allow the page to request immediate activation of a waiting service worker
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 const returnOffline = () =>
   caches.open(PRECACHE_CACHE).then((cache) =>
@@ -150,20 +158,28 @@ self.addEventListener('install', (e) => {
  */
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((cacheNames) =>
-      cacheNames.map((cacheName) => {
-        if (
-          (cacheName.indexOf('bundleCache') !== -1 &&
-            cacheName !== BUNDLE_CACHE) ||
-          (cacheName.indexOf('preCache') !== -1 &&
-            cacheName !== PRECACHE_CACHE) ||
-          (cacheName.indexOf('assetsCache') !== -1 &&
-            cacheName !== ASSETS_CACHE)
-        ) {
-          return caches.delete(cacheName);
-        }
-      }),
-    ),
+    (async () => {
+      await caches.keys().then((cacheNames) =>
+        Promise.all(
+          cacheNames.map((cacheName) => {
+            if (
+              (cacheName.indexOf('bundleCache') !== -1 &&
+                cacheName !== BUNDLE_CACHE) ||
+              (cacheName.indexOf('preCache') !== -1 &&
+                cacheName !== PRECACHE_CACHE) ||
+              (cacheName.indexOf('assetsCache') !== -1 &&
+                cacheName !== ASSETS_CACHE)
+            ) {
+              return caches.delete(cacheName);
+            }
+            return Promise.resolve();
+          }),
+        ),
+      );
+      await self.clients.claim();
+      // Log once the service worker has been successfully activated (i.e., registered and taken control)
+      console.log('[sw.js] Service Worker loaded');
+    })(),
   );
 });
 
@@ -171,7 +187,7 @@ self.addEventListener('activate', (e) => {
  * Web Worker Specific Listener: fetch
  */
 self.addEventListener('fetch', (event) => {
-  self.clients.claim();
+  // clients.claim() moved to 'activate' to take control immediately after activation
 
   if (/a.txt/.test(event.request.url)) {
     if (debug) {

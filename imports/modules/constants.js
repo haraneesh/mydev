@@ -153,65 +153,6 @@ const ProductTypeName = {
   },
 };
 
-const ProductTypeName1 = {
-  New: {
-    name: 'New',
-    display_value: 'New',
-  },
-  Vegetables: {
-    name: 'Vegetables',
-    display_name: 'Vegetables',
-  },
-  Fruits: {
-    name: 'Fruits',
-    display_name: 'Fruits',
-  },
-  Dhals: {
-    name: 'Dhals',
-    display_name: 'Dhal, Lentils & Dried Beans',
-  },
-  Grains: {
-    name: 'Grains',
-    display_name: 'Rice & Millets',
-  },
-  Spices: {
-    name: 'Spices',
-    display_name: 'Masalas & Spices',
-  },
-  Oils: {
-    name: 'Oils',
-    display_name: 'Ghee & Oils',
-  },
-  Prepared: {
-    name: 'Prepared',
-    display_name: 'Pickles, Podis, Spreads',
-  },
-  Hygiene: {
-    name: 'Hygiene',
-    display_name: 'Personal Care & Others',
-  },
-  Sweetners: {
-    name: 'Sweetners',
-    display_name: 'Sweetners & Salts',
-  },
-  Flours: {
-    name: 'Flours',
-    display_name: 'Flours & Rava',
-  },
-  Batter: {
-    name: 'Batter',
-    display_name: 'Batter & Beverages',
-  },
-  Snacks: {
-    name: 'Snacks',
-    display_name: 'Dry Fruits, Nuts & Snacks',
-  },
-  Returnable: {
-    name: 'Returnable',
-    display_name: 'Returnable',
-  },
-};
-
 const ReturnProductType = { name: 'Returnable', value: 'Returnable' };
 // const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners', ReturnProductType.name];
 const ProductTypeNameArray = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].name).sort((a, b) => a.localeCompare(b));

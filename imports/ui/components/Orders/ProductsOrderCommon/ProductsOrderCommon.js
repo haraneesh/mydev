@@ -216,8 +216,8 @@ export function displayProductsByType({
     if (product.displayAsSpecial) {
       if (
         !isDeliveryInChennai &&
-        (constants.ProductType[1] === product.type /* Vegetable */ ||
-          constants.ProductType[2] === product.type) /* Fruits */
+        (product.type === constants.ProductTypeName.Vegetables.name || 
+         product.type === constants.ProductTypeName.Fruits.name)
       ) {
         return;
       }

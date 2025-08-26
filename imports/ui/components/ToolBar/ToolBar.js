@@ -147,7 +147,7 @@ const ToolBar = ({
           <Button
             variant="white"
             onClick={() => {
-              navigate('/mywallet');
+              navigate('/openinvoices');
             }}
           >
             <Icon icon="currency_rupee" type="mt" className="fs-2" />

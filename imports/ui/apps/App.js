@@ -133,7 +133,7 @@ const App = (props) => (
               }
             />
             <Route
-              path="/open_invoices"
+              path="/openinvoices"
               element={
                 <Authenticated
                   routeName="Open Invoices"

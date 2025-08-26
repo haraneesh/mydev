@@ -44,7 +44,19 @@ async function getToken() {
 }
 
 async function generateToken() {
-  const { clientId, clientSecret, refreshToken } = Meteor.settings.private.zoho;
+  const zohoCfg = (Meteor.settings && Meteor.settings.private && Meteor.settings.private.zoho) || {};
+  const { clientId, clientSecret, refreshToken } = zohoCfg;
+  const accountsBaseUrl = zohoCfg.accountsBaseUrl || 'https://accounts.zoho.com';
+
+  // Validate required settings
+  if (!clientId || !clientSecret || !refreshToken) {
+    console.log('Zoho OAuth config missing: ', {
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      hasRefreshToken: !!refreshToken,
+    });
+    return { access_token: '' };
+  }
 
   const params = {
     grant_type: 'refresh_token',
@@ -54,33 +66,44 @@ async function generateToken() {
   };
 
   try {
-  const response = await fetch(
-    'https://accounts.zoho.com/oauth/v2/token?' + new URLSearchParams(params),
-    {
+    const url = `${accountsBaseUrl.replace(/\/$/, '')}/oauth/v2/token?${new URLSearchParams(params)}`;
+    const response = await fetch(url, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(2000), // 2000 milliseconds
-    },
-  );
+      signal: AbortSignal.timeout(10000), // 10 seconds
+    });
 
-  if (!response.ok) { // Check if the response is successful
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+    let bodyText = '';
+    try {
+      bodyText = await response.text();
+    } catch (e) {
+      bodyText = '';
+    }
 
-  const authReq = await response.json();
+    if (!response.ok) {
+      // Log response to aid debugging (invalid_client, invalid_grant, region issues, etc.)
+      console.log('Zoho token response not OK:', response.status, response.statusText, bodyText);
+      return { access_token: '' };
+    }
 
-  if (authReq && authReq.access_token) {
-    return authReq;
-  }
+    let authReq = {};
+    try {
+      authReq = bodyText ? JSON.parse(bodyText) : {};
+    } catch (e) {
+      console.log('Failed to parse Zoho token JSON:', e, bodyText);
+      return { access_token: '' };
+    }
 
-  // error
-  console.log(`error ${JSON.stringify(authReq)}`);
+    if (authReq && authReq.access_token) {
+      return authReq;
+    }
 
-}catch(err) {
+    console.log(`Zoho token error payload: ${JSON.stringify(authReq)}`);
+  } catch (err) {
     console.log('Fetch failed:', err);
-};
+  }
 
- return { access_token: '' };
+  return { access_token: '' };
 }
 
 const ZohoAuthentication = {
