@@ -557,11 +557,14 @@ Meteor.methods({
     return Accounts.sendVerificationEmail(userId);
   },
   'users.visitedPlaceNewOrder': async function lastVisitedPlaceNewOrder() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in to perform this action');
+    }
+    
     try {
-      const { userId } = this;
       const updateDate = new Date();
       await Meteor.users.updateAsync(
-        { _id: userId },
+        { _id: this.userId },
         {
           $set: {
             'globalStatuses.lastVisitedPlaceNewOrder': updateDate,
@@ -569,8 +572,10 @@ Meteor.methods({
         },
       );
       Emitter.emit(Events.NAV_PLACEORDER_LANDING, { userId: this.userId });
+      return { success: true };
     } catch (exception) {
       handleMethodException(exception);
+      throw exception; // Re-throw to ensure the client receives the error
     }
   },
 });

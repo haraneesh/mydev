@@ -186,14 +186,22 @@ Meteor.methods({
   },
   
   // Pay selected invoices using user's wallet (credit notes + unused payments)
-  'payments.payFromWallet': async function payFromWallet({ invoices }) {
+  'payments.payFromWallet': async function payFromWallet(params) {
     try {
+      check(params, {
+        invoices: [{
+          invoice_id: String,
+          amount: Match.Where(amount => {
+            check(amount, Number);
+            return amount >= 0;
+          })
+        }]
+      });
+
+      const { invoices } = params;
+
       if (!this.userId) {
         throw new Meteor.Error('not-authorized', 'You must be logged in');
-      }
-
-      if (!Array.isArray(invoices) || invoices.length === 0) {
-        throw new Meteor.Error('invalid-params', 'No invoices provided');
       }
 
       const user = await Meteor.users.findOneAsync({ _id: this.userId });

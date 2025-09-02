@@ -67,8 +67,11 @@ const DisplayOrderProducts = ({ products, total, invoice }) => (
     </Row>
     <Row className="pt-2 pe-2">
       <Col xs={12} className="text-end">
-        {total !== invoice.balance && (
-          <h4>Balance Due Amount: <strong className="text-danger">{formatMoney(invoice.balance || total, accountSettings)}</strong></h4>
+        {invoice.balance > 0 && invoice.balance !== total && (
+          <h4>Balance Due: <strong className="text-danger">{formatMoney(invoice.balance, accountSettings)}</strong></h4>
+        )}
+        {invoice.balance === 0 && (
+          <h4>Balance: <strong className="text-success">Paid in Full</strong></h4>
         )}
       </Col>
     </Row>

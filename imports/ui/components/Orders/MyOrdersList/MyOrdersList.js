@@ -289,7 +289,7 @@ class MyOrderList extends React.Component {
                       return (
                         <ListGroupItem key={order._id} className="py-3 px-3" action>
                           <Link 
-                            to={`/order/${order._id}`} 
+                            to={`/order/${order._id}/view`} 
                             className="text-decoration-none text-dark d-block"
                           >
                             <Row className="align-items-center g-0">

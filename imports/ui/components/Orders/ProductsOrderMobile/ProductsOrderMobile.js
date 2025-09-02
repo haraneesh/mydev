@@ -42,11 +42,13 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   componentDidMount() {
-    Meteor.call('users.visitedPlaceNewOrder', (error) => {
-      if (error && Meteor.isDevelopment) {
-        toast.error(error.reason);
-      }
-    });
+    if (Meteor.userId()) {
+      Meteor.call('users.visitedPlaceNewOrder', (error) => {
+        if (error && Meteor.isDevelopment) {
+          toast.error(error.reason);
+        }
+      });
+    }
 
     const preFix = this.props.category;
     const key = this.props.subCategory;

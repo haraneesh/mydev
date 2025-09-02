@@ -39,6 +39,7 @@ import SelectBasket from '../pages/Orders/PlaceNewOrder/SelectBasket';
 
 // import EditOrderDetails from '../containers/Orders/EditOrder';
 import EditOrderDetails from '../pages/Orders/EditOrderDetails/EditOrderDetails';
+import ViewOrderDetailsContainer from '../containers/Orders/ViewOrderDetailsContainer';
 import MyOrders from '../pages/Orders/MyOrders/MyOrders';
 import UnpaidInvoices from '../pages/Invoices/UnpaidInvoices';
 
@@ -273,6 +274,18 @@ const App = (props) => (
                   routeName="Order_Success"
                   layout={MainLayout}
                   component={SuccessOrderPlaced}
+                  {...props}
+                />
+              }
+            />
+
+            <Route
+              path="/order/:_id/view"
+              element={
+                <Authenticated
+                  routeName="View_Order_Details"
+                  layout={OrderLayout}
+                  component={ViewOrderDetailsContainer}
                   {...props}
                 />
               }
