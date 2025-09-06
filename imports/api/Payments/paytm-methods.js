@@ -115,6 +115,7 @@ Meteor.methods({
           invoice_id: invoice.invoice_id,
           amount_applied: invoice.total || 0
         })),
+        account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id // optional
       };
 
       const zhResponse = await zohoPayments.createCustomerPayment(paymentData);

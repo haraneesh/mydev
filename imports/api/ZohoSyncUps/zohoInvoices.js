@@ -121,16 +121,6 @@ const createInvoiceObject = (orderId, zhInvoice) => {
   return invoice;
 };
 
-const InvoiceStatuses = {
-  overdue: { value: 'overdue' },
-  due: { value: 'due' },
-  sent: { value: 'sent' },
-  paid: { value: 'paid' },
-  void: { value: 'void' },
-  draft: { value: 'draft' },
-  partially_paid: { value: 'partially_paid' },
-};
-
 // Map Zoho invoice aggregate status to app OrderStatus names
 const mapInvoiceStatusToOrderStatus = (invoiceStatus) => {
   switch (invoiceStatus) {
@@ -139,11 +129,11 @@ const mapInvoiceStatusToOrderStatus = (invoiceStatus) => {
     case 'partially_paid':
       return constants.OrderStatus.Partially_Completed.name;
     case 'overdue':
-    case 'unpaid': // safeguard
+      return constants.OrderStatus.Awaiting_Payment.name;
+    case 'unpaid':
       return constants.OrderStatus.Awaiting_Payment.name;
     case 'sent':
-    case 'due':
-      return constants.OrderStatus.Awaiting_Fulfillment.name;
+      return constants.OrderStatus.Awaiting_Payment.name;
     case 'void':
       return constants.OrderStatus.Cancelled.name;
     case 'draft':
@@ -651,9 +641,8 @@ const processInvoicesFromZoho = async (
   };
 };
 
-// Export all the necessary functions
-const ZohoInvoices = {
-  // Core functions
+// Core functions
+export {
   processInvoicesFromZoho,
   getInvoicesFromZohoByLastModifiedTime,
   
@@ -662,21 +651,6 @@ const ZohoInvoices = {
   createInvoiceObject,
   deriveOrderStatusFromInvoices,
   areAllItemsInvoiced,
-  areAllInvoicedItemsPaid,
-  
-  // Constants
-  InvoiceStatuses,
+  areAllInvoicedItemsPaid
 };
 
-export {
-  processInvoicesFromZoho,
-  getInvoicesFromZohoByLastModifiedTime,
-  getInvoices,
-  createInvoiceObject,
-  deriveOrderStatusFromInvoices,
-  areAllItemsInvoiced,
-  areAllInvoicedItemsPaid,
-  InvoiceStatuses,
-};
-
-export default ZohoInvoices;
