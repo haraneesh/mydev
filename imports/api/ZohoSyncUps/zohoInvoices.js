@@ -19,14 +19,6 @@ const handleAccessDenied = () => {
   throw error;
 };
 
-const areAllItemsInvoiced = (zhSalesOrder) => {
-  const lineItems = zhSalesOrder.line_items;
-  return lineItems.reduce(
-    (startValue, item) => startValue && item.is_invoiced,
-    true,
-  );
-};
-
 /*
 Status of Invoices
 Status	Description
@@ -39,14 +31,6 @@ paid	Once the payment is made by your customer for the invoice raised, it will b
 viewed
 sent
 */
-
-const areAllInvoicedItemsPaid = (orderId, zhInvoices) => {
-  const invoices = zhInvoices;
-  return invoices.reduce(
-    (startValue, invoice) => startValue && invoice.status === 'paid',
-    true,
-  );
-};
 
 /**
  * Creates a standardized invoice object from Zoho invoice data
@@ -121,28 +105,6 @@ const createInvoiceObject = (orderId, zhInvoice) => {
   return invoice;
 };
 
-// Map Zoho invoice aggregate status to app OrderStatus names
-const mapInvoiceStatusToOrderStatus = (invoiceStatus) => {
-  switch (invoiceStatus) {
-    case 'paid':
-      return constants.OrderStatus.Completed.name;
-    case 'partially_paid':
-      return constants.OrderStatus.Partially_Completed.name;
-    case 'overdue':
-      return constants.OrderStatus.Awaiting_Payment.name;
-    case 'unpaid':
-      return constants.OrderStatus.Awaiting_Payment.name;
-    case 'sent':
-      return constants.OrderStatus.Awaiting_Payment.name;
-    case 'void':
-      return constants.OrderStatus.Cancelled.name;
-    case 'draft':
-      return constants.OrderStatus.Saved.name;
-    default:
-      return constants.OrderStatus.Processing.name;
-  }
-};
-
 /**
  * Creates an array of invoice objects from Zoho invoice data
  * @param {string} orderId - The ID of the order these invoices belong to
@@ -172,59 +134,6 @@ const getInvoices = (orderId, zhInvoices) => {
     console.error('Unexpected error in getInvoices:', error);
     return [];
   }
-};
-
-/**
- * Derives the overall order status based on the statuses of its invoices
- * @param {Array} zhInvoices - Array of Zoho invoice objects
- * @returns {string} The derived order status
- */
-const deriveOrderStatusFromInvoices = (zhInvoices) => {
-  if (!zhInvoices || zhInvoices.length === 0) {
-    return 'draft';
-  }
-
-  // Count statuses
-  const statusCounts = zhInvoices.reduce((acc, invoice) => {
-    const status = invoice.status || 'draft';
-    acc[status] = (acc[status] || 0) + 1;
-    return acc;
-  }, {});
-
-  const totalInvoices = zhInvoices.length;
-  
-  // Define status priority (from highest to lowest)
-  const statusPriority = [
-    'overdue',
-    'unpaid',
-    'partially_paid',
-    'sent',
-    'paid',
-    'draft',
-    'void'
-  ];
-
-  // Check if all invoices have the same status
-  const uniqueStatuses = Object.keys(statusCounts);
-  if (uniqueStatuses.length === 1) {
-    return uniqueStatuses[0];
-  }
-
-  // If we have mixed statuses, determine the most significant one
-  for (const status of statusPriority) {
-    if (statusCounts[status]) {
-      // If any invoice has this status, return it (following priority order)
-      return status;
-    }
-  }
-
-  // If we have paid invoices but not all are paid
-  if (statusCounts.paid && statusCounts.paid < totalInvoices) {
-    return 'partially_paid';
-  }
-
-  // Default to draft if no statuses match
-  return 'draft';
 };
 
 /**
@@ -573,9 +482,6 @@ const processInvoicesFromZoho = async (
     if (Array.isArray(zhInvoices) && zhInvoices.length > 0) {
       console.log(`Processing ${zhInvoices.length} invoices for order ${salesOrderNumber}`);
       
-      // Derive invoice aggregate status and map to app-specific order status
-      const invoiceAggregateStatus = deriveOrderStatusFromInvoices(zhInvoices);
-      const orderStatus = mapInvoiceStatusToOrderStatus(invoiceAggregateStatus);
       const invoiceIds = zhInvoices.map((invoice) => invoice.invoice_id).filter(Boolean);
       const now = new Date();
 
@@ -583,7 +489,6 @@ const processInvoicesFromZoho = async (
       const update = {
         $set: {
           zh_invoice_ids: invoiceIds,
-          order_status: orderStatus,
           updatedAt: now,
           lastSyncTime: now,
         },
@@ -599,14 +504,12 @@ const processInvoicesFromZoho = async (
         const result = await Orders.updateAsync({ _id: orderId }, update);
         
         if (result > 0) {
-          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices (invoiceAggStatus=${invoiceAggregateStatus}, mappedOrderStatus=${orderStatus})`);
+          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices`);
           successResp.push({
             orderId,
             salesOrderNumber,
             status: 'success',
             message: `Updated order with ${zhInvoices.length} invoices`,
-            orderStatus, // app-mapped status
-            invoiceAggregateStatus, // raw aggregate status
             invoiceCount: zhInvoices.length,
             updatedAt: now,
           });
@@ -648,9 +551,6 @@ export {
   
   // Helper functions
   getInvoices,
-  createInvoiceObject,
-  deriveOrderStatusFromInvoices,
-  areAllItemsInvoiced,
-  areAllInvoicedItemsPaid
+  createInvoiceObject
 };
 

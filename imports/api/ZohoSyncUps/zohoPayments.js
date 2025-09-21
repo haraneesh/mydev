@@ -1,14 +1,4 @@
-import 'moment-timezone';
-import moment from 'moment';
 import zh from './ZohoBooks';
-import { dateSettings, dateSettingsWithTime } from '../../modules/settings';
-
-function todayFormattedForZoho() {
-  const today = new Date();
-  return moment(today)
-    .tz(dateSettingsWithTime.timeZone)
-    .format(dateSettings.zhPayDateFormat);
-}
 
 // List customer payments
 // GET /customerpayments	List all the payments made by your customer.

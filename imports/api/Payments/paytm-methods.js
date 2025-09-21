@@ -1,6 +1,5 @@
 import { Match, check } from 'meteor/check';
 import { fetch } from 'meteor/fetch';
-import { HTTP } from 'meteor/http';
 import { Meteor } from 'meteor/meteor';
 import { calculateAmountMinusGateWayFee } from '/imports/modules/both/walletHelpers';
 import handleMethodException from '../../modules/handle-method-exception';
@@ -11,31 +10,7 @@ import Payments from './Payments';
 import Invoices from '../Invoices/invoices';
 import PaytmChecksum from './PaytmChecksum';
 
-const STATUS = {
-  TXN_SUCCESS: 'TXN_SUCCESS',
-  TXN_FAILURE: 'TXN_FAILURE',
-};
-
-async function updatePaymentTransactionError(orderId, errorObject) {
-  const payment = await Payments.find({ orderId }).fetchAsync();
-  const paymentErrorObject = payment.errorObject ? payment.errorObject : [];
-  paymentErrorObject.push(errorObject);
-  await Payments.updateAsync(
-    { orderId },
-    {
-      $set: {
-        errorObject: paymentErrorObject,
-      },
-    },
-  );
-}
-
 Meteor.methods({
-  'payment.paytm.paymentTransactionError':
-    async function paymentTransactionError(error) {
-      check(error, Match.Any);
-      await updatePaymentTransactionError(error.ORDERID, error.errorObject);
-    },
   'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus, invoicesToPay = []) {
     check(paymentStatus, {
       STATUS: String,
@@ -216,7 +191,9 @@ Meteor.methods({
         const { merchantKey, websiteName } = Meteor.settings.private.PayTM;
         const { hostName, merchantId } = Meteor.settings.public.PayTM;
         const now = new Date();
-        const suvaiTransactionId = `${this.userId}_${now.getTime().toString()}`;
+        // Clean phone number: remove spaces, dashes, parentheses, and country code
+        const cleanPhone = params.mobile.replace(/[\s\-\(\)\+]/g, '').replace(/^91/, '');
+        const suvaiTransactionId = `${cleanPhone}_${now.getTime().toString()}`;
         const orderId = suvaiTransactionId;
         const user = await Meteor.users.findOneAsync({ _id: this.userId });
 

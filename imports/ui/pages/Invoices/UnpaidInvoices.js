@@ -70,6 +70,11 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
       toast.warning('Please select at least one invoice to pay.');
       return;
     }
+    // Prevent action if wallet balance is not sufficient
+    if ((userWallet?.balance ?? 0) <= 0) {
+      toast.warning('Insufficient wallet balance.');
+      return;
+    }
     try {
       setProcessing(true);
       const invoicesPayload = invoices
@@ -367,7 +372,11 @@ const UnpaidInvoices = ({ walletLoading, loggedInUser, userWallet }) => {
                     <Button
                       variant="primary"
                       onClick={handlePayFromWallet}
-                      disabled={processing || selectedInvoices.length === 0}
+                      disabled={
+                        processing ||
+                        selectedInvoices.length === 0 ||
+                        (userWallet?.balance ?? 0) <= 0
+                      }
                       className="me-2 mt-2"
                     >
                       {processing ? (

@@ -1,4 +1,4 @@
-import { HTTP } from 'meteor/http';
+import { fetch } from 'meteor/fetch';
 
 const _callType = {
   POST: 'POST',

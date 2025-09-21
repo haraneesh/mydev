@@ -93,11 +93,6 @@
         "/Users/charaneesh/.meteor/packages/reywood_publish-composite/1.9.0/web.browser/lib/published_document_list.js",
         "/Users/charaneesh/.meteor/packages/reywood_publish-composite/1.9.0/web.browser/lib/utils.js"
       ],
-      "meteor/http": [
-        "/Users/charaneesh/.meteor/packages/http/1.4.4/web.browser/httpcall_client.js",
-        "/Users/charaneesh/.meteor/packages/http/1.4.4/web.browser/httpcall_common.js",
-        "/Users/charaneesh/.meteor/packages/http/1.4.4/web.browser/httpcall_server.js"
-      ],
       "meteor/perak:joins": [
         "/Users/charaneesh/.meteor/packages/perak_joins/1.2.0/web.browser/lib/joins.js"
       ],

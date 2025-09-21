@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import Razorpay from 'razorpay';
 import Payments from './Payments';
 import { ZhInvoices } from '../ZhInvoices/ZhInvoices';
