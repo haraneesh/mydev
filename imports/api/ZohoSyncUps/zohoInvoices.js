@@ -30,6 +30,19 @@ partially_paid	When the payment is made for a part of the items in the invoice, 
 paid	Once the payment is made by your customer for the invoice raised, it will be shown as Paid.
 viewed
 sent
+
+INVOICE TO ORDER STATUS MAPPING:
+- If ANY invoice is 'unpaid', 'overdue', or 'partially_paid' → Awaiting_Payment (takes precedence)
+- If ANY invoice is 'sent' → Shipped (shipping takes precedence over payment)
+- If ANY invoice is 'paid' → Completed
+- viewed/draft → No status change
+
+Examples:
+- ['paid', 'unpaid'] → Awaiting_Payment (unpaid takes precedence)
+- ['paid', 'partially_paid'] → Awaiting_Payment (partially_paid takes precedence)
+- ['paid', 'sent'] → Shipped (sent takes precedence over paid)
+- ['paid', 'draft'] → Completed (paid is highest priority)
+- ['sent', 'draft'] → Shipped (sent is highest priority)
 */
 
 /**
@@ -373,13 +386,69 @@ const getInvoicesFromZohoByLastModifiedTime = new ValidatedMethod({
 });
 
 /**
- * Processes invoices for a specific order and updates the order status accordingly
- * @param {Object} order - The order to process invoices for
- * @param {Array} successResp - Array to collect success responses
- * @param {Array} errorResp - Array to collect error responses
- * @param {Array} [prefetchedInvoices=null] - Optional pre-fetched invoices for this order
- * @returns {Promise<void>}
+ * Determines the appropriate order status based on invoice statuses
+ * @param {Array} invoices - Array of invoice objects
+ * @returns {string|null} - The determined order status or null if no status can be determined
  */
+const determineOrderStatusFromInvoices = (invoices) => {
+  if (!Array.isArray(invoices) || invoices.length === 0) {
+    console.log('No invoices provided to determineOrderStatusFromInvoices');
+    return null;
+  }
+
+  // Define status mapping exactly as requested by user
+  const statusMapping = {
+    'paid': constants.OrderStatus.Completed.name,
+    'unpaid': constants.OrderStatus.Awaiting_Payment.name,
+    'overdue': constants.OrderStatus.Awaiting_Payment.name,
+    'partially_paid': constants.OrderStatus.Partially_Completed.name,
+    'sent': constants.OrderStatus.Shipped.name,
+    'viewed': null, // Don't change status for viewed invoices
+    'draft': null,  // Don't change status for draft invoices
+  };
+
+  // Get all unique statuses from invoices
+  const invoiceStatuses = invoices
+    .map(invoice => invoice.status)
+    .filter(status => status && statusMapping.hasOwnProperty(status));
+
+  if (invoiceStatuses.length === 0) {
+    console.log(`No valid invoice statuses found among: ${invoices.map(inv => inv.status).join(', ')}`);
+    return null;
+  }
+
+  console.log(`Found invoice statuses: ${invoiceStatuses.join(', ')}`);
+
+  // NEW LOGIC: If any invoice is unpaid, overdue, or partially_paid, set order to Awaiting_Payment
+  if (invoiceStatuses.includes('unpaid') || invoiceStatuses.includes('overdue') || invoiceStatuses.includes('partially_paid')) {
+    console.log('Found unpaid, overdue, or partially_paid invoices, setting order status to Awaiting_Payment');
+    return constants.OrderStatus.Awaiting_Payment.name;
+  }
+
+  // If any invoice is sent, set order to Shipped
+  if (invoiceStatuses.includes('sent')) {
+    console.log('Found sent invoices, setting order status to Shipped');
+    return constants.OrderStatus.Shipped.name;
+  }
+
+  // Priority order for remaining statuses: paid > other
+  const priorityOrder = ['paid'];
+
+  // Find the highest priority status
+  for (const priorityStatus of priorityOrder) {
+    if (invoiceStatuses.includes(priorityStatus)) {
+      const mappedStatus = statusMapping[priorityStatus];
+      if (mappedStatus) {
+        console.log(`Mapping invoice status '${priorityStatus}' to order status '${mappedStatus}'`);
+        return mappedStatus;
+      }
+    }
+  }
+
+  console.log('No matching status found in priority order');
+  return null;
+};
+
 /**
  * Processes invoices for a specific order and updates the order status accordingly
  * @param {Object} order - The order to process invoices for
@@ -485,6 +554,10 @@ const processInvoicesFromZoho = async (
       const invoiceIds = zhInvoices.map((invoice) => invoice.invoice_id).filter(Boolean);
       const now = new Date();
 
+      // Determine new order status based on invoice statuses
+      const newOrderStatus = determineOrderStatusFromInvoices(zhInvoices);
+      console.log(`Determined order status '${newOrderStatus}' based on invoice statuses for order ${salesOrderNumber}`);
+
       // Prepare the order update
       const update = {
         $set: {
@@ -499,19 +572,31 @@ const processInvoicesFromZoho = async (
         },
       };
 
+      // Add order status update if determined and different from current status
+      if (newOrderStatus && newOrderStatus !== order.order_status) {
+        update.$set.order_status = newOrderStatus;
+        console.log(`Will update order ${salesOrderNumber} status from '${order.order_status}' to '${newOrderStatus}'`);
+      } else if (newOrderStatus) {
+        console.log(`Order ${salesOrderNumber} already has status '${newOrderStatus}', no update needed`);
+      } else {
+        console.log(`No order status determined for ${salesOrderNumber}, keeping current status: ${order.order_status}`);
+      }
+
       // Update the order in the database
       try {
         const result = await Orders.updateAsync({ _id: orderId }, update);
         
         if (result > 0) {
-          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices`);
+          console.log(`Successfully updated order ${salesOrderNumber} with ${zhInvoices.length} invoices and status: ${newOrderStatus || order.order_status}`);
+          const actualStatus = newOrderStatus || order.order_status;
           successResp.push({
             orderId,
             salesOrderNumber,
             status: 'success',
-            message: `Updated order with ${zhInvoices.length} invoices`,
+            message: `Updated order with ${zhInvoices.length} invoices${newOrderStatus ? ` and status to ${newOrderStatus}` : ` (status remains ${actualStatus})`}`,
             invoiceCount: zhInvoices.length,
             updatedAt: now,
+            finalStatus: actualStatus,
           });
         } else {
           throw new Error('No documents were updated - order not found or no changes made');
@@ -544,13 +629,15 @@ const processInvoicesFromZoho = async (
   };
 };
 
-// Core functions
 export {
   processInvoicesFromZoho,
   getInvoicesFromZohoByLastModifiedTime,
   
   // Helper functions
   getInvoices,
-  createInvoiceObject
+  createInvoiceObject,
+  
+  // New status determination function
+  determineOrderStatusFromInvoices
 };
 

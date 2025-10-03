@@ -32,7 +32,6 @@ Invitations.schema = new SimpleSchema({
   email: {
     type: String,
     label: 'Email to send invitation to.',
-    regEx: SimpleSchema.RegEx.Email,
     optional: true,
   },
   otp: {

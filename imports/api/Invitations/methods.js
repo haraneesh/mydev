@@ -190,7 +190,7 @@ export const sendInvitation = new ValidatedMethod({
   name: 'invitations.send',
   validate: new SimpleSchema({
     name: { type: String },
-    email: { type: String, regEx: SimpleSchema.RegEx.Email },
+    email: { type: String },
   }).validator(),
   async run(invitation) {
     invitation.sentUserId = Meteor.userId();

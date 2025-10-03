@@ -483,17 +483,35 @@ const getInvoiceById = new ValidatedMethod({
 
         if (!response || response.code === -1 || !response.invoice) {
           console.error('Error fetching invoice from Zoho:', response);
-          throw new Meteor.Error(
-            'api-error',
-            response?.message || 'Failed to fetch invoice from Zoho',
-          );
+          // Instead of throwing an error, return the local invoice data
+          console.log('Returning local invoice data as fallback for invoice:', invoiceId);
+          return {
+            ...localInvoice,
+            _fetchedFromLocal: true,
+            _zohoError: response?.message || 'Failed to fetch from Zoho'
+          };
         }
 
         // Return the full invoice details
         return response.invoice;
       } catch (error) {
         console.error('Zoho API error:', error);
-        throw new Meteor.Error('api-error', `Zoho API error: ${error.message}`);
+        // Check if the error is about resource not existing
+        if (error.message && error.message.includes('Resource does not exist')) {
+          console.log('Invoice not found in Zoho Books, returning local data for invoice:', invoiceId);
+          return {
+            ...localInvoice,
+            _fetchedFromLocal: true,
+            _zohoError: 'Invoice not found in Zoho Books - may have been deleted'
+          };
+        }
+        // Instead of throwing an error, return the local invoice data
+        console.log('Returning local invoice data as fallback for invoice:', invoiceId);
+        return {
+          ...localInvoice,
+          _fetchedFromLocal: true,
+          _zohoError: error.message
+        };
       }
     } catch (error) {
       console.error('Error in zhInvoices.getInvoiceById:', error);

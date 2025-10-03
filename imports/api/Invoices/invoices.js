@@ -7,11 +7,9 @@ export const Invoices = new Mongo.Collection('invoices');
 const InvoiceSchema = new SimpleSchema({
   _id: {
     type: String,
-    regEx: SimpleSchema.RegEx.Id,
   },
   userId: {
     type: String,
-    regEx: SimpleSchema.RegEx.Id,
   },
   invoiceNumber: {
     type: String,
@@ -19,7 +17,6 @@ const InvoiceSchema = new SimpleSchema({
   },
   customerId: {
     type: String,
-    regEx: SimpleSchema.RegEx.Id,
     optional: true,
   },
   invoiceDate: {
@@ -46,7 +43,6 @@ const InvoiceSchema = new SimpleSchema({
   },
   'items.$.productId': {
     type: String,
-    regEx: SimpleSchema.RegEx.Id,
   },
   'items.$.description': {
     type: String,
