@@ -183,8 +183,11 @@ const getInvoicesFromZohoByLastModifiedTime = new ValidatedMethod({
         // Format the last sync time for Zoho API (add 1ms to avoid getting the same record again)
         let lastSyncTime = null;
         if (lastSync) {
+          // Calculate 3 days before the last sync date
+          const lastSyncDate = new Date(lastSync.syncDateTime);
+          const threeDaysAgo = new Date(lastSyncDate.getTime() - (3 * 24 * 60 * 60 * 1000));
           // Format the date with timezone offset
-          lastSyncTime = moment(lastSync.syncDateTime).add(1, 'millisecond').format('YYYY-MM-DDTHH:mm:ss+0530');
+          lastSyncTime = moment(threeDaysAgo).add(1, 'millisecond').format('YYYY-MM-DDTHH:mm:ss+0530');
           // Manually encode the plus sign in the timezone offset
           // lastSyncTime = formattedDate.replace('+', '%2B');
         }
