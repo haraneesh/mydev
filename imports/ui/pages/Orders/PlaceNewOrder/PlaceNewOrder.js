@@ -24,6 +24,7 @@ const PlaceNewOrder = (props) => {
     name,
     products,
     productListId,
+    productListUpdatedAt,
     basketId,
     loggedInUser,
     category,
@@ -120,6 +121,7 @@ const PlaceNewOrder = (props) => {
           <ProductsOrderMain
             products={products}
             productListId={productListId}
+            productListUpdatedAt={productListUpdatedAt}
             name={name}
             dateValue={dateValue}
             loggedInUser={loggedInUser}
@@ -151,6 +153,7 @@ PlaceNewOrder.propTypes = {
   loggedInUser: PropTypes.object.isRequired,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   productListId: PropTypes.string.isRequired,
+  productListUpdatedAt: PropTypes.instanceOf(Date),
   name: PropTypes.string.isRequired,
   basketId: PropTypes.string,
   dateValue: PropTypes.object.isRequired,
@@ -166,8 +169,11 @@ export default withTracker((args) => {
   // const recommendations = RecommendationsCollection.find().fetch();
 
   const productList = ProductLists.findOne();
+  console.log('ProductList:', productList);
   const prds = productList ? productList.products : [];
   const productListId = productList ? productList._id : '';
+  const productListUpdatedAt = productList ? productList.updatedAt : null;
+  console.log('productListUpdatedAt:', productListUpdatedAt);
   const products = getProductUnitPrice(
     Roles.userIsInRole(args.loggedInUserId, constants.Roles.shopOwner.name),
     prds,
@@ -179,6 +185,7 @@ export default withTracker((args) => {
     loading: isLoading(),
     productListId,
     products,
+    productListUpdatedAt,
     name: args.name,
     dateValue: args.date,
     loggedInUser: args.loggedInUser,

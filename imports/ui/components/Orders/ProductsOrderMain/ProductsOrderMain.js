@@ -50,6 +50,7 @@ const ProductsOrderMain = (props) => {
     dateValue = new Date(),
     orderStatus = '',
     orderCustomerId,
+    productListUpdatedAt,
   } = props;
   const isAdmin = isLoggedInUserAdmin();
   const isShopOwner =
@@ -340,6 +341,13 @@ const ProductsOrderMain = (props) => {
         <Col xs={12}>
           <div className="py-sm-4 pt-2 m-0 mt-1 text-center">
             <h2>{formHeading}</h2>
+            {productListUpdatedAt ? (
+              <p>
+                Product list last updated: {new Date(productListUpdatedAt).toLocaleString()}
+              </p>
+            ) : (
+              <p>Product list update date not available</p>
+            )}
             {displayToolBar(orderStatus)}
           </div>
           {displayProductsAndSubmit(isMobile, productGroups)}
@@ -352,6 +360,7 @@ const ProductsOrderMain = (props) => {
 ProductsOrderMain.propTypes = {
   products: PropTypes.array.isRequired,
   loggedInUser: PropTypes.object.isRequired,
+  productListUpdatedAt: PropTypes.instanceOf(Date),
   addItemsFromCart: PropTypes.bool,
   orderedProducts: PropTypes.array,
   orderId: PropTypes.string,
