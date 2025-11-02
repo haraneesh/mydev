@@ -74,25 +74,25 @@ const SuccessOrderPlaced = ({
   return (
     <div className="OrderPlaced mt-0 pb-5 text-center mx-2">
 
-      <h1 className="text-success" style={{ top: '30px', position: 'relative' }}>
+      <h1 className="text-success" style={{ top: '30px', position: 'relative', zIndex: '1000' }}>
         <Icon icon="check_circle" style={{ fontSize: '1.5em' }} type="mt" />
       </h1>
 
-      <div>
-        <section className="px-2 py-3" style={{ backgroundColor: '#faf4ef', borderColor: '#e4dfdb' }}>
+      <div> 
+        <section className="px-2 py-3 bg-white card" style={{ borderColor: '#e4dfdb' }}>
           <h4 className="py-2 pt-4">
             {' '}
-            {profile && ` Hello ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)},`}
+            {profile && ` ${(profile.salutation) ? profile.salutation : ''} ${capitalize(profile.name.first)}, `}
+            Thank you for Ordering on Suvai.
           </h4>
-          <h4 className="py-2">Thank you for Ordering on Suvai.</h4>
 
-          {/* <div className="text-success pt-4">
-            <p>
-              {`Your order will be delivered on ${getDeliveryDay(new Date())}`}
-              . You can pay us after delivery.
-            </p>
-            </div> */}
-
+            <h4 className="py-2 pt-4">
+              Depending on stock availability, your order will arrive today or tomorrow.
+              </h4>
+              <h4 className="py-2 pt-4">
+              You can pay after delivery. 
+            </h4>
+         
           <br />
 
           {(Meteor.settings.public.ShowInviteButton) && (

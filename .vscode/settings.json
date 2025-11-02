@@ -4,5 +4,6 @@
         "emmet.includeLanguages": {
         "javascript": "javascriptreact"
       }
-    }
+    },
+    "kiroAgent.configureMCP": "Disabled"
 }
