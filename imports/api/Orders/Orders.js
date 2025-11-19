@@ -2,6 +2,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Random } from 'meteor/random';
+import _ from 'lodash';
 import SimpleSchema from 'simpl-schema';
 import constants from '../../modules/constants';
 // Import the schema from the appropriate location if needed
@@ -23,7 +24,7 @@ Orders.deny({
   remove: () => true,
 });
 
-const productsSchemaDefObject = _.clone(ProductSchemaDefObject);
+const productsSchemaDefObject = _.cloneDeep(ProductSchemaDefObject);
 productsSchemaDefObject.quantity = {
   type: Number,
   label: 'The quantity of a particular product that was ordered',

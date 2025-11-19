@@ -9,7 +9,6 @@ import Row from 'react-bootstrap/Row';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SelectSalesPerson from '/imports/ui/components/SelectSalesPerson/SelectSalesPerson';
-import { upsertOrder } from '../../../api/Orders/methods';
 import constants from '../../../modules/constants';
 import {
   isChennaiPinCode,
@@ -181,7 +180,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     }
   };
 
-  function placeOrder({ loggedInUserId, onBehalfUser, zohoSalesPerson }) {
+  async function placeOrder({ loggedInUserId, onBehalfUser, zohoSalesPerson }) {
     const products = [];
 
     Object.keys(cartState.cart.productsInCart).map((key) => {
@@ -212,35 +211,30 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
 
     setOrderUpdated(true);
 
-    upsertOrder.call(order, (error, createdOrder) => {
-      if (error) {
-        toast.error(error.reason);
-        setOrderUpdated(false);
-      } else {
-        const createdUpdatedOrderId = createdOrder.insertedId
-          ? createdOrder.insertedId
-          : orderId;
-        setSuccessfullyPlacedOrderId(createdUpdatedOrderId);
+    try {
+      const createdUpdatedOrderId = await Meteor.callAsync('orders.upsert', order);
+      
+      setSuccessfullyPlacedOrderId(createdUpdatedOrderId);
 
-        if (!isLoggedInUserAdmin() && loggedInUser) {
-          toast.success('Order has been placed successfully!');
-          Meteor.call('customer.getUserWalletWithoutCheck', (error, succ) => {
-            setOrderUpdated(false);
-            if (error) {
-              toast.error(error.reason);
-            } else {
-              setShowPaymentModal(true);
-            }
-            setOrderUpdated(false);
-          });
+      if (!isLoggedInUserAdmin() && loggedInUser) {
+        try {
+          await Meteor.callAsync('customer.getUserWalletWithoutCheck');
           setShowPaymentModal(true);
-          moveToOrderSubmitScreen(createdUpdatedOrderId);
-        } else {
-          toast.success('Order has been placed successfully!');
-          moveToOrderSubmitScreen(createdUpdatedOrderId);
+        } catch (walletError) {
+          console.error('Error checking wallet:', walletError);
         }
+        setOrderUpdated(false);
+        moveToOrderSubmitScreen(createdUpdatedOrderId);
+      } else {
+        toast.success('Order has been placed successfully!');
+        setOrderUpdated(false);
+        moveToOrderSubmitScreen(createdUpdatedOrderId);
       }
-    });
+    } catch (error) {
+      console.error('Error placing order:', error);
+      setOrderUpdated(false);
+      toast.error(error.reason || 'Failed to place order. Please try again.');
+    }
   }
 
   const clearCart = () => {

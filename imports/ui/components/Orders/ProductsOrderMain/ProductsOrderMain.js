@@ -17,10 +17,8 @@ import {
 import Product from '../Product';
 import ProductListView from '../ProductsSlideView/ProductsSlideView';
 
-import {
-  updateMyOrderStatus,
-  upsertOrder,
-} from '../../../../api/Orders/methods';
+import { updateMyOrderStatus } from '../../../../api/Orders/methods';
+import { Meteor } from 'meteor/meteor';
 import constants from '../../../../modules/constants';
 import GenerateOrderList from '../../../../reports/client/GenerateOrderList';
 import {
@@ -166,7 +164,7 @@ const ProductsOrderMain = (props) => {
       comments: commentBox ? commentBox.value : '',
     };
 
-    upsertOrder.call(order, (error) => {
+    Meteor.call('orders.upsert', order, (error) => {
       const confirmation = 'Your Order has been placed';
       if (error) {
         toast.error(error.reason);

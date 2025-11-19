@@ -391,13 +391,12 @@ const ProductForNonAdmin = ({
   return (
     <div className="product-item text-center my-2">
       {sale && (
-        <Col
-          xs={12}
+        <div
           className="text-left  ps-sm-2 ps-1"
           style={{ position: 'absolute' }}
         >
           <div className="badge bg-warning">SALE</div>
-        </Col>
+        </div>
       )}
       <Col xs={12} className="item-image-container">
         {imageRow}
