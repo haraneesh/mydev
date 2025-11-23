@@ -62,3 +62,6 @@ import '../../api/PorterSyncUps/porterOrderMethods';
 import '../../api/Settings/methods';
 
 import '../../api/UpdateScripts/UpdateScript';
+
+import '../../api/Notifications/methods';
+import '../../api/Notifications/server/publications';

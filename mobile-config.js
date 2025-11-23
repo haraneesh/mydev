@@ -37,6 +37,17 @@ switch (this.process.env.MOBILE_APP_ID) {
     urlUniversalLink = 'staging.nammasuvai.com';
     break;
 
+  case 'com.nammasuvai.dev':
+    // eslint-disable-next-line no-console
+    console.log('--> mobile-config - production build');
+    idName = {
+      id: 'com.nammasuvai.dev',
+      name: 'MeteorApp',
+    };
+    oneSignalAppId = 'a4a5axxx-59f2-493f-abdb-efce7b0c8ef6';
+    urlUniversalLink = 'mobile.suvaiapp.com';
+    break;
+
   case 'com.suvaiapp.mobile':
     // eslint-disable-next-line no-console
     console.log('--> Legacy suvaiapp mobile-config - production build');
@@ -55,6 +66,7 @@ switch (this.process.env.MOBILE_APP_ID) {
       id: 'com.nammasuvai.development',
       name: 'NammaSuvai Dev',
     };
+    oneSignalAppId = 'eb78f651-694d-45b3-9427-922622ea51e5';
     urlUniversalLink = 'localhost:3000';
     schemeUniversalLink = 'http';
 }
