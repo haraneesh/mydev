@@ -59,94 +59,128 @@ Meteor.startup(() => {
   // alert('OneSignal Status:\n' + status); // Uncomment to see on device
 
   let appId = null;
-// Get a reference to the plugin (fallback for older versions)
-const appSettings = window.AppSettings || window.plugins?.AppSettings;
+  
+  // Get a reference to the plugin (fallback for older versions)
+  // eslint-disable-next-line no-undef
+  const appSettings = window.AppSettings || window.plugins?.AppSettings;
 
-if (!appSettings) {
-  console.error('AppSettings plugin not found');
-  return;
-}
+  console.log('AppSettings check:', {
+    windowAppSettings: !!window.AppSettings,
+    pluginsAppSettings: !!window.plugins?.AppSettings,
+    appSettings: !!appSettings
+  });
 
-// Correct signature: (successCallback, errorCallback, keyArray)
-appSettings.get(
-  (configs) => {
-    const universalLink = configs.universallink;
-    const appId = configs.onesignalappid;
-    // cordova from fairmanager-cordova-plugin-universal-links
-      window.cordova.plugins.UniversalLinks.subscribe(null, (eventData) => {
-        console.debug(`cordovaRedirect ${universalLink} ${eventData.url}`);
+  if (!appSettings) {
+    console.error('AppSettings plugin not found');
+    return;
+  }
 
-        if (!eventData.url.includes(universalLink)) return;
+  console.log('About to call appSettings.get...');
 
-        const redirectUrl = eventData.url.replace(universalLink, '');
-        if (redirectUrl) {
-          const navigateTo = `${
-            !redirectUrl.startsWith('/') ? '/' : ''
-          }${redirectUrl}`;
-          console.debug(`navigateTo ${navigateTo}`);
-          history.push(navigateTo);
-        }
-      });
+  // Correct signature: (successCallback, errorCallback, keyArray)
+  appSettings.get(
+    (configs) => {
+      const universalLink = configs.universallink;
+      appId = configs.OneSignalAppId || configs.onesignalappid;
 
-      appId = configs.onesignalappid;
+      // cordova from fairmanager-cordova-plugin-universal-links
+      if (universalLink && window.cordova?.plugins?.UniversalLinks) {
+        window.cordova.plugins.UniversalLinks.subscribe(null, (eventData) => {
+          console.debug(`cordovaRedirect ${universalLink} ${eventData.url}`);
+
+          if (!eventData.url.includes(universalLink)) return;
+
+          const redirectUrl = eventData.url.replace(universalLink, '');
+          if (redirectUrl) {
+            const navigateTo = `${
+              !redirectUrl.startsWith('/') ? '/' : ''
+            }${redirectUrl}`;
+            console.debug(`navigateTo ${navigateTo}`);
+            history.push(navigateTo);
+          }
+        });
+      }
+
       if (appId) {
         console.log('Initializing OneSignal with App ID:', appId);
-        window.plugins.OneSignal.setLogLevel({ logLevel: 4, visualLevel: 1 });
-
-        const notificationOpenedCallback = (notification) => {
-          console.debug('Notification opened:', JSON.stringify(notification));
+        
+        // OneSignal v5 SDK initialization
+        window.plugins.OneSignal.initialize(appId);
+        
+        // Check current permission status
+        const hasPermission = window.plugins.OneSignal.Notifications.hasPermission();
+        console.log('Current notification permission:', hasPermission);
+        
+        // Request notification permission
+        window.plugins.OneSignal.Notifications.requestPermission(true).then((accepted) => {
+          console.log('Notification permission request result:', accepted);
+          if (accepted) {
+            console.log('Notification permissions granted!');
+          } else {
+            console.warn('Notification permissions denied');
+          }
+        }).catch((error) => {
+          console.error('Error requesting notification permission:', error);
+        });
+        
+        // Set up notification click handler
+        window.plugins.OneSignal.Notifications.addEventListener('click', (event) => {
+          console.debug('Notification clicked:', JSON.stringify(event));
+          
           // Handle deep linking via additionalData.route
-          const route =
-            notification &&
-            notification.payload &&
-            notification.payload.additionalData &&
-            notification.payload.additionalData.route;
+          const route = event?.notification?.additionalData?.route;
           if (route) {
             goTo(route);
           }
-        };
-
-        // Handler for notifications received while app is in foreground
-        const notificationReceivedCallback = (notification) => {
-          console.debug('Notification received:', JSON.stringify(notification));
-          // You can show an in-app notification here if desired
-        };
-
-        window.plugins.OneSignal.startInit(appId);
-        
-        // Set notification handlers
-        window.plugins.OneSignal.handleNotificationOpened(
-          notificationOpenedCallback,
-        );
-        window.plugins.OneSignal.handleNotificationReceived(
-          notificationReceivedCallback,
-        );
-        
-        // Get player ID and store it
-        window.plugins.OneSignal.getIds((ids) => {
-          currentPlayerId = ids.userId;
-          console.log('OneSignal Player ID:', currentPlayerId);
-          
-          // Detect device type
-          const deviceType = window.device?.platform?.toLowerCase() || 'unknown';
-          
-          // Store player ID if user is logged in
-          if (Meteor.userId()) {
-            addPlayerId(currentPlayerId, deviceType);
-          }
         });
         
-        window.plugins.OneSignal.endInit();
+        // Set up notification received handler (foreground)
+        window.plugins.OneSignal.Notifications.addEventListener('foregroundWillDisplay', (event) => {
+          console.debug('Notification received in foreground:', JSON.stringify(event));
+          // You can prevent the notification from displaying by calling:
+          // event.preventDefault();
+        });
+        
+        // Get player ID (subscription ID in v5)
+        const getAndStorePlayerId = async () => {
+          try {
+            const subscriptionId = await window.plugins.OneSignal.User.pushSubscription.getIdAsync();
+            if (subscriptionId) {
+              currentPlayerId = subscriptionId;
+              console.log('OneSignal Player ID:', currentPlayerId);
+              
+              // Detect device type
+              const deviceType = window.device?.platform?.toLowerCase() || 'unknown';
+              
+              // Store player ID if user is logged in
+              if (Meteor.userId()) {
+                addPlayerId(currentPlayerId, deviceType);
+              }
+            } else {
+              console.warn('OneSignal subscription ID not available yet');
+            }
+          } catch (error) {
+            console.error('Error getting OneSignal subscription ID:', error);
+          }
+        };
+        
+        // Listen for subscription changes
+        window.plugins.OneSignal.User.pushSubscription.addEventListener('change', (event) => {
+          console.log('Push subscription changed:', event);
+          getAndStorePlayerId();
+        });
+        
+        // Try to get player ID immediately (in case already subscribed)
+        setTimeout(getAndStorePlayerId, 1000);
+        
         console.log('OneSignal initialized successfully');
       } else {
         console.warn('OneSignal App ID not found in config');
       }
     },
     (error) => {
-      console.error(
-        'Error getting configuration from config.xml in Cordova',
-        error,
-      );
+      console.error('AppSettings get error:', error);
     },
+    ['OneSignalAppId', 'onesignalappid', 'universallink']
   );
 });

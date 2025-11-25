@@ -21,7 +21,7 @@ const PlayerIdSchema = new SimpleSchema({
     type: String,
     label: 'Device Type',
     optional: true,
-    allowedValues: ['android', 'ios', 'web'],
+    allowedValues: ['android', 'ios', 'web', 'unknown'],
   },
   lastActive: {
     type: Date,

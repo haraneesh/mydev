@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "devios": "MONGO_URL=mongodb://127.0.0.1:27017/suvaidb meteor run ios --settings settings-development.json",
-    "devandroid": "MONGO_URL=mongodb://127.0.0.1:27017/suvaidb MOBILE_APP_ID=com.nammasuvai.dev meteor run android --settings settings-development.json",
+    "devandroid": "MONGO_URL=mongodb://127.0.0.1:27017/suvaidb MOBILE_APP_ID=com.nammasuvai.dev ONESIGNAL_APP_ID=eb78f651-694d-45b3-9427-922622ea51e5 meteor run android --settings settings-development.json",
     "dev": "MONGO_URL=mongodb://127.0.0.1:27017/suvaidb meteor --settings settings-development.json",
     "devProd": "MONGO_URL=mongodb://127.0.0.1:27017/suvaidb meteor --settings settings-development.json --production",
     "check": "npx @biomejs/biome check --write ./**/*.{js,jsx}",

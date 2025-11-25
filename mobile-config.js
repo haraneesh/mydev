@@ -15,6 +15,7 @@ let oneSignalAppId = '';
 let urlUniversalLink = null;
 let schemeUniversalLink = 'https';
 
+
 // noinspection ThisExpressionReferencesGlobalObjectJS
 switch (this.process.env.MOBILE_APP_ID) {
   case 'com.nammasuvai.production':
@@ -27,49 +28,25 @@ switch (this.process.env.MOBILE_APP_ID) {
     urlUniversalLink = 'app.nammasuvai.com';
     break;
 
-  case 'com.nammasuvai.staging':
-    // eslint-disable-next-line no-console
-    console.log('--> NammaSuvai mobile-config - staging build');
-    idName = {
-      id: 'com.nammasuvai.staging',
-      name: 'NammaSuvai Staging',
-    };
-    urlUniversalLink = 'staging.nammasuvai.com';
-    break;
-
-  case 'com.nammasuvai.dev':
-    // eslint-disable-next-line no-console
-    console.log('--> mobile-config - production build');
-    idName = {
-      id: 'com.nammasuvai.dev',
-      name: 'MeteorApp',
-    };
-    oneSignalAppId = 'a4a5axxx-59f2-493f-abdb-efce7b0c8ef6';
-    urlUniversalLink = 'mobile.suvaiapp.com';
-    break;
-
-  case 'com.suvaiapp.mobile':
-    // eslint-disable-next-line no-console
-    console.log('--> Legacy suvaiapp mobile-config - production build');
-    idName = {
-      id: 'com.suvaiapp.mobile',
-      name: 'suvaiapp',
-    };
-    oneSignalAppId = 'a4a5axxx-59f2-493f-abdb-efce7b0c8ef6';
-    urlUniversalLink = 'mobile.suvaiapp.com';
-    break;
-
   default:
     // eslint-disable-next-line no-console
     console.log('--> NammaSuvai mobile-config - development build');
     idName = {
-      id: 'com.nammasuvai.development',
+      id: 'com.nammasuvai.dev',
       name: 'NammaSuvai Dev',
     };
-    oneSignalAppId = 'eb78f651-694d-45b3-9427-922622ea51e5';
     urlUniversalLink = 'localhost:3000';
     schemeUniversalLink = 'http';
 }
+
+   // Get OneSignal App ID from environment variables
+    if (process.env.ONESIGNAL_APP_ID) {
+      oneSignalAppId = process.env.ONESIGNAL_APP_ID;
+      console.log(`--> Using OneSignal App ID from env: ${oneSignalAppId}`);
+    } else {
+      console.warn('--> ONESIGNAL_APP_ID env var not set. Using default.');
+      oneSignalAppId = 'eb78f651-694d-45b3-9427-922622ea51e5';
+    }
 
 // eslint-disable-next-line no-undef
 App.info(
@@ -144,7 +121,7 @@ App.configurePlugin('cordova-plugin-geolocation', {
 
 // Universal links + OneSignal
 // eslint-disable-next-line no-undef
-App.setPreference('onesignalappid', oneSignalAppId);
+App.setPreference('OneSignalAppId', oneSignalAppId);
 // eslint-disable-next-line no-undef
 App.setPreference('universallink', `${schemeUniversalLink}://${urlUniversalLink}`);
 
