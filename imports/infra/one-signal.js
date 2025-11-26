@@ -111,17 +111,18 @@ Meteor.startup(() => {
         const hasPermission = window.plugins.OneSignal.Notifications.hasPermission();
         console.log('Current notification permission:', hasPermission);
         
-        // Request notification permission
-        window.plugins.OneSignal.Notifications.requestPermission(true).then((accepted) => {
-          console.log('Notification permission request result:', accepted);
-          if (accepted) {
-            console.log('Notification permissions granted!');
-          } else {
-            console.warn('Notification permissions denied');
-          }
-        }).catch((error) => {
-          console.error('Error requesting notification permission:', error);
-        });
+        // DON'T request permission automatically on app load
+        // Permission will be requested after first order is placed
+        // window.plugins.OneSignal.Notifications.requestPermission(true).then((accepted) => {
+        //   console.log('Notification permission request result:', accepted);
+        //   if (accepted) {
+        //     console.log('Notification permissions granted!');
+        //   } else {
+        //     console.warn('Notification permissions denied');
+        //   }
+        // }).catch((error) => {
+        //   console.error('Error requesting notification permission:', error);
+        // });
         
         // Set up notification click handler
         window.plugins.OneSignal.Notifications.addEventListener('click', (event) => {

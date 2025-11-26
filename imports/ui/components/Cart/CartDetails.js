@@ -30,6 +30,8 @@ import {
 } from './CartCommon';
 import GetUserPhoneNumber from './GetUserPhoneNumber';
 import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
+import PrePermissionModal from '../PrePermissionModal';
+import { requestNotificationPermission, hasNotificationPermission } from '../../helpers/notificationHelpers';
 
 const isOrderAmountGreaterThanMinimum = (orderAmt) => {
   if (
@@ -64,6 +66,10 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   const [selectedSalespersonError, setSelectSalesPersonError] = useState(false);
 
   const [isOrderBeingUpdated, setOrderUpdated] = useState(false);
+  
+  // Pre-permission modal state
+  const [showPrePermissionModal, setShowPrePermissionModal] = useState(false);
+  const [pendingOrderId, setPendingOrderId] = useState(null);
 
   const activeCartId = !orderId || orderId === 'NEW' ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
@@ -285,10 +291,42 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   };
 
   const moveToOrderSubmitScreen = (createdUpdatedOrderId) => {
+    const orderIdToUse = createdUpdatedOrderId || successfullyPlacedOrderId || orderId;
+    
+    // Check if we should show pre-permission modal (mobile users without permission)
+    if (Meteor.isCordova && !hasNotificationPermission()) {
+      // Store the order ID and show pre-permission modal
+      setPendingOrderId(orderIdToUse);
+      setShowPrePermissionModal(true);
+      return;
+    }
+    
+    // Otherwise navigate directly to success page
     cartDispatch({ type: cartActions.orderFlowComplete });
-    navigate(
-      `/order/success/${createdUpdatedOrderId || successfullyPlacedOrderId || orderId}`,
-    );
+    navigate(`/order/success/${orderIdToUse}`);
+  };
+  
+  const handleAcceptNotifications = async () => {
+    setShowPrePermissionModal(false);
+    
+    try {
+      // Request OS permission
+      await requestNotificationPermission();
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+    }
+    
+    // Navigate to success page regardless of permission result
+    cartDispatch({ type: cartActions.orderFlowComplete });
+    navigate(`/order/success/${pendingOrderId}`);
+  };
+  
+  const handleDeclineNotifications = () => {
+    setShowPrePermissionModal(false);
+    
+    // Navigate to success page
+    cartDispatch({ type: cartActions.orderFlowComplete });
+    navigate(`/order/success/${pendingOrderId}`);
   };
 
   const afterPaymentScreen = ({ action }) => {
@@ -467,6 +505,12 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
               }
             />
           </Card>
+          
+          <PrePermissionModal 
+            show={showPrePermissionModal}
+            onAccept={handleAcceptNotifications}
+            onDecline={handleDeclineNotifications}
+          />
         </Row>
       );
     }

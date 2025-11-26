@@ -209,6 +209,31 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+
+  /**
+   * Check if user has notifications enabled
+   * Used to enforce notification requirement for critical operations (mobile only)
+   * @throws {Meteor.Error} If user has no registered player IDs
+   */
+  'checkNotificationRequired': async function checkNotificationRequired() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    // This check should primarily be done on client side
+    // Server-side check is a backup to ensure data integrity
+    const playerIds = await Notifications.find({ userId: this.userId }).fetchAsync();
+    
+    if (playerIds.length === 0) {
+      throw new Meteor.Error(
+        'notifications-required',
+        'Please enable push notifications to continue. You need notifications to receive order updates and delivery alerts.',
+        { requiresNotifications: true }
+      );
+    }
+
+    return { hasNotifications: true, playerIdCount: playerIds.length };
+  },
 });
 
 // Rate limiting
@@ -219,6 +244,7 @@ rateLimit({
     'sendNotificationToAll',
     'getMyPlayerIds',
     'removePlayerId',
+    'checkNotificationRequired',
   ],
   limit: 5,
   timeRange: 1000,

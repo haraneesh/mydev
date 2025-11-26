@@ -265,6 +265,26 @@ Meteor.methods({
 
     if (Meteor.isServer) {
       try {
+        // For new orders (not updates) on Cordova, check if user has notifications enabled
+        const isNewOrder = !order._id;
+        const isCordova = this.connection?.httpHeaders?.['user-agent']?.includes('Cordova') || false;
+        
+        if (isNewOrder && isCordova) {
+          // Import Notifications collection
+          const Notifications = require('../Notifications/Notifications').default;
+          
+          // Check if user has registered player IDs
+          const playerIds = await Notifications.find({ userId: this.userId }).fetchAsync();
+          
+          if (playerIds.length === 0) {
+            throw new Meteor.Error(
+              'notifications-required',
+              'Please enable push notifications to place orders. You need notifications to receive order updates and delivery alerts.',
+              { requiresNotifications: true }
+            );
+          }
+        }
+        
         const result = await addUpdateOrder(order);
         return result;
       } catch (error) {

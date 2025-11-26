@@ -83,24 +83,28 @@ import VerifyEmailAlert from '../components/VerifyEmailAlert';
 import dMyWallet from '../pages/Wallet/MyWallet';
 
 import { CartProvider } from '../stores/ShoppingCart';
+import { NotificationPermissionProvider } from '../stores/NotificationPermission';
 
 import ReturnAlerts from '../components/Alerts/ReturnAlerts';
 import ShowAlerts from '../components/Alerts/ShowAlerts';
 import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
+import NotificationBanner from '../components/NotificationBanner';
 
 const App = (props) => (
   <>
     {!props.loading ? (
       <div className="App">
-        {props.authenticated && <ShowAlerts />}
-        {props.authenticated && <ReturnAlerts />}
-        {props.authenticated && (
-          <PwaInstallPopupIOS
-            delay={3}
-            lang="en"
-            appIcon="apple-touch-icon-precomposed.png"
-          />
-        )}
+        <NotificationPermissionProvider>
+          {props.authenticated && <ShowAlerts />}
+          {props.authenticated && <ReturnAlerts />}
+          {props.authenticated && <NotificationBanner />}
+          {props.authenticated && (
+            <PwaInstallPopupIOS
+              delay={3}
+              lang="en"
+              appIcon="apple-touch-icon-precomposed.png"
+            />
+          )}
         {/* props.authenticated && (
         <VerifyEmailAlert
           {...props}
@@ -734,6 +738,7 @@ const App = (props) => (
           </Routes>
           <Footer {...props} />
         </CartProvider>
+        </NotificationPermissionProvider>
       </div>
     ) : (
       ''
