@@ -248,6 +248,7 @@ Meteor.methods({
         await Payments.insertAsync({
           orderId,
           owner: this.userId,
+          platform: Meteor.isCordova ? 'cordova' : 'web', // Track platform for debugging
           paymentApiInitiationResponseObject: {
             result,
             amount: params.amount,
@@ -336,6 +337,45 @@ Meteor.methods({
           console.log(`Exception --- ${exception}`);
         }
         // handleMethodException(exception);
+      }
+    }
+  },
+  'payment.paytm.paymentTransactionError': async function paymentTransactionError(errorData) {
+    check(errorData, {
+      ORDERID: String,
+      errorObject: Match.Any,
+    });
+
+    if (Meteor.isServer) {
+      try {
+        // Log error for debugging
+        console.error('PayTM Payment Transaction Error:', {
+          orderId: errorData.ORDERID,
+          error: errorData.errorObject,
+          userId: this.userId,
+          timestamp: new Date(),
+        });
+
+        // Update payment record with error if it exists
+        const payment = await Payments.findOneAsync({ orderId: errorData.ORDERID });
+        if (payment) {
+          await Payments.updateAsync(
+            { orderId: errorData.ORDERID },
+            {
+              $set: {
+                status: 'error',
+                error: errorData.errorObject,
+                updatedAt: new Date(),
+              },
+            }
+          );
+        }
+
+        return { success: true, message: 'Error logged' };
+      } catch (exception) {
+        console.error('Error logging payment transaction error:', exception);
+        // Don't throw - this is just for logging
+        return { success: false, message: 'Failed to log error' };
       }
     }
   },

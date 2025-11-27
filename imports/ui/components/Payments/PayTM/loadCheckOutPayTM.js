@@ -1,6 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 
 const loadCheckOutPayTM = (callback) => {
+  // Skip loading PayTM Checkout JS in Cordova environment
+  // The native PayTM All-in-One SDK plugin is used instead
+  if (Meteor.isCordova) {
+    if (callback) callback();
+    return;
+  }
+
   const { hostName, merchantId, scriptID } = Meteor.settings.public.PayTM;
 
   const SCRIPTID = scriptID;

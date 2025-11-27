@@ -29,9 +29,13 @@ Meteor.methods({
    * Add or update a player ID for the current user
    * Called from client when OneSignal initializes
    */
-  'addPlayerId': async function addPlayerId({ playerId, deviceType }) {
-    check(playerId, String);
-    check(deviceType, Match.Maybe(String));
+  'addPlayerId': async function addPlayerId(params) {
+    check(params, {
+      playerId: String,
+      deviceType: Match.Maybe(String),
+    });
+
+    const { playerId, deviceType } = params;
 
     if (!this.userId) {
       throw new Meteor.Error('not-authorized', 'You must be logged in to add a player ID');

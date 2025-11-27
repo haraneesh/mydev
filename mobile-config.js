@@ -132,6 +132,10 @@ App.accessRule('http://*', { type: 'network' });
 App.accessRule('https://*', { type: 'network' });
 // eslint-disable-next-line no-undef
 App.accessRule('https://cdn.onesignal.com', { type: 'network' });
+// eslint-disable-next-line no-undef
+App.accessRule('https://securegw.paytm.in', { type: 'network' });
+// eslint-disable-next-line no-undef
+App.accessRule('https://securegw-stage.paytm.in', { type: 'network' });
 
 // Icons
 App.icons({

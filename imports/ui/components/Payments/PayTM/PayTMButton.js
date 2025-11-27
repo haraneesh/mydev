@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Spinner from '../../Common/Spinner/Spinner';
 import Loading from '../../Loading/Loading';
+import { isCordova } from '/imports/modules/platform-utils';
+import PayTMCordovaService from './PayTMCordovaService';
 import CONFIG from './config';
 import loadCheckOutPayTM from './loadCheckOutPayTM';
 
@@ -139,25 +141,75 @@ function PayTMButton({
         ? paymentDetails.cartTotalBillAmount * 100
         : 0,
     };
+    
     Meteor.call(
       'payment.paytm.initiateTransaction',
       transactionObject,
       (error, result) => {
         if (result && result.status === 'S') {
-          // getSavedCreditCards(result.txToken, paymentDetails.prefill.mobile, result.suvaiTransactionId);
-          // to delete
-
-          showPayScreen({
-            txToken: result.txToken,
-            amount,
-            suvaiTransactionId: result.suvaiTransactionId,
-          });
+          // Check platform and route to appropriate payment method
+          if (isCordova()) {
+            // Use Cordova native plugin
+            startCordovaPayment({
+              txToken: result.txToken,
+              amount,
+              suvaiTransactionId: result.suvaiTransactionId,
+            });
+          } else {
+            // Use web-based PayTM Checkout JS
+            showPayScreen({
+              txToken: result.txToken,
+              amount,
+              suvaiTransactionId: result.suvaiTransactionId,
+            });
+          }
         } else if (result && result.status === 'F') {
           toast.error(result.errorMsg);
+          setIsLoading(false);
         } else if (error) {
           toast.error(error.reason);
+          setIsLoading(false);
         }
       },
+    );
+  }
+
+  function startCordovaPayment({ txToken, amount, suvaiTransactionId }) {
+    const { merchantId } = Meteor.settings.public.PayTM;
+
+    PayTMCordovaService.startPayment(
+      {
+        txToken,
+        amount,
+        orderId: suvaiTransactionId,
+        mid: merchantId,
+      },
+      (paymentStatus) => {
+        // Payment completed (success or failure)
+        setIsLoading(false);
+        transactionStatus(paymentStatus);
+      },
+      (error) => {
+        // Plugin error or user cancellation
+        setIsLoading(false);
+        console.error('Cordova payment error:', error);
+        
+        if (error && error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error('Payment was cancelled or failed to start');
+        }
+        
+        // Log error to server for debugging
+        Meteor.call('payment.paytm.paymentTransactionError', {
+          ORDERID: suvaiTransactionId,
+          errorObject: { 
+            platform: 'cordova',
+            error: error?.message || 'Unknown error',
+            details: error 
+          },
+        });
+      }
     );
   }
 
