@@ -1,8 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
+import { Roles } from 'meteor/alanning:roles';
 import Notifications from './Notifications';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
+import constants from '../../modules/constants';
 
 // Import OneSignal Node SDK
 let OneSignal;
@@ -28,36 +30,69 @@ Meteor.methods({
   /**
    * Add or update a player ID for the current user
    * Called from client when OneSignal initializes
+   * Now includes device details for accurate unique device tracking
    */
   'addPlayerId': async function addPlayerId(params) {
     check(params, {
       playerId: String,
       deviceType: Match.Maybe(String),
+      deviceUuid: Match.Maybe(String),
+      deviceModel: Match.Maybe(String),
+      deviceManufacturer: Match.Maybe(String),
+      platform: Match.Maybe(String),
+      osVersion: Match.Maybe(String),
+      appVersion: Match.Maybe(String),
+      isVirtual: Match.Maybe(Boolean),
     });
 
-    const { playerId, deviceType } = params;
+    const { 
+      playerId, 
+      deviceType, 
+      deviceUuid,
+      deviceModel,
+      deviceManufacturer,
+      platform,
+      osVersion,
+      appVersion,
+      isVirtual
+    } = params;
 
     if (!this.userId) {
       throw new Meteor.Error('not-authorized', 'You must be logged in to add a player ID');
     }
 
     try {
-      // Upsert the player ID for this user
-      await Notifications.upsertAsync(
-        { userId: this.userId, playerId },
-        {
-          $set: {
-            userId: this.userId,
-            playerId,
-            deviceType: deviceType || 'unknown',
-            lastActive: new Date(),
-            updatedAt: new Date(),
-          },
-          $setOnInsert: {
-            createdAt: new Date(),
-          },
-        }
-      );
+      // Prepare the update document
+      const updateDoc = {
+        $set: {
+          userId: this.userId,
+          playerId,
+          deviceType: deviceType || 'unknown',
+          lastActive: new Date(),
+          updatedAt: new Date(),
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      };
+
+      // Add optional device details if provided
+      if (deviceUuid) updateDoc.$set.deviceUuid = deviceUuid;
+      if (deviceModel) updateDoc.$set.deviceModel = deviceModel;
+      if (deviceManufacturer) updateDoc.$set.deviceManufacturer = deviceManufacturer;
+      if (platform) updateDoc.$set.platform = platform;
+      if (osVersion) updateDoc.$set.osVersion = osVersion;
+      if (appVersion) updateDoc.$set.appVersion = appVersion;
+      if (isVirtual !== undefined) updateDoc.$set.isVirtual = isVirtual;
+
+      // Upsert logic:
+      // - If deviceUuid is provided, use it for unique device tracking (prevents double-counting)
+      // - Otherwise, fall back to playerId for backward compatibility
+      const query = deviceUuid 
+        ? { userId: this.userId, deviceUuid }
+        : { userId: this.userId, playerId };
+
+      await Notifications.upsertAsync(query, updateDoc);
 
       console.log(`Player ID ${playerId} added/updated for user ${this.userId}`);
       return { success: true };
@@ -235,8 +270,30 @@ Meteor.methods({
         { requiresNotifications: true }
       );
     }
+      return { hasNotifications: true, playerIdCount: playerIds.length };
+  },
 
-    return { hasNotifications: true, playerIdCount: playerIds.length };
+  /**
+   * Get notification subscription statistics
+   * Returns total devices and unique users subscribed
+   */
+  'getNotificationStats': async function getNotificationStats() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    try {
+      const totalDevices = await Notifications.find({}).countAsync();
+      const uniqueUsers = await Notifications.rawCollection().distinct('userId').then(arr => arr.length);
+      
+      return {
+        totalDevices,
+        uniqueUsers,
+        message: `${uniqueUsers} users with ${totalDevices} registered devices`,
+      };
+    } catch (exception) {
+      handleMethodException(exception);
+    }
   },
 });
 
@@ -253,3 +310,6 @@ rateLimit({
   limit: 5,
   timeRange: 1000,
 });
+
+// Export the oneSignalClient for use in other modules (e.g., AdminMessages)
+export { oneSignalClient };

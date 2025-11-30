@@ -65,3 +65,6 @@ import '../../api/UpdateScripts/UpdateScript';
 
 import '../../api/Notifications/methods';
 import '../../api/Notifications/server/publications';
+
+import '../../api/AdminMessages';
+import '../../api/AdminMessages/server';

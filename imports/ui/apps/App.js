@@ -69,7 +69,9 @@ import {
   dZohoSyncUp,
   dUsers,
   dUserDetails,
-  dReportsHome
+  dReportsHome,
+  dSendMessageToUsers,
+  dNotificationSubscribers
 } from './dynamicRoutes';
 
 import { InvoiceViewWrapper } from '../components/Orders/Invoices/InvoiceViewWrapper';
@@ -562,6 +564,30 @@ const App = (props) => (
                   routeName="Zoho_Sync"
                   layout={MainLayout}
                   component={dZohoSyncUp}
+                  {...props}
+                />
+              }
+            />
+            {/* Send Message To Users */}
+            <Route
+              path="/admin/send-message"
+              element={
+                <AdminAuthenticated
+                  routeName="Send_Message_To_Users"
+                  layout={MainLayout}
+                  component={dSendMessageToUsers}
+                  {...props}
+                />
+              }
+            />
+            {/* Notification Subscribers */}
+            <Route
+              path="/admin/notification-subscribers"
+              element={
+                <AdminAuthenticated
+                  routeName="Notification_Subscribers"
+                  layout={MainLayout}
+                  component={dNotificationSubscribers}
                   {...props}
                 />
               }

@@ -52,6 +52,13 @@ const AdminNav = (props) => {
           <li>
             <NavLink to="/zohoSync" onClick={props.handleClose}>Zoho Sync</NavLink>
           </li>
+          <br/>
+          <li>
+            <NavLink to="/admin/send-message" onClick={props.handleClose}>Send Message To Users</NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/notification-subscribers" onClick={props.handleClose}>Notification Subscribers</NavLink>
+          </li>
         </ul>
       </div>
     );

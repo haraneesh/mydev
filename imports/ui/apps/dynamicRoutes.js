@@ -65,3 +65,8 @@ export const dMessagesHome = lazy(() => import('../pages/Messages/Messages'));
 // Invoice View
 export const dViewInvoice = lazy(() => import('../components/Orders/Invoices/ViewInvoice'));
 
+// Send Message To Users (Admin)
+export const dSendMessageToUsers = lazy(() => import('../pages/Admin/SendMessageToUsers'));
+
+// Notification Subscribers (Admin)
+export const dNotificationSubscribers = lazy(() => import('../pages/Admin/NotificationSubscribers'));

@@ -18,9 +18,26 @@ export const addPlayerId = (playerId, deviceType = 'unknown') => {
     return;
   }
 
+  // Capture device details from Cordova Device plugin
+  const deviceInfo = {};
+  
+  if (window.device) {
+    deviceInfo.deviceUuid = window.device.uuid || null;
+    deviceInfo.deviceModel = window.device.model || null;
+    deviceInfo.deviceManufacturer = window.device.manufacturer || null;
+    deviceInfo.platform = window.device.platform || null;
+    deviceInfo.osVersion = window.device.version || null;
+    deviceInfo.isVirtual = window.device.isVirtual || false;
+  }
+
+  // Get app version from Meteor settings or package
+  const appVersion = Meteor.settings.public?.appVersion || '1.0.0';
+
   methodCall('addPlayerId', {
     playerId,
     deviceType,
+    ...deviceInfo,
+    appVersion,
   })
     .then(() => {
       console.log(`Player ID ${playerId} registered successfully`);
@@ -39,10 +56,48 @@ const goTo = (route) => {
 Meteor.startup(() => {
   Accounts.onLogin((data) => {
     console.log('onLogin', Meteor.userId(), data);
-    if (currentPlayerId) {
-      const deviceType = window.device?.platform?.toLowerCase() || 'unknown';
-      addPlayerId(currentPlayerId, deviceType);
-    }
+    
+    const registerPlayerId = async () => {
+      if (currentPlayerId) {
+        const deviceType = window.device?.platform?.toLowerCase() || 'unknown';
+        console.log('Registering player ID on login:', currentPlayerId);
+        addPlayerId(currentPlayerId, deviceType);
+        return true;
+      }
+      
+      // If currentPlayerId not set yet, try to get it from OneSignal
+      if (window.plugins?.OneSignal?.User?.pushSubscription) {
+        try {
+          const subscriptionId = await window.plugins.OneSignal.User.pushSubscription.getIdAsync();
+          if (subscriptionId) {
+            currentPlayerId = subscriptionId;
+            const deviceType = window.device?.platform?.toLowerCase() || 'unknown';
+            console.log('Got player ID from OneSignal on login:', currentPlayerId);
+            addPlayerId(currentPlayerId, deviceType);
+            return true;
+          }
+        } catch (error) {
+          console.warn('Could not get player ID on login:', error);
+        }
+      }
+      
+      return false;
+    };
+    
+    // Try immediately
+    registerPlayerId().then((success) => {
+      if (!success) {
+        // If failed, retry after 2 seconds (OneSignal might still be initializing)
+        console.log('Player ID not available yet, will retry in 2 seconds...');
+        setTimeout(() => {
+          registerPlayerId().then((retrySuccess) => {
+            if (!retrySuccess) {
+              console.warn('Player ID still not available after retry. User may need to restart the app.');
+            }
+          });
+        }, 2000);
+      }
+    });
   });
 
   if (!Meteor.isCordova) {
