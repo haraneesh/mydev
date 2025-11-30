@@ -92,10 +92,40 @@ import ShowAlerts from '../components/Alerts/ShowAlerts';
 import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
 import NotificationBanner from '../components/NotificationBanner';
 
-const App = (props) => (
+import { Meteor } from 'meteor/meteor';
+import ForceUpdateModal from '../components/ForceUpdateModal/ForceUpdateModal';
+
+const App = (props) => {
+  const [showUpdateModal, setShowUpdateModal] = React.useState(false);
+  const [updateInfo, setUpdateInfo] = React.useState({ minVersion: '', storeUrl: '' });
+
+  React.useEffect(() => {
+    // Only check version on Cordova (mobile app)
+    if (Meteor.isCordova) {
+      const currentVersion = Meteor.settings.public.appVersion || '1.0.0';
+      const platform = window.device?.platform || 'android';
+      
+      Meteor.call('checkAppVersion', currentVersion, platform, (error, result) => {
+        if (!error && result && result.updateRequired) {
+          setUpdateInfo({
+            minVersion: result.minVersion,
+            storeUrl: result.storeUrl
+          });
+          setShowUpdateModal(true);
+        }
+      });
+    }
+  }, []);
+
+  return (
   <>
     {!props.loading ? (
       <div className="App">
+        <ForceUpdateModal 
+          show={showUpdateModal} 
+          minVersion={updateInfo.minVersion}
+          storeUrl={updateInfo.storeUrl}
+        />
         <NotificationPermissionProvider>
           {props.authenticated && <ShowAlerts />}
           {props.authenticated && <ReturnAlerts />}
@@ -770,7 +800,8 @@ const App = (props) => (
       ''
     )}
   </>
-);
+  );
+};
 
 App.propTypes = {
   loading: PropTypes.bool.isRequired,

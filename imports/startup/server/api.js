@@ -68,3 +68,5 @@ import '../../api/Notifications/server/publications';
 
 import '../../api/AdminMessages';
 import '../../api/AdminMessages/server';
+
+import '../../api/AppVersion/methods';

@@ -2,6 +2,7 @@
 // mobile-config.js
 // ================================
 
+// IMPORTANT: When updating this version, also update "appVersion" in settings-development.json
 const version = '1.0.0';
 const [major, minor, patch] = version.split('.');
 // eslint-disable-next-line no-mixed-operators
