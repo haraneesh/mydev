@@ -47,13 +47,13 @@ function PayTMButton({
     const status = typeof paymentStatus === 'string' ? JSON.parse(paymentStatus) : paymentStatus;
     
     const transactionDetails = {
-      STATUS: status.STATUS || status.status,
-      TXNAMOUNT: status.TXNAMOUNT || status.txnamount || status.amount,
-      TXNID: status.TXNID || status.txnid,
-      CHECKSUMHASH: status.CHECKSUMHASH || status.checksumhash,
-      RESPCODE: status.RESPCODE || status.respcode,
-      RESPMSG: status.RESPMSG || status.respmsg || status.message,
-      ORDERID: status.ORDERID || status.orderid,
+      STATUS: status.STATUS || status.status || '',
+      TXNAMOUNT: status.TXNAMOUNT || status.txnamount || status.amount || '0',
+      TXNID: status.TXNID || status.txnid || '',
+      CHECKSUMHASH: status.CHECKSUMHASH || status.checksumhash || '',
+      RESPCODE: status.RESPCODE || status.respcode || '',
+      RESPMSG: status.RESPMSG || status.respmsg || status.message || '',
+      ORDERID: status.ORDERID || status.orderid || '',
       PAYMENTMODE: status.PAYMENTMODE || status.paymentmode || 'OTHER',
     };
 
@@ -175,7 +175,7 @@ function PayTMButton({
   }
 
   function startCordovaPayment({ txToken, amount, suvaiTransactionId }) {
-    const { merchantId } = Meteor.settings.public.PayTM;
+    const { merchantId, callbackUrl } = Meteor.settings.public.PayTM;
 
     PayTMCordovaService.startPayment(
       {
@@ -183,6 +183,7 @@ function PayTMButton({
         amount,
         orderId: suvaiTransactionId,
         mid: merchantId,
+        callbackUrl: `${callbackUrl}?ORDER_ID=${suvaiTransactionId}`
       },
       (paymentStatus) => {
         // Payment completed (success or failure)
@@ -224,9 +225,13 @@ function PayTMButton({
         type="button"
         className="btn btn-primary"
         onClick={() => {
+          console.log('PayTM Button Clicked');
           if (!disabled) {
+            console.log('Initiating transaction...');
             setIsLoading(true);
             initiateTransaction();
+          } else {
+            console.log('PayTM Button is disabled');
           }
         }}
         disabled={isProcessing || disabled || isLoading}

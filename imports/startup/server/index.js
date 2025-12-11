@@ -9,3 +9,5 @@ import './browserPolicy';
 import './sitemap';
 
 import './catchGlobalErrors';
+import './paytm-routes';
+

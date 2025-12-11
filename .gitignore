@@ -9,3 +9,10 @@ imports/api/Reports/items.js
 imports/api/Reports/pos.js
 settings-development.json-example
 settings-development.json-old.json
+
+# Firebase/GCP configuration files (sensitive credentials)
+google-services*.json
+cordova-build-override/platforms/android/app/google-services*.json
+
+# macOS system files
+.DS_Store

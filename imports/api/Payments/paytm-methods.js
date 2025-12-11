@@ -201,7 +201,7 @@ Meteor.methods({
 
         paytmParams.body = {
           requestType: 'Payment',
-          callbackUrl: `${Meteor.settings.public.AppURL}/paymentNotification`,
+          callbackUrl: `${Meteor.settings.public.PayTM.callbackUrl}?ORDER_ID=${orderId}`,
           mid: merchantId,
           websiteName,
           orderId,
@@ -229,14 +229,23 @@ Meteor.methods({
           signature: checksum,
         };
 
-        const response = await fetch(
-          `https://${hostName}/theia/api/v1/initiateTransaction?${new URLSearchParams({ mid: merchantId, orderId: orderId }).toString()}`,
-          {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paytmParams), // body data type must match "Content-Type" header
-          },
-        );
+        const paytmUrl = `https://${hostName}/theia/api/v1/initiateTransaction?${new URLSearchParams({ mid: merchantId, orderId: orderId }).toString()}`;
+        
+        // Log PayTM URL in development environment
+        if (Meteor.isDevelopment) {
+          console.log('=== PAYTM REQUEST ===');
+          console.log('URL:', paytmUrl);
+          console.log('Method: POST');
+          console.log('Headers:', { 'Content-Type': 'application/json' });
+          console.log('Body:', JSON.stringify(paytmParams, null, 2));
+          console.log('=====================');
+        }
+
+        const response = await fetch(paytmUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(paytmParams),
+        });
 
         if (!response.ok) {
           console.log('---------------Error---------------------');
@@ -379,10 +388,90 @@ Meteor.methods({
       }
     }
   },
+
+  /**
+   * Verify payment status with PayTM
+   * @param {string} orderId - The order ID to verify
+   * @returns {Object} Payment status and details
+   */
+  'payment.paytm.verifyPayment': async function verifyPayment(orderId) {
+    check(orderId, String);
+    
+    if (!Meteor.isServer) {
+      throw new Meteor.Error('server-only', 'This method can only be called from server');
+    }
+
+    const { merchantKey, merchantId } = Meteor.settings.private.PayTM;
+    const { hostName } = Meteor.settings.public.PayTM;
+
+    try {
+      // Prepare parameters for status check
+      const paytmParams = {
+        body: {
+          mid: merchantId,
+          orderId: orderId
+        }
+      };
+
+      // Generate checksum
+      const checksum = await PaytmChecksum.generateSignature(
+        JSON.stringify(paytmParams.body),
+        merchantKey
+      );
+
+      paytmParams.head = {
+        signature: checksum
+      };
+
+      // Call PayTM status API
+      const response = await fetch(
+        `https://${hostName}/v3/order/status`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paytmParams)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`PayTM API returned ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      // Standardize the response format
+      const statusResponse = {
+        STATUS: result.body.resultInfo?.resultStatus === 'TXN_SUCCESS' ? 'TXN_SUCCESS' : 'TXN_FAILURE',
+        ORDERID: result.body.orderId,
+        TXNID: result.body.txnId,
+        TXNAMOUNT: result.body.txnAmount,
+        TXNDATE: result.body.txnDate,
+        RESPCODE: result.body.responseCode,
+        RESPMSG: result.body.resultInfo?.resultMsg || 'Unknown status',
+        GATEWAYNAME: result.body.gatewayName,
+        BANKTXNID: result.body.bankTxnId,
+        PAYMENTMODE: result.body.paymentMode,
+        _raw: result // Include raw response for debugging
+      };
+
+      // If payment is successful, process it
+      if (statusResponse.STATUS === 'TXN_SUCCESS') {
+        await Meteor.callAsync('payment.paytm.completeTransaction', statusResponse, []);
+      }
+
+      return statusResponse;
+    } catch (error) {
+      console.error('Error verifying PayTM payment:', error);
+      throw new Meteor.Error('verification-failed', `Failed to verify payment: ${error.message}`);
+    }
+  }
 });
 
 rateLimit({
   methods: [
+    'payment.paytm.verifyPayment',
     'payment.paytm.initiateTransaction',
     'payment.paytm.completeTransaction',
     'payment.paytm.paymentTransactionError',

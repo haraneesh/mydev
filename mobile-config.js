@@ -26,7 +26,7 @@ switch (this.process.env.MOBILE_APP_ID) {
       id: 'com.nammasuvai.production',
       name: 'NammaSuvai',
     };
-    urlUniversalLink = 'app.nammasuvai.com';
+    urlUniversalLink = 'www.nammasuvai.com';
     break;
 
   default:
@@ -58,7 +58,7 @@ App.info(
       description: 'Healthy, Organic Food Marketplace',
       author: 'NammaSuvai Team',
       email: 'support@nammasuvai.com',
-      website: 'https://nammasuvai.com',
+      website: 'https://www.nammasuvai.com',
     },
     idName
   )
@@ -108,7 +108,8 @@ App.configurePlugin('cordova-plugin-splashscreen', {
   SplashScreenSpinnerColor: '#000000'
 });
 
-// Plugins
+
+// Configure other plugins
 // eslint-disable-next-line no-undef
 App.configurePlugin('cordova-plugin-camera', {
   CAMERA_USAGE_DESCRIPTION: 'To capture photos of products',
@@ -136,7 +137,7 @@ App.accessRule('https://cdn.onesignal.com', { type: 'network' });
 // eslint-disable-next-line no-undef
 App.accessRule('https://securegw.paytm.in', { type: 'network' });
 // eslint-disable-next-line no-undef
-App.accessRule('https://securegw-stage.paytm.in', { type: 'network' });
+App.accessRule('https://securestage.paytmpayments.com', { type: 'network' });
 
 // Icons
 App.icons({
@@ -157,9 +158,9 @@ App.launchScreens({
 // eslint-disable-next-line no-undef
 App.appendToConfig(`
   <platform name="android">
-    <preference name="android-targetSdkVersion" value="35" />
+    <preference name="android-targetSdkVersion" value="33" />
     <preference name="android-compileSdkVersion" value="35" />
-    <preference name="android-minSdkVersion" value="21" />
+    <preference name="android-minSdkVersion" value="22" />
 
     <resource-file src="../../../${androidIconsFolder}/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
     <resource-file src="../../../${androidIconsFolder}/mipmap-anydpi-v26/ic_launcher_round.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" />

@@ -10,7 +10,9 @@ interface AllInOneSDKPlugin {
       orderId: string;
       txnToken: string;
       amount: string;
-      isStaging: boolean;
+      isStaging: boolean; // Required by cordova-paytmpayments-allinonesdk
+      restrictAppInvoke?: boolean;
+      callbackUrl?: string;
     },
     successCallback: (response: any) => void,
     errorCallback: (error: any) => void
