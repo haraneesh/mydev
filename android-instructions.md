@@ -78,3 +78,9 @@ bash
 # Test via ADB
 adb shell am start -a android.intent.action.VIEW \
   -d "https://www.nammasuvai.com/products/123"
+
+14. Server code
+
+tar -xzf build.gz
+npm install --prod
+pm2 restart ecosystem.config.js

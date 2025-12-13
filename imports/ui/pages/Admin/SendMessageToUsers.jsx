@@ -382,7 +382,7 @@ const SendMessageToUsers = ({ loading, messages, totalCount }) => {
           </Modal.Header>
           <Modal.Body>
             {testResult?.success ? (
-              <Alert variant="success">
+              <Alert variant="info">
                 <i className="bi bi-check-circle-fill me-2"></i>
                 Test sent successfully!
               </Alert>
