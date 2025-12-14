@@ -49,6 +49,7 @@ export const ListProducts = ({
   isAdmin,
   isShopOwner,
   isDeliveryInChennai,
+  unavailableProducts = {},
 }) => {
   const {
     productVegetables,
@@ -90,6 +91,23 @@ export const ListProducts = ({
       chosenButDeleted.push({
         isMobile,
         key: `review-${index}`,
+        updateProductQuantity,
+        product,
+        isAdmin,
+        isShopOwner,
+        checkout: true,
+      });
+    }
+  });
+
+  const unavailableProductsList = [];
+  Object.keys(unavailableProducts).map((key, index) => {
+    const product = unavailableProducts[key];
+    if (product.quantity > 0) {
+      unavailableProductsList.push({
+        isMobile,
+        key: `unavailable-${index}`,
+        tempKey: `unavailable-${index}`,
         updateProductQuantity,
         product,
         isAdmin,
@@ -187,6 +205,8 @@ export const ListProducts = ({
         constants.ProductTypeName.Beauty.display_value,
       )}
       {displayWithDivider(productsNoCategory, 'Others')}
+      {unavailableProductsList.length > 0 && <hr className="border-warning" />}
+      {displayWithDivider(unavailableProductsList, 'Not Available to Order')}
       {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
     </Row>
   );

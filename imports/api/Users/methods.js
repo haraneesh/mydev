@@ -68,6 +68,10 @@ export const editUserProfile = new ValidatedMethod({
       type: String,
       allowedValues: constants.ProductUpdatePreferences.names,
     },
+    'settings.clearCartAfterOrder': {
+      type: Boolean,
+      optional: true,
+    },
   }).validator(),
   async run(profile) {
     await editProfile({ userId: this.userId, user: profile });

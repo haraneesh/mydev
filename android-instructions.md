@@ -57,6 +57,7 @@ rm -rf .meteor/local/cordova-build
 
 # Build with production config
 npm run build:production
+
 12. Sign the APK
 bash
 cd ../build/android
@@ -71,6 +72,8 @@ jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
   -keystore ~/nammasuvai-release.keystore \
   app/build/outputs/apk/release/app-release-unsigned.apk \
   nammasuvai
+
+  
 13. Test Deep Links
 After installing the app on a device:
 
@@ -81,6 +84,6 @@ adb shell am start -a android.intent.action.VIEW \
 
 14. Server code
 
-tar -xzf build.gz
+tar xzf build.gz
 npm install --prod
 pm2 restart ecosystem.config.js

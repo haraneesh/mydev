@@ -185,10 +185,14 @@ const cartReducer = (currentState, action) => {
       break;
     }
     case cartActions.orderFlowComplete: {
+      const { clearCartAfterOrder } = action.payload || {};
+      
       if (cartId === 'NEW') {
-        newState.carts[cartId] = emptyCart;
+        // Default to clearing cart (Yes) if setting is undefined or true
+        if (clearCartAfterOrder !== false) {
+          newState.carts[cartId] = emptyCart;
+        }
       }
-
       break;
     }
     default:
@@ -244,4 +248,5 @@ export {
   useCartState,
   useCartDispatch,
   cartActions,
+  getTotalBillAmountAndCount,
 };

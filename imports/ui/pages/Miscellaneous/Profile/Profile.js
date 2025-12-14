@@ -117,6 +117,7 @@ class Profile extends React.Component {
         dietPreference: this.dietPreference.selectedOptions[0].value,
         packingPreference: this.packingPreference.selectedOptions[0].value,
         productUpdatePreference: this.productUpdatePreference.selectedOptions[0].value,
+        clearCartAfterOrder: this.clearCartAfterOrder.value === 'true',
       },
       /* status: {
         accountStatus: this.accountStatus.selectedOptions[0].value,
@@ -269,6 +270,18 @@ class Profile extends React.Component {
           {isError.packingPreference.length > 0 && (
           <span className="small text-danger">{isError.productUpdatePreference}</span>
           )}
+        </Row>
+        <Row className="my-3">
+          <label>Clear cart after placing an order</label>
+          <select
+            name="clearCartAfterOrder"
+            className="form-select"
+            ref={(clearCartAfterOrder) => (this.clearCartAfterOrder = clearCartAfterOrder)}
+            defaultValue={(user.settings && user.settings.clearCartAfterOrder !== undefined) ? user.settings.clearCartAfterOrder : true}
+          >
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
         </Row>
         <Row className="my-3">
           <label>Dietary Preference</label>

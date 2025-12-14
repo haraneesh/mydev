@@ -16,7 +16,7 @@ const CartHome = (args) => {
 CartHome.propTypes = {
   loggedInUser: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
-  roles: PropTypes.object.isRequired,
+  roles: PropTypes.array.isRequired,
 };
 
 export default CartHome;

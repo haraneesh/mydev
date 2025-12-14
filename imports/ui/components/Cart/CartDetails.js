@@ -1,5 +1,6 @@
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
+import { useSubscribe } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -9,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import SelectSalesPerson from '/imports/ui/components/SelectSalesPerson/SelectSalesPerson';
+import ProductLists from '../../../api/ProductLists/ProductLists';
 import constants from '../../../modules/constants';
 import {
   isChennaiPinCode,
@@ -18,6 +20,7 @@ import {
   cartActions,
   useCartDispatch,
   useCartState,
+  getTotalBillAmountAndCount,
 } from '../../stores/ShoppingCart';
 import Icon from '../Icon/Icon';
 import Loading from '../Loading/Loading';
@@ -71,6 +74,13 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   const [showPrePermissionModal, setShowPrePermissionModal] = useState(false);
   const [pendingOrderId, setPendingOrderId] = useState(null);
 
+  // Product availability state
+  const [availableProducts, setAvailableProducts] = useState({});
+  const [unavailableProducts, setUnavailableProducts] = useState({});
+  
+  // Subscribe to active product list
+  const isProductListLoading = useSubscribe('productOrderList.view');
+
   const activeCartId = !orderId || orderId === 'NEW' ? 'NEW' : orderId;
   if (cartState.activeCartId !== activeCartId) {
     cartDispatch({
@@ -78,6 +88,44 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       payload: { cartIdToActivate: activeCartId },
     });
   }
+
+  // Compare cart products against active product list
+  useEffect(() => {
+    if (isProductListLoading()) {
+      // Still loading product list
+      return;
+    }
+
+    const productList = ProductLists.findOne();
+    if (!productList || !productList.products) {
+      // No active product list available
+      setAvailableProducts({});
+      setUnavailableProducts(cartState.cart.productsInCart || {});
+      return;
+    }
+
+    // Create a Set of active product IDs for O(1) lookup
+    const activeProductIds = new Set(
+      productList.products.map((product) => product._id)
+    );
+
+    const available = {};
+    const unavailable = {};
+
+    // Split cart products into available and unavailable
+    Object.keys(cartState.cart.productsInCart || {}).forEach((productId) => {
+      const product = cartState.cart.productsInCart[productId];
+      if (activeProductIds.has(productId)) {
+        available[productId] = product;
+      } else {
+        unavailable[productId] = product;
+      }
+    });
+
+    setAvailableProducts(available);
+    setUnavailableProducts(unavailable);
+  }, [cartState.cart.productsInCart, isProductListLoading()]);
+
 
   const updateDeletedProducts = (quantity, productId, product) => {
     const deletedProductsList = { ...deletedProducts };
@@ -189,8 +237,9 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   async function placeOrder({ loggedInUserId, onBehalfUser, zohoSalesPerson }) {
     const products = [];
 
-    Object.keys(cartState.cart.productsInCart).map((key) => {
-      products.push(cartState.cart.productsInCart[key]);
+    // Only include available products in the order
+    Object.keys(availableProducts).map((key) => {
+      products.push(availableProducts[key]);
     });
 
     const order = {
@@ -293,6 +342,12 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
   const moveToOrderSubmitScreen = (createdUpdatedOrderId) => {
     const orderIdToUse = createdUpdatedOrderId || successfullyPlacedOrderId || orderId;
     
+    // Get user preference
+    const clearCartAfterOrder =
+      loggedInUser &&
+      loggedInUser.settings &&
+      loggedInUser.settings.clearCartAfterOrder;
+
     // Check if we should show pre-permission modal (mobile users without permission)
     if (Meteor.isCordova && !hasNotificationPermission()) {
       // Store the order ID and show pre-permission modal
@@ -301,9 +356,20 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       return;
     }
     
-    // Otherwise navigate directly to success page
-    cartDispatch({ type: cartActions.orderFlowComplete });
-    navigate(`/order/success/${orderIdToUse}`);
+    // Otherwise navigate directly
+    if (orderId && orderId !== 'NEW') {
+      cartDispatch({
+        type: cartActions.orderFlowComplete,
+        payload: { clearCartAfterOrder },
+      });
+      navigate('/orders');
+    } else {
+      cartDispatch({
+        type: cartActions.orderFlowComplete,
+        payload: { clearCartAfterOrder },
+      });
+      navigate(`/order/success/${orderIdToUse}`);
+    }
   };
   
   const handleAcceptNotifications = async () => {
@@ -316,16 +382,34 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       console.error('Error requesting notification permission:', error);
     }
     
+    // Get user preference
+    const clearCartAfterOrder =
+      loggedInUser &&
+      loggedInUser.settings &&
+      loggedInUser.settings.clearCartAfterOrder;
+
     // Navigate to success page regardless of permission result
-    cartDispatch({ type: cartActions.orderFlowComplete });
+    cartDispatch({ 
+      type: cartActions.orderFlowComplete,
+      payload: { clearCartAfterOrder }
+    });
     navigate(`/order/success/${pendingOrderId}`);
   };
   
   const handleDeclineNotifications = () => {
     setShowPrePermissionModal(false);
     
+    // Get user preference
+    const clearCartAfterOrder =
+      loggedInUser &&
+      loggedInUser.settings &&
+      loggedInUser.settings.clearCartAfterOrder;
+
     // Navigate to success page
-    cartDispatch({ type: cartActions.orderFlowComplete });
+    cartDispatch({ 
+      type: cartActions.orderFlowComplete,
+      payload: { clearCartAfterOrder }
+    });
     navigate(`/order/success/${pendingOrderId}`);
   };
 
@@ -340,6 +424,10 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     }
   });
 
+  const { totalBillAmount: availableTotalBillAmount } = getTotalBillAmountAndCount(
+    availableProducts || {},
+  );
+
   switch (true) {
     case !cartState.cart: {
       return <Navigate to="/" replace={true} />;
@@ -350,6 +438,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       return <Navigate to={`/order/${orderId}`} replace={true} />;
     }
     case !orderId &&
+      !successfullyPlacedOrderId &&
       cartState.cart.countOfItems === 0 &&
       deletedProducts.countOfItems === 0: {
       return <Navigate to="/neworder" replace={true} />;
@@ -380,7 +469,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
               Cart Details{' '}
             </h3>
             <ListProducts
-              products={cartState.cart.productsInCart}
+              products={availableProducts}
               deletedProducts={deletedProducts.cart}
               updateProductQuantity={updateProductQuantity}
               isMobile
@@ -392,6 +481,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
               isDeliveryInChennai={isChennaiPinCode(
                 cartState.cart.deliveryPincode,
               )}
+              unavailableProducts={unavailableProducts}
             />
             <Row>
               <Col
@@ -468,7 +558,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             />
 
             {!isOrderAmountGreaterThanMinimum(
-              cartState.cart.totalBillAmount,
+              availableTotalBillAmount,
             ) && (
               <div className="offset-1 col-10 alert alert-info py-3 text-center">
                 {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
@@ -476,7 +566,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             )}
 
             <OrderFooter
-              totalBillAmount={cartState.cart.totalBillAmount}
+              totalBillAmount={availableTotalBillAmount}
               onButtonClick={() => {
                 handleOrderSubmit(cartState);
               }}
