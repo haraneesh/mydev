@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { format } from 'date-fns';
+
 import { FaChevronRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -20,7 +20,12 @@ const InvoiceListItem = ({ invoice }) => {
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), 'MMM d, yyyy');
+      // Use native formatting instead of date-fns which was crashing
+      return new Date(dateString).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
     } catch (error) {
       return 'Invalid date';
     }

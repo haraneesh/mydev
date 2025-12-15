@@ -58,20 +58,35 @@ rm -rf .meteor/local/cordova-build
 # Build with production config
 npm run build:production
 
-12. Sign the APK
-bash
-cd ../build/android
-tar -xzf project.tar.gz
-cd project
 
-# Build release APK
-./gradlew assembleRelease
+11a. Generate Keystore (First Time Only)
+If this is a brand new app, generate the keystore first.
+**Keep your password safe!**
+```bash
+keytool -genkey -v -keystore ~/nammasuvai-release.keystore -alias nammasuvai -keyalg RSA -keysize 2048 -validity 10000
+```
 
-# Sign it (if not already signed)
-jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-  -keystore ~/nammasuvai-release.keystore \
-  app/build/outputs/apk/release/app-release-unsigned.apk \
-  nammasuvai
+
+12. Sign and Align the APK (Android 11+ Workflow)
+Since we target Android 11+ (SDK 30+), we must use **zipalign** FIRST, and then sign with **apksigner** (v2 signature).
+
+**A. Zip Align (Input: unsigned -> Output: aligned)**
+```bash
+/Users/charaneesh/Library/Android/sdk/build-tools/36.1.0/zipalign -v -f 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-aligned.apk
+```
+
+**B. Sign with apksigner**
+(Enter your keystore password when prompted)
+```bash
+/Users/charaneesh/Library/Android/sdk/build-tools/36.1.0/apksigner sign --ks ~/nammasuvai-release.keystore --ks-key-alias nammasuvai app/build/outputs/apk/release/app-release-aligned.apk
+```
+
+**C. Install**
+```bash
+adb install -r app/build/outputs/apk/release/app-release-aligned.apk
+```
+
+
 
   
 13. Test Deep Links
