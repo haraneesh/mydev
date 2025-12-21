@@ -69,7 +69,7 @@ export const OrderLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName.replace(/_/g, ' ')} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace(/_/g, ' ')} | ${(Meteor.settings && Meteor.settings.public && Meteor.settings.public.App_Name) || 'Namma Suvai'}`}</title>
       </Helmet>
       <Navigation showEasyNav={false} {...props} />
       <Container fluid="true">{props.children}</Container>
@@ -84,7 +84,7 @@ export const RecipeLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName.replace(/_/g, ' ')} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace(/_/g, ' ')} | ${(Meteor.settings && Meteor.settings.public && Meteor.settings.public.App_Name) || 'Namma Suvai'}`}</title>
       </Helmet>
       <ThemeProvider theme={{}}>
         <Navigation showEasyNav={false} {...props} />
@@ -108,7 +108,7 @@ export const MainLayout = (props) => {
   return (
     <div>
       <Helmet>
-        <title>{`${props.routeName.replace(/_/g, ' ')} | ${Meteor.settings.public.App_Name}`}</title>
+        <title>{`${props.routeName.replace(/_/g, ' ')} | ${(Meteor.settings && Meteor.settings.public && Meteor.settings.public.App_Name) || 'Namma Suvai'}`}</title>
       </Helmet>
       <Navigation showEasyNav={true} {...props} />
       <Container fluid="true">{props.children}</Container>

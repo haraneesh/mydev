@@ -5,7 +5,15 @@ import constants from '/imports/modules/constants';
 import Events from './Events';
 
 class analyticsFunctions {
-    static analyticsApiKey = Meteor.settings.public.analyticsSettings.amplitude.apiKey;
+    static get analyticsApiKey() {
+      return (
+        Meteor.settings &&
+        Meteor.settings.public &&
+        Meteor.settings.public.analyticsSettings &&
+        Meteor.settings.public.analyticsSettings.amplitude &&
+        Meteor.settings.public.analyticsSettings.amplitude.apiKey
+      );
+    }
 
     static initialize(loggedInUser) {
       const isAdmin = Roles.userIsInRole(Meteor.userId(), constants.Roles.admin.name);

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
 import { FaChevronRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { getDayWithoutTime } from '../../../../modules/helpers';
 
 const InvoiceListItem = ({ invoice }) => {
   const statusColors = {
@@ -18,17 +18,13 @@ const InvoiceListItem = ({ invoice }) => {
     'viewed': 'info',
   };
 
-  const formatDate = (dateString) => {
-    try {
-      // Use native formatting instead of date-fns which was crashing
-      return new Date(dateString).toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid date';
-    }
+  const formatDate = (dateInput) => {
+    if (!dateInput) return '';
+    
+    // Handle complex date objects if necessary (e.g. from some DB drivers)
+    const date = (typeof dateInput.toDate === 'function') ? dateInput.toDate() : dateInput;
+    
+    return getDayWithoutTime(date);
   };
 
   const formatCurrency = (amount) => {
@@ -44,6 +40,7 @@ const InvoiceListItem = ({ invoice }) => {
   
   // Safely get the status, defaulting to 'unknown' if not available
   const status = (invoice.status || 'unknown').toLowerCase();
+  
   
   // Format the date, falling back to current date if not available
   const displayDate = formatDate(invoice.date || invoice.createdAt || new Date());

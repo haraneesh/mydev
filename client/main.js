@@ -2,14 +2,16 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Root from '/imports/ui/apps/Root';
-import '/imports/startup/client/index';
 import '/imports/infra/one-signal';
+import '/imports/startup/client';
 import '/imports/ui/stylesheets/application.scss';
 
 Meteor.startup(() => {
   const container = document.getElementById('react-target');
-  const root = createRoot(container);
-  root.render(<Root />);
+  if (container) {
+    const root = createRoot(container);
+    root.render(<Root />);
+  }
 });
 
 // Conditionally initialize the service worker only when not running in Cordova.
@@ -19,7 +21,6 @@ const isCordova = (typeof Meteor !== 'undefined' && Meteor.isCordova) || (typeof
 // Test PayTM Plugin Availability
 Meteor.startup(() => {
   if (Meteor.isCordova) {
-    console.log('=== PAYTM PLUGIN TEST ===');
     
     // Wait for device to be ready
     document.addEventListener('deviceready', () => {

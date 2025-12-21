@@ -31,7 +31,7 @@ export const addPlayerId = (playerId, deviceType = 'unknown') => {
   }
 
   // Get app version from Meteor settings or package
-  const appVersion = Meteor.settings.public?.appVersion || '1.0.0';
+  const appVersion = (Meteor.settings && Meteor.settings.public && Meteor.settings.public.appVersion) || '1.0.0';
 
   methodCall('addPlayerId', {
     playerId,

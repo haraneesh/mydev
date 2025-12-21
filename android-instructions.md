@@ -53,6 +53,7 @@ On your local machine:
 
 bash
 # Clean build
+rm -rf .meteor/local
 rm -rf .meteor/local/cordova-build
 
 # Build with production config
@@ -65,7 +66,8 @@ If this is a brand new app, generate the keystore first.
 ```bash
 keytool -genkey -v -keystore ~/nammasuvai-release.keystore -alias nammasuvai -keyalg RSA -keysize 2048 -validity 10000
 ```
-
+11b. Build the android code
+./gradlew assembleRelease
 
 12. Sign and Align the APK (Android 11+ Workflow)
 Since we target Android 11+ (SDK 30+), we must use **zipalign** FIRST, and then sign with **apksigner** (v2 signature).
@@ -85,9 +87,6 @@ Since we target Android 11+ (SDK 30+), we must use **zipalign** FIRST, and then 
 ```bash
 adb install -r app/build/outputs/apk/release/app-release-aligned.apk
 ```
-
-
-
   
 13. Test Deep Links
 After installing the app on a device:

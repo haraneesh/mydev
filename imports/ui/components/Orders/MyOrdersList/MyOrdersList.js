@@ -19,7 +19,7 @@ import Tabs from 'react-bootstrap/Tabs';
 
 import { useNavigate } from 'react-router-dom';
 import constants from '../../../../modules/constants';
-import { getNumDaysBetween } from '../../../../modules/helpers';
+import { getNumDaysBetween, getDayWithoutTime } from '../../../../modules/helpers';
 import ListCreditNotes from '../../CreditNotes/ListCreditNotes/ListCreditNotes';
 // import NPSFeedBack from '../../FeedBacks/NPSFeedBack/NPSFeedBack';
 // import SurveyFeedBack from '../../FeedBacks/SurveyFeedBack/SurveyFeedBack';
@@ -266,17 +266,7 @@ class MyOrderList extends React.Component {
                       
                       const orderStatus = constants.OrderStatus[order.order_status] || {};
                       
-                      const formatDate = (dateString) => {
-                        try {
-                          return new Date(dateString).toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          });
-                        } catch (error) {
-                          return 'Invalid date';
-                        }
-                      };
+                      const displayDate = getDayWithoutTime(order.createdAt);
                       
                       const formatCurrency = (amount) => {
                         return new Intl.NumberFormat('en-IN', {
@@ -308,7 +298,7 @@ class MyOrderList extends React.Component {
                                 </span>
                               </Col>
                               <Col xs={4} md={4} className="text-truncate pe-2">
-                                {formatDate(order.createdAt)}
+                                {displayDate}
                               </Col>
                               <Col xs={3} md={4} className="text-end pe-2">
                                 {formatCurrency(displayAmount)}

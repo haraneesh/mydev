@@ -150,7 +150,7 @@ const PlaceNewOrderWrapper = (props) =>
   );
 
 PlaceNewOrder.propTypes = {
-  loggedInUser: PropTypes.object.isRequired,
+  loggedInUser: PropTypes.object,
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   productListId: PropTypes.string.isRequired,
   productListUpdatedAt: PropTypes.instanceOf(Date),
@@ -165,7 +165,7 @@ PlaceNewOrder.propTypes = {
 export default withTracker((args) => {
   // const recSubscription = Meteor.subscribe('recommendations.view');
   // const prdSubscription = Meteor.subscribe('productOrderList.view');
-  const isLoading = useSubscribe('productOrderList.view');
+  const handle = Meteor.subscribe('productOrderList.view');
   // const recommendations = RecommendationsCollection.find().fetch();
 
   const productList = ProductLists.findOne();
@@ -180,9 +180,9 @@ export default withTracker((args) => {
   );
 
   return {
-    // loading: !recSubscription.ready() || !prdSubscription.ready(),
+    // loading: !recSubscription.ready() || !handle.ready(),
     // recommendations,
-    loading: isLoading(),
+    loading: !handle.ready(),
     productListId,
     products,
     productListUpdatedAt,

@@ -156,7 +156,7 @@ export default class ProductsOrderMobile extends React.Component {
     const subCatRowItems = [];
     subCategorys.forEach((key) => {
       subCatRowItems.push(
-        <Nav.Item>
+        <Nav.Item key={key}>
           <Nav.Link
             event={key.replace(' ', '').toLowerCase()}
             onClick={() => {
@@ -181,6 +181,7 @@ export default class ProductsOrderMobile extends React.Component {
     const subCatRowId = `${preFix}-cat-row`;
     productDisplayList.push(
       <Nav
+        key={subCatRowId}
         variant="pills bg-white border-bottom border-2 border-light border-opacity-50"
         className="sticky-top"
         id={subCatRowId}

@@ -93,27 +93,61 @@ import PwaInstallPopupIOS from '../components/PwaInstallPopupIOS';
 import NotificationBanner from '../components/NotificationBanner';
 
 import { Meteor } from 'meteor/meteor';
+import Loading from '../components/Loading/Loading';
 import ForceUpdateModal from '../components/ForceUpdateModal/ForceUpdateModal';
 
 const App = (props) => {
   const [showUpdateModal, setShowUpdateModal] = React.useState(false);
-  const [updateInfo, setUpdateInfo] = React.useState({ minVersion: '', storeUrl: '' });
+  const [updateInfo, setUpdateInfo] = React.useState({ minVersion: '', storeUrl: '', codeUpdateRequired: false });
 
   React.useEffect(() => {
     // Only check version on Cordova (mobile app)
     if (Meteor.isCordova) {
-      const currentVersion = Meteor.settings.public.appVersion || '1.0.0';
-      const platform = window.device?.platform || 'android';
-      
-      Meteor.call('checkAppVersion', currentVersion, platform, (error, result) => {
-        if (!error && result && result.updateRequired) {
-          setUpdateInfo({
-            minVersion: result.minVersion,
-            storeUrl: result.storeUrl
-          });
-          setShowUpdateModal(true);
+      const checkVersion = async () => {
+        const currentVersion = (Meteor.settings && Meteor.settings.public && Meteor.settings.public.appVersion) || '1.0.0';
+        const platform = window.device?.platform || 'android';
+        
+        let nativeVersion = null;
+        try {
+          if (window.cordova?.getAppVersion?.getVersionNumber) {
+            nativeVersion = await window.cordova.getAppVersion.getVersionNumber();
+          }
+        } catch (e) {
+          console.warn('Could not get native version:', e);
         }
-      });
+
+        Meteor.call('checkAppVersion', currentVersion, platform, nativeVersion, (error, result) => {
+          if (!error && result) {
+            if (result.nativeUpdateRequired) {
+              // Priority 1: Native Update Required -> Send to Store
+              setUpdateInfo({
+                minVersion: result.minNativeVersion,
+                storeUrl: result.storeUrl,
+                codeUpdateRequired: false
+              });
+              setShowUpdateModal(true);
+            } else if (result.codeUpdateRequired) {
+              // Priority 2: Code Update Required -> Show Spinner & Wait for Reload
+              setUpdateInfo({
+                minVersion: result.minVersion,
+                storeUrl: result.storeUrl,
+                codeUpdateRequired: true
+              });
+              setShowUpdateModal(true);
+              
+              // Verify code update availability and consistency
+              if (window.location.reload) {
+                 // In a real scenario, Reload.isWaitingForResume() would be better 
+                 // but a simple reload often triggers the update if downloaded.
+                 // We delay slightly to let the modal render.
+                 setTimeout(() => window.location.reload(), 3000); 
+              }
+            }
+          }
+        });
+      };
+
+      checkVersion();
     }
   }, []);
 
@@ -125,6 +159,7 @@ const App = (props) => {
           show={showUpdateModal} 
           minVersion={updateInfo.minVersion}
           storeUrl={updateInfo.storeUrl}
+          codeUpdateRequired={updateInfo.codeUpdateRequired}
         />
         <NotificationPermissionProvider>
           {props.authenticated && <ShowAlerts />}
@@ -797,7 +832,7 @@ const App = (props) => {
         </NotificationPermissionProvider>
       </div>
     ) : (
-      ''
+      <Loading />
     )}
   </>
   );

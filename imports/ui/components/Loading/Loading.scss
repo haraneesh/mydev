@@ -1,5 +1,52 @@
 @import '../../stylesheets/bootstrap/variables';
 
+.Loader-Container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #FBF7F0; // Match body background
+  z-index: 10000;
+}
+
+.Loader-Bar {
+  height: 4px;
+  width: 200px;
+  background: #eee;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(45deg, #FF6D00, #FFAB40);
+    position: absolute;
+    top: 0;
+    left: -50%;
+    animation: slide 1.5s infinite ease-in-out;
+  }
+}
+
+.Loader-Content {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+@keyframes slide {
+  from { left: -50%; }
+  to { left: 100%; }
+}
+
+// Keep legacy class for safety if used elsewhere
 .Loader {
   height: 3px;
   overflow: hidden;

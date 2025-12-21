@@ -29,7 +29,7 @@ function RootWithRouter(props) {
 }
 
 RootWithRouter.propTypes = {
-  loggedInUserId: PropTypes.string.isRequired,
+  loggedInUserId: PropTypes.string,
 };
 
 function Root(props) {
@@ -59,9 +59,27 @@ function Root(props) {
     */
 
     const pixelId =
+      Meteor.settings &&
+      Meteor.settings.public &&
+      Meteor.settings.public.analyticsSettings &&
+      Meteor.settings.public.analyticsSettings.facebookPixel &&
       Meteor.settings.public.analyticsSettings.facebookPixel.pixelId;
+    
 
     if (pixelId) {
+      if (!window.fbq) {
+        const n = (window.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        });
+        if (!window._fbq) window._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+      }
+
       const script = document.createElement('script');
       script.async = true;
       script.src = 'https://connect.facebook.net/en_US/fbevents.js';
@@ -93,7 +111,12 @@ function Root(props) {
 </script>
 */
 
-    const gaId = Meteor.settings.public.analyticsSettings.googleTagManager.gaId;
+    const gaId = 
+      Meteor.settings &&
+      Meteor.settings.public &&
+      Meteor.settings.public.analyticsSettings &&
+      Meteor.settings.public.analyticsSettings.googleTagManager &&
+      Meteor.settings.public.analyticsSettings.googleTagManager.gaId;
 
     if (gaId) {
       const script = document.createElement('script');
@@ -119,7 +142,12 @@ function Root(props) {
     })(window, document, "clarity", "script", "xxxxxxx");
 </script>
   */
-    const clarityId = Meteor.settings.public.analyticsSettings.clarity.clId;
+    const clarityId = 
+      Meteor.settings &&
+      Meteor.settings.public &&
+      Meteor.settings.public.analyticsSettings &&
+      Meteor.settings.public.analyticsSettings.clarity &&
+      Meteor.settings.public.analyticsSettings.clarity.clId;
 
     if (clarityId) {
       const clarityUrl = 'https://www.clarity.ms/tag/';

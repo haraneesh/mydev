@@ -6,7 +6,7 @@ const dateSettings = {
   format: 'dddd, D MMM YYYY',
   shortFormat: 'ddd, D MMM',
   zhPayDateFormat: 'YYYY-MM-DD',
-  dayWithoutTime: 'DD-MM-YYYY',
+  dayWithoutTime: 'DD MMM YYYY',
   timeZone: 'Asia/Kolkata',
 };
 
