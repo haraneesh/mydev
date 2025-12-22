@@ -178,11 +178,20 @@ App.appendToConfig(`
     <resource-file src="../../../${androidIconsFolder}/mipmap-xhdpi/ic_launcher_round.webp" target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" />
     <resource-file src="../../../${androidIconsFolder}/mipmap-xxhdpi/ic_launcher_round.webp" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" />
     <resource-file src="../../../${androidIconsFolder}/mipmap-xxxhdpi/ic_launcher_round.webp" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" />
+
+    <resource-file src="../../../${androidIconsFolder}/drawable-mdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-mdpi/ic_onesignal_large_icon_default.png" />
+    <resource-file src="../../../${androidIconsFolder}/drawable-hdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-hdpi/ic_onesignal_large_icon_default.png" />
+    <resource-file src="../../../${androidIconsFolder}/drawable-xhdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-xhdpi/ic_onesignal_large_icon_default.png" />
+    <resource-file src="../../../${androidIconsFolder}/drawable-xxhdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-xxhdpi/ic_onesignal_large_icon_default.png" />
+    <resource-file src="../../../${androidIconsFolder}/drawable-xxxhdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-xxxhdpi/ic_onesignal_large_icon_default.png" />
   </platform>
 
   <universal-links>
     <host name="${urlUniversalLink}" scheme="${schemeUniversalLink}" />
   </universal-links>
+  <config-file target="AndroidManifest.xml" parent="/manifest/application">
+    <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FFED762F" />
+  </config-file>
   <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:usesCleartextTraffic="true"></application>
   </edit-config>
