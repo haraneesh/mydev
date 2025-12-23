@@ -7,7 +7,7 @@
     }
 
     .fix-product-height {
-       min-height: 12rem;
+       min-height: 10rem;
     }
 
     .col-sm-3{
@@ -17,6 +17,12 @@
     .product-name{
         margin-bottom:0px;
         padding-bottom:5px;
+        font-size: 0.95rem;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        line-height: 1.4;
     }
 
     .product-name-subtext{
@@ -69,6 +75,10 @@
         }
         .menuLeft{
             width: 22%;
+        }
+        .product-name{
+            font-size: 0.80rem;
+            line-height: 1.2;
         }
     }
 }

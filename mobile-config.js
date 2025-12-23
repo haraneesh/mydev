@@ -15,7 +15,7 @@ let idName = null;
 let oneSignalAppId = '';
 let urlUniversalLink = null;
 let schemeUniversalLink = 'https';
-
+let isProduction = process.env.IS_PRODUCTION === 'true' || this.process.env.MOBILE_APP_ID === 'com.nammasuvai.production';
 
 // noinspection ThisExpressionReferencesGlobalObjectJS
 switch (this.process.env.MOBILE_APP_ID) {
@@ -109,18 +109,6 @@ App.configurePlugin('cordova-plugin-splashscreen', {
 });
 
 
-// Configure other plugins
-// eslint-disable-next-line no-undef
-App.configurePlugin('cordova-plugin-camera', {
-  CAMERA_USAGE_DESCRIPTION: 'To capture photos of products',
-  PHOTOLIBRARY_USAGE_DESCRIPTION: 'To select product images from your gallery'
-});
-
-// eslint-disable-next-line no-undef
-App.configurePlugin('cordova-plugin-geolocation', {
-  GEOLOCATION_USAGE_DESCRIPTION: 'To find nearby stores and delivery locations'
-});
-
 // Universal links + OneSignal
 // eslint-disable-next-line no-undef
 App.setPreference('OneSignalAppId', oneSignalAppId);
@@ -158,7 +146,7 @@ App.launchScreens({
 // eslint-disable-next-line no-undef
 App.appendToConfig(`
   <platform name="android">
-    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="android-targetSdkVersion" value="35" />
     <preference name="android-compileSdkVersion" value="35" />
     <preference name="android-minSdkVersion" value="22" />
 
@@ -193,6 +181,6 @@ App.appendToConfig(`
     <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="E04A0000" />
   </config-file>
   <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:usesCleartextTraffic="true"></application>
+    <application android:usesCleartextTraffic="${isProduction ? 'false' : 'true'}"></application>
   </edit-config>
 `);

@@ -402,7 +402,7 @@ const ProductForNonAdmin = ({
         {imageRow}
       </Col>
 
-      <Col xs={12} style={{ height: '8em' }}>
+      <Col xs={12} style={{ height: '6em', overflow: 'hidden' }}>
         <div>
           <Col xs={12}>{prodNameDesc}</Col>
           <Col xs={12}>

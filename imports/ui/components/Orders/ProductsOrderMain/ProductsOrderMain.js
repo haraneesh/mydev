@@ -341,7 +341,7 @@ const ProductsOrderMain = (props) => {
             <h2>{formHeading}</h2>
             {productListUpdatedAt ? (
               <p>
-                Product list last updated: {new Date(productListUpdatedAt).toLocaleString()}
+                Product list last updated:<br className="d-md-none" /> {new Date(productListUpdatedAt).toLocaleString()}
               </p>
             ) : (
               <p>Product list update date not available</p>
