@@ -402,18 +402,18 @@ const ProductForNonAdmin = ({
         {imageRow}
       </Col>
 
-      <Col xs={12} style={{ height: '6em', overflow: 'hidden' }}>
+      <Col xs={12}>
         <div>
-          <Col xs={12}>{prodNameDesc}</Col>
+          <Col xs={12} style={{ height: '4em' }}>{prodNameDesc}</Col>
           <Col xs={12}>
-            <p>
+            <p className="m-2">
               {' '}
               {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}{' '}
             </p>
           </Col>
         </div>
       </Col>
-      <Col className="ps-2 ms-sm-4">
+      <Col>
         <AddToCart
           onChange={onChange}
           unit={unit}
