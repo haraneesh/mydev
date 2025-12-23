@@ -95,61 +95,89 @@ import NotificationBanner from '../components/NotificationBanner';
 import { Meteor } from 'meteor/meteor';
 import Loading from '../components/Loading/Loading';
 import ForceUpdateModal from '../components/ForceUpdateModal/ForceUpdateModal';
+import updateManager from '../../modules/updateManager';
+import backButtonManager from '../../modules/backButtonManager';
 
 const App = (props) => {
   const [showUpdateModal, setShowUpdateModal] = React.useState(false);
-  const [updateInfo, setUpdateInfo] = React.useState({ minVersion: '', storeUrl: '', codeUpdateRequired: false });
+  const [updateInfo, setUpdateInfo] = React.useState({ minVersion: '', storeUrl: '', codeUpdateRequired: false, updateError: null });
+  const unsubscribeBackButtonRef = React.useRef(null);
 
   React.useEffect(() => {
-    // Only check version on Cordova (mobile app)
-    if (Meteor.isCordova) {
-      const checkVersion = async () => {
-        const currentVersion = (Meteor.settings && Meteor.settings.public && Meteor.settings.public.appVersion) || '1.0.0';
-        const platform = window.device?.platform || 'android';
-        
-        let nativeVersion = null;
-        try {
-          if (window.cordova?.getAppVersion?.getVersionNumber) {
-            nativeVersion = await window.cordova.getAppVersion.getVersionNumber();
-          }
-        } catch (e) {
-          console.warn('Could not get native version:', e);
-        }
-
-        Meteor.call('checkAppVersion', currentVersion, platform, nativeVersion, (error, result) => {
-          if (!error && result) {
-            if (result.nativeUpdateRequired) {
-              // Priority 1: Native Update Required -> Send to Store
-              setUpdateInfo({
-                minVersion: result.minNativeVersion,
-                storeUrl: result.storeUrl,
-                codeUpdateRequired: false
-              });
-              setShowUpdateModal(true);
-            } else if (result.codeUpdateRequired) {
-              // Priority 2: Code Update Required -> Show Spinner & Wait for Reload
-              setUpdateInfo({
-                minVersion: result.minVersion,
-                storeUrl: result.storeUrl,
-                codeUpdateRequired: true
-              });
-              setShowUpdateModal(true);
-              
-              // Verify code update availability and consistency
-              if (window.location.reload) {
-                 // In a real scenario, Reload.isWaitingForResume() would be better 
-                 // but a simple reload often triggers the update if downloaded.
-                 // We delay slightly to let the modal render.
-                 setTimeout(() => window.location.reload(), 3000); 
-              }
-            }
-          }
+    // Only initialize update checking on Cordova (mobile app)
+    if (typeof Meteor !== 'undefined' && Meteor.isCordova) {
+      try {
+        // Register update manager callbacks
+        updateManager.on('onNativeUpdateRequired', (result) => {
+          console.log('Native update required');
+          setUpdateInfo({
+            minVersion: result.minNativeVersion,
+            storeUrl: result.storeUrl,
+            codeUpdateRequired: false,
+            updateError: null
+          });
+          setShowUpdateModal(true);
+          preventBackButton();
         });
-      };
 
-      checkVersion();
+        updateManager.on('onCodeUpdateRequired', (result) => {
+          console.log('Code update required');
+          setUpdateInfo({
+            minVersion: result.minVersion,
+            storeUrl: result.storeUrl,
+            codeUpdateRequired: true,
+            updateError: null
+          });
+          setShowUpdateModal(true);
+          preventBackButton();
+          // Automatically wait for code update to be ready
+          updateManager.reloadForCodeUpdate().catch(err => {
+            console.error('Error reloading for code update:', err);
+          });
+        });
+
+        updateManager.on('onCodeUpdateAvailable', () => {
+          console.log('Code update available from Meteor');
+          // Code update is available but not yet required
+        });
+
+        updateManager.on('onUpdateCheckError', (errorData) => {
+          console.error('Update check error:', errorData);
+          setUpdateInfo(prev => ({
+            ...prev,
+            updateError: errorData.message
+          }));
+        });
+
+        // Initialize update manager (starts version checking)
+        updateManager.initialize();
+      } catch (error) {
+        console.error('Error initializing update manager:', error);
+      }
     }
+
+    // Cleanup
+    return () => {
+      if (unsubscribeBackButtonRef.current) {
+        unsubscribeBackButtonRef.current();
+      }
+    };
   }, []);
+
+  /**
+   * Prevent back button navigation when update is required
+   */
+  const preventBackButton = () => {
+    // Unsubscribe previous handler if exists
+    if (unsubscribeBackButtonRef.current) {
+      unsubscribeBackButtonRef.current();
+    }
+
+    // Subscribe to new back button handler
+    unsubscribeBackButtonRef.current = backButtonManager.disable(() => {
+      console.log('Back button disabled during update');
+    });
+  };
 
   return (
   <>
@@ -160,6 +188,16 @@ const App = (props) => {
           minVersion={updateInfo.minVersion}
           storeUrl={updateInfo.storeUrl}
           codeUpdateRequired={updateInfo.codeUpdateRequired}
+          updateError={updateInfo.updateError}
+          onUpdateNow={() => {
+            if (updateInfo.codeUpdateRequired) {
+              // Code update will be handled by updateManager
+              updateManager.reloadForCodeUpdate();
+            } else {
+              // Native update
+              updateManager.openAppStore(updateInfo.storeUrl);
+            }
+          }}
         />
         <NotificationPermissionProvider>
           {props.authenticated && <ShowAlerts />}

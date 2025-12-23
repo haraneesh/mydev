@@ -190,7 +190,7 @@ App.appendToConfig(`
     <host name="${urlUniversalLink}" scheme="${schemeUniversalLink}" />
   </universal-links>
   <config-file target="AndroidManifest.xml" parent="/manifest/application">
-    <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FFED762F" />
+    <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="E04A0000" />
   </config-file>
   <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:usesCleartextTraffic="true"></application>

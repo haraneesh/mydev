@@ -41,7 +41,6 @@ const NotificationBanner = () => {
   return (
     <div className="notification-banner">
       <div className="notification-banner-content">
-        <i className="fa fa-bell-slash notification-banner-icon" />
         <div className="notification-banner-text">
           <strong>{message.title}</strong>
           <p>{message.description}</p>
