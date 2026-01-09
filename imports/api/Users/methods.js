@@ -2,6 +2,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Accounts } from 'meteor/accounts-base';
 import { Match, check } from 'meteor/check';
+import { Random } from 'meteor/random';
 // import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Meteor } from 'meteor/meteor';
 import SimpleSchema from 'simpl-schema';
@@ -39,6 +40,21 @@ if (Meteor.isServer) {
 
     return true;
   });
+
+  global.getUserIdFromToken = async (token) => {
+    if (!token) return null;
+
+    try {
+      const user = await Meteor.users.findOneAsync({
+        'services.resume.loginTokens.hashedToken': Accounts._hashLoginToken(token),
+      });
+
+      return user ? user._id : null;
+    } catch (error) {
+      console.error('Error validating token:', error);
+      return null;
+    }
+  };
 }
 
 export const editUserProfile = new ValidatedMethod({
@@ -587,8 +603,331 @@ Meteor.methods({
   },
 });
 
+Meteor.methods({
+  'auth.requestOTP': async function requestOTP(phone) {
+    check(phone, String);
+
+    if (!phone || phone.length !== 10) {
+      throw new Meteor.Error('invalid-phone', 'Phone number must be 10 digits');
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      throw new Meteor.Error('invalid-phone', 'Phone number must contain only digits');
+    }
+
+    try {
+      const now = new Date();
+      const expiryTime = new Date(now.getTime() + 10 * 60 * 1000);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      await Meteor.users.updateAsync(
+        { username: phone },
+        {
+          $set: {
+            'auth.otp': otp,
+            'auth.otpExpiry': expiryTime,
+            'auth.otpAttempts': 0,
+          },
+        },
+        { upsert: false },
+      );
+
+      console.log(`[auth.requestOTP] OTP generated for phone ${phone}: ${otp}`);
+
+      return { success: true, message: 'OTP sent successfully' };
+    } catch (error) {
+      console.error('[auth.requestOTP] Error:', error);
+      throw new Meteor.Error('otp-generation-failed', 'Failed to generate OTP');
+    }
+  },
+
+  'auth.verifyOTP': async function verifyOTP(data) {
+    check(data, { phone: String, otp: String });
+
+    const { phone, otp } = data;
+
+    if (!phone || phone.length !== 10) {
+      throw new Meteor.Error('invalid-phone', 'Phone number must be 10 digits');
+    }
+
+    if (!otp || otp.length !== 6) {
+      throw new Meteor.Error('invalid-otp', 'OTP must be 6 digits');
+    }
+
+    try {
+      const user = await Meteor.users.findOneAsync({ username: phone });
+
+      if (!user) {
+        throw new Meteor.Error('user-not-found', 'User not found');
+      }
+
+      const storedOtp = user.auth?.otp;
+      const otpExpiry = user.auth?.otpExpiry;
+      const now = new Date();
+
+      if (!storedOtp || !otpExpiry) {
+        throw new Meteor.Error('no-otp', 'No OTP found. Please request a new one.');
+      }
+
+      if (now > otpExpiry) {
+        throw new Meteor.Error('otp-expired', 'OTP has expired');
+      }
+
+      if (storedOtp !== otp) {
+        const attempts = (user.auth?.otpAttempts || 0) + 1;
+        await Meteor.users.updateAsync(
+          { _id: user._id },
+          { $set: { 'auth.otpAttempts': attempts } },
+        );
+
+        if (attempts >= 3) {
+          await Meteor.users.updateAsync(
+            { _id: user._id },
+            { $unset: { 'auth.otp': 1, 'auth.otpExpiry': 1, 'auth.otpAttempts': 1 } },
+          );
+          throw new Meteor.Error('too-many-attempts', 'Too many failed attempts. Please request a new OTP.');
+        }
+
+        throw new Meteor.Error('invalid-otp', 'Invalid OTP');
+      }
+
+      const token = Random.secret();
+      const hashedToken = Accounts._hashLoginToken(token);
+
+      await Meteor.users.updateAsync(
+        { _id: user._id },
+        {
+          $set: {
+            'services.resume.loginTokens': [
+              {
+                when: new Date(),
+                hashedToken,
+              },
+            ],
+            'auth.authenticated': true,
+            'auth.authenticatedAt': new Date(),
+          },
+          $unset: {
+            'auth.otp': 1,
+            'auth.otpExpiry': 1,
+            'auth.otpAttempts': 1,
+          },
+        },
+      );
+
+      console.log(`[auth.verifyOTP] User ${phone} authenticated successfully`);
+
+      return {
+        token,
+        userId: user._id,
+        success: true,
+      };
+    } catch (error) {
+      console.error('[auth.verifyOTP] Error:', error);
+      if (error.error) {
+        throw error;
+      }
+      throw new Meteor.Error('verification-failed', 'Failed to verify OTP');
+    }
+  },
+
+  'auth.getCurrentUser': async function getCurrentUser(token) {
+    check(token, Match.OneOf(String, null, undefined));
+
+    let userId = this.userId;
+
+    if (!userId && token) {
+      userId = await global.getUserIdFromToken(token);
+    }
+
+    if (!userId) {
+      throw new Meteor.Error('not-authenticated', 'User not authenticated');
+    }
+
+    try {
+      const user = await Meteor.users.findOneAsync(
+        { _id: userId },
+        {
+          fields: {
+            username: 1,
+            emails: 1,
+            profile: 1,
+            createdAt: 1,
+            updatedAt: 1,
+          },
+        },
+      );
+
+      if (!user) {
+        throw new Meteor.Error('user-not-found', 'User not found');
+      }
+
+      return {
+        user: {
+          _id: user._id,
+          phone: user.username,
+          name: user.profile?.name?.first || null,
+          email: user.emails?.[0]?.address || null,
+          createdAt: user.createdAt ? user.createdAt.toISOString() : null,
+          updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null,
+          addressIds: user.addressIds || [],
+          defaultAddressId: user.defaultAddressId || null,
+        },
+      };
+    } catch (error) {
+      console.error('[auth.getCurrentUser] Error:', error);
+      if (error instanceof Meteor.Error) {
+        throw error;
+      }
+      throw new Meteor.Error('internal-error', `Internal error: ${error.message}`);
+    }
+  },
+
+  'auth.logout': async function logout() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authenticated', 'User not authenticated');
+    }
+
+    try {
+      await Meteor.users.updateAsync(
+        { _id: this.userId },
+        {
+          $set: {
+            'services.resume.loginTokens': [],
+          },
+        },
+      );
+
+      console.log(`[auth.logout] User ${this.userId} logged out`);
+
+      return { success: true, message: 'Logged out successfully' };
+    } catch (error) {
+      console.error('[auth.logout] Error:', error);
+      throw new Meteor.Error('logout-failed', 'Failed to logout');
+    }
+  },
+
+  'auth.signup': async function signup(data) {
+    check(data, { phone: String, password: String });
+
+    const { phone, password } = data;
+
+    if (!phone || phone.length !== 10) {
+      throw new Meteor.Error('invalid-phone', 'Phone must be 10 digits');
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      throw new Meteor.Error('invalid-phone', 'Phone must contain only digits');
+    }
+
+    if (!password || password.length < 4) {
+      throw new Meteor.Error('weak-password', 'Password must be at least 4 characters');
+    }
+
+    try {
+      const existingUser = await Meteor.users.findOneAsync({ username: phone });
+      if (existingUser) {
+        throw new Meteor.Error('user-exists', 'User already registered');
+      }
+
+      const userId = await Accounts.createUserAsync({
+        username: phone,
+        password: password,
+        profile: {
+          phone: phone,
+        },
+      });
+
+      await Meteor.users.updateAsync(
+        { _id: userId },
+        {
+          $set: {
+            'auth.authenticated': false,
+            'auth.createdAt': new Date(),
+          },
+        },
+      );
+
+      console.log(`[auth.signup] User created: ${phone}`);
+
+      return { success: true, userId, message: 'Account created successfully' };
+    } catch (error) {
+      console.error('[auth.signup] Error:', error);
+      if (error.error) throw error;
+      throw new Meteor.Error('signup-failed', 'Failed to create account');
+    }
+  },
+
+  'auth.login': async function login(data) {
+    check(data, { phone: String, password: String });
+
+    const { phone, password } = data;
+
+    if (!phone || phone.length !== 10) {
+      throw new Meteor.Error('invalid-phone', 'Phone must be 10 digits');
+    }
+
+    if (!/^\d{10}$/.test(phone)) {
+      throw new Meteor.Error('invalid-phone', 'Phone must contain only digits');
+    }
+
+    if (!password) {
+      throw new Meteor.Error('invalid-password', 'Password is required');
+    }
+
+    try {
+      const user = await Meteor.users.findOneAsync({ username: phone });
+      if (!user) {
+        throw new Meteor.Error('user-not-found', 'User not found');
+      }
+
+      const authenticated = await Accounts._checkPasswordAsync(user, password);
+      if (!authenticated) {
+        throw new Meteor.Error('invalid-credentials', 'Invalid password');
+      }
+
+      const token = Random.secret();
+      const hashedToken = Accounts._hashLoginToken(token);
+
+      await Meteor.users.updateAsync(
+        { _id: user._id },
+        {
+          $set: {
+            'services.resume.loginTokens': [
+              {
+                when: new Date(),
+                hashedToken,
+              },
+            ],
+            'auth.authenticated': true,
+            'auth.authenticatedAt': new Date(),
+          },
+        },
+      );
+
+      console.log(`[auth.login] User authenticated: ${phone}`);
+
+      return {
+        token,
+        userId: user._id,
+        success: true,
+      };
+    } catch (error) {
+      console.error('[auth.login] Error:', error);
+      if (error.error) throw error;
+      throw new Meteor.Error('login-failed', 'Login failed');
+    }
+  },
+});
+
 rateLimit({
   methods: [
+    'auth.requestOTP',
+    'auth.verifyOTP',
+    'auth.getCurrentUser',
+    'auth.logout',
+    'auth.signup',
+    'auth.login',
     'users.createSelfSignUpsForSpecials',
     'users.sendVerificationEmail',
     'users.visitedPlaceNewOrder',

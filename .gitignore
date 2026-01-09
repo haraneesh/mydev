@@ -7,7 +7,7 @@ public/bg-new.jpg
 public/ignore
 imports/api/Reports/items.js
 imports/api/Reports/pos.js
-
+docs/thoughts/shared/implementation_summary/temp
 # Firebase/GCP configuration files (sensitive credentials)
 google-services*.json
 cordova-build-override/platforms/android/app/google-services*.json

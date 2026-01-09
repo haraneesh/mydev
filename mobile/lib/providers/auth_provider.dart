@@ -1,0 +1,106 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import '../models/user.dart';
+import '../models/auth_state.dart';
+import '../services/auth_service.dart';
+
+class AuthProvider extends ChangeNotifier {
+  final AuthService _authService;
+
+  User? _currentUser;
+  AuthState _authState = AuthState.initial;
+  String? _error;
+
+  @visibleForTesting
+  set currentUserForTesting(User? value) => _currentUser = value;
+
+  @visibleForTesting
+  set errorForTesting(String? value) => _error = value;
+
+  AuthProvider({required AuthService authService}) : _authService = authService;
+
+  User? get currentUser => _currentUser;
+  AuthState get authState => _authState;
+  String? get error => _error;
+  bool get isAuthenticated => _currentUser != null;
+  String? get authToken => _authService.authToken;
+
+  Future<void> signup(String phone, String password) async {
+    _authState = AuthState.authenticating;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.signup(phone, password);
+      _authState = AuthState.unauthenticated;
+      notifyListeners();
+    } catch (e) {
+      _authState = AuthState.error;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> login(String phone, String password) async {
+    _authState = AuthState.authenticating;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.login(phone, password);
+      _currentUser = await _authService.getCurrentUser();
+      _authState = AuthState.authenticated;
+      notifyListeners();
+    } catch (e) {
+      _authState = AuthState.error;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> logout() async {
+    _authState = AuthState.authenticating;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _authService.logout();
+      _currentUser = null;
+      _authState = AuthState.unauthenticated;
+      notifyListeners();
+    } catch (e) {
+      _authState = AuthState.error;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> restoreAuthState() async {
+    _authState = AuthState.initial;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final token = await _authService.restoreToken();
+
+      if (token != null && token.isNotEmpty) {
+        _currentUser = await _authService.getCurrentUser();
+        _authState = AuthState.authenticated;
+      } else {
+        _authState = AuthState.unauthenticated;
+      }
+    } catch (e) {
+      _authState = AuthState.unauthenticated;
+      _currentUser = null;
+    }
+    notifyListeners();
+  }
+
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+}

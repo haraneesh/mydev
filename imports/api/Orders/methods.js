@@ -699,6 +699,76 @@ Meteor.methods({
   },
 });
 
+Meteor.methods({
+  'orders.create': async function createOrder(orderData) {
+    console.log('[orders.create] Called with data:', orderData);
+    
+    check(orderData, {
+      name: String,
+      phone: String,
+      address: String,
+      items: Array,
+      totalAmount: Number,
+    });
+
+    if (!orderData.name || orderData.name.trim().length === 0) {
+      throw new Meteor.Error('invalid-name', 'Customer name is required');
+    }
+
+    if (!orderData.phone || orderData.phone.length !== 10) {
+      throw new Meteor.Error('invalid-phone', 'Phone must be 10 digits');
+    }
+
+    if (!orderData.address || orderData.address.trim().length === 0) {
+      throw new Meteor.Error('invalid-address', 'Delivery address is required');
+    }
+
+    if (!orderData.items || orderData.items.length === 0) {
+      throw new Meteor.Error('invalid-items', 'Order must contain at least one item');
+    }
+
+    if (orderData.totalAmount <= 0) {
+      throw new Meteor.Error('invalid-total', 'Total amount must be greater than 0');
+    }
+
+    const products = orderData.items.map(item => ({
+      _id: item.productId,
+      name: item.productName,
+      quantity: item.quantity,
+      price: item.price,
+      subtotal: item.subtotal,
+    }));
+
+    const order = {
+      products,
+      customer_details: {
+        _id: Meteor.userId() || `anonymous_${Date.now()}`,
+        name: orderData.name.trim(),
+        phone: orderData.phone,
+        deliveryAddress: orderData.address.trim(),
+        mobilePhone: parseInt(orderData.phone, 10),
+        role: constants.Roles.customer.name,
+      },
+      total_bill_amount: orderData.totalAmount,
+      order_status: 'Pending',
+      deliveryPincode: '000000',
+    };
+
+    try {
+      const orderId = await Orders.rawCollection().insertOne(order);
+      const insertedId = orderId.insertedId ? orderId.insertedId.toString() : orderId;
+      console.log('[orders.create] Order created successfully with ID:', insertedId);
+      return {
+        orderId: insertedId,
+        success: true,
+      };
+    } catch (error) {
+      console.error('[orders.create] Error creating order:', error);
+      throw new Meteor.Error('order-creation-failed', `Failed to create order: ${error.message}`);
+    }
+  },
+});
+
 rateLimit({
   methods: [
     getOrders,
@@ -708,6 +778,7 @@ rateLimit({
     updateMyOrderStatus,
     updateExpectedDeliveryDate,
     'orders.upsert',
+    'orders.create',
     removeOrder,
     updateOrderStatus,
     'admin.fetchOrderCount',
