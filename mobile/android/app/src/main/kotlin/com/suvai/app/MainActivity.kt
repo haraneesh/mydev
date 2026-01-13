@@ -1,4 +1,4 @@
-package com.example.suvai
+package com.suvai.app
 
 import io.flutter.embedding.android.FlutterActivity
 

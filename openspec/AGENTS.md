@@ -133,10 +133,16 @@ openspec/
 │   ├── [change-name]/
 │   │   ├── proposal.md     # Why, what, impact
 │   │   ├── tasks.md        # Implementation checklist
-│   │   ├── design.md       # Technical decisions (optional; see criteria)
+│   │   ├── design.md       # Technical decisions (optional; see 
+|   |   ├── codereview/
+|   |   |   ├──codereview_suggestions.md #code review recommendations  
+|   |   |   ├──codereview_implementation.md #assessment of code review recommendations
+|   |
+criteria)
 │   │   └── specs/          # Delta changes
 │   │       └── [capability]/
-│   │           └── spec.md # ADDED/MODIFIED/REMOVED
+│   │           └── spec.md # ADDED/MODIFIED/
+REMOVED
 │   └── archive/            # Completed changes
 ```
 

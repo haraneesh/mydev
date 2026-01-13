@@ -37,6 +37,18 @@ class ProductService {
     }
   }
 
+  /// Fetches products from the active ProductList using the same subscription as the Meteor web client.
+  /// 
+  /// Logic (matching PlaceNewOrder.js):
+  /// 1. Subscribe to 'productOrderList.view' - automatically gets active ProductList for today
+  /// 2. Fetch ProductLists collection documents
+  /// 3. Extract products array from the first (active) ProductList
+  /// 4. Filter by category if specified
+  /// 
+  /// Throws exception if no active ProductList found for today.
+  /// Stores the updatedAt timestamp of the last fetched ProductList
+  DateTime? lastProductListUpdatedAt;
+
   Future<List<Product>> fetchProducts({
     String? category,
     bool availableOnly = true,
@@ -47,38 +59,74 @@ class ProductService {
 
     try {
       debugPrint(
-        'Fetching products from Meteor: category=$category, availableOnly=$availableOnly',
+        'Fetching products: category=$category, availableOnly=$availableOnly',
       );
 
-      final params = <String, dynamic>{};
-      if (category != null && category.isNotEmpty && category != 'All') {
-        params['category'] = category;
-      }
-      if (availableOnly) {
-        params['availableOnly'] = true;
-      }
-
-      debugPrint('Subscribing to products.list');
-      await _meteorClient.subscribe('products.list');
+      // Subscribe to the active product list (same as Meteor web client)
+      debugPrint('Subscribing to productOrderList.view');
+      await _meteorClient.subscribe('productOrderList.view');
       
       await Future.delayed(Duration(milliseconds: 500));
       
-      final documents = _meteorClient.getCollectionDocuments('Products');
-      debugPrint('Received ${documents.length} products from Meteor server');
+      // Get ProductLists from local collection
+      final productListDocs = _meteorClient.getCollectionDocuments('ProductLists');
+      debugPrint('Received ${productListDocs.length} product list(s) from server');
       
-      if (documents.isEmpty) {
-        debugPrint('⚠️ No products from server, using mock data as fallback');
-        debugPrint('Available collections: ${_meteorClient.collections.keys.toList()}');
-        return _generateMockProducts();
+      if (productListDocs.isEmpty) {
+        debugPrint('⚠️ No active ProductList available');
+        throw Exception('No products available today. Please check back later.');
       }
 
-      debugPrint('✅ Using ${documents.length} real products from Meteor server');
-      final products = documents
+      // Get the first ProductList (typically the only one for today)
+      final activeProductList = productListDocs.first;
+      debugPrint('✅ Found active ProductList: ${activeProductList['_id']}');
+      
+      // Debug: Log all fields in the ProductList
+      debugPrint('📋 ProductList fields: ${activeProductList.keys.toList()}');
+      debugPrint('📋 Full ProductList data: $activeProductList');
+
+      // Extract and store the updatedAt timestamp
+      // Meteor sends dates as EJSON format: {"$date": milliseconds}
+      final updatedAt = activeProductList['updatedAt'];
+      debugPrint('🕐 Raw updatedAt value: $updatedAt (type: ${updatedAt.runtimeType})');
+      if (updatedAt is DateTime) {
+        lastProductListUpdatedAt = updatedAt;
+      } else if (updatedAt is Map<String, dynamic> && updatedAt.containsKey('\$date')) {
+        try {
+          final milliseconds = updatedAt['\$date'];
+          if (milliseconds is int) {
+            lastProductListUpdatedAt = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+            debugPrint('✅ Parsed updatedAt from EJSON: $lastProductListUpdatedAt');
+          }
+        } catch (e) {
+          debugPrint('⚠️ Could not parse EJSON updatedAt: $updatedAt, Error: $e');
+        }
+      } else if (updatedAt is String) {
+        try {
+          lastProductListUpdatedAt = DateTime.parse(updatedAt);
+          debugPrint('✅ Parsed updatedAt from ISO8601 string: $lastProductListUpdatedAt');
+        } catch (e) {
+          debugPrint('⚠️ Could not parse ISO8601 updatedAt: $updatedAt, Error: $e');
+        }
+      } else {
+        debugPrint('⚠️ updatedAt has unexpected type: ${updatedAt.runtimeType}, value: $updatedAt');
+      }
+
+      // Extract products array from ProductList
+      final productsList = activeProductList['products'] as List<dynamic>? ?? [];
+      debugPrint('✅ Found ${productsList.length} products in active ProductList');
+      debugPrint('✅ ProductList updatedAt timestamp: $lastProductListUpdatedAt');
+      
+      final products = productsList
+          .cast<Map<String, dynamic>>()
           .map((doc) => Product.fromJson(doc))
           .toList();
       
+      // Filter by category if specified
       if (category != null && category.isNotEmpty && category != 'All') {
-        return products.where((p) => p.category == category).toList();
+        final filtered = products.where((p) => p.category == category).toList();
+        debugPrint('   Filtered to ${filtered.length} products in category: $category');
+        return filtered;
       }
 
       return products;
@@ -190,5 +238,30 @@ class ProductService {
       debugPrint('Error fetching categories: $e');
       rethrow;
     }
+  }
+
+  /// Searches products by name and description (case-insensitive).
+  /// Returns a filtered list of products that match the search query.
+  /// 
+  /// [query] - The search string (will be trimmed and lowercased)
+  /// [products] - List of products to search within
+  /// 
+  /// Returns products where name or description contains the query string.
+  List<Product> searchProducts(String query, List<Product> products) {
+    if (query.trim().isEmpty) {
+      return products;
+    }
+
+    final lowerQuery = query.toLowerCase().trim();
+    debugPrint('Searching products for: "$lowerQuery"');
+
+    final results = products.where((product) {
+      final nameMatch = product.name.toLowerCase().contains(lowerQuery);
+      final descriptionMatch = product.description?.toLowerCase().contains(lowerQuery) ?? false;
+      return nameMatch || descriptionMatch;
+    }).toList();
+
+    debugPrint('Search results: ${results.length} products found');
+    return results;
   }
 }

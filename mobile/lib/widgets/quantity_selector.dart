@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class QuantitySelector extends StatelessWidget {
-  final int quantity;
-  final Function(int) onQuantityChanged;
+  final double quantity;
+  final Function(double) onQuantityChanged;
 
   const QuantitySelector({
     required this.quantity,
@@ -14,27 +14,28 @@ class QuantitySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           icon: const Icon(Icons.remove),
-          iconSize: 20,
-          constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+          iconSize: 18,
+          constraints: const BoxConstraints(minHeight: 28, minWidth: 28),
           padding: EdgeInsets.zero,
           onPressed: quantity > 1 ? () => onQuantityChanged(quantity - 1) : null,
         ),
         SizedBox(
-          width: 32,
+          width: 28,
           child: Center(
             child: Text(
-              quantity.toString(),
-              style: Theme.of(context).textTheme.labelLarge,
+              quantity % 1 == 0 ? quantity.toInt().toString() : quantity.toString(),
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ),
         ),
         IconButton(
           icon: const Icon(Icons.add),
-          iconSize: 20,
-          constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+          iconSize: 18,
+          constraints: const BoxConstraints(minHeight: 28, minWidth: 28),
           padding: EdgeInsets.zero,
           onPressed: () => onQuantityChanged(quantity + 1),
         ),

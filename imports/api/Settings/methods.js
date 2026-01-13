@@ -1,5 +1,10 @@
 import Settings from './Settings';
 
+// Import server methods for Settings (server-only)
+if (Meteor.isServer) {
+  import('./server/methods');
+}
+
 async function getValue(keyValue) {
   const keyRow = await Settings.findOneAsync({ key: keyValue });
   if (keyRow) { return keyRow.value; }

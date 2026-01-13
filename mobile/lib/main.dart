@@ -9,6 +9,7 @@ import 'screens/public/login_screen.dart';
 import 'services/meteor_client.dart';
 import 'services/order_service.dart';
 import 'services/auth_service.dart';
+import 'services/settings_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   late MeteorClient meteorClient;
   late OrderService orderService;
   late AuthService authService;
+  late SettingsService settingsService;
 
   @override
   void initState() {
@@ -33,6 +35,12 @@ class _MyAppState extends State<MyApp> {
     meteorClient = MeteorClient(serverUrl: meteorServerUrl);
     orderService = OrderService(meteorClient: meteorClient);
     authService = AuthService(meteorClient: meteorClient);
+    
+    // Initialize SettingsService and clear cache on app launch
+    // This ensures fresh settings are fetched every time the app starts
+    settingsService = SettingsService(meteorClient: meteorClient);
+    settingsService.clearCache();
+    debugPrint('📱 App started - Settings cache cleared, will fetch fresh settings on first request');
   }
 
   @override

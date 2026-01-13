@@ -437,7 +437,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (_errorMessage != null)
               Text(
                 _errorMessage!,
-                style: const TextStyle(color: Colors.red, fontSize: 14),
+                style: const TextStyle(color: Colors.red, fontSize: 16),
               ),
             const SizedBox(height: 32),
             

@@ -1,7 +1,7 @@
 # Project Context
 
 ## Purpose
-[Describe your project's purpose and goals]
+This project is to make changes to the flutter mobile application.
 
 ## Tech Stack
 - [List your primary technologies]

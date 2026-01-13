@@ -28,7 +28,7 @@ void main() {
         imageUrl: '',
       );
 
-      final items = [CartItem(product: product, quantity: 2)];
+      final items = [CartItem(product: product, quantity: 2, selectedUnit: 1.0, selectedUnitPrice: product.price)];
 
       final checkoutData = CheckoutData(
         name: 'John Doe',
@@ -61,7 +61,7 @@ void main() {
         name: '',
         phone: '9876543210',
         address: '123 Main St',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 
@@ -88,7 +88,7 @@ void main() {
         name: 'John Doe',
         phone: '',
         address: '123 Main St',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 
@@ -115,7 +115,7 @@ void main() {
         name: 'John Doe',
         phone: '98765432',
         address: '123 Main St',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 
@@ -142,7 +142,7 @@ void main() {
         name: 'John Doe',
         phone: '987654321a',
         address: '123 Main St',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 
@@ -169,7 +169,7 @@ void main() {
         name: 'John Doe',
         phone: '9876543210',
         address: '',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 
@@ -198,7 +198,7 @@ void main() {
         name: 'John Doe',
         phone: '9876543210',
         address: '123 Main St',
-        items: [CartItem(product: product, quantity: 1)],
+        items: [CartItem(product: product, quantity: 1, selectedUnit: 1.0, selectedUnitPrice: product.price)],
         totalAmount: 250.0,
       );
 

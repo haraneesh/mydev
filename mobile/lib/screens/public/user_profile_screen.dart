@@ -296,7 +296,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     _errorMessage!,
                     style: const TextStyle(
                       color: Colors.red,
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 const SizedBox(height: 24),

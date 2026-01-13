@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 40),
             Text(
               'Welcome to Suvai',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 48),
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
               enabled: !_isLoading,
               decoration: InputDecoration(
                 labelText: 'Password',
-                hintText: _isSignUpMode ? 'At least 4 characters' : 'Your password',
+                hintText: _isSignUpMode ? 'At least 4 characters' : 'Password',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _errorMessage!,
                 style: const TextStyle(
                   color: Colors.red,
-                  fontSize: 14,
+                  fontSize: 16,
                 ),
               ),
             const SizedBox(height: 32),
@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     : Text(
                         _isSignUpMode ? 'Sign Up' : 'Login',
-                        style: const TextStyle(fontSize: 16, color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
               ),
             ),
@@ -224,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _isSignUpMode
                         ? 'Already have an account? '
                         : 'New to Suvai? ',
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
@@ -242,11 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                     child: Text(
                       _isSignUpMode ? 'Login' : 'Create an account',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.secondary,
-                      ),
+                      style: const TextStyle(color: AppColors.secondary),
                     ),
                   ),
                 ],
@@ -278,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
                   'Continue as Guest',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

@@ -3,15 +3,45 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/quantity_selector.dart';
+import '../../widgets/unit_selection_modal.dart';
 import '../../widgets/order_footer.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
+import '../../services/settings_service.dart';
 import 'home_screen.dart';
 import 'user_profile_screen.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  late SettingsService _settingsService;
+  final Map<String, String> _imageUrlCache = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsService = SettingsService();
+  }
+
+  Future<String> buildProductImageUrl(String imageName) async {
+    if (_imageUrlCache.containsKey(imageName)) {
+      return _imageUrlCache[imageName]!;
+    }
+
+    try {
+      final completeUrl = await _settingsService.buildProductImageUrl(imageName);
+      _imageUrlCache[imageName] = completeUrl;
+      return completeUrl;
+    } catch (e) {
+      debugPrint('Error building image URL for $imageName: $e');
+      return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,74 +130,256 @@ class CartScreen extends StatelessWidget {
       ),
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
-          if (cartProvider.items.isEmpty) {
-            return const Center(
-              child: Text('Your cart is empty'),
+          if (cartProvider.items.isEmpty && cartProvider.removedItems.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.brown[500]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Your cart is empty',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Add some products to get started',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.brown[500]),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    },
+                    child: const Text('Continue Shopping'),
+                  ),
+                ],
+              ),
             );
+          }
+
+          // Group items by category (active items)
+          final grouped = <String, List<dynamic>>{};
+          final categoryOrder = <String>[];
+
+          for (final item in cartProvider.items) {
+            final category = item.product.category;
+            if (!grouped.containsKey(category)) {
+              grouped[category] = [];
+              categoryOrder.add(category);
+            }
+            grouped[category]!.add(item);
+          }
+
+          // Add removed items as a separate category if any exist
+          if (cartProvider.removedItems.isNotEmpty) {
+            grouped['Removed'] = cartProvider.removedItems;
+            categoryOrder.add('Removed');
           }
 
           return Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Shopping Cart',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: cartProvider.items.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: categoryOrder.length + categoryOrder.fold<int>(0, (sum, cat) => sum + grouped[cat]!.length),
                   itemBuilder: (context, index) {
-                    final cartItem = cartProvider.items[index];
+                    // Flatten the grouped items
+                    var currentIndex = 0;
+                    for (final category in categoryOrder) {
+                      // Category header
+                      if (currentIndex == index) {
+                        final isRemoved = category == 'Removed';
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12, bottom: 8),
+                          child: Text(
+                            category,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: isRemoved ? Colors.grey[600] : AppColors.primary,
+                            ),
+                          ),
+                        );
+                      }
+                      currentIndex++;
 
-                    return Card(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    cartItem.product.name,
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                  Text(
-                                    '₹${cartItem.product.price.toStringAsFixed(0)} each',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(color: Colors.grey),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '₹${cartItem.subtotal.toStringAsFixed(0)}',
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
+                      // Items in this category
+                      for (final item in grouped[category]!) {
+                        if (currentIndex == index) {
+                          final isRemoved = category == 'Removed';
+                          return Card(
+                            elevation: 0,
+                            color: isRemoved ? Colors.grey[100] : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              side: BorderSide(
+                                color: isRemoved ? Colors.grey[300]! : AppColors.border,
+                                width: 1,
                               ),
                             ),
-                            Column(
-                              children: [
-                                QuantitySelector(
-                                  quantity: cartItem.quantity,
-                                  onQuantityChanged: (newQuantity) {
-                                    cartProvider.updateQuantity(
-                                      cartItem.product.id,
-                                      newQuantity,
-                                    );
-                                  },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Opacity(
+                                opacity: isRemoved ? 0.6 : 1.0,
+                                child: Row(
+                                  children: [
+                                    // Product Image
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: Container(
+                                        width: 70,
+                                        height: 70,
+                                        color: Colors.white,
+                                        child: FutureBuilder<String>(
+                                          future: buildProductImageUrl(
+                                            item.product.imageUrl.isEmpty ? 'blank.jpg' : item.product.imageUrl,
+                                          ),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                              return Center(
+                                                child: CircularProgressIndicator(
+                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
+                                                ),
+                                              );
+                                            }
+                                            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                                              return Image.network(
+                                                snapshot.data!,
+                                                fit: BoxFit.contain,
+                                                errorBuilder: (_, __, ___) => const Icon(Icons.image, color: Colors.grey),
+                                              );
+                                            }
+                                            return const Icon(Icons.image, color: Colors.grey);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    // Product Info
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.product.name,
+                                            style: Theme.of(context).textTheme.bodyLarge,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Unit: ${item.formattedUnit}',
+                                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                              color: AppColors.info,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Price and Edit Button (hidden for removed items)
+                                    if (!isRemoved)
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            '₹${item.subtotal.toStringAsFixed(0)}',
+                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          SizedBox(
+                                            height: 28,
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                final provider = context.read<CartProvider>();
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (dialogContext) => UnitSelectionModal(
+                                                    product: item.product,
+                                                    onUnitSelected: (selectedUnit) {
+                                                      provider.addItem(
+                                                        item.product,
+                                                        item.quantity,
+                                                        selectedUnit: selectedUnit,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppColors.info,
+                                                foregroundColor: Colors.white,
+                                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                                minimumSize: const Size(0, 28),
+                                              ),
+                                              child: const Text(
+                                                'Edit',
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    // Restore button for removed items
+                                    if (isRemoved)
+                                      SizedBox(
+                                        height: 28,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            final provider = context.read<CartProvider>();
+                                            showDialog(
+                                              context: context,
+                                              builder: (dialogContext) => UnitSelectionModal(
+                                                product: item.product,
+                                                onUnitSelected: (selectedUnit) {
+                                                  provider.addItem(
+                                                    item.product,
+                                                    item.quantity,
+                                                    selectedUnit: selectedUnit,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.info,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                            minimumSize: const Size(0, 28),
+                                          ),
+                                          child: const Text(
+                                            'Restore',
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                                const SizedBox(height: 8),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    cartProvider.removeItem(cartItem.product.id);
-                                  },
-                                ),
-                              ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
+                          );
+                        }
+                        currentIndex++;
+                      }
+                    }
+                    return const SizedBox.shrink();
                   },
                 ),
               ),

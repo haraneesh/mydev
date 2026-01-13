@@ -20,26 +20,26 @@ class AppColors {
 class AppTypography {
   static TextStyle h2 = GoogleFonts.sourceSerif4(
     fontSize: 28,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
   static TextStyle h3 = GoogleFonts.sourceSerif4(
     fontSize: 20,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
   static TextStyle button = GoogleFonts.nunito(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.bold,
     letterSpacing: 1.0,
     color: AppColors.background,
   );
 
   static TextStyle body = GoogleFonts.nunito(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
 
@@ -64,31 +64,31 @@ ThemeData buildAppTheme() {
     textTheme: TextTheme(
       displayLarge: GoogleFonts.sourceSerif4(
         fontSize: 32,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
       displaySmall: GoogleFonts.sourceSerif4(
         fontSize: 28,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
       headlineSmall: GoogleFonts.sourceSerif4(
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
       ),
       bodyLarge: GoogleFonts.nunito(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
       bodyMedium: GoogleFonts.nunito(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
       labelSmall: GoogleFonts.nunito(
-        fontSize: 12,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
         color: AppColors.textSecondary,
       ),

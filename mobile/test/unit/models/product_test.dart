@@ -134,7 +134,12 @@ void main() {
         imageUrl: '',
       );
 
-      final item = CartItem(product: product, quantity: 2);
+      final item = CartItem(
+        product: product,
+        quantity: 2,
+        selectedUnit: 1.0,
+        selectedUnitPrice: 50.0,
+      );
 
       expect(item.product.id, '1');
       expect(item.quantity, 2);
@@ -151,7 +156,12 @@ void main() {
         imageUrl: '',
       );
 
-      final item = CartItem(product: product, quantity: 3);
+      final item = CartItem(
+        product: product,
+        quantity: 3,
+        selectedUnit: 1.0,
+        selectedUnitPrice: 50.0,
+      );
 
       expect(item.subtotal, 150.0);
     });
@@ -167,7 +177,12 @@ void main() {
         imageUrl: '',
       );
 
-      final item = CartItem(product: product, quantity: 2);
+      final item = CartItem(
+        product: product,
+        quantity: 2,
+        selectedUnit: 1.0,
+        selectedUnitPrice: 30.0,
+      );
       final json = item.toJson();
 
       expect(json['productId'], 'prod_1');
@@ -185,7 +200,11 @@ void main() {
         imageUrl: '',
       );
 
-      final item = CartItem(product: product);
+      final item = CartItem(
+        product: product,
+        selectedUnit: 1.0,
+        selectedUnitPrice: 50.0,
+      );
 
       expect(item.quantity, 1);
     });
