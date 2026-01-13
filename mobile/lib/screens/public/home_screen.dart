@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late ProductService productService;
   late SettingsService settingsService;
   bool isLoading = false;
+  bool isInitialLoad = true;
   String? errorMessage;
   DateTime? productListUpdatedAt;
   bool isRefreshingSettings = false;
@@ -61,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     
     if (widget.initialProducts != null) {
       _initializeDefaultCategory();
+      // Set isInitialLoad to false since products are already available
+      isInitialLoad = false;
     } else {
       _initializeProducts();
     }
@@ -132,11 +135,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> _initializeProducts() async {
     if (isLoading) return;
     
+    debugPrint('🏠 _initializeProducts started');
     setState(() => isLoading = true);
     
     try {
+      debugPrint('🔌 Connecting to product service...');
       await productService.connect();
+      debugPrint('✅ Connected to product service');
+      
+      debugPrint('📦 Fetching products...');
       final fetchedProducts = await productService.fetchProducts();
+      debugPrint('✅ Products fetched: ${fetchedProducts.length} items');
       
       // Load default category from settings
       final defaultCategory = await settingsService.getDefaultCategory();
@@ -191,7 +200,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
     } finally {
       if (mounted) {
-        setState(() => isLoading = false);
+        debugPrint('🏠 Setting isInitialLoad = false and isLoading = false');
+        setState(() {
+          isLoading = false;
+          isInitialLoad = false;
+        });
+        debugPrint('✅ HomeScreen initialization complete');
       }
     }
   }
@@ -247,6 +261,33 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🏠 HomeScreen.build() called - isInitialLoad: $isInitialLoad, products.length: ${products.length}');
+    
+    // Show full-page loading indicator during initial load
+    if (isInitialLoad || (products.isEmpty && errorMessage == null)) {
+      debugPrint('🔄 Showing loading indicator');
+      return BackgroundWidget(
+        child: Scaffold(
+          appBar: AppBarWithLogo(
+            showLeading: true,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          body: const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.secondary),
+            ),
+          ),
+        ),
+      );
+    }
+    
+    debugPrint('✅ Showing content - products.length: ${products.length}');
+
     final filteredProducts = getFilteredProducts();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

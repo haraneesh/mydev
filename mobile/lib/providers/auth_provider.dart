@@ -99,6 +99,49 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateProfile({
+    required String emailAddress,
+    String? salutation,
+    String? firstName,
+    String? lastName,
+    String? whMobilePhone,
+    String? deliveryAddress,
+    String? deliveryPincode,
+    String? dietPreference,
+    String? packingPreference,
+    String? productUpdatePreference,
+    bool? clearCartAfterOrder,
+    String? newPassword,
+  }) async {
+    _authState = AuthState.authenticating;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _currentUser = await _authService.updateUserProfile(
+        emailAddress: emailAddress,
+        salutation: salutation,
+        firstName: firstName,
+        lastName: lastName,
+        whMobilePhone: whMobilePhone,
+        deliveryAddress: deliveryAddress,
+        deliveryPincode: deliveryPincode,
+        dietPreference: dietPreference,
+        packingPreference: packingPreference,
+        productUpdatePreference: productUpdatePreference,
+        clearCartAfterOrder: clearCartAfterOrder,
+        newPassword: newPassword,
+      );
+      _authState = AuthState.authenticated;
+      notifyListeners();
+    } catch (e) {
+      _authState = AuthState.error;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

@@ -752,6 +752,7 @@ Meteor.methods({
             username: 1,
             emails: 1,
             profile: 1,
+            settings: 1,
             createdAt: 1,
             updatedAt: 1,
           },
@@ -762,7 +763,11 @@ Meteor.methods({
         throw new Meteor.Error('user-not-found', 'User not found');
       }
 
-      return {
+      console.log('[auth.getCurrentUser] Full user object from DB:', JSON.stringify(user, null, 2));
+      console.log('[auth.getCurrentUser] user.profile:', user.profile);
+      console.log('[auth.getCurrentUser] user.settings:', user.settings);
+
+      const responseData = {
         user: {
           _id: user._id,
           phone: user.username,
@@ -772,8 +777,28 @@ Meteor.methods({
           updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null,
           addressIds: user.addressIds || [],
           defaultAddressId: user.defaultAddressId || null,
+          profile: {
+            salutation: user.profile?.salutation || null,
+            name: {
+              first: user.profile?.name?.first || null,
+              last: user.profile?.name?.last || null,
+            },
+            whMobilePhone: user.profile?.whMobilePhone || null,
+            deliveryAddress: user.profile?.deliveryAddress || null,
+            deliveryPincode: user.profile?.deliveryPincode || null,
+          },
+          settings: {
+            dietPreference: user.settings?.dietPreference || null,
+            packingPreference: user.settings?.packingPreference || null,
+            productUpdatePreference: user.settings?.productUpdatePreference || null,
+            clearCartAfterOrder: user.settings?.clearCartAfterOrder || false,
+          },
         },
       };
+
+      console.log('[auth.getCurrentUser] Response being sent to client:', JSON.stringify(responseData, null, 2));
+
+      return responseData;
     } catch (error) {
       console.error('[auth.getCurrentUser] Error:', error);
       if (error instanceof Meteor.Error) {

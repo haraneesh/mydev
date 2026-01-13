@@ -222,7 +222,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     valueColor: AlwaysStoppedAnimation<Color>(AppColors.secondary),
                                   ),
                                 )
-                              : const Text('Place Order'),
+                              : Text(
+                                'PLACE ORDER',
+                                style: getButtonTextStyle(),
+                              ),
                         ),
                       ),
                     ],

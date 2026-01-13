@@ -64,6 +64,58 @@ class SettingsService {
     }
   }
 
+  /// Gets the minimum cart order amount from settings
+  /// Reads from CART_ORDER.MINIMUM_ORDER_AMT in Meteor settings
+  /// Falls back to 1000 if not configured
+  Future<double> getMinimumOrderAmount() async {
+    try {
+      final settings = await getPublicSettings();
+      
+      // Navigate through CART_ORDER -> MINIMUM_ORDER_AMT
+      final cartOrderConfig = settings['CART_ORDER'] as Map<String, dynamic>?;
+      if (cartOrderConfig != null) {
+        final minimumAmount = cartOrderConfig['MINIMUM_ORDER_AMT'];
+        if (minimumAmount != null) {
+          final amount = (minimumAmount is int) ? minimumAmount.toDouble() : minimumAmount as double;
+          debugPrint('Using minimum order amount from settings: $amount');
+          return amount;
+        }
+      }
+      
+      debugPrint('MINIMUM_ORDER_AMT not configured, using fallback: 1000.0');
+      return 1000.0;
+    } catch (e) {
+      debugPrint('Error getting minimum order amount: $e');
+      return 1000.0;
+    }
+  }
+
+  /// Gets the minimum cart order message from settings
+  /// Reads from CART_ORDER.MINIMUMCART_ORDER_MSG in Meteor settings
+  /// Falls back to default message if not configured
+  Future<String> getMinimumOrderMessage() async {
+    try {
+      final settings = await getPublicSettings();
+      
+      // Navigate through CART_ORDER -> MINIMUMCART_ORDER_MSG
+      final cartOrderConfig = settings['CART_ORDER'] as Map<String, dynamic>?;
+      if (cartOrderConfig != null) {
+        final message = cartOrderConfig['MINIMUMCART_ORDER_MSG'] as String?;
+        if (message != null && message.isNotEmpty) {
+          debugPrint('Using minimum order message from settings');
+          return message;
+        }
+      }
+      
+      const defaultMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+      debugPrint('MINIMUMCART_ORDER_MSG not configured, using default message');
+      return defaultMessage;
+    } catch (e) {
+      debugPrint('Error getting minimum order message: $e');
+      return 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+    }
+  }
+
   /// Gets the default category to open on the home page
   /// Reads from PRODUCT_ORDER.PAGE_TO_OPEN_DEFAULT in Meteor settings
   /// Falls back to 'All' if not configured
@@ -198,6 +250,10 @@ class SettingsService {
       'DELIVERY': {
         'MIN_ORDER_VALUE': 100,
         'DELIVERY_CHARGE': 50,
+      },
+      'CART_ORDER': {
+        'MINIMUM_ORDER_AMT': 1000,
+        'MINIMUMCART_ORDER_MSG': 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.',
       },
       'Product_Images': 'https://storage.googleapis.com/suvai_images_20/',
       'Product_Images_Version': 'v999999',

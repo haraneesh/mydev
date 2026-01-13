@@ -21,11 +21,28 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   late SettingsService _settingsService;
   final Map<String, String> _imageUrlCache = {};
+  double _minimumOrderAmount = 1000.0;
+  String _minimumOrderMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
 
   @override
   void initState() {
     super.initState();
     _settingsService = SettingsService();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    try {
+      final minAmount = await _settingsService.getMinimumOrderAmount();
+      final message = await _settingsService.getMinimumOrderMessage();
+      
+      setState(() {
+        _minimumOrderAmount = minAmount;
+        _minimumOrderMessage = message;
+      });
+    } catch (e) {
+      debugPrint('Error loading cart settings: $e');
+    }
   }
 
   Future<String> buildProductImageUrl(String imageName) async {
@@ -159,7 +176,10 @@ class _CartScreenState extends State<CartScreen> {
                         MaterialPageRoute(builder: (_) => const HomeScreen()),
                       );
                     },
-                    child: const Text('Continue Shopping'),
+                    child: Text(
+                      'CONTINUE SHOPPING',
+                      style: getButtonTextStyle(),
+                    ),
                   ),
                 ],
               ),
@@ -329,9 +349,9 @@ class _CartScreenState extends State<CartScreen> {
                                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                                                 minimumSize: const Size(0, 28),
                                               ),
-                                              child: const Text(
-                                                'Edit',
-                                                style: TextStyle(color: Colors.white),
+                                              child: Text(
+                                                'EDIT',
+                                                style: getButtonTextStyle(),
                                               ),
                                             ),
                                           ),
@@ -364,9 +384,9 @@ class _CartScreenState extends State<CartScreen> {
                                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                                             minimumSize: const Size(0, 28),
                                           ),
-                                          child: const Text(
-                                            'Restore',
-                                            style: TextStyle(color: Colors.white),
+                                          child: Text(
+                                            'RESTORE',
+                                            style: getButtonTextStyle(),
                                           ),
                                         ),
                                       ),
@@ -383,16 +403,34 @@ class _CartScreenState extends State<CartScreen> {
                   },
                 ),
               ),
+              // Minimum order amount threshold
+              if (cartProvider.totalAmount < _minimumOrderAmount)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.brown[50],
+                    border: Border.all(color: Colors.brown[300]!, width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    _minimumOrderMessage,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.brown[800],
+                    ),
+                  ),
+                ),
               OrderFooter(
                 totalAmount: cartProvider.totalAmount,
                 itemCount: cartProvider.itemCount,
                 context: context,
               ),
-            ],
-          );
-        },
-      ),
-      ),
-    );
-  }
-}
+              ],
+              );
+              },
+              ),
+              ),
+              );
+              }
+              }

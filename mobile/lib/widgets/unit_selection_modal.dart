@@ -188,7 +188,10 @@ class UnitSelectionModal extends StatelessWidget {
                             backgroundColor: AppColors.secondary,
                             foregroundColor: Colors.white,
                           ),
-                          child: const Text('Remove from Cart'),
+                          child: Text(
+                            'REMOVE FROM CART',
+                            style: getButtonTextStyle(),
+                          ),
                         ),
                       ),
                     );

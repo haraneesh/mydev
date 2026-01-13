@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Global button text style helper
+TextStyle getButtonTextStyle({
+  Color color = Colors.white,
+  FontWeight fontWeight = FontWeight.bold,
+  double fontSize = 12,
+  double letterSpacing = 1.2,
+}) {
+  return GoogleFonts.nunito(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    letterSpacing: letterSpacing,
+    color: color,
+  );
+}
+
 class AppColors {
   static const Color primary = Color(0xFF702223);
   static const Color secondary = Color(0xFFe04a06);

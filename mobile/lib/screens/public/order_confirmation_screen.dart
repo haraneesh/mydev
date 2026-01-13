@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
 
@@ -120,7 +121,10 @@ class OrderConfirmationScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
-                child: const Text('Continue Shopping'),
+                child: Text(
+                  'CONTINUE SHOPPING',
+                  style: getButtonTextStyle(),
+                ),
               ),
             ),
           ],

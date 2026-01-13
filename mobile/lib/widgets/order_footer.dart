@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config/theme.dart';
 import '../screens/public/checkout_screen.dart';
 
 class OrderFooter extends StatelessWidget {
@@ -61,7 +62,10 @@ class OrderFooter extends StatelessWidget {
                  );
                }
               },
-              child: const Text('Checkout'),
+              child: Text(
+                'CHECKOUT',
+                style: getButtonTextStyle(),
+              ),
             ),
           ),
         ],

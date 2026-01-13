@@ -93,6 +93,10 @@ class AuthService {
     try {
       final response = await meteorClient.call('auth.getCurrentUser', [_authToken]);
 
+      debugPrint('=== RESPONSE AFTER CALL ===');
+      debugPrint('response: $response');
+      debugPrint('===========================');
+
       if (response['error'] != null) {
         throw AuthException(
           response['error'] as String,
@@ -105,7 +109,25 @@ class AuthService {
         throw AuthException('Failed to fetch user data');
       }
 
+      debugPrint('=== RAW USER DATA FROM SERVER ===');
+      debugPrint('userData: $userData');
+      debugPrint('profile: ${userData['profile']}');
+      debugPrint('settings: ${userData['settings']}');
+      debugPrint('================================');
+
       final user = User.fromJson(userData);
+      
+      debugPrint('=== PARSED USER OBJECT ===');
+      debugPrint('firstName: ${user.firstName}');
+      debugPrint('lastName: ${user.lastName}');
+      debugPrint('email: ${user.email}');
+      debugPrint('whMobilePhone: ${user.whMobilePhone}');
+      debugPrint('deliveryAddress: ${user.deliveryAddress}');
+      debugPrint('deliveryPincode: ${user.deliveryPincode}');
+      debugPrint('salutation: ${user.salutation}');
+      debugPrint('dietaryPreference: ${user.dietaryPreference}');
+      debugPrint('==========================');
+      
       await _cacheUser(user);
       return user;
     } catch (e) {
@@ -160,6 +182,67 @@ class AuthService {
       // Note: This is a simple implementation. Consider using json_serializable for production
     } catch (e) {
       // Continue even if caching fails
+    }
+  }
+
+  Future<User> updateUserProfile({
+    required String emailAddress,
+    String? salutation,
+    String? firstName,
+    String? lastName,
+    String? whMobilePhone,
+    String? deliveryAddress,
+    String? deliveryPincode,
+    String? dietPreference,
+    String? packingPreference,
+    String? productUpdatePreference,
+    bool? clearCartAfterOrder,
+    String? newPassword,
+  }) async {
+    if (_authToken == null || _authToken!.isEmpty) {
+      throw AuthException('No authentication token available');
+    }
+
+    try {
+      if (!meteorClient.isConnected) {
+        await meteorClient.connect();
+      }
+
+      final profileData = {
+        'emailAddress': emailAddress,
+        'profile': {
+          if (salutation != null) 'salutation': salutation,
+          'name': {
+            if (firstName != null) 'first': firstName,
+            if (lastName != null) 'last': lastName,
+          },
+          if (whMobilePhone != null) 'whMobilePhone': whMobilePhone,
+          if (deliveryAddress != null) 'deliveryAddress': deliveryAddress,
+          if (deliveryPincode != null) 'deliveryPincode': deliveryPincode,
+        },
+        'settings': {
+          if (dietPreference != null) 'dietPreference': dietPreference,
+          if (packingPreference != null) 'packingPreference': packingPreference,
+          if (productUpdatePreference != null) 'productUpdatePreference': productUpdatePreference,
+          if (clearCartAfterOrder != null) 'clearCartAfterOrder': clearCartAfterOrder,
+        },
+      };
+
+      if (newPassword != null && newPassword.isNotEmpty) {
+        profileData['password'] = newPassword;
+      }
+
+      final response = await meteorClient.call('users.editUserProfile', [profileData]);
+
+      if (response['error'] != null) {
+        throw AuthException(response['error'] as String);
+      }
+
+      // Fetch and return updated user
+      return await getCurrentUser();
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthException('Failed to update profile: $e');
     }
   }
 

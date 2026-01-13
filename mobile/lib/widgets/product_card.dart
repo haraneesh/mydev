@@ -185,10 +185,10 @@ class _ProductCardState extends State<ProductCard> {
                                 ),
                               );
                             },
-                            child: const Text(
-                              'Add',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            child: Text(
+                               'ADD',
+                               style: getButtonTextStyle(),
+                             ),
                           ),
                         );
                       },

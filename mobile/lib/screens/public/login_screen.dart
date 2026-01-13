@@ -208,8 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       )
                     : Text(
-                        _isSignUpMode ? 'Sign Up' : 'Login',
-                        style: const TextStyle(color: Colors.white),
+                        _isSignUpMode ? 'SIGN UP' : 'LOGIN',
+                        style: getButtonTextStyle(),
                       ),
               ),
             ),
@@ -241,9 +241,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                           },
                     child: Text(
-                      _isSignUpMode ? 'Login' : 'Create an account',
-                      style: const TextStyle(color: AppColors.secondary),
-                    ),
+                       _isSignUpMode ? 'LOGIN' : 'CREATE AN ACCOUNT',
+                       style: getButtonTextStyle(
+                         color: AppColors.secondary,
+                       ),
+                     ),
                   ),
                 ],
               ),
@@ -270,11 +272,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   : () {
                       Navigator.of(context).pop();
                     },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
-                  'Continue as Guest',
-                  style: TextStyle(color: Colors.white),
+                  'CONTINUE AS GUEST',
+                  style: getButtonTextStyle(),
                 ),
               ),
             ),
