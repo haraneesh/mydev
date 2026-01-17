@@ -55,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // Clear settings cache to ensure fresh settings are loaded
     // This ensures we always get the latest settings from Meteor server
     settingsService.clearCache();
-    debugPrint('🏠 HomeScreen initialized - Settings cache cleared, will fetch fresh settings');
     
     // Initialize with all displayable product categories (excluding New, Returnable)
     categories = ['All', ...ProductConstants.getAllCategories()];
@@ -74,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // Refresh settings whenever the app is resumed (brought to foreground)
     // This ensures fresh settings are loaded when returning from other pages or background
     if (state == AppLifecycleState.resumed) {
-      debugPrint('📱 App resumed - triggering settings refresh');
       _refreshSettings();
     }
   }
@@ -94,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     
     try {
       setState(() => isRefreshingSettings = true);
-      debugPrint('🔄 Refreshing settings on app resume');
       
       await settingsService.refreshSettings();
       
@@ -102,9 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // This ensures the new Product_Images_Version is applied to all images
       await _initializeProducts();
       
-      debugPrint('✅ Settings refreshed successfully on app resume');
     } catch (e) {
-      debugPrint('❌ Error refreshing settings on app resume: $e');
       // Continue with existing settings on error
     } finally {
       if (mounted) {
@@ -127,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
-      debugPrint('Error loading default category: $e');
       // Fall back to 'All' if there's an error
     }
   }
@@ -135,17 +129,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> _initializeProducts() async {
     if (isLoading) return;
     
-    debugPrint('🏠 _initializeProducts started');
     setState(() => isLoading = true);
     
     try {
-      debugPrint('🔌 Connecting to product service...');
       await productService.connect();
-      debugPrint('✅ Connected to product service');
       
-      debugPrint('📦 Fetching products...');
       final fetchedProducts = await productService.fetchProducts();
-      debugPrint('✅ Products fetched: ${fetchedProducts.length} items');
       
       // Load default category from settings
       final defaultCategory = await settingsService.getDefaultCategory();
@@ -165,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
           // Store the product list update timestamp
           productListUpdatedAt = productService.lastProductListUpdatedAt;
-          debugPrint('🕐 HomeScreen: productListUpdatedAt set to: $productListUpdatedAt');
           errorMessage = null;
         });
       }
@@ -200,12 +188,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
     } finally {
       if (mounted) {
-        debugPrint('🏠 Setting isInitialLoad = false and isLoading = false');
         setState(() {
           isLoading = false;
           isInitialLoad = false;
         });
-        debugPrint('✅ HomeScreen initialization complete');
       }
     }
   }
@@ -229,31 +215,39 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   /// Filters products by search query or selected category.
+  /// Only products with availableToOrder=true are displayed.
   /// 
   /// If search query is present, searches across all products (ignores category filter).
   /// Otherwise, filters by the selected category's 'name' field (used in MongoDB).
   List<Product> getFilteredProducts() {
-    // If search query is present, search across all products
+    // Debug: Log all products and their availableToOrder status
+    for (final product in products.take(5)) {
+    }
+    
+    // Filter to only include products available for ordering
+    final availableProducts = products
+        .where((product) => product.availableToOrder)
+        .toList();
+    
+    
+    // If search query is present, search across available products
     if (searchQuery.trim().isNotEmpty) {
-      final results = productService.searchProducts(searchQuery, products);
-      debugPrint('🔍 Search results for "$searchQuery": ${results.length} products found');
+      final results = productService.searchProducts(searchQuery, availableProducts);
       return results;
     }
     
     // Otherwise filter by category
     if (selectedCategory == 'All') {
-      return products;
+      return availableProducts;
     }
     
-    var filtered = products
+    var filtered = availableProducts
         .where((product) => product.category == selectedCategory)
         .toList();
     
     // Debug: Log actual category values in products
     if (filtered.isEmpty) {
       final actualCategories = products.map((p) => p.category).toSet().toList();
-      debugPrint('❌ No products found for category: $selectedCategory');
-      debugPrint('   Available product categories: $actualCategories');
     }
     
     return filtered;
@@ -261,11 +255,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('🏠 HomeScreen.build() called - isInitialLoad: $isInitialLoad, products.length: ${products.length}');
     
     // Show full-page loading indicator during initial load
     if (isInitialLoad || (products.isEmpty && errorMessage == null)) {
-      debugPrint('🔄 Showing loading indicator');
       return BackgroundWidget(
         child: Scaffold(
           appBar: AppBarWithLogo(
@@ -286,7 +278,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       );
     }
     
-    debugPrint('✅ Showing content - products.length: ${products.length}');
 
     final filteredProducts = getFilteredProducts();
     final screenWidth = MediaQuery.of(context).size.width;
@@ -294,8 +285,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final isTablet = screenWidth >= 600;
     
     // Debug logging
-    debugPrint('HomeScreen build - Width: $screenWidth, Height: $screenHeight, isTablet: $isTablet');
-    debugPrint('HomeScreen build - Categories: $categories, Selected: $selectedCategory');
     
     // Check if no products are available (error state)
     final hasNoProductsError = errorMessage != null && 
@@ -305,7 +294,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final showSidebar = categories.isNotEmpty && !hasNoProductsError;
     
     // Debug logging for timestamp display condition
-    debugPrint('🕐 Build - productListUpdatedAt: $productListUpdatedAt, hasNoProductsError: $hasNoProductsError, willDisplay: ${productListUpdatedAt != null && !hasNoProductsError}');
 
     return BackgroundWidget(
       child: Scaffold(
@@ -319,48 +307,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
         actions: [
-          Consumer<CartProvider>(
-            builder: (context, cartProvider, child) {
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CartScreen()),
-                      );
-                    },
-                  ),
-                  if (cartProvider.itemCount > 0)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: Text(
-                          '${cartProvider.itemCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_bag),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
+                        );
+                      },
+                    ),
+                    if (cartProvider.itemCount > 0)
+                      Positioned(
+                        top: 8,
+                        right: 2,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          textAlign: TextAlign.center,
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: Text(
+                            '${cartProvider.itemCount}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -601,7 +592,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
-              leading: const Icon(Icons.shopping_cart),
+              leading: const Icon(Icons.shopping_bag),
               title: const Text('Cart'),
               onTap: () {
                 Navigator.pop(context);

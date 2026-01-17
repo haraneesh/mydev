@@ -1,1 +1,1 @@
-Read and follow instructions in openspec/AGENTS.md
+Read and follow instructions in AGENTS.md

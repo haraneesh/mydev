@@ -69,37 +69,26 @@ class UnitSelectionModal extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          debugPrint('\n🎯 UNIT SELECTION TAPPED =====================');
-                          debugPrint('📍 Product: ${product.name} (ID: ${product.id})');
-                          debugPrint('📏 Selected unit: $unit (displayLabel: ${product.formatUnitLabel(unit)})');
                           
                           // Check if product is already in cart
                           final cartProvider = Provider.of<CartProvider>(context, listen: false);
-                          debugPrint('🛍️ Current cart items: ${cartProvider.items.map((i) => '${i.product.name}:${i.selectedUnit}').toList()}');
                           
                           final isInCart = cartProvider.items.any(
                             (item) => item.product.id == product.id,
                           );
                           
-                          debugPrint('🛒 Unit Selection - Product ID: ${product.id}, isInCart: $isInCart, selectedUnit: $unit');
                           
                           if (isInCart) {
                             // Product already in cart - update the unit
                             final currentItem = cartProvider.items.firstWhere((item) => item.product.id == product.id);
-                            debugPrint('🔄 UPDATING UNIT: ${currentItem.selectedUnit} → $unit');
-                            debugPrint('   Old: ${product.formatUnitLabel(currentItem.selectedUnit)}');
-                            debugPrint('   New: ${product.formatUnitLabel(unit)}');
                             
                             cartProvider.updateItemUnit(product.id, unit);
                             
-                            debugPrint('✅ Cart update triggered. Items: ${cartProvider.items.map((item) => '${item.product.name}:${item.selectedUnit}').toList()}');
                           } else {
                             // Product not in cart - use callback to add it
-                            debugPrint('➕ Adding new item with unit: $unit (${product.formatUnitLabel(unit)})');
                             onUnitSelected(unit);
                           }
                           
-                          debugPrint('👈 Closing modal...\n');
                           Navigator.of(context).pop();
                         },
                         child: Padding(
@@ -179,7 +168,6 @@ class UnitSelectionModal extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            debugPrint('🗑️ Remove button pressed for product: ${product.id}');
                             // Move product to removed items
                             cartProvider.moveItemToRemoved(product.id);
                             Navigator.of(context).pop();

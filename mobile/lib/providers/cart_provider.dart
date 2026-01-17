@@ -16,19 +16,34 @@ class CartProvider extends ChangeNotifier {
   final CartStorage _cartStorage;
   final OrderService _orderService;
   final Map<String, Product> _productsMap = {};
+  List<Product> _currentProductList = [];
   String _lastOrderId = '';
 
   List<CartItem> get items => _items;
 
   List<CartItem> get removedItems => _removedItems;
 
+  /// Returns only items that are available to order based on current product list
+  List<CartItem> get availableItems {
+    if (_currentProductList.isEmpty) {
+      return _items;
+    }
+    final availableProductIds = _currentProductList
+        .where((p) => p.availableToOrder)
+        .map((p) => p.id)
+        .toSet();
+    return _items.where((item) => availableProductIds.contains(item.product.id)).toList();
+  }
+
   double get totalAmount =>
-      _items.fold(0.0, (sum, item) => sum + item.subtotal);
+      availableItems.fold(0.0, (sum, item) => sum + item.subtotal);
 
   int get itemCount =>
-      _items.fold(0.0, (sum, item) => sum + item.quantity).toInt();
+      availableItems.fold(0.0, (sum, item) => sum + item.quantity).toInt();
 
   String get lastOrderId => _lastOrderId;
+
+  OrderService get orderService => _orderService;
 
   CartProvider({
     CartStorage? cartStorage,
@@ -43,6 +58,38 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
+  /// Updates the current product list used for availability checks
+  /// Should be called whenever the product list is refreshed
+  void updateProductAvailability(List<Product> currentProductList) {
+    _currentProductList = currentProductList;
+    notifyListeners(); // Notify to recalculate totals based on new availability
+  }
+
+  /// Separates cart items into available and unavailable based on product availability
+  /// Returns a map with 'available' and 'unavailable' keys
+  Map<String, List<CartItem>> separateItemsByAvailability(List<Product> currentProductList) {
+    final availableProductIds = currentProductList
+        .where((p) => p.availableToOrder)
+        .map((p) => p.id)
+        .toSet();
+
+    final available = <CartItem>[];
+    final unavailable = <CartItem>[];
+
+    for (final item in _items) {
+      if (availableProductIds.contains(item.product.id)) {
+        available.add(item);
+      } else {
+        unavailable.add(item);
+      }
+    }
+
+    return {
+      'available': available,
+      'unavailable': unavailable,
+    };
+  }
+
   Future<void> loadCart() async {
     _items = await _cartStorage.getCart(_productsMap);
     notifyListeners();
@@ -54,12 +101,10 @@ class CartProvider extends ChangeNotifier {
   Future<void> addItem(Product product, double quantity, {double selectedUnit = 1.0}) async {
     if (quantity <= 0) return;
 
-    debugPrint('➕ addItem: ${product.name}, selectedUnit: $selectedUnit, quantity: $quantity');
 
     // Check if product exists in removed items and restore it
     final removedIndex = _removedItems.indexWhere((i) => i.product.id == product.id);
     if (removedIndex >= 0) {
-      debugPrint('   Product was removed, restoring it...');
       _removedItems.removeAt(removedIndex);
     }
 
@@ -73,11 +118,9 @@ class CartProvider extends ChangeNotifier {
 
     if (existingIndex >= 0) {
       // Increase quantity of existing item
-      debugPrint('   Same unit already in cart, increasing quantity from ${_items[existingIndex].quantity} to ${_items[existingIndex].quantity + quantity}');
       _items[existingIndex].quantity += quantity;
     } else {
       // Add new item with this unit selection
-      debugPrint('   Adding new cart item');
       _items.add(CartItem(
         product: product,
         quantity: quantity,
@@ -86,7 +129,6 @@ class CartProvider extends ChangeNotifier {
       ));
     }
 
-    debugPrint('✅ addItem complete. Cart now has ${_items.length} items');
     await _cartStorage.saveCart(_items);
     notifyListeners();
   }
@@ -96,7 +138,6 @@ class CartProvider extends ChangeNotifier {
   Future<void> moveItemToRemoved(String productId) async {
     final itemIndex = _items.indexWhere((i) => i.product.id == productId);
     if (itemIndex >= 0) {
-      debugPrint('🗑️ Moving product to removed: $productId');
       _removedItems.add(_items[itemIndex]);
       _items.removeAt(itemIndex);
       await _cartStorage.saveCart(_items);
@@ -140,7 +181,6 @@ class CartProvider extends ChangeNotifier {
   /// Replaces the old unit with the new selected unit (selectedUnit IS the quantity)
   /// If product is not in cart, this method does nothing
   Future<void> updateItemUnit(String productId, double newSelectedUnit) async {
-    debugPrint('🚀 updateItemUnit START: productId=$productId, newSelectedUnit=$newSelectedUnit');
     
     // Find the existing cart item for this product
     final existingIndex = _items.indexWhere((i) => i.product.id == productId);
@@ -150,8 +190,6 @@ class CartProvider extends ChangeNotifier {
       final product = existingCartItem.product; // Use product from cart item
       final oldUnit = existingCartItem.selectedUnit;
       
-      debugPrint('🔄 updateItemUnit: Found product at index $existingIndex, oldUnit: $oldUnit, newUnit: $newSelectedUnit');
-      debugPrint('   Product name: ${product.name}, Product ID: ${product.id}');
       
       // Update the item in place (same index)
       // Note: quantity is set to 1.0 because selectedUnit IS the quantity in this app
@@ -162,24 +200,25 @@ class CartProvider extends ChangeNotifier {
         selectedUnit: newSelectedUnit,
         selectedUnitPrice: newUnitPrice > 0 ? newUnitPrice : null,
       );
-      debugPrint('   ✏️ Updated item at index $existingIndex: unit=$oldUnit → $newSelectedUnit, price=${_items[existingIndex].selectedUnitPrice}');
       
-      debugPrint('✅ updateItemUnit: Cart updated. Items count: ${_items.length}');
       for (var item in _items) {
-        debugPrint('   📦 Cart item: ${item.product.name}: unit=${item.selectedUnit}, price=${item.selectedUnitPrice}');
       }
       
       await _cartStorage.saveCart(_items);
-      debugPrint('   💾 Saved to storage');
       
-      debugPrint('📢 Calling notifyListeners()...');
       notifyListeners();
-      debugPrint('✅ notifyListeners() completed');
     } else {
-      debugPrint('❌ updateItemUnit: Product $productId not found in cart (cart items: ${_items.map((i) => i.product.id).toList()})');
     }
     
-    debugPrint('🎉 updateItemUnit END\n');
+  }
+
+  /// Permanently removes all items in the removed items section from cart storage
+  Future<void> commitRemovedItems() async {
+    if (_removedItems.isNotEmpty) {
+      _removedItems.clear();
+      await _cartStorage.saveCart(_items);
+      notifyListeners();
+    }
   }
 
   Future<void> clearCart() async {
@@ -189,27 +228,41 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> placeOrder(CheckoutData checkoutData) async {
-    if (_items.isEmpty) {
-      throw Exception('Cart is empty');
+  Future<String> placeOrder(CheckoutData checkoutData, {bool clearCart = true, String? userId}) async {
+    if (availableItems.isEmpty) {
+      throw Exception('No available items in cart for order');
     }
 
     try {
-      debugPrint(
-        'Placing order: ${checkoutData.name}, ${checkoutData.phone}, ${checkoutData.address}',
+      // Only submit available items (not removed, not unavailable)
+      final filteredCheckoutData = CheckoutData(
+        name: checkoutData.name,
+        phone: checkoutData.phone,
+        address: checkoutData.address,
+        items: availableItems,
+        totalAmount: totalAmount,
+        notes: checkoutData.notes,
       );
 
-      final orderId = await _orderService.submitOrder(checkoutData);
+      final orderId = await _orderService.submitOrder(filteredCheckoutData, userId: userId);
 
-      await _cartStorage.clearCart();
-      _items = [];
-      _removedItems.clear();
       _lastOrderId = orderId;
+
+      if (clearCart) {
+        await _cartStorage.clearCart();
+        _items = [];
+        _removedItems.clear();
+      } else {
+        // Keep all items (both available and unavailable)
+        // Only clear removed items section
+        _removedItems.clear();
+        await _cartStorage.saveCart(_items);
+      }
+
       notifyListeners();
 
       return orderId;
     } catch (e) {
-      debugPrint('Error placing order: $e');
       rethrow;
     }
   }

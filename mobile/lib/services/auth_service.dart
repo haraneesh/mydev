@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
 import '../models/auth_state.dart';
 import 'meteor_client.dart';
+import 'onesignal_service.dart';
 
 class AuthService {
   final MeteorClient meteorClient;
@@ -25,24 +26,57 @@ class AuthService {
 
 
 
-  Future<void> signup(String phone, String password) async {
+  Future<void> signup({
+    required String phone,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String deliveryAddress,
+    required String deliveryPincode,
+    String? eatingHealthyMeaning,
+  }) async {
     if (phone.isEmpty) throw AuthException('Phone is required');
     if (password.isEmpty) throw AuthException('Password is required');
     if (!_isValidPhone(phone)) throw AuthException('Phone must be 10 digits');
-    if (password.length < 4) throw AuthException('Password must be at least 4 characters');
+    if (password.length < 6) throw AuthException('Password must be at least 6 characters');
+    if (firstName.isEmpty) throw AuthException('First name is required');
+    if (lastName.isEmpty) throw AuthException('Last name is required');
+    if (email.isEmpty) throw AuthException('Email is required');
+    if (deliveryAddress.isEmpty) throw AuthException('Delivery address is required');
+    if (deliveryPincode.isEmpty) throw AuthException('Delivery pincode is required');
 
     try {
       if (!meteorClient.isConnected) {
         await meteorClient.connect();
       }
 
-      final response = await meteorClient.call('auth.signup', [
-        {'phone': phone, 'password': password}
+      // Call users.signUp with complete user profile
+      final signupResponse = await meteorClient.call('users.signUp', [
+        {
+          'username': phone,
+          'email': email,
+          'password': password,
+          'profile': {
+            'name': {
+              'first': firstName,
+              'last': lastName,
+            },
+            'whMobilePhone': phone,
+            'deliveryAddress': deliveryAddress,
+            'deliveryPincode': deliveryPincode,
+            if (eatingHealthyMeaning != null && eatingHealthyMeaning.isNotEmpty)
+              'eatingHealthyMeaning': eatingHealthyMeaning,
+          },
+        }
       ]);
 
-      if (response['error'] != null) {
-        throw AuthException(response['error'] as String);
+      if (signupResponse['error'] != null) {
+        throw AuthException(signupResponse['error'] as String);
       }
+
+      // After successful signup, automatically log the user in
+      await login(phone, password);
     } catch (e) {
       if (e is AuthException) rethrow;
       throw AuthException('Signup failed: $e');
@@ -79,6 +113,9 @@ class AuthService {
       _authToken = token;
       meteorClient.setAuth(token, userId);
       await secureStorage.write(key: _tokenKey, value: token);
+
+      // Register OneSignal player ID with server
+      await _registerOneSignalPlayerId(userId);
     } catch (e) {
       if (e is AuthException) rethrow;
       throw AuthException('Login failed: $e');
@@ -93,10 +130,6 @@ class AuthService {
     try {
       final response = await meteorClient.call('auth.getCurrentUser', [_authToken]);
 
-      debugPrint('=== RESPONSE AFTER CALL ===');
-      debugPrint('response: $response');
-      debugPrint('===========================');
-
       if (response['error'] != null) {
         throw AuthException(
           response['error'] as String,
@@ -109,25 +142,7 @@ class AuthService {
         throw AuthException('Failed to fetch user data');
       }
 
-      debugPrint('=== RAW USER DATA FROM SERVER ===');
-      debugPrint('userData: $userData');
-      debugPrint('profile: ${userData['profile']}');
-      debugPrint('settings: ${userData['settings']}');
-      debugPrint('================================');
-
       final user = User.fromJson(userData);
-      
-      debugPrint('=== PARSED USER OBJECT ===');
-      debugPrint('firstName: ${user.firstName}');
-      debugPrint('lastName: ${user.lastName}');
-      debugPrint('email: ${user.email}');
-      debugPrint('whMobilePhone: ${user.whMobilePhone}');
-      debugPrint('deliveryAddress: ${user.deliveryAddress}');
-      debugPrint('deliveryPincode: ${user.deliveryPincode}');
-      debugPrint('salutation: ${user.salutation}');
-      debugPrint('dietaryPreference: ${user.dietaryPreference}');
-      debugPrint('==========================');
-      
       await _cacheUser(user);
       return user;
     } catch (e) {
@@ -249,5 +264,71 @@ class AuthService {
   bool _isValidPhone(String phone) {
     if (phone.length != 10) return false;
     return RegExp(r'^[0-9]{10}$').hasMatch(phone);
+  }
+
+  /// Register OneSignal player ID with the server
+  /// 
+  /// This integrates with OneSignalService to:
+  /// 1. Set external user ID for cross-device tracking
+  /// 2. Register device player ID with backend
+  /// 3. Enable push notifications for this user
+  Future<void> _registerOneSignalPlayerId(String userId) async {
+    try {
+      debugPrint('[Auth] Registering OneSignal player ID for user: $userId');
+
+      // Set external user ID for cross-device tracking
+      await OneSignalService.setExternalUserId(userId);
+
+      // Request push permission and wait for it
+      final hasPermission = await OneSignalService.requestPermission();
+      debugPrint('[Auth] Push permission result: $hasPermission');
+
+      // Wait a bit for player ID to be assigned after permission
+      await Future.delayed(const Duration(milliseconds: 1000));
+      
+      // Try to fetch player ID synchronously
+      var playerId = OneSignalService.getPlayerId();
+      
+      // If not available, wait for it (up to 4 more seconds)
+      if (playerId == null || playerId.isEmpty) {
+        debugPrint('[Auth] Player ID not immediately available, waiting...');
+        playerId = await OneSignalService.waitForPlayerId(timeout: const Duration(seconds: 4));
+        debugPrint('[Auth] Waited for player ID, result: ${playerId != null ? playerId.substring(0, 8) + '...' : 'null'}');
+      } else {
+        debugPrint('[Auth] Player ID immediately available: ${playerId.substring(0, 8)}...');
+      }
+
+      if (playerId == null || playerId.isEmpty) {
+        debugPrint(
+          '[Auth] ⚠️ Player ID not available yet. '
+          'Will be registered on next subscription change.',
+        );
+        return;
+      }
+
+      // Store player ID in backend
+      try {
+        await meteorClient.call('addPlayerId', [
+          {
+            'playerId': playerId,
+            'deviceType': _getDeviceType(),
+          }
+        ]);
+        debugPrint('[Auth] ✅ OneSignal player ID registered: ${playerId.substring(0, 8)}...');
+      } catch (e) {
+        debugPrint('[Auth] ⚠️ Error registering player ID with backend: $e');
+        // Don't fail login if registration fails
+      }
+    } catch (e) {
+      debugPrint('[Auth] ⚠️ Error in OneSignal setup: $e');
+      // Don't fail login if OneSignal setup fails
+    }
+  }
+
+  /// Get device type string
+  String _getDeviceType() {
+    // TODO: Use package:device_info_plus to get actual platform
+    // For now, return 'mobile' as placeholder
+    return 'mobile';
   }
 }

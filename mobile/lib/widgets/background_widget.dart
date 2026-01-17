@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 /// A reusable widget that applies the background image to any page.
-/// Wraps the child widget with a background image that repeats across the page.
+/// Wraps the child widget with a background image that covers the entire screen.
 class BackgroundWidget extends StatelessWidget {
   final Widget child;
+  final String? backgroundImagePath;
 
   const BackgroundWidget({
     super.key,
     required this.child,
+    this.backgroundImagePath,
   });
 
   @override
@@ -15,7 +17,7 @@ class BackgroundWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: const AssetImage('assets/bg.jpg'),
+          image: AssetImage(backgroundImagePath ?? 'assets/bg.jpg'),
           fit: BoxFit.none,
           repeat: ImageRepeat.repeat,
           alignment: Alignment.topLeft,
@@ -53,6 +55,13 @@ class BackgroundWidget extends StatelessWidget {
         drawerEnableOpenDragGesture: widget.drawerEnableOpenDragGesture,
         endDrawerEnableOpenDragGesture: widget.endDrawerEnableOpenDragGesture,
         restorationId: widget.restorationId,
+      );
+    }
+    // Handle WillPopScope wrapper
+    if (widget is WillPopScope) {
+      return WillPopScope(
+        onWillPop: widget.onWillPop,
+        child: _makeScaffoldTransparent(widget.child),
       );
     }
     return widget;

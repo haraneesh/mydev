@@ -69,9 +69,8 @@ class CartService {
            .whereType<CartItem>()
            .toList();
      } catch (e) {
-       debugPrint('Error loading cart: $e');
-       return [];
-     }
+        return [];
+      }
    }
 
   Future<void> saveCart(List<CartItem> items) async {

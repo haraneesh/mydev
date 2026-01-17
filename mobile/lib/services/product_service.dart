@@ -15,12 +15,9 @@ class ProductService {
 
   Future<void> connect() async {
     try {
-      debugPrint('Connecting to Meteor server at $baseUrl');
       await _meteorClient.connect();
       _isConnected = true;
-      debugPrint('Connected to Meteor server');
     } catch (e) {
-      debugPrint('Error connecting to Meteor: $e');
       _isConnected = false;
       rethrow;
     }
@@ -28,11 +25,9 @@ class ProductService {
 
   Future<void> disconnect() async {
     try {
-      debugPrint('Disconnecting from Meteor server');
       await _meteorClient.disconnect();
       _isConnected = false;
     } catch (e) {
-      debugPrint('Error disconnecting: $e');
       rethrow;
     }
   }
@@ -58,37 +53,26 @@ class ProductService {
     }
 
     try {
-      debugPrint(
-        'Fetching products: category=$category, availableOnly=$availableOnly',
-      );
-
       // Subscribe to the active product list (same as Meteor web client)
-      debugPrint('Subscribing to productOrderList.view');
       await _meteorClient.subscribe('productOrderList.view');
       
       await Future.delayed(Duration(milliseconds: 500));
       
       // Get ProductLists from local collection
       final productListDocs = _meteorClient.getCollectionDocuments('ProductLists');
-      debugPrint('Received ${productListDocs.length} product list(s) from server');
       
       if (productListDocs.isEmpty) {
-        debugPrint('⚠️ No active ProductList available');
         throw Exception('No products available today. Please check back later.');
       }
 
       // Get the first ProductList (typically the only one for today)
       final activeProductList = productListDocs.first;
-      debugPrint('✅ Found active ProductList: ${activeProductList['_id']}');
       
       // Debug: Log all fields in the ProductList
-      debugPrint('📋 ProductList fields: ${activeProductList.keys.toList()}');
-      debugPrint('📋 Full ProductList data: $activeProductList');
 
       // Extract and store the updatedAt timestamp
       // Meteor sends dates as EJSON format: {"$date": milliseconds}
       final updatedAt = activeProductList['updatedAt'];
-      debugPrint('🕐 Raw updatedAt value: $updatedAt (type: ${updatedAt.runtimeType})');
       if (updatedAt is DateTime) {
         lastProductListUpdatedAt = updatedAt;
       } else if (updatedAt is Map<String, dynamic> && updatedAt.containsKey('\$date')) {
@@ -96,26 +80,19 @@ class ProductService {
           final milliseconds = updatedAt['\$date'];
           if (milliseconds is int) {
             lastProductListUpdatedAt = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-            debugPrint('✅ Parsed updatedAt from EJSON: $lastProductListUpdatedAt');
           }
         } catch (e) {
-          debugPrint('⚠️ Could not parse EJSON updatedAt: $updatedAt, Error: $e');
         }
       } else if (updatedAt is String) {
         try {
           lastProductListUpdatedAt = DateTime.parse(updatedAt);
-          debugPrint('✅ Parsed updatedAt from ISO8601 string: $lastProductListUpdatedAt');
         } catch (e) {
-          debugPrint('⚠️ Could not parse ISO8601 updatedAt: $updatedAt, Error: $e');
         }
       } else {
-        debugPrint('⚠️ updatedAt has unexpected type: ${updatedAt.runtimeType}, value: $updatedAt');
       }
 
       // Extract products array from ProductList
       final productsList = activeProductList['products'] as List<dynamic>? ?? [];
-      debugPrint('✅ Found ${productsList.length} products in active ProductList');
-      debugPrint('✅ ProductList updatedAt timestamp: $lastProductListUpdatedAt');
       
       final products = productsList
           .cast<Map<String, dynamic>>()
@@ -125,13 +102,11 @@ class ProductService {
       // Filter by category if specified
       if (category != null && category.isNotEmpty && category != 'All') {
         final filtered = products.where((p) => p.category == category).toList();
-        debugPrint('   Filtered to ${filtered.length} products in category: $category');
         return filtered;
       }
 
       return products;
     } catch (e) {
-      debugPrint('Error fetching products: $e');
       rethrow;
     }
   }
@@ -207,7 +182,6 @@ class ProductService {
     }
 
     try {
-      debugPrint('Fetching product: $productId');
       
       final products = _generateMockProducts();
       return products.firstWhere(
@@ -215,7 +189,6 @@ class ProductService {
         orElse: () => throw Exception('Product not found'),
       );
     } catch (e) {
-      debugPrint('Error fetching product by ID: $e');
       rethrow;
     }
   }
@@ -235,7 +208,6 @@ class ProductService {
 
       return ['All', ...categories.toList()..sort()];
     } catch (e) {
-      debugPrint('Error fetching categories: $e');
       rethrow;
     }
   }
@@ -253,7 +225,6 @@ class ProductService {
     }
 
     final lowerQuery = query.toLowerCase().trim();
-    debugPrint('Searching products for: "$lowerQuery"');
 
     final results = products.where((product) {
       final nameMatch = product.name.toLowerCase().contains(lowerQuery);
@@ -261,7 +232,6 @@ class ProductService {
       return nameMatch || descriptionMatch;
     }).toList();
 
-    debugPrint('Search results: ${results.length} products found');
     return results;
   }
 }

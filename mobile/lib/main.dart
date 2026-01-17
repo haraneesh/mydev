@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'config/theme.dart';
+import 'config/onesignal_config.dart';
 import 'models/auth_state.dart';
 import 'providers/cart_provider.dart';
 import 'providers/auth_provider.dart';
@@ -10,8 +12,25 @@ import 'services/meteor_client.dart';
 import 'services/order_service.dart';
 import 'services/auth_service.dart';
 import 'services/settings_service.dart';
+import 'services/onesignal_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables from .env file
+  await dotenv.load(fileName: '.env');
+
+  // Initialize OneSignal
+  try {
+    final appId = OneSignalConfig.getAppId();
+    await OneSignalService.initialize(appId);
+    OneSignalConfig.logConfigStatus();
+    OneSignalService.logStatus();
+  } catch (e) {
+    debugPrint('❌ Failed to initialize OneSignal: $e');
+    // Continue app startup even if OneSignal fails
+  }
+
   runApp(const MyApp());
 }
 
@@ -40,7 +59,6 @@ class _MyAppState extends State<MyApp> {
     // This ensures fresh settings are fetched every time the app starts
     settingsService = SettingsService(meteorClient: meteorClient);
     settingsService.clearCache();
-    debugPrint('📱 App started - Settings cache cleared, will fetch fresh settings on first request');
   }
 
   @override

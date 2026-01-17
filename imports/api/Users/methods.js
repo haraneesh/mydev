@@ -461,6 +461,13 @@ Meteor.methods({
 
     const usr = await createNewUser(user);
 
+    // Set clear cart after order to true for new users
+    await Meteor.users.updateAsync(usr._id, {
+      $set: {
+        'settings.clearCartAfterOrder': true,
+      },
+    });
+
     notifyUserSignUp(
       `${user.profile.name.first} ${user.profile.name.last}, 
     First Name: ${user.profile.name.first}
@@ -763,11 +770,7 @@ Meteor.methods({
         throw new Meteor.Error('user-not-found', 'User not found');
       }
 
-      console.log('[auth.getCurrentUser] Full user object from DB:', JSON.stringify(user, null, 2));
-      console.log('[auth.getCurrentUser] user.profile:', user.profile);
-      console.log('[auth.getCurrentUser] user.settings:', user.settings);
-
-      const responseData = {
+      return {
         user: {
           _id: user._id,
           phone: user.username,
@@ -795,10 +798,6 @@ Meteor.methods({
           },
         },
       };
-
-      console.log('[auth.getCurrentUser] Response being sent to client:', JSON.stringify(responseData, null, 2));
-
-      return responseData;
     } catch (error) {
       console.error('[auth.getCurrentUser] Error:', error);
       if (error instanceof Meteor.Error) {

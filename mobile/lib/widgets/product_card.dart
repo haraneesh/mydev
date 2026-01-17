@@ -57,9 +57,7 @@ class _ProductCardState extends State<ProductCard> {
           _isLoadingImage = false;
         });
       }
-      debugPrint('🖼️ Loaded image URL for ${widget.product.name}: $_imageUrl (using: $imageName)');
     } catch (e) {
-      debugPrint('Error loading image URL: $e');
       if (mounted) {
         setState(() => _isLoadingImage = false);
       }
@@ -74,16 +72,12 @@ class _ProductCardState extends State<ProductCard> {
     
     return Consumer<CartProvider>(
       builder: (context, cartProvider, _) {
-        debugPrint('🏗️ ProductCard.build() REBUILDING for product: ${widget.product.name}');
-        debugPrint('   📊 CartProvider has ${cartProvider.items.length} items');
         
         // Check if product is in cart and get its cart unit/price
         final cartItem = cartProvider.items
             .where((item) => item.product.id == widget.product.id)
             .firstOrNull;
         
-        debugPrint('   🔍 Looking for product ID: ${widget.product.id}');
-        debugPrint('   📦 Cart product IDs: ${cartProvider.items.map((i) => i.product.id).toList()}');
         
         // Determine which unit to display
         late double displayUnit;
@@ -93,19 +87,16 @@ class _ProductCardState extends State<ProductCard> {
           // Product is in cart - use its selected unit and price
           displayUnit = cartItem.selectedUnit;
           displayUnitPrice = cartItem.selectedUnitPrice;
-          debugPrint('   ✅ Found in cart! selectedUnit: $displayUnit, price: $displayUnitPrice');
         } else {
           // Product not in cart - use lowest unit
           final units = _parseUnitsForSelection();
           final nonZeroUnits = units.where((u) => u > 0).toList();
           displayUnit = nonZeroUnits.isNotEmpty ? nonZeroUnits.first : 1.0;
           displayUnitPrice = widget.product.calculateUnitPrice(displayUnit);
-          debugPrint('   ⭕ NOT in cart, using default unit: $displayUnit, price: $displayUnitPrice');
         }
         
         // Format the display unit
         final displayUnitDisplay = _convertToDisplayUnit(displayUnit, parsedUnitOfSale);
-        debugPrint('   🎨 Display unit formatted as: $displayUnitDisplay');
 
     return Container(
       decoration: BoxDecoration(
@@ -116,7 +107,7 @@ class _ProductCardState extends State<ProductCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 90,
+            height: 80,
             width: double.infinity,
             child: Container(
               decoration: BoxDecoration(
@@ -151,49 +142,7 @@ class _ProductCardState extends State<ProductCard> {
                          ),
                       ),
                     ),
-                  // Add button overlay (bottom-right) - oblong pill shape, green when in cart
-                  Positioned(
-                    bottom: 0,
-                    right: 4,
-                    child: Consumer<CartProvider>(
-                      builder: (context, cartProvider, _) {
-                        // Check if product is in cart for button color
-                        final isInCart = cartProvider.items.any(
-                          (item) => item.product.id == widget.product.id,
-                        );
-                        return SizedBox(
-                          height: 24,
-                          width: 42,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isInCart ? AppColors.success : AppColors.primary,
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onPressed: () {
-                              // Show unit selection modal
-                              showDialog(
-                                context: context,
-                                builder: (context) => UnitSelectionModal(
-                                  product: widget.product,
-                                  onUnitSelected: (selectedUnit) {
-                                    cartProvider.addItem(widget.product, 1.0, selectedUnit: selectedUnit);
-                                    widget.onAddToCart?.call();
-                                  },
-                                ),
-                              );
-                            },
-                            child: Text(
-                               'ADD',
-                               style: getButtonTextStyle(),
-                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+
                 ],
               ),
             ),
@@ -204,43 +153,76 @@ class _ProductCardState extends State<ProductCard> {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-              child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                // Product Name (3 lines max)
-                Text(
-                   widget.product.name,
-                   maxLines: 3,
-                   overflow: TextOverflow.ellipsis,
-                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+               child: Column(
+                   mainAxisSize: MainAxisSize.max,
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   children: [
+                 // Product Name (3 lines max)
+                 Text(
+                    widget.product.name,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                       fontSize: 14,
+                       fontWeight: FontWeight.w700,
+                       color: AppColors.textPrimary,
+                   ),
                   ),
-                 ),
-                 const Spacer(),
-                 // Row 1: Units (left) | Price (right)
-                  Row(
+                  const Spacer(),
+                 // Row: Units and Price (left) | ADD button (right)
+                 Row(
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
                      Expanded(
                        child: Text(
-                         displayUnitDisplay,
+                         '$displayUnitDisplay, ₹${displayUnitPrice.toStringAsFixed(0)}',
                          maxLines: 1,
                          overflow: TextOverflow.ellipsis,
                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                            color: AppColors.textSecondary,
-                           fontSize: 12,
+                           fontSize: 14,
+                           fontWeight: FontWeight.w600,
                          ),
                        ),
                      ),
-                     Text(
-                       '₹${displayUnitPrice.toStringAsFixed(0)}',
-                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                         fontSize: 12,
-                         fontWeight: FontWeight.w600,
-                       ),
+                     Consumer<CartProvider>(
+                       builder: (context, cartProvider, _) {
+                         // Check if product is in cart for button color
+                         final isInCart = cartProvider.items.any(
+                           (item) => item.product.id == widget.product.id,
+                         );
+                         return SizedBox(
+                           height: 24,
+                           width: 42,
+                           child: ElevatedButton(
+                             style: ElevatedButton.styleFrom(
+                               backgroundColor: isInCart ? AppColors.success : AppColors.primary,
+                               padding: EdgeInsets.zero,
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(12),
+                               ),
+                             ),
+                             onPressed: () {
+                               // Show unit selection modal
+                               showDialog(
+                                 context: context,
+                                 builder: (context) => UnitSelectionModal(
+                                   product: widget.product,
+                                   onUnitSelected: (selectedUnit) {
+                                     cartProvider.addItem(widget.product, 1.0, selectedUnit: selectedUnit);
+                                     widget.onAddToCart?.call();
+                                   },
+                                 ),
+                               );
+                             },
+                             child: Text(
+                               'ADD',
+                               style: getButtonTextStyle(),
+                             ),
+                           ),
+                         );
+                       },
                      ),
                    ],
                  ),
@@ -265,7 +247,6 @@ class _ProductCardState extends State<ProductCard> {
     try {
       return widget.product.getAvailableUnits();
     } catch (e) {
-      debugPrint('Error parsing unitsForSelection: $e');
       return [1.0, 2.0, 3.0, 4.0, 5.0];
     }
   }
@@ -323,7 +304,6 @@ class _ProductCardState extends State<ProductCard> {
         return discount != null && discount > 0;
       });
     } catch (e) {
-      debugPrint('Error checking discount: $e');
       return false;
     }
   }
@@ -352,7 +332,6 @@ class _ProductCardState extends State<ProductCard> {
        _imageUrl!,
        fit: BoxFit.contain,
        errorBuilder: (context, error, stackTrace) {
-        debugPrint('Error loading image from $_imageUrl: $error');
         return Center(
           child: Icon(
             Icons.broken_image,

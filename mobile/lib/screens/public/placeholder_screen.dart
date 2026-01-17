@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../widgets/app_bar_with_logo.dart';
+import '../../widgets/background_widget.dart';
 
 class PlaceholderScreen extends StatelessWidget {
   const PlaceholderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppBarWithLogo(),
-      body: Center(
+    return BackgroundWidget(
+      child: Scaffold(
+        appBar: const AppBarWithLogo(),
+        body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -42,6 +44,7 @@ class PlaceholderScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

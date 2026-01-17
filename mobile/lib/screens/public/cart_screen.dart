@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
+import '../../models/product.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/unit_selection_modal.dart';
@@ -8,6 +9,7 @@ import '../../widgets/order_footer.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
 import '../../services/settings_service.dart';
+import '../../services/product_service.dart';
 import 'home_screen.dart';
 import 'user_profile_screen.dart';
 
@@ -20,15 +22,33 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   late SettingsService _settingsService;
+  late ProductService _productService;
   final Map<String, String> _imageUrlCache = {};
   double _minimumOrderAmount = 1000.0;
   String _minimumOrderMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+  List<Product> _currentProductList = [];
+  bool _isLoadingProductList = false;
 
   @override
   void initState() {
     super.initState();
     _settingsService = SettingsService();
+    _productService = ProductService();
     _loadSettings();
+    _loadProductList();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _commitRemovedItemsAndNavigate(VoidCallback onNavigate) async {
+    final cartProvider = context.read<CartProvider>();
+    await cartProvider.commitRemovedItems();
+    if (mounted) {
+      onNavigate();
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -41,7 +61,37 @@ class _CartScreenState extends State<CartScreen> {
         _minimumOrderMessage = message;
       });
     } catch (e) {
-      debugPrint('Error loading cart settings: $e');
+    }
+  }
+
+  Future<void> _loadProductList() async {
+    if (_isLoadingProductList) return;
+    
+    try {
+      setState(() => _isLoadingProductList = true);
+      
+      if (!_productService.isConnected) {
+        await _productService.connect();
+      }
+      
+      final products = await _productService.fetchProducts();
+      
+      if (mounted) {
+        setState(() {
+          _currentProductList = products;
+        });
+        
+        // Update cart provider with current product availability
+        final cartProvider = context.read<CartProvider>();
+        cartProvider.updateProductAvailability(products);
+      }
+      
+    } catch (e) {
+      // Continue without availability data if fetch fails
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingProductList = false);
+      }
     }
   }
 
@@ -55,7 +105,6 @@ class _CartScreenState extends State<CartScreen> {
       _imageUrlCache[imageName] = completeUrl;
       return completeUrl;
     } catch (e) {
-      debugPrint('Error building image URL for $imageName: $e');
       return '';
     }
   }
@@ -63,17 +112,26 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return BackgroundWidget(
-      child: Scaffold(
-        extendBodyBehindAppBar: false,
-        appBar: AppBarWithLogo(
-        showLeading: true,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+      child: WillPopScope(
+        onWillPop: () async {
+          // Commit removed items when navigating away
+          if (mounted) {
+            final cartProvider = context.read<CartProvider>();
+            await cartProvider.commitRemovedItems();
+          }
+          return true;
+        },
+        child: Scaffold(
+          extendBodyBehindAppBar: false,
+          appBar: AppBarWithLogo(
+          showLeading: true,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
           ),
         ),
-      ),
       drawer: Drawer(
         backgroundColor: Colors.white,
         child: ListView(
@@ -110,10 +168,12 @@ class _CartScreenState extends State<CartScreen> {
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
-                );
+                _commitRemovedItemsAndNavigate(() {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  );
+                });
               },
             ),
             ListTile(
@@ -126,10 +186,12 @@ class _CartScreenState extends State<CartScreen> {
               title: const Text('Profile'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const UserProfileScreen()),
-                );
+                _commitRemovedItemsAndNavigate(() {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+                  );
+                });
               },
             ),
             const Divider(),
@@ -171,10 +233,12 @@ class _CartScreenState extends State<CartScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const HomeScreen()),
-                      );
+                      _commitRemovedItemsAndNavigate(() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        );
+                      });
                     },
                     child: Text(
                       'CONTINUE SHOPPING',
@@ -186,24 +250,38 @@ class _CartScreenState extends State<CartScreen> {
             );
           }
 
-          // Group items by category (active items)
-          final grouped = <String, List<dynamic>>{};
-          final categoryOrder = <String>[];
+          // Separate items by availability status
+           final availability = _currentProductList.isNotEmpty
+               ? cartProvider.separateItemsByAvailability(_currentProductList)
+               : {'available': cartProvider.items, 'unavailable': <CartItem>[]};
+           
+           final availableItems = availability['available'] as List<CartItem>;
+           final unavailableItems = availability['unavailable'] as List<CartItem>;
 
-          for (final item in cartProvider.items) {
-            final category = item.product.category;
-            if (!grouped.containsKey(category)) {
-              grouped[category] = [];
-              categoryOrder.add(category);
-            }
-            grouped[category]!.add(item);
-          }
+           // Group available items by category
+           final grouped = <String, List<dynamic>>{};
+           final categoryOrder = <String>[];
 
-          // Add removed items as a separate category if any exist
-          if (cartProvider.removedItems.isNotEmpty) {
-            grouped['Removed'] = cartProvider.removedItems;
-            categoryOrder.add('Removed');
-          }
+           for (final item in availableItems) {
+             final category = item.product.category;
+             if (!grouped.containsKey(category)) {
+               grouped[category] = [];
+               categoryOrder.add(category);
+             }
+             grouped[category]!.add(item);
+           }
+
+           // Add removed items as a separate category if any exist
+           if (cartProvider.removedItems.isNotEmpty) {
+             grouped['Removed'] = cartProvider.removedItems;
+             categoryOrder.add('Removed');
+           }
+
+           // Add unavailable items as a separate category if any exist (at the end)
+           if (unavailableItems.isNotEmpty) {
+             grouped['Not available to order'] = unavailableItems;
+             categoryOrder.add('Not available to order');
+           }
 
           return Column(
             children: [
@@ -225,13 +303,14 @@ class _CartScreenState extends State<CartScreen> {
                       // Category header
                       if (currentIndex == index) {
                         final isRemoved = category == 'Removed';
+                        final isUnavailable = category == 'Not available to order';
                         return Padding(
                           padding: const EdgeInsets.only(top: 12, bottom: 8),
                           child: Text(
                             category,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: isRemoved ? Colors.grey[600] : AppColors.primary,
+                              color: isRemoved ? Colors.grey[600] : (isUnavailable ? Colors.brown[400] : AppColors.primary),
                             ),
                           ),
                         );
@@ -242,20 +321,21 @@ class _CartScreenState extends State<CartScreen> {
                       for (final item in grouped[category]!) {
                         if (currentIndex == index) {
                           final isRemoved = category == 'Removed';
+                          final isUnavailable = category == 'Not available to order';
                           return Card(
                             elevation: 0,
-                            color: isRemoved ? Colors.grey[100] : Colors.white,
+                            color: isRemoved || isUnavailable ? Colors.grey[100] : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6),
                               side: BorderSide(
-                                color: isRemoved ? Colors.grey[300]! : AppColors.border,
+                                color: isRemoved || isUnavailable ? Colors.grey[300]! : AppColors.border,
                                 width: 1,
                               ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: Opacity(
-                                opacity: isRemoved ? 0.6 : 1.0,
+                                opacity: isRemoved || isUnavailable ? 0.6 : 1.0,
                                 child: Row(
                                   children: [
                                     // Product Image
@@ -311,86 +391,89 @@ class _CartScreenState extends State<CartScreen> {
                                         ],
                                       ),
                                     ),
-                                    // Price and Edit Button (hidden for removed items)
-                                    if (!isRemoved)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            '₹${item.subtotal.toStringAsFixed(0)}',
-                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.primary,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          SizedBox(
-                                            height: 28,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                final provider = context.read<CartProvider>();
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (dialogContext) => UnitSelectionModal(
-                                                    product: item.product,
-                                                    onUnitSelected: (selectedUnit) {
-                                                      provider.addItem(
-                                                        item.product,
-                                                        item.quantity,
-                                                        selectedUnit: selectedUnit,
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.info,
-                                                foregroundColor: Colors.white,
-                                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                                                minimumSize: const Size(0, 28),
-                                              ),
-                                              child: Text(
-                                                'EDIT',
-                                                style: getButtonTextStyle(),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    // Restore button for removed items
-                                    if (isRemoved)
-                                      SizedBox(
-                                        height: 28,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            final provider = context.read<CartProvider>();
-                                            showDialog(
-                                              context: context,
-                                              builder: (dialogContext) => UnitSelectionModal(
-                                                product: item.product,
-                                                onUnitSelected: (selectedUnit) {
-                                                  provider.addItem(
-                                                    item.product,
-                                                    item.quantity,
-                                                    selectedUnit: selectedUnit,
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppColors.info,
-                                            foregroundColor: Colors.white,
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                                            minimumSize: const Size(0, 28),
-                                          ),
-                                          child: Text(
-                                            'RESTORE',
-                                            style: getButtonTextStyle(),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                    // Price and Edit Button (hidden for removed and unavailable items)
+                                     if (!isRemoved && !isUnavailable)
+                                       Column(
+                                         crossAxisAlignment: CrossAxisAlignment.end,
+                                         children: [
+                                           Text(
+                                             '₹${item.subtotal.toStringAsFixed(0)}',
+                                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                               fontWeight: FontWeight.w700,
+                                               color: AppColors.primary,
+                                             ),
+                                           ),
+                                           const SizedBox(height: 4),
+                                           SizedBox(
+                                             height: 28,
+                                             child: ElevatedButton(
+                                               onPressed: () {
+                                                 final provider = context.read<CartProvider>();
+                                                 showDialog(
+                                                   context: context,
+                                                   builder: (dialogContext) => UnitSelectionModal(
+                                                     product: item.product,
+                                                     onUnitSelected: (selectedUnit) {
+                                                       provider.addItem(
+                                                         item.product,
+                                                         item.quantity,
+                                                         selectedUnit: selectedUnit,
+                                                       );
+                                                     },
+                                                   ),
+                                                 );
+                                               },
+                                               style: ElevatedButton.styleFrom(
+                                                 backgroundColor: AppColors.info,
+                                                 foregroundColor: Colors.white,
+                                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                                 minimumSize: const Size(0, 28),
+                                               ),
+                                               child: Text(
+                                                 'EDIT',
+                                                 style: getButtonTextStyle(),
+                                               ),
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                     // Empty space for unavailable items
+                                     if (isUnavailable)
+                                       const SizedBox.shrink(),
+                                     // Restore button for removed items
+                                     if (isRemoved)
+                                       SizedBox(
+                                         height: 28,
+                                         child: ElevatedButton(
+                                           onPressed: () {
+                                             final provider = context.read<CartProvider>();
+                                             showDialog(
+                                               context: context,
+                                               builder: (dialogContext) => UnitSelectionModal(
+                                                 product: item.product,
+                                                 onUnitSelected: (selectedUnit) {
+                                                   provider.addItem(
+                                                     item.product,
+                                                     item.quantity,
+                                                     selectedUnit: selectedUnit,
+                                                   );
+                                                 },
+                                               ),
+                                             );
+                                           },
+                                           style: ElevatedButton.styleFrom(
+                                             backgroundColor: AppColors.info,
+                                             foregroundColor: Colors.white,
+                                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                             minimumSize: const Size(0, 28),
+                                           ),
+                                           child: Text(
+                                             'RESTORE',
+                                             style: getButtonTextStyle(),
+                                           ),
+                                         ),
+                                       ),
+                                     ],
                                 ),
                               ),
                             ),
@@ -429,6 +512,7 @@ class _CartScreenState extends State<CartScreen> {
               ],
               );
               },
+              ),
               ),
               ),
               );

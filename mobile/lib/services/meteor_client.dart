@@ -9,7 +9,7 @@ class MeteorClient {
   final Map<String, Map<String, dynamic>> collections = {};
   final StreamController<MeteorMessage> _messageController =
       StreamController.broadcast();
-  final Map<String, Completer<Map<String, dynamic>>> _pendingMethods = {};
+  final Map<String, Completer<dynamic>> _pendingMethods = {};
   bool isConnectedInternal = false;
   int _methodId = 0;
   String? _authToken;
@@ -86,7 +86,7 @@ class MeteorClient {
     );
   }
 
-  Future<Map<String, dynamic>> call(
+  Future<dynamic> call(
     String method,
     List<dynamic> params,
   ) async {
@@ -95,7 +95,7 @@ class MeteorClient {
     }
 
     final id = (++_methodId).toString();
-    final completer = Completer<Map<String, dynamic>>();
+    final completer = Completer<dynamic>();
     _pendingMethods[id] = completer;
 
     try {
@@ -187,11 +187,26 @@ class MeteorClient {
         break;
       case 'result':
         final id = message['id'] as String?;
-        final result = message['result'] as Map<String, dynamic>?;
+        final resultData = message['result'];
+        
+        // Handle various result types: Map, String, or other types
+        dynamic result;
+        if (resultData is Map<String, dynamic>) {
+          result = resultData;
+        } else if (resultData is String) {
+          // Server returned a string (e.g., orderId)
+          result = resultData;
+        } else if (resultData != null) {
+          // Try to pass through other types as-is
+          result = resultData;
+        } else {
+          // No result provided
+          result = {};
+        }
         
         if (id != null && _pendingMethods.containsKey(id)) {
           final completer = _pendingMethods.remove(id);
-          completer?.complete(result ?? {});
+          completer?.complete(result);
         }
         break;
       case 'error':

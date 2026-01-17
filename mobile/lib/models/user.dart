@@ -40,7 +40,7 @@ class User {
     this.dietaryPreference,
     this.packingPreference,
     this.productUpdatePreference,
-    this.clearCartAfterOrder = false,
+    this.clearCartAfterOrder = true,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -69,7 +69,7 @@ class User {
       dietaryPreference: settings['dietPreference'],
       packingPreference: settings['packingPreference'],
       productUpdatePreference: settings['productUpdatePreference'],
-      clearCartAfterOrder: settings['clearCartAfterOrder'] ?? false,
+      clearCartAfterOrder: settings['clearCartAfterOrder'] ?? true,
     );
   }
 

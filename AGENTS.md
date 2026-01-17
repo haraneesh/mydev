@@ -15,4 +15,6 @@ Use `@/openspec/AGENTS.md` to learn:
 
 Keep this managed block so 'openspec update' can refresh the instructions.
 
+You are making changes to `@/mobile` or `@/openspec/`. If you are changing code to any other folder ask for permission prior to do it.
+
 <!-- OPENSPEC:END -->

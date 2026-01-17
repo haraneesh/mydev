@@ -144,7 +144,7 @@ const addUpdateOrder = async (order) => {
   const isUpdate = !!order._id;
   
   const { loggedInUserId } = order;
-  
+
   if (isUpdate) {
     const existingOrder = await Orders.findOneAsync(order._id);
     
@@ -216,7 +216,7 @@ const addUpdateOrder = async (order) => {
   } else {
     delete order._id;
 
-    const orderId = await Orders.insertAsync(order);
+    orderId = await Orders.insertAsync(order);
 
     await ProductLists.updateAsync(
       { _id: order.productOrderListId },

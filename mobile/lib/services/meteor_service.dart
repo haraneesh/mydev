@@ -8,12 +8,10 @@ class MeteorService {
     List<dynamic> args,
   ) async {
     try {
-      debugPrint('Calling Meteor method: $methodName with args: $args');
       throw UnimplementedError(
         'Meteor DDP implementation pending - method: $methodName',
       );
     } catch (e) {
-      debugPrint('Meteor method error: $e');
       rethrow;
     }
   }

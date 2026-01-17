@@ -5,21 +5,37 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/background_widget.dart';
 import 'user_profile_screen.dart';
+import 'sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String? prefillPhone;
+  final bool initialSignUpMode;
+
+  const LoginScreen({
+    this.prefillPhone,
+    this.initialSignUpMode = false,
+    super.key,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
+  late final TextEditingController _phoneController;
+  late final TextEditingController _passwordController;
   bool _isLoading = false;
   bool _showPassword = false;
   bool _isSignUpMode = false;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController = TextEditingController(text: widget.prefillPhone ?? '');
+    _passwordController = TextEditingController();
+    _isSignUpMode = widget.initialSignUpMode;
+  }
 
   @override
   void dispose() {
@@ -42,37 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleSignUp() async {
-    if (!_canSubmit()) return;
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final authProvider = context.read<AuthProvider>();
-      await authProvider.signup(_phoneController.text, _passwordController.text);
-
-      if (mounted) {
-        setState(() {
-          _phoneController.clear();
-          _passwordController.clear();
-          _isSignUpMode = false;
-          _errorMessage = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created! You can now login.')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _errorMessage = e.toString().replaceAll('Exception: ', '');
-        });
-      }
-    }
+    // Navigate to SignUpScreen instead of inline signup
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SignUpScreen(
+          prefillPhone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+        ),
+      ),
+    );
   }
 
   Future<void> _handleLogin() async {
@@ -155,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
               enabled: !_isLoading,
               decoration: InputDecoration(
                 labelText: 'Password',
-                hintText: _isSignUpMode ? 'At least 4 characters' : 'Password',
+                hintText: 'Password',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
@@ -163,9 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 errorText: _passwordController.text.isNotEmpty &&
                         !_isPasswordValid(_passwordController.text)
-                    ? _isSignUpMode
-                        ? 'Password must be at least 4 characters'
-                        : 'Password is required'
+                    ? 'Password is required'
                     : null,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -194,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 disabledForegroundColor: Colors.white,
               ),
               onPressed: _canSubmit() && !_isLoading
-                  ? (_isSignUpMode ? _handleSignUp : _handleLogin)
+                  ? _handleLogin
                   : null,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -207,49 +199,43 @@ class _LoginScreenState extends State<LoginScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : Text(
-                        _isSignUpMode ? 'SIGN UP' : 'LOGIN',
-                        style: getButtonTextStyle(),
+                    : const Text(
+                        'LOGIN',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
+                          color: Colors.white,
+                        ),
                       ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _isSignUpMode
-                        ? 'Already have an account? '
-                        : 'New to Suvai? ',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.secondary,
                     ),
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _isSignUpMode = !_isSignUpMode;
-                              _errorMessage = null;
-                              _phoneController.clear();
-                              _passwordController.clear();
-                            });
-                          },
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    const Text(
+                    'New to Suvai? ',
+                    style: TextStyle(fontSize: 16),
+                    ),
+                    TextButton(
+                    style: TextButton.styleFrom(
+                     foregroundColor: AppColors.secondary,
+                    ),
+                    onPressed: _isLoading ? null : _handleSignUp,
                     child: Text(
-                       _isSignUpMode ? 'LOGIN' : 'CREATE AN ACCOUNT',
-                       style: getButtonTextStyle(
-                         color: AppColors.secondary,
-                       ),
-                     ),
-                  ),
-                ],
-              ),
-            ),
+                      'CREATE AN ACCOUNT',
+                      style: getButtonTextStyle(
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                    ),
+                    ],
+                    ),
+                    ),
             const SizedBox(height: 24),
             Row(
               children: const [
@@ -269,8 +255,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               onPressed: _isLoading
                   ? null
-                  : () {
-                      Navigator.of(context).pop();
+                  : () async {
+                      final authProvider = context.read<AuthProvider>();
+                      await authProvider.continueAsGuest();
                     },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),

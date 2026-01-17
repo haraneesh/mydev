@@ -42,21 +42,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     final authProvider = context.read<AuthProvider>();
     final user = authProvider.currentUser;
     
-    // Debug: Print server values
-    debugPrint('=== SERVER USER DATA ===');
-    debugPrint('firstName: ${user?.firstName}');
-    debugPrint('lastName: ${user?.lastName}');
-    debugPrint('email: ${user?.email}');
-    debugPrint('whMobilePhone: ${user?.whMobilePhone}');
-    debugPrint('deliveryAddress: ${user?.deliveryAddress}');
-    debugPrint('deliveryPincode: ${user?.deliveryPincode}');
-    debugPrint('salutation: ${user?.salutation}');
-    debugPrint('dietaryPreference: ${user?.dietaryPreference}');
-    debugPrint('packingPreference: ${user?.packingPreference}');
-    debugPrint('productUpdatePreference: ${user?.productUpdatePreference}');
-    debugPrint('clearCartAfterOrder: ${user?.clearCartAfterOrder}');
-    debugPrint('=======================');
-    
+
     _firstNameController.text = user?.firstName ?? '';
     _lastNameController.text = user?.lastName ?? '';
     _emailController.text = user?.email ?? '';

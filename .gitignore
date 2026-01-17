@@ -11,6 +11,7 @@ docs/thoughts/shared/implementation_summary/temp
 # Firebase/GCP configuration files (sensitive credentials)
 google-services*.json
 cordova-build-override/platforms/android/app/google-services*.json
-
+openspec/changes
+openspec/specs
 # macOS system files
 .DS_Store

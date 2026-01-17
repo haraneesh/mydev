@@ -133,17 +133,30 @@ Meteor.methods({
 
       const playerIds = playerRecords.map(record => record.playerId);
 
-      // Create notification
+      // Get logo URL for notifications from Product_Images setting
+      const baseImageUrl = Meteor.settings.public?.Product_Images || 'https://storage.googleapis.com/suvai_images_20/';
+      const logoUrl = `${baseImageUrl}logo-nm.png`;
+
+      // Create notification with logo branding
       const notification = {
         headings: { en: title },
         contents: { en: message },
         include_player_ids: playerIds,
+        
+        // Android: Use big_picture to show logo as a compact thumbnail
+        // This displays the logo icon next to the notification text
+        big_picture: logoUrl,
+        
+        // Add brand color accent for Android
+        android_accent_color: 'FF6B9D84',  // Suvai green color
       };
 
       // Add additional data if provided (for deep linking)
       if (data) {
         notification.data = data;
       }
+
+      console.log('[sendNotification] Payload with logo:', { logoUrl, title, message });
 
       // Send via OneSignal
       if (oneSignalClient) {
@@ -190,17 +203,29 @@ Meteor.methods({
     }
 
     try {
-      // Create notification for all subscribed users
+      // Get logo URL for notifications from Product_Images setting
+      const baseImageUrl = Meteor.settings.public?.Product_Images || 'https://storage.googleapis.com/suvai_images_20/';
+      const logoUrl = `${baseImageUrl}logo-nm.png`;
+
+      // Create notification for all subscribed users with branding
       const notification = {
         headings: { en: title },
         contents: { en: message },
         included_segments: ['Subscribed Users'], // OneSignal default segment
+        
+        // Android: Show logo as compact thumbnail next to text
+        big_picture: logoUrl,
+        
+        // Add brand color accent for Android
+        android_accent_color: 'FF6B9D84',  // Suvai green color
       };
 
       // Add additional data if provided
       if (data) {
         notification.data = data;
       }
+
+      console.log('[sendNotificationToAll] Payload with logo:', { logoUrl, title, message });
 
       // Send via OneSignal
       if (oneSignalClient) {
@@ -295,6 +320,42 @@ Meteor.methods({
       handleMethodException(exception);
     }
   },
+
+  /**
+   * Admin utility: Clear all invalid player IDs from the database
+   * Use this when you get "All player IDs are invalid" error
+   */
+  'clearAllNotifications': async function clearAllNotifications() {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized', 'You must be logged in');
+    }
+
+    if (!Meteor.isServer) {
+      return;
+    }
+
+    // Import Roles only on server
+    const { Roles } = require('meteor/alanning:roles');
+    const constants = require('../../modules/constants').default;
+
+    // Check if user is admin
+    const isAdmin = await Roles.userIsInRoleAsync(this.userId, constants.Roles.admin.name);
+    if (!isAdmin) {
+      throw new Meteor.Error('not-authorized', 'Only admins can clear notifications');
+    }
+
+    try {
+      const result = await Notifications.removeAsync({});
+      console.log(`Admin cleared all notifications. Deleted ${result} records.`);
+      return { 
+        success: true, 
+        deletedCount: result,
+        message: 'All notification subscriptions cleared. Devices will need to re-register.' 
+      };
+    } catch (exception) {
+      handleMethodException(exception);
+    }
+  },
 });
 
 // Rate limiting
@@ -306,6 +367,7 @@ rateLimit({
     'getMyPlayerIds',
     'removePlayerId',
     'checkNotificationRequired',
+    'clearAllNotifications',
   ],
   limit: 5,
   timeRange: 1000,

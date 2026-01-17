@@ -25,14 +25,33 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _currentUser != null;
   String? get authToken => _authService.authToken;
 
-  Future<void> signup(String phone, String password) async {
+  Future<void> signup({
+    required String phone,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String deliveryAddress,
+    required String deliveryPincode,
+    String? eatingHealthyMeaning,
+  }) async {
     _authState = AuthState.authenticating;
     _error = null;
     notifyListeners();
 
     try {
-      await _authService.signup(phone, password);
-      _authState = AuthState.unauthenticated;
+      await _authService.signup(
+        phone: phone,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        deliveryAddress: deliveryAddress,
+        deliveryPincode: deliveryPincode,
+        eatingHealthyMeaning: eatingHealthyMeaning,
+      );
+      _currentUser = await _authService.getCurrentUser();
+      _authState = AuthState.authenticated;
       notifyListeners();
     } catch (e) {
       _authState = AuthState.error;
@@ -97,6 +116,30 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = null;
     }
     notifyListeners();
+  }
+
+  Future<void> continueAsGuest() async {
+    _authState = AuthState.authenticating;
+    _error = null;
+    notifyListeners();
+
+    try {
+      // Create a guest user object to mark authenticated state
+      _currentUser = User(
+        id: 'guest',
+        phone: '',
+        email: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      _authState = AuthState.authenticated;
+      notifyListeners();
+    } catch (e) {
+      _authState = AuthState.error;
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
   }
 
   Future<void> updateProfile({

@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE local files
+.vscode/
+!.vscode/launch.json
+!.vscode/extensions.json

@@ -19,47 +19,32 @@ class SettingsService {
   /// Settings are cached after the first fetch to avoid repeated requests
   Future<Map<String, dynamic>> getPublicSettings() async {
     if (_cachedSettings != null) {
-      debugPrint('Returning cached settings');
       return _cachedSettings!;
     }
 
     try {
-      debugPrint('Fetching public settings from Meteor server');
       
       // Attempt to call the Meteor method to get public settings
       try {
-        debugPrint('🔌 Attempting to call Meteor method: getPublicSettings');
         
         // Ensure MeteorClient is connected before calling methods
         if (!_meteorClient.isConnected) {
-          debugPrint('📡 MeteorClient not connected, attempting to connect...');
           await _meteorClient.connect();
-          debugPrint('✅ MeteorClient connected');
         }
         
         final result = await _meteorClient.call('getPublicSettings', []);
         if (result is Map<String, dynamic>) {
           _cachedSettings = result;
-          debugPrint('✅ Settings loaded from Meteor server');
-          debugPrint('   Product_Images: ${_cachedSettings!['Product_Images'] ?? "NOT SET"}');
-          debugPrint('   Product_Images_Version: ${_cachedSettings!['Product_Images_Version'] ?? "NOT SET"}');
           return _cachedSettings!;
         }
       } catch (methodError) {
-        debugPrint('⚠️ Meteor method call failed: $methodError');
-        debugPrint('   This could mean: MeteorClient not connected, method not registered, or network error');
       }
       
       // Fallback: Return mock settings
-      debugPrint('⚠️ Using mock settings as fallback (not from Meteor server)');
-      debugPrint('   This fallback will be used if Meteor method call fails');
       _cachedSettings = _generateMockSettings();
-      debugPrint('   Fallback Product_Images: ${_cachedSettings!['Product_Images']}');
       
-      debugPrint('Settings loaded: $_cachedSettings');
       return _cachedSettings!;
     } catch (e) {
-      debugPrint('Error fetching settings: $e');
       return _generateMockSettings();
     }
   }
@@ -77,15 +62,12 @@ class SettingsService {
         final minimumAmount = cartOrderConfig['MINIMUM_ORDER_AMT'];
         if (minimumAmount != null) {
           final amount = (minimumAmount is int) ? minimumAmount.toDouble() : minimumAmount as double;
-          debugPrint('Using minimum order amount from settings: $amount');
           return amount;
         }
       }
       
-      debugPrint('MINIMUM_ORDER_AMT not configured, using fallback: 1000.0');
       return 1000.0;
     } catch (e) {
-      debugPrint('Error getting minimum order amount: $e');
       return 1000.0;
     }
   }
@@ -102,16 +84,13 @@ class SettingsService {
       if (cartOrderConfig != null) {
         final message = cartOrderConfig['MINIMUMCART_ORDER_MSG'] as String?;
         if (message != null && message.isNotEmpty) {
-          debugPrint('Using minimum order message from settings');
           return message;
         }
       }
       
       const defaultMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
-      debugPrint('MINIMUMCART_ORDER_MSG not configured, using default message');
       return defaultMessage;
     } catch (e) {
-      debugPrint('Error getting minimum order message: $e');
       return 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
     }
   }
@@ -128,15 +107,12 @@ class SettingsService {
       if (productOrderConfig != null) {
         final defaultCategory = productOrderConfig['PAGE_TO_OPEN_DEFAULT'] as String?;
         if (defaultCategory != null && defaultCategory.isNotEmpty) {
-          debugPrint('Using default category from settings: $defaultCategory');
           return defaultCategory;
         }
       }
       
-      debugPrint('PAGE_TO_OPEN_DEFAULT not configured, using fallback: All');
       return 'All';
     } catch (e) {
-      debugPrint('Error getting default category: $e');
       return 'All';
     }
   }
@@ -149,14 +125,11 @@ class SettingsService {
       final settings = await getPublicSettings();
       final productImagesUrl = settings['Product_Images'] as String?;
       if (productImagesUrl != null && productImagesUrl.isNotEmpty) {
-        debugPrint('Using product images URL from settings: $productImagesUrl');
         return productImagesUrl;
       }
       
-      debugPrint('Product_Images not configured in settings');
       return '';
     } catch (e) {
-      debugPrint('Error getting product images URL: $e');
       return '';
     }
   }
@@ -167,19 +140,14 @@ class SettingsService {
   Future<String> getProductImagesVersion() async {
     try {
       final settings = await getPublicSettings();
-      debugPrint('🔍 Raw settings object: $settings');
       final productImagesVersion = settings['Product_Images_Version'] as String?;
-      debugPrint('📌 Product_Images_Version value from settings: $productImagesVersion (type: ${productImagesVersion.runtimeType})');
       
       if (productImagesVersion != null && productImagesVersion.isNotEmpty) {
-        debugPrint('✅ Using product images version from settings: $productImagesVersion');
         return productImagesVersion;
       }
       
-      debugPrint('⚠️ Product_Images_Version not configured in settings or is empty');
       return '';
     } catch (e) {
-      debugPrint('❌ Error getting product images version: $e');
       return '';
     }
   }
@@ -193,15 +161,11 @@ class SettingsService {
     }
 
     try {
-      debugPrint('🖼️ [buildProductImageUrl] Starting URL construction for: $imageName');
       var baseUrl = await getProductImagesUrl();
-      debugPrint('🖼️ [buildProductImageUrl] Got baseUrl: $baseUrl');
       
       final version = await getProductImagesVersion();
-      debugPrint('🖼️ [buildProductImageUrl] Got version: $version');
       
       if (baseUrl.isEmpty) {
-        debugPrint('❌ Cannot build image URL: base URL is empty');
         return '';
       }
       
@@ -216,7 +180,6 @@ class SettingsService {
         cleanImageName = cleanImageName.substring(1);
       }
       
-      debugPrint('🔗 [buildProductImageUrl] Building URL with: baseUrl=$baseUrl, imageName=$cleanImageName, version=$version');
       
       // Build URL with version query parameter if available
       String imageUrl;
@@ -226,10 +189,8 @@ class SettingsService {
         imageUrl = '$baseUrl/$cleanImageName';
       }
       
-      debugPrint('✅ [buildProductImageUrl] Final image URL: $imageUrl');
       return imageUrl;
     } catch (e) {
-      debugPrint('❌ [buildProductImageUrl] Error building product image URL: $e');
       return '';
     }
   }
@@ -263,13 +224,11 @@ class SettingsService {
   /// Clears the cached settings, forcing a fresh fetch on next call
   void clearCache() {
     _cachedSettings = null;
-    debugPrint('Settings cache cleared');
   }
 
   /// Refreshes settings from the server by clearing cache and fetching fresh data
   /// This ensures the latest settings are always retrieved
   Future<Map<String, dynamic>> refreshSettings() async {
-    debugPrint('🔄 Refreshing settings from server');
     clearCache();
     return await getPublicSettings();
   }

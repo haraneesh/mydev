@@ -2,7 +2,8 @@
     <application
         android:label="suvai"
         android:name="${applicationName}"
-        android:icon="@mipmap/suvai">
+        android:icon="@mipmap/suvai"
+        android:usesCleartextTraffic="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,6 +31,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+        <!-- OneSignal Notification Configuration -->
+        <meta-data
+            android:name="com.onesignal.NotificationLargeIcon"
+            android:resource="@drawable/logo_notification" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

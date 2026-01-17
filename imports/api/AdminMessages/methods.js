@@ -5,27 +5,16 @@ import Notifications from '../Notifications/Notifications';
 import rateLimit from '../../modules/rate-limit';
 import handleMethodException from '../../modules/handle-method-exception';
 
-// Import OneSignal Node SDK
-let OneSignal;
-if (Meteor.isServer) {
-  OneSignal = require('onesignal-node');
-}
-
-// Initialize OneSignal client on server (same pattern as Notifications/methods.js)
+// Import the pre-initialized OneSignal client from Notifications module
 let oneSignalClient;
 if (Meteor.isServer) {
-  const appId = Meteor.settings.private?.Signal?.oneSignalAppId;
-  const apiKey = Meteor.settings.private?.Signal?.oneSignalRestApiKey;
-  
-  console.log('AdminMessages: Initializing OneSignal client...');
-  console.log('AdminMessages: App ID:', appId ? 'Found' : 'NOT FOUND');
-  console.log('AdminMessages: API Key:', apiKey ? 'Found' : 'NOT FOUND');
-  
-  if (appId && apiKey) {
-    oneSignalClient = new OneSignal.Client(appId, apiKey);
-    console.log('AdminMessages: OneSignal client initialized successfully');
-  } else {
-    console.error('AdminMessages: OneSignal credentials not found in Meteor.settings.private.Signal');
+  // Import the already-initialized client to avoid duplicate initialization
+  try {
+    const notificationsModule = require('../Notifications/methods.js');
+    oneSignalClient = notificationsModule.oneSignalClient;
+    console.log('AdminMessages: OneSignal client imported from Notifications module');
+  } catch (error) {
+    console.error('AdminMessages: Failed to import OneSignal client:', error.message);
   }
 }
 
@@ -77,12 +66,24 @@ Meteor.methods({
 
       const playerIds = playerRecords.map(record => record.playerId);
 
+      // Construct logo URL from settings
+      const baseImageUrl = Meteor.settings.public?.Product_Images;
+      const imageVersion = Meteor.settings.public?.Product_Images_Version;
+      const logoUrl = baseImageUrl && imageVersion ? `${baseImageUrl}logo-nm.png?${imageVersion}` : null;
+
       // Create test notification
       const notification = {
         headings: { en: title },
         contents: { en: message },
         include_player_ids: playerIds,
+        priority: 10,  // High priority for both platforms
+        android_accent_color: '5f1d1c',  // Suvai brand color
       };
+      
+      // Add small icon badge if logo URL is available
+      if (logoUrl) {
+        notification.large_icon = logoUrl;
+      }
 
       // Send via OneSignal
       if (oneSignalClient) {
@@ -95,8 +96,8 @@ Meteor.methods({
           message: 'Test notification sent to your device(s).'
         };
       } else {
-        console.warn('OneSignal client not initialized');
-        return { sent: false, reason: 'client-not-ready' };
+        console.error('AdminMessages: OneSignal client not initialized in sendTestMessageToAdmin');
+        throw new Meteor.Error('onesignal-not-initialized', 'OneSignal client is not properly initialized. Check server logs and API credentials.');
       }
     } catch (exception) {
       handleMethodException(exception);
@@ -144,24 +145,28 @@ Meteor.methods({
       console.log('Admin user:', adminUser);
       console.log('Admin name resolved to:', adminName);
 
-      // Get all subscribed player IDs from our database
-      const Notifications = require('../Notifications/Notifications').default;
-      const allSubscriptions = await Notifications.find({}, { fields: { playerId: 1 } }).fetchAsync();
+      // Construct logo URL from settings
+       const baseImageUrl = Meteor.settings.public?.Product_Images;
+       const imageVersion = Meteor.settings.public?.Product_Images_Version;
+       const logoUrl = baseImageUrl && imageVersion ? `${baseImageUrl}logo-nm.png?${imageVersion}` : null;
+
+       // Create notification for all subscribed users via OneSignal segment
+       // This sends to all devices that have OneSignal enabled in the app
+       const notification = {
+         headings: { en: title },
+         contents: { en: message },
+         included_segments: ['All'],  // OneSignal built-in segment for all subscribers
+         priority: 10,  // High priority for both platforms
+         android_accent_color: '5f1d1c',  // Suvai brand color
+       };
+       
+       // Add small icon badge if logo URL is available
+       if (logoUrl) {
+         notification.large_icon = logoUrl;
+       }
       
-      if (allSubscriptions.length === 0) {
-        throw new Meteor.Error('no-subscribers', 'No users have subscribed to notifications yet.');
-      }
-
-      const playerIds = allSubscriptions.map(sub => sub.playerId);
-      console.log(`Broadcasting to ${playerIds.length} devices`);
-      console.log('Player IDs:', playerIds);
-
-      // Create notification for all subscribed users
-      const notification = {
-        headings: { en: title },
-        contents: { en: message },
-        include_player_ids: playerIds,
-      };
+      console.log('Broadcasting to all OneSignal subscribers via segment');
+      console.log('Notification payload:', notification);
 
       // Send via OneSignal
       if (oneSignalClient) {
@@ -169,49 +174,14 @@ Meteor.methods({
         console.log('Broadcast notification sent:', response.body);
 
         if (!response.body.id) {
-          console.error('OneSignal response missing ID:', response.body);
-          console.error('OneSignal errors:', response.body.errors);
-          
-          // Check if the error is due to invalid player IDs
-          if (response.body.errors && response.body.errors.invalid_player_ids) {
-            const invalidIds = response.body.errors.invalid_player_ids;
-            console.log('Invalid player IDs detected:', invalidIds);
-            
-            // Filter out invalid player IDs and retry
-            const validPlayerIds = playerIds.filter(id => !invalidIds.includes(id));
-            
-            if (validPlayerIds.length === 0) {
-              throw new Meteor.Error('no-valid-subscribers', 'All player IDs are invalid. Please check the Notification Subscribers page and ensure devices are properly registered.');
-            }
-            
-            console.log(`Retrying broadcast with ${validPlayerIds.length} valid player IDs (removed ${invalidIds.length} invalid)`);
-            
-            // Retry with valid player IDs only
-            const retryNotification = {
-              headings: { en: title },
-              contents: { en: message },
-              include_player_ids: validPlayerIds,
-            };
-            
-            const retryResponse = await oneSignalClient.createNotification(retryNotification);
-            console.log('Retry broadcast notification sent:', retryResponse.body);
-            
-            if (!retryResponse.body.id) {
-              const errorMsg = retryResponse.body.errors 
-                ? (Array.isArray(retryResponse.body.errors) ? retryResponse.body.errors.join(', ') : JSON.stringify(retryResponse.body.errors))
-                : 'Unknown error';
-              throw new Meteor.Error('onesignal-error', `Failed to get notification ID from OneSignal after retry: ${errorMsg}`);
-            }
-            
-            // Use the retry response for the rest of the flow
-            response.body = retryResponse.body;
-          } else {
-            const errorMsg = response.body.errors 
-              ? (Array.isArray(response.body.errors) ? response.body.errors.join(', ') : JSON.stringify(response.body.errors))
-              : 'Unknown error';
-            throw new Meteor.Error('onesignal-error', `Failed to get notification ID from OneSignal: ${errorMsg}`);
-          }
-        }
+           console.error('OneSignal response missing ID:', response.body);
+           console.error('OneSignal errors:', response.body.errors);
+           
+           const errorMsg = response.body.errors 
+             ? (Array.isArray(response.body.errors) ? response.body.errors.join(', ') : JSON.stringify(response.body.errors))
+             : 'Unknown error';
+           throw new Meteor.Error('onesignal-error', `Failed to send notification via OneSignal: ${errorMsg}`);
+         }
 
         // Store message in database
         const messageId = await AdminMessages.insertAsync({
@@ -239,7 +209,8 @@ Meteor.methods({
           recipients: response.body.recipients 
         };
       } else {
-        throw new Meteor.Error('onesignal-not-configured', 'OneSignal is not properly configured');
+        console.error('AdminMessages: OneSignal client not initialized in confirmAndSendToAll');
+        throw new Meteor.Error('onesignal-not-initialized', 'OneSignal client is not properly initialized. Check server logs and API credentials.');
       }
     } catch (exception) {
       handleMethodException(exception);
@@ -320,7 +291,8 @@ Meteor.methods({
           },
         };
       } else {
-        throw new Meteor.Error('onesignal-not-configured', 'OneSignal is not properly configured');
+        console.error('AdminMessages: OneSignal client not initialized in refreshMessageDeliveryStatus');
+        throw new Meteor.Error('onesignal-not-initialized', 'OneSignal client is not properly initialized. Check server logs and API credentials.');
       }
     } catch (exception) {
       handleMethodException(exception);

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// Global button text style helper
 TextStyle getButtonTextStyle({
   Color color = Colors.white,
-  FontWeight fontWeight = FontWeight.bold,
+  FontWeight fontWeight = FontWeight.w700,
   double fontSize = 12,
   double letterSpacing = 1.2,
 }) {
@@ -30,24 +30,25 @@ class AppColors {
   static const Color info = Color(0xFF7F4422);
   static const Color navbarBg = Color(0xFF514732);
   static const Color btnBg = Color(0xFF702223); // Secondary button background
+  static const Color hintText = Color(0xFFa89584); // Lighter shade of brown for placeholder text
 }
 
 class AppTypography {
   static TextStyle h2 = GoogleFonts.sourceSerif4(
     fontSize: 28,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
 
   static TextStyle h3 = GoogleFonts.sourceSerif4(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
 
   static TextStyle button = GoogleFonts.nunito(
     fontSize: 14,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     letterSpacing: 1.0,
     color: AppColors.background,
   );
@@ -60,13 +61,13 @@ class AppTypography {
 
   static TextStyle label = GoogleFonts.nunito(
     fontSize: 12,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: AppColors.textSecondary,
   );
 
   static TextStyle formControl = GoogleFonts.nunito(
     fontSize: 16,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
 }
@@ -79,17 +80,17 @@ ThemeData buildAppTheme() {
     textTheme: TextTheme(
       displayLarge: GoogleFonts.sourceSerif4(
         fontSize: 32,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
       displaySmall: GoogleFonts.sourceSerif4(
         fontSize: 28,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
       headlineSmall: GoogleFonts.sourceSerif4(
         fontSize: 22,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
       bodyLarge: GoogleFonts.nunito(
@@ -104,7 +105,7 @@ ThemeData buildAppTheme() {
       ),
       labelSmall: GoogleFonts.nunito(
         fontSize: 16,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: AppColors.textSecondary,
       ),
     ),
@@ -128,6 +129,7 @@ ThemeData buildAppTheme() {
         borderSide: const BorderSide(color: AppColors.accent),
       ),
       labelStyle: const TextStyle(color: AppColors.textSecondary),
+      hintStyle: const TextStyle(color: AppColors.hintText),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
   );

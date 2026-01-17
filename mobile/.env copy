@@ -1,0 +1,8 @@
+# OneSignal Configuration
+# Get your app ID from: https://dashboard.onesignal.com → Settings → Keys & IDs
+# Copy this file to .env and fill in your actual values
+# IMPORTANT: .env should NEVER be checked in to git (see .gitignore)
+
+ONESIGNAL_APP_ID=eb78f651-694d-45b3-9427-922622ea51e5
+
+NOTIFICATION_LOGO_URL=https://storage.googleapis.com/suvai_images_20/logo-nm.png

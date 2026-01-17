@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../config/theme.dart';
+import '../../providers/auth_provider.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
+import 'home_screen.dart';
+import 'cart_screen.dart';
+import 'user_profile_screen.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
   final String orderId;
@@ -15,29 +21,137 @@ class OrderConfirmationScreen extends StatelessWidget {
     super.key,
   });
 
+  Widget _buildGoodItem(BuildContext context, String imagePath, String title, String description) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.asset(
+          imagePath,
+          width: 48,
+          height: 48,
+          fit: BoxFit.contain,
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF2f2215),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF514732),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundWidget(
       child: Scaffold(
-        extendBodyBehindAppBar: false,
-        appBar: const AppBarWithLogo(),
+         extendBodyBehindAppBar: false,
+         appBar: AppBarWithLogo(
+           showLeading: true,
+           leading: Builder(
+             builder: (context) => IconButton(
+               icon: const Icon(Icons.menu),
+               onPressed: () => Scaffold.of(context).openDrawer(),
+             ),
+           ),
+         ),
+         drawer: Drawer(
+           backgroundColor: Colors.white,
+           child: ListView(
+             padding: EdgeInsets.zero,
+             children: [
+               DrawerHeader(
+                 decoration: const BoxDecoration(color: AppColors.primary),
+                 child: Consumer<AuthProvider>(
+                   builder: (context, authProvider, _) {
+                     return Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       mainAxisAlignment: MainAxisAlignment.end,
+                       children: [
+                         Text(
+                           'Suvai',
+                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                             color: Colors.white,
+                           ),
+                         ),
+                         const SizedBox(height: 4),
+                         Text(
+                           authProvider.currentUser?.phone ?? 'Guest',
+                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                             color: Colors.white,
+                           ),
+                         ),
+                       ],
+                     );
+                   },
+                 ),
+               ),
+               ListTile(
+                 leading: const Icon(Icons.home),
+                 title: const Text('Home'),
+                 onTap: () {
+                   Navigator.pop(context);
+                   Navigator.pushReplacement(
+                     context,
+                     MaterialPageRoute(builder: (_) => const HomeScreen()),
+                   );
+                 },
+               ),
+               ListTile(
+                 leading: const Icon(Icons.shopping_bag),
+                 title: const Text('Cart'),
+                 onTap: () {
+                   Navigator.pop(context);
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(builder: (_) => const CartScreen()),
+                   );
+                 },
+               ),
+               ListTile(
+                 leading: const Icon(Icons.person),
+                 title: const Text('Profile'),
+                 onTap: () {
+                   Navigator.pop(context);
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+                   );
+                 },
+               ),
+               const Divider(),
+               ListTile(
+                 leading: const Icon(Icons.logout),
+                 title: const Text('Logout'),
+                 onTap: () async {
+                   Navigator.pop(context);
+                   final authProvider = context.read<AuthProvider>();
+                   await authProvider.logout();
+                 },
+               ),
+             ],
+           ),
+         ),
         body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 32),
-            Icon(
-              Icons.check_circle,
-              size: 80,
-              color: Colors.green[600],
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Order Confirmed',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
+            children: [
             const SizedBox(height: 32),
             Card(
               color: Colors.white,
@@ -50,11 +164,19 @@ class OrderConfirmationScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Order ID',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                         SelectableText(
                           orderId,
-                          style: Theme.of(context).textTheme.labelLarge,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                       ],
                     ),
@@ -64,11 +186,19 @@ class OrderConfirmationScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Customer Name',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                         Text(
                           name,
-                          style: Theme.of(context).textTheme.labelLarge,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                       ],
                     ),
@@ -78,11 +208,19 @@ class OrderConfirmationScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Total Amount',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                         Text(
                           '₹${totalAmount.toStringAsFixed(0)}',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2f2215),
+                          ),
                         ),
                       ],
                     ),
@@ -91,40 +229,84 @@ class OrderConfirmationScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
+            // Thank You & Order Details Section
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: Colors.white,
+                border: Border.all(color: Colors.grey[200]!, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 60,
+                    color: Colors.green[600],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '$name, Thank you for Ordering on Suvai.',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2f2215),
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Depending on stock availability, your order will arrive today or tomorrow.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF514732),
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'You can pay after delivery.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF514732),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Congratulations Section
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey[200]!, width: 1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'What happens next?',
-                    style: Theme.of(context).textTheme.titleSmall,
+                    'Congratulations for doing Good',
+                    style: GoogleFonts.sourceSerif4(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF2f2215),
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '• We\'ll prepare your order\n'
-                    '• You\'ll receive an SMS update\n'
-                    '• Delivery will be within 30-45 minutes',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  const SizedBox(height: 20),
+                  _buildGoodItem(context, 'assets/images/success/food.png', 'Good for You', 'Choosing Nutrition rich wholesome food'),
+                  const SizedBox(height: 16),
+                  _buildGoodItem(context, 'assets/images/success/junk.png', 'Good for You', 'Limiting highly processed and refined food'),
+                  const SizedBox(height: 16),
+                  _buildGoodItem(context, 'assets/images/success/safe.png', 'Good for You', 'Avoiding pesticides, artificial colors and preservatives'),
+                  const SizedBox(height: 16),
+                  _buildGoodItem(context, 'assets/images/success/rural.png', 'Good for Farmers', 'Supporting Rural Economy, through farmers and self help groups'),
+                  const SizedBox(height: 16),
+                  _buildGoodItem(context, 'assets/images/success/sustainable.png', 'Good for Earth', 'Promoting Sustainable living by doing your bit for the planet'),
                 ],
-              ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                child: Text(
-                  'CONTINUE SHOPPING',
-                  style: getButtonTextStyle(),
-                ),
               ),
             ),
           ],

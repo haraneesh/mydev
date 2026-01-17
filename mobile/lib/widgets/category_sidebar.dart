@@ -68,7 +68,7 @@ class CategorySidebar extends StatefulWidget {
 }
 
 class _CategorySidebarState extends State<CategorySidebar> {
-  /// Get set of category names that have at least one product
+  /// Get set of category names that have at least one product with availableToOrder=true
   Set<String> _getCategoriesWithProducts() {
     if (widget.products == null || widget.products!.isEmpty) {
       return {}; // Return empty set if no products provided
@@ -77,23 +77,27 @@ class _CategorySidebarState extends State<CategorySidebar> {
     final categoriesWithProducts = <String>{};
     
     for (final product in widget.products!) {
-      // Extract category from product
+      // Extract category and availableToOrder from product
       String? category;
+      bool? availableToOrder;
       
       if (product is Map<String, dynamic>) {
         // If product is a Map
         category = product['category'] ?? product['type'];
+        availableToOrder = product['availableToOrder'] as bool?;
       } else if (product.runtimeType.toString().contains('Product')) {
         // If product is a Product object, access via reflection
         try {
           category = product.category;
+          availableToOrder = product.availableToOrder;
         } catch (e) {
           // Fallback if reflection fails
           continue;
         }
       }
       
-      if (category != null && category.isNotEmpty) {
+      // Only add category if it has a product with availableToOrder=true
+      if (category != null && category.isNotEmpty && (availableToOrder ?? true)) {
         categoriesWithProducts.add(category);
       }
     }
@@ -167,12 +171,6 @@ class _CategorySidebarState extends State<CategorySidebar> {
             vertical: 12,
           ),
           decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isSelected ? AppColors.primary : AppColors.border,
-                width: isSelected ? 4 : 0.5,
-              ),
-            ),
             color: isSelected
                 ? AppColors.primary.withOpacity(0.1)
                 : Colors.transparent,
@@ -184,8 +182,8 @@ class _CategorySidebarState extends State<CategorySidebar> {
               children: [
                 // Icon
                 SizedBox(
-                  height: 40,
-                  width: 40,
+                  height: 48,
+                  width: 48,
                   child: _buildCategoryIcon(categoryName),
                 ),
                 const SizedBox(height: 4),
@@ -231,23 +229,28 @@ class _CategorySidebarState extends State<CategorySidebar> {
       );
     }
     
-    return Image.asset(
-      'assets/icons/$iconFileName',
-      width: 24,
-      height: 24,
-      color: widget.selectedCategory == categoryName
-          ? AppColors.primary
-          : Colors.grey,
-      errorBuilder: (context, error, stackTrace) {
-        // Fallback if image asset not found
-        return Icon(
-          Icons.category,
-          color: widget.selectedCategory == categoryName
-              ? AppColors.primary
-              : Colors.grey,
-          size: 24,
-        );
-      },
+    return Center(
+      child: Image.asset(
+        'assets/icons/$iconFileName',
+        width: 48,
+        height: 48,
+        fit: BoxFit.contain,
+        isAntiAlias: false,
+        filterQuality: FilterQuality.none,
+        color: widget.selectedCategory == categoryName
+            ? AppColors.primary
+            : Colors.grey,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback if image asset not found
+          return Icon(
+            Icons.category,
+            color: widget.selectedCategory == categoryName
+                ? AppColors.primary
+                : Colors.grey,
+            size: 40,
+          );
+        },
+      ),
     );
   }
 }

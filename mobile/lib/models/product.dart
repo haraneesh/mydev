@@ -1,5 +1,31 @@
 import 'package:flutter/foundation.dart';
 
+class VendorDetails {
+  final dynamic id; // Can be int or string
+  final String slug;
+  final String name;
+
+  VendorDetails({
+    required this.id,
+    required this.slug,
+    required this.name,
+  });
+
+  factory VendorDetails.fromJson(Map<String, dynamic> json) {
+    return VendorDetails(
+      id: json['id'],
+      slug: json['slug'] ?? '',
+      name: json['name'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'slug': slug,
+    'name': name,
+  };
+}
+
 class Product {
   final String id;
   final String name;
@@ -9,6 +35,9 @@ class Product {
   final String subcategory;
   final String imageUrl;
   final int minOrderQuantity;
+  final VendorDetails? vendorDetails;
+  final String sku; // SKU for order submission
+  final String zhItemId; // Zen Hub item ID
   
   /// Base unit of sale for fractional calculations.
   /// Format: "{number}{unit}" e.g., "1Kg", "1L", "10pieces"
@@ -38,6 +67,8 @@ class Product {
   final int maxUnitsAvailableToOrder; // Maximum units that can be ordered
   final int totQuantityOrdered; // Total quantity already ordered
   final int previousOrdQty; // Previous order quantity
+  final bool? _availableToOrder; // Whether product is available for ordering (nullable for backwards compatibility)
+  final double wSaleBaseUnitPrice; // Wholesale base unit price
 
   Product({
     required this.id,
@@ -48,12 +79,17 @@ class Product {
     required this.subcategory,
     required this.imageUrl,
     this.minOrderQuantity = 1,
+    this.vendorDetails,
+    this.sku = '',
+    this.zhItemId = '',
     this.unitOfSale,
     this.unitsForSelection,
     this.maxUnitsAvailableToOrder = 0,
     this.totQuantityOrdered = 0,
     this.previousOrdQty = 0,
-  });
+    this.wSaleBaseUnitPrice = 0.0,
+    bool? availableToOrder,
+  }) : _availableToOrder = availableToOrder;
 
   factory Product.fromJson(Map<String, dynamic> json) {
     // The 'type' field from Meteor is the primary category indicator
@@ -70,6 +106,12 @@ class Product {
         ? unitsForSelectionRaw
         : '0,1,2,3,4,5,6,7,8,9,10';
     
+    // Handle vendor_details
+    VendorDetails? vendorDetails;
+    if (json['vendor_details'] is Map<String, dynamic>) {
+      vendorDetails = VendorDetails.fromJson(json['vendor_details']);
+    }
+    
     return Product(
       id: json['_id'] ?? json['id'] ?? '',
       name: json['name'] ?? '',
@@ -80,13 +122,22 @@ class Product {
       subcategory: json['subcategory'] ?? '',
       imageUrl: json['imageUrl'] ?? json['image'] ?? json['image_path'] ?? '',
       minOrderQuantity: json['minOrderQuantity'] ?? 1,
+      vendorDetails: vendorDetails,
+      sku: json['sku'] ?? '',
+      zhItemId: json['zh_item_id'] ?? '',
       unitOfSale: unitOfSale,
       unitsForSelection: unitsForSelection,
       maxUnitsAvailableToOrder: (json['maxUnitsAvailableToOrder'] as num?)?.toInt() ?? 0,
       totQuantityOrdered: (json['totQuantityOrdered'] as num?)?.toInt() ?? 0,
       previousOrdQty: (json['previousOrdQty'] as num?)?.toInt() ?? 0,
+      wSaleBaseUnitPrice: (json['wSaleBaseUnitPrice'] as num?)?.toDouble() ?? 0.0,
+      availableToOrder: json['availableToOrder'] as bool?,
     );
   }
+
+  /// Getter for availableToOrder that safely returns true if null (defaults to true)
+  /// This ensures backward compatibility - products without the field are considered available
+  bool get availableToOrder => _availableToOrder ?? true;
 
   Map<String, dynamic> toJson() => {
     '_id': id,
@@ -97,11 +148,16 @@ class Product {
     'subcategory': subcategory,
     'imageUrl': imageUrl,
     'minOrderQuantity': minOrderQuantity,
+    'vendor_details': vendorDetails?.toJson(),
+    'sku': sku,
+    'zh_item_id': zhItemId,
     'unitOfSale': unitOfSale,
     'unitsForSelection': unitsForSelection,
     'maxUnitsAvailableToOrder': maxUnitsAvailableToOrder,
     'totQuantityOrdered': totQuantityOrdered,
     'previousOrdQty': previousOrdQty,
+    'wSaleBaseUnitPrice': wSaleBaseUnitPrice,
+    'availableToOrder': _availableToOrder,
   };
 
   /// Returns unitsForSelection safely, ensuring it's never null or empty
@@ -156,7 +212,6 @@ class Product {
       units.sort();
       return units.isNotEmpty ? units : [1.0];
     } catch (e) {
-      debugPrint('Error getting available units: $e');
       return [1.0];
     }
   }
@@ -175,7 +230,6 @@ class Product {
       final result = price * fraction * discountMultiplier;
       return result > 0 ? result : 0.0;
     } catch (e) {
-      debugPrint('Error calculating unit price for fraction $fraction: $e');
       return price * fraction;
     }
   }
@@ -224,7 +278,6 @@ class Product {
         return '${calculatedValue.toStringAsFixed(2)}$unitType';
       }
       } catch (e) {
-      debugPrint('Error formatting unit label for fraction $fraction: $e');
       return '${fraction}x';
       }
       }

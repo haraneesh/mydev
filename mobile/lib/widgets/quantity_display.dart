@@ -136,12 +136,9 @@ class _QuantityDisplayState extends State<QuantityDisplay> {
           key: _popupMenuKey,
           initialValue: widget.currentQuantity,
           onSelected: (newQuantity) {
-            debugPrint('📌 PopupMenuButton.onSelected called with: $newQuantity (type: ${newQuantity.runtimeType})');
             if (newQuantity != widget.currentQuantity) {
-              debugPrint('🔄 Calling onQuantityChanged with: $newQuantity');
               widget.onQuantityChanged(newQuantity);
             } else {
-              debugPrint('⏭️ Skipping onQuantityChanged because newQuantity == currentQuantity');
             }
           },
           itemBuilder: (BuildContext context) => widget.popupMenuItems,
