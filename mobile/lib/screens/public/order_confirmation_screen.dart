@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
+import '../../widgets/app_menu_drawer.dart';
 import 'home_screen.dart';
 import 'cart_screen.dart';
 import 'user_profile_screen.dart';
@@ -61,111 +62,35 @@ class OrderConfirmationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BackgroundWidget(
       child: Scaffold(
-         extendBodyBehindAppBar: false,
-         appBar: AppBarWithLogo(
-           showLeading: true,
-           leading: Builder(
-             builder: (context) => IconButton(
-               icon: const Icon(Icons.menu),
-               onPressed: () => Scaffold.of(context).openDrawer(),
-             ),
-           ),
-         ),
-         drawer: Drawer(
-           backgroundColor: Colors.white,
-           child: ListView(
-             padding: EdgeInsets.zero,
-             children: [
-               DrawerHeader(
-                 decoration: const BoxDecoration(color: AppColors.primary),
-                 child: Consumer<AuthProvider>(
-                   builder: (context, authProvider, _) {
-                     return Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       mainAxisAlignment: MainAxisAlignment.end,
-                       children: [
-                         Text(
-                           'Suvai',
-                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                             color: Colors.white,
-                           ),
-                         ),
-                         const SizedBox(height: 4),
-                         Text(
-                           authProvider.currentUser?.phone ?? 'Guest',
-                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                             color: Colors.white,
-                           ),
-                         ),
-                       ],
-                     );
-                   },
-                 ),
-               ),
-               ListTile(
-                 leading: const Icon(Icons.home),
-                 title: const Text('Home'),
-                 onTap: () {
-                   Navigator.pop(context);
-                   Navigator.pushReplacement(
-                     context,
-                     MaterialPageRoute(builder: (_) => const HomeScreen()),
-                   );
-                 },
-               ),
-               ListTile(
-                 leading: const Icon(Icons.shopping_bag),
-                 title: const Text('Cart'),
-                 onTap: () {
-                   Navigator.pop(context);
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (_) => const CartScreen()),
-                   );
-                 },
-               ),
-               ListTile(
-                 leading: const Icon(Icons.person),
-                 title: const Text('Profile'),
-                 onTap: () {
-                   Navigator.pop(context);
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (_) => const UserProfileScreen()),
-                   );
-                 },
-               ),
-               const Divider(),
-               ListTile(
-                 leading: const Icon(Icons.logout),
-                 title: const Text('Logout'),
-                 onTap: () async {
-                   Navigator.pop(context);
-                   final authProvider = context.read<AuthProvider>();
-                   await authProvider.logout();
-                 },
-               ),
-             ],
-           ),
-         ),
+        extendBodyBehindAppBar: false,
+        appBar: AppBarWithLogo(
+          showLeading: true,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+        ),
+        drawer: const AppMenuDrawer(),
         body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
+          padding: const EdgeInsets.all(24),
+          child: Column(
             children: [
-            const SizedBox(height: 32),
-            Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
+              const SizedBox(height: 32),
+              Card(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
                           'Order ID',
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -173,7 +98,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         SelectableText(
                           orderId,
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -187,7 +112,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         Text(
                           'Customer Name',
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -195,7 +120,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         Text(
                           name,
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -209,7 +134,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         Text(
                           'Total Amount',
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -217,7 +142,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         Text(
                           '₹${totalAmount.toStringAsFixed(0)}',
                           style: GoogleFonts.nunito(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2f2215),
                           ),
@@ -243,7 +168,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                   Icon(
                     Icons.check_circle,
                     size: 60,
-                    color: Colors.green[600],
+                    color: AppColors.success,
                   ),
                   const SizedBox(height: 16),
                   Text(

@@ -5,6 +5,7 @@ import '../../config/preferences.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
+import '../../widgets/app_menu_drawer.dart';
 import 'home_screen.dart';
 import 'cart_screen.dart';
 
@@ -206,76 +207,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
       ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: AppColors.primary),
-              child: Consumer<AuthProvider>(
-                builder: (context, authProvider, _) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Suvai',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        authProvider.currentUser?.phone ?? 'Guest',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text('Cart'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CartScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () => Navigator.pop(context),
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () async {
-                Navigator.pop(context);
-                await _showLogoutConfirmation();
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: const AppMenuDrawer(),
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
           final user = authProvider.currentUser;
@@ -314,7 +246,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         Text(
                           user.phone,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -356,7 +288,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _salutation ?? 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -389,7 +321,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _firstNameController.text.isNotEmpty ? _firstNameController.text : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -422,7 +354,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _lastNameController.text.isNotEmpty ? _lastNameController.text : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -456,7 +388,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             user.email ?? 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -491,7 +423,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _whMobilePhoneController.text.isNotEmpty ? _whMobilePhoneController.text : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -526,7 +458,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _deliveryAddressController.text.isNotEmpty ? _deliveryAddressController.text : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -562,7 +494,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _deliveryPincodeController.text.isNotEmpty ? _deliveryPincodeController.text : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -622,7 +554,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 ? PreferenceConstants.dietaryPreferences[_dietaryPreference] ?? 'Not set'
                                 : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -666,7 +598,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 ? PreferenceConstants.packingPreferences[_packingPreference] ?? 'Not set'
                                 : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -710,7 +642,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 ? PreferenceConstants.productUpdatePreferences[_productUpdatePreference] ?? 'Not set'
                                 : 'Not set',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -752,7 +684,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Text(
                             _clearCartAfterOrder ? 'Yes' : 'No',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

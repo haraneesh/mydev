@@ -181,10 +181,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          title: Image.asset(
-            'assets/logo_mobile.png',
-            height: 40,
-            fit: BoxFit.contain,
+          title: Text(
+            'Suvai',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
         body: SingleChildScrollView(
@@ -296,7 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'First Name',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -325,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Last Name',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -354,7 +353,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Email Address',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -384,7 +383,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'WhatsApp Mobile Number',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -416,7 +415,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Confirm Mobile Number',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -448,7 +447,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Delivery Address',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -478,7 +477,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Delivery Address Pincode',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -510,7 +509,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'What does eating healthy mean to you?',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -540,7 +539,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Password',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -576,7 +575,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Confirm Password',
                   style: GoogleFonts.nunito(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF514732),
                   ),
@@ -623,7 +622,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Text(
                     _errorMessage!,
                     style: const TextStyle(
-                      color: Colors.red,
+                      color: AppColors.accent,
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,

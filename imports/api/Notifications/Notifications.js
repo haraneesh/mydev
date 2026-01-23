@@ -109,12 +109,6 @@ if (Meteor.isServer) {
     { unique: true, sparse: true, name: 'userId_1_deviceUuid_1' }
   );
   
-  // Keep old index for backward compatibility (for records without deviceUuid)
-  Notifications.rawCollection().createIndex(
-    { userId: 1, playerId: 1 },
-    { unique: true, sparse: true, name: 'userId_1_playerId_1' }
-  );
-  
   Notifications.rawCollection().createIndex(
     { playerId: 1 },
     { name: 'playerId_1' }

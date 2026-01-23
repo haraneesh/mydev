@@ -114,6 +114,15 @@ const ZhInvoiceSchema = new SimpleSchema({
     label: 'Line Item Total',
     min: 0,
   },
+  payment_history: {
+    type: Array,
+    label: 'Payment History',
+    optional: true,
+  },
+  'payment_history.$': {
+    type: Object,
+    blackbox: true,
+  },
   // Timestamps will be handled by MongoDB or explicitly in methods
   createdAt: {
     type: Date,

@@ -769,6 +769,27 @@ Meteor.methods({
   },
 });
 
+export const getStatusColors = new ValidatedMethod({
+  name: 'constants.getStatusColors',
+  validate() {
+    // No parameters required
+  },
+  run() {
+    // Return order status with their color labels and hex codes
+    const statusColorMap = {};
+    
+    Object.entries(constants.OrderStatus).forEach(([key, status]) => {
+      statusColorMap[status.name] = {
+        displayValue: status.display_value,
+        label: status.label,
+        hexColor: constants.StatusColorPalette[status.label] || '#000000',
+      };
+    });
+    
+    return statusColorMap;
+  },
+});
+
 rateLimit({
   methods: [
     getOrders,

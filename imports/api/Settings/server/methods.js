@@ -28,6 +28,8 @@ export const getPublicSettings = new ValidatedMethod({
       Support_Numbers: publicSettings.Support_Numbers || {},
       pinCodes: publicSettings.pinCodes || {},
       cloudinary: publicSettings.cloudinary || {},
+      PayTM: publicSettings.PayTM || {},
+      Razor: publicSettings.Razor || {},
     };
   },
 });

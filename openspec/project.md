@@ -21,11 +21,20 @@ This project is to make changes to the flutter mobile application.
 ### Git Workflow
 [Describe your branching strategy and commit conventions]
 
+# Meteor publications and methods
+Refer to SERVER_PUBLICATIONS_AND_METHODS.md for meteor methods and subscriptions
+
 ## Domain Context
 [Add domain-specific knowledge that AI assistants need to understand]
 
 ## Important Constraints
 [List any technical, business, or regulatory constraints]
+
+
+Body fontSize is 14px.
+Font weight is w600.
+Background color of cards is to be White.
+Whenever I instruct to change the color of an element ensure that the ColorScheme of the app is updated rather than overriding the element on the page.
 
 ## External Dependencies
 [Document key external services, APIs, or systems]

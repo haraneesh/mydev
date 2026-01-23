@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/background_widget.dart';
@@ -81,9 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
       final authProvider = context.read<AuthProvider>();
       await authProvider.login(_phoneController.text, _passwordController.text);
       
-      // Don't navigate manually - let the AuthRouter rebuild and handle routing
-      // The AuthProvider state change will trigger a rebuild of AuthRouter
-      // which will then show HomeScreen instead of LoginScreen
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/');
+      }
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -116,31 +117,54 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 40),
             Text(
               'Welcome to Suvai',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: GoogleFonts.sourceSerif4(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 48),
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              maxLength: 10,
-              enabled: !_isLoading,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                prefixText: '+91 ',
-                hintText: '9876543210',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  enabled: !_isLoading,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: GoogleFonts.nunito(fontSize: 18, fontWeight: FontWeight.w700),
+                    prefixText: '+91 ',
+                    hintText: '9876543210',
+                    hintStyle: GoogleFonts.nunito(
+                      color: _phoneController.text.isNotEmpty && _phoneController.text.length < 10
+                          ? AppColors.info
+                          : AppColors.hintText,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    counterText: '',
+                  ),
+                  onChanged: (_) => setState(() {}),
                 ),
-                errorText: _phoneController.text.isNotEmpty &&
-                        !_isPhoneValid(_phoneController.text)
-                    ? 'Phone must be 10 digits'
-                    : null,
-                counterText: '',
-              ),
-              onChanged: (_) => setState(() {}),
+                if (_phoneController.text.isNotEmpty && !_isPhoneValid(_phoneController.text))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Phone must be 10 digits',
+                      style: GoogleFonts.nunito(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 24),
             TextField(
@@ -149,6 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
               enabled: !_isLoading,
               decoration: InputDecoration(
                 labelText: 'Password',
+                labelStyle: GoogleFonts.nunito(fontSize: 18, fontWeight: FontWeight.w700),
                 hintText: 'Password',
                 filled: true,
                 fillColor: Colors.white,
@@ -172,9 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
             if (_errorMessage != null)
               Text(
                 _errorMessage!,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
+                style: GoogleFonts.nunito(
+                  color: AppColors.accent,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             const SizedBox(height: 32),
@@ -199,15 +225,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
-                        'LOGIN',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
-                          color: Colors.white,
-                        ),
-                      ),
+                    : Text(
+                         'LOGIN',
+                         style: GoogleFonts.nunito(
+                           fontSize: 12,
+                           fontWeight: FontWeight.w700,
+                           letterSpacing: 1.2,
+                           color: Colors.white,
+                         ),
+                       ),
                     ),
                     ),
                     const SizedBox(height: 16),
@@ -217,10 +243,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    const Text(
-                    'New to Suvai? ',
-                    style: TextStyle(fontSize: 16),
-                    ),
+                    Text(
+                     'New to Suvai? ',
+                     style: GoogleFonts.nunito(fontSize: 14, fontWeight: FontWeight.w600),
+                     ),
                     TextButton(
                     style: TextButton.styleFrom(
                      foregroundColor: AppColors.secondary,
@@ -238,13 +264,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
             const SizedBox(height: 24),
             Row(
-              children: const [
-                Expanded(child: Divider()),
+              children: [
+                const Expanded(child: Divider()),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('OR'),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OR',
+                    style: GoogleFonts.nunito(fontWeight: FontWeight.w600),
+                  ),
                 ),
-                Expanded(child: Divider()),
+                const Expanded(child: Divider()),
               ],
             ),
             const SizedBox(height: 24),
@@ -258,6 +287,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   : () async {
                       final authProvider = context.read<AuthProvider>();
                       await authProvider.continueAsGuest();
+                      if (mounted) {
+                        Navigator.of(context).pushReplacementNamed('/');
+                      }
                     },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),

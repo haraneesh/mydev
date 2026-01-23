@@ -3,12 +3,18 @@ import 'meteor_client.dart';
 
 /// Service for accessing Meteor public settings
 class SettingsService {
-  late MeteorClient _meteorClient;
-  Map<String, dynamic>? _cachedSettings;
+  static final SettingsService _instance = SettingsService._internal();
 
-  SettingsService({MeteorClient? meteorClient}) {
-    _meteorClient = meteorClient ?? MeteorClient(serverUrl: 'http://10.0.2.2:3000');
+  factory SettingsService() {
+    return _instance;
   }
+
+  SettingsService._internal();
+
+  static SettingsService get instance => _instance;
+
+  late MeteorClient _meteorClient = MeteorClient.instance;
+  Map<String, dynamic>? _cachedSettings;
 
   void setMeteorClient(MeteorClient client) {
     _meteorClient = client;
@@ -88,10 +94,10 @@ class SettingsService {
         }
       }
       
-      const defaultMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+      const defaultMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than ₹1000.';
       return defaultMessage;
     } catch (e) {
-      return 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+      return 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than ₹1000.';
     }
   }
 
@@ -214,7 +220,13 @@ class SettingsService {
       },
       'CART_ORDER': {
         'MINIMUM_ORDER_AMT': 1000,
-        'MINIMUMCART_ORDER_MSG': 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.',
+        'MINIMUMCART_ORDER_MSG': 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than ₹1000.',
+      },
+      'PayTM': {
+        'merchantId': 'TESTING123',
+        'hostName': 'securegw-stage.paytm.in',
+        'callbackUrl': 'https://example.com/callback',
+        'websiteName': 'DEFAULT',
       },
       'Product_Images': 'https://storage.googleapis.com/suvai_images_20/',
       'Product_Images_Version': 'v999999',

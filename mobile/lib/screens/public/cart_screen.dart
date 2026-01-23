@@ -8,9 +8,12 @@ import '../../widgets/unit_selection_modal.dart';
 import '../../widgets/order_footer.dart';
 import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
+import '../../widgets/app_menu_drawer.dart';
 import '../../services/settings_service.dart';
 import '../../services/product_service.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
+import 'orders_screen.dart';
 import 'user_profile_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -25,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
   late ProductService _productService;
   final Map<String, String> _imageUrlCache = {};
   double _minimumOrderAmount = 1000.0;
-  String _minimumOrderMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.';
+  String _minimumOrderMessage = 'Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than ₹1000.';
   List<Product> _currentProductList = [];
   bool _isLoadingProductList = false;
 
@@ -124,90 +127,16 @@ class _CartScreenState extends State<CartScreen> {
         child: Scaffold(
           extendBodyBehindAppBar: false,
           appBar: AppBarWithLogo(
-          showLeading: true,
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-        ),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: AppColors.primary),
-              child: Consumer<AuthProvider>(
-                builder: (context, authProvider, _) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Suvai',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        authProvider.currentUser?.phone ?? 'Guest',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  );
-                },
+            showLeading: true,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-                _commitRemovedItemsAndNavigate(() {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text('Cart'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {
-                Navigator.pop(context);
-                _commitRemovedItemsAndNavigate(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const UserProfileScreen()),
-                  );
-                });
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () async {
-                Navigator.pop(context);
-                final authProvider = context.read<AuthProvider>();
-                await authProvider.logout();
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Consumer<CartProvider>(
+          ),
+          drawer: const AppMenuDrawer(),
+          body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.items.isEmpty && cartProvider.removedItems.isEmpty) {
             return Center(

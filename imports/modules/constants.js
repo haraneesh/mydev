@@ -229,6 +229,16 @@ const OrderStatus = {
   },
 };
 
+// Color palette mapping for status labels
+const StatusColorPalette = {
+  'warning': '#FFC107',
+  'brand-yellow': '#FFC107',
+  'danger': '#DC3545',
+  'success': '#28A745',
+  'info': '#17A2B8',
+  'primary': '#702223',
+};
+
 const PorterStatus = {
   Not_Assigned: {
     name: 'Not_Assigned',
@@ -543,6 +553,7 @@ const constants = {
   UserAccountStatus,
   PackingPreferences,
   ProductUpdatePreferences,
+  StatusColorPalette,
 };
 
 export default constants;

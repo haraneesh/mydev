@@ -23,6 +23,8 @@ class AuthProvider extends ChangeNotifier {
   AuthState get authState => _authState;
   String? get error => _error;
   bool get isAuthenticated => _currentUser != null;
+  bool get isGuest => _currentUser?.id == 'guest';
+  bool get isLoggedInUser => isAuthenticated && !isGuest;
   String? get authToken => _authService.authToken;
 
   Future<void> signup({

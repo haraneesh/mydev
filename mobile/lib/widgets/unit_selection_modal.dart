@@ -28,6 +28,7 @@ class UnitSelectionModal extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       insetPadding: const EdgeInsets.all(16),
+      backgroundColor: Colors.white,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -202,14 +203,14 @@ class UnitSelectionModal extends StatelessWidget {
                 color: Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.red,
+                  color: AppColors.accent,
                   width: 2,
                 ),
               ),
               child: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).pop(),
-                color: Colors.red,
+                color: AppColors.accent,
                 iconSize: 16,
                 padding: EdgeInsets.zero,
               ),

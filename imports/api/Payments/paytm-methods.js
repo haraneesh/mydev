@@ -93,25 +93,39 @@ Meteor.methods({
         account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id // optional
       };
 
-      const zhResponse = await zohoPayments.createCustomerPayment(paymentData);
+      let zhResponse;
+      try {
+        zhResponse = await zohoPayments.createCustomerPayment(paymentData);
+      } catch (zohoError) {
+        console.error('Zoho Payment Creation Error:', zohoError);
+        // We still have the money in PayTM, so we shouldn't just crash. 
+        // We'll proceed to save the error and alert.
+        zhResponse = { code: -1, message: zohoError.message };
+      }
 
       if (Meteor.isDevelopment) {
         console.log('Zoho Payment Response:', zhResponse);
       }
 
       // 5. Update ZhInvoices status to paid using the dedicated method
-      if (invoicesToPay.length > 0 && zhResponse.code == 0) {
-        const { updateInvoicePaymentStatus } = await import('/imports/api/ZhInvoices/methods');
+      if (invoicesToPay.length > 0 && zhResponse && zhResponse.code == 0) {
+        console.log(`Updating ${invoicesToPay.length} invoices for order ${paymentStatus.ORDERID}`);
         
         for (const invoice of invoicesToPay) {
           const amount = invoice.total || 0;
           
-          await updateInvoicePaymentStatus.call({
-            invoiceId: invoice.invoice_id,
-            paymentStatus,
-            amount
-          });
+          try {
+            await Meteor.callAsync('zhInvoices.updatePaymentStatus', {
+              invoiceId: invoice.invoice_id,
+              paymentStatus,
+              amount
+            });
+          } catch (updateError) {
+            console.error(`Error updating status for invoice ${invoice.invoice_id}:`, updateError);
+          }
         }
+      } else if (zhResponse && zhResponse.code != 0) {
+        console.error(`Zoho Payment failed with code ${zhResponse.code}: ${zhResponse.message}`);
       }
 
       // 6. Update payment record with Zoho response
@@ -253,6 +267,12 @@ Meteor.methods({
           throw new Error('Return response has an error');
         }
         const result = await response.json();
+        
+        if (Meteor.isDevelopment) {
+          console.log('=== PAYTM RESPONSE ===');
+          console.log(JSON.stringify(result, null, 2));
+          console.log('======================');
+        }
 
         await Payments.insertAsync({
           orderId,

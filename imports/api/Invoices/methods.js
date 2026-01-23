@@ -163,12 +163,12 @@ Meteor.methods({
         `Invoice balance sum: ₹${sumOfBalances.toFixed(2)}, Outstanding amount: ₹${outstandingAmountInRs.toFixed(2)}`,
       );
 
-      // 4. Check if sync is needed and cooldown has passed
+      // 4. Check if sync is needed (with 0.01 rupee epsilon for float precision)
       const lastSyncTime = lastSyncTimes.get(this.userId);
-      const cooldownPassed =
-        !lastSyncTime || Date.now() - lastSyncTime > SYNC_COOLDOWN_MS;
+      const cooldownPassed = !lastSyncTime || Date.now() - lastSyncTime > SYNC_COOLDOWN_MS;
+      const isDiscrepancy = (sumOfBalances - outstandingAmountInRs) > 0.01;
 
-      if (sumOfBalances > outstandingAmountInRs && cooldownPassed) {
+      if (isDiscrepancy || cooldownPassed) {
         console.log(
           'Discrepancy detected! Syncing invoices from Zoho Books...',
         );
@@ -185,12 +185,8 @@ Meteor.methods({
         console.log(`Sync complete. Returning ${updatedInvoices.length} invoices.`);
 
         return updatedInvoices;
-      } else if (sumOfBalances > outstandingAmountInRs && !cooldownPassed) {
-        console.log(
-          'Sync needed but cooldown active. Returning local invoices.',
-        );
       } else {
-        console.log('No sync needed. Returning local invoices.');
+        console.log('No sync needed and cooldown active. Returning local invoices.');
       }
 
       // 6. Return local data if no sync needed

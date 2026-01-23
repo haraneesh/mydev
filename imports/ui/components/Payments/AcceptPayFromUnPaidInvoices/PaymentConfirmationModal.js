@@ -37,7 +37,7 @@ const PaymentConfirmationModal = ({
           <h4 className="mb-3">Payment Summary</h4>
           <h6 className="mb-2">Surplus payments will be saved in your wallet for your next purchase.</h6>
           <div className="d-flex justify-content-center align-items-center mb-3">
-            <span className="h3 mb-0 me-2">Rs</span>
+            <span className="h3 mb-0 me-2">₹</span>
             <input
               type="number"
               className="form-control form-control-lg text-center d-inline-block"

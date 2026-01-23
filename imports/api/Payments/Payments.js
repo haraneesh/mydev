@@ -67,6 +67,53 @@ Payments.schema = new SimpleSchema({
     blackbox: true,
     optional: true,
   },
+  status: {
+    type: String,
+    label: 'Status of the payment',
+    allowedValues: ['pending', 'completed', 'failed', 'refunded', 'error'],
+    optional: true,
+  },
+  paymentMethod: {
+    type: String,
+    label: 'Payment mode used',
+    optional: true,
+  },
+  totalAmount: {
+    type: Number,
+    label: 'Total amount paid',
+    optional: true,
+  },
+  relatedInvoices: {
+    type: Array,
+    label: 'List of invoice IDs paid in this transaction',
+    optional: true,
+  },
+  'relatedInvoices.$': {
+    type: String,
+  },
+  invoiceCount: {
+    type: Number,
+    optional: true,
+  },
+  processedAt: {
+    type: Date,
+    optional: true,
+  },
+  error: {
+    type: SimpleSchema.oneOf({
+      type: String,
+      optional: true,
+    }, {
+      type: Object,
+      blackbox: true,
+      optional: true,
+    }),
+    optional: true,
+  },
+  errorDetails: {
+    type: String,
+    optional: true,
+  },
   createdAt: {
     type: Date,
     autoValue() {

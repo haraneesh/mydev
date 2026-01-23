@@ -79,7 +79,16 @@ class AuthService {
       await login(phone, password);
     } catch (e) {
       if (e is AuthException) rethrow;
-      throw AuthException('Signup failed: $e');
+      
+      // Provide user-friendly error messages for common network issues
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('timeout')) {
+        throw AuthException('Connection timed out. Please check your internet connection and try again.');
+      } else if (errorString.contains('connection') || errorString.contains('refused')) {
+        throw AuthException('Unable to connect to server. Please check your internet connection.');
+      }
+      
+      throw AuthException('Signup failed. Please try again.');
     }
   }
 
@@ -118,7 +127,16 @@ class AuthService {
       await _registerOneSignalPlayerId(userId);
     } catch (e) {
       if (e is AuthException) rethrow;
-      throw AuthException('Login failed: $e');
+      
+      // Provide user-friendly error messages for common network issues
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('timeout')) {
+        throw AuthException('Connection timed out. Please check your internet connection and try again.');
+      } else if (errorString.contains('connection') || errorString.contains('refused')) {
+        throw AuthException('Unable to connect to server. Please check your internet connection.');
+      }
+      
+      throw AuthException('Login failed. Please try again.');
     }
   }
 
@@ -171,6 +189,17 @@ class AuthService {
       _authToken = await secureStorage.read(key: _tokenKey);
       if (_authToken != null) {
         meteorClient.setAuth(_authToken!, 'restored-user');
+        
+        try {
+          await getCurrentUser();
+          return _authToken;
+        } catch (e) {
+          debugPrint('[Auth] Restored token is invalid, clearing: $e');
+          _authToken = null;
+          meteorClient.clearAuth();
+          await secureStorage.delete(key: _tokenKey);
+          return null;
+        }
       }
       return _authToken;
     } catch (e) {

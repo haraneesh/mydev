@@ -148,8 +148,8 @@ Meteor.methods({
         big_picture: logoUrl,
         
         // Add brand color accent for Android
-        android_accent_color: 'FF6B9D84',  // Suvai green color
-      };
+        android_accent_color: 'FF519716',  // Suvai green color (#519716)
+        };
 
       // Add additional data if provided (for deep linking)
       if (data) {
@@ -217,8 +217,8 @@ Meteor.methods({
         big_picture: logoUrl,
         
         // Add brand color accent for Android
-        android_accent_color: 'FF6B9D84',  // Suvai green color
-      };
+        android_accent_color: 'FF519716',  // Suvai green color (#519716)
+        };
 
       // Add additional data if provided
       if (data) {

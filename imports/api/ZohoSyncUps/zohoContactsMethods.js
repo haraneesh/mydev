@@ -273,7 +273,7 @@ export async function retWalletAndSyncIfNecessary(userId) {
     const days = duration.asDays();
 
     if (days > 1) {
-      const { zohoResponse } = await updateUserWallet(user);
+      const { zohoResponse, wallet } = await updateUserWallet(user);
 
       if (zohoResponse.code !== 0) {
         handleMethodException(zohoResponse, zohoResponse.code);
@@ -281,16 +281,16 @@ export async function retWalletAndSyncIfNecessary(userId) {
 
       const { error } = await getUserOrdersAndInvoicesFromZoho(userId);
 
-      if (error.erroResp && error.erroResp.length > 0) {
+      if (error?.erroResp && error.erroResp.length > 0) {
         handleMethodException(error.errorResp[0], error.errorResp[0].code);
       }
 
-      return zohoResponse.wallet;
+      return wallet || user.wallet;
     }
-    return user.wallet;
+    return user.wallet || {};
   }
 
-  return {};
+  return user?.wallet || {};
 }
 
 export const getUserWallet = new ValidatedMethod({

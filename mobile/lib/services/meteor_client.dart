@@ -3,6 +3,16 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MeteorClient {
+  static final MeteorClient _instance = MeteorClient._internal('http://10.0.2.2:3000');
+
+  factory MeteorClient({String serverUrl = 'http://10.0.2.2:3000'}) {
+    return _instance;
+  }
+
+  MeteorClient._internal(this.serverUrl);
+
+  static MeteorClient get instance => _instance;
+
   final String serverUrl;
   late WebSocketChannel _channel;
   final Map<String, dynamic> subscriptions = {};
@@ -12,20 +22,50 @@ class MeteorClient {
   final Map<String, Completer<dynamic>> _pendingMethods = {};
   bool isConnectedInternal = false;
   int _methodId = 0;
+  int _subscriptionId = 0;
   String? _authToken;
-
-  MeteorClient({required this.serverUrl});
+  String? _authUserId;
+  Completer<void>? _authCompleter;
+  void Function()? onAuthError;
 
   void setAuth(String token, String userId) {
     _authToken = token;
+    _authUserId = userId;
+    
+    // If we are setting auth, it means we have a token.
+    // Ensure any pending waitForAuth call is completed.
+    _authCompleter ??= Completer<void>();
+    if (!_authCompleter!.isCompleted) {
+      _authCompleter!.complete();
+    }
   }
 
   void clearAuth() {
     _authToken = null;
+    _authUserId = null;
+    _authCompleter = null;
+  }
+
+  Future<void> waitForAuth() async {
+    if (_authToken == null) {
+      return; // No auth needed
+    }
+    
+    // If completer doesn't exist yet, create one and wait
+    if (_authCompleter == null) {
+      _authCompleter = Completer<void>();
+      await _authCompleter!.future;
+    } else if (!_authCompleter!.isCompleted) {
+      // If completer exists but not completed, wait for it
+      await _authCompleter!.future;
+    }
+    // If completer exists and is already completed, future resolves immediately
   }
 
   bool get isConnected => isConnectedInternal;
   Stream<MeteorMessage> get messages => _messageController.stream;
+  String? get authToken => _authToken;
+  String? get authUserId => _authUserId;
 
   Future<void> connect() async {
     try {
@@ -46,6 +86,10 @@ class MeteorClient {
       );
 
       isConnectedInternal = true;
+      
+      // Reset auth completer for new connection
+      _authCompleter = null;
+      
       await _sendMessage({'msg': 'connect', 'version': '1', 'support': ['1']});
     } catch (e) {
       isConnectedInternal = false;
@@ -58,30 +102,34 @@ class MeteorClient {
     await _channel.sink.close();
   }
 
-  Future<void> subscribe(String name, {Map<String, dynamic>? params}) async {
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
+  Future<void> subscribe(String name, {Map<String, dynamic>? params, List<dynamic>? args}) async {
+    final id = (++_subscriptionId).toString();
     final subscription = <String, dynamic>{
       'msg': 'sub',
       'id': id,
       'name': name,
     };
-    if (params != null) {
+    
+    // Use args if provided (direct array), otherwise wrap params in array
+    if (args != null) {
+      subscription['params'] = args;
+    } else if (params != null) {
       subscription['params'] = [params];
     }
 
     final readyCompleter = Completer<void>();
     subscriptions[id] = <String, dynamic>{
       'name': name,
-      'params': params,
+      'params': params ?? args,
       'ready': readyCompleter,
     };
 
     await _sendMessage(subscription);
     
     await readyCompleter.future.timeout(
-      Duration(seconds: 5),
+      Duration(seconds: 15),
       onTimeout: () {
-        throw Exception('Subscription to $name timed out after 5 seconds');
+        throw Exception('Subscription to $name timed out after 15 seconds');
       },
     );
   }
@@ -90,6 +138,7 @@ class MeteorClient {
     String method,
     List<dynamic> params,
   ) async {
+    await waitForAuth();
     if (!isConnectedInternal) {
       throw Exception('Not connected to Meteor server');
     }
@@ -134,12 +183,36 @@ class MeteorClient {
     _channel.sink.add(jsonEncode(message));
   }
 
+  void _sendAuth() {
+    // Send login method call with auth token
+    final id = (++_methodId).toString();
+    // Reuse existing completer if one is waiting, otherwise create new one
+    _authCompleter ??= Completer<void>();
+    _pendingMethods[id] = _authCompleter!;
+    
+    final method = {
+      'msg': 'method',
+      'method': 'login',
+      'params': [
+        {
+          'resume': _authToken,
+        }
+      ],
+      'id': id,
+    };
+    _channel.sink.add(jsonEncode(method));
+  }
+
   void _handleMessage(Map<String, dynamic> message) {
     final msg = message['msg'] as String?;
 
     switch (msg) {
       case 'connected':
         isConnectedInternal = true;
+        // Send authentication if available
+        if (_authToken != null && _authUserId != null) {
+          _sendAuth();
+        }
         break;
       case 'added':
         final collection = message['collection'] as String?;
@@ -181,32 +254,50 @@ class MeteorClient {
         if (subId != null && subId.isNotEmpty) {
           final subscription = subscriptions[subId[0]];
           if (subscription != null && subscription['ready'] is Completer) {
-            (subscription['ready'] as Completer).complete();
+            final completer = subscription['ready'] as Completer;
+            // Remove to prevent double-completion if server sends multiple ready messages
+            subscription.remove('ready');
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
           }
         }
         break;
       case 'result':
         final id = message['id'] as String?;
+        final error = message['error'] as Map<String, dynamic>?;
         final resultData = message['result'];
-        
-        // Handle various result types: Map, String, or other types
-        dynamic result;
-        if (resultData is Map<String, dynamic>) {
-          result = resultData;
-        } else if (resultData is String) {
-          // Server returned a string (e.g., orderId)
-          result = resultData;
-        } else if (resultData != null) {
-          // Try to pass through other types as-is
-          result = resultData;
-        } else {
-          // No result provided
-          result = {};
-        }
         
         if (id != null && _pendingMethods.containsKey(id)) {
           final completer = _pendingMethods.remove(id);
-          completer?.complete(result);
+          
+          if (error != null) {
+            final errorMessage = error['reason'] ?? error['message'] ?? 'Unknown error';
+            final errorCode = error['error']?.toString();
+            
+            if (errorCode == '403' || errorCode == '401' || 
+                errorMessage.toString().toLowerCase().contains('not authorized') ||
+                errorMessage.toString().toLowerCase().contains('not logged in')) {
+              onAuthError?.call();
+            }
+            
+            completer?.completeError(
+              Exception(errorMessage),
+            );
+          } else {
+            // Handle various result types: Map, String, or other types
+            dynamic result;
+            if (resultData is Map<String, dynamic>) {
+              result = resultData;
+            } else if (resultData is String) {
+              result = resultData;
+            } else if (resultData != null) {
+              result = resultData;
+            } else {
+              result = {};
+            }
+            completer?.complete(result);
+          }
         }
         break;
       case 'error':

@@ -1,6 +1,7 @@
 class User {
   final String id;
   final String phone;
+  final String? mobile;  // Alias for phone compatibility
   final String? name;
   final String? email;
   final DateTime createdAt;
@@ -25,6 +26,7 @@ class User {
   User({
     required this.id,
     required this.phone,
+    this.mobile,
     this.name,
     this.email,
     required this.createdAt,
@@ -50,6 +52,7 @@ class User {
     return User(
       id: json['_id'] ?? json['id'] ?? '',
       phone: json['phone'] ?? '',
+      mobile: json['mobile'] ?? json['phone'],
       name: json['name'],
       email: json['email'],
       createdAt: json['createdAt'] is DateTime
@@ -76,6 +79,7 @@ class User {
   Map<String, dynamic> toJson() => {
     '_id': id,
     'phone': phone,
+    'mobile': mobile,
     'name': name,
     'email': email,
     'createdAt': createdAt.toIso8601String(),
@@ -103,6 +107,7 @@ class User {
   User copyWith({
     String? id,
     String? phone,
+    String? mobile,
     String? name,
     String? email,
     DateTime? createdAt,
@@ -123,6 +128,7 @@ class User {
     return User(
       id: id ?? this.id,
       phone: phone ?? this.phone,
+      mobile: mobile ?? this.mobile,
       name: name ?? this.name,
       email: email ?? this.email,
       createdAt: createdAt ?? this.createdAt,
