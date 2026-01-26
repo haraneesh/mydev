@@ -119,6 +119,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => CartProvider(orderService: orderService),
         ),
+        Provider<OneSignalService>.value(
+          value: OneSignalService.instance,
+        ),
       ],
       child: MaterialApp(
         title: 'Suvai',

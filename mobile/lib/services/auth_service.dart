@@ -306,22 +306,22 @@ class AuthService {
       debugPrint('[Auth] Registering OneSignal player ID for user: $userId');
 
       // Set external user ID for cross-device tracking
-      await OneSignalService.setExternalUserId(userId);
+      await OneSignalService.instance.setExternalUserId(userId);
 
       // Request push permission and wait for it
-      final hasPermission = await OneSignalService.requestPermission();
+      final hasPermission = await OneSignalService.instance.requestPermission();
       debugPrint('[Auth] Push permission result: $hasPermission');
 
       // Wait a bit for player ID to be assigned after permission
       await Future.delayed(const Duration(milliseconds: 1000));
       
       // Try to fetch player ID synchronously
-      var playerId = OneSignalService.getPlayerId();
+      var playerId = OneSignalService.instance.getPlayerId();
       
       // If not available, wait for it (up to 4 more seconds)
       if (playerId == null || playerId.isEmpty) {
         debugPrint('[Auth] Player ID not immediately available, waiting...');
-        playerId = await OneSignalService.waitForPlayerId(timeout: const Duration(seconds: 4));
+        playerId = await OneSignalService.instance.waitForPlayerId(timeout: const Duration(seconds: 4));
         debugPrint('[Auth] Waited for player ID, result: ${playerId != null ? playerId.substring(0, 8) + '...' : 'null'}');
       } else {
         debugPrint('[Auth] Player ID immediately available: ${playerId.substring(0, 8)}...');

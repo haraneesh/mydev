@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MeteorClient {
@@ -26,40 +27,86 @@ class MeteorClient {
   String? _authToken;
   String? _authUserId;
   Completer<void>? _authCompleter;
+  Completer<void>? _connectionCompleter;
+  String? _loginMethodId;
   void Function()? onAuthError;
 
   void setAuth(String token, String userId) {
+    if (kDebugMode) {
+      print('[MeteorClient] setAuth: token=${token.isNotEmpty ? "..." : "EMPTY"}, userId=$userId');
+    }
+    
+    final bool tokenChanged = _authToken != token;
     _authToken = token;
     _authUserId = userId;
     
-    // If we are setting auth, it means we have a token.
-    // Ensure any pending waitForAuth call is completed.
-    _authCompleter ??= Completer<void>();
-    if (!_authCompleter!.isCompleted) {
-      _authCompleter!.complete();
+    if (tokenChanged) {
+      // reset auth completer since we have new credentials
+      _authCompleter = null;
+      
+      // If we are already connected, trigger the login immediately
+      if (isConnectedInternal && token.isNotEmpty) {
+        if (kDebugMode) {
+          print('[MeteorClient] Already connected, triggering login for new token...');
+        }
+        _sendAuth();
+      }
     }
   }
 
   void clearAuth() {
+    if (kDebugMode) {
+      print('[MeteorClient] clearAuth');
+    }
     _authToken = null;
     _authUserId = null;
     _authCompleter = null;
   }
 
   Future<void> waitForAuth() async {
-    if (_authToken == null) {
-      return; // No auth needed
+    // If no token, we can't authenticate anyway
+    if (_authToken == null || _authToken!.isEmpty) {
+      if (kDebugMode) {
+        print('[MeteorClient] No auth token available, skipping wait');
+      }
+      return; 
     }
     
-    // If completer doesn't exist yet, create one and wait
-    if (_authCompleter == null) {
-      _authCompleter = Completer<void>();
-      await _authCompleter!.future;
-    } else if (!_authCompleter!.isCompleted) {
-      // If completer exists but not completed, wait for it
-      await _authCompleter!.future;
+    if (!isConnectedInternal) {
+      if (kDebugMode) {
+        print('[MeteorClient] Not connected, triggering connect from waitForAuth');
+      }
+      await connect();
     }
-    // If completer exists and is already completed, future resolves immediately
+    
+    // Ensure we have a completer and wait for it
+    if (_authCompleter == null) {
+      if (kDebugMode) {
+        print('[MeteorClient] No active auth completer, triggering session login');
+      }
+      _sendAuth();
+    }
+    
+    if (kDebugMode && !_authCompleter!.isCompleted) {
+      print('[MeteorClient] Waiting for authentication to complete...');
+    }
+    
+    try {
+      await _authCompleter!.future.timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          if (kDebugMode) {
+            print('[MeteorClient] Auth timeout - session might be unauthenticated');
+          }
+          throw Exception('Authentication timed out. Please try again.');
+        },
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('[MeteorClient] Auth failure: $e');
+      }
+      rethrow;
+    }
   }
 
   bool get isConnected => isConnectedInternal;
@@ -68,8 +115,19 @@ class MeteorClient {
   String? get authUserId => _authUserId;
 
   Future<void> connect() async {
+    // If already connecting, return current future
+    if (_connectionCompleter != null && !_connectionCompleter!.isCompleted) {
+      return _connectionCompleter!.future;
+    }
+
     try {
+      _connectionCompleter = Completer<void>();
+      isConnectedInternal = false;
+      
       final wsUrl = serverUrl.replaceFirst('http://', 'ws://');
+      if (kDebugMode) {
+        print('[MeteorClient] Connecting to $wsUrl...');
+      }
       _channel = WebSocketChannel.connect(Uri.parse('$wsUrl/websocket'));
 
       _channel.stream.listen(
@@ -78,21 +136,34 @@ class MeteorClient {
           _handleMessage(json);
         },
         onError: (error) {
+          if (kDebugMode) print('[MeteorClient] WebSocket Error: $error');
           isConnectedInternal = false;
+          if (!_connectionCompleter!.isCompleted) {
+            _connectionCompleter!.completeError(error);
+          }
         },
         onDone: () {
+          if (kDebugMode) print('[MeteorClient] WebSocket Closed');
           isConnectedInternal = false;
+          if (!_connectionCompleter!.isCompleted) {
+            _connectionCompleter!.complete();
+          }
         },
       );
 
-      isConnectedInternal = true;
+      // Send connect message
+      _channel.sink.add(jsonEncode({'msg': 'connect', 'version': '1', 'support': ['1']}));
       
-      // Reset auth completer for new connection
-      _authCompleter = null;
-      
-      await _sendMessage({'msg': 'connect', 'version': '1', 'support': ['1']});
+      // Wait for 'connected' message from server
+      await _connectionCompleter!.future.timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw Exception('Timeout waiting for DDP connected message');
+        },
+      );
     } catch (e) {
       isConnectedInternal = false;
+      _connectionCompleter = null;
       rethrow;
     }
   }
@@ -155,10 +226,6 @@ class MeteorClient {
         'id': id,
       };
 
-      if (_authToken != null) {
-        message['token'] = _authToken!;
-      }
-
       await _sendMessage(message);
 
       final response = await completer.future.timeout(
@@ -184,11 +251,23 @@ class MeteorClient {
   }
 
   void _sendAuth() {
-    // Send login method call with auth token
+    if (_authToken == null || _authToken!.isEmpty) return;
+    
+    // If a login is already pending, don't send another
+    if (_loginMethodId != null && _pendingMethods.containsKey(_loginMethodId)) {
+      return;
+    }
+
     final id = (++_methodId).toString();
+    _loginMethodId = id;
+    
     // Reuse existing completer if one is waiting, otherwise create new one
     _authCompleter ??= Completer<void>();
     _pendingMethods[id] = _authCompleter!;
+    
+    if (kDebugMode) {
+      print('[MeteorClient] Sending login method request (id: $id)...');
+    }
     
     final method = {
       'msg': 'method',
@@ -209,8 +288,13 @@ class MeteorClient {
     switch (msg) {
       case 'connected':
         isConnectedInternal = true;
+        if (kDebugMode) print('[MeteorClient] DDP session connected');
+        if (_connectionCompleter != null && !_connectionCompleter!.isCompleted) {
+          _connectionCompleter!.complete();
+        }
+        
         // Send authentication if available
-        if (_authToken != null && _authUserId != null) {
+        if (_authToken != null && _authToken!.isNotEmpty) {
           _sendAuth();
         }
         break;
@@ -275,16 +359,33 @@ class MeteorClient {
             final errorMessage = error['reason'] ?? error['message'] ?? 'Unknown error';
             final errorCode = error['error']?.toString();
             
+            if (kDebugMode) {
+              print('[MeteorClient] Method $id error: $errorMessage ($errorCode)');
+            }
+
             if (errorCode == '403' || errorCode == '401' || 
                 errorMessage.toString().toLowerCase().contains('not authorized') ||
                 errorMessage.toString().toLowerCase().contains('not logged in')) {
               onAuthError?.call();
             }
             
-            completer?.completeError(
-              Exception(errorMessage),
-            );
+            if (completer != null && !completer.isCompleted) {
+              completer.completeError(
+                Exception(errorMessage),
+              );
+            }
           } else {
+            // Handle login result specially
+            if (id == _loginMethodId) {
+              _loginMethodId = null;
+              if (resultData is Map<String, dynamic> && resultData.containsKey('id')) {
+                _authUserId = resultData['id'];
+                if (kDebugMode) {
+                  print('[MeteorClient] Login successful for user: $_authUserId');
+                }
+              }
+            }
+
             // Handle various result types: Map, String, or other types
             dynamic result;
             if (resultData is Map<String, dynamic>) {
@@ -296,7 +397,10 @@ class MeteorClient {
             } else {
               result = {};
             }
-            completer?.complete(result);
+
+            if (completer != null && !completer.isCompleted) {
+              completer.complete(result);
+            }
           }
         }
         break;

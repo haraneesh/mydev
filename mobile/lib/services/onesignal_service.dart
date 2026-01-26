@@ -14,6 +14,26 @@ import 'package:suvai/config/notification_config.dart';
 /// - Register device with server on login
 /// - Auto-register on subscription changes
 class OneSignalService {
+  static OneSignalService? _instance;
+  static OneSignalService get instance => _instance ??= OneSignalService._();
+
+  final bool _isTest;
+  bool? _stubPermission;
+  bool? _stubRequestResult;
+
+  OneSignalService._({bool isTest = false}) : _isTest = isTest;
+
+  /// Create a nulled version of OneSignalService for testing
+  factory OneSignalService.createNull({
+    bool? hasPermission,
+    bool? requestResult,
+  }) {
+    final service = OneSignalService._(isTest: true);
+    service._stubPermission = hasPermission;
+    service._stubRequestResult = requestResult;
+    return service;
+  }
+
   static String? _currentPlayerId;
   static bool _isInitialized = false;
 
@@ -167,7 +187,7 @@ class OneSignalService {
   /// Returns:
   ///   - Current player ID if available
   ///   - null if not yet fetched
-  static String? getPlayerId() {
+  String? getPlayerId() {
     return _currentPlayerId;
   }
 
@@ -176,7 +196,7 @@ class OneSignalService {
   /// Returns:
   ///   - Player ID when available
   ///   - null if not assigned within timeout
-  static Future<String?> waitForPlayerId({Duration timeout = const Duration(seconds: 5)}) async {
+  Future<String?> waitForPlayerId({Duration timeout = const Duration(seconds: 5)}) async {
     // If already have player ID, return immediately
     if (_currentPlayerId != null && _currentPlayerId!.isNotEmpty) {
       return _currentPlayerId;
@@ -206,7 +226,8 @@ class OneSignalService {
   /// 
   /// Parameters:
   ///   - userId: User ID from your authentication system
-  static Future<void> setExternalUserId(String userId) async {
+  Future<void> setExternalUserId(String userId) async {
+    if (_isTest) return;
     try {
       debugPrint('[OneSignal] Setting external user ID: $userId');
       OneSignal.login(userId);
@@ -219,7 +240,8 @@ class OneSignalService {
   /// Clear external user ID (on logout)
   /// 
   /// Should be called when user logs out
-  static Future<void> clearExternalUserId() async {
+  Future<void> clearExternalUserId() async {
+    if (_isTest) return;
     try {
       debugPrint('[OneSignal] Clearing external user ID');
       OneSignal.logout();
@@ -238,7 +260,8 @@ class OneSignalService {
   /// Returns:
   ///   - true if permission granted
   ///   - false if denied
-  static Future<bool> requestPermission() async {
+  Future<bool> requestPermission() async {
+    if (_isTest) return _stubRequestResult ?? false;
     try {
       debugPrint('[OneSignal] Requesting notification permission...');
 
@@ -254,6 +277,21 @@ class OneSignalService {
       }
     } catch (e) {
       debugPrint('[OneSignal] ❌ Error requesting permission: $e');
+      return false;
+    }
+  }
+
+  /// Check if notification permission is granted
+  /// 
+  /// Returns:
+  ///   - true if permission is granted
+  ///   - false otherwise
+  Future<bool> hasPermission() async {
+    if (_isTest) return _stubPermission ?? false;
+    try {
+      return OneSignal.Notifications.permission;
+    } catch (e) {
+      debugPrint('[OneSignal] Error checking permission: $e');
       return false;
     }
   }
@@ -297,7 +335,7 @@ class OneSignalService {
   /// Returns:
   ///   - true if device is subscribed to push notifications
   ///   - false otherwise
-  static bool isSubscribed() {
+  bool isSubscribed() {
     return _currentPlayerId != null && _currentPlayerId!.isNotEmpty;
   }
 
@@ -331,7 +369,7 @@ class OneSignalService {
 ╠════════════════════════════════════════════════════════════╣
 ║ Initialized: ${_isInitialized ? '✅' : '❌'}                                      ║
 ║ Player ID:   ${_currentPlayerId != null ? '✅ ${_currentPlayerId!.substring(0, 8)}...' : '⚠️  Not available'}  ║
-║ Subscribed:  ${isSubscribed() ? '✅' : '❌'}                                      ║
+║ Subscribed:  ${instance.isSubscribed() ? '✅' : '❌'}                                      ║
 ╚════════════════════════════════════════════════════════════╝
     ''');
   }

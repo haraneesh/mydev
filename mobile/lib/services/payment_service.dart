@@ -80,7 +80,7 @@ class PaymentService {
       if (result['status'] == 'S') {
         return {
           'success': true,
-          'txToken': result['txToken'],
+          'txToken': result['txToken'] ?? result['txnToken'],
           'suvaiTransactionId': result['suvaiTransactionId'],
           'status': 'S',
         };

@@ -91,9 +91,6 @@ class _CheckoutPhoneVerificationDialogState
             child: const Text('Back'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.secondary,
-            ),
             onPressed: () {
               Navigator.pop(context);
               widget.onSignUpPressed();
@@ -170,11 +167,6 @@ class _CheckoutPhoneVerificationDialogState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
                 onPressed: _isLoading ? null : _validateAndProceed,
                 child: _isLoading
                     ? const SizedBox(

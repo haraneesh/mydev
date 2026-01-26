@@ -107,7 +107,7 @@ class PaymentErrorHandler {
     return PaymentError(
       type: PaymentErrorType.unknownError,
       message: 'An error occurred during payment',
-      userMessage: 'Something went wrong. Please try again.',
+      userMessage: 'Payment Error: ${error.toString()}',
       technicalDetails: error.toString(),
       isRetryable: true,
       originalError: error,

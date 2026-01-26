@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/invoice.dart';
 import '../models/payment.dart';
@@ -113,8 +114,22 @@ class PaytmPaymentController {
         };
       }
 
-      final txToken = initiateResult['txToken'] as String;
-      final suvaiTransactionId = initiateResult['suvaiTransactionId'] as String;
+      final txToken = initiateResult['txToken'] as String?;
+      final suvaiTransactionId = initiateResult['suvaiTransactionId'] as String?;
+
+      if (txToken == null || txToken.isEmpty) {
+        return {
+          'success': false,
+          'error': 'Failed to get transaction token from server',
+        };
+      }
+
+      if (suvaiTransactionId == null || suvaiTransactionId.isEmpty) {
+        return {
+          'success': false,
+          'error': 'Failed to get transaction ID from server',
+        };
+      }
 
       if (kDebugMode) {
         print('✓ Transaction initiated');
@@ -201,12 +216,45 @@ class PaytmPaymentController {
       }
 
       // Step 3: Handle Paytm response
-      final paymentStatus = checkoutResult['paymentStatus'] as Map<String, dynamic>;
+      final Map<String, dynamic> paymentStatus = checkoutResult['paymentStatus'] is Map 
+          ? Map<String, dynamic>.from(checkoutResult['paymentStatus'])
+          : {};
 
       if (kDebugMode) {
         print('✓ Paytm response received');
+        print('  Full response: $paymentStatus');
         print('  status: ${paymentStatus['STATUS']}');
+        print('  respCode: ${paymentStatus['RESPCODE']}');
         print('  txnId: ${paymentStatus['TXNID']}');
+      }
+
+      // Validate payment status before proceeding to server completion
+      if (paymentStatus['STATUS'] != 'TXN_SUCCESS') {
+        final error = _errorHandler.parsePaytmResponse(paymentStatus);
+        if (kDebugMode) {
+          print('✗ Payment not successful: ${error.message}');
+        }
+        
+        // Log the failure to server
+        try {
+          await _paymentService.handlePaymentError(
+            orderId: suvaiTransactionId,
+            errorObject: {
+              'reason': error.message,
+              'type': 'status_check_failure',
+              'paymentStatus': paymentStatus,
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
+        } catch (_) {}
+
+        return {
+          'success': false,
+          'orderId': suvaiTransactionId,
+          'error': error.userMessage ?? error.message,
+          'isRetryable': true,
+          'technicalDetails': 'Paytm status: ${paymentStatus['STATUS']}, code: ${paymentStatus['RESPCODE']}',
+        };
       }
 
       // Step 4: Complete transaction on server (with retry)
@@ -323,7 +371,32 @@ class PaytmPaymentController {
         print('  orderId: $orderId');
         print('  amount: $amount');
         print('  isStaging: $isStaging');
-        print('  callbackUrl: ${callbackUrl ?? 'https://securegw.paytm.in/theia/paytmCallback'}?ORDER_ID=$orderId');
+      }
+
+      // Construct callback URL safely
+      String finalCallbackUrl = (callbackUrl == null || callbackUrl.isEmpty)
+          ? (isStaging 
+              ? 'https://securestage.paytmpayments.com/theia/paytmCallback' 
+              : 'https://securegw.paytm.in/theia/paytmCallback')
+          : callbackUrl;
+      
+      // Ensure ORDER_ID is appended correctly but only once
+      if (!finalCallbackUrl.contains('ORDER_ID=')) {
+        finalCallbackUrl += (finalCallbackUrl.contains('?') ? '&' : '?') + 'ORDER_ID=$orderId';
+      } else {
+        // If it already has it, ensure the value is set correctly
+        finalCallbackUrl = finalCallbackUrl.replaceAll(
+          RegExp(r'ORDER_ID=[^&]*'), 
+          'ORDER_ID=$orderId'
+        );
+      }
+
+      if (kDebugMode) {
+        print('  finalCallbackUrl: $finalCallbackUrl');
+      }
+
+      if (kDebugMode) {
+        print('  callbackUrl: $finalCallbackUrl');
       }
 
       // Call Paytm SDK wrapper
@@ -334,7 +407,7 @@ class PaytmPaymentController {
         txnToken: params['txnToken'] as String,
         isStaging: params['isStaging'] as bool,
         restrictAppInvoke: params['restrictAppInvoke'] as bool,
-        callbackUrl: '${callbackUrl ?? 'https://securegw.paytm.in/theia/paytmCallback'}?ORDER_ID=$orderId',
+        callbackUrl: finalCallbackUrl,
       );
 
       if (kDebugMode) {
@@ -375,27 +448,59 @@ class PaytmPaymentController {
       };
     }
 
-    // Handle string response (sometimes SDK returns JSON string)
     if (response is String) {
       try {
-        // Try to parse as JSON
-        return Map<String, dynamic>.from(
-          Uri.decodeFull(response)
-              .replaceAll('\\/', '/')
-              as Map<String, dynamic>,
-        );
-      } catch (e) {
+        // Try to parse as JSON if it looks like JSON
+        if (response.trim().startsWith('{')) {
+          return Map<String, dynamic>.from(jsonDecode(response));
+        }
+        
+        // Sometimes it's a URL-encoded string of JSON
+        final decoded = Uri.decodeFull(response);
+        if (decoded.trim().startsWith('{')) {
+          return Map<String, dynamic>.from(jsonDecode(decoded));
+        }
+
+        // Sometimes it's a query-string format (key1=val1&key2=val2)
+        if (response.contains('=') || decoded.contains('=')) {
+          final querySource = decoded.contains('=') ? decoded : response;
+          final Map<String, String> params = Uri.splitQueryString(querySource);
+          
+          if (params.isNotEmpty) {
+            final Map<String, dynamic> normalized = {};
+            // Paytm SDK sometimes returns keys in lowercase or mixed case
+            params.forEach((key, value) {
+              normalized[key.toUpperCase()] = value;
+            });
+            return normalized;
+          }
+        }
+
         return {
           'STATUS': 'UNKNOWN',
           'RESPCODE': '999',
           'RESPMSG': response,
+          'RAW': response,
+        };
+      } catch (e) {
+        return {
+          'STATUS': 'ERROR',
+          'RESPCODE': '999',
+          'RESPMSG': 'Error parsing response: $e',
+          'RAW': response,
         };
       }
     }
 
     // Handle map response
     if (response is Map) {
-      return Map<String, dynamic>.from(response);
+      final Map<String, dynamic> normalized = {};
+      response.forEach((key, value) {
+        if (value != null) {
+          normalized[key.toString().toUpperCase()] = value.toString();
+        }
+      });
+      return normalized;
     }
 
     return {

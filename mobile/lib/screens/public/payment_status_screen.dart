@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../config/theme.dart';
 import '../../models/invoice.dart';
 import '../../services/payment_service.dart';
 
@@ -76,13 +77,13 @@ class _PaymentStatusScreenState extends State<PaymentStatusScreen> {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.green[100],
+                color: AppColors.success.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check_circle,
                 size: 60,
-                color: Colors.green[700],
+                color: AppColors.success,
               ),
             ),
             const SizedBox(height: 24),
@@ -208,7 +209,8 @@ class _PaymentStatusScreenState extends State<PaymentStatusScreen> {
                   child: ElevatedButton(
                     onPressed: _goToPaymentDashboard,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: AppColors.success,
+                      foregroundColor: Colors.white,
                     ),
                     child: const Text('Done'),
                   ),

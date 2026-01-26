@@ -14,6 +14,8 @@ import '../../widgets/category_sidebar.dart';
 import '../../widgets/app_menu_drawer.dart';
 import 'cart_screen.dart';
 import 'user_profile_screen.dart';
+import '../../services/onesignal_service.dart';
+import '../../widgets/notification_requirement_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Product>? initialProducts;
@@ -66,6 +68,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       isInitialLoad = false;
     } else {
       _initializeProducts();
+    }
+
+    // Check for notification permission on app load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkNotificationPermission();
+    });
+  }
+
+  Future<void> _checkNotificationPermission() async {
+    final oneSignalService = OneSignalService.instance;
+    final hasPermission = await oneSignalService.hasPermission();
+    
+    if (!hasPermission && mounted) {
+      await NotificationRequirementDialog.show(context, oneSignalService);
     }
   }
 

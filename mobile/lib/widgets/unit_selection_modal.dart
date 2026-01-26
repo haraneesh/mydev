@@ -173,14 +173,7 @@ class UnitSelectionModal extends StatelessWidget {
                             cartProvider.moveItemToRemoved(product.id);
                             Navigator.of(context).pop();
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondary,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: Text(
-                            'REMOVE FROM CART',
-                            style: getButtonTextStyle(),
-                          ),
+                          child: const Text('REMOVE FROM CART'),
                         ),
                       ),
                     );

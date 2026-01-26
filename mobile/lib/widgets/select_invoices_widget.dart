@@ -507,7 +507,7 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
           if (totalAmount > 0) ...[
             const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal:8, vertical: 8),
               decoration: BoxDecoration(
                 color: AppColors.divider.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -518,7 +518,7 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
                   Text(
                     'Amount Due',
                     style: GoogleFonts.nunito(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
@@ -526,8 +526,8 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
                   Text(
                     '₹${amountDue.toStringAsFixed(2)}',
                     style: GoogleFonts.nunito(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -610,7 +610,10 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
 
         if (result['success']) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Paid successfully using wallet balance!')),
+            const SnackBar(
+              content: Text('Paid successfully using wallet balance!'),
+              backgroundColor: AppColors.success,
+            ),
           );
           _loadData();
         } else {
@@ -648,7 +651,10 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
 
       if (paymentSuccess == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment successful!')),
+          const SnackBar(
+            content: Text('Payment successful!'),
+            backgroundColor: AppColors.success,
+          ),
         );
         _loadData();
       }

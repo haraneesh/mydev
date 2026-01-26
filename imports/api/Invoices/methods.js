@@ -116,8 +116,9 @@ Meteor.methods({
     }
   },
 
-  async 'invoices.getUnpaidInvoices'() {
+  'invoices.getUnpaidInvoices': async function getUnpaidInvoices() {
     if (!this.userId) {
+      console.error('[invoices.getUnpaidInvoices] No userId found in method context');
       throw new Meteor.Error(
         'not-authorized',
         'You must be logged in to view invoices',
@@ -127,14 +128,19 @@ Meteor.methods({
     try {
       // 1. Get user, customer ID, and outstanding amount
       const user = await Meteor.users.findOneAsync(this.userId);
+      if (!user) {
+        console.error(`[invoices.getUnpaidInvoices] User ${this.userId} not found in database`);
+        throw new Meteor.Error('user-not-found', 'User not found');
+      }
+
       const customerId = user?.zh_contact_id;
       const outstandingAmountInRs =
         (user?.wallet?.outstanding_receivable_amount_InPaise || 0) / 100;
 
       if (!customerId) {
         console.error(
-          'No Zoho contact ID found in user object:',
-          JSON.stringify(user, null, 2),
+          '[invoices.getUnpaidInvoices] No Zoho contact ID found for user:',
+          this.userId
         );
         throw new Meteor.Error(
           'no-customer',
@@ -202,7 +208,10 @@ Meteor.methods({
 });
 
 rateLimit({
-  methods: ['invoices.getAll', 'invoices.getUnpaidInvoices'],
+  methods: [
+    { name: 'invoices.getAll' },
+    { name: 'invoices.getUnpaidInvoices' }
+  ],
   limit: 5,
   timeRange: 1000,
 });

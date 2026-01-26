@@ -12,45 +12,58 @@ import PaytmChecksum from './PaytmChecksum';
 
 Meteor.methods({
   'payment.paytm.completeTransaction': async function completeTransaction(paymentStatus, invoicesToPay = []) {
-    check(paymentStatus, {
-      STATUS: String,
-      TXNAMOUNT: String,
-      TXNID: Match.Maybe(String),
-      CHECKSUMHASH: String,
-      RESPCODE: String,
-      RESPMSG: String,
-      ORDERID: String,
-      PAYMENTMODE: String,
-    });
-    check(invoicesToPay, Match.Where(invoices => {
-      // Allow empty array
-      if (invoices.length === 0) return true;
-      
-      // Check each item in the array
-      return Array.isArray(invoices) && invoices.every(invoice => {
-        return invoice && 
-               typeof invoice._id === 'string' &&
-               typeof invoice.invoice_id === 'string' &&
-               typeof invoice.total === 'number';
-      });
-    }));
+    if (Meteor.isDevelopment) {
+      console.log('completeTransaction called with:', JSON.stringify(paymentStatus, null, 2));
+      console.log('invoicesToPay:', JSON.stringify(invoicesToPay, null, 2));
+    }
 
     if (!Meteor.isServer) return;
 
     try {
+      // 0. Initial validation
+      check(paymentStatus, Match.ObjectIncluding({
+        STATUS: String,
+        TXNAMOUNT: Match.OneOf(String, Number),
+        ORDERID: String,
+        TXNID: Match.Maybe(String),
+        RESPCODE: Match.Maybe(String),
+        RESPMSG: Match.Maybe(String),
+        PAYMENTMODE: Match.Maybe(String),
+      }));
+
+      check(invoicesToPay, [Match.ObjectIncluding({
+        _id: String,
+        invoice_id: Match.OneOf(String, Number),
+        total: Number,
+      })]);
+
+      if (!this.userId) {
+        throw new Meteor.Error('not-authorized', 'User must be logged in to complete transaction');
+      }
+
       // 1. Update payment record with status and invoice references
+      const txnAmount = typeof paymentStatus.TXNAMOUNT === 'number' 
+        ? paymentStatus.TXNAMOUNT 
+        : parseFloat(paymentStatus.TXNAMOUNT);
+
       const updateData = {
         paymentApiResponseObject: paymentStatus,
         owner: this.userId,
         status: paymentStatus.STATUS === 'TXN_SUCCESS' ? 'completed' : 'failed',
         paymentMethod: paymentStatus.PAYMENTMODE,
-        totalAmount: parseFloat(paymentStatus.TXNAMOUNT) || 0,
+        totalAmount: txnAmount || 0,
         updatedAt: new Date()
       };
 
       if (invoicesToPay.length > 0) {
         updateData.relatedInvoices = invoicesToPay.map(inv => inv._id);
         updateData.invoiceCount = invoicesToPay.length;
+      }
+
+      const existingPayment = await Payments.findOneAsync({ orderId: paymentStatus.ORDERID });
+      if (!existingPayment) {
+        console.warn(`No payment record found for order ${paymentStatus.ORDERID}. This shouldn't happen if initiateTransaction was called.`);
+        // Note: we continue because we still have the money and want to process Zoho
       }
 
       await Payments.updateAsync(
@@ -65,8 +78,12 @@ Meteor.methods({
       }
 
       // 3. Process payment with Zoho
-      console.log('transaction amount ' + paymentStatus.TXNAMOUNT);
-      const txnAmountInPaise = parseFloat(paymentStatus.TXNAMOUNT) * 100;
+      console.log(`Processing successful payment for order ${paymentStatus.ORDERID}, amount: ${paymentStatus.TXNAMOUNT}`);
+      
+      const txnAmountInPaise = (typeof paymentStatus.TXNAMOUNT === 'number' 
+        ? paymentStatus.TXNAMOUNT 
+        : parseFloat(paymentStatus.TXNAMOUNT)) * 100;
+      
       const paymentAmountDeductingFee = 
         paymentStatus.PAYMENTMODE === 'CC' || paymentStatus.PAYMENTMODE === 'NB'
           ? calculateAmountMinusGateWayFee(txnAmountInPaise)
@@ -74,7 +91,11 @@ Meteor.methods({
 
       const paidUser = await Meteor.users.findOneAsync({ _id: this.userId });
       if (!paidUser) {
-        throw new Meteor.Error('user-not-found', 'User not found');
+        throw new Meteor.Error('user-not-found', 'User not found in database');
+      }
+      
+      if (!paidUser.zh_contact_id) {
+        throw new Meteor.Error('missing-zoho-id', 'User does not have a Zoho Contact ID linked');
       }
 
       // 4. Process Zoho payment
@@ -82,12 +103,12 @@ Meteor.methods({
         customer_id: paidUser.zh_contact_id,
         payment_mode: paymentStatus.PAYMENTMODE === 'CC' ? 'creditcard' : 
                      paymentStatus.PAYMENTMODE === 'NB' ? 'banktransfer' : 'other',
-        amount: paymentAmountDeductingFee / 100,
+        amount: Math.round(paymentAmountDeductingFee) / 100, // Ensure no floating point issues
         date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
         reference_number: paymentStatus.ORDERID,
         description: `Paid via PayTM, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
         invoices: invoicesToPay.map(invoice => ({
-          invoice_id: invoice.invoice_id,
+          invoice_id: invoice.invoice_id.toString(), // Ensure string for Zoho
           amount_applied: invoice.total || 0
         })),
         account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id // optional
@@ -116,7 +137,7 @@ Meteor.methods({
           
           try {
             await Meteor.callAsync('zhInvoices.updatePaymentStatus', {
-              invoiceId: invoice.invoice_id,
+              invoiceId: invoice.invoice_id.toString(),
               paymentStatus,
               amount
             });
@@ -140,10 +161,9 @@ Meteor.methods({
       );
 
       // 7. Update user's wallet information
-      const user = await Meteor.users.findOneAsync(this.userId);
-      if (user && user.zh_contact_id) {
+      if (paidUser.zh_contact_id) {
         try {
-          await updateUserWallet(user);
+          await updateUserWallet(paidUser);
         } catch (walletError) {
           console.error('Error updating user wallet:', walletError);
           // Don't fail the whole operation if wallet update fails
@@ -160,20 +180,26 @@ Meteor.methods({
     } catch (error) {
       console.error('Error in completeTransaction:', error);
       
-      // Update payment record with error
-      await Payments.updateAsync(
-        { orderId: paymentStatus.ORDERID },
-        { 
-          $set: { 
-            status: 'failed',
-            error: error.message,
-            errorDetails: error.reason || error.details,
-            updatedAt: new Date()
-          } 
+      // Attempt to log error in database if possible
+      try {
+        if (paymentStatus && paymentStatus.ORDERID) {
+          await Payments.updateAsync(
+            { orderId: paymentStatus.ORDERID },
+            { 
+              $set: { 
+                status: 'error',
+                error: error.message,
+                errorDetails: error.reason || error.details,
+                updatedAt: new Date()
+              } 
+            }
+          );
         }
-      );
+      } catch (logError) {
+        console.error('Failed to log error in record:', logError);
+      }
       
-      throw new Meteor.Error('payment-processing-failed', error.message);
+      handleMethodException(error);
     }
   },
   'payment.paytm.simulatePayment': async function simulatePayment() {
@@ -412,7 +438,7 @@ Meteor.methods({
   /**
    * Verify payment status with PayTM
    * @param {string} orderId - The order ID to verify
-   * @returns {Object} Payment status and details
+   * @returns {Promise<Object>} Payment status and details
    */
   'payment.paytm.verifyPayment': async function verifyPayment(orderId) {
     check(orderId, String);

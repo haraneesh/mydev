@@ -32,7 +32,7 @@ class Invoice {
   factory Invoice.fromJson(Map<String, dynamic> json, {bool parseLineItems = true}) {
     return Invoice(
       id: json['_id'] ?? json['invoice_id'] ?? '',
-      invoiceId: json['invoice_id'] ?? '',
+      invoiceId: json['invoice_id']?.toString() ?? '',
       invoiceNumber: json['invoice_number'] ?? 'N/A',
       date: _parseDate(json['date'] ?? json['createdAt']),
       status: (json['status'] ?? 'unknown').toString().toLowerCase(),

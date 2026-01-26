@@ -9,6 +9,8 @@ import '../../widgets/app_bar_with_logo.dart';
 import '../../widgets/background_widget.dart';
 import 'order_confirmation_screen.dart';
 import 'sign_up_screen.dart';
+import '../../services/onesignal_service.dart';
+import '../../widgets/notification_requirement_dialog.dart';
 
 class CheckoutData {
   final String name;
@@ -135,9 +137,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _submitOrder() async {
     final authProvider = context.read<AuthProvider>();
+    final oneSignalService = context.read<OneSignalService>();
     final isLoggedIn = authProvider.currentUser != null && 
         authProvider.currentUser!.id != 'guest';
     
+    // Check for notification permission before proceeding
+    final hasPermission = await oneSignalService.hasPermission();
+    if (!hasPermission) {
+      if (mounted) {
+        final granted = await _showNotificationRequirementDialog(oneSignalService);
+        if (!granted) return;
+      }
+    }
+
     // For guests, validate phone field exists
     if (!isLoggedIn) {
       if (!_formKey.currentState!.validate()) {
@@ -151,6 +163,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     // For logged-in users, proceed directly with their phone from profile
     await _placeOrder(_phoneController.text);
+  }
+
+  Future<bool> _showNotificationRequirementDialog(OneSignalService oneSignalService) {
+    return NotificationRequirementDialog.show(context, oneSignalService);
   }
 
   Future<void> _validatePhoneAndPlaceOrder(String phone) async {
@@ -197,19 +213,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'CANCEL',
-              style: getButtonTextStyle(),
-            ),
+            child: const Text('CANCEL'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.secondary,
-              foregroundColor: Colors.white,
-            ),
             onPressed: () async {
               // Capture current notes before navigating to signup
               final currentNotes = _notesController.text.trim();
@@ -229,10 +237,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 _populateNotesFromSignup(returnedNotes);
               }
             },
-            child: Text(
-              'SIGN UP',
-              style: getButtonTextStyle(),
-            ),
+            child: const Text('SIGN UP'),
           ),
         ],
       ),
