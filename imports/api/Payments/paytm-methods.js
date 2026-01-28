@@ -6,6 +6,7 @@ import handleMethodException from '../../modules/handle-method-exception';
 import rateLimit from '../../modules/rate-limit';
 import { updateUserWallet } from '../ZohoSyncUps/zohoContactsMethods';
 import zohoPayments from '../ZohoSyncUps/zohoPayments';
+import zh from '../ZohoSyncUps/ZohoBooks';
 import Payments from './Payments';
 import Invoices from '../Invoices/invoices';
 import PaytmChecksum from './PaytmChecksum';
@@ -77,7 +78,7 @@ Meteor.methods({
         return { success: false, status: 'failed', message: paymentStatus.RESPMSG };
       }
 
-      // 3. Process payment with Zoho
+      // 3. Fetch fresh invoice balances from Zoho to ensure accuracy
       console.log(`Processing successful payment for order ${paymentStatus.ORDERID}, amount: ${paymentStatus.TXNAMOUNT}`);
       
       const txnAmountInPaise = (typeof paymentStatus.TXNAMOUNT === 'number' 
@@ -98,21 +99,112 @@ Meteor.methods({
         throw new Meteor.Error('missing-zoho-id', 'User does not have a Zoho Contact ID linked');
       }
 
-      // 4. Process Zoho payment
+      // Fetch fresh invoice balances from Zoho
+      const invoiceIds = invoicesToPay.map(inv => inv.invoice_id.toString());
+      const freshInvoices = [];
+      
+      for (const invoiceId of invoiceIds) {
+        try {
+          const response = await zh.getRecordById('invoices', invoiceId);
+          if (response.code === 0 && response.invoice) {
+            freshInvoices.push({
+              invoice_id: response.invoice.invoice_id,
+              balance: parseFloat(response.invoice.balance) || 0,
+              total: parseFloat(response.invoice.total) || 0,
+              status: response.invoice.status
+            });
+          } else {
+            console.warn(`Failed to fetch invoice ${invoiceId} from Zoho: ${response.message}`);
+            // Fallback to local data if Zoho fetch fails
+            const localInvoice = invoicesToPay.find(inv => inv.invoice_id.toString() === invoiceId);
+            if (localInvoice) {
+              freshInvoices.push({
+                invoice_id: invoiceId,
+                balance: localInvoice.total || 0,
+                total: localInvoice.total || 0,
+                status: 'unknown'
+              });
+            }
+          }
+        } catch (fetchError) {
+          console.error(`Error fetching invoice ${invoiceId}:`, fetchError);
+          // Fallback to local data
+          const localInvoice = invoicesToPay.find(inv => inv.invoice_id.toString() === invoiceId);
+          if (localInvoice) {
+            freshInvoices.push({
+              invoice_id: invoiceId,
+              balance: localInvoice.total || 0,
+              total: localInvoice.total || 0,
+              status: 'unknown'
+            });
+          }
+        }
+      }
+
+      // 4. Distribute payment amount across invoices with capped application
+      const netPaymentAmount = Math.round(paymentAmountDeductingFee) / 100; // Convert to rupees
+      let remainingAmount = netPaymentAmount;
+      const invoicesToApply = [];
+      
+      for (const invoice of freshInvoices) {
+        if (remainingAmount <= 0) break;
+        
+        const amountToApply = Math.min(invoice.balance, remainingAmount);
+        if (amountToApply > 0) {
+          invoicesToApply.push({
+            invoice_id: invoice.invoice_id.toString(),
+            amount_applied: amountToApply
+          });
+          remainingAmount -= amountToApply;
+        }
+      }
+
+      console.log(`Applied ${netPaymentAmount - remainingAmount} to ${invoicesToApply.length} invoices, surplus: ${remainingAmount}`);
+
+      // 5. Handle surplus by creating a Retainer Invoice
+      let retainerInvoiceId = null;
+      if (remainingAmount > 0.01) { // Use epsilon for floating point comparison
+        try {
+          console.log(`Creating Retainer Invoice for surplus amount: ₹${remainingAmount.toFixed(2)}`);
+          const retainerResponse = await zohoPayments.createRetainerInvoice({
+            customer_id: paidUser.zh_contact_id,
+            retainer_invoice_amount: remainingAmount,
+            reference_number: paymentStatus.ORDERID,
+            description: `Surplus from PayTM payment ${paymentStatus.ORDERID}`
+          });
+
+          if (retainerResponse.code === 0 && retainerResponse.retainerinvoice) {
+            retainerInvoiceId = retainerResponse.retainerinvoice.retainerinvoice_id;
+            console.log(`Retainer Invoice created: ${retainerInvoiceId}`);
+          } else {
+            console.warn('Failed to create Retainer Invoice:', retainerResponse.message);
+          }
+        } catch (retainerError) {
+          console.error('Error creating Retainer Invoice:', retainerError);
+          // Continue with payment even if retainer creation fails
+        }
+      }
+
+      // 6. Create customer payment in Zoho
       const paymentData = {
         customer_id: paidUser.zh_contact_id,
         payment_mode: paymentStatus.PAYMENTMODE === 'CC' ? 'creditcard' : 
                      paymentStatus.PAYMENTMODE === 'NB' ? 'banktransfer' : 'other',
-        amount: Math.round(paymentAmountDeductingFee) / 100, // Ensure no floating point issues
+        amount: netPaymentAmount,
         date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
         reference_number: paymentStatus.ORDERID,
         description: `Paid via PayTM, id ${paymentStatus.ORDERID} msg ${paymentStatus.RESPMSG}`,
-        invoices: invoicesToPay.map(invoice => ({
-          invoice_id: invoice.invoice_id.toString(), // Ensure string for Zoho
-          amount_applied: invoice.total || 0
-        })),
-        account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id // optional
+        invoices: invoicesToApply,
+        account_id: Meteor.settings.private.PayTM.zoho_fund_deposit_account_id
       };
+
+      // Add retainer invoice to payment if created
+      if (retainerInvoiceId) {
+        paymentData.retainer_invoices = [{
+          retainerinvoice_id: retainerInvoiceId,
+          amount_applied: remainingAmount
+        }];
+      }
 
       let zhResponse;
       try {

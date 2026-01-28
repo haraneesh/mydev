@@ -36,9 +36,9 @@ function Navigation(props) {
           <span className="text-left col ps-1">
             <img
               className="brand-logo ms-3"
-              src="/logo.svg?v200"
+              src="/logo.png?v200"
               alt="Suvai"
-              style={{ maxWidth: '8em' }}
+              style={{ maxWidth: '12em' }}
               onClick={() => {
                 navigate('/');
               }}

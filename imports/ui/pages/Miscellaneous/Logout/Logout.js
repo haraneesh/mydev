@@ -6,7 +6,7 @@ import './Logout.scss';
 const Logout = () => (
   <div className="Logout">
     <img
-      src="https://nammasuvai.com/logo.svg"
+      src="https://nammasuvai.com/logo.png"
       alt="Namma Suvai"
     />
     <h1>Eat Healthy, Live Healthy</h1>

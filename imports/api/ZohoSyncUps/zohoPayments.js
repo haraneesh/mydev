@@ -56,6 +56,47 @@ async function getCustomerPayments(zhCustomerId, { limit = 10, page = 1 } = {}) 
   }
 }
 
+/**
+ * Create a Retainer Invoice in Zoho Books
+ * Used when payment amount exceeds invoice balances - the surplus is stored as a retainer
+ * @param {Object} args - Retainer invoice arguments
+ * @param {string} args.customer_id - Zoho customer ID
+ * @param {number} args.retainer_invoice_amount - Amount for the retainer invoice
+ * @param {string} args.reference_number - Payment reference (e.g., Paytm order ID)
+ * @param {string} [args.description] - Description for the retainer invoice
+ * @returns {Promise<Object>} Zoho API response with retainer invoice details
+ */
+async function createRetainerInvoice(args) {
+  try {
+    const { customer_id, retainer_invoice_amount, reference_number, description } = args;
+
+    if (!customer_id || !retainer_invoice_amount || retainer_invoice_amount <= 0) {
+      throw new Error('customer_id and positive retainer_invoice_amount are required');
+    }
+
+    const retainerInvoiceData = {
+      customer_id,
+      retainer_invoice_amount,
+      reference_number: reference_number || '',
+      notes: description || `Retainer created from payment ${reference_number}`,
+    };
+
+    console.log('Creating Retainer Invoice in Zoho:', JSON.stringify(retainerInvoiceData, null, 2));
+    const response = await zh.createRecord('retainerinvoices', retainerInvoiceData);
+    
+    if (response.code === 0 && response.retainerinvoice) {
+      console.log('Retainer Invoice created successfully:', response.retainerinvoice.retainerinvoice_id);
+      return response;
+    } else {
+      throw new Error(response.message || 'Failed to create retainer invoice');
+    }
+  } catch (error) {
+    console.error('Error creating Retainer Invoice in Zoho:', error);
+    throw new Error(`Failed to create Retainer Invoice: ${error.message}`);
+  }
+}
+
+
 import { Meteor } from 'meteor/meteor';
 import { check, Match } from 'meteor/check';
 import { ZhPayments } from '../ZhPayments/ZhPayments';
@@ -272,6 +313,7 @@ Meteor.methods({
 const zohoPayments = {
   createCustomerPayment,
   getCustomerPayments,
+  createRetainerInvoice,
   getOpenCreditNotes: 'zohoPayments.getOpenCreditNotes',
   getMyRecentPayments: 'zohoPayments.getMyRecentPayments'
 };
