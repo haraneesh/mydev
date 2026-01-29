@@ -7,6 +7,7 @@ import '../../utils/refund_cache.dart';
 import '../../widgets/refund_list_item_widget.dart';
 import '../../widgets/background_widget.dart';
 import '../../widgets/app_menu_drawer.dart';
+import '../../widgets/app_bar_with_logo.dart';
 import '../../providers/cart_provider.dart';
 
 class RefundListScreen extends StatefulWidget {
@@ -136,14 +137,7 @@ class _RefundListScreenState extends State<RefundListScreen> {
     return BackgroundWidget(
       child: Scaffold(
         extendBodyBehindAppBar: false,
-        appBar: AppBar(
-          backgroundColor: AppColors.background,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(
-            'Suvai',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+        appBar: AppBarWithLogo(
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh, color: AppColors.primary),

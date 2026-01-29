@@ -139,22 +139,22 @@ ThemeData buildAppTheme() {
       errorContainer: Color(0xFFEF0905),
     ),
     textTheme: TextTheme(
-      displayLarge: GoogleFonts.nunito(
+      displayLarge: GoogleFonts.sourceSerif4(
         fontSize: 32,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
-      displaySmall: GoogleFonts.nunito(
+      displaySmall: GoogleFonts.sourceSerif4(
         fontSize: 28,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
-      headlineMedium: GoogleFonts.nunito(
+      headlineMedium: GoogleFonts.sourceSerif4(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,
       ),
-      headlineSmall: GoogleFonts.nunito(
+      headlineSmall: GoogleFonts.sourceSerif4(
         fontSize: 22,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimary,

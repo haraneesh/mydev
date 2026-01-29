@@ -6,6 +6,7 @@ import '../../config/theme.dart';
 import '../../utils/formatters.dart';
 import '../../utils/unit_formatter.dart';
 import '../../widgets/background_widget.dart';
+import '../../widgets/app_bar_with_logo.dart';
 import '../../providers/cart_provider.dart';
 
 class InvoiceDetailScreen extends StatefulWidget {
@@ -56,18 +57,12 @@ class _InvoiceDetailScreenState extends State<InvoiceDetailScreen> {
     return BackgroundWidget(
       child: Scaffold(
         extendBodyBehindAppBar: false,
-        appBar: AppBar(
-          backgroundColor: AppColors.background,
-          elevation: 0,
+        appBar: AppBarWithLogo(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.pop(context),
           ),
-          centerTitle: true,
-          title: Text(
-            'Suvai',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+          showLeading: true,
         ),
         body: FutureBuilder<dynamic>(
           future: _invoiceDetailsFuture,

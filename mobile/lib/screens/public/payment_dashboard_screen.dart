@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../config/theme.dart';
 import '../../models/invoice.dart';
-import '../../models/payment.dart';
 import '../../services/order_service.dart';
 import '../../services/invoice_cache_manager.dart';
 import '../../widgets/invoice_list_item.dart';
@@ -20,11 +19,8 @@ class PaymentDashboardScreen extends StatefulWidget {
   State<PaymentDashboardScreen> createState() => _PaymentDashboardScreenState();
 }
 
-class _PaymentDashboardScreenState extends State<PaymentDashboardScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _PaymentDashboardScreenState extends State<PaymentDashboardScreen> {
   List<Invoice> unpaidInvoices = [];
-  List<Payment> paymentHistory = [];
   bool isLoading = false;
   String? errorMessage;
   final _cacheManager = InvoiceCacheManager.instance;
@@ -33,14 +29,7 @@ class _PaymentDashboardScreenState extends State<PaymentDashboardScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _loadData();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -139,44 +128,7 @@ class _PaymentDashboardScreenState extends State<PaymentDashboardScreen>
         extendBodyBehindAppBar: false,
         appBar: const AppBarWithLogo(),
         drawer: const AppMenuDrawer(),
-        body: Column(
-          children: [
-            // Tab bar
-            Container(
-              color: Colors.white,
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: AppColors.primary,
-                labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
-                labelStyle: GoogleFonts.nunito(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: GoogleFonts.nunito(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: const [
-                  Tab(text: 'Pay Invoices'),
-                  Tab(text: 'Payment History'),
-                ],
-              ),
-            ),
-            // Tab content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  // Pay Invoices Tab - shows invoice selection
-                  _buildPayInvoicesTab(),
-                  // Payment History Tab
-                  _buildPaymentHistoryTab(),
-                ],
-              ),
-            ),
-          ],
-        ),
+        body: _buildPayInvoicesTab(),
       ),
     );
   }
@@ -321,49 +273,6 @@ class _PaymentDashboardScreenState extends State<PaymentDashboardScreen>
           const SizedBox(height: 24),
         ],
       ),
-      ),
-    );
-  }
-
-  Widget _buildPaymentHistoryTab() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.history,
-                  size: 64,
-                  color: Colors.grey[300],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'No payment history yet',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Your payment transactions will appear here',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

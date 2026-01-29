@@ -26,7 +26,7 @@ class WalletBalanceCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               child: const Icon(
-                Icons.wallet,
+                Icons.credit_card,
                 size: 40,
                 color: AppColors.primary,
               ),

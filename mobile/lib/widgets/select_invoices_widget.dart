@@ -478,19 +478,19 @@ class _SelectInvoicesWidgetState extends State<SelectInvoicesWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  children: [
-                    const Icon(Icons.account_balance_wallet_outlined, size: 16, color: AppColors.textPrimary),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Wallet Balance',
-                      style: GoogleFonts.nunito(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
+                   children: [
+                     const Icon(Icons.credit_card, size: 16, color: AppColors.textPrimary),
+                     const SizedBox(width: 4),
+                     Text(
+                       'Wallet Balance',
+                       style: GoogleFonts.nunito(
+                         fontSize: 14,
+                         fontWeight: FontWeight.w600,
+                         color: AppColors.textPrimary,
+                       ),
+                     ),
+                   ],
+                 ),
                 Text(
                   '- ₹${(walletBalance > totalAmount ? totalAmount : walletBalance).toStringAsFixed(2)}',
                   style: GoogleFonts.nunito(
