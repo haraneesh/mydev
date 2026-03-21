@@ -1,0 +1,76 @@
+// Configure project-wide build settings
+ext.cdvBuildToolsVersion = '35.0.0'
+ext.cdvCompileSdkVersion = 35
+ext.cdvTargetSdkVersion = 35
+
+ext.postBuildExtras = {
+    // Add any post-build configuration here
+    android {
+        // Ensure SDK levels are explicitly set
+        compileSdkVersion 35
+        defaultConfig {
+            // Set the minimum SDK version
+            minSdkVersion 23
+            // Ensure target SDK aligns with compile SDK
+            targetSdkVersion 35
+            
+            // Enable multidex support
+            multiDexEnabled true
+            
+            // Enable vector drawable support
+            vectorDrawables.useSupportLibrary = true
+        }
+        
+        // Enable Java 11 features
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
+        }
+        
+        // Enable data binding if needed
+        buildFeatures {
+            dataBinding true
+            viewBinding true
+        }
+        
+        // Configure build types
+        buildTypes {
+            release {
+                // Enable code shrinking and obfuscation
+                minifyEnabled true
+                shrinkResources true
+                proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                
+                // Enable resource shrinking
+                shrinkResources true
+                
+                // Enable zip align
+                zipAlignEnabled true
+            }
+            
+            debug {
+                // Enable test coverage
+                testCoverageEnabled true
+                
+                // Enable debugging
+                debuggable true
+            }
+        }
+    }
+    
+    // Configure repositories
+    repositories {
+        google()
+        mavenCentral()
+    }
+    
+    // Configure dependencies
+    dependencies {
+        // Add common dependencies here
+        implementation 'androidx.appcompat:appcompat:1.6.1'
+        implementation 'com.google.android.material:material:1.11.0'
+        implementation 'androidx.multidex:multidex:2.0.1'
+        
+        // Add other common dependencies as needed
+    }
+}

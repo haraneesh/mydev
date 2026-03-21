@@ -1,0 +1,18 @@
+@import '../../stylesheets/bootstrap/variables';
+
+.OAuthLoginButtons {
+  margin-bottom: 25px;
+
+  &.WithEmailMessage {
+    position: relative;
+    padding-bottom: 30px;
+
+    .EmailMessage {
+      display: inline-block;
+      padding: 0 10px;
+      position: absolute;
+      bottom: -25px;
+      left: 40%;
+    }
+  }
+}

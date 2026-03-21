@@ -1,0 +1,42 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+.menu-item {
+    padding: 0 40px;
+    margin: 5px 10px;
+    user-select: none;
+    cursor: pointer;
+    border:none;
+  }
+
+  .arrow {
+    font-size: 3em;
+  }
+
+  .arrow-disabled {
+    color: $gray-300;
+  }
+
+  .item-slider-view {
+    display: none;
+  }
+
+  .menu-item-wrapper{
+    max-width: 20em;
+   // margin-top: -1.5em;
+  }
+  
+  .scroll-menu-arrow {
+    padding: 20px;
+    cursor: pointer;
+  }
+
+  .flickity-slider{
+     .fix-product-height{
+        min-height: 0rem;
+    }
+    .product-item{
+      margin-top:1rem;
+      margin-bottom:1rem;
+    }
+  }
+  

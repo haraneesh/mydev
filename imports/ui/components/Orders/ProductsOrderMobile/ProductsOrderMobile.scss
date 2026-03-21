@@ -1,0 +1,9 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+.productOrderList {
+    .accordion-button::after{
+      display:none;
+    }
+
+    border-bottom: #e4dfdb 1px solid;
+}

@@ -1,0 +1,112 @@
+.pre-permission-modal {
+  .modal-header {
+    background: linear-gradient(135deg, rgb(206, 100, 61) 0%, rgb(242, 159, 129) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 20px 24px;
+
+    .modal-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 18px;
+
+      i {
+        font-size: 22px;
+      }
+    }
+
+    .btn-close {
+      filter: brightness(0) invert(1);
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 24px;
+  }
+}
+
+.pre-permission-content {
+  .pre-permission-intro {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+  }
+
+  .pre-permission-message {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  .pre-permission-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      i {
+        color: #28a745;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      span {
+        font-size: 14px;
+        color: #555;
+      }
+    }
+  }
+
+  .pre-permission-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    margin: 0;
+
+    i {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: #856404;
+      font-size: 16px;
+    }
+
+    font-size: 13px;
+    color: #856404;
+    line-height: 1.5;
+  }
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  padding: 16px 24px;
+
+  .btn {
+    padding: 10px 24px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+}

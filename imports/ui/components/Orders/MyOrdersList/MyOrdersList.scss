@@ -1,0 +1,13 @@
+@import '../../../stylesheets/bootstrap/variables';
+.filterButton{
+    background: #fff;
+}
+.filterButton:hover{ 
+    color:$secondary !important;
+}
+
+.MyOrderList{
+    .nav > li > a, .nav > li > button{
+        min-width: 5rem;
+    }
+}

@@ -1,0 +1,10 @@
+@import '../../stylesheets/bootstrap/variables';
+
+.InputHint {
+  display: block;
+  margin-top: 8px;
+  color: $gray-500;
+  font-size: 13px;
+  letter-spacing: 0.25px;
+  font-weight: bold;
+}

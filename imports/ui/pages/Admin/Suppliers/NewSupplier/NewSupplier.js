@@ -1,0 +1,16 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import SupplierEditor from '../../../../components/SupplierEditor/SupplierEditor';
+
+const NewSupplier = ({ history }) => (
+  <div className="NewSupplier">
+    <h2 className="py-4">New Supplier</h2>
+    <SupplierEditor history={history} />
+  </div>
+);
+
+NewSupplier.propTypes = {
+  history: PropTypes.object.isRequired,
+};
+
+export default NewSupplier;

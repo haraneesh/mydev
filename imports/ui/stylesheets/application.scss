@@ -1,0 +1,15 @@
+// Main application styles
+// Bootstrap CSS is imported in client/main.js
+// Import Bootstrap variables for use in custom SCSS
+@import './bootstrap/functions';
+@import './bootstrap/variables';
+
+// Custom stylesheets
+@import './module/Loading';
+@import './module/Login';
+@import './module/Signup';
+@import './module/ImageUploader';
+@import './module/about';
+@import './state/Navbar';
+@import './special/specials';
+@import './product/product';

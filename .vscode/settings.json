@@ -1,0 +1,9 @@
+{
+    "editor.defaultFormatter": "biomejs.biome",
+    "emmet.preferences": {
+        "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+      }
+    },
+    "kiroAgent.configureMCP": "Disabled"
+}

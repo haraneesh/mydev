@@ -1,0 +1,342 @@
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
+import { Roles } from 'meteor/alanning:roles';
+import constants from '../../modules/constants';
+import { Orders } from '../Orders/Orders';
+import Payments from '../Payments/Payments';
+import Products from '../Products/Products';
+import ZohoSyncUps, { syncUpConstants } from '../ZohoSyncUps/ZohoSyncUps';
+// import Messages from '../Messages/Messages';
+// import constants from '../../modules/constants';
+
+/*
+const IngWeights = new Mongo.Collection('IngWeights');
+
+if (IngWeights.findOne()) {
+  // If IngWeights table exists then update the ingredients with these measures
+  const ingredients = Ingredients.find({}, { _id: 1, NDB_No: 1 }); // cursor
+  ingredients.forEach((ing) => {
+    const weights = IngWeights.find({ NDB_No: ing.NDB_No }, { _id: 0 }).fetch();
+    weights.push(
+      {
+        Seq: weights.length + 1,
+        Amount: 100,
+        Msre_Desc: 'g',
+        Gm_Wgt: 1,
+      });
+    Ingredients.update({ _id: ing._id }, { $set: { Weights: weights } });
+  });
+
+  IngWeights._dropCollection();
+}
+*/
+
+// update products to have displayOrder
+// Products.update({}, { $set: { displayOrder: 0 } }, { multi: true });
+
+// Migration: Add new fields to Payments collection
+/*
+const migratePaymentsSchema = async () => {
+  try {
+    const batchSize = 100;
+    const count = await Payments.find().countAsync();
+    const batches = Math.ceil(count / batchSize);
+
+    console.log(`Starting Payments schema migration for ${count} documents...`);
+
+    for (let i = 0; i < batches; i++) {
+      const payments = await Payments.find(
+        {},
+        {
+          skip: i * batchSize,
+          limit: batchSize,
+          fields: { _id: 1, paymentApiResponseObject: 1 },
+        },
+      ).fetchAsync();
+
+      const bulk = Payments.rawCollection().initializeUnorderedBulkOp();
+
+      for (const payment of payments) {
+        const updates = {};
+        const paymentResponse = payment.paymentApiResponseObject || {};
+
+        // Set status based on payment response
+        if (paymentResponse.STATUS === 'TXN_SUCCESS') {
+          updates.status = 'completed';
+        } else if (paymentResponse.STATUS === 'TXN_FAILURE') {
+          updates.status = 'failed';
+        } else {
+          updates.status = 'pending';
+        }
+
+        // Set payment method if available
+        if (paymentResponse.PAYMENTMODE) {
+          updates.paymentMethod = paymentResponse.PAYMENTMODE;
+        }
+
+        // Set total amount if available
+        if (paymentResponse.TXNAMOUNT) {
+          updates.totalAmount = parseFloat(paymentResponse.TXNAMOUNT);
+        }
+
+        // Only update if we have changes
+        if (Object.keys(updates).length > 0) {
+          bulk.find({ _id: payment._id }).updateOne({ $set: updates });
+        }
+      }
+
+      if (bulk.batches.length > 0) {
+        await bulk.execute();
+        console.log(`Processed batch ${i + 1}/${batches}`);
+      }
+    }
+
+    // Create indexes
+    await Payments.rawCollection().createIndex({ status: 1 });
+    await Payments.rawCollection().createIndex({ paymentMethod: 1 });
+    await Payments.rawCollection().createIndex({ totalAmount: 1 });
+
+    console.log('Payments schema migration completed successfully');
+  } catch (error) {
+    console.error('Error during Payments schema migration:', error);
+    throw error;
+  }
+};
+
+const runInitializationScripts = async () => {
+  // Run payments migration first
+  try {
+    await migratePaymentsSchema();
+  } catch (error) {
+    console.error('Failed to run payments migration:', error);
+  }
+
+  // Initialize invoicesLastModifiedTimeFromZoho if it doesn't exist
+
+  const existingSync = await ZohoSyncUps.findOneAsync({
+    syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+  });
+
+  const august5_2025 = new Date('2025-08-17T00:00:00.000Z');
+
+  await ZohoSyncUps.updateAsync(
+    {
+      syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+    },
+    {
+      $set: {
+        syncDateTime: august5_2025,
+        noErrorSyncDate: august5_2025,
+        errorRecords: [],
+        successRecords: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        syncedForUser: 'All',
+      },
+    },
+  );
+
+  if (!existingSync) {
+    console.log(
+      'Initializing invoicesLastModifiedTimeFromZoho to August 5th, 2025',
+    );
+
+
+    await ZohoSyncUps.insertAsync({
+      syncEntity: syncUpConstants.invoicesLastModifiedTimeFromZoho,
+      syncDateTime: august5_2025,
+      noErrorSyncDate: august5_2025,
+      errorRecords: [],
+      successRecords: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      syncedForUser: 'All',
+    });
+  } else {
+    console.log(
+      'invoicesLastModifiedTimeFromZoho already exists with date:',
+      existingSync.syncDateTime,
+    );
+  }
+};
+
+// Run the initialization
+if (Meteor.isServer) {
+  Meteor.startup(() => {
+    runInitializationScripts();
+  });
+}
+*/
+/*
+
+702207000050765962	VEV000425
+702207000137410932	MRB000753
+702207000136418021	MRB000402
+702207000059654001	VEV000490
+702207000050777039	VEV000423
+702207000050770073	VEV000421
+702207000051114001	VEV000435
+702207000050771031	VEV000422
+702207000050764569	VEV000424
+
+Products.update({ sku: 'VLO000570' }, { $set: { zh_item_id: '702207000099462029' } });
+Products.update({ sku: 'VLG000019' }, { $set: { zh_item_id: '702207000000087121' } });
+Products.update({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } });
+Products.update({ sku: 'GCR000767' }, { $set: { zh_item_id: '702207000141238235' } });
+
+/*
+Products.update({ sku: 'VEV000425' }, { $set: { zh_item_id: '702207000050765962' } });
+Products.update({ sku: 'MRB000753' }, { $set: { zh_item_id: '702207000137410932' } });
+Products.update({ sku: 'VEV000490' }, { $set: { zh_item_id: '702207000059654001' } });
+Products.update({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } });
+Products.update({ sku: 'VEV000423' }, { $set: { zh_item_id: '702207000050777039' } });
+Products.update({ sku: 'VEV000421' }, { $set: { zh_item_id: '702207000050770073' } });
+Products.update({ sku: 'VEV000435' }, { $set: { zh_item_id: '702207000051114001' } });
+Products.update({ sku: 'VEV000422' }, { $set: { zh_item_id: '702207000050771031' } });
+Products.update({ sku: 'VEV000424' }, { $set: { zh_item_id: '702207000050764569' } });
+
+Meteor.users.update({ productReturnables: { $exists: false } }, {
+  $set: {
+    productReturnables: {},
+  },
+},
+{ multi: true });
+*/
+
+/*
+Meteor.users.update({ productReturns: { $exists: true } }, {
+  $rename: { productReturns: 'productReturnables' },
+},
+{ multi: true });
+*/
+
+/* const cusers = Meteor.users.find({}).fetch();
+
+cusers.forEach((u) => {
+  if (u.emails[0].verified === 'false') {
+    const user = u;
+    const email = [];
+    email.push({ address: u.emails[0].address, verified: false });
+    delete user.email;
+    user.emails = email;
+    Meteor.users.update({ _id: u._id }, { $set: user });
+  }
+}); */
+
+/*
+const cusers = Meteor.users.find({}).fetch();
+
+cusers.forEach((u) => {
+  if (u.isAdmin) {
+    Roles.setUserRoles(u._id, [constants.Roles.admin.name]);
+  } else {
+    Roles.setUserRoles(u._id, [constants.Roles.customer.name]);
+  }
+});
+*/
+
+/* Orders.update({ expectedDeliveryDate: { $exists: false } }, {
+  $set: {
+    expectedDeliveryDate: new Date(2017, 1, 1),
+  },
+}, { multi: true }); */
+
+// Messages.update({ likeMemberId: { $exists: false } }, { $set: { likeMemberId: [] } }, { multi: true });
+// Messages.update({ messageType: 'Suggestion' }, { $set: { messageType: 'Message' } }, { multi: true });
+
+// Products.update({ wSaleBaseUnitPrice: { $exists: false } }, { $set: { wSaleBaseUnitPrice: 0 } }, { multi: true });
+// Products.update({ sourceSuppliers: { $exists: false } }, { $set: { sourceSuppliers: [] } }, { multi: true });
+// Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: 'blank_image.png' } }, { multi: true });
+// Products.update({ image_path: '/blank_image.png' }, { $set: { image_path: '' } }, { multi: true });
+// Products.update({}, { $set: { frequentlyOrdered: false } }, { multi: true });
+
+// Products.update({}, { $set: { maxUnitsAvailableToOrder: 9999 } }, { multi: true });
+
+// Products.update({}, { $unset: { sourceSupplier: "" } }, { multi: true });
+
+// ZohoSyncUps.update({ syncedForUser: { $exists: false } }, { $set: { syncedForUser: 'All' } });
+
+/*
+const syncDate = new Date();
+syncDate.setDate(syncDate.getDate() - 32);
+const zohoSyncUp = {
+  syncDateTime: syncDate,
+  noErrorSyncDate: syncDate,
+  errorRecords: [],
+  successRecords: [],
+  syncEntity: 'invoices-last-modified-time-from-zoho',
+  syncedForUser: 'All',
+};
+await ZohoSyncUps.upsertAsync({ syncEntity: 'invoices-last-modified-time-from-zoho' }, { $set: zohoSyncUp });
+
+syncDate.setDate(syncDate.getDate() - 32);
+const zohoSyncUp2 = {
+  syncDateTime: syncDate,
+  noErrorSyncDate: syncDate,
+  errorRecords: [],
+  successRecords: [],
+  syncEntity: 'invoice-details-from-zoho',
+  syncedForUser: 'All',
+};
+await ZohoSyncUps.upsertAsync({ syncEntity: 'invoice-details-from-zoho' }, { $set: zohoSyncUp2 });
+*/
+/*
+Orders.find({}).fetch().forEach(order => {
+  const role = await Roles.getRolesForUserAsync(order.customer_details._id)[0];
+  Orders.update({ _id: order._id }, { $set: { 'customer_details.role': role } });
+}); */
+
+// upgrade to Roles 3.0
+
+// Roles._forwardMigrate();
+// Roles._forwardMigrate2();
+
+/* db.users.find({"settings.packingPreference":{$exists:false}}); */
+/*Meteor.users.updateAsync(
+  { 'settings.packingPreference': { $exists: false } },
+  {
+    $set: {
+      'settings.packingPreference': constants.PackingPreferences.noPreference.name,
+    },
+  },
+  { multi: true },
+);
+
+Meteor.users.updateAsync(
+  { 'settings.productUpdatePreference': { $exists: false } },
+  {
+    $set: {
+      'settings.productUpdatePreference': constants.ProductUpdatePreferences.sendMeProductPhotosOnWhatsApp.name,
+    },
+  },
+  { multi: true },
+);*/
+
+/*
+Orders.updateAsync(
+  { order_status: constants.OrderStatus.Awaiting_Payment.name },
+  {
+    $set: {
+      order_status: constants.OrderStatus.Awaiting_Fulfillment.name,
+    },
+  },
+  { multi: true },
+);*/
+
+// clean up some junk accounts
+/*
+Meteor.users.removeAsync({ _id: 'D37aYoxgCMgbngr9f' });
+Meteor.users.removeAsync({ username: '9987876223' });
+Meteor.users.removeAsync({ username: '9884854633' });
+Meteor.users.removeAsync({ username: '9884854634' });
+Meteor.users.removeAsync({ username: '9884854635' });
+Meteor.users.removeAsync({ username: '9884854636' });
+Meteor.users.removeAsync({ username: '8734486932' });
+Meteor.users.removeAsync({ username: '8754486933' });
+Meteor.users.removeAsync({ username: '8734486933' });
+
+
+Products.updateAsync({ sku: 'VLO000570' }, { $set: { zh_item_id: '702207000099462029' } }); // Chives
+Products.updateAsync({ sku: 'VLG000019' }, { $set: { zh_item_id: '702207000000087121' } }); // Agathi Keerai
+Products.updateAsync({ sku: 'MRB000402' }, { $set: { zh_item_id: '702207000136418021' } }); // 100 ML
+*/

@@ -1,0 +1,297 @@
+%clearfix {
+  *zoom: 1;
+
+  &:before,
+  &:after {
+    display: table;
+    content: "";
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+
+label.error{
+  color: $warning;
+}
+
+.icon-fill{
+  font-variation-settings: 'FILL' 1;
+}
+
+.container-fluid {
+  padding-right:5px;
+  padding-left: 5px;
+  padding-bottom: 60px;
+}
+
+.container > .navbar-header, .row {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+
+.row{
+  align-items: center;
+}
+
+h1, h2, h3, h4, h6, .h1, .h2, .h3, .h4, .h6{
+  margin-top:0px;
+  margin-bottom:0px;
+}
+
+h1, h2, h3, h6, .h1, .h2, .h3, .h6{
+font-family: $heading-font;
+}
+
+.h3, h3 {
+  font-weight: 500;
+}
+
+hr {
+  border-top: 2px dashed $gray-500;
+}
+
+.btn{
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 85%;
+}
+
+.btn-block{
+  display:inline-block;
+}
+
+#checkout-login{
+  display: none !important;
+}
+
+div:focus,
+.btn:active,
+.btn:focus,
+.btn.active {
+  background-image: none;
+  outline: none !important;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+//** selection
+::-moz-selection { /* Code for Firefox */
+    color: #fff;
+    background: $brand-yellow
+}
+
+::selection {
+   color: #fff; 
+    background: $brand-yellow;
+}
+
+.underline {
+  border-bottom: 2px solid $warning;
+}
+
+// Effects =================================================================
+
+/*
+input[type="radio"],
+.radio input[type="radio"],
+.radio-inline input[type="radio"] {
+  position: relative;
+  margin-top: 6px;
+  margin-right: 4px;
+  vertical-align: top;
+  border: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    @include transition(240ms);
+  }
+
+  &:before {
+    position: absolute;
+    left: 0;
+    top: -3px;
+    background-color: transparent;
+  }
+
+  &:after {
+    position: relative;
+    top: -3px;
+    border: 2px solid $gray-500;
+  }
+
+  &:checked:after {
+    border-color: $secondary;
+    //background-color: $primary;
+    border-width: 0.4em;
+  }
+
+  &:disabled:after,
+  &:disabled:checked:after {
+    border-color: $gray-300;
+  }
+}
+
+input[type="checkbox"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  position: relative;
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus:after {
+    border-color: $primary;
+  }
+
+  &:after {
+    content: '•';
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+    border: 2px solid $gray-500;
+    border-radius: 2px;
+    color: $white;
+    background-color: $white;
+  }
+
+  &:checked:before {
+    content: '';
+    //border: 2px solid #fff;
+    //border-top-width: 0;
+    //border-left-width: 0;
+    background-color: transparent;
+  }
+
+  &:checked:after {
+    background-color: $primary;
+    border-color: $primary;
+    content: '✓';
+    @include transition(240ms);
+  }
+
+  &:disabled:after {
+    border-color: $gray-300;
+  }
+
+  &:disabled:checked:after {
+    background-color: $gray-300;
+    border-color: transparent;
+  }
+}
+*/
+
+// Text Center =================================================================
+.text-center{
+  text-align: center;
+}
+.text-right{
+  text-align: right;
+}
+.text-left{
+  text-align: left;
+}
+.text-left-not-xs, .text-left-not-sm, .text-left-not-md, .text-left-not-lg {
+    text-align: left;
+}
+.text-center-not-xs, .text-center-not-sm, .text-center-not-md, .text-center-not-lg {
+    text-align: center;
+}
+.text-right-not-xs, .text-right-not-sm, .text-right-not-md, .text-right-not-lg {
+    text-align: right;
+}
+.text-justify-not-xs, .text-justify-not-sm, .text-justify-not-md, .text-justify-not-lg {
+    text-align: justify;
+}
+
+@media (max-width: 767px) {
+    .text-left-not-xs, .text-center-not-xs, .text-right-not-xs, .text-justify-not-xs {
+        text-align: inherit;
+    }
+    .text-left-xs {
+        text-align: left;
+    }
+    .text-center-xs {
+        text-align: center;
+    }
+    .text-right-xs {
+        text-align: right;
+    }
+    .text-justify-xs {
+        text-align: justify;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .text-left-not-sm, .text-center-not-sm, .text-right-not-sm, .text-justify-not-sm {
+        text-align: inherit;
+    }
+    .text-left-sm {
+        text-align: left;
+    }
+    .text-center-sm {
+        text-align: center;
+    }
+    .text-right-sm {
+        text-align: right;
+    }
+    .text-justify-sm {
+        text-align: justify;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .text-left-not-md, .text-center-not-md, .text-right-not-md, .text-justify-not-md {
+        text-align: inherit;
+    }
+    .text-left-md {
+        text-align: left;
+    }
+    .text-center-md {
+        text-align: center;
+    }
+    .text-right-md {
+        text-align: right;
+    }
+    .text-justify-md {
+        text-align: justify;
+    }
+}
+@media (min-width: 1200px) {
+    .text-left-not-lg, .text-center-not-lg, .text-right-not-lg, .text-justify-not-lg {
+        text-align: inherit;
+    }
+    .text-left-lg {
+        text-align: left;
+    }
+    .text-center-lg {
+        text-align: center;
+    }
+    .text-right-lg {
+        text-align: right;
+    }
+    .text-justify-lg {
+        text-align: justify;
+    }
+}

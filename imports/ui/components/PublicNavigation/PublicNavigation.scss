@@ -1,0 +1,10 @@
+@import '../../stylesheets/bootstrap/variables';
+
+.publicNavigation{
+    
+    @media (max-width: breakpoint-min('sm')) {
+        width: 100% !important;
+        padding-top:12px;
+        padding-bottom:12px;
+    }
+}

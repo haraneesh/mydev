@@ -1,0 +1,38 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+
+.Vision {
+    font-size:  $h6-font-size;
+    margin-top: 1em;
+    font-family: $font-family-base;
+    font-weight: 400;
+
+    h1, h2, h3{
+        font-family: $heading-font;
+        text-transform:uppercase;
+        letter-spacing: 1.4px;
+        line-height: $headings-line-height;
+    }
+
+    .img-responsive {
+        margin: 0 auto;
+    }
+
+    @media (min-width: 768px){
+     h1, h2, h3{
+        margin:4em 0 3rem 0;
+     }
+    }
+
+    .mission-bar{
+        font-family: $font-family-base;
+        margin:4em 0 0 0;
+        text-transform:uppercase;
+        font-size: $h5-font-size;
+        letter-spacing:1.1px;
+    }
+
+    .mission-text{
+        min-height: 8em;
+    }
+}

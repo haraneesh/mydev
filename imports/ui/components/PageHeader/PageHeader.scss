@@ -1,0 +1,16 @@
+@import '../../stylesheets/bootstrap/variables';
+
+.PageHeader {
+  padding: 0px 0 20px;
+  margin-bottom: 20px;
+
+  p {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: $gray-300;
+  }
+}
+
+.PageHeader-container {
+  text-align: center;
+}

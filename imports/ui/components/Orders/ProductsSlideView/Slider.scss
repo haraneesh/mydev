@@ -1,0 +1,29 @@
+@import "../../../stylesheets/bootstrap/variables";
+
+.slider{
+    .flickity-button {
+        color: $gray-700;
+        background: #fff;
+    }
+    
+    .flickity-prev-next-button.previous{
+        left: 0px !important;
+    }
+
+    .flickity-prev-next-button.next{
+        right: 0px !important;
+    }
+
+    .flickity-prev-next-button {
+        width: 3em !important; 
+        height: 100% !important;
+        border-radius: 0%;
+    }
+    .flickity-slider{
+        display: flex; 
+        align-items: flex-end;
+    }
+    .item-image{
+        min-height:64px;
+    }
+}

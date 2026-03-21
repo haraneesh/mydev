@@ -1,0 +1,16 @@
+node_modules
+settings-demo.json
+settings-staging.json
+settings-production.json
+settings-development.json
+public/bg-new.jpg
+public/ignore
+imports/api/Reports/items.js
+imports/api/Reports/pos.js
+
+# Firebase/GCP configuration files (sensitive credentials)
+google-services*.json
+cordova-build-override/platforms/android/app/google-services*.json
+
+# macOS system files
+.DS_Store

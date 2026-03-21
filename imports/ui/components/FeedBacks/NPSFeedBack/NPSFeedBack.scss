@@ -1,0 +1,51 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+.modalNPSFeedBack{
+
+    .ratingNumberDisplay {
+        border-radius: 50%;
+        margin: 5px !important;
+        border: 1px solid $brand-default;
+        display: inline-block;
+        line-height: 2.5em;
+        font-size: 42%;
+        box-shadow: 1px 2px $gray-300;
+        width: 2.5em;
+    }
+
+    .selectedRatingPromoter{
+        background-color:$primary;
+        color: $gray-300Text;
+        border-color: $success;;
+    }
+
+    .selectedRatingPassive{
+        background-color:$warning;
+        color: $gray-300Text;
+        border-color: $warning;
+    }
+
+    .selectedRatingDetractor{
+        background-color:$danger;
+        color: $gray-300Text;
+        border-color: $danger;
+    }
+
+    .ratingGuide{
+        font-size:40%;
+    }
+
+    .ratingsModal{
+        font-size:xx-large;
+    }
+
+    .modal-content{
+        box-shadow: none !important;
+        border-color: $modal-content-border-color;
+    }
+
+    textarea {
+        min-height: 8em;
+    }
+
+}

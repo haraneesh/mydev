@@ -1,0 +1,22 @@
+const accountSettings = {
+  symbol: 'Rs. ', // default currency symbol is '$'
+};
+
+const dateSettings = {
+  format: 'dddd, D MMM YYYY',
+  shortFormat: 'ddd, D MMM',
+  zhPayDateFormat: 'YYYY-MM-DD',
+  dayWithoutTime: 'DD MMM YYYY',
+  timeZone: 'Asia/Kolkata',
+};
+
+const dateSettingsWithTime = {
+  format: 'dddd, MMMM Do YYYY, h:mm:ss a',
+  timeZone: 'Asia/Kolkata',
+};
+
+export {
+  accountSettings,
+  dateSettings,
+  dateSettingsWithTime,
+};

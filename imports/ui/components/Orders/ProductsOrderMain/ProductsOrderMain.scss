@@ -1,0 +1,44 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+.productOrderList{
+
+.order-details-products  {
+    border: 0px none;
+    border-bottom: 0px solid;
+    border-color: $gray-300;
+}
+
+.productCategoryHeading::before {
+    content:"";
+    display:block;
+    height:50px; /* fixed header height*/
+  }
+
+.order-image{
+    height:5em;
+}
+
+.form-control{
+    font-size: $font-size-lg;
+    height: 42px;
+}
+
+// Product ordering tabs
+.productCatImg{
+    width:4em;
+}
+
+
+.EditOrderDetails  {
+    @media (max-width: breakpoint-min('sm')) {
+        .orderFooter{
+            position: fixed;
+            background:$navbar-light-brand-color;
+            width: 100%;
+            left: 0px;
+            bottom: 0px;
+            //z-index: $zindex-navbar;
+        }
+    }
+}
+}

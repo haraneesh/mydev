@@ -1,0 +1,26 @@
+[[[[[ ~/Stuff/mydev-mobile ]]]]]
+
+=> Started proxy.
+=> Started your app.
+
+=> App running at: http://localhost:3000/
+(node:14550) Warning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+I20251116-19:45:30.544(-5)? Order
+I20251116-19:45:30.571(-5)? {"products":[{"_id":"vAFwmX7mhQ8jfBGe6","sku":"GAM000163","name":"BARNYARD FLAKES / KUTHIRAIVALI AVAL","unitOfSale":"1 Kg","unitprice":340,"type":"Millets","availableToOrder":true,"vendor_details":{"id":1,"slug":"healthy-farm-foods","name":"Healthy Farm Foods"},"unitsForSelection":"0,0.1,0.2,0.3,0.4,0.5=5%","category":"Aval / Flakes","zh_item_id":"702207000000119073","maxUnitsAvailableToOrder":9999,"wSaleBaseUnitPrice":210,"frequentlyOrdered":false,"displayAsSpecial":true,"availableToOrderWH":false,"includeReturnables":false,"zh_intra_tax_percentage":0,"totQuantityOrdered":0,"quantity":0.1,"sale":true,"quantitySelected":0.1},{"_id":"qEhTjbzkZrXStoTno","sku":"GDF000087","name":"KAMBU  AVAL / BAJRA FLAKES","unitprice":320,"unitOfSale":"1 Kg","image_path":"kambu_aval.jpg","type":"Millets","availableToOrder":true,"vendor_details":{"id":1,"slug":"healthy-farm-foods","name":"Healthy Farm Foods"},"unitsForSelection":"0,0.1,0.2,0.3,0.4,0.5=5%","category":"Aval / Flakes","zh_item_id":"702207000000087311","maxUnitsAvailableToOrder":9999,"wSaleBaseUnitPrice":180,"availableToOrderWH":false,"frequentlyOrdered":false,"description":"Product of Suvai","includeReturnables":false,"zh_intra_tax_percentage":0,"displayAsSpecial":true,"totQuantityOrdered":0,"quantity":0.1,"sale":true,"quantitySelected":0.1}],"_id":"","comments":"","issuesWithPreviousOrder":"","payCashWithThisDelivery":false,"collectRecyclablesWithThisDelivery":false,"basketId":"","loggedInUserId":"ev3CQpKYEwdhJJA9u","deliveryPincode":"600087"}
+I20251116-19:45:30.603(-5)? Exception while invoking method 'orders.upsert' Error: Failed validation The positional operator did not find the match needed from the query
+I20251116-19:45:30.604(-5)?     at getErrorObject (packages/aldeed:collection2/main.js:580:19)
+I20251116-19:45:30.604(-5)?     at ns.Collection.Mongo.Collection.<computed> [as updateAsync] (packages/aldeed:collection2/main.js:264:16)
+I20251116-19:45:30.604(-5)?     at processTicksAndRejections (node:internal/process/task_queues:105:5)
+I20251116-19:45:30.605(-5)? Sanitized and reported to the client as: errorClass [Error]: Failed validation The positional operator did not find the match needed from the query [400]
+I20251116-19:45:30.606(-5)?     at getErrorObject (packages/aldeed:collection2/main.js:587:30)
+I20251116-19:45:30.606(-5)?     at ns.Collection.Mongo.Collection.<computed> [as updateAsync] (packages/aldeed:collection2/main.js:264:16)
+I20251116-19:45:30.606(-5)?     at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+I20251116-19:45:30.606(-5)?   isClientSafe: true,
+I20251116-19:45:30.606(-5)?   error: 400,
+I20251116-19:45:30.606(-5)?   reason: 'Failed validation The positional operator did not find the match needed from the query',
+I20251116-19:45:30.606(-5)?   details: '[]',
+I20251116-19:45:30.606(-5)?   errorType: 'Meteor.Error'
+I20251116-19:45:30.606(-5)? }
+I20251116-19:45:30.606(-5)? 
+=> Server modified -- restarting...                                   => Meteor server restarted at: http://localhost:3000/

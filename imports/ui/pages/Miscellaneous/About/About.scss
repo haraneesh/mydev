@@ -1,0 +1,67 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+/*
+.aboutHtml {
+    background: url(/about/about.jpg) no-repeat center center fixed;
+    background-size: auto auto;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+*/
+
+.about-body{
+    h1, h2, h3 {
+        line-height: 1.5;
+    }
+    .py-4{
+        color: $headings-color;
+        margin-top:1em;
+    }
+    .about-page {
+        margin-top:1.5em;
+    }
+
+    @media (min-width: breakpoint-min('sm')) {
+        .about-getOrganic{
+            margin-top:1em;
+
+            p {
+                margin-top: 2em;
+            }
+        }
+    }
+
+    .visionLink{
+        color: $navbar-light-active-color;
+    }
+
+    .membersBtn{
+        margin: 0.5em 0.5em 0.5em;
+        min-width: 12em;
+    }
+
+    .how-section1{
+        padding-top: 5% 0 0 5%;
+    }
+    .how-section1 h4{
+        color: $yellow-700;
+        font-weight: bold;
+    }
+    .how-section1 .subheading{
+        color: $success;;
+    }
+    
+    .dt-align {
+        margin-top: 3rem !important;
+        color:$primary;
+    }
+
+    .bodyCursText p{
+        font-family:'Marck Script', $font-family-base;
+        font-size:1.3em;
+        font-weight: 400;
+    }
+
+}
