@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Root from '/imports/ui/apps/Root';
-import '/imports/infra/one-signal';
+// import '/imports/infra/one-signal'; // OneSignal disabled
 import '/imports/startup/client';
 import '/imports/ui/stylesheets/application.scss';
 

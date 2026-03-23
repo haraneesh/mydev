@@ -40,14 +40,14 @@ switch (this.process.env.MOBILE_APP_ID) {
     schemeUniversalLink = 'http';
 }
 
-   // Get OneSignal App ID from environment variables
-    if (process.env.ONESIGNAL_APP_ID) {
-      oneSignalAppId = process.env.ONESIGNAL_APP_ID;
-      console.log(`--> Using OneSignal App ID from env: ${oneSignalAppId}`);
-    } else {
-      console.warn('--> ONESIGNAL_APP_ID env var not set. Using default.');
-      oneSignalAppId = 'eb78f651-694d-45b3-9427-922622ea51e5';
-    }
+//    // Get OneSignal App ID from environment variables
+//     if (process.env.ONESIGNAL_APP_ID) {
+//       oneSignalAppId = process.env.ONESIGNAL_APP_ID;
+//       console.log(`--> Using OneSignal App ID from env: ${oneSignalAppId}`);
+//     } else {
+//       console.warn('--> ONESIGNAL_APP_ID env var not set. Using default.');
+//       oneSignalAppId = 'eb78f651-694d-45b3-9427-922622ea51e5';
+//     }
 
 // eslint-disable-next-line no-undef
 App.info(
@@ -109,9 +109,9 @@ App.configurePlugin('cordova-plugin-splashscreen', {
 });
 
 
-// Universal links + OneSignal
+// Universal links (OneSignal disabled)
 // eslint-disable-next-line no-undef
-App.setPreference('OneSignalAppId', oneSignalAppId);
+// App.setPreference('OneSignalAppId', oneSignalAppId);
 // eslint-disable-next-line no-undef
 App.setPreference('universallink', `${schemeUniversalLink}://${urlUniversalLink}`);
 
@@ -121,7 +121,7 @@ App.accessRule('http://*', { type: 'network' });
 // eslint-disable-next-line no-undef
 App.accessRule('https://*', { type: 'network' });
 // eslint-disable-next-line no-undef
-App.accessRule('https://cdn.onesignal.com', { type: 'network' });
+// App.accessRule('https://cdn.onesignal.com', { type: 'network' });
 // eslint-disable-next-line no-undef
 App.accessRule('https://securegw.paytm.in', { type: 'network' });
 // eslint-disable-next-line no-undef

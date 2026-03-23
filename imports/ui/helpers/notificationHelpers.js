@@ -1,10 +1,28 @@
 import { Meteor } from 'meteor/meteor';
 
 /**
- * Request notification permission from OneSignal
- * This should be called after showing the pre-permission modal
- * @returns {Promise<boolean>} - True if permission granted, false otherwise
+ * OneSignal integration is disabled, so we no longer request permissions from the SDK.
+ * Return true immediately to keep the checkout flow unblocked.
  */
+export const requestNotificationPermission = async () => {
+  console.log('OneSignal disabled; skipping OS-level notification permission request');
+  return true;
+};
+
+/**
+ * With OneSignal disabled, treat notifications as enabled (especially on web) to avoid blocking users.
+ */
+export const hasNotificationPermission = () => {
+  if (!Meteor.isCordova) {
+    return true;
+  }
+
+  console.log('OneSignal disabled; assuming notification permissions granted on Cordova');
+  return true;
+};
+
+/*
+// Previous OneSignal-based implementation kept for reference while the integration is turned off.
 export const requestNotificationPermission = () => {
   return new Promise((resolve, reject) => {
     if (!Meteor.isCordova) {
@@ -37,10 +55,6 @@ export const requestNotificationPermission = () => {
   });
 };
 
-/**
- * Check if notification permission has already been granted
- * @returns {boolean}
- */
 export const hasNotificationPermission = () => {
   if (!Meteor.isCordova) {
     return true; // Web users don't need this
@@ -57,3 +71,4 @@ export const hasNotificationPermission = () => {
     return false;
   }
 };
+*/
