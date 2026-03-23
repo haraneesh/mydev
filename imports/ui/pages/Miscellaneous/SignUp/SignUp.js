@@ -11,16 +11,21 @@ import { acceptInvitation } from '../../../../api/Invitations/methods';
 import { formValChange, formValid } from '../../../../modules/validate';
 // import OAuthLoginButtons from '../../../components/OAuthLoginButtons/OAuthLoginButtons';
 import InputHint from '../../../components/InputHint/InputHint';
+import { getLoggedInUserDisplayUserName } from '../../../../modules/helpers';
 
 const defaultState = {
   signUpRequestSent: false,
   isError: {
+    emailAddress: '',
     password: '',
     firstName: '',
     lastName: '',
     whMobilePhone: '',
     confirmWhMobileNumber: '',
+    deliveryAddress: '',
+    deliveryPincode: '',
     confirmPassword: '',
+    eatingHealthyMeaning: '',
   },
 };
 
@@ -69,7 +74,7 @@ class SignUp extends React.Component {
 
     const user = {
       username: this.whMobilePhone.value.trim(),
-      email: `${this.whMobilePhone.value.trim()}@placeholder.com`,
+      email: this.emailAddress.value.trim(),
       password: document.querySelector('[name="password"]').value.trim(),
       profile: {
         name: {
@@ -77,6 +82,9 @@ class SignUp extends React.Component {
           last: this.lastName.value.trim(),
         },
         whMobilePhone: this.whMobilePhone.value.trim(),
+        deliveryAddress: this.deliveryAddress.value.trim(),
+        deliveryPincode: this.deliveryPincode.value.trim(),
+        eatingHealthyMeaning: this.eatingHealthyMeaning?.value?.trim() || '',
       },
     };
 
@@ -136,7 +144,7 @@ class SignUp extends React.Component {
             <h2 className="py-4 text-center">Sign Up</h2>
             <div className="text-center">
               <Card className="p-3">
-                <h2 className="text-info"> Welcome to Suvai </h2>
+                <h2 className="text-info pb-3"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been
@@ -186,7 +194,7 @@ class SignUp extends React.Component {
               <Row className="pt-3">
                 <Col xs={6}>
                   <Row style={{ paddingRight: '1px' }}>
-                    <label>First Name (optional)</label>
+                    <label>First Name</label>
                     <input
                       type="text"
                       name="firstName"
@@ -204,7 +212,7 @@ class SignUp extends React.Component {
                 </Col>
                 <Col xs={6}>
                   <Row style={{ paddingLeft: '1px' }}>
-                    <label>Last Name (optional)</label>
+                    <label>Last Name</label>
                     <input
                       type="text"
                       name="lastName"
@@ -220,6 +228,21 @@ class SignUp extends React.Component {
                     )}
                   </Row>
                 </Col>
+              </Row>
+              <Row className="pt-3">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  name="emailAddress"
+                  ref={(emailAddress) => (this.emailAddress = emailAddress)}
+                  onBlur={this.onValueChange}
+                  className="form-control"
+                />
+                {isError.emailAddress.length > 0 && (
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.emailAddress}
+                  </span>
+                )}
               </Row>
               <Row className="pt-3">
                 <label>Whats App Mobile Number</label>
@@ -258,6 +281,60 @@ class SignUp extends React.Component {
                   </span>
                 )}
               </Row>
+              <Row className="pt-3">
+                <label>Delivery Address</label>
+                <textarea
+                  ref={(deliveryAddress) =>
+                    (this.deliveryAddress = deliveryAddress)
+                  }
+                  name="deliveryAddress"
+                  placeholder="Complete address to deliver at, including Landmark, Pincode."
+                  rows={6}
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+                {isError.deliveryAddress.length > 0 && (
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.deliveryAddress}
+                  </span>
+                )}
+              </Row>
+              <Row>
+                <Row>Delivery Address Pincode</Row>
+                <input
+                  type="text"
+                  ref={(deliveryPincode) =>
+                    (this.deliveryPincode = deliveryPincode)
+                  }
+                  name="deliveryPincode"
+                  placeholder="Enter Pincode of the delivery address"
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+                {isError.deliveryPincode.length > 0 && (
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.deliveryPincode}
+                  </span>
+                )}
+              </Row>
+              {/* <Row className="pt-3">
+                <label>What does eating healthy mean to you?</label>
+                <textarea
+                  ref={(eatingHealthyMeaning) =>
+                    (this.eatingHealthyMeaning = eatingHealthyMeaning)
+                  }
+                  name="eatingHealthyMeaning"
+                  placeholder="You are never wrong, tell us what is in your mind."
+                  rows={6}
+                  className="form-control"
+                  onBlur={this.onValueChange}
+                />
+                {isError.eatingHealthyMeaning.length > 0 && (
+                  <span className="bg-white py-2  px-2 text-danger">
+                    {isError.eatingHealthyMeaning}
+                  </span>
+                )}
+              </Row> */}
               <Row className="pt-3">
                 <label>Password</label>
                 <input

@@ -33,19 +33,18 @@ const ContactUs = () => (
       </Col>
       <Col xs={12} sm={6}>
         <address>
-          <strong>Land Line</strong>
-          <br />
-          <a href={`tel:${LandLineSupport.replace(' ', '')}`}>{LandLineSupport}</a>
-        </address>
-        <address>
-          <strong>Whats App</strong>
-          <br />
-          <a href={`tel:${WhatsAppSupport.replace(' ', '')}`}>{WhatsAppSupport}</a>
+          <strong>Call Us / Whats App</strong>
+          <br /> 
+          <p>          
+            <a href={`tel:${WhatsAppSupport.replace(' ', '')}`}>{WhatsAppSupport}</a>
+            <br />
+            <a href={"tel:+919789897882"}>{'+91 9789897882'}</a>
+          </p>
         </address>
         <address>
           <strong>E-Mail</strong>
           <br />
-          <a href="mailto:#">hi@nammasuvai.com</a>
+          <a href="mailto:#">suvaiorganics@gmail.com</a>
         </address>
       </Col>
     </Row>

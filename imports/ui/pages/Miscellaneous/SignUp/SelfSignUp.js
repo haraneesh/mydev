@@ -149,7 +149,7 @@ class SelfSignUp extends React.Component {
             <h2 className="py-4">Sign Up</h2>
             <div className="card text-center">
               <div className="card-body">
-                <h2 className="text-info"> Welcome to Suvai </h2>
+                <h2 className="text-info pb-3"> Welcome to Suvai </h2>
                 <br />
                 <p>
                   Suvai is a community of like minded families who have been

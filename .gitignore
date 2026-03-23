@@ -14,3 +14,9 @@ cordova-build-override/platforms/android/app/google-services*.json
 
 # macOS system files
 .DS_Store
+
+.agent
+_bmad
+_bmad-output
+.meteor
+.vscode

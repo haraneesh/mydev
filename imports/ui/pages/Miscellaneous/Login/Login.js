@@ -16,10 +16,10 @@ import { clearEntireLocalStore } from '../../../stores/localStorage';
 const showPasswordButtonPositions = {
   position: 'absolute',
   right: '0px',
-  top: '42px',
-  padding: '10px',
+  top: '44px',
   fontSize: '76%',
   width: '75px',
+  padding: '0px',
 };
 
 const defaultState = {

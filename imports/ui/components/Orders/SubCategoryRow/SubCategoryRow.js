@@ -53,7 +53,7 @@ const SubCategoryRow = ({ items }) => {
     const hiddenItems = items.slice(visibleCount);
 
     return (
-        <Row className="align-items-center w-100" style={{marginTop: '-10px'}}>
+        <Row className="align-items-center w-100" >
             {visibleItems.map((item, index) => (
                 <Col key={index}>
                     <div className="text-truncate">

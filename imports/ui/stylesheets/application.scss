@@ -1,10 +1,13 @@
 // Main application styles
-// Bootstrap CSS is imported in client/main.js
-// Import Bootstrap variables for use in custom SCSS
+// Import local Bootstrap variables and functions for use in custom SCSS
 @import './bootstrap/functions';
 @import './bootstrap/variables';
 
+// Import Bootstrap source (uncommented as part of revocation)
+@import '~bootstrap/scss/bootstrap';
+
 // Custom stylesheets
+@import './base/extends';
 @import './module/Loading';
 @import './module/Login';
 @import './module/Signup';
@@ -13,3 +16,5 @@
 @import './state/Navbar';
 @import './special/specials';
 @import './product/product';
+@import './richTextEditor/richTextEditor';
+@import './react-toastify/main';

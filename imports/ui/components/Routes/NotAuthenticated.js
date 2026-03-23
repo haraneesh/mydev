@@ -23,7 +23,7 @@ const NotAuthenticated = ({
   ...rest
 }) => {
   if (authenticated) {
-    return <Navigate to="/" replace={true} />;
+    return <Navigate to="/neworder" replace={true} />;
   }
 
   const location = useLocation();

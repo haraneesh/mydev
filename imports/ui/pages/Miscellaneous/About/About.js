@@ -39,59 +39,29 @@ const About = () => {
         <Card className="my-3 py-4">
           <div className="about-section text-left row d-flex text-center">
             <Col sm={6} xs={12} className="d-flex justify-content-center">
-              <img src="about/basket_vegetables.png" style={{ width: '100%' }} alt="vegetable basket" />
+              <img src="about/basket_vegetables.png" style={{ width: '100%', maxWidth:'40em' }} alt="vegetable basket" />
             </Col>
             <Col sm={6} xs={12} className="about-getOrganic text-center">
 
-              <h1> Authentic Organic and Natural Products </h1>
+              <h1> Authentic Organic and Natural Produce </h1>
               <h4> delivered at your door step </h4>
-              <HighLightText highLightText="Healthy Food, No Chemicals" />
+              <HighLightText highLightText="No Pesticide Residues" />
               <Col xs={12} className="mt-4">
-                <Button className="membersBtn btn-block" variant="secondary" href="/cart" style={{ fontSize: '1.5rem', padding: '12px 30px' }}> Order Now &rarr; </Button>
+                <Button className="membersBtn btn-block" variant="secondary" href="/cart" style={{ fontSize: '1rem', padding: '10px 24px' }}> Order Now &rarr; </Button>
               </Col>
             </Col>
           </div>
         </Card>
       </section>
 
-      <Card className="my-3 py-3">
-        <div className="text-center bodyCursText">
-          <h2 className="py-4 p-0 m-0"> Why Us?</h2>
-          <Row className="justify-content-center">
-            <Col sm={4} className="py-3">
-              <h4 className="text-primary">Delivering since 2016</h4>
-              <p>Horticulture graduate expertise in organic farming</p>
-            </Col>
-            <Col sm={4} className="py-3">
-              <h4 className="text-primary">Network of farmers</h4>
-              <p>across India</p>
-            </Col>
-          </Row>
-        </div>
-      </Card>
-
-      <Card className="my-3 py-3">
-        <div className="text-center">
-          <h3 className="py-3">Contact Us</h3>
-          <Row className="justify-content-center">
-            <Col xs={12} className="mb-3">
-              <p><strong>Email:</strong> <a href="mailto:suvaiorganics@gmail.com">suvaiorganics@gmail.com</a></p>
-            </Col>
-            <Col xs={12}>
-              <p><strong>Contact:</strong> <a href="tel:9361032849">9361032849</a>, <a href="tel:9789897882">9789897882</a></p>
-            </Col>
-          </Row>
-        </div>
-      </Card>
-
       <ContactUs />
-      
-      <Card className="my-3">
-        <OurFarm />
-      </Card>
 
       <Card className="my-3">
         <OurPromise />
+      </Card>
+
+      <Card className="my-3">
+        <OurFarm />
       </Card>
 
       <Card className="my-3">
