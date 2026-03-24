@@ -8,7 +8,7 @@
 
 // Custom stylesheets
 @import './base/extends';
-@import './module/Loading';
+@import '../components/Loading/Loading';
 @import './module/Login';
 @import './module/Signup';
 @import './module/ImageUploader';
