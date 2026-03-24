@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 import './Footer.scss';
 
 const copyrightYear = () => {
-  const currentYear = 2025;
+  const currentYear = 2026;
   return currentYear;
 };
 

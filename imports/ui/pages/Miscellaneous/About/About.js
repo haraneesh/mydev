@@ -44,7 +44,7 @@ const About = () => {
             <Col sm={6} xs={12} className="about-getOrganic text-center">
 
               <h1> Authentic Organic and Natural Produce </h1>
-              <h4> delivered at your door step </h4>
+              <h4> delivered to your door step </h4>
               <HighLightText highLightText="No Pesticide Residues" />
               <Col xs={12} className="mt-4">
                 <Button className="membersBtn btn-block" variant="secondary" href="/cart" style={{ fontSize: '1rem', padding: '10px 24px' }}> Order Now &rarr; </Button>
@@ -102,7 +102,7 @@ const About = () => {
         <section className="text-left text-center-xs row" style={{ height: '20%' }}>
           <Col sm={5} className="d-flex text-center justify-content-center">
             <h2 className="pb-3">
-              Our journey, from the
+              Our story, from the
               <br />
               person behind Suvai
             </h2>

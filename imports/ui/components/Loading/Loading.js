@@ -1,14 +1,7 @@
 import React from 'react';
 
-const Loading = () => {
-  return (
-    <div className="Loader-Container">
-      <div className="Loader-Bar" />
-      <div className="Loader-Content">
-        <h2 style={{ color: '#976A4B' }}>Suvai Loading...</h2>
-      </div>
-    </div>
-  );
-};
+const Loading = () => (
+  <div className="Loader" />
+);
 
 export default Loading;
