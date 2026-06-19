@@ -13,11 +13,11 @@ function OurFarm() {
         We practice Regenerative Organic Farming
       </p>
       <Row>
-        <Col xs={12} sm={6}>
+        <Col xs={12} sm={6} lg={8}>
           <FarmAccordion />
         </Col>
 
-        <Col xs={12} sm={6} className="d-flex justify-content-center text-center p-2">
+        <Col xs={12} sm={6} lg={4} className="d-flex justify-content-center text-center p-6">
           <div style={{
             alignSelf: 'center',
             listStyleType: 'none',
