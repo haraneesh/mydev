@@ -49,7 +49,7 @@ OrderFooter.propTypes = {
 };
 
 export const SideBarDisplayHeader = ({ clName, title, onclick, imgName }) => (
-  <div onClick={onclick} className="productCatHead row pb-2">
+  <div onClick={onclick} className={`productCatHead row pb-2 ${clName}`}>
     {/* <Col sm={3} className={`productCatHeadIcon productCat_${clName}`} /> */}
     <img
       className="col-sm-3 col-xs-12 mx-auto productCatImg"

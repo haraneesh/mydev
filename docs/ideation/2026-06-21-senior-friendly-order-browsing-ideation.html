@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ideation: Senior-Friendly Order Browsing</title>
+  <style>
+    :root {
+      --bg: #fbf7f0;
+      --panel: #fffdf8;
+      --ink: #2f2924;
+      --muted: #6b625a;
+      --line: #e4d9ca;
+      --accent: #306b4f;
+      --accent-soft: #e8f3ec;
+      --warn-soft: #fff4d9;
+      --warn: #7a4d00;
+      --blue-soft: #e7f0fa;
+      --blue: #24547c;
+      --radius: 8px;
+      --shadow: 0 12px 30px rgba(47, 41, 36, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    main {
+      width: min(940px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+    }
+    .eyebrow {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 {
+      line-height: 1.2;
+      margin: 0;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-top: 8px;
+      max-width: 760px;
+    }
+    h2 {
+      font-size: 1.35rem;
+      margin: 32px 0 12px;
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    p { max-width: 72ch; }
+    a { color: var(--accent); }
+    code {
+      background: rgba(48, 107, 79, 0.09);
+      border: 1px solid rgba(48, 107, 79, 0.18);
+      border-radius: 5px;
+      padding: 0.08rem 0.26rem;
+      font-size: 0.92em;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      margin-top: 18px;
+    }
+    .axis-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      padding: 0;
+      list-style: none;
+    }
+    .axis-list li {
+      background: var(--accent-soft);
+      border: 1px solid #cce3d4;
+      border-radius: var(--radius);
+      padding: 12px;
+      color: #1f5139;
+      font-weight: 700;
+    }
+    .jump-list {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+    .jump-list a {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      background: #fff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .idea {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-top: 16px;
+      background: #fff;
+    }
+    .idea-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .rank {
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+    .idea h3 { margin-top: 3px; }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .badge {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.82rem;
+      font-weight: 750;
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .badge.axis { color: #1f5139; background: var(--accent-soft); }
+    .badge.warn { color: var(--warn); background: var(--warn-soft); }
+    .fields {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .field {
+      border-top: 1px solid #eee3d5;
+      padding-top: 10px;
+    }
+    .field strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 3px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--accent-soft);
+      color: #1f5139;
+      font-size: 0.88rem;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .diagram {
+      margin: 14px 0 4px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdf8;
+      padding: 12px;
+      overflow-x: auto;
+    }
+    footer {
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Ideation</div>
+    <h1>Senior-Friendly Order Browsing</h1>
+    <p>Ranked product ideas for simplifying Suvai's order/product browsing flow for shoppers who are 60+ or less technically confident, while preserving the current working checkout path.</p>
+    <div class="meta">
+      <span class="pill">Date: <time datetime="2026-06-21">2026-06-21</time></span>
+      <span class="pill">Topic: senior-friendly-order-browsing</span>
+      <span class="pill">Focus: simplify product browsing and improve icon labels</span>
+      <span class="pill">Mode: repo-grounded</span>
+    </div>
+  </header>
+
+  <section class="section" id="grounding">
+    <h2>Grounding Context</h2>
+    <p><strong>Codebase context.</strong> The order flow is a Meteor/React app. The home page links to ordering via <code>/cart</code> or <code>/neworder</code>, product selection is rendered through <code>ProductsOrderMain</code> and <code>ProductsOrderMobile</code>, product cards through <code>ProductForNonAdmin</code>, cart review through <code>CartDetails</code>, and registered-phone checkout through <code>GetUserPhoneNumber</code>.</p>
+    <p><strong>Observed usability test.</strong> On a mobile-sized viewport, <code>ORDER NOW</code> worked, <code>/neworder</code> loaded a long category/product surface, adding one item updated the cart count, checkout led to a cart review, and submitting with the provided test mobile number reached the success page. The final URL was <code>/order/success/undefined</code>, which is outside this ideation scope but worth fixing separately.</p>
+    <p><strong>Direct code evidence.</strong> Header controls are icon-only buttons for profile, cart, and menu in <code>imports/ui/components/AuthenticatedNavigation/Menu.js:20</code>, <code>:30</code>, and <code>:50</code>. The authenticated toolbar has hidden text labels with <code>display: 'none'</code> in <code>imports/ui/components/ToolBar/ToolBar.js:16</code> and icon buttons at <code>:97</code>, <code>:109</code>, <code>:136</code>, and <code>:147</code>. Product browsing renders a vertical category rail with many categories from <code>ProductsOrderMobile.js:266</code> onward, subcategory pills at <code>:164-200</code>, and individual product cards. Product cards turn an added item into a quantity selector in <code>ProductForNonAdmin.js:198-220</code>. The registered mobile number modal appears only after cart placement in <code>GetUserPhoneNumber.js:48-84</code>.</p>
+    <p><strong>External context.</strong> NN/g's research on older adults notes that interfaces often fail by using small text, poor contrast, and tiny targets, and that small targets and tiny mobile text are especially difficult for older users. WCAG 2.2 requires UI component names and roles to be programmatically determined, and defines status messages so success, waiting, and error changes can be exposed to assistive technologies.</p>
+    <p><strong>Sources.</strong> <a href="https://www.nngroup.com/articles/usability-for-senior-citizens/">NN/g: Usability for Older Adults</a>; <a href="https://www.w3.org/TR/WCAG22/#name-role-value">WCAG 2.2: Name, Role, Value</a>; <a href="https://www.w3.org/TR/WCAG22/#dfn-status-messages">WCAG 2.2: Status Messages</a>.</p>
+  </section>
+
+  <section class="section" id="axes">
+    <h2>Topic Axes</h2>
+    <ul class="axis-list">
+      <li>Navigation clarity</li>
+      <li>Browse density</li>
+      <li>Product card decision load</li>
+      <li>Checkout expectation</li>
+      <li>Accessible semantics</li>
+    </ul>
+  </section>
+
+  <section class="section" id="ideas">
+    <h2>Ranked Ideas</h2>
+    <ul class="jump-list">
+      <li><a href="#idea-1">1. Senior Mode Order Layout</a></li>
+      <li><a href="#idea-2">2. Plain-Language Icon System</a></li>
+      <li><a href="#idea-3">3. Guided Category Landing</a></li>
+      <li><a href="#idea-4">4. Compact Product Cards With Confirmed Add State</a></li>
+      <li><a href="#idea-5">5. Checkout Readiness Banner</a></li>
+      <li><a href="#idea-6">6. Assisted Search First</a></li>
+      <li><a href="#idea-7">7. Accessible Order Progress Announcements</a></li>
+    </ul>
+
+    <article class="idea" id="idea-1">
+      <div class="idea-head">
+        <div>
+          <div class="rank">1</div>
+          <h3>Senior Mode Order Layout</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Browse density</span>
+        <span class="badge">Confidence 82%</span>
+        <span class="badge warn">Complexity Medium</span>
+      </div>
+      <div class="diagram">
+        <svg width="760" height="150" role="img" aria-label="Before and after sketch of product browsing density">
+          <rect x="10" y="15" width="330" height="115" rx="8" fill="#fff4d9" stroke="#e4d9ca"/>
+          <text x="28" y="42" font-size="15" font-weight="700" fill="#2f2924">Current</text>
+          <rect x="28" y="58" width="72" height="55" rx="4" fill="#f1dfc7"/>
+          <rect x="110" y="58" width="94" height="22" rx="4" fill="#d9e8de"/>
+          <rect x="110" y="90" width="94" height="22" rx="4" fill="#d9e8de"/>
+          <rect x="214" y="58" width="94" height="22" rx="4" fill="#d9e8de"/>
+          <rect x="214" y="90" width="94" height="22" rx="4" fill="#d9e8de"/>
+          <text x="380" y="82" font-size="24" fill="#306b4f">→</text>
+          <rect x="430" y="15" width="320" height="115" rx="8" fill="#e8f3ec" stroke="#cce3d4"/>
+          <text x="448" y="42" font-size="15" font-weight="700" fill="#2f2924">Senior Mode</text>
+          <rect x="448" y="58" width="120" height="44" rx="6" fill="#fff"/>
+          <rect x="580" y="58" width="120" height="44" rx="6" fill="#fff"/>
+          <text x="466" y="84" font-size="13" fill="#2f2924">2 columns max</text>
+          <text x="600" y="84" font-size="13" fill="#2f2924">larger controls</text>
+        </svg>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> Add a persistent, user-selectable "Easy ordering" mode for the order page: larger type, fewer columns, a collapsed category drawer, more whitespace, and always-visible cart summary. It should not replace the existing dense layout; it should let less confident shoppers choose a calmer version once and keep that preference.</div>
+        <div class="field"><strong>Basis</strong> direct: The mobile order UI currently forces a sticky category rail with many categories in <code>ProductsOrderMobile.js:266-360</code>, while product cards are dense and often uppercase. external: NN/g identifies small type, poor contrast, and tiny targets as major barriers for older adults.</div>
+        <div class="field"><strong>Rationale</strong> This tackles the highest-friction surface observed in testing without removing power-user efficiency. It also gives the team a single design target for future senior-friendly work instead of one-off tweaks.</div>
+        <div class="field"><strong>Downsides</strong> Requires layout branching and QA across category navigation, search, cart footer, and product cards. It can drift unless shared components are used.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-2">
+      <div class="idea-head">
+        <div>
+          <div class="rank">2</div>
+          <h3>Plain-Language Icon System</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Accessible semantics</span>
+        <span class="badge">Confidence 91%</span>
+        <span class="badge warn">Complexity Low</span>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> Create a small accessible icon-button wrapper used by header, toolbar, product quantity, and cart controls. Every icon button gets an explicit accessible name, visible text where space allows, a minimum touch target, and a consistent badge pattern for counts.</div>
+        <div class="field"><strong>Basis</strong> direct: The header renders icon-only buttons around <code>person</code>, <code>local_mall</code>, and <code>menu</code> in <code>Menu.js:20-57</code>. Toolbar labels exist but are hidden with <code>display: 'none'</code> in <code>ToolBar.js:16-20</code>. The usability test text output exposed strings like <code>personlocal_mallmenu</code> and <code>addADD ITEMS</code>. external: WCAG 2.2 says UI component name and role must be programmatically determinable.</div>
+        <div class="field"><strong>Rationale</strong> This is the fastest high-confidence improvement. It helps screen reader users, voice control users, and anyone who does not recognize the icon set.</div>
+        <div class="field"><strong>Downsides</strong> Needs careful visual styling to avoid crowding the already-tight mobile header. Some labels may need visually-hidden text rather than visible text.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-3">
+      <div class="idea-head">
+        <div>
+          <div class="rank">3</div>
+          <h3>Guided Category Landing</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Navigation clarity</span>
+        <span class="badge">Confidence 78%</span>
+        <span class="badge warn">Complexity Medium</span>
+      </div>
+      <div class="diagram">
+        <svg width="760" height="150" role="img" aria-label="Guided category landing flow">
+          <rect x="15" y="30" width="160" height="80" rx="8" fill="#e8f3ec" stroke="#cce3d4"/>
+          <text x="36" y="62" font-size="14" font-weight="700" fill="#2f2924">Start with needs</text>
+          <text x="36" y="86" font-size="13" fill="#2f2924">Vegetables, staples,</text>
+          <text x="36" y="104" font-size="13" fill="#2f2924">breakfast, health</text>
+          <text x="205" y="78" font-size="24" fill="#306b4f">→</text>
+          <rect x="250" y="30" width="210" height="80" rx="8" fill="#fff" stroke="#e4d9ca"/>
+          <text x="270" y="62" font-size="14" font-weight="700" fill="#2f2924">Show 4-6 common paths</text>
+          <text x="270" y="88" font-size="13" fill="#2f2924">not all 20 categories first</text>
+          <text x="490" y="78" font-size="24" fill="#306b4f">→</text>
+          <rect x="535" y="30" width="190" height="80" rx="8" fill="#e7f0fa" stroke="#c8d9ea"/>
+          <text x="554" y="62" font-size="14" font-weight="700" fill="#2f2924">Then products</text>
+          <text x="554" y="88" font-size="13" fill="#2f2924">with category drawer</text>
+        </svg>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> Replace the immediate long category rail with a short landing panel: "What are you shopping for today?" with 4-6 common entry points such as Fresh vegetables, Daily staples, Breakfast, Protein rich, Gut health, and Search. The full category list remains available behind "All categories."</div>
+        <div class="field"><strong>Basis</strong> direct: The product page starts directly inside <code>Tab.Container</code> defaulting to the configured product category at <code>ProductsOrderMobile.js:260</code>, then renders every category nav item. The test landed on Millets with 32 add buttons visible in the DOM, even for a shopper who may only want a familiar grocery path.</div>
+        <div class="field"><strong>Rationale</strong> Older and less technical shoppers benefit from recognition over exploration. A guided starting point reduces the cognitive work of interpreting a taxonomy.</div>
+        <div class="field"><strong>Downsides</strong> Requires deciding and maintaining the common paths. If too promotional, it could hide the category users actually need.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-4">
+      <div class="idea-head">
+        <div>
+          <div class="rank">4</div>
+          <h3>Compact Product Cards With Confirmed Add State</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Product card decision load</span>
+        <span class="badge">Confidence 80%</span>
+        <span class="badge warn">Complexity Medium</span>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> After "Add to Cart," keep the card compact and show a clear added state: "Added: 150 g" with two large buttons, "Change quantity" and "Remove." Open the full quantity selector only when the user asks to change it.</div>
+        <div class="field"><strong>Basis</strong> direct: <code>AddToCart</code> swaps the button for a full quantity selector and returnable controls in <code>ProductForNonAdmin.js:198-220</code>. During testing, the first card expanded into many visible quantities: 150 g, 200 g, 500 g, 1 kg, 1.5 kg, 2 kg, plus delete.</div>
+        <div class="field"><strong>Rationale</strong> The current behavior confirms the add, but it also adds visual noise exactly where the user just succeeded. A compact state preserves confidence while keeping browsing calm.</div>
+        <div class="field"><strong>Downsides</strong> Adds one tap for users who routinely adjust quantities immediately. Needs careful handling for discounted quantity options.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-5">
+      <div class="idea-head">
+        <div>
+          <div class="rank">5</div>
+          <h3>Checkout Readiness Banner</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Checkout expectation</span>
+        <span class="badge">Confidence 74%</span>
+        <span class="badge warn">Complexity Low</span>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> On the product and cart pages, show a small, plain-language checkout readiness line: "You can place this order with your registered mobile number. New to Suvai? Sign up first." If the user is already logged in, replace it with "You are ordering as [name]."</div>
+        <div class="field"><strong>Basis</strong> direct: The registered-phone modal is only introduced after pressing <code>Place Order</code> in <code>GetUserPhoneNumber.js:48-84</code>. The usability test made it through, but the requirement appears at the final commitment moment.</div>
+        <div class="field"><strong>Rationale</strong> This prevents surprise at checkout and supports less technical users who may not distinguish between browsing, cart review, login, and order placement.</div>
+        <div class="field"><strong>Downsides</strong> Adds another message to already-busy pages. It must stay short and avoid sounding like an error.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-6">
+      <div class="idea-head">
+        <div>
+          <div class="rank">6</div>
+          <h3>Assisted Search First</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Navigation clarity</span>
+        <span class="badge">Confidence 68%</span>
+        <span class="badge warn">Complexity Medium</span>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> Promote search from a passive field into an assisted shopper: large search input, suggested terms, typo-tolerant matching, and "Did you mean?" recovery for common spellings and transliterations. Keep categories as secondary navigation.</div>
+        <div class="field"><strong>Basis</strong> direct: Product search exists at the top of the order card through <code>ProductsOrderMain.js:215-223</code>, but the page still emphasizes category browsing. external: NN/g reports older users are often punished by unforgiving inputs and simple typos.</div>
+        <div class="field"><strong>Rationale</strong> Grocery shoppers often know what they want by name. Assisted search can bypass taxonomy learning, especially with mixed English/Tamil product names and spelling variation.</div>
+        <div class="field"><strong>Downsides</strong> Requires search quality work and product-name synonym data. Bad suggestions could reduce trust quickly.</div>
+      </div>
+    </article>
+
+    <article class="idea" id="idea-7">
+      <div class="idea-head">
+        <div>
+          <div class="rank">7</div>
+          <h3>Accessible Order Progress Announcements</h3>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge axis">Accessible semantics</span>
+        <span class="badge">Confidence 70%</span>
+        <span class="badge warn">Complexity Low</span>
+      </div>
+      <div class="fields">
+        <div class="field"><strong>Description</strong> Add accessible status regions for add-to-cart, cart count updates, checkout modal validation, and final order success. Pair visual toast/count changes with screen-reader-friendly messages such as "Barnyard flakes added. Cart total is Rs. 51."</div>
+        <div class="field"><strong>Basis</strong> direct: The cart count visually updated during testing, but the accessible text surface was awkward and console warnings showed prop/DOM issues. external: WCAG 2.2 defines status messages as changes that can be presented by assistive technologies without taking focus.</div>
+        <div class="field"><strong>Rationale</strong> This turns invisible state changes into explicit feedback. Older users who rely on zoom, screen readers, or simply slower visual scanning get a stronger sense of "what just happened."</div>
+        <div class="field"><strong>Downsides</strong> Requires discipline to avoid noisy announcements. Needs testing with actual assistive technology.</div>
+      </div>
+    </article>
+  </section>
+
+  <section class="section" id="rejections">
+    <h2>Rejection Summary</h2>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Idea</th><th>Reason Rejected</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Full redesign of checkout and payment</td><td>Scope overrun: the requested focus is product browsing and icon clarity, not the whole order/payment system.</td></tr>
+        <tr><td>2</td><td>Remove all categories and use only search</td><td>Too risky: categories are useful for browsing groceries and existing users may depend on them.</td></tr>
+        <tr><td>3</td><td>Voice ordering</td><td>Interesting but high complexity and not grounded enough in the tested pain; better as a later brainstorm variant.</td></tr>
+        <tr><td>4</td><td>Desktop-only senior ordering page</td><td>Contradicts the observed mobile use case and NN/g notes older adults increasingly use smartphones.</td></tr>
+        <tr><td>5</td><td>Make every icon text-only</td><td>Duplicates the stronger icon-system idea but loses compactness and visual scanning benefits.</td></tr>
+        <tr><td>6</td><td>Increase every product image size</td><td>Below ambition floor: may help recognition, but worsens list length and does not address navigation or semantics.</td></tr>
+        <tr><td>7</td><td>Hide health categories for senior users</td><td>Unjustified assumption: health categories may be especially useful to this audience.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="composition-signal">
+    Composed 2026-06-21T17:45Z by ce-ideate from the local usability test and codebase context.
+  </footer>
+</main>
+</body>
+</html>

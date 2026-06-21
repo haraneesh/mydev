@@ -5,5 +5,24 @@
       display:none;
     }
 
+    .healthCategoryNavItem{
+        margin: 0.15rem 0;
+    }
+
+    .healthCategoryHeader{
+        position: relative;
+        padding-right: 1.25rem;
+    }
+
+    .healthCategoryHeader::after{
+        content: '♥';
+        position: absolute;
+        top: 0.15rem;
+        right: 0.35rem;
+        color: $warning;
+        font-size: 0.95rem;
+        line-height: 1;
+    }
+
     border-bottom: #e4dfdb 1px solid;
 }

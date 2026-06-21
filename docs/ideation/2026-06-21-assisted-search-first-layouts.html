@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assisted Search First: Experience Layouts</title>
+  <style>
+    :root {
+      --page: #fbf7f0;
+      --paper: #fffdf8;
+      --ink: #2f2924;
+      --muted: #6b625a;
+      --line: #e4d9ca;
+      --brand: #326b4f;
+      --brand-deep: #214f39;
+      --brand-soft: #e6f2eb;
+      --gold: #f1b93f;
+      --gold-soft: #fff4d9;
+      --red: #a5432f;
+      --blue: #24547c;
+      --blue-soft: #e7f0fa;
+      --white: #fff;
+      --shadow: 0 22px 48px rgba(52, 45, 37, 0.14);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.7), rgba(251, 247, 240, 1)),
+        var(--page);
+      color: var(--ink);
+      font-family: Muli, "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 36px 0 54px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 22px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      max-width: 780px;
+    }
+
+    .kicker {
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      color: var(--muted);
+      max-width: 68ch;
+      margin-top: 12px;
+      font-size: 1.02rem;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--paper);
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(250px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .layout {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layout h2 {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .layout-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      min-height: 3.9em;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 310px;
+      min-height: 670px;
+      margin: 0 auto;
+      border: 1px solid #d7c9b8;
+      border-radius: 26px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .app-top {
+      height: 58px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--brand-soft);
+      display: grid;
+      place-items: center;
+      color: var(--brand-deep);
+      font-weight: 900;
+      border: 1px solid #cce3d4;
+    }
+
+    .title {
+      min-width: 0;
+    }
+
+    .title strong {
+      display: block;
+      font-size: 0.98rem;
+      line-height: 1.1;
+    }
+
+    .title span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      min-width: 42px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+
+    .cart-dot {
+      position: absolute;
+      transform: translate(10px, -10px);
+      background: var(--red);
+      color: var(--white);
+      border-radius: 999px;
+      min-width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+    }
+
+    .screen {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 8px;
+    }
+
+    .hero h3 {
+      font-size: 1.42rem;
+      line-height: 1.12;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .search-box {
+      border: 2px solid var(--brand);
+      background: var(--white);
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 10px;
+      box-shadow: 0 8px 18px rgba(50, 107, 79, 0.12);
+    }
+
+    .search-box.focused {
+      outline: 3px solid rgba(241, 185, 63, 0.45);
+    }
+
+    .magnifier {
+      color: var(--brand);
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .search-text {
+      font-size: 1rem;
+      color: var(--ink);
+      min-width: 0;
+    }
+
+    .voice {
+      border: 0;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border-radius: 999px;
+      min-width: 38px;
+      height: 38px;
+      font-weight: 900;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--ink);
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .chip.strong {
+      border-color: #cce3d4;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .section-title a {
+      color: var(--brand);
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.84rem;
+      text-decoration: none;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+    }
+
+    .category {
+      min-height: 86px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px;
+      display: grid;
+      gap: 5px;
+      align-content: start;
+    }
+
+    .category img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .category strong {
+      font-size: 0.9rem;
+      line-height: 1.1;
+    }
+
+    .category span {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .suggestion-list, .result-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .suggestion {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 11px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .suggestion .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .suggestion strong, .result strong {
+      display: block;
+      line-height: 1.2;
+      font-size: 0.95rem;
+    }
+
+    .suggestion span, .result span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .result {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 10px;
+    }
+
+    .thumb {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius);
+      background: var(--brand-soft);
+      display: grid;
+      place-items: center;
+      color: var(--brand-deep);
+      font-weight: 900;
+      border: 1px solid #cce3d4;
+    }
+
+    .result-main {
+      display: grid;
+      gap: 8px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .price {
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .add {
+      border: 0;
+      background: var(--brand);
+      color: var(--white);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-weight: 900;
+      min-height: 42px;
+    }
+
+    .added {
+      border: 1px solid #cce3d4;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .notice {
+      border: 1px solid #f0daa3;
+      background: var(--gold-soft);
+      color: var(--warn);
+      border-radius: var(--radius);
+      padding: 11px;
+      font-size: 0.9rem;
+      font-weight: 750;
+    }
+
+    .footer-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--white);
+      border-top: 1px solid var(--line);
+      padding: 10px 12px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer-bar strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .footer-bar span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .checkout {
+      border: 0;
+      background: var(--brand-deep);
+      color: var(--white);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-weight: 900;
+      min-height: 44px;
+    }
+
+    .phone.with-footer .screen {
+      padding-bottom: 86px;
+    }
+
+    .empty-state {
+      border: 1px solid #f0daa3;
+      background: #fff9eb;
+      border-radius: var(--radius);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .empty-state strong {
+      font-size: 1.02rem;
+    }
+
+    .spell-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .spell {
+      border: 1px solid #cce3d4;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .cart-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .cart-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .qty {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .qty button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .phone input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 46px;
+      padding: 10px;
+      font: inherit;
+    }
+
+    .full {
+      width: 100%;
+      min-height: 46px;
+      border: 0;
+      background: var(--brand);
+      color: var(--white);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    .notes {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .note {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(52, 45, 37, 0.08);
+    }
+
+    .note h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .note p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1120px) {
+      .layout-grid { grid-template-columns: repeat(2, minmax(250px, 1fr)); }
+      .notes { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      main { width: min(100vw - 18px, 360px); padding-top: 24px; }
+      header { grid-template-columns: 1fr; }
+      .meta { justify-content: flex-start; }
+      .layout-grid { grid-template-columns: 1fr; }
+      .layout-note { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="kicker">Assisted Search First</div>
+      <h1>Four mobile layouts for a calmer Suvai ordering experience</h1>
+      <p class="summary">These are exploratory HTML layouts for making search the primary path into ordering, while still preserving familiar categories, cart review, and registered-mobile checkout.</p>
+    </div>
+    <div class="meta" aria-label="Document metadata">
+      <span class="pill">Date: 2026-06-21</span>
+      <span class="pill">Artifact: HTML layouts</span>
+      <span class="pill">Audience: 60+ shoppers</span>
+    </div>
+  </header>
+
+  <section class="layout-grid" aria-label="Assisted search layouts">
+    <article class="layout">
+      <div>
+        <h2>1. Start with search</h2>
+        <p class="layout-note">The first ordering screen gives the shopper one obvious action, then a few reassuring shortcuts.</p>
+      </div>
+      <div class="phone">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Suvai</strong>
+            <span>Organic groceries</span>
+          </div>
+          <div class="icon-row">
+            <button class="icon-btn" aria-label="Cart">🛍</button>
+            <button class="icon-btn" aria-label="Menu">☰</button>
+          </div>
+        </div>
+        <div class="screen">
+          <section class="hero">
+            <h3>What do you need today?</h3>
+            <p class="helper">Search by product name, common spelling, or category.</p>
+          </section>
+          <div class="search-box focused" role="search">
+            <span class="magnifier">⌕</span>
+            <span class="search-text">Search rice, dhal, milk...</span>
+            <button class="voice" aria-label="Speak search">🎙</button>
+          </div>
+          <div class="chips" aria-label="Popular searches">
+            <button class="chip strong">Vegetables</button>
+            <button class="chip">Rice</button>
+            <button class="chip">Dals</button>
+            <button class="chip">Milk</button>
+            <button class="chip">Breakfast</button>
+          </div>
+          <div>
+            <div class="section-title">
+              <span>Common paths</span>
+              <a href="#">All categories</a>
+            </div>
+            <div class="category-grid">
+              <button class="category">
+                <img src="../../public/app/imgVegetables.png" alt="">
+                <strong>Fresh vegetables</strong>
+                <span>Daily cooking</span>
+              </button>
+              <button class="category">
+                <img src="../../public/app/imgRice.png" alt="">
+                <strong>Rice & staples</strong>
+                <span>Pantry refills</span>
+              </button>
+              <button class="category">
+                <img src="../../public/app/imgProteinRich.png" alt="">
+                <strong>Protein rich</strong>
+                <span>Dals, nuts, milk</span>
+              </button>
+              <button class="category">
+                <img src="../../public/app/imgGutHealth.png" alt="">
+                <strong>Gut health</strong>
+                <span>Gentle choices</span>
+              </button>
+            </div>
+          </div>
+          <div class="notice">You can place your order with your registered mobile number.</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>2. Suggestions while typing</h2>
+        <p class="layout-note">The user gets spelling help, category matches, and direct product results before the page becomes long.</p>
+      </div>
+      <div class="phone with-footer">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Search</strong>
+            <span>2 items in cart</span>
+          </div>
+          <div class="icon-row">
+            <button class="icon-btn" aria-label="Cart">🛍<span class="cart-dot">2</span></button>
+          </div>
+        </div>
+        <div class="screen">
+          <div class="search-box focused" role="search">
+            <span class="magnifier">⌕</span>
+            <span class="search-text">thinai</span>
+            <button class="voice" aria-label="Clear search">×</button>
+          </div>
+          <div class="suggestion-list">
+            <button class="suggestion">
+              <span class="mark">↳</span>
+              <span><strong>Thinai in Millets</strong><span>8 products</span></span>
+            </button>
+            <button class="suggestion">
+              <span class="mark">✓</span>
+              <span><strong>Thinai flour</strong><span>Frequently ordered</span></span>
+            </button>
+          </div>
+          <div>
+            <div class="section-title">
+              <span>Products</span>
+              <a href="#">Filter</a>
+            </div>
+            <div class="result-list">
+              <article class="result">
+                <div class="thumb">T</div>
+                <div class="result-main">
+                  <div>
+                    <strong>THINAI / FOXTAIL FLOUR</strong>
+                    <span>200 g · Millets & Products</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price">Rs. 56.00</span>
+                    <button class="add">Add</button>
+                  </div>
+                </div>
+              </article>
+              <article class="result">
+                <div class="thumb">T</div>
+                <div class="result-main">
+                  <div>
+                    <strong>THINAI RAVVA</strong>
+                    <span>250 g · Broken</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price">Rs. 77.50</span>
+                    <button class="added">Added: 250 g</button>
+                  </div>
+                </div>
+              </article>
+              <article class="result">
+                <div class="thumb">T</div>
+                <div class="result-main">
+                  <div>
+                    <strong>THINAI / FOXTAIL RAW</strong>
+                    <span>250 g · Whole Millets</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price">Rs. 40.00</span>
+                    <button class="add">Add</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bar">
+          <div>
+            <strong>Total Rs. 128.50</strong>
+            <span>2 items selected</span>
+          </div>
+          <button class="checkout">Checkout</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>3. Helpful recovery</h2>
+        <p class="layout-note">Misspellings and transliterations should lead to choices, not a dead end.</p>
+      </div>
+      <div class="phone">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Search</strong>
+            <span>Try another spelling</span>
+          </div>
+          <div class="icon-row">
+            <button class="icon-btn" aria-label="Cart">🛍</button>
+          </div>
+        </div>
+        <div class="screen">
+          <div class="search-box focused" role="search">
+            <span class="magnifier">⌕</span>
+            <span class="search-text">kambu avale</span>
+            <button class="voice" aria-label="Clear search">×</button>
+          </div>
+          <section class="empty-state">
+            <strong>No exact match</strong>
+            <p class="helper">These are close to what you typed.</p>
+            <div class="spell-row">
+              <button class="spell">Kambu aval</button>
+              <button class="spell">Bajra flakes</button>
+              <button class="spell">Aval</button>
+            </div>
+          </section>
+          <div>
+            <div class="section-title"><span>Closest matches</span></div>
+            <div class="result-list">
+              <article class="result">
+                <div class="thumb">K</div>
+                <div class="result-main">
+                  <div>
+                    <strong>KAMBU AVAL / BAJRA FLAKES</strong>
+                    <span>150 g · Aval / Flakes</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price">Rs. 36.00</span>
+                    <button class="add">Add</button>
+                  </div>
+                </div>
+              </article>
+              <article class="result">
+                <div class="thumb">A</div>
+                <div class="result-main">
+                  <div>
+                    <strong>BARNYARD FLAKES / AVAL</strong>
+                    <span>150 g · Aval / Flakes</span>
+                  </div>
+                  <div class="price-row">
+                    <span class="price">Rs. 51.00</span>
+                    <button class="add">Add</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+          <button class="full">Browse all Aval / Flakes</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>4. Cart handoff</h2>
+        <p class="layout-note">The transition from search to order placement keeps identity requirements visible and calm.</p>
+      </div>
+      <div class="phone">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Your cart</strong>
+            <span>Review before placing order</span>
+          </div>
+          <div class="icon-row">
+            <button class="icon-btn" aria-label="Menu">☰</button>
+          </div>
+        </div>
+        <div class="screen">
+          <section class="cart-card">
+            <div class="cart-line">
+              <div>
+                <strong>THINAI RAVVA</strong>
+                <span class="helper">250 g · Rs. 77.50</span>
+              </div>
+              <strong>Rs. 77.50</strong>
+            </div>
+            <div class="qty" aria-label="Quantity controls">
+              <button aria-label="Reduce quantity">−</button>
+              <span>250 g</span>
+              <button aria-label="Increase quantity">+</button>
+            </div>
+          </section>
+          <section class="cart-card">
+            <div class="cart-line">
+              <div>
+                <strong>KAMBU AVAL / BAJRA FLAKES</strong>
+                <span class="helper">150 g · Rs. 36.00</span>
+              </div>
+              <strong>Rs. 36.00</strong>
+            </div>
+            <div class="qty" aria-label="Quantity controls">
+              <button aria-label="Reduce quantity">−</button>
+              <span>150 g</span>
+              <button aria-label="Increase quantity">+</button>
+            </div>
+          </section>
+          <div class="notice">Delivery charge applies below Rs. 1000.</div>
+          <section class="cart-card">
+            <strong>Registered mobile number</strong>
+            <span class="helper">Use the number you gave Suvai.</span>
+            <input type="tel" value="8754486932" aria-label="Registered mobile number">
+          </section>
+          <div class="cart-line">
+            <strong>Total</strong>
+            <strong>Rs. 113.50</strong>
+          </div>
+          <button class="full">Place order</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="notes" aria-label="Design notes">
+    <article class="note">
+      <h3>What changes from today</h3>
+      <p>Search moves from a card inside the product list to the first ordering decision. Categories become fallback and discovery, not the first wall of choices.</p>
+    </article>
+    <article class="note">
+      <h3>Why this helps older users</h3>
+      <p>The screen uses larger targets, clearer labels, short choices, forgiving spelling recovery, and explicit cart feedback.</p>
+    </article>
+    <article class="note">
+      <h3>Implementation boundary</h3>
+      <p>This is an experience sketch, not a plan. It can be refined into requirements with one chosen layout direction.</p>
+    </article>
+  </section>
+
+  <footer>
+    Composed 2026-06-21 by ce-ideate for the Assisted Search First idea.
+  </footer>
+</main>
+</body>
+</html>

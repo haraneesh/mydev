@@ -39,7 +39,7 @@ function GetUserPhoneNumber({handlePlaceOrder, showMobileNumberForm, handleClose
           if (user){
              handlePlaceOrder({userId: user._id});
           } else {
-            setErrorState({whMobilePhone:'If you are a new to Suvai, please sign up. This mobile number is not registered with us.'});  
+            setErrorState({whMobilePhone:'If you are new to Suvai, please sign up. This mobile number is not registered with us.'});  
           }
         });
       }

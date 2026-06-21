@@ -107,12 +107,22 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   returnSideBarNavLink({ displayText, imgName, eventKey }) {
+    const isHealthCategory =
+      eventKey === constants.ProductCuratedCategory.proteinRich.name ||
+      eventKey === constants.ProductCuratedCategory.gutHealth.name;
+
     return (
-      <Nav.Item>
-        <Nav.Link eventKey={eventKey} style={{ padding: 0 }}>
+      <Nav.Item className={isHealthCategory ? 'healthCategoryNavItem' : ''}>
+        <Nav.Link
+          eventKey={eventKey}
+          className={isHealthCategory ? 'healthCategoryNavLink' : ''}
+          style={{ padding: 0 }}
+        >
           <SideBarDisplayHeader
             onclick={() => this.handlePanelSelect('order-tab')}
-            clName="menuIcon"
+            clName={
+              isHealthCategory ? 'menuIcon healthCategoryHeader' : 'menuIcon'
+            }
             title={displayText}
             imgName={imgName}
           />
