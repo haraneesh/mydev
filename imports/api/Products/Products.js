@@ -1,7 +1,9 @@
 /* eslint-disable consistent-return */
+import 'meteor/aldeed:collection2/static';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import constants from '../../modules/constants';
 
 const Products = new Mongo.Collection('Products');
 export default Products;
@@ -36,6 +38,16 @@ export const ProductSchemaDefObject = {
   image_path: { type: String, label: 'The image path of the product.', optional: true },
   type: { type: String, label: 'The type of the product.' },
   category: { type: String, label: 'The category of the product.', optional: true },
+  curatedCategories: {
+    type: Array,
+    label: 'Curated categories for product shelves.',
+    optional: true,
+    defaultValue: [],
+  },
+  'curatedCategories.$': {
+    type: String,
+    allowedValues: constants.ProductCuratedCategory.names,
+  },
   availableToOrder: { type: Boolean, label: 'Is product availableToOrder?', optional: true },
   availableToOrderWH: { type: Boolean, label: 'Is product availableToOrderWH?', optional: true },
   maxUnitsAvailableToOrder: {

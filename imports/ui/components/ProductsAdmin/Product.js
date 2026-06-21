@@ -11,6 +11,7 @@ import Row from 'react-bootstrap/Row';
 import { toast } from 'react-toastify';
 import { removeProduct, upsertProduct } from '../../../api/Products/methods.js';
 import constants from '../../../modules/constants';
+import { toggleCuratedCategory } from '../../../modules/productCuratedCategories';
 import Checkbox from '../Common/Checkbox';
 import ProductDetails from './ProductDetails';
 
@@ -156,6 +157,12 @@ export default function Product(props) {
     }, {});
   }
 
+  function arraysHaveSameValues(first = [], second = []) {
+    if (first.length !== second.length) return false;
+
+    return first.every((value, index) => value === second[index]);
+  }
+
   function handleRemoveProduct(event) {
     event.preventDefault();
     const productId = event.target.name;
@@ -209,14 +216,24 @@ export default function Product(props) {
               }
             : null;
         break;
+      case 'curatedCategories':
+        valueToUpdate = toggleCuratedCategory(
+          product.curatedCategories,
+          selectedValue,
+        );
+        break;
       default:
         valueToUpdate = selectedValue;
         break;
     }
 
     const currentValue = product[field] ? product[field] : '';
+    const valueHasChanged =
+      field === 'curatedCategories'
+        ? !arraysHaveSameValues(valueToUpdate, product.curatedCategories || [])
+        : valueToUpdate !== currentValue.toString();
 
-    if (valueToUpdate !== currentValue.toString()) {
+    if (valueHasChanged) {
       product[field] = valueToUpdate;
       const newState = Object.assign({}, state);
       newState.product = product;
@@ -418,6 +435,48 @@ export default function Product(props) {
                 defaultValue={product.category}
                 help
               />
+            </Col>
+          </Row>
+          <Row className="py-2">
+            <Col xs={1} />
+            <Col xs={4}>
+              <label>Curated Categories</label>
+            </Col>
+            <Col>
+              <Checkbox
+                id={`curatedCategoriesProteinRich-${product._id}`}
+                name="curatedCategories"
+                value={constants.ProductCuratedCategory.proteinRich.name}
+                checked={
+                  !!(
+                    state.product.curatedCategories &&
+                    state.product.curatedCategories.includes(
+                      constants.ProductCuratedCategory.proteinRich.name,
+                    )
+                  )
+                }
+                onChange={handleProductUpsert}
+              >
+                {constants.ProductCuratedCategory.proteinRich.display_value}
+              </Checkbox>
+            </Col>
+            <Col>
+              <Checkbox
+                id={`curatedCategoriesGutHealth-${product._id}`}
+                name="curatedCategories"
+                value={constants.ProductCuratedCategory.gutHealth.name}
+                checked={
+                  !!(
+                    state.product.curatedCategories &&
+                    state.product.curatedCategories.includes(
+                      constants.ProductCuratedCategory.gutHealth.name,
+                    )
+                  )
+                }
+                onChange={handleProductUpsert}
+              >
+                {constants.ProductCuratedCategory.gutHealth.display_value}
+              </Checkbox>
             </Col>
           </Row>
           <Row className="py-2">

@@ -235,6 +235,8 @@ export default class ProductsOrderMobile extends React.Component {
       productDisposables,
       productBeauty,
       productSpecials,
+      productProteinRich,
+      productGutHealth,
     } = productGroups;
 
     const productRecommended = [];
@@ -257,6 +259,18 @@ export default class ProductsOrderMobile extends React.Component {
                   displayText: 'New Arrivals',
                   imgName: 'imgSpecials',
                   eventKey: 'specials',
+                })}
+                {this.returnSideBarNavLink({
+                  displayText:
+                    constants.ProductCuratedCategory.proteinRich.display_value,
+                  imgName: 'imgProteinRich',
+                  eventKey: 'proteinRich',
+                })}
+                {this.returnSideBarNavLink({
+                  displayText:
+                    constants.ProductCuratedCategory.gutHealth.display_value,
+                  imgName: 'imgGutHealth',
+                  eventKey: 'gutHealth',
                 })}
                 {this.returnSideBarNavLink({
                   displayText:
@@ -362,6 +376,22 @@ export default class ProductsOrderMobile extends React.Component {
                     {this.displayProductsWithCategories(
                       productSpecials,
                       'specials'
+                    )}
+                  </Row>
+                </Tab.Pane>
+                <Tab.Pane eventKey="proteinRich">
+                  <Row>
+                    {this.displayProductsWithCategories(
+                      productProteinRich,
+                      'proteinRich',
+                    )}
+                  </Row>
+                </Tab.Pane>
+                <Tab.Pane eventKey="gutHealth">
+                  <Row>
+                    {this.displayProductsWithCategories(
+                      productGutHealth,
+                      'gutHealth',
                     )}
                   </Row>
                 </Tab.Pane>

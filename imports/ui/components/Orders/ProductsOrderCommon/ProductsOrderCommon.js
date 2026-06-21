@@ -188,10 +188,16 @@ export function displayProductsByType({
   const productRecommended = [];
   const productsNoCategory = [];
   const productSpecials = [];
+  const productProteinRich = [];
+  const productGutHealth = [];
 
   const checkout = !!cartScreen;
 
   _.map(products, (product, index) => {
+    const curatedCategories = Array.isArray(product.curatedCategories)
+      ? product.curatedCategories
+      : [];
+
     if (
       !!wasProductOrderedPreviously &&
       wasProductOrderedPreviously(product._id)
@@ -213,15 +219,16 @@ export function displayProductsByType({
       );
     }
 
-    if (product.displayAsSpecial) {
-      if (
-        !isDeliveryInChennai &&
-        (product.type === constants.ProductTypeName.Vegetables.name || 
-         product.type === constants.ProductTypeName.Fruits.name)
-      ) {
-        return;
-      }
+    const isSpecialProduceHiddenOutsideChennai =
+      !isDeliveryInChennai &&
+      (product.type === constants.ProductTypeName.Vegetables.name ||
+        product.type === constants.ProductTypeName.Fruits.name);
 
+    if (product.displayAsSpecial && isSpecialProduceHiddenOutsideChennai) {
+      return;
+    }
+
+    if (product.displayAsSpecial) {
       productSpecials.push({
         isMobile,
         key: `special-${index}`,
@@ -236,6 +243,48 @@ export function displayProductsByType({
       productGroupMetaHash = incrementMetaWithOrderCount(
         productGroupMetaHash,
         'productSpecials',
+        product,
+      );
+    }
+
+    if (
+      curatedCategories.includes(
+        constants.ProductCuratedCategory.proteinRich.name,
+      )
+    ) {
+      productProteinRich.push({
+        isMobile,
+        key: `proteinRich-${index}`,
+        updateProductQuantity,
+        product,
+        isAdmin,
+        isShopOwner,
+        checkout,
+        isBasket,
+      });
+      productGroupMetaHash = incrementMetaWithOrderCount(
+        productGroupMetaHash,
+        'productProteinRich',
+        product,
+      );
+    }
+
+    if (
+      curatedCategories.includes(constants.ProductCuratedCategory.gutHealth.name)
+    ) {
+      productGutHealth.push({
+        isMobile,
+        key: `gutHealth-${index}`,
+        updateProductQuantity,
+        product,
+        isAdmin,
+        isShopOwner,
+        checkout,
+        isBasket,
+      });
+      productGroupMetaHash = incrementMetaWithOrderCount(
+        productGroupMetaHash,
+        'productGutHealth',
         product,
       );
     }
@@ -386,6 +435,8 @@ export function displayProductsByType({
     productSpecials,
     productPrepared,
     productRecommended,
+    productProteinRich,
+    productGutHealth,
     productsNoCategory,
     isMobile,
     productGroupMetaHash,

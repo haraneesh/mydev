@@ -2,6 +2,7 @@ import React from 'react';
 
 const Checkbox = ({
   name,
+  id = name,
   checked,
   onChange,
   children,
@@ -11,13 +12,13 @@ const Checkbox = ({
     <input
       className="form-check-input"
       type="checkbox"
-      id={name}
+      id={id}
       name={name}
       value={value}
       onClick={onChange}
       checked={checked}
     />
-    <label className="form-check-label" htmlFor={name}>
+    <label className="form-check-label" htmlFor={id}>
       {children}
     </label>
   </div>

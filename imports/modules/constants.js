@@ -157,6 +157,19 @@ const ReturnProductType = { name: 'Returnable', value: 'Returnable' };
 // const ProductType = ['New', 'Vegetables', 'Fruits', 'Dhals', 'Grains', 'Spices', 'Oils', 'Prepared', 'Hygiene', 'Sweetners', ReturnProductType.name];
 const ProductTypeNameArray = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].name).sort((a, b) => a.localeCompare(b));
 // const ProductTypeDisplayNames = Object.keys(ProductTypeName).map((cat) => ProductTypeName[cat].displayName);
+
+const ProductCuratedCategory = {
+  proteinRich: {
+    name: 'proteinRich',
+    display_value: 'Protein rich',
+  },
+  gutHealth: {
+    name: 'gutHealth',
+    display_value: 'Gut health',
+  },
+};
+
+ProductCuratedCategory.names = Object.keys(ProductCuratedCategory).map((cat) => ProductCuratedCategory[cat].name);
 /*
 Saved - customer saved the current selection, with the intent to resume.
 Processing — customer has placed and order and we are ready to start processing the request.
@@ -512,6 +525,7 @@ const SELECT_EMPTY_VALUE = '';
 const constants = {
   ProductTypeName,
   ProductTypeNameArray,
+  ProductCuratedCategory,
   OrderStatus,
   PorterStatus,
   DaysFromTodayForward,
