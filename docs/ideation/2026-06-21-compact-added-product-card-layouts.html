@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compact Added Product Card Layouts</title>
+  <style>
+    :root {
+      --page: #fbf7f0;
+      --paper: #fffdf8;
+      --white: #fff;
+      --ink: #302923;
+      --muted: #71665c;
+      --line: #e6dac9;
+      --brand: #326b4f;
+      --brand-deep: #214f39;
+      --brand-soft: #e7f3ec;
+      --gold: #f1b93f;
+      --gold-soft: #fff4d9;
+      --danger: #a34330;
+      --blue-soft: #e7f0fa;
+      --blue: #24547c;
+      --shadow: 0 18px 44px rgba(48, 41, 35, 0.12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.72), rgba(251, 247, 240, 1)),
+        var(--page);
+      color: var(--ink);
+      font-family: Muli, "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 36px 0 56px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 22px;
+      margin-bottom: 24px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.06;
+      max-width: 780px;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .kicker {
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      color: var(--muted);
+      max-width: 70ch;
+      margin-top: 12px;
+      font-size: 1.02rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 62ch;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 330px;
+      min-height: 760px;
+      margin: 0 auto;
+      border: 1px solid #d8c9b6;
+      border-radius: 28px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .app-top {
+      min-height: 58px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--brand-soft);
+      border: 1px solid #cce3d4;
+      display: grid;
+      place-items: center;
+      color: var(--brand-deep);
+      font-weight: 900;
+    }
+
+    .title strong, .desk-title strong {
+      display: block;
+      line-height: 1.12;
+    }
+
+    .title span, .desk-title span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .icon-btn {
+      min-width: 42px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: var(--radius);
+      font-weight: 900;
+    }
+
+    .screen {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      padding-bottom: 92px;
+    }
+
+    .search {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-weight: 750;
+    }
+
+    .section-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .mobile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+
+    .product-card {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      display: grid;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .product-card.featured {
+      border-color: #cce3d4;
+      box-shadow: 0 10px 24px rgba(50, 107, 79, 0.12);
+    }
+
+    .product-card.expanded {
+      grid-column: span 2;
+    }
+
+    .photo {
+      height: 88px;
+      border-radius: var(--radius);
+      background: var(--brand-soft);
+      display: grid;
+      place-items: center;
+      color: var(--brand-deep);
+      font-weight: 900;
+      border: 1px solid #cce3d4;
+    }
+
+    .photo.small {
+      height: 58px;
+      width: 58px;
+    }
+
+    .product-name {
+      font-size: 0.9rem;
+      line-height: 1.18;
+      min-height: 2.2em;
+      font-weight: 900;
+    }
+
+    .subtext {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .price {
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    button {
+      font: inherit;
+      cursor: default;
+    }
+
+    .add {
+      border: 0;
+      border-radius: var(--radius);
+      min-height: 42px;
+      background: var(--brand);
+      color: var(--white);
+      font-weight: 900;
+      width: 100%;
+    }
+
+    .added-compact {
+      display: grid;
+      gap: 7px;
+      border: 1px solid #cce3d4;
+      background: var(--brand-soft);
+      border-radius: var(--radius);
+      padding: 8px;
+    }
+
+    .added-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand-deep);
+      font-weight: 900;
+      font-size: 0.86rem;
+    }
+
+    .added-line .check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: var(--brand);
+      color: var(--white);
+      font-size: 0.78rem;
+      margin-right: 4px;
+    }
+
+    .added-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      border-top: 1px solid rgba(50, 107, 79, 0.16);
+      padding-top: 7px;
+    }
+
+    .link-btn {
+      border: 0;
+      background: transparent;
+      color: var(--brand-deep);
+      min-height: 32px;
+      font-weight: 900;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .remove {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      min-height: 32px;
+      font-weight: 850;
+      padding: 0;
+    }
+
+    .remove::before {
+      content: "× ";
+      color: var(--danger);
+      font-weight: 900;
+    }
+
+    .edit-panel {
+      border: 1px solid #d6e7dc;
+      background: #f7fbf8;
+      border-radius: var(--radius);
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .qty-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .qty {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 8px;
+      min-height: 40px;
+      font-weight: 850;
+    }
+
+    .qty.selected {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: var(--white);
+    }
+
+    .done {
+      border: 0;
+      background: var(--brand-deep);
+      color: var(--white);
+      border-radius: var(--radius);
+      min-height: 42px;
+      font-weight: 900;
+    }
+
+    .cart-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-top: 1px solid var(--line);
+      background: var(--white);
+      padding: 11px 13px 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cart-footer strong { display: block; }
+    .cart-footer span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .checkout {
+      border: 0;
+      background: var(--brand-deep);
+      color: var(--white);
+      min-height: 44px;
+      border-radius: var(--radius);
+      padding: 0 14px;
+      font-weight: 900;
+    }
+
+    .desktop {
+      min-height: 760px;
+      border: 1px solid #d8c9b6;
+      border-radius: 16px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .desk-top {
+      min-height: 62px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .desk-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .desk-action {
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: var(--radius);
+      min-height: 40px;
+      padding: 0 12px;
+      font-weight: 850;
+    }
+
+    .desk-body {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr) 250px;
+      min-height: 698px;
+    }
+
+    .rail {
+      border-right: 1px solid var(--line);
+      padding: 14px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      background: #fffaf2;
+    }
+
+    .rail button {
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: var(--radius);
+      min-height: 40px;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .rail button.active {
+      background: var(--brand-soft);
+      border-color: #cce3d4;
+      color: var(--brand-deep);
+    }
+
+    .catalog {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .desk-search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .desk-search .search {
+      min-height: 46px;
+    }
+
+    .web-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .web-card {
+      min-height: 292px;
+    }
+
+    .web-card .photo {
+      height: 112px;
+    }
+
+    .web-card.expanded {
+      grid-column: span 2;
+      grid-template-columns: 132px 1fr;
+      align-items: start;
+    }
+
+    .web-card.expanded .photo {
+      height: 118px;
+    }
+
+    .cart-panel {
+      border-left: 1px solid var(--line);
+      background: var(--white);
+      padding: 16px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .mini-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+    }
+
+    .mini-line span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .notice {
+      background: var(--gold-soft);
+      color: #76500c;
+      border: 1px solid #efd89e;
+      border-radius: var(--radius);
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 750;
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .note {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 26px rgba(48, 41, 35, 0.08);
+      padding: 16px;
+    }
+
+    .note p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-top: 6px;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      header,
+      .comparison,
+      .notes {
+        grid-template-columns: 1fr;
+      }
+      .meta { justify-content: flex-start; }
+      .desktop { overflow-x: auto; }
+      .desk-body { min-width: 880px; }
+      .web-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        width: min(100vw - 18px, 360px);
+        padding-top: 24px;
+      }
+      .phone { max-width: 340px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="kicker">Compact Added Product Card</div>
+      <h1>Mobile and web layouts for a calmer post-add experience</h1>
+      <p class="summary">Today, selecting a product immediately expands into all available quantity choices. These layouts keep the confirmation visible but compact, then reveal quantity editing only when the shopper asks for it.</p>
+    </div>
+    <div class="meta" aria-label="Document metadata">
+      <span class="pill">Date: 2026-06-21</span>
+      <span class="pill">Scope: product card state</span>
+      <span class="pill">Output: HTML layouts</span>
+    </div>
+  </header>
+
+  <section class="comparison" aria-label="Mobile and web product-card layouts">
+    <article class="panel">
+      <div>
+        <h2>1. Mobile view</h2>
+        <p class="panel-note">Two-column grocery browsing stays stable. Added products show as calm confirmation rows; quantity choices appear only after tapping Edit.</p>
+      </div>
+      <div class="phone">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Millets & Products</strong>
+            <span>2 items selected</span>
+          </div>
+          <button class="icon-btn" aria-label="Cart">🛍</button>
+        </div>
+        <div class="screen">
+          <div class="search">Search products <span>⌕</span></div>
+          <div class="section-label">Aval / Flakes</div>
+          <div class="mobile-grid">
+            <article class="product-card">
+              <div class="photo">B</div>
+              <div>
+                <div class="product-name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+                <div class="subtext">150 g, Rs. 51.00</div>
+              </div>
+              <button class="add">Add to Cart</button>
+            </article>
+
+            <article class="product-card featured">
+              <div class="photo">K</div>
+              <div>
+                <div class="product-name">KAMBU AVAL / BAJRA FLAKES</div>
+                <div class="subtext">150 g, Rs. 36.00</div>
+              </div>
+              <div class="added-compact" aria-label="Kambu aval added to cart, 150 grams">
+                <div class="added-line">
+                  <span><span class="check">✓</span>In cart</span>
+                  <span>150 g</span>
+                </div>
+                <div class="added-actions">
+                  <button class="link-btn">Edit quantity</button>
+                  <button class="remove" aria-label="Remove Kambu aval">Remove</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card expanded">
+              <div class="price-row">
+                <div>
+                  <div class="product-name">RAGI FLAKES</div>
+                  <div class="subtext">Editing quantity</div>
+                </div>
+                <span class="price">Rs. 40.50</span>
+              </div>
+              <div class="edit-panel">
+                <div class="section-label">Choose quantity</div>
+                <div class="qty-grid">
+                  <button class="qty">100 g</button>
+                  <button class="qty selected">150 g</button>
+                  <button class="qty">250 g</button>
+                  <button class="qty">500 g</button>
+                  <button class="qty">1 kg</button>
+                  <button class="qty">2 kg</button>
+                </div>
+                <button class="done">Done</button>
+              </div>
+            </article>
+
+            <article class="product-card">
+              <div class="photo">S</div>
+              <div>
+                <div class="product-name">SAMAI FLAKES</div>
+                <div class="subtext">150 g, Rs. 60.00</div>
+              </div>
+              <button class="add">Add to Cart</button>
+            </article>
+          </div>
+        </div>
+        <div class="cart-footer">
+          <div>
+            <strong>Total Rs. 76.50</strong>
+            <span>2 products in cart</span>
+          </div>
+          <button class="checkout">Checkout</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div>
+        <h2>2. Web view</h2>
+        <p class="panel-note">Desktop can afford richer product cards and a side cart, but it still avoids expanding every selected item. Quantity editing is a local, deliberate state.</p>
+      </div>
+      <div class="desktop">
+        <div class="desk-top">
+          <div class="logo">S</div>
+          <div class="desk-title">
+            <strong>Choose Your Products</strong>
+            <span>Product list last updated: 6/20/2026, 11:25 PM</span>
+          </div>
+          <div class="desk-actions">
+            <button class="desk-action">Delivery: In Chennai</button>
+            <button class="desk-action">Cart · 2</button>
+          </div>
+        </div>
+        <div class="desk-body">
+          <nav class="rail" aria-label="Product categories">
+            <button>New Arrivals</button>
+            <button>Protein rich</button>
+            <button>Gut health</button>
+            <button>Vegetables</button>
+            <button>Rice & Products</button>
+            <button class="active">Millets & Products</button>
+            <button>Dals & Lentils</button>
+            <button>Milk & Products</button>
+          </nav>
+
+          <section class="catalog">
+            <div class="desk-search">
+              <div class="search">Search for Kambu, Ragi, Thinai <span>⌕</span></div>
+              <button class="desk-action">Sort: Popular</button>
+            </div>
+            <div class="section-label">Aval / Flakes</div>
+            <div class="web-grid">
+              <article class="product-card web-card">
+                <div class="photo">B</div>
+                <div>
+                  <div class="product-name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+                  <div class="subtext">150 g, Rs. 51.00</div>
+                </div>
+                <button class="add">Add to Cart</button>
+              </article>
+
+              <article class="product-card web-card featured">
+                <div class="photo">K</div>
+                <div>
+                  <div class="product-name">KAMBU AVAL / BAJRA FLAKES</div>
+                  <div class="subtext">150 g, Rs. 36.00</div>
+                </div>
+                <div class="added-compact" aria-label="Kambu aval added to cart, 150 grams">
+                  <div class="added-line">
+                    <span><span class="check">✓</span>In cart</span>
+                    <span>150 g</span>
+                  </div>
+                  <div class="added-actions">
+                    <button class="link-btn">Edit quantity</button>
+                    <button class="remove">Remove</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product-card web-card">
+                <div class="photo">S</div>
+                <div>
+                  <div class="product-name">SAMAI FLAKES</div>
+                  <div class="subtext">150 g, Rs. 60.00</div>
+                </div>
+                <button class="add">Add to Cart</button>
+              </article>
+
+              <article class="product-card web-card expanded">
+                <div class="photo">R</div>
+                <div>
+                  <div class="price-row">
+                    <div>
+                      <div class="product-name">RAGI FLAKES</div>
+                      <div class="subtext">Pick a different size</div>
+                    </div>
+                    <span class="price">Rs. 40.50</span>
+                  </div>
+                  <div class="edit-panel">
+                    <div class="qty-grid">
+                      <button class="qty">100 g</button>
+                      <button class="qty selected">150 g</button>
+                      <button class="qty">250 g</button>
+                      <button class="qty">500 g</button>
+                      <button class="qty">1 kg</button>
+                      <button class="qty">2 kg</button>
+                    </div>
+                    <button class="done">Update cart</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product-card web-card">
+                <div class="photo">V</div>
+                <div>
+                  <div class="product-name">VARAGU FLAKES</div>
+                  <div class="subtext">100 g, Rs. 34.00</div>
+                </div>
+                <button class="add">Add to Cart</button>
+              </article>
+            </div>
+          </section>
+
+          <aside class="cart-panel" aria-label="Cart summary">
+            <h2>Your Cart</h2>
+            <div class="mini-line">
+              <div>
+                <strong>Kambu aval</strong>
+                <span>150 g</span>
+              </div>
+              <strong>Rs. 36.00</strong>
+            </div>
+            <div class="mini-line">
+              <div>
+                <strong>Ragi flakes</strong>
+                <span>150 g</span>
+              </div>
+              <strong>Rs. 40.50</strong>
+            </div>
+            <div class="notice">Delivery charge applies below Rs. 1000.</div>
+            <div class="mini-line">
+              <strong>Total</strong>
+              <strong>Rs. 76.50</strong>
+            </div>
+            <button class="checkout">Checkout</button>
+          </aside>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="notes" aria-label="Design notes">
+    <article class="note">
+      <h3>Core behavior</h3>
+      <p>Adding a product changes one compact card state. It does not expose every size unless the shopper taps Edit quantity.</p>
+    </article>
+    <article class="note">
+      <h3>Why it is calmer</h3>
+      <p>The selected product remains the same height as nearby cards, so the grid does not feel like it jumps after success.</p>
+    </article>
+    <article class="note">
+      <h3>Implementation fit</h3>
+      <p>This can live inside the existing `AddToCart` branch: compact selected state first, quantity selector as an explicit edit state.</p>
+    </article>
+  </section>
+
+  <footer>
+    Composed 2026-06-21 by ce-ideate for compact post-add product card exploration.
+  </footer>
+</main>
+</body>
+</html>

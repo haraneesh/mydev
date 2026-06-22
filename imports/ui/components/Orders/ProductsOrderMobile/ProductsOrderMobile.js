@@ -166,25 +166,22 @@ export default class ProductsOrderMobile extends React.Component {
     const subCatRowItems = [];
     subCategorys.forEach((key) => {
       subCatRowItems.push(
-        <Nav.Item key={key}>
-          <Nav.Link
-            event={key.replace(' ', '').toLowerCase()}
-            onClick={() => {
-              const cardHeaderToMove = document.getElementById(
-                `${preFix}-${key.replace(' ', '').toLowerCase()}`,
-              );
-              const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
-              const targetPosition =
-                cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({
-                top: targetPosition - stickyNavBar.offsetHeight,
-                behavior: 'smooth',
-              });
-            }}
-          >
-            {key}
-          </Nav.Link>
-        </Nav.Item>,
+        {
+          key,
+          label: key,
+          onClick: () => {
+            const cardHeaderToMove = document.getElementById(
+              `${preFix}-${key.replace(' ', '').toLowerCase()}`,
+            );
+            const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
+            const targetPosition =
+              cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({
+              top: targetPosition - stickyNavBar.offsetHeight,
+              behavior: 'smooth',
+            });
+          },
+        },
       );
     });
 
@@ -192,8 +189,8 @@ export default class ProductsOrderMobile extends React.Component {
     productDisplayList.push(
       <Nav
         key={subCatRowId}
-        variant="pills bg-white border-bottom border-2 border-light border-opacity-50"
-        className="sticky-top"
+        variant="pills"
+        className="sticky-top productSubCategoryNav"
         id={subCatRowId}
       >
         <SubCategoryRow items={subCatRowItems} />
@@ -205,14 +202,13 @@ export default class ProductsOrderMobile extends React.Component {
         ? constants.ProductTypeName[key].display_value
         : key;
 
-      ;
-
       productDisplayList.push(
-        <Row key={key} id={`${preFix}-${key.replace(' ', '').toLowerCase()}`}>
-          <div
-            className="card-header text-start"
-            style={{ borderRadius: '4px', fontWeight: 'bold' }}
-          >
+        <Row
+          key={key}
+          className="productSubCategorySection"
+          id={`${preFix}-${key.replace(' ', '').toLowerCase()}`}
+        >
+          <div className="productSubCategoryHeader text-start">
             <h6>{displayText}</h6>
           </div>
           {productsBySubCategory[key]}
@@ -379,8 +375,8 @@ export default class ProductsOrderMobile extends React.Component {
                 })}
               </Nav>
             </Col>
-            <Col xs={9}>
-              <Tab.Content>
+            <Col xs={9} className="productOrderPanels">
+              <Tab.Content className="productOrderPanelsContent">
                 <Tab.Pane eventKey="specials">
                   <Row>
                     {this.displayProductsWithCategories(

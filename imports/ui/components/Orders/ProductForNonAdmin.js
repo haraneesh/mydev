@@ -11,12 +11,19 @@ import Icon from '../Icon/Icon';
 import {
   calculateBulkDiscount,
   displayUnitOfSale,
+  toTitleCase,
 } from '../../../modules/helpers';
 import { accountSettings } from '../../../modules/settings';
 
 import OrderCommon from '../../../modules/both/orderCommon';
 
 const { costOfReturnable } = OrderCommon;
+
+const displayProductTitle = (name) =>
+  toTitleCase(name).replace(
+    /\(([^)]*)\)/g,
+    (_, text) => `(${toTitleCase(text)})`,
+  );
 
 export const QuantitySelector = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -133,7 +140,7 @@ const ProductName = ({
 }) => (
   <div className="productNameDesc">
     <p className="product-name">
-      <strong>{name}</strong>
+      <strong>{displayProductTitle(name)}</strong>
     </p>
     {/* (quantitySelected > 0) && (
       (!sliderView && (
@@ -182,8 +189,7 @@ const AddToCart = ({
             );
           }}
         >
-          {' '}
-          Add To Cart
+          Add to Cart
         </Button>
       </div>
     );
@@ -196,7 +202,7 @@ const AddToCart = ({
   */
 
   return (
-    <>
+    <div className="cartControl">
       <QuantitySelector
         onChange={onChange}
         unit={unit}
@@ -217,7 +223,7 @@ const AddToCart = ({
         retQtySelected={retQtySelected}
         retQtySelectedPrice={retQtySelectedPrice}
       />
-    </>
+    </div>
   );
 };
 
@@ -404,16 +410,18 @@ const ProductForNonAdmin = ({
 
       <Col xs={12}>
         <div>
-          <Col xs={12} style={{ height: '4em' }}>{prodNameDesc}</Col>
+          <Col xs={12} className="product-name-container">
+            {prodNameDesc}
+          </Col>
           <Col xs={12}>
-            <p className="m-2">
+            <p className="product-price">
               {' '}
               {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}{' '}
             </p>
           </Col>
         </div>
       </Col>
-      <Col>
+      <Col className="product-action-container">
         <AddToCart
           onChange={onChange}
           unit={unit}

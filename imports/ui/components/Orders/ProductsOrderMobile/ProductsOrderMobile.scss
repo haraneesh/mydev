@@ -1,6 +1,10 @@
 @import '../../../stylesheets/bootstrap/variables';
 
 .productOrderList {
+    background: #f4efe6;
+    border-bottom: #e4dfdb 1px solid;
+    padding-bottom: 1rem;
+
     .accordion-button::after{
       display:none;
     }
@@ -24,5 +28,145 @@
         line-height: 1;
     }
 
-    border-bottom: #e4dfdb 1px solid;
+    .menuLeft{
+        background: $white;
+    }
+
+    .menuLeft .nav-link.active{
+        background: $white;
+        border: 1px solid #e4d4c4;
+        border-radius: 0.45rem;
+        box-shadow: 0 0.1rem 0.35rem rgba($black, 0.04);
+        color: $black;
+        margin: 0.15rem 0.25rem;
+        padding: 0.25rem 0 !important;
+    }
+
+    .menuLeft .nav-link.active .productCatHead{
+        font-weight: 800;
+    }
+
+    .productOrderPanels{
+        background: #f4efe6;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .productOrderPanelsContent{
+        padding-top: 0.35rem;
+    }
+
+    .subCategoryPriorityRow{
+        align-items: stretch;
+        background: $white;
+        border: 1px solid #e4dfdb;
+        border-radius: 0.45rem;
+        box-shadow: 0 0.1rem 0.35rem rgba($black, 0.05);
+        display: flex;
+        overflow: visible;
+        width: 100%;
+    }
+
+    .subCategoryPriorityTabs{
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .subCategoryPriorityItem{
+        border-bottom: 0;
+        flex: 0 1 auto;
+        min-width: 0;
+    }
+
+    .subCategoryPriorityItem .nav-link{
+        border-radius: 0;
+        color: #7b351f;
+        font-weight: 700;
+        overflow: hidden;
+        padding: 0.55rem 0.45rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .subCategoryPriorityItem .nav-link span{
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        padding: 0.25rem 0.45rem;
+        text-overflow: ellipsis;
+        vertical-align: bottom;
+    }
+
+    .subCategoryPriorityItem .nav-link.active{
+        background: transparent;
+        color: #5f2117;
+    }
+
+    .subCategoryPriorityItem .nav-link.active span{
+        background: #f8f2ea;
+        border-color: #d8c3ad;
+    }
+
+    .subCategoryMore{
+        align-items: stretch;
+        border-left: 1px solid #eaded3;
+        display: flex;
+        flex: 0 0 auto;
+    }
+
+    .subCategoryMore .dropdown-toggle{
+        align-items: center;
+        color: #7b351f;
+        display: flex;
+        font-weight: 800;
+        padding: 0.55rem 0.75rem;
+        text-decoration: none;
+    }
+
+    .subCategoryMore .dropdown-toggle::after{
+        margin-left: 0.35rem;
+    }
+
+    .subCategoryMore .dropdown-menu{
+        border-color: #e4dfdb;
+        box-shadow: 0 0.45rem 1rem rgba($black, 0.1);
+    }
+
+    .subCategoryMore .dropdown-item{
+        color: #7b351f;
+        font-weight: 700;
+    }
+
+    .subCategoryMore .dropdown-item.active{
+        background: #f4efe6;
+        color: #5f2117;
+    }
+
+    .productSubCategorySection{
+        margin: 0 0 0.9rem;
+        row-gap: 0.35rem;
+    }
+
+    .productSubCategoryHeader{
+        background: transparent;
+        color: #8f2f1f;
+        font-weight: 700;
+        padding: 0.35rem 0.1rem 0.2rem;
+        width: 100%;
+
+        h6{
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            margin: 0;
+        }
+    }
+
+    .productSubCategoryNav{
+        background: transparent;
+        padding: 0.15rem 0;
+    }
 }

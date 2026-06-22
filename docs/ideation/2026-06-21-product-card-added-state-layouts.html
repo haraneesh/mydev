@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Card Added State Layouts</title>
+  <style>
+    :root {
+      --page: #fbf7f0;
+      --paper: #fffdf8;
+      --card: #ffffff;
+      --ink: #2f2924;
+      --muted: #6b625a;
+      --line: #e5d9ca;
+      --brand: #326b4f;
+      --brand-deep: #214f39;
+      --brand-soft: #e8f3ec;
+      --gold: #f1b93f;
+      --gold-soft: #fff4d9;
+      --danger: #9a3f2f;
+      --danger-soft: #f9e8e2;
+      --blue: #24547c;
+      --blue-soft: #e7f0fa;
+      --shadow: 0 22px 48px rgba(52, 45, 37, 0.14);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.78), rgba(251, 247, 240, 1)),
+        var(--page);
+      font-family: Muli, "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 36px 0 54px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      max-width: 780px;
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.05;
+    }
+
+    .kicker {
+      margin-bottom: 8px;
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .summary {
+      max-width: 72ch;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--paper);
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(250px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .layout {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layout h2 {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .layout-note {
+      min-height: 3.8em;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 310px;
+      min-height: 680px;
+      margin: 0 auto;
+      border: 1px solid #d7c9b8;
+      border-radius: 26px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .app-top {
+      height: 58px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #cce3d4;
+      border-radius: 50%;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .title {
+      min-width: 0;
+    }
+
+    .title strong {
+      display: block;
+      font-size: 0.98rem;
+      line-height: 1.1;
+    }
+
+    .title span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .icon-btn {
+      position: relative;
+      min-width: 42px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .cart-dot {
+      position: absolute;
+      right: -5px;
+      top: -7px;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--danger);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 0.72rem;
+      border: 2px solid var(--paper);
+    }
+
+    .screen {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .section-title a {
+      color: var(--brand);
+      font-size: 0.84rem;
+      text-transform: none;
+      text-decoration: none;
+      letter-spacing: 0;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .product-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 10px;
+      min-height: 246px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 8px;
+    }
+
+    .product-card.selected {
+      border-color: #9bc6aa;
+      box-shadow: inset 0 0 0 1px #cfe5d6;
+    }
+
+    .image {
+      height: 72px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 36% 38%, rgba(241, 185, 63, 0.22), transparent 34%),
+        var(--brand-soft);
+      display: grid;
+      place-items: center;
+      color: var(--brand-deep);
+      font-weight: 900;
+      border: 1px solid #cce3d4;
+    }
+
+    .name {
+      min-height: 3.4em;
+      font-size: 0.84rem;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .price {
+      color: var(--muted);
+      font-size: 0.82rem;
+      align-self: start;
+    }
+
+    button {
+      font: inherit;
+      cursor: default;
+    }
+
+    .add {
+      min-height: 42px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--brand);
+      color: white;
+      font-weight: 900;
+      width: 100%;
+    }
+
+    .added-banner {
+      min-height: 42px;
+      border: 1px solid #b9d8c4;
+      border-radius: var(--radius);
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .micro-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .secondary, .remove {
+      min-height: 38px;
+      border-radius: var(--radius);
+      font-weight: 900;
+      font-size: 0.82rem;
+    }
+
+    .secondary {
+      border: 1px solid #cce3d4;
+      background: white;
+      color: var(--brand-deep);
+    }
+
+    .remove {
+      border: 1px solid #e7c2b8;
+      background: var(--danger-soft);
+      color: var(--danger);
+      min-width: 42px;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: 38px 1fr 38px;
+      gap: 6px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .stepper button, .qty-pill {
+      min-height: 38px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: white;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+    }
+
+    .qty-pill {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+      border-color: #cce3d4;
+      font-size: 0.84rem;
+    }
+
+    .sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-top: 1px solid var(--line);
+      background: white;
+      box-shadow: 0 -18px 38px rgba(52, 45, 37, 0.14);
+      padding: 14px;
+      border-radius: 18px 18px 0 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .sheet h3 {
+      font-size: 1rem;
+    }
+
+    .qty-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .qty-options button {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      font-weight: 900;
+    }
+
+    .qty-options .active {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+
+    .full {
+      min-height: 46px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--brand-deep);
+      color: white;
+      font-weight: 900;
+    }
+
+    .toast {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: 70px;
+      min-height: 54px;
+      border: 1px solid #b9d8c4;
+      border-radius: var(--radius);
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      box-shadow: 0 12px 24px rgba(33, 79, 57, 0.16);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .toast-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .cart-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-top: 1px solid var(--line);
+      background: white;
+      padding: 10px 12px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cart-bar strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .cart-bar span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .checkout {
+      min-height: 44px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--brand-deep);
+      color: white;
+      padding: 0 14px;
+      font-weight: 900;
+    }
+
+    .phone.with-cart .screen {
+      padding-bottom: 84px;
+    }
+
+    .compare {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .note {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(52, 45, 37, 0.08);
+    }
+
+    .note h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .note p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1120px) {
+      .layout-grid { grid-template-columns: repeat(2, minmax(250px, 1fr)); }
+      .compare { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      main { width: min(100vw - 18px, 360px); padding-top: 24px; }
+      header { grid-template-columns: 1fr; }
+      .meta { justify-content: flex-start; }
+      .layout-grid { grid-template-columns: 1fr; }
+      .layout-note { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="kicker">Product Card Added State</div>
+      <h1>Four layout directions for confirming add-to-cart without visual clutter</h1>
+      <p class="summary">Today, adding a product replaces the button with the full quantity selector. These layouts keep the confidence of “added” while making quantity changes optional and calmer for older or less technical shoppers.</p>
+    </div>
+    <div class="meta" aria-label="Document metadata">
+      <span class="pill">Date: 2026-06-21</span>
+      <span class="pill">Artifact: HTML layouts</span>
+      <span class="pill">Scope: Product card state</span>
+    </div>
+  </header>
+
+  <section class="layout-grid" aria-label="Product card added state layouts">
+    <article class="layout">
+      <div>
+        <h2>1. Compact confirmation</h2>
+        <p class="layout-note">The product card stays the same height. “Added” is clear; quantity controls appear only behind Change.</p>
+      </div>
+      <div class="phone with-cart">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Millets & Products</strong>
+            <span>Simple product cards</span>
+          </div>
+          <button class="icon-btn" aria-label="Cart">🛍<span class="cart-dot">1</span></button>
+        </div>
+        <div class="screen">
+          <div class="section-title"><span>Aval / Flakes</span><a href="#">All</a></div>
+          <div class="product-grid">
+            <article class="product-card selected">
+              <div class="image">B</div>
+              <div class="name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+              <div class="price">150 g · Rs. 51.00</div>
+              <div>
+                <div class="added-banner">✓ Added: 150 g</div>
+                <div class="micro-actions">
+                  <button class="secondary">Change</button>
+                  <button class="remove" aria-label="Remove Barnyard flakes">×</button>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="image">K</div>
+              <div class="name">KAMBU AVAL / BAJRA FLAKES</div>
+              <div class="price">150 g · Rs. 36.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">R</div>
+              <div class="name">RAGI FLAKES</div>
+              <div class="price">150 g · Rs. 40.50</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">S</div>
+              <div class="name">SAMAI FLAKES</div>
+              <div class="price">150 g · Rs. 60.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+          </div>
+        </div>
+        <div class="cart-bar">
+          <div><strong>Total Rs. 51.00</strong><span>1 item selected</span></div>
+          <button class="checkout">Checkout</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>2. Inline stepper</h2>
+        <p class="layout-note">For common quantity changes, the card shows one calm row instead of six exposed options.</p>
+      </div>
+      <div class="phone with-cart">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Millets & Products</strong>
+            <span>Quick quantity adjustment</span>
+          </div>
+          <button class="icon-btn" aria-label="Cart">🛍<span class="cart-dot">1</span></button>
+        </div>
+        <div class="screen">
+          <div class="section-title"><span>Aval / Flakes</span><a href="#">All</a></div>
+          <div class="product-grid">
+            <article class="product-card selected">
+              <div class="image">B</div>
+              <div class="name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+              <div class="price">Rs. 51.00</div>
+              <div>
+                <div class="added-banner">Added to cart</div>
+                <div class="stepper">
+                  <button aria-label="Decrease quantity">−</button>
+                  <span class="qty-pill">150 g</span>
+                  <button aria-label="Increase quantity">+</button>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="image">K</div>
+              <div class="name">KAMBU AVAL / BAJRA FLAKES</div>
+              <div class="price">150 g · Rs. 36.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">R</div>
+              <div class="name">RAGI FLAKES</div>
+              <div class="price">150 g · Rs. 40.50</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">S</div>
+              <div class="name">SAMAI FLAKES</div>
+              <div class="price">150 g · Rs. 60.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+          </div>
+        </div>
+        <div class="cart-bar">
+          <div><strong>Total Rs. 51.00</strong><span>1 item selected</span></div>
+          <button class="checkout">Checkout</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>3. Bottom quantity sheet</h2>
+        <p class="layout-note">The product list stays quiet. The full quantity choices move into a focused sheet when needed.</p>
+      </div>
+      <div class="phone with-cart">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Millets & Products</strong>
+            <span>Quantity chooser open</span>
+          </div>
+          <button class="icon-btn" aria-label="Cart">🛍<span class="cart-dot">1</span></button>
+        </div>
+        <div class="screen">
+          <div class="section-title"><span>Aval / Flakes</span><a href="#">All</a></div>
+          <div class="product-grid">
+            <article class="product-card selected">
+              <div class="image">B</div>
+              <div class="name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+              <div class="price">150 g · Rs. 51.00</div>
+              <div>
+                <div class="added-banner">✓ Added: 150 g</div>
+                <div class="micro-actions">
+                  <button class="secondary">Change quantity</button>
+                  <button class="remove" aria-label="Remove Barnyard flakes">×</button>
+                </div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="image">K</div>
+              <div class="name">KAMBU AVAL / BAJRA FLAKES</div>
+              <div class="price">150 g · Rs. 36.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+          </div>
+        </div>
+        <section class="sheet" aria-label="Change quantity">
+          <div>
+            <h3>Change quantity</h3>
+            <p class="price">Barnyard flakes</p>
+          </div>
+          <div class="qty-options">
+            <button class="active">150 g</button>
+            <button>200 g</button>
+            <button>500 g</button>
+            <button>1 kg</button>
+            <button>1.5 kg</button>
+            <button>2 kg</button>
+          </div>
+          <button class="full">Done</button>
+        </section>
+      </div>
+    </article>
+
+    <article class="layout">
+      <div>
+        <h2>4. Toast plus unchanged grid</h2>
+        <p class="layout-note">The card barely changes; a temporary confirmation and cart count carry the feedback.</p>
+      </div>
+      <div class="phone with-cart">
+        <div class="app-top">
+          <div class="logo">S</div>
+          <div class="title">
+            <strong>Millets & Products</strong>
+            <span>Confirmation message</span>
+          </div>
+          <button class="icon-btn" aria-label="Cart">🛍<span class="cart-dot">1</span></button>
+        </div>
+        <div class="toast" role="status">
+          <span class="toast-mark">✓</span>
+          <span>Barnyard flakes added. Cart total is Rs. 51.</span>
+        </div>
+        <div class="screen" style="padding-top: 76px;">
+          <div class="section-title"><span>Aval / Flakes</span><a href="#">All</a></div>
+          <div class="product-grid">
+            <article class="product-card selected">
+              <div class="image">B</div>
+              <div class="name">BARNYARD FLAKES / KUTHIRAIVALI AVAL</div>
+              <div class="price">150 g · Rs. 51.00</div>
+              <button class="secondary">In cart · Edit</button>
+            </article>
+            <article class="product-card">
+              <div class="image">K</div>
+              <div class="name">KAMBU AVAL / BAJRA FLAKES</div>
+              <div class="price">150 g · Rs. 36.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">R</div>
+              <div class="name">RAGI FLAKES</div>
+              <div class="price">150 g · Rs. 40.50</div>
+              <button class="add">Add to cart</button>
+            </article>
+            <article class="product-card">
+              <div class="image">S</div>
+              <div class="name">SAMAI FLAKES</div>
+              <div class="price">150 g · Rs. 60.00</div>
+              <button class="add">Add to cart</button>
+            </article>
+          </div>
+        </div>
+        <div class="cart-bar">
+          <div><strong>Total Rs. 51.00</strong><span>1 item selected</span></div>
+          <button class="checkout">Checkout</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="compare" aria-label="Design notes">
+    <article class="note">
+      <h3>Strongest default</h3>
+      <p>Compact confirmation is the safest first pass: it preserves product-card height and gives explicit Change and Remove actions.</p>
+    </article>
+    <article class="note">
+      <h3>Fastest quantity edits</h3>
+      <p>The inline stepper is useful when quantity changes are common, but it assumes there is a sensible next and previous quantity.</p>
+    </article>
+    <article class="note">
+      <h3>Best for complex quantities</h3>
+      <p>The bottom sheet keeps all existing quantity options, including discounts and returnables, without crowding every product card.</p>
+    </article>
+  </section>
+
+  <footer>
+    Composed 2026-06-21 by ce-ideate for the product-card added-state recommendation. Grounded in <code>ProductForNonAdmin.js</code> where Add to Cart currently expands into <code>QuantitySelector</code> and returnable controls.
+  </footer>
+</main>
+</body>
+</html>

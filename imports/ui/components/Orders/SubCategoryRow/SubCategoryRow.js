@@ -1,82 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Nav from 'react-bootstrap/Nav';
+
+const MIN_TAB_WIDTH = 112;
+const MORE_MENU_WIDTH = 86;
 
 const SubCategoryRow = ({ items }) => {
-    const [visibleCount, setVisibleCount] = useState(3); // Start with 3 visible items
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(items.length);
+  const rowRef = useRef(null);
 
+  const updateVisibleCount = () => {
+    if (!rowRef.current) return;
 
-    // Standard breakpoints for responsiveness (Bootstrap style)
-  const breakpoints = {
-    sm: 576,  // Small screen (phones)
-    md: 768,  // Medium screen (tablets)
-    lg: 992,  // Large screen (small desktops)
-    xl: 1200, // Extra large screen (large desktops)
-    xxl: 1400, // Extra extra large screen (ultra-wide monitors)
-  };
+    const rowWidth = rowRef.current.clientWidth;
+    const fullRowCount = Math.floor(rowWidth / MIN_TAB_WIDTH);
 
-  // Function to determine how many items should be shown based on the screen width
-  const getItemsPerRow = (windowWidth) => {
-    if (windowWidth <= breakpoints.sm) {
-      return 2; // Show 2 items on small screens (mobile)
-    } else if (windowWidth <= breakpoints.md) {
-      return 4; // Show 4 items on medium screens (tablets)
-    } else if (windowWidth <= breakpoints.lg) {
-      return 5; // Show 5 items on large screens (small desktops)
-    } else if (windowWidth <= breakpoints.xl) {
-      return 6; // Show 6 items on extra large screens (large desktops)
-    } else if (windowWidth <= breakpoints.xxl) {
-      return 7; // Show 7 items on very large screens (ultra-wide monitors)
-    } else {
-      return 9;
+    if (fullRowCount >= items.length) {
+      setVisibleCount(items.length);
+      return;
     }
+
+    const availableWidth = rowWidth - MORE_MENU_WIDTH;
+    const nextVisibleCount = Math.max(
+      2,
+      Math.floor(availableWidth / MIN_TAB_WIDTH),
+    );
+
+    setVisibleCount(Math.min(items.length, nextVisibleCount));
   };
 
-    // Function to update visible count based on row width
-    const updateVisibleCount = () => {
-        const maxVisibleCount = getItemsPerRow(window.innerWidth);
-        setVisibleCount(maxVisibleCount);
-    
-    };
+  useEffect(() => {
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
 
-    useEffect(() => {
-        
-        window.addEventListener('resize', updateVisibleCount);
-        updateVisibleCount();
-        return () => {
-            // if (t) clearTimeout(t);
-            window.removeEventListener('resize', updateVisibleCount); 
-        }
-        
-    }, [items]);
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, [items]);
 
-    const visibleItems = items.slice(0, visibleCount);
-    const hiddenItems = items.slice(visibleCount);
+  const visibleIndexes = items
+    .slice(0, visibleCount)
+    .map((item, index) => index);
 
-    return (
-        <Row className="align-items-center w-100" >
-            {visibleItems.map((item, index) => (
-                <Col key={index}>
-                    <div className="text-truncate">
-                        {item}
-                    </div>
-                </Col>
+  if (
+    activeIndex >= visibleCount &&
+    visibleIndexes.length > 0 &&
+    visibleCount < items.length
+  ) {
+    visibleIndexes[visibleIndexes.length - 1] = activeIndex;
+  }
+
+  const visibleIndexSet = new Set(visibleIndexes);
+  const hiddenIndexes = items
+    .map((item, index) => index)
+    .filter((index) => !visibleIndexSet.has(index));
+
+  const handleSelect = (index) => {
+    setActiveIndex(index);
+    items[index].onClick();
+  };
+
+  return (
+    <div className="subCategoryPriorityRow" ref={rowRef}>
+      <div className="subCategoryPriorityTabs">
+        {visibleIndexes.map((index) => (
+          <Nav.Item className="subCategoryPriorityItem" key={items[index].key}>
+            <Nav.Link
+              className={activeIndex === index ? 'active' : ''}
+              onClick={() => handleSelect(index)}
+            >
+              <span>{items[index].label}</span>
+            </Nav.Link>
+          </Nav.Item>
+        ))}
+      </div>
+
+      {hiddenIndexes.length > 0 && (
+        <Dropdown align="end" className="subCategoryMore">
+          <Dropdown.Toggle id="sub-category-more" variant="link">
+            More
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {hiddenIndexes.map((index) => (
+              <Dropdown.Item
+                active={activeIndex === index}
+                key={items[index].key}
+                onClick={() => handleSelect(index)}
+              >
+                {items[index].label}
+              </Dropdown.Item>
             ))}
-            {hiddenItems.length > 0 && (
-                <Col>
-                    <DropdownButton
-                        id="dropdown-basic-button"
-                        title={`+ ${hiddenItems.length} more`}
-                    >
-                        {hiddenItems.map((item, index) => (
-                            <Dropdown.Item key={index}>
-                                {item}
-                            </Dropdown.Item>
-                        ))}
-                    </DropdownButton>
-                </Col>
-            )}
-        </Row>
-    );
+          </Dropdown.Menu>
+        </Dropdown>
+      )}
+    </div>
+  );
 };
 
 export default SubCategoryRow;

@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Namma Suvai — Product Browsing: Navigation & Card Typography</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+  /* ── Brand tokens ──────────────────────────────────── */
+  :root {
+    --brand-maroon:   #702223;
+    --brand-brown:    #7F4422;
+    --brand-orange:   #e04a06;
+    --brand-green:    #519716;
+    --brand-green-dk: #3d7010;
+    --brand-bg:       #f5f0e8;
+    --brand-card-bg:  #ffffff;
+    --brand-header-bg:#fdf8f0;
+    --brand-section-bg: #f0ebe0;
+    --text-dark:      #2c1a0e;
+    --text-mid:       #5a3a1a;
+    --text-light:     #8a6a4a;
+    --pill-active-bg: #702223;
+    --pill-active-text: #fff;
+    --pill-idle-bg:   #ede7db;
+    --pill-idle-text: #702223;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #e8e2d8;
+    color: var(--text-dark);
+  }
+
+  /* ── Page header ───────────────────────────────────── */
+  .page-title {
+    background: var(--brand-maroon);
+    color: #fff;
+    text-align: center;
+    padding: 18px 20px 14px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: .3px;
+  }
+  .page-title span { font-weight: 400; font-size: .9rem; opacity: .8; display:block; margin-top:4px; }
+
+  /* ── Two-panel comparison layout ──────────────────── */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px) {
+    .comparison { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--brand-card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  }
+
+  .panel-label {
+    text-align: center;
+    padding: 10px;
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .panel-label.before { background: #fde8d8; color: #a03010; }
+  .panel-label.after  { background: #dff0cc; color: #2d6010; }
+
+  /* ── Shared shop shell ─────────────────────────────── */
+  .shop {
+    background: var(--brand-bg);
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* top bar */
+  .shop-topbar {
+    background: var(--brand-header-bg);
+    border-bottom: 1px solid #ddd4c0;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .shop-topbar .logo {
+    font-weight: 800;
+    color: var(--brand-maroon);
+    font-size: .95rem;
+    white-space: nowrap;
+  }
+  .search-box {
+    flex: 1;
+    border: 1px solid #ccc3b0;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: .78rem;
+    color: var(--text-light);
+    background: #fff;
+    font-family: inherit;
+  }
+  .delivery-btn {
+    background: var(--brand-maroon);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: .72rem;
+    font-family: inherit;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  /* main area: sidebar + content */
+  .shop-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Left sidebar ──────────────────────────────────── */
+  .sidebar {
+    width: 130px;
+    min-width: 130px;
+    background: #fff;
+    border-right: 1px solid #e0d8cc;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .sidebar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 6px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    text-align: center;
+    gap: 4px;
+  }
+  .sidebar-item.active {
+    background: #fdf3ec;
+    border-left-color: var(--brand-maroon);
+  }
+  .sidebar-item img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    opacity: .85;
+  }
+  .sidebar-icon {
+    font-size: 28px !important;
+    color: var(--brand-maroon);
+    opacity: .7;
+  }
+  .sidebar-item.active .sidebar-icon { opacity: 1; }
+  .sidebar-item span {
+    font-size: .65rem;
+    color: var(--text-mid);
+    line-height: 1.2;
+  }
+  .sidebar-item.active span { color: var(--brand-maroon); font-weight: 700; }
+  .sidebar-heart {
+    font-size: .6rem;
+    color: #e04a06;
+    position: absolute;
+    right: 8px;
+  }
+
+  /* ── Product content pane ──────────────────────────── */
+  .product-pane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px 80px;
+  }
+
+  /* ── BEFORE: Pill bar ──────────────────────────────── */
+  .pill-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px 0 6px;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .pill-bar::-webkit-scrollbar { display: none; }
+  .pill {
+    background: var(--pill-idle-bg);
+    color: var(--pill-idle-text);
+    border: 1px solid #d0c8b8;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: .7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .pill.active {
+    background: var(--pill-active-bg);
+    color: var(--pill-active-text);
+    border-color: var(--pill-active-bg);
+  }
+  .pill.overflow {
+    background: var(--brand-maroon);
+    color: #fff;
+    border-color: var(--brand-maroon);
+  }
+
+  /* ── Section header (shared) ───────────────────────── */
+  .section-header {
+    background: var(--brand-section-bg);
+    padding: 7px 10px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--brand-maroon);
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  /* BEFORE: section-header has no anchor affordance */
+  /* AFTER: section-header has visible jump-anchor affordance */
+  .section-header.anchored {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .section-header.anchored .anchor-hint {
+    font-size: .6rem;
+    color: var(--brand-brown);
+    font-weight: 400;
+    opacity: .7;
+  }
+
+  /* ── Product grid ──────────────────────────────────── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    gap: 6px;
+  }
+  .product-card img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .product-card .placeholder-img {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 28px;
+  }
+  .product-card .name {
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+  /* BEFORE: ALL CAPS */
+  .name.allcaps { text-transform: uppercase; letter-spacing: .3px; }
+  /* AFTER: Title Case, more breathing room */
+  .name.titlecase { text-transform: none; }
+
+  .product-card .price {
+    font-size: .62rem;
+    color: var(--text-mid);
+  }
+  .add-btn {
+    background: var(--brand-green);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: .62rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  /* AFTER: add vertical gap between name and price */
+  .product-card.spacious .price { margin-top: 2px; }
+
+  /* ── Checkout sticky bar ───────────────────────────── */
+  .checkout-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--brand-header-bg);
+    border-top: 1px solid #ddd4c0;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+  .checkout-bar .total {
+    font-size: .8rem;
+    color: var(--text-mid);
+    font-weight: 600;
+  }
+  .checkout-btn {
+    background: var(--brand-orange);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 7px 18px;
+    font-size: .78rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* ── Annotation callout bubbles ────────────────────── */
+  .callout {
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: .7rem;
+    line-height: 1.5;
+    margin: 6px 0;
+  }
+  .callout.bad  { background: #fde8d8; border-left: 3px solid #e04a06; color: #7a2010; }
+  .callout.good { background: #dff0cc; border-left: 3px solid #519716; color: #2d5a08; }
+  .callout strong { display: block; margin-bottom: 2px; }
+
+  /* ── After: floating "jump to section" TOC ─────────── */
+  .section-toc {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0d8cc;
+  }
+  .section-toc-label {
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .toc-link {
+    background: var(--pill-idle-bg);
+    color: var(--brand-maroon);
+    border: 1px solid #d0c8b8;
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: .65rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+  }
+  .toc-link:hover { background: var(--brand-maroon); color: #fff; }
+
+  /* ── Legend / summary table ────────────────────────── */
+  .summary-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 16px 24px;
+  }
+  .summary-title {
+    font-size: .95rem;
+    font-weight: 800;
+    color: var(--brand-maroon);
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--brand-maroon);
+  }
+  table.diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .78rem;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,.08);
+  }
+  .diff-table th {
+    background: var(--brand-maroon);
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 700;
+  }
+  .diff-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #ede7db;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .diff-table tr:last-child td { border-bottom: none; }
+  .diff-table .col-before { background: #fff8f5; color: #7a2010; }
+  .diff-table .col-after  { background: #f5faee; color: #2d5a08; }
+  .tag-bad  { display:inline-block; background:#fde8d8; color:#a03010; border-radius:3px; padding:1px 6px; font-size:.65rem; font-weight:700; margin-right:3px; }
+  .tag-good { display:inline-block; background:#dff0cc; color:#2d6010; border-radius:3px; padding:1px 6px; font-size:.65rem; font-weight:700; margin-right:3px; }
+
+  /* ── Section divider between comparison rows ───────── */
+  .section-divider {
+    max-width: 1400px;
+    margin: 8px auto 0;
+    padding: 0 16px;
+  }
+  .section-divider h2 {
+    font-size: .8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--brand-maroon);
+    padding: 12px 14px 10px;
+    background: var(--brand-maroon);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+    margin: 0;
+  }
+
+  /* ── Card typography comparison (zoomed-in grid) ───── */
+  .card-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 16px 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px) {
+    .card-comparison { grid-template-columns: 1fr; }
+  }
+
+  /* A plain white surface to mount the cards on */
+  .card-stage {
+    background: var(--brand-bg);
+    padding: 16px;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Zoomed card grid — 2 columns so cards are bigger and easier to read */
+  .card-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* ── BEFORE card ── cramped, ALL CAPS ───────────────── */
+  .card-before {
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    gap: 4px;           /* tight gap — the problem */
+  }
+  .card-before img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .card-before .c-name {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.25;
+    text-transform: uppercase;   /* ALL CAPS — the problem */
+    letter-spacing: .4px;
+  }
+  .card-before .c-price {
+    font-size: .68rem;
+    color: var(--text-mid);
+    /* no margin-top — crammed straight under the name */
+  }
+  .card-before .c-btn {
+    background: var(--brand-green);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 0;
+    font-size: .65rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: default;
+    width: 100%;
+    text-transform: uppercase;
+  }
+
+  /* ── AFTER card ── spacious, Title Case, split weight/price ── */
+  .card-after {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    gap: 0;             /* controlled spacing via margin on children */
+  }
+  .card-after img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-bottom: 9px;
+  }
+  .card-after .c-name {
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.35;
+    text-transform: none;        /* Title Case — the fix */
+    letter-spacing: 0;
+    margin-bottom: 6px;          /* clear visual gap before weight/price */
+  }
+  /* weight and price on separate lines, visually distinct */
+  .card-after .c-weight {
+    font-size: .65rem;
+    color: var(--text-light);
+    margin-bottom: 2px;
+  }
+  .card-after .c-price {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--brand-maroon);
+    margin-bottom: 9px;          /* clear gap before button */
+  }
+  .card-after .c-btn {
+    background: var(--brand-green);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 0;
+    font-size: .68rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: default;
+    width: 100%;
+  }
+
+  /* ── Rec 3: Quantity selector comparison ────────────── */
+  .qty-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 16px 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px) { .qty-comparison { grid-template-columns: 1fr; } }
+
+  .qty-stage {
+    background: var(--brand-bg);
+    padding: 16px;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* shared card shell for qty demos */
+  .qty-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    gap: 0;
+    width: 180px;
+    margin: 0 auto;
+  }
+  .qty-card img {
+    width: 72px; height: 72px;
+    object-fit: contain; border-radius: 4px;
+    margin-bottom: 9px;
+  }
+  .qty-card .qc-name {
+    font-size: .76rem; font-weight: 700;
+    color: var(--text-dark); margin-bottom: 4px;
+  }
+  .qty-card .qc-weight {
+    font-size: .63rem; color: var(--text-light); margin-bottom: 2px;
+  }
+  .qty-card .qc-price {
+    font-size: .74rem; font-weight: 700;
+    color: var(--brand-maroon); margin-bottom: 10px;
+  }
+
+  /* BEFORE: native <select> + trash icon row */
+  .qty-native-row {
+    display: flex; align-items: center; gap: 6px; width: 100%;
+  }
+  .qty-native-select {
+    flex: 1;
+    border: 1px solid #ccc3b0; border-radius: 5px;
+    padding: 6px 8px; font-size: .72rem;
+    font-family: inherit; color: var(--text-dark);
+    background: #fff;
+    appearance: auto;
+  }
+  .qty-trash-btn {
+    background: none; border: 1px solid #d0c8b8;
+    border-radius: 5px; padding: 6px 7px;
+    color: var(--text-mid); cursor: default;
+    font-size: .8rem; line-height: 1;
+  }
+
+  /* AFTER: stepper (+/−) with label */
+  .qty-stepper-wrap { width: 100%; }
+  .qty-stepper-label {
+    font-size: .6rem; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: .5px;
+    margin-bottom: 5px;
+  }
+  .qty-stepper {
+    display: flex; align-items: center;
+    border: 1.5px solid var(--brand-maroon);
+    border-radius: 6px; overflow: hidden;
+    width: 100%;
+  }
+  .qty-step-btn {
+    background: var(--brand-maroon); color: #fff;
+    border: none; padding: 7px 12px;
+    font-size: 1rem; line-height: 1;
+    font-weight: 700; cursor: default;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .qty-step-val {
+    flex: 1; text-align: center;
+    font-size: .75rem; font-weight: 700;
+    color: var(--brand-maroon);
+    padding: 0 4px;
+  }
+  .qty-step-unit {
+    font-size: .6rem; color: var(--text-light);
+    font-weight: 400; display: block;
+  }
+
+  /* ── Pack-size trigger — idle/default (no selection made yet) ── */
+  .qty-size-trigger {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    border: 1.5px solid #ccc3b0;   /* muted — nothing chosen yet */
+    border-radius: 6px; background: #fff;
+    padding: 6px 10px;
+    font-size: .72rem; font-weight: 600;
+    color: var(--text-dark);
+    cursor: default; font-family: inherit;
+    margin-bottom: 2px;
+  }
+  .qty-size-trigger .trigger-label {
+    font-size: .58rem; color: var(--text-light);
+    font-weight: 400; display: block; text-align: left;
+  }
+  .qty-size-trigger .trigger-caret { font-size: .7rem; color: var(--text-light); }
+
+  /* ── Pack-size trigger — confirmed (user actively picked a size) ── */
+  .qty-size-trigger.confirmed {
+    border-color: var(--brand-maroon);
+    background: #fdf3ec;
+    color: var(--brand-maroon);
+  }
+  .qty-size-trigger.confirmed .trigger-caret { color: var(--brand-maroon); }
+
+  /* ── Inline option list (simulates open state) ─────── */
+  .qty-size-list {
+    width: 100%; border: 1.5px solid var(--brand-maroon);
+    border-radius: 6px; overflow: hidden;
+    margin-bottom: 2px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  }
+  .qty-size-opt {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 10px;
+    font-size: .72rem; color: var(--text-dark);
+    background: #fff; border: none; width: 100%;
+    font-family: inherit; cursor: default;
+    border-bottom: 1px solid #ede7db;
+  }
+  .qty-size-opt:last-child { border-bottom: none; }
+  .qty-size-opt.selected {
+    background: #fdf3ec; color: var(--brand-maroon); font-weight: 700;
+  }
+  .qty-size-opt .opt-check { font-size: .65rem; color: var(--brand-green); }
+
+  /* remove-text link */
+  .qty-remove-link {
+    font-size: .6rem; color: var(--text-light);
+    text-decoration: underline; cursor: default;
+    margin-top: 6px; background: none; border: none;
+    font-family: inherit;
+  }
+
+  /* add-to-cart button reused in rec3 */
+  .qty-add-btn {
+    background: var(--brand-green); color: #fff;
+    border: none; border-radius: 5px;
+    padding: 7px 0; font-size: .68rem;
+    font-weight: 700; font-family: inherit;
+    cursor: default; width: 100%;
+    margin-top: 2px;
+  }
+
+  /* annotation labels inside the card stage */
+  .card-anno {
+    font-size: .68rem;
+    line-height: 1.5;
+    padding: 6px 10px;
+    border-radius: 5px;
+  }
+  .card-anno.bad  { background: #fde8d8; border-left: 3px solid #e04a06; color: #7a2010; }
+  .card-anno.good { background: #dff0cc; border-left: 3px solid #519716; color: #2d5a08; }
+  .card-anno strong { display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  Namma Suvai — Product Browsing Layout
+  <span>Recommendation 1: Remove pill bar, anchor in-grid section headers &nbsp;|&nbsp; Recommendation 2: Title Case product names, spacious cards</span>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     REC 1: PILL BAR → ANCHORED SECTION HEADERS
+════════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <h2>Recommendation 1 — Remove the pill bar: let in-grid section headers be the single navigation anchor</h2>
+</div>
+<div class="comparison">
+
+  <!-- ════════ BEFORE panel ════════ -->
+  <div class="panel">
+    <div class="panel-label before">⚠ Before — Three navigation layers at once</div>
+
+    <div class="shop">
+      <!-- topbar -->
+      <div class="shop-topbar">
+        <div class="logo">🌿 Namma Suvai</div>
+        <input class="search-box" placeholder="Search for 'Kullakar Rice' or 'Bansi Wheat'…" readonly />
+        <button class="delivery-btn">DELIVERY: IN CHENNAI ▾</button>
+      </div>
+
+      <div class="shop-body">
+        <!-- sidebar -->
+        <div class="sidebar">
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">favorite_border</span>
+            <span>New Arrivals</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">fitness_center</span>
+            <span>Protein rich ♥</span>
+          </div>
+          <div class="sidebar-item active">
+            <span class="material-icons sidebar-icon">eco</span>
+            <span>Vegetables</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">local_florist</span>
+            <span>Fruits</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">grass</span>
+            <span>Leafy Greens</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">grain</span>
+            <span>Rice & Products</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">spa</span>
+            <span>Wheat &amp; Products</span>
+          </div>
+        </div>
+
+        <!-- product content -->
+        <div class="product-pane">
+
+          <!-- LAYER 2: Pill bar (the problem) -->
+          <div class="callout bad">
+            <strong>⬇ Layer 2: Horizontal pill bar</strong>
+            Same sub-categories as the in-grid headings — shown twice.
+            Overflows with a hidden "+ 8 MORE" button.
+          </div>
+          <div class="pill-bar">
+            <button class="pill active">Banana Family</button>
+            <button class="pill">Beans Family</button>
+            <button class="pill">Brinjal Family</button>
+            <button class="pill">Cabbage Allied</button>
+            <button class="pill">Chillies</button>
+            <button class="pill">Coconut</button>
+            <button class="pill overflow">+ 8 MORE ▾</button>
+          </div>
+
+          <!-- LAYER 3: In-grid section headers -->
+          <div class="callout bad">
+            <strong>⬇ Layer 3: In-grid section header</strong>
+            Repeats what the pill bar already said. User eye doesn't know where to anchor.
+          </div>
+
+          <div class="section-header">Banana Family</div>
+          <div class="product-grid">
+            <div class="product-card">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Banana_flower_DS.jpg/160px-Banana_flower_DS.jpg" alt="Banana Flower" />
+              <div class="name allcaps">BANANA FLOWER</div>
+              <div class="price">1 pc, Rs. 40.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+            <div class="product-card">
+              <div class="placeholder-img"><span class="material-icons" style="color:#ccc;font-size:32px">eco</span></div>
+              <div class="name allcaps">BANANA FLOWER (CLEANED)</div>
+              <div class="price">1 pc, Rs. 50.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+            <div class="product-card">
+              <div class="placeholder-img"><span class="material-icons" style="color:#ccc;font-size:32px">eco</span></div>
+              <div class="name allcaps">RAW BANANA / VAZHAKKAI</div>
+              <div class="price">1 pc, Rs. 29.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+          </div>
+
+          <div class="section-header">Beans Family</div>
+          <div class="product-grid">
+            <div class="product-card">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Flat Beans" />
+              <div class="name allcaps">FLAT BEANS / AVARAI</div>
+              <div class="price">250 g, Rs. 55.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+            <div class="product-card">
+              <div class="placeholder-img"><span class="material-icons" style="color:#ccc;font-size:32px">eco</span></div>
+              <div class="name allcaps">RING BEANS / BUSH BEANS</div>
+              <div class="price">250 g, Rs. 60.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+            <div class="product-card">
+              <div class="placeholder-img"><span class="material-icons" style="color:#ccc;font-size:32px">eco</span></div>
+              <div class="name allcaps">CLUSTER BEANS</div>
+              <div class="price">250 g, Rs. 45.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+          </div>
+
+          <div class="section-header">Brinjal Family</div>
+          <div class="product-grid">
+            <div class="product-card">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Eggplant_je.jpg/160px-Eggplant_je.jpg" alt="Brinjal" />
+              <div class="name allcaps">BRINJAL / KATHIRIKAI</div>
+              <div class="price">250 g, Rs. 38.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+            <div class="product-card">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Okra_-_Abelmoschus_esculentus.jpg/160px-Okra_-_Abelmoschus_esculentus.jpg" alt="Ladies Finger" />
+              <div class="name allcaps">LADIES FINGER / VENDAIKAI</div>
+              <div class="price">250 g, Rs. 42.00</div>
+              <button class="add-btn">ADD TO CART</button>
+            </div>
+          </div>
+
+        </div><!-- /product-pane -->
+      </div><!-- /shop-body -->
+
+      <div class="checkout-bar">
+        <span class="total">Total: Rs. 0.00</span>
+        <button class="checkout-btn" disabled style="opacity:.5">CHECKOUT →</button>
+      </div>
+    </div><!-- /shop -->
+  </div><!-- /before panel -->
+
+
+  <!-- ════════ AFTER panel ════════ -->
+  <div class="panel">
+    <div class="panel-label after">✅ After — Pill bar removed, section headers as anchors</div>
+
+    <div class="shop">
+      <!-- topbar -->
+      <div class="shop-topbar">
+        <div class="logo">🌿 Namma Suvai</div>
+        <input class="search-box" placeholder="Search vegetables, rice, spices…" readonly />
+        <button class="delivery-btn">DELIVERY: IN CHENNAI ▾</button>
+      </div>
+
+      <div class="shop-body">
+        <!-- sidebar (same) -->
+        <div class="sidebar">
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">favorite_border</span>
+            <span>New Arrivals</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">fitness_center</span>
+            <span>Protein rich ♥</span>
+          </div>
+          <div class="sidebar-item active">
+            <span class="material-icons sidebar-icon">eco</span>
+            <span>Vegetables</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">local_florist</span>
+            <span>Fruits</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">grass</span>
+            <span>Leafy Greens</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">grain</span>
+            <span>Rice & Products</span>
+          </div>
+          <div class="sidebar-item">
+            <span class="material-icons sidebar-icon">spa</span>
+            <span>Wheat &amp; Products</span>
+          </div>
+        </div>
+
+        <!-- product content — NO pill bar -->
+        <div class="product-pane">
+
+          <div class="callout good">
+            <strong>✅ Pill bar removed</strong>
+            Sub-category navigation moves into a compact "Jump to section" panel — clearly labelled, all visible at once, no overflow.
+          </div>
+
+          <!-- Jump-to-section TOC (replaces pill bar) -->
+          <div class="section-toc">
+            <div class="section-toc-label">Jump to section</div>
+            <a class="toc-link" href="#sec-banana">Banana Family</a>
+            <a class="toc-link" href="#sec-beans">Beans Family</a>
+            <a class="toc-link" href="#sec-brinjal">Brinjal Family</a>
+            <a class="toc-link" href="#sec-cabbage">Cabbage Allied</a>
+            <a class="toc-link" href="#sec-chillies">Chillies</a>
+            <a class="toc-link" href="#sec-coconut">Coconut</a>
+            <a class="toc-link" href="#sec-gourds">Gourds</a>
+            <a class="toc-link" href="#sec-roots">Roots</a>
+            <a class="toc-link" href="#sec-tomatoes">Tomatoes</a>
+          </div>
+
+          <div class="callout good">
+            <strong>✅ Section headers are now the single anchor point</strong>
+            Title Case names. A subtle "↑ top" hint confirms they are scroll-anchors.
+          </div>
+
+          <!-- Banana Family -->
+          <div class="section-header anchored" id="sec-banana">
+            <span>🍌 Banana Family</span>
+            <span class="anchor-hint">↑ top</span>
+          </div>
+          <div class="product-grid">
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Banana_flower_DS.jpg/160px-Banana_flower_DS.jpg" alt="Banana Flower" />
+              <div class="name titlecase">Banana Flower</div>
+              <div class="price">1 pc · Rs. 40</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Banana_flower_DS.jpg/160px-Banana_flower_DS.jpg" alt="Banana Flower Cleaned" style="filter:brightness(1.1)" />
+              <div class="name titlecase">Banana Flower (Cleaned)</div>
+              <div class="price">1 pc · Rs. 50</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Raw_bananas.jpg/160px-Raw_bananas.jpg" alt="Raw Banana" />
+              <div class="name titlecase">Raw Banana / Vazhakkai</div>
+              <div class="price">1 pc · Rs. 29</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+          </div>
+
+          <!-- Beans Family -->
+          <div class="section-header anchored" id="sec-beans">
+            <span>🫘 Beans Family</span>
+            <span class="anchor-hint">↑ top</span>
+          </div>
+          <div class="product-grid">
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Flat Beans" />
+              <div class="name titlecase">Flat Beans / Avarai</div>
+              <div class="price">250 g · Rs. 55</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Ring Beans" style="filter:hue-rotate(30deg)" />
+              <div class="name titlecase">Ring Beans / Bush Beans</div>
+              <div class="price">250 g · Rs. 60</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Cluster Beans" style="filter:hue-rotate(60deg) saturate(0.8)" />
+              <div class="name titlecase">Cluster Beans</div>
+              <div class="price">250 g · Rs. 45</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+          </div>
+
+          <!-- Brinjal Family -->
+          <div class="section-header anchored" id="sec-brinjal">
+            <span>🍆 Brinjal Family</span>
+            <span class="anchor-hint">↑ top</span>
+          </div>
+          <div class="product-grid">
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Eggplant_je.jpg/160px-Eggplant_je.jpg" alt="Brinjal" />
+              <div class="name titlecase">Brinjal / Kathirikai</div>
+              <div class="price">250 g · Rs. 38</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Okra_-_Abelmoschus_esculentus.jpg/160px-Okra_-_Abelmoschus_esculentus.jpg" alt="Ladies Finger" />
+              <div class="name titlecase">Ladies Finger / Vendaikai</div>
+              <div class="price">250 g · Rs. 42</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+          </div>
+
+          <!-- Roots -->
+          <div class="section-header anchored" id="sec-roots">
+            <span>🥕 Roots</span>
+            <span class="anchor-hint">↑ top</span>
+          </div>
+          <div class="product-grid">
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Baby_potatoes.jpg/160px-Baby_potatoes.jpg" alt="Baby Potato" />
+              <div class="name titlecase">Baby Potato</div>
+              <div class="price">250 g · Rs. 20</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Beet_root.jpg/160px-Beet_root.jpg" alt="Beet Root" />
+              <div class="name titlecase">Beet Root Ooty</div>
+              <div class="price">250 g · Rs. 40</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+            <div class="product-card spacious">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Carrot_on_a_white_background.jpg/160px-Carrot_on_a_white_background.jpg" alt="Carrot" />
+              <div class="name titlecase">Carrot Ooty</div>
+              <div class="price">250 g · Rs. 50</div>
+              <button class="add-btn">Add to Cart</button>
+            </div>
+          </div>
+
+        </div><!-- /product-pane -->
+      </div><!-- /shop-body -->
+
+      <div class="checkout-bar">
+        <span class="total">Total: Rs. 0.00</span>
+        <button class="checkout-btn" disabled style="opacity:.5">CHECKOUT →</button>
+      </div>
+    </div><!-- /shop -->
+  </div><!-- /after panel -->
+
+</div><!-- /comparison -->
+
+
+<!-- ════════════════════════════════════════════════════
+     REC 2: CARD TYPOGRAPHY — ALL CAPS → TITLE CASE, CRAMPED → SPACIOUS
+════════════════════════════════════════════════════ -->
+<div class="section-divider" style="margin-top:24px">
+  <h2>Recommendation 2 — ALL CAPS product names → Title Case; cramped card layout → spacious with distinct weight / price zones</h2>
+</div>
+<div class="card-comparison">
+
+  <!-- BEFORE card panel -->
+  <div class="panel">
+    <div class="panel-label before">⚠ Before — ALL CAPS names, weight + price crammed on one line</div>
+    <div class="card-stage">
+      <div class="card-anno bad">
+        <strong>Problems highlighted below</strong>
+        ALL CAPS is harder to read (especially for older users). Weight and price are merged into one grey line with no visual hierarchy. Tight <code>gap: 4px</code> between every element leaves no breathing room. "ADD TO CART" repeats the shouting style.
+      </div>
+      <div class="card-grid-2col">
+
+        <div class="card-before">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Banana_flower_DS.jpg/160px-Banana_flower_DS.jpg" alt="Banana Flower" />
+          <div class="c-name">BANANA FLOWER</div>
+          <div class="c-price">1 pc, Rs. 40.00</div>
+          <button class="c-btn">ADD TO CART</button>
+        </div>
+
+        <div class="card-before">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Flat Beans" />
+          <div class="c-name">FLAT BEANS / AVARAI</div>
+          <div class="c-price">250 g, Rs. 55.00</div>
+          <button class="c-btn">ADD TO CART</button>
+        </div>
+
+        <div class="card-before">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Eggplant_je.jpg/160px-Eggplant_je.jpg" alt="Brinjal" />
+          <div class="c-name">BRINJAL / KATHIRIKAI</div>
+          <div class="c-price">250 g, Rs. 38.00</div>
+          <button class="c-btn">ADD TO CART</button>
+        </div>
+
+        <div class="card-before">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Carrot_on_a_white_background.jpg/160px-Carrot_on_a_white_background.jpg" alt="Carrot" />
+          <div class="c-name">CARROT OOTY</div>
+          <div class="c-price">250 g, Rs. 50.00</div>
+          <button class="c-btn">ADD TO CART</button>
+        </div>
+
+      </div><!-- /card-grid-2col -->
+    </div><!-- /card-stage -->
+  </div>
+
+  <!-- AFTER card panel -->
+  <div class="panel">
+    <div class="panel-label after">✅ After — Title Case, weight and price on separate lines, clear button zone</div>
+    <div class="card-stage">
+      <div class="card-anno good">
+        <strong>Changes applied</strong>
+        Title Case is easier to scan at a glance. Weight (grey, small) and price (maroon, bold) are on separate lines — the eye jumps straight to the price. A deliberate <code>margin-bottom: 6px</code> after the name and <code>9px</code> before the button creates clear visual zones. Button text drops the ALL CAPS too.
+      </div>
+      <div class="card-grid-2col">
+
+        <div class="card-after">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Banana_flower_DS.jpg/160px-Banana_flower_DS.jpg" alt="Banana Flower" />
+          <div class="c-name">Banana Flower</div>
+          <div class="c-weight">1 pc</div>
+          <div class="c-price">Rs. 40</div>
+          <button class="c-btn">Add to Cart</button>
+        </div>
+
+        <div class="card-after">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Flat Beans" />
+          <div class="c-name">Flat Beans / Avarai</div>
+          <div class="c-weight">250 g</div>
+          <div class="c-price">Rs. 55</div>
+          <button class="c-btn">Add to Cart</button>
+        </div>
+
+        <div class="card-after">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Eggplant_je.jpg/160px-Eggplant_je.jpg" alt="Brinjal" />
+          <div class="c-name">Brinjal / Kathirikai</div>
+          <div class="c-weight">250 g</div>
+          <div class="c-price">Rs. 38</div>
+          <button class="c-btn">Add to Cart</button>
+        </div>
+
+        <div class="card-after">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Carrot_on_a_white_background.jpg/160px-Carrot_on_a_white_background.jpg" alt="Carrot" />
+          <div class="c-name">Carrot Ooty</div>
+          <div class="c-weight">250 g</div>
+          <div class="c-price">Rs. 50</div>
+          <button class="c-btn">Add to Cart</button>
+        </div>
+
+      </div><!-- /card-grid-2col -->
+    </div><!-- /card-stage -->
+  </div>
+
+</div><!-- /card-comparison -->
+
+<!-- ════════════════════════════════════════════════════
+     SUMMARY TABLE
+════════════════════════════════════════════════════ -->
+<div class="summary-section">
+  <div class="summary-title">What changed and why</div>
+  <table class="diff-table">
+    <thead>
+      <tr>
+        <th style="width:22%">Element</th>
+        <th style="width:39%">Before</th>
+        <th style="width:39%">After</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Navigation layers</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          3 layers visible simultaneously — left sidebar (L1), horizontal pill bar (L2), in-grid section headings (L3). L2 and L3 say the same thing.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          2 layers — left sidebar (L1) for major categories, in-grid section headings (L2) as the single sub-category anchor. Pill bar removed entirely.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Sub-category access</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Pill bar shows only 6–7 pills then hides the rest behind "+ 8 MORE ▾". Half the category is invisible unless you know to expand.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          "Jump to section" TOC shows all sub-categories at once in a small grid panel. No overflow, no hidden items.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Section headers</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Plain row — no affordance that they do anything. User doesn't know they could scroll to them.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Headers now have a small "↑ top" hint on the right, making it clear they are anchor points and that clicking scrolls back up.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Product names</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          ALL CAPS — harder to read, especially for older users. "FLAT BEANS /AVARAI" feels like shouting.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Title Case — "Flat Beans / Avarai". Easier to scan. Dot separator (·) between weight and price adds breathing room.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Cognitive load</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Eye has to process: sidebar category → pill bar sub-category → overflow button → then find matching section heading in the grid. 4 decisions.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Eye: sidebar category → "Jump to section" TOC → scroll to heading. 2 decisions. Clear hierarchy, one path.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Card — product name</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          ALL CAPS (<code>text-transform: uppercase</code>). Harder to scan, especially for older readers. "FLAT BEANS / AVARAI" reads as shouting and slows recognition.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Title Case. "Flat Beans / Avarai" is immediately recognisable. Larger font size (0.78 rem vs 0.65 rem) improves legibility at a glance.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Card — weight &amp; price</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Weight and price on the same line in one uniform grey colour — "250 g, Rs. 55.00". No visual hierarchy; the eye can't jump straight to the price.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Weight on its own line in small grey text. Price on its own line in bold maroon — the brand's primary colour. Scannability improved: you see the price without reading the weight first.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Card — internal spacing</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Uniform <code>gap: 4px</code> between all elements. Card feels dense; name, price, and button are visually indistinct zones.
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Deliberate margins: 9 px below image, 6 px below name, 9 px above button. Three clear zones — image · name + price · action — make the card scannable in one glance.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Quantity — model</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Native <code>&lt;select&gt;</code> implies both "which size" and "how many" are variable. Conflating the two makes the interaction model unclear — what exactly is the user choosing?
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Quantity is always 1. The only decision is <em>which pack size</em>. Removing the quantity concept simplifies the card to a single choice.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Quantity — pack size picker</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Up to 10 pack sizes (150 g → 5 kg) hidden inside an OS-modal dropdown. The user has no idea what sizes exist until they open it — two interactions minimum (tap to open, tap to select).
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          A compact trigger button always shows the current size (one row, zero clutter). Tapping opens a full option list inline inside the card — each row shows size + price. No OS picker, no scroll modal. Closes on selection, price updates immediately.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Quantity — remove / undo</strong></td>
+        <td class="col-before">
+          <span class="tag-bad">PROBLEM</span>
+          Trash icon (🗑) with no text label. Older users may not associate it with "remove from cart". Tap target is small (≈ 28 × 28 px).
+        </td>
+        <td class="col-after">
+          <span class="tag-good">FIXED</span>
+          Plain text "Remove" link below the size trigger — unambiguous at any age, no icon literacy required.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     REC 3: QUANTITY SELECTOR
+════════════════════════════════════════════════════ -->
+<div class="section-divider" style="margin-top:24px">
+  <h2>Recommendation 3 — Quantity selection: native OS dropdown → custom size trigger + stepper</h2>
+</div>
+<div class="qty-comparison">
+
+  <!-- ── BEFORE ── -->
+  <div class="panel">
+    <div class="panel-label before">⚠ Before — Native &lt;select&gt; hides all pack sizes; mixes size with quantity</div>
+    <div class="qty-stage">
+
+      <div class="card-anno bad">
+        <strong>Problems with the current control</strong>
+        The native <code>&lt;select&gt;</code> hides up to 10 pack sizes (150 g → 5 kg) until the user taps to open an OS-modal picker. "How many packs" and "which pack size" are conflated into one control — conceptually confusing. The trash icon (🗑) has no text label.
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+
+        <!-- State 1: before add -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">1 · Before adding</div>
+          <div class="qty-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Kambu Aval" />
+            <div class="qc-name">Kambu Aval / Bajra Flakes</div>
+            <div class="qc-weight">150 g</div>
+            <div class="qc-price">Rs. 36</div>
+            <button class="qty-add-btn">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- State 2: after add — select closed -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">2 · After adding (closed)</div>
+          <div class="qty-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Kambu Aval" />
+            <div class="qc-name">Kambu Aval / Bajra Flakes</div>
+            <div class="qty-native-row" style="margin-top:10px">
+              <select class="qty-native-select">
+                <option selected>150 g</option>
+                <option>300 g</option>
+                <option>500 g</option>
+                <option>750 g</option>
+                <option>1 kg</option>
+                <option>2 kg</option>
+                <option>3 kg</option>
+                <option>4 kg</option>
+                <option>5 kg</option>
+              </select>
+              <button class="qty-trash-btn">🗑</button>
+            </div>
+            <div style="font-size:.58rem;color:var(--brand-orange);margin-top:6px;font-style:italic;line-height:1.4">
+              ✗ 9 pack sizes hidden until tapped<br>✗ Trash icon has no label
+            </div>
+          </div>
+        </div>
+
+        <!-- State 3: OS picker open -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">3 · OS picker open</div>
+          <div class="qty-card" style="width:160px;padding:0;overflow:hidden">
+            <!-- simulated OS picker -->
+            <div style="background:#f0f0f0;padding:8px 12px;border-bottom:1px solid #ddd;font-size:.65rem;color:#888;display:flex;justify-content:space-between">
+              <span>Cancel</span><span style="color:#007aff;font-weight:700">Done</span>
+            </div>
+            <div class="qty-size-list" style="border:none;border-radius:0;box-shadow:none;margin:0">
+              <button class="qty-size-opt selected"><span>✓ 150 g</span><span style="color:var(--text-light);font-size:.6rem">Rs. 36</span></button>
+              <button class="qty-size-opt"><span>300 g</span><span style="color:var(--text-light);font-size:.6rem">Rs. 68</span></button>
+              <button class="qty-size-opt"><span>500 g</span><span style="color:var(--text-light);font-size:.6rem">Rs. 108</span></button>
+              <button class="qty-size-opt"><span>750 g</span><span style="color:var(--text-light);font-size:.6rem">Rs. 154</span></button>
+              <button class="qty-size-opt"><span>1 kg</span><span style="color:var(--text-light);font-size:.6rem">Rs. 200</span></button>
+              <button class="qty-size-opt"><span>2 kg</span><span style="color:var(--text-light);font-size:.6rem">Rs. 380</span></button>
+              <button class="qty-size-opt"><span>3 kg</span><span style="color:var(--text-light);font-size:.6rem">Rs. 550</span></button>
+              <button class="qty-size-opt"><span>4 kg</span><span style="color:var(--text-light);font-size:.6rem">Rs. 700</span></button>
+              <button class="qty-size-opt" style="border-bottom:none"><span>5 kg</span><span style="color:var(--text-light);font-size:.6rem">Rs. 860</span></button>
+            </div>
+            <div style="background:#f0f0f0;padding:6px 12px;font-size:.58rem;color:var(--brand-orange);font-style:italic">
+              ✗ Blocks the whole screen — OS modal
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /flex -->
+    </div>
+  </div>
+
+  <!-- ── AFTER ── -->
+  <div class="panel">
+    <div class="panel-label after">✅ After — Compact trigger shows selected size; inline list opens inside card; quantity is always 1</div>
+    <div class="qty-stage">
+
+      <div class="card-anno good">
+        <strong>Revised approach</strong>
+        Quantity is always 1 — the only decision is <em>which pack size</em>. A compact trigger button shows the selected size inline (zero clutter). Tapping opens a list directly inside the card — no OS modal, no page takeover. Selecting a size closes the list and updates the price. "Remove" replaces the unlabelled trash icon.
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+
+        <!-- State 1: before add -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">1 · Before adding</div>
+          <div class="qty-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Kambu Aval" />
+            <div class="qc-name">Kambu Aval / Bajra Flakes</div>
+            <!-- compact trigger — closed state, price updates live -->
+            <button class="qty-size-trigger" style="margin-top:9px">
+              <div>
+                <span class="trigger-label">Pack size</span>
+                150 g
+              </div>
+              <span class="trigger-caret">▾</span>
+            </button>
+            <div class="qc-price" style="margin-top:4px;margin-bottom:8px">Rs. 36</div>
+            <button class="qty-add-btn">Add to Cart</button>
+          </div>
+        </div>
+
+        <!-- State 2: trigger tapped — list open inline -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">2 · Size picker open (inline)</div>
+          <div class="qty-card" style="width:190px">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Kambu Aval" />
+            <div class="qc-name">Kambu Aval / Bajra Flakes</div>
+            <!-- trigger in open state — still neutral, not yet confirmed -->
+            <button class="qty-size-trigger" style="margin-top:9px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none;border-color:#ccc3b0;background:#fff;color:var(--text-dark)">
+              <div>
+                <span class="trigger-label">Pack size — tap to change</span>
+                150 g
+              </div>
+              <span class="trigger-caret">▴</span>
+            </button>
+            <!-- inline list — no OS modal -->
+            <div class="qty-size-list" style="border-top-left-radius:0;border-top-right-radius:0;margin-bottom:4px">
+              <button class="qty-size-opt selected"><span>150 g</span><span class="opt-check">✓ &nbsp;Rs. 36</span></button>
+              <button class="qty-size-opt"><span>300 g</span><span style="font-size:.6rem;color:var(--text-light)">Rs. 68</span></button>
+              <button class="qty-size-opt"><span>500 g</span><span style="font-size:.6rem;color:var(--text-light)">Rs. 108</span></button>
+              <button class="qty-size-opt"><span>1 kg</span><span style="font-size:.6rem;color:var(--text-light)">Rs. 200</span></button>
+              <button class="qty-size-opt" style="border-bottom:none"><span>5 kg</span><span style="font-size:.6rem;color:var(--text-light)">Rs. 860</span></button>
+            </div>
+            <div style="font-size:.58rem;color:var(--brand-green);font-style:italic;margin-bottom:4px">
+              ✓ Stays inside the card — no modal
+            </div>
+          </div>
+        </div>
+
+        <!-- State 3: size chosen — done, no stepper needed -->
+        <div>
+          <div style="font-size:.6rem;text-align:center;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">3 · Size chosen — added to cart</div>
+          <div class="qty-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beans_-_Flat_beans_-_1.jpg/160px-Beans_-_Flat_beans_-_1.jpg" alt="Kambu Aval" />
+            <div class="qc-name">Kambu Aval / Bajra Flakes</div>
+            <!-- confirmed class = maroon border + tint, signals active selection -->
+            <button class="qty-size-trigger confirmed" style="margin-top:9px">
+              <div>
+                <span class="trigger-label">Pack size — tap to change</span>
+                500 g
+              </div>
+              <span class="trigger-caret">▾</span>
+            </button>
+            <div class="qc-price" style="margin-top:4px;margin-bottom:10px">Rs. 108</div>
+            <!-- no stepper — quantity is always 1 -->
+            <div style="font-size:.58rem;color:var(--brand-green);font-style:italic;margin-bottom:8px">
+              ✓ 1 × 500 g in cart
+            </div>
+            <button class="qty-remove-link">Remove</button>
+          </div>
+        </div>
+
+      </div><!-- /flex -->
+    </div>
+  </div>
+
+</div><!-- /qty-comparison -->
+
+</body>
+</html>
