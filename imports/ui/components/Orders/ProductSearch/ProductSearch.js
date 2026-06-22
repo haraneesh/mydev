@@ -1,9 +1,9 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
 import Icon from '../../Icon/Icon';
+import './ProductSearch.scss';
 
 class ProductSearch extends React.Component {
   constructor(props) {
@@ -60,12 +60,13 @@ class ProductSearch extends React.Component {
 
   render() {
     const { searchString } = this.state;
-    const searchResults = (searchString !== '' && searchString.length > 2)
+    const shouldShowResults = searchString.length > 2;
+    const searchResults = shouldShowResults
       ? (this.props.getProductsMatchingSearch(searchString /* , 8 */)) : '';
 
     return (
-      <div className="productOrderSearch border-bottom">
-        <div className="mb-0 justify-content-center card">
+      <div className="productOrderSearch">
+        <div className="mb-0 justify-content-center card productOrderSearchCard">
           <div className="card-header">
             <div className="input-group px-sm-5">
               <input
@@ -84,10 +85,12 @@ class ProductSearch extends React.Component {
             </div>
           </div>
 
-          {searchString !== '' && (
-          <div className="row card-body">
+          {shouldShowResults && (
+          <div className="productOrderSearchResults">
+            <div className="row">
             { searchResults }
             { searchResults && searchResults.length === 0 && this.informProductUnavailability()}
+            </div>
           </div>
           )}
 

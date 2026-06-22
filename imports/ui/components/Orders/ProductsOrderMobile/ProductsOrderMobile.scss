@@ -2,8 +2,8 @@
 
 .productOrderList {
     background: #f4efe6;
-    border-bottom: #e4dfdb 1px solid;
-    padding-bottom: 1rem;
+    border-bottom: 0;
+    padding-bottom: 0;
 
     .accordion-button::after{
       display:none;
@@ -54,6 +54,18 @@
 
     .productOrderPanelsContent{
         padding-top: 0.35rem;
+    }
+
+    .productOrderEmptyState{
+        color: #3b291f;
+        padding: 1.25rem 1rem;
+        text-align: center;
+
+        h4{
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+        }
     }
 
     .subCategoryPriorityRow{

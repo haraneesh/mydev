@@ -1,0 +1,44 @@
+@import '../../../stylesheets/bootstrap/variables';
+
+.productOrderSearch{
+    background: #f4efe6;
+    border-bottom: 1px solid #e4dfdb;
+    position: relative;
+    z-index: 900;
+}
+
+.productOrderSearchCard{
+    border-color: #e4dfdb;
+    border-radius: 0;
+    box-shadow: 0 0.25rem 0.75rem rgba($black, 0.05);
+    overflow: visible;
+    position: relative;
+}
+
+.productOrderSearchCard > .card-header{
+    background: #fbf7f0;
+    border-bottom: 0;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 902;
+}
+
+.productOrderSearchResults{
+    background: rgba($white, 0.98);
+    border: 1px solid #e4dfdb;
+    border-radius: 0 0 0.45rem 0.45rem;
+    box-shadow: 0 0.65rem 1.4rem rgba($black, 0.12);
+    overflow: visible;
+    padding: 1rem;
+    position: relative;
+    z-index: 901;
+}
+
+.productOrderSearchResults > .row{
+    row-gap: 1rem;
+}
+
+.productOrderSearchResults .fix-product-height{
+    margin-bottom: 0;
+}

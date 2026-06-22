@@ -291,7 +291,7 @@ const ProductsOrderMain = (props) => {
 
   const displayProductsAndSubmit = (isMobile, productGroups) =>
     products.length > 0 ? (
-      <Card className="mb-5">
+      <Card className="productOrderShell mb-5">
         <Row>
           <Col xs={12} className="pt-0" id="search-section">
             <ProductSearch
@@ -306,7 +306,7 @@ const ProductsOrderMain = (props) => {
               {displayProductsByTypeStandardView(productGroups, isMobile)}
             </ListGroup>
           </Col>
-          <Col xs={12} className="bg-white pt-3">
+          <Col xs={12} className="productOrderCheckout bg-white">
             {displayOrderFooter(isMobile)}
           </Col>
         </Row>

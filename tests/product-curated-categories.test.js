@@ -4,7 +4,11 @@ import { toggleCuratedCategory } from '../imports/modules/productCuratedCategori
 import Products from '../imports/api/Products/Products';
 import ProductLists from '../imports/api/ProductLists/ProductLists';
 import { Orders } from '../imports/api/Orders/Orders';
-import { displayProductsByType } from '../imports/ui/components/Orders/ProductsOrderCommon/ProductsOrderCommon';
+import {
+  displayProductsByType,
+  getDefaultOrderProductCategoryKey,
+  getVisibleOrderProductCategories,
+} from '../imports/ui/components/Orders/ProductsOrderCommon/ProductsOrderCommon';
 
 const baseProduct = {
   _id: 'test-product-id',
@@ -223,5 +227,53 @@ describe('product curated categories', function () {
     assert.strictEqual(productGroups.productSpecials.length, 0);
     assert.strictEqual(productGroups.productProteinRich.length, 0);
     assert.strictEqual(productGroups.productFruits.length, 0);
+  });
+
+  it('only exposes order categories with products', function () {
+    const productGroups = displayProductGroups();
+    const visibleCategoryKeys = getVisibleOrderProductCategories(
+      productGroups,
+    ).map(({ eventKey }) => eventKey);
+
+    assert.deepStrictEqual(visibleCategoryKeys, ['dhals']);
+  });
+
+  it('exposes curated shelves additively when they have products', function () {
+    const productGroups = displayProductGroups({
+      curatedCategories: [constants.ProductCuratedCategory.proteinRich.name],
+    });
+    const visibleCategoryKeys = getVisibleOrderProductCategories(
+      productGroups,
+    ).map(({ eventKey }) => eventKey);
+
+    assert.deepStrictEqual(visibleCategoryKeys, ['proteinRich', 'dhals']);
+  });
+
+  it('keeps order category defaults on visible configured categories', function () {
+    const productGroups = displayProductGroups({
+      curatedCategories: [constants.ProductCuratedCategory.gutHealth.name],
+    });
+
+    assert.strictEqual(
+      getDefaultOrderProductCategoryKey(productGroups, 'gutHealth'),
+      'gutHealth',
+    );
+  });
+
+  it('falls back order category defaults when configured category is empty', function () {
+    const productGroups = displayProductGroups();
+
+    assert.strictEqual(
+      getDefaultOrderProductCategoryKey(productGroups, 'proteinRich'),
+      'dhals',
+    );
+  });
+
+  it('returns no order category default when all groups are empty', function () {
+    assert.deepStrictEqual(getVisibleOrderProductCategories({}), []);
+    assert.strictEqual(
+      getDefaultOrderProductCategoryKey({}, 'proteinRich'),
+      undefined,
+    );
   });
 });

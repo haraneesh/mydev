@@ -6,14 +6,15 @@ import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 import { toast } from 'react-toastify';
-import SubCategoryRow  from '../SubCategoryRow/SubCategoryRow';
 import constants from '../../../../modules/constants';
-import { isChennaiPinCode, toTitleCase } from '../../../../modules/helpers';
+import { toTitleCase } from '../../../../modules/helpers';
 import Product from '../Product';
 import {
-  DisplayCategoryHeader,
   SideBarDisplayHeader,
+  getDefaultOrderProductCategoryKey,
+  getVisibleOrderProductCategories,
 } from '../ProductsOrderCommon/ProductsOrderCommon';
+import SubCategoryRow from '../SubCategoryRow/SubCategoryRow';
 
 import './ProductsOrderMobile.scss';
 
@@ -35,6 +36,8 @@ export default class ProductsOrderMobile extends React.Component {
 
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
     this.returnSideBarNavLink = this.returnSideBarNavLink.bind(this);
+    this.getVisibleCategories = this.getVisibleCategories.bind(this);
+    this.isCategoryVisible = this.isCategoryVisible.bind(this);
     this.displayProductsWithCategories =
       this.displayProductsWithCategories.bind(this);
     this.displayProductsByTypeStandardView =
@@ -75,7 +78,7 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   goToCategoryAndSubCategory(preFix, key) {
-    if (preFix) {
+    if (preFix && this.isCategoryVisible(preFix)) {
       const section = document.getElementById(`order-tabb-tab-${preFix}`);
       if (!section) return;
       section.click();
@@ -95,7 +98,7 @@ export default class ProductsOrderMobile extends React.Component {
     }
   }
 
-  handlePanelSelect(panelToFocus) {
+  handlePanelSelect(_panelToFocus) {
     document
       .getElementById('search-section')
       .scrollIntoView({ behavior: 'smooth' });
@@ -106,13 +109,26 @@ export default class ProductsOrderMobile extends React.Component {
     return this.displayProductsByTypeStandardView(productGroups);
   }
 
+  getVisibleCategories(productGroups = this.props.productGroups) {
+    return getVisibleOrderProductCategories(productGroups);
+  }
+
+  isCategoryVisible(eventKey) {
+    return this.getVisibleCategories().some(
+      (category) => category.eventKey === eventKey,
+    );
+  }
+
   returnSideBarNavLink({ displayText, imgName, eventKey }) {
     const isHealthCategory =
       eventKey === constants.ProductCuratedCategory.proteinRich.name ||
       eventKey === constants.ProductCuratedCategory.gutHealth.name;
 
     return (
-      <Nav.Item className={isHealthCategory ? 'healthCategoryNavItem' : ''}>
+      <Nav.Item
+        className={isHealthCategory ? 'healthCategoryNavItem' : ''}
+        key={eventKey}
+      >
         <Nav.Link
           eventKey={eventKey}
           className={isHealthCategory ? 'healthCategoryNavLink' : ''}
@@ -165,24 +181,22 @@ export default class ProductsOrderMobile extends React.Component {
     const subCategorys = Object.keys(productsBySubCategory).sort();
     const subCatRowItems = [];
     subCategorys.forEach((key) => {
-      subCatRowItems.push(
-        {
-          key,
-          label: key,
-          onClick: () => {
-            const cardHeaderToMove = document.getElementById(
-              `${preFix}-${key.replace(' ', '').toLowerCase()}`,
-            );
-            const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
-            const targetPosition =
-              cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
-            window.scrollTo({
-              top: targetPosition - stickyNavBar.offsetHeight,
-              behavior: 'smooth',
-            });
-          },
+      subCatRowItems.push({
+        key,
+        label: key,
+        onClick: () => {
+          const cardHeaderToMove = document.getElementById(
+            `${preFix}-${key.replace(' ', '').toLowerCase()}`,
+          );
+          const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
+          const targetPosition =
+            cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: targetPosition - stickyNavBar.offsetHeight,
+            behavior: 'smooth',
+          });
         },
-      );
+      });
     });
 
     const subCatRowId = `${preFix}-cat-row`;
@@ -220,40 +234,29 @@ export default class ProductsOrderMobile extends React.Component {
   }
 
   displayProductsByTypeStandardView(productGroups) {
-    const {
-      productVegetables,
-      productFruits,
-      productGreens,
-      productRice,
-      productWheat,
-      productCereals,
-      productMillets,
-      productDhals,
-      productSweetners,
-      productSalts,
-      productSpices,
-      productNuts,
-      productDryFruits,
-      productOils,
-      productMilk,
-      productEggs,
-      productPrepared,
-      productDisposables,
-      productBeauty,
-      productSpecials,
-      productProteinRich,
-      productGutHealth,
-    } = productGroups;
-
-    const productRecommended = [];
-
-    const isDeliveryInChennai = isChennaiPinCode(this.props.deliveryPincode);
+    const visibleCategories = this.getVisibleCategories(productGroups);
+    const defaultActiveKey = getDefaultOrderProductCategoryKey(
+      productGroups,
+      Meteor.settings.public.PRODUCT_ORDER.PAGE_TO_OPEN_DEFAULT,
+    );
 
     // const expanded = this.state.panelToFocus !== '';
+    if (visibleCategories.length === 0) {
+      return (
+        <div className="productOrderList" id="order-tab">
+          <Row>
+            <Col xs={12} className="productOrderEmptyState">
+              <h4>Today, We don't have products available.</h4>
+            </Col>
+          </Row>
+        </div>
+      );
+    }
+
     return (
       <div className="productOrderList" id="order-tab">
         {/* side navigation */}
-        <Tab.Container id="order-tabb" defaultActiveKey={ Meteor.settings.public.PRODUCT_ORDER.PAGE_TO_OPEN_DEFAULT}>
+        <Tab.Container id="order-tabb" defaultActiveKey={defaultActiveKey}>
           <Row
             style={{
               alignItems: 'flex-start',
@@ -261,265 +264,26 @@ export default class ProductsOrderMobile extends React.Component {
           >
             <Col className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0">
               <Nav variant="pills" style={{ flexFlow: 'column' }}>
-                {this.returnSideBarNavLink({
-                  displayText: 'New Arrivals',
-                  imgName: 'imgSpecials',
-                  eventKey: 'specials',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductCuratedCategory.proteinRich.display_value,
-                  imgName: 'imgProteinRich',
-                  eventKey: 'proteinRich',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductCuratedCategory.gutHealth.display_value,
-                  imgName: 'imgGutHealth',
-                  eventKey: 'gutHealth',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductTypeName.Vegetables.display_value,
-                  imgName: 'imgVegetables',
-                  eventKey: 'vegetables',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Fruits.display_value,
-                  imgName: 'imgFruits',
-                  eventKey: 'fruits',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Greens.display_value,
-                  imgName: 'imgGreens',
-                  eventKey: 'greens',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Rice.display_value,
-                  imgName: 'imgRice',
-                  eventKey: 'rice',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Wheat.display_value,
-                  imgName: 'imgWheat',
-                  eventKey: 'wheat',
-                })}
-                {/* (this.returnSideBarNavLink({ displayText: constants.ProductTypeName.Cereals.display_value, imgName: 'imgCereals', eventKey: 'cereals' })) */}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Millets.display_value,
-                  imgName: 'imgMillets',
-                  eventKey: 'millets',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Dhals.display_value,
-                  imgName: 'imgDhals',
-                  eventKey: 'dhals',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductTypeName.Sweetners.display_value,
-                  imgName: 'imgSweetners',
-                  eventKey: 'sweetners',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Salts.display_value,
-                  imgName: 'imgSalts',
-                  eventKey: 'salts',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Spices.display_value,
-                  imgName: 'imgSpices',
-                  eventKey: 'spices',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Nuts.display_value,
-                  imgName: 'imgNuts',
-                  eventKey: 'nuts',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductTypeName.DryFruits.display_value,
-                  imgName: 'imgDryFruits',
-                  eventKey: 'dryFruits',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Oils.display_value,
-                  imgName: 'imgOils',
-                  eventKey: 'oils',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Milk.display_value,
-                  imgName: 'imgMilk',
-                  eventKey: 'milk',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Eggs.display_value,
-                  imgName: 'imgEggs',
-                  eventKey: 'eggs',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Prepared.display_value,
-                  imgName: 'imgPrepared',
-                  eventKey: 'prepared',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText:
-                    constants.ProductTypeName.Disposables.display_value,
-                  imgName: 'imgDisposables',
-                  eventKey: 'disposables',
-                })}
-                {this.returnSideBarNavLink({
-                  displayText: constants.ProductTypeName.Beauty.display_value,
-                  imgName: 'imgBeauty',
-                  eventKey: 'beauty',
-                })}
+                {visibleCategories.map((category) =>
+                  this.returnSideBarNavLink(category),
+                )}
               </Nav>
             </Col>
             <Col xs={9} className="productOrderPanels">
               <Tab.Content className="productOrderPanelsContent">
-                <Tab.Pane eventKey="specials">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productSpecials,
-                      'specials'
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="proteinRich">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productProteinRich,
-                      'proteinRich',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="gutHealth">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productGutHealth,
-                      'gutHealth',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="vegetables">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productVegetables,
-                      'vegetables'
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="fruits">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productFruits,
-                      'fruits',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="greens">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productGreens,
-                      'greens',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="rice">
-                  {this.displayProductsWithCategories(productRice, 'rice')}
-                </Tab.Pane>
-                <Tab.Pane eventKey="wheat">
-                  <Row>
-                    {this.displayProductsWithCategories(productWheat, 'wheat')}
-                  </Row>
-                </Tab.Pane>
-                {/* <Tab.Pane eventKey="cereals"><Row>{this.displayProductsWithCategories(productCereals, 'cereals')}</Row></Tab.Pane> */}
-                <Tab.Pane eventKey="millets">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productMillets,
-                      'millets',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="dhals">
-                  <Row>
-                    {this.displayProductsWithCategories(productDhals, 'dhals')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="sweetners">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productSweetners,
-                      'sweetners',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="salts">
-                  <Row>
-                    {this.displayProductsWithCategories(productSalts, 'salts')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="spices">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productSpices,
-                      'spices',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="nuts">
-                  <Row>
-                    {this.displayProductsWithCategories(productNuts, 'nuts')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="dryFruits">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productDryFruits,
-                      'dryFruits',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="oils">
-                  <Row>
-                    {this.displayProductsWithCategories(productOils, 'oils')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="milk">
-                  <Row>
-                    {this.displayProductsWithCategories(productMilk, 'milk')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="eggs">
-                  <Row>
-                    {this.displayProductsWithCategories(productEggs, 'eggs')}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="prepared">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productPrepared,
-                      'prepared',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="disposables">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productDisposables,
-                      'disposables',
-                    )}
-                  </Row>
-                </Tab.Pane>
-                <Tab.Pane eventKey="beauty">
-                  <Row>
-                    {this.displayProductsWithCategories(
-                      productBeauty,
-                      'beauty',
-                    )}
-                  </Row>
-                </Tab.Pane>
+                {visibleCategories.map((category) => (
+                  <Tab.Pane
+                    eventKey={category.eventKey}
+                    key={category.eventKey}
+                  >
+                    <Row>
+                      {this.displayProductsWithCategories(
+                        productGroups[category.groupKey],
+                        category.eventKey,
+                      )}
+                    </Row>
+                  </Tab.Pane>
+                ))}
               </Tab.Content>
             </Col>
           </Row>

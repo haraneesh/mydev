@@ -4,17 +4,18 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import _ from 'underscore';
 import constants from '../../../../modules/constants';
 import { isDeviceMobile } from '../../../../modules/helpers';
 
 export const OrderFooter = ({
-  isMobile,
+  isMobile: _isMobile,
   totalBillAmount,
   onButtonClick,
   submitButtonName,
-  onSecondButtonClick = {},
+  onSecondButtonClick: _onSecondButtonClick = {},
 }) => (
-  <div style={{ marginBottom: '1em' }}>
+  <div className="orderFooter">
     {/* <Col className="text-left-not-xs" sm={4} xs={12}>
        } <Button
             bsStyle="default"
@@ -143,12 +144,154 @@ const incrementMetaWithOrderCount = (
   return metaHash;
 };
 
-function toTitleCase(str) {
-  return str.replace(
-    /\w\S*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
-  );
-}
+export const orderProductCategoryDefinitions = [
+  {
+    displayText: 'New Arrivals',
+    eventKey: 'specials',
+    groupKey: 'productSpecials',
+    imgName: 'imgSpecials',
+  },
+  {
+    displayText: constants.ProductCuratedCategory.proteinRich.display_value,
+    eventKey: constants.ProductCuratedCategory.proteinRich.name,
+    groupKey: 'productProteinRich',
+    imgName: 'imgProteinRich',
+  },
+  {
+    displayText: constants.ProductCuratedCategory.gutHealth.display_value,
+    eventKey: constants.ProductCuratedCategory.gutHealth.name,
+    groupKey: 'productGutHealth',
+    imgName: 'imgGutHealth',
+  },
+  {
+    displayText: constants.ProductTypeName.Vegetables.display_value,
+    eventKey: 'vegetables',
+    groupKey: 'productVegetables',
+    imgName: 'imgVegetables',
+  },
+  {
+    displayText: constants.ProductTypeName.Fruits.display_value,
+    eventKey: 'fruits',
+    groupKey: 'productFruits',
+    imgName: 'imgFruits',
+  },
+  {
+    displayText: constants.ProductTypeName.Greens.display_value,
+    eventKey: 'greens',
+    groupKey: 'productGreens',
+    imgName: 'imgGreens',
+  },
+  {
+    displayText: constants.ProductTypeName.Rice.display_value,
+    eventKey: 'rice',
+    groupKey: 'productRice',
+    imgName: 'imgRice',
+  },
+  {
+    displayText: constants.ProductTypeName.Wheat.display_value,
+    eventKey: 'wheat',
+    groupKey: 'productWheat',
+    imgName: 'imgWheat',
+  },
+  {
+    displayText: constants.ProductTypeName.Millets.display_value,
+    eventKey: 'millets',
+    groupKey: 'productMillets',
+    imgName: 'imgMillets',
+  },
+  {
+    displayText: constants.ProductTypeName.Dhals.display_value,
+    eventKey: 'dhals',
+    groupKey: 'productDhals',
+    imgName: 'imgDhals',
+  },
+  {
+    displayText: constants.ProductTypeName.Sweetners.display_value,
+    eventKey: 'sweetners',
+    groupKey: 'productSweetners',
+    imgName: 'imgSweetners',
+  },
+  {
+    displayText: constants.ProductTypeName.Salts.display_value,
+    eventKey: 'salts',
+    groupKey: 'productSalts',
+    imgName: 'imgSalts',
+  },
+  {
+    displayText: constants.ProductTypeName.Spices.display_value,
+    eventKey: 'spices',
+    groupKey: 'productSpices',
+    imgName: 'imgSpices',
+  },
+  {
+    displayText: constants.ProductTypeName.Nuts.display_value,
+    eventKey: 'nuts',
+    groupKey: 'productNuts',
+    imgName: 'imgNuts',
+  },
+  {
+    displayText: constants.ProductTypeName.DryFruits.display_value,
+    eventKey: 'dryFruits',
+    groupKey: 'productDryFruits',
+    imgName: 'imgDryFruits',
+  },
+  {
+    displayText: constants.ProductTypeName.Oils.display_value,
+    eventKey: 'oils',
+    groupKey: 'productOils',
+    imgName: 'imgOils',
+  },
+  {
+    displayText: constants.ProductTypeName.Milk.display_value,
+    eventKey: 'milk',
+    groupKey: 'productMilk',
+    imgName: 'imgMilk',
+  },
+  {
+    displayText: constants.ProductTypeName.Eggs.display_value,
+    eventKey: 'eggs',
+    groupKey: 'productEggs',
+    imgName: 'imgEggs',
+  },
+  {
+    displayText: constants.ProductTypeName.Prepared.display_value,
+    eventKey: 'prepared',
+    groupKey: 'productPrepared',
+    imgName: 'imgPrepared',
+  },
+  {
+    displayText: constants.ProductTypeName.Disposables.display_value,
+    eventKey: 'disposables',
+    groupKey: 'productDisposables',
+    imgName: 'imgDisposables',
+  },
+  {
+    displayText: constants.ProductTypeName.Beauty.display_value,
+    eventKey: 'beauty',
+    groupKey: 'productBeauty',
+    imgName: 'imgBeauty',
+  },
+];
+
+export const getVisibleOrderProductCategories = (productGroups = {}) =>
+  orderProductCategoryDefinitions.filter(({ groupKey }) => {
+    const productGroup = productGroups[groupKey];
+    return Array.isArray(productGroup) && productGroup.length > 0;
+  });
+
+export const getDefaultOrderProductCategoryKey = (
+  productGroups = {},
+  configuredDefaultKey,
+) => {
+  const visibleCategories = getVisibleOrderProductCategories(productGroups);
+  if (
+    visibleCategories.some(({ eventKey }) => eventKey === configuredDefaultKey)
+  ) {
+    return configuredDefaultKey;
+  }
+
+  return visibleCategories[0] && visibleCategories[0].eventKey;
+};
 
 export function displayProductsByType({
   products,
@@ -270,7 +413,9 @@ export function displayProductsByType({
     }
 
     if (
-      curatedCategories.includes(constants.ProductCuratedCategory.gutHealth.name)
+      curatedCategories.includes(
+        constants.ProductCuratedCategory.gutHealth.name,
+      )
     ) {
       productGutHealth.push({
         isMobile,
