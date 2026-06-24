@@ -235,7 +235,7 @@ export function displayUnitOfSale(numOfUnits, unit) {
       // retValue = value >= 1000 ? `${value / 1000} Kg` : retValue;
       if (value >= 1000) {
         retValue = `${value / 1000} Kg`;
-      } else if (value < 0) {
+      } else if (value < 1) {
         retValue = `${value * 1000} mg`;
       }
       break;
@@ -243,7 +243,7 @@ export function displayUnitOfSale(numOfUnits, unit) {
       // retValue = value >= 1000 ? `${value / 1000} Kl` : retValue;
       if (value >= 1000) {
         retValue = `${value / 1000} Kl`;
-      } else if (value < 0) {
+      } else if (value < 1) {
         retValue = `${value * 1000} ml`;
       }
       break;
