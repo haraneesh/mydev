@@ -10,50 +10,86 @@
     }
 
     .healthCategoryNavItem{
-        margin: 0.15rem 0;
+        margin: 0.08rem 0;
     }
 
     .healthCategoryHeader{
         position: relative;
-        padding-right: 1.25rem;
-    }
-
-    .healthCategoryHeader::after{
-        content: '♥';
-        position: absolute;
-        top: 0.15rem;
-        right: 0.35rem;
-        color: $warning;
-        font-size: 0.95rem;
-        line-height: 1;
+        padding-right: 0.35rem;
     }
 
     .menuLeft{
         background: $white;
     }
 
+    .menuLeft .nav-item{
+        border-bottom: 0;
+    }
+
+    .menuLeft .nav-link{
+        margin: 0.22rem 0;
+        padding: 0 !important;
+        position: relative;
+    }
+
+    .menuLeft .productCatHead{
+        align-items: center;
+        margin: 0;
+        min-height: 2.85rem;
+        padding-bottom: 0 !important;
+        row-gap: 0.1rem;
+    }
+
+    .menuLeft .productCatImg{
+        display: block;
+        max-height: 2.25rem;
+        max-width: 2.25rem;
+        object-fit: contain;
+        padding: 0;
+    }
+
+    .menuLeft .productCatHead > .col-12{
+        align-items: center;
+        align-self: stretch;
+        display: flex;
+    }
+
+    .menuLeft .productCatHead p{
+        font-size: 0.86rem !important;
+        font-weight: 700;
+        line-height: 1.16;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
     .menuLeft .nav-link.active{
-        background: $white;
-        border: 1px solid #e4d4c4;
-        border-radius: 0.45rem;
-        box-shadow: 0 0.1rem 0.35rem rgba($black, 0.04);
-        color: $black;
-        margin: 0.15rem 0.25rem;
-        padding: 0.25rem 0 !important;
+        background: #fffdf8;
+        border: 1px solid #ead0c6;
+        border-radius: 0.4rem;
+        box-shadow: none;
+        color: #2f2215;
+        margin: 0.08rem 0.28rem 0.08rem 0.08rem;
+        padding: 0.18rem 0 !important;
     }
 
     .menuLeft .nav-link.active .productCatHead{
+        color: #2f2215;
+        font-weight: 800;
+    }
+
+    .menuLeft .nav-link.active .productCatHead p{
+        color: #2f2215;
         font-weight: 800;
     }
 
     .productOrderPanels{
         background: #f4efe6;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-left: 0.22rem;
+        padding-right: 0.22rem;
     }
 
     .productOrderPanelsContent{
-        padding-top: 0.35rem;
+        padding-top: 0.25rem;
     }
 
     .productOrderEmptyState{
@@ -76,7 +112,21 @@
         box-shadow: 0 0.1rem 0.35rem rgba($black, 0.05);
         display: flex;
         overflow: visible;
+        position: relative;
         width: 100%;
+        z-index: 5100;
+    }
+
+    .subCategoryPriorityMeasurement{
+        display: flex;
+        height: 0;
+        left: 0;
+        overflow: hidden;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        visibility: hidden;
+        white-space: nowrap;
     }
 
     .subCategoryPriorityTabs{
@@ -96,7 +146,7 @@
         color: #7b351f;
         font-weight: 700;
         overflow: hidden;
-        padding: 0.55rem 0.45rem;
+        padding: 0.38rem 0.25rem;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -107,7 +157,7 @@
         display: inline-block;
         max-width: 100%;
         overflow: hidden;
-        padding: 0.25rem 0.45rem;
+        padding: 0.2rem 0.35rem;
         text-overflow: ellipsis;
         vertical-align: bottom;
     }
@@ -134,7 +184,7 @@
         color: #7b351f;
         display: flex;
         font-weight: 800;
-        padding: 0.55rem 0.75rem;
+        padding: 0.38rem 0.5rem;
         text-decoration: none;
     }
 
@@ -145,6 +195,7 @@
     .subCategoryMore .dropdown-menu{
         border-color: #e4dfdb;
         box-shadow: 0 0.45rem 1rem rgba($black, 0.1);
+        z-index: 5101;
     }
 
     .subCategoryMore .dropdown-item{
@@ -158,8 +209,9 @@
     }
 
     .productSubCategorySection{
-        margin: 0 0 0.9rem;
-        row-gap: 0.35rem;
+        --bs-gutter-x: 0.38rem;
+        margin: 0 0 0.65rem;
+        row-gap: 0.36rem;
     }
 
     .productSubCategoryHeader{
@@ -180,5 +232,17 @@
     .productSubCategoryNav{
         background: transparent;
         padding: 0.15rem 0;
+        z-index: 6000;
+    }
+
+    @media (max-width: 575.98px) {
+        .menuLeft .productCatHead > .col-12{
+            justify-content: center;
+        }
+
+        .menuLeft .productCatHead p{
+            text-align: center;
+            width: 100%;
+        }
     }
 }

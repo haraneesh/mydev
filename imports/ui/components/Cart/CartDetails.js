@@ -452,7 +452,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
       );
     default: {
       return (
-        <Row>
+        <Row className="cartDetailsPage">
           <GetUserPhoneNumber
             handlePlaceOrder={placeOrderSuvaiMobileNumber}
             showMobileNumberForm={getUserMobileNumber}
@@ -463,8 +463,8 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
               {orderId ? 'Update Order' : 'Your Cart'}
             </h2>
           </Col>
-          <Card className="mt-3">
-            <h3 className="card-header" style={{ textAlign: 'center' }}>
+          <Card className="cartDetailsCard mt-3">
+            <h3 className="cartDetailsTitle card-header">
               {' '}
               Cart Details{' '}
             </h3>

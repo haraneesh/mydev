@@ -8,6 +8,7 @@ import Icon from '../Icon/Icon';
 
 import { useNavigate } from 'react-router-dom';
 import { useCartState } from '../../stores/ShoppingCart';
+import './Menu.scss';
 
 const Menu = (props) => {
   const cartState = useCartState();
@@ -57,10 +58,13 @@ const Menu = (props) => {
         </Button>
 
         <Offcanvas
+          backdropClassName="appMenuOffcanvasBackdrop"
+          className="appMenuOffcanvas"
           show={props.show}
           onHide={props.handleClose}
           placement="top"
           name="OffCanvasMenu"
+          style={{ zIndex: 20000 }}
         >
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>

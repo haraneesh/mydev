@@ -6,6 +6,18 @@
 // Import Bootstrap source (uncommented as part of revocation)
 @import '~bootstrap/scss/bootstrap';
 
+.table-primary {
+  --ns-table-bg: #fdfaf3;
+}
+
+.list-group-item-primary {
+  background-color: #fdfaf3;
+}
+
+.alert-primary {
+  --ns-alert-bg: #fdfaf3;
+}
+
 // Custom stylesheets
 @import './base/extends';
 @import '../components/Loading/Loading';

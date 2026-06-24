@@ -29,14 +29,11 @@ const displayWithDivider = (displayArray, displayText) => {
   });
 
   return (
-    <div style={{ borderBottomWidth: '0px' }}>
-      <div
-        className="card-header p-3 text-start"
-        style={{ borderRadius: '4px', fontWeight: 'bold' }}
-      >
+    <div className="cartCategoryGroup">
+      <div className="cartCategoryHeader card-header text-start">
         <small className="text-uppercase">{displayText}</small>
       </div>
-      <div className="card-body p-0">{displayBatch}</div>
+      <div className="cartCategoryBody card-body p-0">{displayBatch}</div>
     </div>
   );
 };
@@ -118,14 +115,14 @@ export const ListProducts = ({
   });
 
   return (
-    <Row className="order-details-products p-1 p-sm-2 mb-3">
-      <Row>
-        <Col xs={7} sm={9}>
+    <Row className="order-details-products cartProductList p-1 p-sm-2 mb-3">
+      <Row className="cartProductListHeader">
+        <Col xs={7} sm={8}>
           {' '}
           <strong> Name </strong>
         </Col>
         {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} sm={3} className="text-left">
+        <Col xs={5} sm={4} className="text-left">
           {' '}
           <strong> Value </strong>
         </Col>

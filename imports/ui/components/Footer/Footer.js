@@ -12,10 +12,10 @@ const copyrightYear = () => {
 const Footer = (args) => (
   <footer className={`bg-white px-2 ${(args.authenticated) ? 'footer-show-toolbar' : 'footer-no-toolbar'} `}>
 
-    <Container fluid="true">
+    <Container fluid>
 
-      <div className="row">
-        <div className="col-7 col-sm-8 text-left">
+      <div className="footerContent">
+        <div className="footerCopyright">
           &copy;
           {' '}
           {copyrightYear()}
@@ -23,8 +23,8 @@ const Footer = (args) => (
           Suvai Organics
           <span className="d-sm-inline d-none"> | Eat Healthy, Live Healthy</span>
         </div>
-        <div className="col-5 col-sm-4 text-right">
-          <Link to="/pages/terms" style={{ paddingRight: '15px' }} className="text-body">
+        <div className="footerLinks">
+          <Link to="/pages/terms" className="text-body">
             Terms
             <span className="d-sm-inline d-none"> of Service</span>
           </Link>

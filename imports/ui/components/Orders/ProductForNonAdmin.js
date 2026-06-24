@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Icon from '../Icon/Icon';
 
@@ -25,51 +24,212 @@ const displayProductTitle = (name) =>
     (_, text) => `(${toTitleCase(text)})`,
   );
 
+const parseQuantityOption = (selectValue) => {
+  const [quantityValue, discountValue] = String(selectValue).trim().split('=');
+  return {
+    quantity: parseFloat(quantityValue),
+    rawQuantity: quantityValue,
+    discount: discountValue ? discountValue.trim() : '',
+  };
+};
+
 export const QuantitySelector = ({
   values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   onChange,
   unit,
   unitprice,
   controlName,
+  productName,
   quantitySelected,
   sliderView,
-  displayDelete = true,
-}) => (
-  <div className="row justify-content-left">
-    <Col xs={10} sm={9}>
-      <Form.Select
-        name={controlName}
-        onChange={onChange}
-        value={quantitySelected}
-        className={sliderView ? 'btn-block w-75' : ''}
+  displayDelete = false,
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const selectorRef = React.useRef(null);
+  const listboxId = `quantity-options-${controlName}`;
+  const options = values.map((selectValue) => parseQuantityOption(selectValue));
+  const quantityOptions = options.filter(
+    (option) => Number.isFinite(option.quantity) && option.quantity > 0,
+  );
+  const selectedOption =
+    options.find(
+      (option) => option.quantity === parseFloat(quantitySelected),
+    ) || options[0];
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    const handleDocumentInteraction = (event) => {
+      if (selectorRef.current && !selectorRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleDocumentInteraction);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentInteraction);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const selectQuantity = (quantity) => {
+    onChange({ target: { name: controlName, value: quantity } });
+    setIsOpen(false);
+  };
+
+  const selectedPrice = selectedOption
+    ? calculateBulkDiscount({
+        unitprice,
+        unitsForSelection: values.join(','),
+        quantitySelected: selectedOption.quantity,
+      })
+    : 0;
+
+  return (
+    <div className="row justify-content-left quantitySelectorRow">
+      <Col
+        xs={displayDelete ? 10 : 12}
+        sm={displayDelete ? 9 : 12}
+        className="m-0 p-0"
       >
-        {values.map((selectValue, index) => {
-          const slctValue = selectValue.split('=')[0]; // for entries that are like 0.5=5%
-          const discValue = selectValue.split('=')[1];
-          return (
-            <option value={parseFloat(slctValue)} key={`option-${index}`}>
-              {' '}
-              {`${displayUnitOfSale(slctValue, unit)} ${discValue ? ` ,${discValue} discount` : ''}`}{' '}
-            </option>
-          );
-        })}
-      </Form.Select>
-    </Col>
-    {displayDelete && (
-      <Col xs={2} className="text-center ps-0">
-        <Button
-          variant="white"
-          className="m-0 p-0 text-center"
-          onClick={() => {
-            onChange({ target: { name: controlName, value: '0' } });
-          }}
+        <div
+          className={`quantityChooser ${isOpen ? 'quantityChooserOpen' : ''} ${
+            sliderView ? 'quantityChooserSlider' : ''
+          }`}
+          ref={selectorRef}
         >
-          <Icon icon="delete" type="mt" />
-        </Button>
+          <button
+            type="button"
+            className="quantityChooserToggle"
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+            aria-controls={listboxId}
+            onClick={() => setIsOpen((open) => !open)}
+          >
+            <span className="quantityChooserValue">
+              {displayUnitOfSale(selectedOption.rawQuantity, unit)}
+            </span>
+            <span className="quantityChooserMeta">
+              {formatMoney(selectedPrice, accountSettings)}
+            </span>
+            <span className="quantityChooserChevron" aria-hidden="true" />
+          </button>
+          {isOpen && (
+            <>
+              <button
+                type="button"
+                className="quantityChooserOverlay"
+                aria-label="Close quantity options"
+                onClick={() => setIsOpen(false)}
+              />
+              <div
+                className="quantityChooserMenu"
+                id={listboxId}
+                role="listbox"
+                aria-label="Choose product quantity"
+              >
+                {productName && (
+                  <div
+                    className="quantityChooserProductName"
+                    role="presentation"
+                  >
+                    {displayProductTitle(productName)}
+                  </div>
+                )}
+                {[
+                  {
+                    quantity: 0,
+                    rawQuantity: '0',
+                    discount: '',
+                    isRemoveOption: true,
+                  },
+                  ...quantityOptions,
+                ].map((option) => {
+                  const isSelected =
+                    option.quantity === parseFloat(quantitySelected);
+                  const isRemoveOption = option.isRemoveOption;
+
+                  if (!isRemoveOption && option.quantity <= 0) {
+                    return null;
+                  }
+
+                  const discountedPrice = calculateBulkDiscount({
+                    unitprice,
+                    unitsForSelection: values.join(','),
+                    quantitySelected: option.quantity,
+                  });
+                  const regularPrice = unitprice * option.quantity;
+
+                  return (
+                    <button
+                      type="button"
+                      className={`quantityChooserOption ${isSelected ? 'selected' : ''}`}
+                      role="option"
+                      aria-selected={isSelected}
+                      key={`option-${option.rawQuantity}`}
+                      onClick={() => selectQuantity(option.quantity)}
+                    >
+                      <span className="quantityChooserOptionQty">
+                        {isRemoveOption ? (
+                          <span className="quantityChooserRemoveLabel">
+                            <Icon icon="delete" type="mt" />
+                            Remove from cart
+                          </span>
+                        ) : (
+                          displayUnitOfSale(option.rawQuantity, unit)
+                        )}
+                      </span>
+                      {!isRemoveOption && (
+                        <span className="quantityChooserOptionPrice">
+                          {formatMoney(discountedPrice, accountSettings)}
+                        </span>
+                      )}
+                      {!isRemoveOption && option.discount && (
+                        <span className="quantityChooserOptionDiscount">
+                          {option.discount} discount
+                        </span>
+                      )}
+                      {!isRemoveOption && discountedPrice !== regularPrice && (
+                        <span className="quantityChooserOptionRegularPrice">
+                          <del>
+                            {formatMoney(regularPrice, accountSettings)}
+                          </del>
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </Col>
-    )}
-  </div>
-);
+      {displayDelete && (
+        <Col xs={2} className="text-center ps-0">
+          <Button
+            variant="white"
+            className="m-0 p-0 text-center"
+            onClick={() => {
+              onChange({ target: { name: controlName, value: '0' } });
+            }}
+          >
+            <Icon icon="delete" type="mt" />
+          </Button>
+        </Col>
+      )}
+    </div>
+  );
+};
 
 function onReturnableAdd(e, onChange, value) {
   // onChange({ target: { name: controlName, value: 0 } });
@@ -164,6 +324,7 @@ const AddToCart = ({
   unit,
   unitprice,
   controlName,
+  productName,
   quantitySelected,
   maxUnitsAvailableToOrder,
   associatedReturnables,
@@ -208,6 +369,7 @@ const AddToCart = ({
         unit={unit}
         unitprice={unitprice}
         controlName={controlName}
+        productName={productName}
         quantitySelected={quantitySelected}
         values={values}
         maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -251,6 +413,9 @@ const ProductForNonAdmin = ({
 }) => {
   const firstNonZeroOrderQty = 1;
   const unitsForSelectionArray = unitsForSelection.split(',');
+  const hasDiscountedQuantity = unitsForSelectionArray.some(
+    (selectValue) => !!parseQuantityOption(selectValue).discount,
+  );
   const lowestOrdQty =
     unitsForSelectionArray.length > 0
       ? unitsForSelectionArray[firstNonZeroOrderQty]
@@ -295,39 +460,38 @@ const ProductForNonAdmin = ({
     });
     const regularPrice = unitprice * quantitySelected;
     return (
-      <Row className="pb-4">
-        <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
+      <Row className="cartProductRow">
+        <Col xs={7} sm={8} className="cartProductName">
           {removedDuringCheckout ? <s> {name} </s> : name}
         </Col>
-        <div className="col" style={{ paddingLeft: '10px' }}>
-          <Col xs={12} className="p-0">
-            {!isBasket && (
-              <Col xs={12} className="p-0">
-                {formatMoney(calculatedDiscountPrice, accountSettings)}
+        <Col xs={5} sm={4} className="cartProductValue">
+          {!isBasket && (
+            <div className="cartProductPrice">
+              {formatMoney(calculatedDiscountPrice, accountSettings)}
 
-                {calculatedDiscountPrice !== regularPrice && (
-                  <span className="text-muted">
-                    {' '}
-                    <del>{formatMoney(regularPrice, accountSettings)}</del>
-                  </span>
-                )}
-              </Col>
-            )}
+              {calculatedDiscountPrice !== regularPrice && (
+                <span className="text-muted">
+                  {' '}
+                  <del>{formatMoney(regularPrice, accountSettings)}</del>
+                </span>
+              )}
+            </div>
+          )}
 
-            <QuantitySelector
-              onChange={onChange}
-              unit={unit}
-              unitprice={unitprice}
-              controlName={productId}
-              quantitySelected={quantitySelected}
-              values={unitsForSelectionArray}
-              maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
-            />
-          </Col>
-        </div>
-        {!removedDuringCheckout && (
-          <Row className="addCartButton">
-            <Col xs={6} sm={9} style={{ paddingRight: '0px' }}>
+          <QuantitySelector
+            onChange={onChange}
+            unit={unit}
+            unitprice={unitprice}
+            controlName={productId}
+            productName={name}
+            quantitySelected={quantitySelected}
+            values={unitsForSelectionArray}
+            maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
+          />
+        </Col>
+        {!removedDuringCheckout && includeReturnables && (
+          <Row className="cartReturnableRow">
+            <Col xs={7} sm={8}>
               <AddReturnable
                 onChange={onChange}
                 quantitySelected={quantitySelected}
@@ -340,7 +504,7 @@ const ProductForNonAdmin = ({
                 isCheckOut
               />
             </Col>
-            <div className="col" style={{ paddingLeft: '10px' }}>
+            <Col xs={5} sm={4} className="cartReturnablePrice">
               {checkout &&
               associatedReturnables.quantity &&
               associatedReturnables.quantity > 0 ? (
@@ -348,13 +512,12 @@ const ProductForNonAdmin = ({
               ) : (
                 ''
               )}
-            </div>
+            </Col>
           </Row>
         )}
       </Row>
     );
   }
-
   if (sliderView) {
     return (
       <div className="product-item text-center text-center row">
@@ -380,6 +543,7 @@ const ProductForNonAdmin = ({
             unit={unit}
             unitprice={unitprice}
             controlName={productId}
+            productName={name}
             quantitySelected={quantitySelected}
             values={unitsForSelectionArray}
             maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}
@@ -396,13 +560,8 @@ const ProductForNonAdmin = ({
 
   return (
     <div className="product-item text-center my-2">
-      {sale && (
-        <div
-          className="text-left  ps-sm-2 ps-1"
-          style={{ position: 'absolute' }}
-        >
-          <div className="badge bg-warning">SALE</div>
-        </div>
+      {(sale || hasDiscountedQuantity) && (
+        <div className="productSaleBadge badge bg-warning">SALE</div>
       )}
       <Col xs={12} className="item-image-container">
         {imageRow}
@@ -427,6 +586,7 @@ const ProductForNonAdmin = ({
           unit={unit}
           unitprice={unitprice}
           controlName={productId}
+          productName={name}
           quantitySelected={quantitySelected}
           values={unitsForSelectionArray}
           maxUnitsAvailableToOrder={maxUnitsAvailableToOrder}

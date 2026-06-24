@@ -116,7 +116,7 @@ function ProductsOrderFromDetails(props) {
   const unit = product.unitOfSale;
 
   return (
-    <>
+    <div className="productOrderDetailsPage">
       <h3 className="py-4 col-12 text-center"> {product.name} </h3>
       <div className="px-2 pb-6">
         <div className="card py-4">
@@ -179,7 +179,7 @@ function ProductsOrderFromDetails(props) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

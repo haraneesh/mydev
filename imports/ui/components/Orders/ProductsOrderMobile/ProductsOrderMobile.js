@@ -32,6 +32,7 @@ export default class ProductsOrderMobile extends React.Component {
         ? this.props.recommendations
         : [],
       scrollToLocation: false,
+      routedCategoryKey: '',
     };
 
     this.handlePanelSelect = this.handlePanelSelect.bind(this);
@@ -58,7 +59,26 @@ export default class ProductsOrderMobile extends React.Component {
     this.goToCategoryAndSubCategory(preFix, key);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const categoryKeysChanged =
+      getVisibleOrderProductCategories(prevProps.productGroups)
+        .map(({ eventKey }) => eventKey)
+        .join('|') !==
+      this.getVisibleCategories()
+        .map(({ eventKey }) => eventKey)
+        .join('|');
+
+    if (
+      this.props.category &&
+      categoryKeysChanged &&
+      this.state.routedCategoryKey !== this.props.category
+    ) {
+      this.goToCategoryAndSubCategory(
+        this.props.category,
+        this.props.subCategory,
+      );
+    }
+
     if (this.state.scrollToLocation) {
       if (this.state.panelToFocus) {
         setTimeout(
@@ -79,6 +99,7 @@ export default class ProductsOrderMobile extends React.Component {
 
   goToCategoryAndSubCategory(preFix, key) {
     if (preFix && this.isCategoryVisible(preFix)) {
+      this.setState({ routedCategoryKey: preFix });
       const section = document.getElementById(`order-tabb-tab-${preFix}`);
       if (!section) return;
       section.click();
@@ -189,6 +210,9 @@ export default class ProductsOrderMobile extends React.Component {
             `${preFix}-${key.replace(' ', '').toLowerCase()}`,
           );
           const stickyNavBar = document.getElementById(`${preFix}-cat-row`);
+          if (!cardHeaderToMove || !stickyNavBar) {
+            return;
+          }
           const targetPosition =
             cardHeaderToMove.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({
@@ -262,7 +286,10 @@ export default class ProductsOrderMobile extends React.Component {
               alignItems: 'flex-start',
             }}
           >
-            <Col className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0">
+            <Col
+              xs={3}
+              className="menuLeft sticky-top pe-0 pb-5 border-end border-light m-0"
+            >
               <Nav variant="pills" style={{ flexFlow: 'column' }}>
                 {visibleCategories.map((category) =>
                   this.returnSideBarNavLink(category),

@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Nav from 'react-bootstrap/Nav';
 
@@ -9,39 +15,105 @@ const SubCategoryRow = ({ items }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(items.length);
   const rowRef = useRef(null);
+  const measurementRef = useRef(null);
+  const itemMeasurementRefs = useRef([]);
+  const moreMeasurementRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
-  const updateVisibleCount = () => {
+  const updateVisibleCount = useCallback(() => {
     if (!rowRef.current) return;
 
     const rowWidth = rowRef.current.clientWidth;
-    const fullRowCount = Math.floor(rowWidth / MIN_TAB_WIDTH);
+    if (rowWidth <= 0) return;
 
-    if (fullRowCount >= items.length) {
+    const measuredItemWidths = items.map((item, index) => {
+      const itemElement = itemMeasurementRefs.current[index];
+      return itemElement
+        ? itemElement.getBoundingClientRect().width
+        : MIN_TAB_WIDTH;
+    });
+
+    const totalItemsWidth = measuredItemWidths.reduce(
+      (totalWidth, itemWidth) => totalWidth + itemWidth,
+      0,
+    );
+
+    if (totalItemsWidth <= rowWidth) {
       setVisibleCount(items.length);
       return;
     }
 
-    const availableWidth = rowWidth - MORE_MENU_WIDTH;
-    const nextVisibleCount = Math.max(
-      2,
-      Math.floor(availableWidth / MIN_TAB_WIDTH),
-    );
+    const moreWidth = moreMeasurementRef.current
+      ? moreMeasurementRef.current.getBoundingClientRect().width
+      : MORE_MENU_WIDTH;
+    const availableWidth = rowWidth - moreWidth;
+    let nextVisibleCount = 0;
+    let usedWidth = 0;
 
-    setVisibleCount(Math.min(items.length, nextVisibleCount));
-  };
+    measuredItemWidths.some((itemWidth) => {
+      if (usedWidth + itemWidth > availableWidth) {
+        return true;
+      }
+
+      usedWidth += itemWidth;
+      nextVisibleCount += 1;
+      return false;
+    });
+
+    setVisibleCount(Math.min(items.length, Math.max(1, nextVisibleCount)));
+  }, [items]);
+
+  useLayoutEffect(() => {
+    const scheduleUpdate = () => {
+      if (animationFrameRef.current) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+      }
+      animationFrameRef.current = window.requestAnimationFrame(() => {
+        animationFrameRef.current = null;
+        updateVisibleCount();
+      });
+    };
+    scheduleUpdate();
+
+    const rowElement = rowRef.current;
+    const measurementElement = measurementRef.current;
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(scheduleUpdate)
+      : null;
+
+    if (resizeObserver && rowElement) {
+      resizeObserver.observe(rowElement);
+    }
+
+    if (resizeObserver && measurementElement) {
+      resizeObserver.observe(measurementElement);
+    }
+
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      if (animationFrameRef.current) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+      }
+      window.removeEventListener('resize', scheduleUpdate);
+    };
+  }, [updateVisibleCount]);
 
   useEffect(() => {
-    updateVisibleCount();
-    window.addEventListener('resize', updateVisibleCount);
-
-    return () => window.removeEventListener('resize', updateVisibleCount);
-  }, [items]);
+    if (activeIndex >= items.length) {
+      setActiveIndex(Math.max(0, items.length - 1));
+    }
+  }, [activeIndex, items.length]);
 
   const visibleIndexes = items
     .slice(0, visibleCount)
     .map((item, index) => index);
 
   if (
+    activeIndex < items.length &&
     activeIndex >= visibleCount &&
     visibleIndexes.length > 0 &&
     visibleCount < items.length
@@ -61,6 +133,35 @@ const SubCategoryRow = ({ items }) => {
 
   return (
     <div className="subCategoryPriorityRow" ref={rowRef}>
+      <div
+        aria-hidden="true"
+        className="subCategoryPriorityMeasurement"
+        ref={measurementRef}
+      >
+        {items.map((item, index) => (
+          <div
+            className="subCategoryPriorityItem"
+            key={item.key}
+            ref={(element) => {
+              itemMeasurementRefs.current[index] = element;
+            }}
+          >
+            <button className="nav-link" tabIndex={-1} type="button">
+              <span>{item.label}</span>
+            </button>
+          </div>
+        ))}
+        <div className="subCategoryMore" ref={moreMeasurementRef}>
+          <button
+            className="dropdown-toggle btn btn-link"
+            tabIndex={-1}
+            type="button"
+          >
+            More
+          </button>
+        </div>
+      </div>
+
       <div className="subCategoryPriorityTabs">
         {visibleIndexes.map((index) => (
           <Nav.Item className="subCategoryPriorityItem" key={items[index].key}>

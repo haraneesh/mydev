@@ -79,7 +79,11 @@ class ProductSearch extends React.Component {
                 onBlur={this.onLostFocus}
                 ref={(searchBox) => (this.searchBox = searchBox)}
               />
-              <button className="btn btn-primary input-group-text" type="button" onClick={this.clear}>
+              <button
+                className="btn btn-primary input-group-text productOrderSearchClear"
+                type="button"
+                onClick={this.clear}
+              >
                 <Icon icon="close" type="mt" />
               </button>
             </div>
