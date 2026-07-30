@@ -10,7 +10,8 @@ import { accountSettings } from '../../../modules/settings';
 import Product from '../Orders/Product';
 import { displayProductsByType } from '../Orders/ProductsOrderCommon/ProductsOrderCommon';
 
-const displayWithDivider = (displayArray, displayText) => {
+const displayWithDivider = (displayArray, displayText, options = {}) => {
+  const { cartReview = false, sectionType = '' } = options;
   const displayBatch = [];
   if (!(displayArray && displayArray.length > 0)) return <></>;
 
@@ -24,12 +25,17 @@ const displayWithDivider = (displayArray, displayText) => {
         isAdmin={p.isAdmin || p.isShopOwner}
         checkout={p.checkout}
         isBasket={p.isBasket}
+        productClass={cartReview ? 'cartReviewProduct' : ''}
       />,
     );
   });
 
   return (
-    <div className="cartCategoryGroup">
+    <div
+      className={`cartCategoryGroup ${
+        sectionType ? `cartCategoryGroup${sectionType}` : ''
+      }`}
+    >
       <div className="cartCategoryHeader card-header text-start">
         <small className="text-uppercase">{displayText}</small>
       </div>
@@ -47,6 +53,7 @@ export const ListProducts = ({
   isShopOwner,
   isDeliveryInChennai,
   unavailableProducts = {},
+  cartReview = false,
 }) => {
   const {
     productVegetables,
@@ -88,6 +95,7 @@ export const ListProducts = ({
       chosenButDeleted.push({
         isMobile,
         key: `review-${index}`,
+        tempKey: `review-${index}`,
         updateProductQuantity,
         product,
         isAdmin,
@@ -115,96 +123,125 @@ export const ListProducts = ({
   });
 
   return (
-    <Row className="order-details-products cartProductList p-1 p-sm-2 mb-3">
-      <Row className="cartProductListHeader">
-        <Col xs={7} sm={8}>
-          {' '}
-          <strong> Name </strong>
-        </Col>
-        {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
-        <Col xs={5} sm={4} className="text-left">
-          {' '}
-          <strong> Value </strong>
-        </Col>
-      </Row>
+    <Row
+      className={`order-details-products cartProductList ${
+        cartReview ? 'cartReviewList' : 'p-1 p-sm-2 mb-3'
+      }`}
+    >
+      {!cartReview && (
+        <Row className="cartProductListHeader">
+          <Col xs={7} sm={8}>
+            {' '}
+            <strong> Name </strong>
+          </Col>
+          {/* <Col xs={3} className="text-right-xs"> <strong> Rate </strong></Col> */}
+          <Col xs={5} sm={4} className="text-left">
+            {' '}
+            <strong> Value </strong>
+          </Col>
+        </Row>
+      )}
 
       {displayWithDivider(
         productVegetables,
         constants.ProductTypeName.Vegetables.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productFruits,
         constants.ProductTypeName.Fruits.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productGreens,
         constants.ProductTypeName.Greens.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productRice,
         constants.ProductTypeName.Rice.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productWheat,
         constants.ProductTypeName.Wheat.display_value,
+        { cartReview },
       )}
       {/* displayWithDivider(productCereals, constants.ProductTypeName.Cereals.display_value) */}
       {displayWithDivider(
         productMillets,
         constants.ProductTypeName.Millets.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productDhals,
         constants.ProductTypeName.Dhals.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productSweetners,
         constants.ProductTypeName.Sweetners.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productSalts,
         constants.ProductTypeName.Salts.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productSpices,
         constants.ProductTypeName.Spices.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productNuts,
         constants.ProductTypeName.Nuts.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productDryFruits,
         constants.ProductTypeName.DryFruits.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productOils,
         constants.ProductTypeName.Oils.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productMilk,
         constants.ProductTypeName.Milk.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productEggs,
         constants.ProductTypeName.Eggs.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productPrepared,
         constants.ProductTypeName.Prepared.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productDisposables,
         constants.ProductTypeName.Disposables.display_value,
+        { cartReview },
       )}
       {displayWithDivider(
         productBeauty,
         constants.ProductTypeName.Beauty.display_value,
+        { cartReview },
       )}
-      {displayWithDivider(productsNoCategory, 'Others')}
+      {displayWithDivider(productsNoCategory, 'Others', { cartReview })}
       {unavailableProductsList.length > 0 && <hr className="border-warning" />}
-      {displayWithDivider(unavailableProductsList, 'Not Available to Order')}
-      {displayWithDivider(chosenButDeleted, 'Removed From Cart')}
+      {displayWithDivider(unavailableProductsList, 'Not Available to Order', {
+        cartReview,
+      })}
+      {displayWithDivider(chosenButDeleted, 'Removed From Cart', {
+        cartReview,
+        sectionType: 'Removed',
+      })}
     </Row>
   );
 };

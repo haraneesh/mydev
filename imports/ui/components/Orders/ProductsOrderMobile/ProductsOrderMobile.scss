@@ -1,5 +1,3 @@
-@import '../../../stylesheets/bootstrap/variables';
-
 .productOrderList {
     background: #f4efe6;
     border-bottom: 0;
@@ -19,7 +17,7 @@
     }
 
     .menuLeft{
-        background: $white;
+        background: #fbf6ee;
     }
 
     .menuLeft .nav-item{
@@ -83,7 +81,7 @@
     }
 
     .productOrderPanels{
-        background: #f4efe6;
+        background: #fffdf7;
         padding-left: 0.22rem;
         padding-right: 0.22rem;
     }
@@ -106,10 +104,10 @@
 
     .subCategoryPriorityRow{
         align-items: stretch;
-        background: $white;
+        background: #fff;
         border: 1px solid #e4dfdb;
         border-radius: 0.45rem;
-        box-shadow: 0 0.1rem 0.35rem rgba($black, 0.05);
+        box-shadow: 0 0.1rem 0.35rem rgba(47, 34, 21, 0.05);
         display: flex;
         overflow: visible;
         position: relative;
@@ -194,7 +192,7 @@
 
     .subCategoryMore .dropdown-menu{
         border-color: #e4dfdb;
-        box-shadow: 0 0.45rem 1rem rgba($black, 0.1);
+        box-shadow: 0 0.45rem 1rem rgba(47, 34, 21, 0.1);
         z-index: 5101;
     }
 

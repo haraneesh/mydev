@@ -7,7 +7,7 @@
   }
 }
 .shoppingCartBubble {
-  background: #EF0905;
+  background: $secondary;
   border-radius: 50%;
   font-size: 11px;
   position: absolute;
@@ -24,7 +24,7 @@
     left: 0;
     right:0;
     bottom: 0;
-    z-index: 1000;
+    z-index: 6995;
     position: fixed;
     width: 100%;
     display: flex;
@@ -58,8 +58,8 @@
   }
 
   .alertBubble {
-    background: #ef0905;
-    color: #ef0905;
+    background: $secondary;
+    color: $secondary;
     border-radius: 50%;
     font-size: 8px;
     position: absolute;

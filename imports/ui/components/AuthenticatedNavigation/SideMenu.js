@@ -91,6 +91,7 @@ const SideMenu = (props) => {
             <li className="py-2">
               <Button
                 id="app-logout"
+                variant='secondary'
                 onClick={() => {
                   handleClose();
                   handleLogout();
@@ -104,6 +105,7 @@ const SideMenu = (props) => {
             <li className="py-2">
               <Button
                 id="app-login"
+                variant='secondary'
                 onClick={() => {
                   handleClose();
                   navigate('/login');

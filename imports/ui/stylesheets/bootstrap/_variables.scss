@@ -40,6 +40,7 @@ $grays: (
 
 // scss-docs-start color-variables
 $blue:   #702223 !default; //#0d6efd //#522e23
+$forest-green: #3f7559 !default;
 $red:     #EF0905 !default; //#dc3545 //#A2082C
 $indigo: #e04a06 !default; //secondary
 $yellow: #ffc107 !default; //#ffc107 $brand-yellow:     #FFB800 !default; //#FDC123
@@ -301,7 +302,7 @@ $cyans: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       $blue !default;
+$primary:       $forest-green !default;
 $secondary:     $indigo !default;
 $success:       $green !default;
 $info:          $cyan !default;

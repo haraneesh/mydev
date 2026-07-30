@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Order Page Variations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --ink: #30231b;
+      --muted: #755d4d;
+      --paper: #fffdf8;
+      --warm: #f4efe6;
+      --warm-2: #eadfce;
+      --line: #d8ccb9;
+      --maroon: #702223;
+      --maroon-2: #8f2f1f;
+      --green: #3f7559;
+      --leaf: #519716;
+      --orange: #e04a06;
+      --brown: #7f4422;
+      --shadow: 0 0.45rem 1.1rem rgba(47, 34, 21, 0.10);
+      --radius: 0.45rem;
+    }
+
+    body {
+      margin: 0;
+      background: #e8e0d4;
+      color: var(--ink);
+      font-family: Nunito, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .review-tabs {
+      align-items: center;
+      background: var(--ink);
+      box-shadow: 0 0.18rem 0.6rem rgba(0, 0, 0, 0.18);
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding: 0 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .review-tabs button {
+      background: transparent;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      color: rgba(255, 253, 248, 0.62);
+      cursor: pointer;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      min-height: 3rem;
+      padding: 0.8rem 1rem;
+      white-space: nowrap;
+    }
+
+    .review-tabs button:hover,
+    .review-tabs button:focus {
+      color: #fffdf8;
+      outline: 0;
+    }
+
+    .review-tabs button.active {
+      border-bottom-color: var(--green);
+      color: #fffdf8;
+    }
+
+    .variation {
+      display: none;
+      min-height: calc(100vh - 3rem);
+    }
+
+    .variation.active { display: block; }
+
+    .frame {
+      margin: 0 auto;
+      max-width: 1240px;
+      padding: 1.25rem;
+    }
+
+    .phone-shell {
+      background: var(--warm);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      margin: 0 auto;
+      max-width: 430px;
+      min-height: 780px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .desktop-shell {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      min-height: 760px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      align-items: center;
+      background: #fffaf2;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 0.65rem;
+      min-height: 4.35rem;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .brand {
+      color: var(--maroon);
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 650;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .search {
+      align-items: center;
+      background: #fff;
+      border: 1px solid #d8c3ad;
+      border-radius: var(--radius);
+      color: var(--muted);
+      display: flex;
+      flex: 1;
+      font-size: 0.88rem;
+      font-weight: 700;
+      min-height: 2.55rem;
+      padding: 0 0.75rem;
+    }
+
+    .icon-button {
+      align-items: center;
+      background: var(--maroon);
+      border: 0;
+      border-radius: var(--radius);
+      color: #fffdf8;
+      display: inline-flex;
+      font-weight: 900;
+      height: 2.55rem;
+      justify-content: center;
+      min-width: 2.55rem;
+      padding: 0 0.75rem;
+    }
+
+    .section-title {
+      color: var(--maroon-2);
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      margin: 0;
+      padding: 0.55rem 0.25rem 0.35rem;
+    }
+
+    .product-grid {
+      display: grid;
+      gap: 0.45rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .product-card {
+      background: #fff;
+      border: 1px solid transparent;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.25rem 0.75rem rgba(47, 34, 21, 0.08);
+      display: flex;
+      flex-direction: column;
+      min-height: 13rem;
+      padding: 0.65rem 0.5rem 0.55rem;
+    }
+
+    .product-card:hover {
+      border-color: #d8c3ad;
+      transform: translateY(-1px);
+      transition: border-color 140ms ease, transform 140ms ease;
+    }
+
+    .product-art {
+      align-items: center;
+      background: #fbf7f0;
+      border-radius: 0.35rem;
+      display: flex;
+      font-size: 2.1rem;
+      height: 5.1rem;
+      justify-content: center;
+      margin-bottom: 0.45rem;
+    }
+
+    .product-name {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1.22;
+      margin: 0;
+      min-height: 3rem;
+      text-align: center;
+    }
+
+    .product-price {
+      color: #522e23;
+      font-size: 0.88rem;
+      font-weight: 800;
+      margin: 0.35rem 0 0.45rem;
+      text-align: center;
+    }
+
+    .add-btn,
+    .qty-btn,
+    .checkout-btn {
+      border: 0;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0;
+      min-height: 2.35rem;
+      padding: 0.48rem 0.7rem;
+    }
+
+    .add-btn {
+      background: var(--maroon);
+      color: #fff;
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .qty-btn {
+      background: #fffaf2;
+      border: 1px solid #e2cdb8;
+      color: var(--ink);
+      margin-top: auto;
+      text-align: left;
+      width: 100%;
+    }
+
+    .checkout-bar {
+      align-items: center;
+      background: #fffdf8;
+      border-top: 1px solid var(--line);
+      bottom: 0;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: space-between;
+      left: 0;
+      min-height: 4.4rem;
+      padding: 0.75rem 0.9rem;
+      position: sticky;
+      right: 0;
+      z-index: 20;
+    }
+
+    .checkout-total span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .checkout-total strong {
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .checkout-btn {
+      background: var(--green);
+      color: #fff;
+      min-width: 9rem;
+    }
+
+    .rail-layout {
+      display: grid;
+      grid-template-columns: 6.4rem minmax(0, 1fr);
+    }
+
+    .category-rail {
+      background: #fff;
+      border-right: 1px solid #e4dfdb;
+      height: calc(780px - 4.35rem);
+      overflow: auto;
+      padding: 0.35rem;
+      position: sticky;
+      top: 0;
+    }
+
+    .cat-tile {
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 0.4rem;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      font-size: 0.78rem;
+      font-weight: 800;
+      gap: 0.2rem;
+      min-height: 4.2rem;
+      padding: 0.45rem 0.25rem;
+      text-align: center;
+    }
+
+    .cat-tile.active {
+      background: #fffdf8;
+      border-color: #ead0c6;
+      color: var(--maroon);
+    }
+
+    .cat-icon { font-size: 1.35rem; }
+
+    .content-pane {
+      min-width: 0;
+      padding: 0.4rem;
+    }
+
+    .subnav {
+      background: #fff;
+      border: 1px solid #e4dfdb;
+      border-radius: 0.45rem;
+      display: flex;
+      gap: 0.2rem;
+      margin-bottom: 0.55rem;
+      overflow-x: auto;
+      padding: 0.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 8;
+    }
+
+    .subnav span {
+      border-radius: 0.25rem;
+      color: #7b351f;
+      flex: 0 0 auto;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 0.35rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    .subnav .active {
+      background: #f8f2ea;
+      color: #5f2117;
+    }
+
+    .note {
+      background: #fff8df;
+      border: 1px solid #ead89a;
+      border-radius: var(--radius);
+      color: #6f4b00;
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.35;
+      margin: 0.75rem 0;
+      padding: 0.75rem;
+    }
+
+    /* Variation 2 */
+    .easy-shell {
+      background: #fffbf4;
+      max-width: 520px;
+    }
+
+    .easy-header {
+      background: #fff4df;
+      border-bottom: 1px solid var(--line);
+      padding: 1rem;
+    }
+
+    .easy-header h1 {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 1.65rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .easy-header p {
+      color: var(--muted);
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .quick-cats {
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 0.9rem;
+    }
+
+    .quick-cat {
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 0.55rem;
+      color: var(--ink);
+      display: flex;
+      font-size: 1rem;
+      font-weight: 900;
+      gap: 0.6rem;
+      min-height: 4.2rem;
+      padding: 0.8rem;
+    }
+
+    .easy-list {
+      display: grid;
+      gap: 0.65rem;
+      padding: 0 0.9rem 5rem;
+    }
+
+    .easy-row {
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 0.55rem;
+      display: grid;
+      gap: 0.7rem;
+      grid-template-columns: 3.8rem minmax(0, 1fr) 6.5rem;
+      min-height: 5.2rem;
+      padding: 0.65rem;
+    }
+
+    .easy-row .product-art {
+      height: 3.8rem;
+      margin: 0;
+    }
+
+    .easy-row h3 {
+      font-size: 1rem;
+      line-height: 1.2;
+      margin: 0 0 0.2rem;
+    }
+
+    .easy-row p {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    /* Variation 3 */
+    .search-first {
+      background: #f7f2ea;
+    }
+
+    .search-hero {
+      background: #fffdf8;
+      border-bottom: 1px solid var(--line);
+      padding: 1.1rem;
+    }
+
+    .search-hero h1 {
+      color: var(--ink);
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin: 0 0 0.75rem;
+    }
+
+    .big-search {
+      align-items: center;
+      background: #fff;
+      border: 2px solid var(--maroon);
+      border-radius: 0.55rem;
+      color: #6f5243;
+      display: flex;
+      font-size: 1rem;
+      font-weight: 800;
+      min-height: 3.35rem;
+      padding: 0 0.9rem;
+    }
+
+    .suggestions {
+      display: flex;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .suggestions span {
+      background: #f4efe6;
+      border: 1px solid #d8c3ad;
+      border-radius: 999px;
+      color: #6f2d21;
+      flex: 0 0 auto;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 0.45rem 0.75rem;
+    }
+
+    .result-row {
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid #eaded3;
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: 3.5rem minmax(0, 1fr) 6rem;
+      min-height: 5.1rem;
+      padding: 0.7rem 0.9rem;
+    }
+
+    .result-row h3 {
+      font-size: 0.95rem;
+      line-height: 1.18;
+      margin: 0;
+    }
+
+    .result-row p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin: 0.2rem 0 0;
+    }
+
+    /* Variation 4 */
+    .catalogue-layout {
+      display: grid;
+      grid-template-columns: 17rem minmax(0, 1fr);
+      min-height: 760px;
+    }
+
+    .catalogue-nav {
+      background: #f3ecdf;
+      border-right: 1px solid var(--line);
+      padding: 1rem;
+    }
+
+    .catalogue-nav h1 {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 1.6rem;
+      margin: 0 0 1rem;
+    }
+
+    .catalogue-list {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .catalogue-list div {
+      align-items: center;
+      background: #fffdf8;
+      border: 1px solid transparent;
+      border-radius: 0.45rem;
+      display: flex;
+      font-weight: 900;
+      gap: 0.65rem;
+      min-height: 3rem;
+      padding: 0.55rem 0.7rem;
+    }
+
+    .catalogue-list .active {
+      border-color: #c9b89e;
+      color: var(--maroon);
+    }
+
+    .catalogue-main {
+      background: #fffdf8;
+      padding: 1rem;
+    }
+
+    .catalogue-head {
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .catalogue-head h2 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .catalogue-products {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* Variation 5 */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 22rem;
+      min-height: 760px;
+    }
+
+    .workspace-main {
+      background: var(--warm);
+      padding-bottom: 1rem;
+    }
+
+    .workspace-main .product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 0.75rem;
+    }
+
+    .cart-panel {
+      background: #f3ecdf;
+      border-left: 1px solid var(--line);
+      padding: 1rem;
+    }
+
+    .cart-panel h2 {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 1.4rem;
+      margin: 0 0 0.9rem;
+    }
+
+    .cart-line {
+      border-bottom: 1px solid #d8ccb9;
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 0.8rem 0;
+    }
+
+    .cart-line strong {
+      display: block;
+      font-size: 0.94rem;
+      line-height: 1.2;
+    }
+
+    .cart-line span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-top: 0.15rem;
+    }
+
+    .cart-summary {
+      margin-top: 1rem;
+    }
+
+    .cart-summary textarea {
+      background: #fffdf8;
+      border: 1px solid #cda98d;
+      border-radius: 0.55rem;
+      color: #6c5044;
+      font: inherit;
+      font-weight: 700;
+      min-height: 5rem;
+      padding: 0.85rem;
+      resize: vertical;
+      width: 100%;
+    }
+
+    @media (max-width: 860px) {
+      .frame { padding: 0.65rem; }
+      .catalogue-layout,
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .catalogue-nav,
+      .cart-panel {
+        border-left: 0;
+        border-right: 0;
+      }
+      .catalogue-products,
+      .workspace-main .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 460px) {
+      .review-tabs { padding: 0 0.35rem; }
+      .review-tabs button { padding: 0.75rem 0.65rem; }
+      .phone-shell { min-height: 720px; }
+      .brand { display: none; }
+      .easy-row {
+        grid-template-columns: 3.8rem minmax(0, 1fr);
+      }
+      .easy-row .add-btn,
+      .easy-row .qty-btn {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="review-tabs" aria-label="Variation selector">
+    <button class="active" type="button" data-tab="v1">1 Refined Current</button>
+    <button type="button" data-tab="v2">2 Easy Ordering</button>
+    <button type="button" data-tab="v3">3 Search First</button>
+    <button type="button" data-tab="v4">4 Catalogue</button>
+    <button type="button" data-tab="v5">5 Cart Side Panel</button>
+  </nav>
+
+  <section id="v1" class="variation active">
+    <div class="frame">
+      <div class="phone-shell">
+        <header class="topbar">
+          <div class="brand">Suvai</div>
+          <div class="search">Search products</div>
+          <button class="icon-button" type="button">Cart 2</button>
+        </header>
+        <main class="rail-layout">
+          <aside class="category-rail">
+            <div class="cat-tile active"><span class="cat-icon">🌾</span>Millets</div>
+            <div class="cat-tile"><span class="cat-icon">🥬</span>Greens</div>
+            <div class="cat-tile"><span class="cat-icon">🍚</span>Rice</div>
+            <div class="cat-tile"><span class="cat-icon">🥭</span>Fruits</div>
+            <div class="cat-tile"><span class="cat-icon">🫘</span>Dhals</div>
+            <div class="cat-tile"><span class="cat-icon">🧂</span>Salts</div>
+            <div class="cat-tile"><span class="cat-icon">🛒</span>New</div>
+          </aside>
+          <section class="content-pane">
+            <div class="subnav"><span class="active">Flakes</span><span>Rava</span><span>Flour</span><span>Whole</span></div>
+            <h2 class="section-title">Millets</h2>
+            <div class="product-grid">
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Barnyard Millet Flakes</h3><p class="product-price">Rs. 51</p><button class="qty-btn" type="button">1 pkt · Rs. 51</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Kodo Millet Rava</h3><p class="product-price">Rs. 74</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Thinai Flour</h3><p class="product-price">Rs. 86</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Little Millet</h3><p class="product-price">Rs. 92</p><button class="qty-btn" type="button">500 g · Rs. 92</button></article>
+            </div>
+          </section>
+        </main>
+        <footer class="checkout-bar"><div class="checkout-total"><span>2 items</span><strong>Rs. 143</strong></div><button class="checkout-btn" type="button">Checkout</button></footer>
+      </div>
+    </div>
+  </section>
+
+  <section id="v2" class="variation">
+    <div class="frame">
+      <div class="phone-shell easy-shell">
+        <header class="easy-header">
+          <h1>Choose your products</h1>
+          <p>Larger rows, fewer choices on screen, and a cart summary always visible.</p>
+        </header>
+        <div class="quick-cats">
+          <div class="quick-cat">🌾 Millets</div>
+          <div class="quick-cat">🥬 Greens</div>
+          <div class="quick-cat">🍚 Rice</div>
+          <div class="quick-cat">🥭 Fruits</div>
+        </div>
+        <main class="easy-list">
+          <div class="note">You can place this order with your registered mobile number.</div>
+          <article class="easy-row"><div class="product-art">🌾</div><div><h3>Barnyard Millet Flakes</h3><p>1 packet · Rs. 51</p></div><button class="qty-btn" type="button">Added</button></article>
+          <article class="easy-row"><div class="product-art">🌾</div><div><h3>Kodo Millet Rava</h3><p>500 g · Rs. 74</p></div><button class="add-btn" type="button">Add</button></article>
+          <article class="easy-row"><div class="product-art">🍚</div><div><h3>Mapillai Samba Rice</h3><p>1 kg · Rs. 118</p></div><button class="add-btn" type="button">Add</button></article>
+          <article class="easy-row"><div class="product-art">🥬</div><div><h3>Sirukeerai Greens</h3><p>1 bunch · Rs. 32</p></div><button class="add-btn" type="button">Add</button></article>
+        </main>
+        <footer class="checkout-bar"><div class="checkout-total"><span>1 item</span><strong>Rs. 51</strong></div><button class="checkout-btn" type="button">Review order</button></footer>
+      </div>
+    </div>
+  </section>
+
+  <section id="v3" class="variation">
+    <div class="frame">
+      <div class="phone-shell search-first">
+        <header class="search-hero">
+          <h1>What would you like to add?</h1>
+          <div class="big-search">Search rice, greens, millet...</div>
+          <div class="suggestions"><span>Millets</span><span>Greens</span><span>Frequently ordered</span><span>New arrivals</span></div>
+        </header>
+        <main>
+          <h2 class="section-title" style="padding-left:0.9rem;">Matching products</h2>
+          <article class="result-row"><div class="product-art">🌾</div><div><h3>Barnyard Millet Flakes</h3><p>Millets · Flakes</p></div><button class="qty-btn" type="button">1 pkt</button></article>
+          <article class="result-row"><div class="product-art">🌾</div><div><h3>Kodo Millet Rava</h3><p>Millets · Rava</p></div><button class="add-btn" type="button">Add</button></article>
+          <article class="result-row"><div class="product-art">🌾</div><div><h3>Little Millet</h3><p>Millets · Whole</p></div><button class="add-btn" type="button">Add</button></article>
+          <h2 class="section-title" style="padding-left:0.9rem;">Browse instead</h2>
+          <div class="quick-cats">
+            <div class="quick-cat">🍚 Rice</div>
+            <div class="quick-cat">🫘 Dhals</div>
+            <div class="quick-cat">🧂 Salts</div>
+            <div class="quick-cat">🥭 Fruits</div>
+          </div>
+        </main>
+        <footer class="checkout-bar"><div class="checkout-total"><span>1 item</span><strong>Rs. 51</strong></div><button class="checkout-btn" type="button">Checkout</button></footer>
+      </div>
+    </div>
+  </section>
+
+  <section id="v4" class="variation">
+    <div class="frame">
+      <div class="desktop-shell">
+        <div class="catalogue-layout">
+          <aside class="catalogue-nav">
+            <h1>Choose your products</h1>
+            <div class="search" style="margin-bottom:0.85rem;">Search products</div>
+            <div class="catalogue-list">
+              <div class="active">🌾 Millets</div>
+              <div>🥬 Greens</div>
+              <div>🍚 Rice</div>
+              <div>🫘 Dhals</div>
+              <div>🥭 Fruits</div>
+              <div>🧂 Salts</div>
+              <div>🛒 New Arrivals</div>
+            </div>
+          </aside>
+          <main class="catalogue-main">
+            <div class="catalogue-head"><div><h2>Millets</h2><p style="color:var(--muted);font-weight:800;margin:0.2rem 0 0;">Flakes, flour, rava, and whole grains</p></div><button class="icon-button" type="button">Cart 2 · Rs. 143</button></div>
+            <div class="subnav"><span class="active">All</span><span>Flakes</span><span>Rava</span><span>Flour</span><span>Whole</span></div>
+            <div class="catalogue-products">
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Barnyard Millet Flakes</h3><p class="product-price">Rs. 51</p><button class="qty-btn" type="button">1 pkt · Rs. 51</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Kodo Millet Rava</h3><p class="product-price">Rs. 74</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Thinai Flour</h3><p class="product-price">Rs. 86</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Little Millet</h3><p class="product-price">Rs. 92</p><button class="qty-btn" type="button">500 g · Rs. 92</button></article>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="v5" class="variation">
+    <div class="frame">
+      <div class="desktop-shell">
+        <div class="workspace">
+          <main class="workspace-main">
+            <header class="topbar">
+              <div class="brand">Suvai</div>
+              <div class="search">Search products</div>
+              <button class="icon-button" type="button">Delivery: Chennai</button>
+            </header>
+            <div class="subnav" style="margin:0.75rem;"><span class="active">Millets</span><span>Greens</span><span>Rice</span><span>Dhals</span><span>Fruits</span><span>Salts</span></div>
+            <h2 class="section-title" style="padding-left:0.85rem;">Millets</h2>
+            <div class="product-grid">
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Barnyard Millet Flakes</h3><p class="product-price">Rs. 51</p><button class="qty-btn" type="button">1 pkt · Rs. 51</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Kodo Millet Rava</h3><p class="product-price">Rs. 74</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🌾</div><h3 class="product-name">Thinai Flour</h3><p class="product-price">Rs. 86</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🥬</div><h3 class="product-name">Sirukeerai Greens</h3><p class="product-price">Rs. 32</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🍚</div><h3 class="product-name">Mapillai Samba Rice</h3><p class="product-price">Rs. 118</p><button class="add-btn" type="button">Add</button></article>
+              <article class="product-card"><div class="product-art">🫘</div><h3 class="product-name">Toor Dhal</h3><p class="product-price">Rs. 130</p><button class="add-btn" type="button">Add</button></article>
+            </div>
+          </main>
+          <aside class="cart-panel">
+            <h2>Current order</h2>
+            <div class="note">Minimum order alert can live here without blocking browsing.</div>
+            <div class="cart-line"><div><strong>Barnyard Millet Flakes</strong><span>1 packet</span></div><strong>Rs. 51</strong></div>
+            <div class="cart-line"><div><strong>Little Millet</strong><span>500 g</span></div><strong>Rs. 92</strong></div>
+            <div class="cart-summary">
+              <textarea placeholder="Anything you would like to tell us about this order?"></textarea>
+              <div class="checkout-bar" style="position:static;margin-top:1rem;border:0;padding:0;background:transparent;"><div class="checkout-total"><span>2 items</span><strong>Rs. 143</strong></div><button class="checkout-btn" type="button">Checkout</button></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const buttons = document.querySelectorAll('[data-tab]');
+    const panels = document.querySelectorAll('.variation');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((item) => item.classList.remove('active'));
+        panels.forEach((panel) => panel.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -128,7 +128,7 @@ class About extends React.Component {
               <p>
                 To Join the community, do send us a Whatsapp Message at
                 <br />
-                <a href="tel:+919361032849" className="text-primary">+91 9361032849</a>
+                <a href="tel:+919361032849" className="text-secondary">+91 9361032849</a>
               </p>
             </h4>
           </div>

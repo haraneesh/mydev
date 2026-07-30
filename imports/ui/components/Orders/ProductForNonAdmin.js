@@ -460,7 +460,11 @@ const ProductForNonAdmin = ({
     });
     const regularPrice = unitprice * quantitySelected;
     return (
-      <Row className="cartProductRow">
+      <Row
+        className={`cartProductRow ${
+          removedDuringCheckout ? 'cartProductRowRemoved' : ''
+        }`}
+      >
         <Col xs={7} sm={8} className="cartProductName">
           {removedDuringCheckout ? <s> {name} </s> : name}
         </Col>

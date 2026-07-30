@@ -1,0 +1,1659 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart Checkout Layout Variations</title>
+  <style>
+    @font-face {
+      font-family: "Muli";
+      src: url("../../public/fonts/Muli/Muli-SemiBold.woff2") format("woff2");
+      font-weight: 600;
+    }
+
+    @font-face {
+      font-family: "Muli";
+      src: url("../../public/fonts/Muli/Muli-Bold.woff2") format("woff2");
+      font-weight: 800;
+    }
+
+    @font-face {
+      font-family: "Baukasten";
+      src: url("../../public/fonts/Baukasten/HomepageBaukasten-Book.woff2") format("woff2");
+      font-weight: 500;
+    }
+
+    :root {
+      --page: #f7f1e7;
+      --paper: #fffdf8;
+      --cream: #fbf5ec;
+      --wash: #f1e7d9;
+      --line: #dfcfbb;
+      --ink: #2f2822;
+      --muted: #77695d;
+      --faint: #a79686;
+      --leaf: #2f6a4f;
+      --leaf-dark: #234b3a;
+      --leaf-soft: #dcebe1;
+      --clay: #973f2d;
+      --clay-dark: #762d22;
+      --gold: #be8732;
+      --blue: #2f5c68;
+      --slate: #46545a;
+      --white: #fff;
+      --shadow: 0 22px 55px rgba(55, 42, 30, 0.12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(47, 106, 79, 0.12), transparent 34rem),
+        linear-gradient(180deg, #fffaf2, var(--page));
+      color: var(--ink);
+      font-family: Muli, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button, select, textarea {
+      border-radius: var(--radius);
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(47, 106, 79, 0.35);
+      outline-offset: 3px;
+    }
+
+    .review-shell {
+      width: min(1280px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 34px 0 72px;
+    }
+
+    .review-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 4.1rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+      max-width: 820px;
+    }
+
+    h2 {
+      font-size: clamp(1.45rem, 2vw, 2.1rem);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .eyebrow {
+      color: var(--leaf-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      color: var(--muted);
+      font-size: 1.03rem;
+      max-width: 70ch;
+      margin-top: 12px;
+    }
+
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      max-width: 480px;
+    }
+
+    .top-nav a {
+      color: var(--leaf-dark);
+      background: rgba(255, 253, 248, 0.84);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      padding: 8px 11px;
+      text-decoration: none;
+      transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .top-nav a:hover {
+      background: var(--leaf-soft);
+      border-color: #b9d3c2;
+      transform: translateY(-1px);
+    }
+
+    .variation {
+      margin-top: 34px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(223, 207, 187, 0.78);
+      animation: rise 420ms ease both;
+    }
+
+    .variation:nth-of-type(2) { animation-delay: 60ms; }
+    .variation:nth-of-type(3) { animation-delay: 120ms; }
+    .variation:nth-of-type(4) { animation-delay: 180ms; }
+    .variation:nth-of-type(5) { animation-delay: 240ms; }
+    .variation:nth-of-type(6) { animation-delay: 300ms; }
+
+    .variation-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .variation-head p {
+      color: var(--muted);
+      max-width: 72ch;
+      margin-top: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.82);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mockup {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .site-nav {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 18px;
+      background: #fff;
+      border-bottom: 1px solid #e8ddcf;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 150px;
+    }
+
+    .brand-sun {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, #ee8f31 0 36%, #f6c25b 36% 52%, #5e9b49 52% 67%, #2f6a4f 67%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+    }
+
+    .brand-word {
+      font-family: Baukasten, Georgia, serif;
+      font-size: 1.02rem;
+      line-height: 1;
+      color: var(--leaf);
+      white-space: nowrap;
+    }
+
+    .brand-word span:first-child {
+      color: #ef7530;
+    }
+
+    .main-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      flex: 1;
+    }
+
+    .main-links a {
+      color: #6d1e16;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #3b2a20;
+      font-weight: 800;
+    }
+
+    .cart-icon {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      font-size: 1rem;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -9px;
+      right: -9px;
+      display: grid;
+      place-items: center;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #e92d36;
+      color: #fff;
+      font-size: 0.68rem;
+      line-height: 1;
+    }
+
+    .page-title-band {
+      display: grid;
+      place-items: center;
+      min-height: 90px;
+      background:
+        linear-gradient(rgba(245, 237, 224, 0.72), rgba(245, 237, 224, 0.72)),
+        repeating-linear-gradient(90deg, rgba(101, 77, 44, 0.18) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(0deg, rgba(101, 77, 44, 0.12) 0 1px, transparent 1px 5px);
+      border-bottom: 1px solid #d9c8b3;
+      padding: 18px;
+    }
+
+    .page-title-band h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+    }
+
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      color: #4c2f25;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .site-footer div:last-child {
+      display: flex;
+      gap: 18px;
+      white-space: nowrap;
+    }
+
+    .checkout-band {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      padding: 16px 22px;
+    }
+
+    .mockup-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 58px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(251, 245, 236, 0.9);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(47, 106, 79, 0.22);
+      border-radius: 50%;
+      background: var(--leaf-soft);
+      color: var(--leaf-dark);
+      font-weight: 800;
+    }
+
+    .brand strong {
+      display: block;
+      line-height: 1.1;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .ghost-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      border: 1px solid transparent;
+      padding: 9px 13px;
+      color: var(--white);
+      background: var(--leaf);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(35, 75, 58, 0.18);
+      background: var(--leaf-dark);
+    }
+
+    .btn.secondary {
+      color: var(--leaf-dark);
+      background: var(--paper);
+      border-color: var(--line);
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      color: var(--white);
+      background: var(--clay-dark);
+    }
+
+    .price {
+      color: var(--ink);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .select-like {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 40px;
+      border: 1px solid #d9b499;
+      background: #fffaf4;
+      color: var(--ink);
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      min-width: 180px;
+    }
+
+    .select-like span:last-child {
+      color: var(--clay-dark);
+      font-size: 0.76rem;
+    }
+
+    .category {
+      color: var(--leaf-dark);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .removed-name {
+      color: #3f3028;
+      font-weight: 800;
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
+    .removed-section {
+      background: #f0e8dd;
+      color: #5e392e;
+    }
+
+    .removed-row {
+      opacity: 0.86;
+    }
+
+    .zero-price {
+      color: #6d1e16;
+      font-weight: 800;
+    }
+
+    .delivery-alert {
+      border: 1px solid #c6a896;
+      background: #ead9cf;
+      color: #7b2e21;
+      border-radius: 6px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .delivery-alert.compact {
+      text-align: left;
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .note-box {
+      width: 100%;
+      min-height: 74px;
+      resize: vertical;
+      border: 1px solid #c9a98f;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 12px;
+    }
+
+    .note-box::placeholder {
+      color: #835f49;
+    }
+
+    .total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .v1 .cart-body {
+      padding: 22px;
+    }
+
+    .market-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .market-section {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eadfce;
+    }
+
+    .market-items {
+      display: grid;
+      gap: 10px;
+    }
+
+    .market-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 18px;
+      align-items: center;
+      min-height: 58px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(223, 207, 187, 0.55);
+    }
+
+    .market-row:last-child {
+      border-bottom: 0;
+    }
+
+    .market-checkout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+      gap: 22px;
+      align-items: end;
+      margin-top: 22px;
+    }
+
+    .v2 .cart-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 0;
+      min-height: 620px;
+    }
+
+    .two-main {
+      padding: 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .two-summary {
+      background: #f8efe4;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      min-height: 620px;
+    }
+
+    .two-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .two-section {
+      display: grid;
+      gap: 8px;
+    }
+
+    .two-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(223, 207, 187, 0.75);
+    }
+
+    .two-row .controls {
+      display: grid;
+      gap: 7px;
+      justify-items: end;
+    }
+
+    .summary-lines {
+      display: grid;
+      gap: 11px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .summary-line strong {
+      color: var(--ink);
+    }
+
+    .v3 .cart-body {
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: linear-gradient(180deg, #f5ecdf, #fbf8f1);
+    }
+
+    .phone {
+      width: min(390px, 100%);
+      min-height: 780px;
+      border: 1px solid #d7c5ae;
+      border-radius: 30px;
+      background: var(--paper);
+      overflow: hidden;
+      box-shadow: 0 18px 44px rgba(47, 40, 34, 0.18);
+    }
+
+    .phone-top {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 42px;
+      gap: 10px;
+      align-items: center;
+      min-height: 66px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--leaf-dark);
+      font-weight: 800;
+    }
+
+    .phone-title {
+      text-align: center;
+      min-width: 0;
+    }
+
+    .phone-title strong,
+    .phone-title span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .phone-title span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .phone-items {
+      display: grid;
+      gap: 14px;
+      padding: 16px 14px 128px;
+    }
+
+    .phone-category {
+      color: var(--leaf-dark);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 4px 0 -4px;
+    }
+
+    .phone-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid #eadfce;
+    }
+
+    .phone-row small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 800;
+    }
+
+    .phone-bottom {
+      position: sticky;
+      bottom: 0;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.96);
+      box-shadow: 0 -12px 28px rgba(47, 40, 34, 0.1);
+    }
+
+    .phone-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 38px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: var(--cream);
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .phone-total {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .phone-total span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+
+    .v4 .mockup {
+      background:
+        linear-gradient(rgba(255, 253, 248, 0.91), rgba(255, 253, 248, 0.91)),
+        repeating-linear-gradient(0deg, #efe2d1 0 1px, transparent 1px 34px);
+    }
+
+    .v4 .mockup-bar {
+      background: #efe3d3;
+    }
+
+    .ledger-body {
+      padding: 22px;
+    }
+
+    .ledger-title {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #cab59e;
+    }
+
+    .ledger-title h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.7rem, 3vw, 2.8rem);
+    }
+
+    .ledger {
+      display: grid;
+      margin-top: 16px;
+      border-top: 1px solid #cab59e;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) 170px 120px;
+      gap: 14px;
+      align-items: center;
+      min-height: 64px;
+      border-bottom: 1px solid #dbcbb9;
+      padding: 10px 0;
+    }
+
+    .ledger-row.header {
+      min-height: 42px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .ledger-footer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+      gap: 22px;
+      align-items: end;
+      margin-top: 22px;
+    }
+
+    .v5 .mockup {
+      background: #fffefb;
+      box-shadow: none;
+    }
+
+    .minimal-body {
+      padding: clamp(20px, 4vw, 52px);
+    }
+
+    .minimal-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      padding-bottom: 28px;
+    }
+
+    .minimal-top h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 4rem);
+      font-weight: 700;
+    }
+
+    .minimal-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .minimal-section {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .minimal-products {
+      display: grid;
+      gap: 8px;
+    }
+
+    .minimal-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 200px 120px;
+      gap: 18px;
+      align-items: center;
+      min-height: 56px;
+    }
+
+    .minimal-row .select-like {
+      min-width: 0;
+      background: transparent;
+    }
+
+    .minimal-checkout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 14px;
+      align-items: center;
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .v6 .cart-body {
+      padding: 20px;
+      background: #f7f4ee;
+    }
+
+    .packing-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+    }
+
+    .packing-board {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .packing-row {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 100px 110px;
+      gap: 14px;
+      align-items: center;
+      min-height: 72px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eadfce;
+    }
+
+    .packing-row:last-child {
+      border-bottom: 0;
+    }
+
+    .check {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border: 2px solid #b8a38d;
+      border-radius: 6px;
+      color: var(--leaf);
+      font-weight: 800;
+    }
+
+    .packing-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .packing-sidebar {
+      display: grid;
+      align-content: start;
+      gap: 14px;
+    }
+
+    .side-panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .side-panel h3 {
+      margin-bottom: 10px;
+    }
+
+    .pack-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      border: 1px solid #eadfce;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fffaf4;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .review-header,
+      .variation-head,
+      .site-nav,
+      .market-section,
+      .market-checkout,
+      .v2 .cart-body,
+      .ledger-footer,
+      .minimal-section,
+      .minimal-checkout,
+      .packing-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .top-nav,
+      .ghost-actions,
+      .main-links {
+        justify-content: flex-start;
+      }
+
+      .site-nav {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .main-links {
+        order: 3;
+        width: 100%;
+        gap: 18px;
+      }
+
+      .two-main {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .two-summary {
+        min-height: auto;
+        position: static;
+      }
+
+      .ledger-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .ledger-row.header {
+        display: none;
+      }
+
+      .ledger-row .category,
+      .ledger-row .product-name {
+        grid-column: 1 / -1;
+      }
+
+      .minimal-row,
+      .packing-row,
+      .market-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .minimal-checkout {
+        align-items: stretch;
+      }
+
+      .minimal-checkout .btn,
+      .market-checkout .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .review-shell {
+        width: min(100vw - 18px, 1280px);
+        padding-top: 20px;
+      }
+
+      .mockup-bar,
+      .minimal-top,
+      .ledger-title {
+        grid-template-columns: 1fr;
+      }
+
+      .mockup-bar {
+        align-items: flex-start;
+      }
+
+      .cart-body,
+      .v1 .cart-body,
+      .two-main,
+      .two-summary,
+      .ledger-body,
+      .v6 .cart-body {
+        padding: 14px;
+      }
+
+      .select-like {
+        min-width: 0;
+      }
+
+      .site-footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="review-shell">
+    <header class="review-header">
+      <div>
+        <p class="eyebrow">Suvai Organics checkout explorations</p>
+        <h1>Cart layout variations for review</h1>
+        <p class="intro">Six HTML mockups based on the low-total cart state: two active items, removed products, delivery-charge alert, notes, checkout action, and the full page shell.</p>
+      </div>
+      <nav class="top-nav" aria-label="Variation shortcuts">
+        <a href="#clean-market">Clean Market</a>
+        <a href="#two-column">Two Column</a>
+        <a href="#mobile-first">Mobile First</a>
+        <a href="#ledger">Ledger</a>
+        <a href="#minimal">Minimal</a>
+        <a href="#packing">Packing</a>
+      </nav>
+    </header>
+
+    <section class="variation v1" id="clean-market">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 1</p>
+          <h2>Clean Market Page Cleanup</h2>
+          <p>A direct modernization of the new state: two active items remain easy to scan, removed items are separated from purchasable rows, and the delivery-charge alert sits close to checkout.</p>
+        </div>
+        <span class="tag">Best incremental update</span>
+      </div>
+
+      <div class="mockup">
+        <nav class="site-nav" aria-label="Store navigation">
+          <div class="brand-logo"><span class="brand-sun"></span><span class="brand-word"><span>Namma</span> Suvai</span></div>
+          <div class="main-links"><a href="#">My Orders</a><a href="#">Place Order</a><a href="#">About Us</a></div>
+          <div class="nav-icons"><span>●</span><span class="cart-icon">▣<span class="cart-badge">2</span></span><span>☰</span></div>
+        </nav>
+        <div class="page-title-band"><h3>Your Cart</h3></div>
+        <div class="mockup-bar">
+          <div class="brand">
+            <div class="mark">S</div>
+            <div>
+              <strong>Cart Details</strong>
+              <span>2 items ready for checkout</span>
+            </div>
+          </div>
+          <div class="ghost-actions">
+            <button class="btn secondary">+ Add Items</button>
+            <button class="btn danger">Clear Cart</button>
+          </div>
+        </div>
+
+        <div class="cart-body">
+          <div class="market-grid">
+            <section class="market-section">
+              <div class="category">Vegetables</div>
+              <div class="market-items">
+                <div class="market-row">
+                  <div class="product-name">BANANA FLOWER</div>
+                  <div class="price">Rs. 80.00</div>
+                  <div class="select-like"><strong>2 pc</strong><span>Rs. 80.00⌄</span></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="market-section">
+              <div class="category">Millets &amp; Products</div>
+              <div class="market-items">
+                <div class="market-row">
+                  <div class="product-name">SAMAI FLAKES</div>
+                  <div class="price">Rs. 300.00</div>
+                  <div class="select-like"><strong>750 g</strong><span>Rs. 300.00⌄</span></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="market-section removed-row">
+              <div class="category removed-section">Removed from cart</div>
+              <div class="market-items">
+                <div class="market-row">
+                  <div class="removed-name">PEANUT RICE MIX</div>
+                  <div class="zero-price">Rs. 0.00</div>
+                  <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                </div>
+                <div class="market-row">
+                  <div class="removed-name">SPROUTED RAGI FLOUR</div>
+                  <div class="zero-price">Rs. 0.00</div>
+                  <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                </div>
+                <div class="market-row">
+                  <div class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</div>
+                  <div class="zero-price">Rs. 0.00</div>
+                  <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="market-checkout">
+            <label>
+              <span class="category">Packing note</span>
+              <textarea class="note-box" placeholder="Is there anything that you would like to tell us about this order?"></textarea>
+            </label>
+            <div>
+              <div class="delivery-alert compact">Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.</div>
+              <div class="total" style="margin-top: 12px;"><span>Total</span><strong>Rs. 380.00</strong></div>
+              <button class="btn" style="width: 100%; margin-top: 12px;">Place Order →</button>
+            </div>
+          </div>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics | Eat Healthy, Live Healthy</div>
+          <div><span>Terms of Service</span><span>Privacy Policy</span></div>
+        </footer>
+      </div>
+    </section>
+
+    <section class="variation v2" id="two-column">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 2</p>
+          <h2>Two-Column Desktop Page</h2>
+          <p>The strongest desktop recommendation for the alert state: active rows stay left, removed rows remain visible but de-emphasized, and the delivery-charge warning is anchored in the order summary.</p>
+        </div>
+        <span class="tag">Recommended desktop</span>
+      </div>
+
+      <div class="mockup v2">
+        <nav class="site-nav" aria-label="Store navigation">
+          <div class="brand-logo"><span class="brand-sun"></span><span class="brand-word"><span>Namma</span> Suvai</span></div>
+          <div class="main-links"><a href="#">My Orders</a><a href="#">Place Order</a><a href="#">About Us</a></div>
+          <div class="nav-icons"><span>●</span><span class="cart-icon">▣<span class="cart-badge">2</span></span><span>☰</span></div>
+        </nav>
+        <div class="page-title-band"><h3>Your Cart</h3></div>
+        <div class="mockup-bar">
+          <div class="brand">
+            <div class="mark">S</div>
+            <div>
+              <strong>Cart Details</strong>
+              <span>Review quantities before ordering</span>
+            </div>
+          </div>
+          <div class="ghost-actions">
+            <button class="btn secondary">+ Add Items</button>
+            <button class="btn danger">Clear Cart</button>
+          </div>
+        </div>
+
+        <div class="cart-body">
+          <div class="two-main">
+            <div class="two-list">
+              <section class="two-section">
+                <div class="category">Vegetables</div>
+                <div class="two-row">
+                  <div class="product-name">BANANA FLOWER</div>
+                  <div class="controls">
+                    <span class="price">Rs. 80.00</span>
+                    <div class="select-like"><strong>2 pc</strong><span>Rs. 80.00⌄</span></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="two-section">
+                <div class="category">Millets &amp; Products</div>
+                <div class="two-row">
+                  <div class="product-name">SAMAI FLAKES</div>
+                  <div class="controls">
+                    <span class="price">Rs. 300.00</span>
+                    <div class="select-like"><strong>750 g</strong><span>Rs. 300.00⌄</span></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="two-section removed-row">
+                <div class="category removed-section">Removed from cart</div>
+                <div class="two-row">
+                  <div class="removed-name">PEANUT RICE MIX</div>
+                  <div class="controls">
+                    <span class="zero-price">Rs. 0.00</span>
+                    <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                  </div>
+                </div>
+                <div class="two-row">
+                  <div class="removed-name">SPROUTED RAGI FLOUR</div>
+                  <div class="controls">
+                    <span class="zero-price">Rs. 0.00</span>
+                    <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                  </div>
+                </div>
+                <div class="two-row">
+                  <div class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</div>
+                  <div class="controls">
+                    <span class="zero-price">Rs. 0.00</span>
+                    <div class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <aside class="two-summary" aria-label="Order summary">
+            <h3>Order Summary</h3>
+            <div class="summary-lines">
+              <div class="summary-line"><span>Active items</span><strong>2</strong></div>
+              <div class="summary-line"><span>Removed</span><strong>3</strong></div>
+              <div class="summary-line"><span>Subtotal</span><strong>Rs. 380.00</strong></div>
+            </div>
+            <div class="delivery-alert compact">Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.</div>
+            <label>
+              <span class="category">Note for packing team</span>
+              <textarea class="note-box" placeholder="Is there anything that you would like to tell us about this order?"></textarea>
+            </label>
+            <div class="total"><span>Total</span><strong>Rs. 380.00</strong></div>
+            <button class="btn">Place Order →</button>
+          </aside>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics | Eat Healthy, Live Healthy</div>
+          <div><span>Terms of Service</span><span>Privacy Policy</span></div>
+        </footer>
+      </div>
+    </section>
+
+    <section class="variation v3" id="mobile-first">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 3</p>
+          <h2>Compact Mobile-First Page</h2>
+          <p>Built around phone ordering in the alert state: two active rows stay prominent, removed products collapse into a compact group, and the delivery warning is visible before checkout.</p>
+        </div>
+        <span class="tag">Recommended mobile</span>
+      </div>
+
+      <div class="mockup v3">
+        <div class="cart-body">
+          <div class="phone">
+            <div class="phone-top">
+              <div class="brand-logo" style="min-width: 0;"><span class="brand-sun"></span></div>
+              <div class="phone-title">
+                <strong>Your Cart</strong>
+                <span>Namma Suvai</span>
+              </div>
+              <button class="icon" aria-label="Menu">☰</button>
+            </div>
+
+            <div class="phone-items">
+              <div class="phone-category">Vegetables</div>
+              <div class="phone-row">
+                <div><strong>BANANA FLOWER</strong><small>2 pc</small></div>
+                <span class="price">Rs. 80</span>
+              </div>
+
+              <div class="phone-category">Millets &amp; Products</div>
+              <div class="phone-row">
+                <div><strong>SAMAI FLAKES</strong><small>750 g</small></div>
+                <span class="price">Rs. 300</span>
+              </div>
+              <div class="phone-category">Removed from cart</div>
+              <div class="phone-row removed-row">
+                <div><strong class="removed-name">PEANUT RICE MIX</strong><small>Removed</small></div>
+                <span class="zero-price">Rs. 0</span>
+              </div>
+              <div class="phone-row removed-row">
+                <div><strong class="removed-name">SPROUTED RAGI FLOUR</strong><small>Removed</small></div>
+                <span class="zero-price">Rs. 0</span>
+              </div>
+              <div class="phone-row removed-row">
+                <div><strong class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</strong><small>Removed</small></div>
+                <span class="zero-price">Rs. 0</span>
+              </div>
+            </div>
+
+            <div class="phone-bottom">
+              <button class="phone-note">Add packing note <span>+</span></button>
+              <div class="delivery-alert compact">Delivery charge applies below Rs 1000.</div>
+              <div class="phone-total">
+                <div><span>Total</span><strong>Rs. 380.00</strong></div>
+                <button class="btn">Place Order →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics</div>
+          <div><span>Terms</span><span>Privacy</span></div>
+        </footer>
+      </div>
+    </section>
+
+    <section class="variation v4" id="ledger">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 4</p>
+          <h2>Warm Organic Ledger Page</h2>
+          <p>Keeps the full screenshot’s earthy, paper-like identity while treating removed products as an audit section and keeping the delivery-charge message near the order action.</p>
+        </div>
+        <span class="tag">Closest brand mood</span>
+      </div>
+
+      <div class="mockup v4">
+        <nav class="site-nav" aria-label="Store navigation">
+          <div class="brand-logo"><span class="brand-sun"></span><span class="brand-word"><span>Namma</span> Suvai</span></div>
+          <div class="main-links"><a href="#">My Orders</a><a href="#">Place Order</a><a href="#">About Us</a></div>
+          <div class="nav-icons"><span>●</span><span class="cart-icon">▣<span class="cart-badge">2</span></span><span>☰</span></div>
+        </nav>
+        <div class="page-title-band"><h3>Your Cart</h3></div>
+        <div class="mockup-bar">
+          <div class="brand">
+            <div class="mark">S</div>
+            <div>
+              <strong>Cart Details</strong>
+              <span>Eat Healthy, Live Healthy</span>
+            </div>
+          </div>
+          <div class="ghost-actions">
+            <button class="btn secondary">+ Add Items</button>
+            <button class="btn danger">Clear Cart</button>
+          </div>
+        </div>
+
+        <div class="ledger-body">
+          <div class="ledger-title">
+            <h3>Your Cart</h3>
+            <div class="total"><span>Total</span><strong>Rs. 380.00</strong></div>
+          </div>
+
+          <div class="ledger">
+            <div class="ledger-row header">
+              <span>Category</span><span>Item</span><span>Selected pack</span><span>Amount</span>
+            </div>
+            <div class="ledger-row">
+              <span class="category">Vegetables</span>
+              <span class="product-name">BANANA FLOWER</span>
+              <span class="select-like"><strong>2 pc</strong><span>⌄</span></span>
+              <span class="price">Rs. 80.00</span>
+            </div>
+            <div class="ledger-row">
+              <span class="category">Millets</span>
+              <span class="product-name">SAMAI FLAKES</span>
+              <span class="select-like"><strong>750 g</strong><span>⌄</span></span>
+              <span class="price">Rs. 300.00</span>
+            </div>
+            <div class="ledger-row removed-row">
+              <span class="category removed-section">Removed</span>
+              <span class="removed-name">PEANUT RICE MIX</span>
+              <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+              <span class="zero-price">Rs. 0.00</span>
+            </div>
+            <div class="ledger-row removed-row">
+              <span class="category removed-section">Removed</span>
+              <span class="removed-name">SPROUTED RAGI FLOUR</span>
+              <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+              <span class="zero-price">Rs. 0.00</span>
+            </div>
+            <div class="ledger-row removed-row">
+              <span class="category removed-section">Removed</span>
+              <span class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</span>
+              <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+              <span class="zero-price">Rs. 0.00</span>
+            </div>
+          </div>
+
+          <div class="ledger-footer">
+            <label>
+              <span class="category">Add notes for the packing team</span>
+              <textarea class="note-box" placeholder="Is there anything that you would like to tell us about this order?"></textarea>
+            </label>
+            <div>
+              <div class="delivery-alert compact">Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.</div>
+              <button class="btn" style="width: 100%; margin-top: 12px;">Place Order →</button>
+            </div>
+          </div>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics | Eat Healthy, Live Healthy</div>
+          <div><span>Terms of Service</span><span>Privacy Policy</span></div>
+        </footer>
+      </div>
+    </section>
+
+    <section class="variation v5" id="minimal">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 5</p>
+          <h2>Cardless Minimal Page</h2>
+          <p>A quieter premium option for the alert state: active and removed products use the same alignment system, while the warning reads as checkout context rather than an error.</p>
+        </div>
+        <span class="tag">Most refined</span>
+      </div>
+
+      <div class="mockup v5">
+        <nav class="site-nav" aria-label="Store navigation">
+          <div class="brand-logo"><span class="brand-sun"></span><span class="brand-word"><span>Namma</span> Suvai</span></div>
+          <div class="main-links"><a href="#">My Orders</a><a href="#">Place Order</a><a href="#">About Us</a></div>
+          <div class="nav-icons"><span>●</span><span class="cart-icon">▣<span class="cart-badge">2</span></span><span>☰</span></div>
+        </nav>
+        <div class="page-title-band"><h3>Your Cart</h3></div>
+        <div class="minimal-body">
+          <div class="minimal-top">
+            <div>
+              <p class="eyebrow">Suvai Organics</p>
+              <h3>Cart Details</h3>
+            </div>
+            <div class="ghost-actions">
+              <button class="btn secondary">+ Add Items</button>
+              <button class="btn danger">Clear Cart</button>
+            </div>
+          </div>
+
+          <div class="minimal-list">
+            <section class="minimal-section">
+              <div class="category">Vegetables</div>
+              <div class="minimal-products">
+                <div class="minimal-row">
+                  <span class="product-name">BANANA FLOWER</span>
+                  <span class="select-like"><strong>2 pc</strong><span>Rs. 80.00⌄</span></span>
+                  <span class="price">Rs. 80.00</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="minimal-section">
+              <div class="category">Millets &amp; Products</div>
+              <div class="minimal-products">
+                <div class="minimal-row">
+                  <span class="product-name">SAMAI FLAKES</span>
+                  <span class="select-like"><strong>750 g</strong><span>Rs. 300.00⌄</span></span>
+                  <span class="price">Rs. 300.00</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="minimal-section">
+              <div class="category removed-section">Removed from cart</div>
+              <div class="minimal-products">
+                <div class="minimal-row removed-row">
+                  <span class="removed-name">PEANUT RICE MIX</span>
+                  <span class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></span>
+                  <span class="zero-price">Rs. 0.00</span>
+                </div>
+                <div class="minimal-row removed-row">
+                  <span class="removed-name">SPROUTED RAGI FLOUR</span>
+                  <span class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></span>
+                  <span class="zero-price">Rs. 0.00</span>
+                </div>
+                <div class="minimal-row removed-row">
+                  <span class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</span>
+                  <span class="select-like"><strong>&nbsp;</strong><span>Rs. 0.00⌄</span></span>
+                  <span class="zero-price">Rs. 0.00</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="minimal-checkout">
+            <label>
+              <span class="category">Packing note</span>
+              <textarea class="note-box" placeholder="Is there anything that you would like to tell us about this order?"></textarea>
+            </label>
+            <div class="delivery-alert compact">Delivery charge applies below Rs 1000.</div>
+            <div class="total"><span>Total</span><strong>Rs. 380.00</strong></div>
+            <button class="btn">Place Order →</button>
+          </div>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics | Eat Healthy, Live Healthy</div>
+          <div><span>Terms of Service</span><span>Privacy Policy</span></div>
+        </footer>
+      </div>
+    </section>
+
+    <section class="variation v6" id="packing">
+      <div class="variation-head">
+        <div>
+          <p class="eyebrow">Variation 6</p>
+          <h2>Operational Packing Page</h2>
+          <p>A fulfillment-oriented version of the alert state: the two packable items are checked separately from removed products, with the delivery-charge warning in the side panel.</p>
+        </div>
+        <span class="tag">Best for operations</span>
+      </div>
+
+      <div class="mockup v6">
+        <nav class="site-nav" aria-label="Store navigation">
+          <div class="brand-logo"><span class="brand-sun"></span><span class="brand-word"><span>Namma</span> Suvai</span></div>
+          <div class="main-links"><a href="#">My Orders</a><a href="#">Place Order</a><a href="#">About Us</a></div>
+          <div class="nav-icons"><span>●</span><span class="cart-icon">▣<span class="cart-badge">2</span></span><span>☰</span></div>
+        </nav>
+        <div class="page-title-band"><h3>Your Cart</h3></div>
+        <div class="mockup-bar">
+          <div class="brand">
+            <div class="mark">S</div>
+            <div>
+              <strong>Cart Details</strong>
+              <span>Packing review</span>
+            </div>
+          </div>
+          <div class="ghost-actions">
+            <button class="btn secondary">+ Add Items</button>
+            <button class="btn danger">Clear Cart</button>
+          </div>
+        </div>
+
+        <div class="cart-body">
+          <div class="packing-layout">
+            <div class="packing-board">
+              <div class="packing-row">
+                <span class="check">✓</span>
+                <div><strong>BANANA FLOWER</strong><span class="packing-meta">Vegetables</span></div>
+                <span class="select-like"><strong>2 pc</strong><span>⌄</span></span>
+                <span class="price">Rs. 80.00</span>
+              </div>
+              <div class="packing-row">
+                <span class="check"></span>
+                <div><strong>SAMAI FLAKES</strong><span class="packing-meta">Millets &amp; Products</span></div>
+                <span class="select-like"><strong>750 g</strong><span>⌄</span></span>
+                <span class="price">Rs. 300.00</span>
+              </div>
+              <div class="packing-row removed-row">
+                <span class="check"></span>
+                <div><strong class="removed-name">PEANUT RICE MIX</strong><span class="packing-meta">Removed from cart</span></div>
+                <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+                <span class="zero-price">Rs. 0.00</span>
+              </div>
+              <div class="packing-row removed-row">
+                <span class="check"></span>
+                <div><strong class="removed-name">SPROUTED RAGI FLOUR</strong><span class="packing-meta">Removed from cart</span></div>
+                <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+                <span class="zero-price">Rs. 0.00</span>
+              </div>
+              <div class="packing-row removed-row">
+                <span class="check"></span>
+                <div><strong class="removed-name">BARNYARD /KUTHURAIVALLI FLOUR</strong><span class="packing-meta">Removed from cart</span></div>
+                <span class="select-like"><strong>&nbsp;</strong><span>⌄</span></span>
+                <span class="zero-price">Rs. 0.00</span>
+              </div>
+            </div>
+
+            <aside class="packing-sidebar">
+              <div class="side-panel">
+                <h3>Order check</h3>
+                <div class="pack-stats">
+                  <div class="stat"><strong>2</strong><span>Active</span></div>
+                  <div class="stat"><strong>3</strong><span>Removed</span></div>
+                </div>
+              </div>
+              <div class="side-panel">
+                <div class="delivery-alert compact">Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.</div>
+              </div>
+              <div class="side-panel">
+                <h3>Packing note</h3>
+                <textarea class="note-box" placeholder="Is there anything that you would like to tell us about this order?"></textarea>
+              </div>
+              <div class="side-panel">
+                <div class="total"><span>Total</span><strong>Rs. 380.00</strong></div>
+                <button class="btn" style="width: 100%; margin-top: 14px;">Place Order →</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+        <footer class="site-footer">
+          <div>© 2026 Suvai Organics | Eat Healthy, Live Healthy</div>
+          <div><span>Terms of Service</span><span>Privacy Policy</span></div>
+        </footer>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

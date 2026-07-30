@@ -75,22 +75,22 @@ const About = () => {
           <h2 className="py-4 p-0 m-0"> Why Us</h2>
           <Row>
             <Col sm={3}>
-              <h1 className="dt-align">6+ Years</h1>
+              <h1 className="dt-align text-secondary">6+ Years</h1>
               {' '}
               <p> promoting organic produce</p>
             </Col>
             <Col sm={3}>
-              <h1 className="dt-align">9+ Years</h1>
+              <h1 className="dt-align text-secondary">9+ Years</h1>
               {' '}
               <p> Organic farmers network</p>
             </Col>
             <Col sm={3}>
-              <h1 className="dt-align">1000+ families</h1>
+              <h1 className="dt-align text-secondary">1000+ families</h1>
               {' '}
               <p> as members</p>
             </Col>
             <Col sm={3}>
-              <h1 className="dt-align">6 days</h1>
+              <h1 className="dt-align text-secondary">6 days</h1>
               {' '}
               <p> a week delivery</p>
             </Col>
@@ -310,7 +310,7 @@ const About = () => {
             <p>
               To Join the community, send us a Whatsapp Message at
               <br />
-              <a href={`tel:${WhatsAppSupport.replace(' ', '')}`} className="text-primary">{WhatsAppSupport}</a>
+              <a href={`tel:${WhatsAppSupport.replace(' ', '')}`} className="text-secondary">{WhatsAppSupport}</a>
             </p>
           </h4>
         </Col>

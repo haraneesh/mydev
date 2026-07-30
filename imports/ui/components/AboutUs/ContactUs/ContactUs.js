@@ -26,7 +26,7 @@ const ContactUs = () => (
           <br />
           <p>
             <a href="https://goo.gl/maps/GnWveu17Jb42" target="_blank">
-              <span className="text-primary">View on Maps &rarr;</span>
+              <span className="text-secondary">View on Maps &rarr;</span>
             </a>
           </p>
         </address>

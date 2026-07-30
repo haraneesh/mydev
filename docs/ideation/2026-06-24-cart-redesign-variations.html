@@ -1,0 +1,2178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart Redesign Variations — 2026-06-24</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ============================================================
+       SHARED: TAB SWITCHER + SHELL
+  ============================================================ -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #fffdf9;
+      --sidebar:  #f3ecdf;
+      --border:   #d8ccb9;
+      --text:     #35261f;
+      --green:    #315742;
+      --submit:   #3f7559;
+      --rust:     #87372b;
+      --clear:    #6f2d21;
+      --shadow:   rgba(47, 34, 21, 0.08);
+      --r-btn:    0.45rem;
+      --r-card:   0.6rem;
+    }
+
+    html { background: #e8e0d4; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: #e8e0d4;
+      min-height: 100vh;
+    }
+
+    /* Tab bar */
+    .tab-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--text);
+      display: flex;
+      gap: 0;
+      padding: 0 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+
+    .tab-bar button {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,253,249,0.55);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-bar button:hover { color: rgba(255,253,249,0.85); }
+
+    .tab-bar button.active {
+      color: #fffdf9;
+      border-bottom-color: #3f7559;
+    }
+
+    /* Variation panels */
+    .variation { display: none; }
+    .variation.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="tab-bar">
+  <button class="active" onclick="showTab(0)">Option 1: Refined</button>
+  <button onclick="showTab(1)">Option 2: Mobile Stack</button>
+  <button onclick="showTab(2)">Option 3: Paper Ledger</button>
+  <button onclick="showTab(3)">Option 4: Card Scan</button>
+  <button onclick="showTab(4)">Option 5: Drawer Checkout</button>
+</div>
+
+<!-- ================================================================
+     VARIATION 1: REFINED CURRENT
+================================================================ -->
+<div class="variation active" id="v1">
+<style>
+  #v1 {
+    background: var(--bg);
+    min-height: calc(100vh - 44px);
+  }
+
+  /* Page shell */
+  .v1-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Page title */
+  .v1-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.85rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* Two-column layout */
+  .v1-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  /* Left: cart main */
+  .v1-main {}
+
+  /* Cart header */
+  .v1-cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .v1-cart-header h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .v1-header-btns {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .v1-btn-add {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: none;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r-btn);
+    padding: 0.42rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .v1-btn-add:hover {
+    background: var(--green);
+    color: #fffdf9;
+  }
+
+  .v1-btn-clear {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--clear);
+    background: none;
+    border: 1.5px solid rgba(111, 45, 33, 0.35);
+    border-radius: var(--r-btn);
+    padding: 0.42rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .v1-btn-clear:hover {
+    background: var(--clear);
+    color: #fffdf9;
+    border-color: var(--clear);
+  }
+
+  /* Category section */
+  .v1-category {
+    margin-bottom: 0.5rem;
+  }
+
+  .v1-category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+    padding: 0.6rem 0 0.4rem;
+  }
+
+  .v1-category-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7a6555;
+    white-space: nowrap;
+  }
+
+  .v1-category-rule {
+    flex: 1;
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      var(--border) 0,
+      var(--border) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+  }
+
+  /* Product row */
+  .v1-product-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: var(--r-card);
+    transition: background 0.15s;
+    cursor: default;
+  }
+
+  .v1-product-row:hover {
+    background: rgba(49, 87, 66, 0.06);
+  }
+
+  .v1-product-name {
+    flex: 1;
+    font-size: 0.915rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Quantity pill */
+  .v1-qty-pill {
+    display: flex;
+    align-items: center;
+    background: var(--sidebar);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    overflow: hidden;
+  }
+
+  .v1-qty-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--green);
+    background: none;
+    border: none;
+    width: 1.9rem;
+    height: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s;
+    flex-shrink: 0;
+  }
+
+  .v1-qty-btn:hover { background: rgba(49,87,66,0.1); }
+
+  .v1-qty-num {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 1.6rem;
+    text-align: center;
+    padding: 0 0.1rem;
+  }
+
+  .v1-product-price {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text);
+    min-width: 3.5rem;
+    text-align: right;
+  }
+
+  /* Right sidebar */
+  .v1-sidebar {
+    position: sticky;
+    top: 60px;
+  }
+
+  .v1-summary-card {
+    background: var(--sidebar);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: 0 4px 18px var(--shadow);
+  }
+
+  /* Delivery alert */
+  .v1-delivery-alert {
+    background: rgba(135, 55, 43, 0.08);
+    border-bottom: 1px solid rgba(135, 55, 43, 0.2);
+    padding: 0.85rem 1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+
+  .v1-alert-icon {
+    font-size: 0.85rem;
+    margin-top: 0.05rem;
+    flex-shrink: 0;
+    color: var(--rust);
+  }
+
+  .v1-alert-text {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  /* Note section */
+  .v1-note-section {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .v1-note-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a6555;
+    margin-bottom: 0.5rem;
+  }
+
+  .v1-note-textarea {
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text);
+    background: rgba(255,253,249,0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--r-btn);
+    padding: 0.6rem 0.75rem;
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.5;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .v1-note-textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(49, 87, 66, 0.12);
+  }
+
+  /* Total row */
+  .v1-total-section {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .v1-total-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #7a6555;
+  }
+
+  .v1-total-amount {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Place order */
+  .v1-place-order-wrap {
+    padding: 1rem;
+  }
+
+  .v1-place-order {
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fffdf9;
+    background: var(--submit);
+    border: none;
+    border-radius: var(--r-btn);
+    padding: 0.85rem 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(63, 117, 89, 0.3);
+  }
+
+  .v1-place-order:hover {
+    background: #315742;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(63, 117, 89, 0.35);
+  }
+
+  .v1-place-order:active { transform: translateY(0); }
+
+  .v1-arrow { font-size: 1rem; }
+
+  @media (max-width: 720px) {
+    .v1-layout { grid-template-columns: 1fr; }
+    .v1-sidebar { position: static; }
+  }
+</style>
+
+<div class="v1-page">
+  <h1 class="v1-title">Your Cart</h1>
+
+  <div class="v1-layout">
+    <!-- LEFT: product list -->
+    <div class="v1-main">
+      <div class="v1-cart-header">
+        <h2>Cart Details</h2>
+        <div class="v1-header-btns">
+          <button class="v1-btn-add">+ Add Items</button>
+          <button class="v1-btn-clear">Clear Cart</button>
+        </div>
+      </div>
+
+      <!-- VEGETABLES -->
+      <div class="v1-category">
+        <div class="v1-category-header">
+          <span class="v1-category-label">Vegetables</span>
+          <div class="v1-category-rule"></div>
+        </div>
+        <div class="v1-product-row">
+          <span class="v1-product-name">Banana Flower <span style="font-size:0.78rem;color:#7a6555;font-weight:400;">1 pc</span></span>
+          <div class="v1-qty-pill">
+            <button class="v1-qty-btn" onclick="v1adj(this,-1)">−</button>
+            <span class="v1-qty-num">1</span>
+            <button class="v1-qty-btn" onclick="v1adj(this,1)">+</button>
+          </div>
+          <span class="v1-product-price">Rs. 40</span>
+        </div>
+      </div>
+
+      <!-- MILLETS -->
+      <div class="v1-category">
+        <div class="v1-category-header">
+          <span class="v1-category-label">Millets &amp; Products</span>
+          <div class="v1-category-rule"></div>
+        </div>
+        <div class="v1-product-row">
+          <span class="v1-product-name">Samai Flakes <span style="font-size:0.78rem;color:#7a6555;font-weight:400;">150g</span></span>
+          <div class="v1-qty-pill">
+            <button class="v1-qty-btn" onclick="v1adj(this,-1)">−</button>
+            <span class="v1-qty-num">1</span>
+            <button class="v1-qty-btn" onclick="v1adj(this,1)">+</button>
+          </div>
+          <span class="v1-product-price">Rs. 60</span>
+        </div>
+        <div class="v1-product-row">
+          <span class="v1-product-name">Kambu Aval <span style="font-size:0.78rem;color:#7a6555;font-weight:400;">150g</span></span>
+          <div class="v1-qty-pill">
+            <button class="v1-qty-btn" onclick="v1adj(this,-1)">−</button>
+            <span class="v1-qty-num">1</span>
+            <button class="v1-qty-btn" onclick="v1adj(this,1)">+</button>
+          </div>
+          <span class="v1-product-price">Rs. 36</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: summary -->
+    <div class="v1-sidebar">
+      <div class="v1-summary-card">
+        <div class="v1-delivery-alert">
+          <span class="v1-alert-icon">⚠</span>
+          <p class="v1-alert-text">Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.</p>
+        </div>
+        <div class="v1-note-section">
+          <div class="v1-note-label">Note for Packing Team</div>
+          <textarea class="v1-note-textarea" placeholder="Any special instructions? e.g. keep vegetables separate…"></textarea>
+        </div>
+        <div class="v1-total-section">
+          <span class="v1-total-label">Total</span>
+          <span class="v1-total-amount">Rs. 136</span>
+        </div>
+        <div class="v1-place-order-wrap">
+          <button class="v1-place-order">Place Order <span class="v1-arrow">→</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end v1 -->
+
+
+<!-- ================================================================
+     VARIATION 2: FULL-WIDTH STACK
+================================================================ -->
+<div class="variation" id="v2">
+<style>
+  #v2 {
+    background: var(--bg);
+    min-height: calc(100vh - 44px);
+  }
+
+  /* Delivery banner */
+  .v2-delivery-banner {
+    background: rgba(135, 55, 43, 0.09);
+    border-bottom: 1px solid rgba(135, 55, 43, 0.2);
+    padding: 0.55rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--rust);
+    line-height: 1.4;
+  }
+
+  .v2-banner-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+  /* Page */
+  .v2-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1.75rem 1.25rem 120px;
+  }
+
+  /* Title row */
+  .v2-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .v2-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .v2-btn-add {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: none;
+    border: 1.5px solid var(--green);
+    border-radius: var(--r-btn);
+    padding: 0.42rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .v2-btn-add:hover { background: var(--green); color: #fffdf9; }
+
+  /* Category collapsible */
+  .v2-category {
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .v2-cat-toggle {
+    width: 100%;
+    background: var(--sidebar);
+    border: none;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .v2-cat-toggle:hover { background: #ece3d2; }
+
+  .v2-cat-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .v2-cat-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: #7a6555;
+  }
+
+  .v2-cat-chevron {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+  }
+
+  .v2-cat-chevron.open { transform: rotate(180deg); }
+
+  /* Category body */
+  .v2-cat-body {
+    background: var(--bg);
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+    max-height: 0;
+  }
+
+  .v2-cat-body.open { max-height: 600px; }
+
+  /* Product row as pill row */
+  .v2-product-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .v2-product-info {
+    flex: 1;
+  }
+
+  .v2-product-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .v2-product-unit {
+    font-size: 0.72rem;
+    color: #7a6555;
+    font-weight: 400;
+  }
+
+  /* Inline quantity control */
+  .v2-qty-ctrl {
+    display: flex;
+    align-items: center;
+    background: var(--sidebar);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+  }
+
+  .v2-qty-btn {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--green);
+    background: none;
+    border: none;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-radius: 50%;
+  }
+
+  .v2-qty-btn:hover { background: rgba(49,87,66,0.12); }
+
+  .v2-qty-num {
+    font-size: 0.82rem;
+    font-weight: 700;
+    min-width: 1.5rem;
+    text-align: center;
+  }
+
+  .v2-product-price {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    min-width: 3.2rem;
+    text-align: right;
+  }
+
+  /* Note field */
+  .v2-note-wrap {
+    margin-top: 1.25rem;
+  }
+
+  .v2-note-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a6555;
+    margin-bottom: 0.4rem;
+  }
+
+  .v2-note-textarea {
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: #fffdf9;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 0.7rem 0.9rem;
+    resize: none;
+    min-height: 2.8rem;
+    max-height: 8rem;
+    overflow: hidden;
+    line-height: 1.5;
+    transition: border-color 0.15s, box-shadow 0.15s, min-height 0.2s;
+  }
+
+  .v2-note-textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(49, 87, 66, 0.1);
+    min-height: 5rem;
+    overflow: auto;
+  }
+
+  /* Sticky bottom bar */
+  .v2-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fffdf9;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(47,34,21,0.1);
+    z-index: 500;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .v2-bottom-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .v2-total-block { flex: 1; }
+
+  .v2-total-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a6555;
+  }
+
+  .v2-total-amount {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  .v2-place-order {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #fffdf9;
+    background: var(--submit);
+    border: none;
+    border-radius: var(--r-btn);
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(63, 117, 89, 0.28);
+  }
+
+  .v2-place-order:hover { background: var(--green); transform: translateY(-1px); }
+
+  .v2-clear-link {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #a07060;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.15s;
+  }
+
+  .v2-clear-link:hover { color: var(--clear); }
+</style>
+
+<!-- Delivery banner -->
+<div class="v2-delivery-banner">
+  <span class="v2-banner-icon">⚠</span>
+  Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.
+</div>
+
+<div class="v2-page">
+  <div class="v2-title-row">
+    <h1 class="v2-title">Your Cart</h1>
+    <button class="v2-btn-add">+ Add Items</button>
+  </div>
+
+  <!-- VEGETABLES -->
+  <div class="v2-category">
+    <button class="v2-cat-toggle" onclick="v2toggle(this)">
+      <span class="v2-cat-name">Vegetables</span>
+      <span class="v2-cat-meta">
+        <span>1 item</span>
+        <span class="v2-cat-chevron open">▲</span>
+      </span>
+    </button>
+    <div class="v2-cat-body open">
+      <div class="v2-product-row">
+        <div class="v2-product-info">
+          <div class="v2-product-name">Banana Flower</div>
+          <div class="v2-product-unit">1 pc</div>
+        </div>
+        <div class="v2-qty-ctrl">
+          <button class="v2-qty-btn" onclick="v2adj(this,-1)">−</button>
+          <span class="v2-qty-num">1</span>
+          <button class="v2-qty-btn" onclick="v2adj(this,1)">+</button>
+        </div>
+        <span class="v2-product-price">Rs. 40</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MILLETS -->
+  <div class="v2-category">
+    <button class="v2-cat-toggle" onclick="v2toggle(this)">
+      <span class="v2-cat-name">Millets &amp; Products</span>
+      <span class="v2-cat-meta">
+        <span>2 items</span>
+        <span class="v2-cat-chevron open">▲</span>
+      </span>
+    </button>
+    <div class="v2-cat-body open">
+      <div class="v2-product-row">
+        <div class="v2-product-info">
+          <div class="v2-product-name">Samai Flakes</div>
+          <div class="v2-product-unit">150g</div>
+        </div>
+        <div class="v2-qty-ctrl">
+          <button class="v2-qty-btn" onclick="v2adj(this,-1)">−</button>
+          <span class="v2-qty-num">1</span>
+          <button class="v2-qty-btn" onclick="v2adj(this,1)">+</button>
+        </div>
+        <span class="v2-product-price">Rs. 60</span>
+      </div>
+      <div class="v2-product-row">
+        <div class="v2-product-info">
+          <div class="v2-product-name">Kambu Aval</div>
+          <div class="v2-product-unit">150g</div>
+        </div>
+        <div class="v2-qty-ctrl">
+          <button class="v2-qty-btn" onclick="v2adj(this,-1)">−</button>
+          <span class="v2-qty-num">1</span>
+          <button class="v2-qty-btn" onclick="v2adj(this,1)">+</button>
+        </div>
+        <span class="v2-product-price">Rs. 36</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Note -->
+  <div class="v2-note-wrap">
+    <div class="v2-note-label">Note for Packing Team</div>
+    <textarea class="v2-note-textarea" placeholder="Any special instructions for the packing team?"></textarea>
+  </div>
+
+  <div style="margin-top:0.75rem; text-align:right;">
+    <button class="v2-clear-link">Clear cart</button>
+  </div>
+</div>
+
+<!-- Sticky bottom bar -->
+<div class="v2-bottom-bar">
+  <div class="v2-bottom-inner">
+    <div class="v2-total-block">
+      <div class="v2-total-label">Order Total</div>
+      <div class="v2-total-amount">Rs. 136</div>
+    </div>
+    <button class="v2-place-order">Place Order →</button>
+  </div>
+</div>
+</div><!-- end v2 -->
+
+
+<!-- ================================================================
+     VARIATION 3: PAPER LEDGER
+================================================================ -->
+<div class="variation" id="v3">
+<style>
+  #v3 {
+    background: #e8dfd0;
+    min-height: calc(100vh - 44px);
+    padding: 2rem 1rem 4rem;
+  }
+
+  .v3-paper {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #faf6ee;
+    border: 1px solid #c8bba3;
+    box-shadow:
+      0 1px 0 #fffdf9 inset,
+      0 8px 32px rgba(47,34,21,0.14),
+      0 2px 6px rgba(47,34,21,0.08);
+    padding: 2.5rem 2.5rem 2rem;
+    position: relative;
+  }
+
+  /* Subtle paper texture via gradient */
+  .v3-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      rgba(180,160,130,0.07) 23px,
+      rgba(180,160,130,0.07) 24px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Shop header */
+  .v3-shop-header {
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--text);
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .v3-shop-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .v3-shop-sub {
+    font-size: 0.72rem;
+    color: #7a6555;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  .v3-receipt-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7a6555;
+    text-align: center;
+    padding: 0.6rem 0 0.75rem;
+    border-bottom: 1px dashed #b8a990;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Action row */
+  .v3-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .v3-btn-add {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: none;
+    border: 1px solid var(--green);
+    border-radius: var(--r-btn);
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .v3-btn-add:hover { background: var(--green); color: #fffdf9; }
+
+  .v3-btn-clear {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #a07060;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+  }
+
+  .v3-btn-clear:hover { color: var(--clear); }
+
+  /* Category block */
+  .v3-category {
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  /* Category header: small-caps with rule */
+  .v3-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .v3-cat-rule-left, .v3-cat-rule-right {
+    flex: 1;
+    height: 1px;
+    background: var(--text);
+    opacity: 0.25;
+  }
+
+  .v3-cat-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.7rem;
+    font-variant: small-caps;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    white-space: nowrap;
+    opacity: 0.75;
+  }
+
+  /* Product row: dot-leader */
+  .v3-product-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    padding: 0.35rem 0;
+    position: relative;
+  }
+
+  .v3-product-name {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    white-space: nowrap;
+    background: #faf6ee;
+    padding-right: 0.3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .v3-product-unit-inline {
+    font-size: 0.72rem;
+    color: #7a6555;
+    background: #faf6ee;
+    padding-right: 0.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .v3-dot-leader {
+    flex: 1;
+    overflow: hidden;
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #b8a990;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    line-height: 1;
+    align-self: center;
+  }
+
+  /* Stepper */
+  .v3-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    background: rgba(211,196,174,0.45);
+    border: 1px solid #c8bba3;
+    border-radius: var(--r-btn);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .v3-step-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--green);
+    background: none;
+    border: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .v3-step-btn:hover { background: rgba(49,87,66,0.12); }
+
+  .v3-step-num {
+    font-size: 0.78rem;
+    font-weight: 700;
+    min-width: 1.25rem;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .v3-product-price {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.88rem;
+    color: var(--text);
+    background: #faf6ee;
+    padding-left: 0.3rem;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Dashed separator between categories */
+  .v3-dash-rule {
+    border: none;
+    border-top: 1px dashed #b8a990;
+    margin: 0.75rem 0 1.25rem;
+  }
+
+  /* Double rule before summary */
+  .v3-double-rule {
+    position: relative;
+    margin: 1.25rem 0 1.25rem;
+    height: 5px;
+  }
+
+  .v3-double-rule::before,
+  .v3-double-rule::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--text);
+  }
+
+  .v3-double-rule::before { top: 0; }
+  .v3-double-rule::after  { top: 4px; }
+
+  /* Delivery notice */
+  .v3-delivery-notice {
+    background: rgba(135, 55, 43, 0.07);
+    border: 1px dashed rgba(135, 55, 43, 0.35);
+    border-radius: var(--r-card);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 1.1rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--rust);
+    font-style: italic;
+  }
+
+  /* Lined textarea */
+  .v3-note-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.7rem;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: #7a6555;
+    margin-bottom: 0.4rem;
+  }
+
+  .v3-note-textarea {
+    width: 100%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text);
+    background:
+      repeating-linear-gradient(
+        transparent,
+        transparent 1.4rem,
+        rgba(135,115,90,0.2) 1.4rem,
+        rgba(135,115,90,0.2) calc(1.4rem + 1px)
+      );
+    background-size: 100% 1.41rem;
+    background-position: 0 0.7rem;
+    border: none;
+    border-bottom: 1px solid #c8bba3;
+    border-radius: 0;
+    padding: 0.7rem 0 0;
+    resize: none;
+    min-height: 4.25rem;
+    line-height: 1.41rem;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+
+  .v3-note-textarea:focus {
+    border-bottom-color: var(--green);
+    box-shadow: none;
+  }
+
+  /* Total row */
+  .v3-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0 1rem;
+    border-top: 1px solid rgba(53,38,31,0.15);
+    margin-top: 0.75rem;
+  }
+
+  .v3-total-label {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.85rem;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: var(--text);
+  }
+
+  .v3-total-amount {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Stamp button */
+  .v3-place-order {
+    width: 100%;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fffdf9;
+    background: var(--submit);
+    border: 2px solid rgba(255,253,249,0.15);
+    border-radius: 0.2rem;
+    padding: 0.95rem 1.5rem;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s, box-shadow 0.15s;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      0 3px 10px rgba(63,117,89,0.35);
+    margin-top: 0.25rem;
+  }
+
+  .v3-place-order::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(255,253,249,0.2);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  .v3-place-order:hover {
+    background: var(--green);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      0 5px 18px rgba(63,117,89,0.4);
+  }
+
+  .v3-footer-note {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: #a08878;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 680px) {
+    #v3 { padding: 0.75rem 0 3rem; }
+    .v3-paper { padding: 1.75rem 1.25rem 1.5rem; border-left: none; border-right: none; }
+  }
+</style>
+
+<div class="v3-paper">
+  <!-- Shop header -->
+  <div class="v3-shop-header">
+    <div class="v3-shop-name">Your Order</div>
+    <div class="v3-shop-sub">Naturally grown &middot; Thoughtfully packed</div>
+  </div>
+
+  <div class="v3-receipt-title">Cart Details</div>
+
+  <div class="v3-action-row">
+    <button class="v3-btn-add">+ Add Items</button>
+    <button class="v3-btn-clear">Clear Cart</button>
+  </div>
+
+  <!-- VEGETABLES -->
+  <div class="v3-category">
+    <div class="v3-cat-header">
+      <div class="v3-cat-rule-left"></div>
+      <span class="v3-cat-label">Vegetables</span>
+      <div class="v3-cat-rule-right"></div>
+    </div>
+
+    <div class="v3-product-row">
+      <span class="v3-product-name">Banana Flower</span>
+      <span class="v3-product-unit-inline">1 pc</span>
+      <span class="v3-dot-leader" aria-hidden="true">...................................</span>
+      <div class="v3-stepper">
+        <button class="v3-step-btn" onclick="v3adj(this,-1)">−</button>
+        <span class="v3-step-num">1</span>
+        <button class="v3-step-btn" onclick="v3adj(this,1)">+</button>
+      </div>
+      <span class="v3-product-price">Rs. 40</span>
+    </div>
+  </div>
+
+  <hr class="v3-dash-rule">
+
+  <!-- MILLETS -->
+  <div class="v3-category">
+    <div class="v3-cat-header">
+      <div class="v3-cat-rule-left"></div>
+      <span class="v3-cat-label">Millets &amp; Products</span>
+      <div class="v3-cat-rule-right"></div>
+    </div>
+
+    <div class="v3-product-row">
+      <span class="v3-product-name">Samai Flakes</span>
+      <span class="v3-product-unit-inline">150g</span>
+      <span class="v3-dot-leader" aria-hidden="true">...................................</span>
+      <div class="v3-stepper">
+        <button class="v3-step-btn" onclick="v3adj(this,-1)">−</button>
+        <span class="v3-step-num">1</span>
+        <button class="v3-step-btn" onclick="v3adj(this,1)">+</button>
+      </div>
+      <span class="v3-product-price">Rs. 60</span>
+    </div>
+
+    <div class="v3-product-row">
+      <span class="v3-product-name">Kambu Aval</span>
+      <span class="v3-product-unit-inline">150g</span>
+      <span class="v3-dot-leader" aria-hidden="true">...................................</span>
+      <div class="v3-stepper">
+        <button class="v3-step-btn" onclick="v3adj(this,-1)">−</button>
+        <span class="v3-step-num">1</span>
+        <button class="v3-step-btn" onclick="v3adj(this,1)">+</button>
+      </div>
+      <span class="v3-product-price">Rs. 36</span>
+    </div>
+  </div>
+
+  <!-- Double rule + summary -->
+  <div class="v3-double-rule"></div>
+
+  <div class="v3-delivery-notice">
+    Due to an increase in delivery costs, a delivery charge will apply to orders with a total value of less than Rs 1000.
+  </div>
+
+  <div class="v3-note-label">Note for Packing Team</div>
+  <textarea class="v3-note-textarea" placeholder="Write your instructions here…"></textarea>
+
+  <div class="v3-total-row">
+    <span class="v3-total-label">Total</span>
+    <span class="v3-total-amount">Rs. 136</span>
+  </div>
+
+  <button class="v3-place-order">Place Order</button>
+
+  <p class="v3-footer-note">Thank you for supporting natural farming</p>
+</div>
+</div><!-- end v3 -->
+
+
+<!-- ================================================================
+     JAVASCRIPT
+================================================================ -->
+
+<!-- ================================================================
+     VARIATION 4: CARD SCAN — scan-style product cards, dark summary header
+================================================================ -->
+<div class="variation" id="v4">
+<style>
+  #v4 {
+    background: #f5efe4;
+    min-height: calc(100vh - 44px);
+  }
+
+  .v4-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 5rem;
+  }
+
+  .v4-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    color: #35261f;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.01em;
+  }
+
+  .v4-subtitle {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #7a6555;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+  }
+
+  .v4-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    background: #fff8f5;
+    border: 1px solid #d9b3a8;
+    border-left: 3px solid #87372b;
+    border-radius: 0.45rem;
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.8rem;
+    color: #87372b;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .v4-alert-icon { font-size: 0.95rem; line-height: 1.5; flex-shrink: 0; }
+
+  .v4-body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .v4-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0 0.6rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #d8ccb9;
+  }
+
+  .v4-cat-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #315742;
+    flex-shrink: 0;
+  }
+
+  .v4-cat-name {
+    font-size: 0.72rem; font-weight: 900;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: #315742;
+  }
+
+  .v4-cat-count { font-size: 0.72rem; font-weight: 700; color: #a89080; margin-left: auto; }
+
+  .v4-product-card {
+    display: flex; align-items: center;
+    background: #fffdf9;
+    border: 1px solid #e1d5c5;
+    border-radius: 0.55rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: 0.75rem;
+  }
+
+  .v4-product-card:hover {
+    border-color: #b8d4bf;
+    box-shadow: 0 2px 8px rgba(47,34,21,0.07);
+  }
+
+  .v4-product-icon {
+    width: 36px; height: 36px;
+    border-radius: 0.4rem;
+    background: #eef5ef;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .v4-product-info { flex: 1; min-width: 0; }
+
+  .v4-product-name {
+    font-size: 0.9rem; font-weight: 800; color: #35261f;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .v4-product-meta { font-size: 0.74rem; font-weight: 600; color: #9a8070; margin-top: 0.1rem; }
+
+  .v4-qty {
+    display: flex; align-items: center;
+    border: 1px solid #d8ccb9;
+    border-radius: 2rem;
+    overflow: hidden;
+    background: #f5efe4;
+  }
+
+  .v4-qty button {
+    background: none; border: none;
+    width: 28px; height: 28px;
+    cursor: pointer; font-size: 1rem; font-weight: 700; color: #315742;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+
+  .v4-qty button:hover { background: #dde9de; }
+
+  .v4-qty-num {
+    font-size: 0.82rem; font-weight: 800; color: #35261f;
+    min-width: 20px; text-align: center;
+  }
+
+  .v4-product-price {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.95rem; font-weight: 600; color: #35261f;
+    min-width: 64px; text-align: right; flex-shrink: 0;
+  }
+
+  .v4-sidebar { position: sticky; top: 3.5rem; }
+
+  .v4-sidebar-card {
+    background: #fffdf9;
+    border: 1px solid #d8ccb9;
+    border-radius: 0.6rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(47,34,21,0.06);
+  }
+
+  .v4-sidebar-header {
+    background: #315742;
+    padding: 0.8rem 1.1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .v4-sidebar-header span:first-child {
+    font-size: 0.72rem; font-weight: 900;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,253,249,0.75);
+  }
+
+  .v4-sidebar-header span:last-child {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.1rem; font-weight: 600; color: #fffdf9;
+  }
+
+  .v4-sidebar-body { padding: 1rem 1.1rem; }
+
+  .v4-note-label {
+    font-size: 0.72rem; font-weight: 900;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #315742; margin-bottom: 0.45rem; display: block;
+  }
+
+  .v4-note-textarea {
+    width: 100%; min-height: 72px;
+    background: #faf6ee; border: 1px solid #cda98d; border-radius: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 600; color: #6c5044;
+    resize: none; outline: none; transition: border-color 0.15s; margin-bottom: 1rem;
+  }
+
+  .v4-note-textarea:focus { border-color: #315742; }
+
+  .v4-line-items { margin-bottom: 1rem; border-top: 1px dashed #d8ccb9; padding-top: 0.85rem; }
+
+  .v4-line-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 0.8rem; font-weight: 700; color: #7a6555; margin-bottom: 0.3rem;
+  }
+
+  .v4-total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: 0.65rem; border-top: 2px solid #d8ccb9; margin-bottom: 1rem;
+  }
+
+  .v4-total-label {
+    font-size: 0.78rem; font-weight: 900;
+    letter-spacing: 0.07em; text-transform: uppercase; color: #35261f;
+  }
+
+  .v4-total-amount {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.25rem; font-weight: 600; color: #35261f;
+  }
+
+  .v4-place-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; background: #3f7559; color: #fffdf9;
+    border: none; border-radius: 0.45rem; padding: 0.8rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 900;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+
+  .v4-place-btn:hover { background: #356549; transform: translateY(-1px); }
+  .v4-place-btn:active { transform: translateY(0); }
+
+  .v4-action-bar { display: flex; gap: 0.6rem; margin-bottom: 1.25rem; }
+
+  .v4-btn-add {
+    display: flex; align-items: center; gap: 0.3rem;
+    background: #fffdf9; border: 1px solid #d8ccb9; border-radius: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; color: #315742;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .v4-btn-add:hover { background: #eff7f0; border-color: #b8d4bf; }
+
+  .v4-btn-clear {
+    display: flex; align-items: center; gap: 0.3rem;
+    background: #6f2d21; border: 1px solid #6f2d21; border-radius: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; color: #fff;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+
+  .v4-btn-clear:hover { background: #5a2219; }
+</style>
+
+<div class="v4-page">
+  <div class="v4-title">Your Cart</div>
+  <div class="v4-subtitle">3 items &middot; Rs. 136.00</div>
+
+  <div class="v4-alert">
+    <span class="v4-alert-icon">&#9888;</span>
+    <span>Delivery charge applies to orders under Rs 1000. Add more items to waive it.</span>
+  </div>
+
+  <div class="v4-action-bar">
+    <button class="v4-btn-add">+ Add Items</button>
+    <button class="v4-btn-clear">&#215; Clear Cart</button>
+  </div>
+
+  <div class="v4-body">
+    <div class="v4-products">
+      <div class="v4-cat-header">
+        <div class="v4-cat-dot"></div>
+        <span class="v4-cat-name">Vegetables</span>
+        <span class="v4-cat-count">1 item</span>
+      </div>
+      <div class="v4-product-card">
+        <div class="v4-product-icon">&#127807;</div>
+        <div class="v4-product-info">
+          <div class="v4-product-name">Banana Flower</div>
+          <div class="v4-product-meta">per piece</div>
+        </div>
+        <div class="v4-qty">
+          <button onclick="v4adj(this,-1)">&#8722;</button>
+          <span class="v4-qty-num">1</span>
+          <button onclick="v4adj(this,1)">+</button>
+        </div>
+        <div class="v4-product-price">Rs. 40.00</div>
+      </div>
+
+      <div class="v4-cat-header" style="margin-top:1rem">
+        <div class="v4-cat-dot"></div>
+        <span class="v4-cat-name">Millets &amp; Products</span>
+        <span class="v4-cat-count">2 items</span>
+      </div>
+      <div class="v4-product-card">
+        <div class="v4-product-icon">&#127806;</div>
+        <div class="v4-product-info">
+          <div class="v4-product-name">Samai Flakes</div>
+          <div class="v4-product-meta">150 g</div>
+        </div>
+        <div class="v4-qty">
+          <button onclick="v4adj(this,-1)">&#8722;</button>
+          <span class="v4-qty-num">1</span>
+          <button onclick="v4adj(this,1)">+</button>
+        </div>
+        <div class="v4-product-price">Rs. 60.00</div>
+      </div>
+      <div class="v4-product-card">
+        <div class="v4-product-icon">&#127807;</div>
+        <div class="v4-product-info">
+          <div class="v4-product-name">Kambu Aval / Bajra Flakes</div>
+          <div class="v4-product-meta">150 g</div>
+        </div>
+        <div class="v4-qty">
+          <button onclick="v4adj(this,-1)">&#8722;</button>
+          <span class="v4-qty-num">1</span>
+          <button onclick="v4adj(this,1)">+</button>
+        </div>
+        <div class="v4-product-price">Rs. 36.00</div>
+      </div>
+    </div>
+
+    <div class="v4-sidebar">
+      <div class="v4-sidebar-card">
+        <div class="v4-sidebar-header">
+          <span>Order Summary</span>
+          <span>Rs. 136.00</span>
+        </div>
+        <div class="v4-sidebar-body">
+          <label class="v4-note-label">Note for packing team</label>
+          <textarea class="v4-note-textarea" placeholder="Any special instructions for packing?"></textarea>
+          <div class="v4-line-items">
+            <div class="v4-line-item"><span>Subtotal</span><span>Rs. 136.00</span></div>
+            <div class="v4-line-item"><span>Delivery</span><span style="color:#87372b">TBD</span></div>
+          </div>
+          <div class="v4-total-row">
+            <span class="v4-total-label">Total</span>
+            <span class="v4-total-amount">Rs. 136.00</span>
+          </div>
+          <button class="v4-place-btn">Place Order &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================
+     VARIATION 5: DRAWER CHECKOUT — clean list, slide-in order review panel
+================================================================ -->
+<div class="variation" id="v5">
+<style>
+  #v5 {
+    background: #fffdf9;
+    min-height: calc(100vh - 44px);
+    position: relative;
+  }
+
+  .v5-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 7rem;
+  }
+
+  .v5-page-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 2rem; padding-bottom: 1.25rem;
+    border-bottom: 2px solid #d8ccb9;
+  }
+
+  .v5-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 2rem; font-weight: 400; color: #35261f;
+    letter-spacing: -0.02em; line-height: 1;
+  }
+
+  .v5-header-actions { display: flex; gap: 0.5rem; padding-bottom: 0.2rem; }
+
+  .v5-btn-secondary {
+    background: none; border: 1px solid #d8ccb9; border-radius: 0.45rem;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 800; color: #315742;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+
+  .v5-btn-secondary:hover { background: #eff7f0; }
+
+  .v5-btn-danger {
+    background: none; border: 1px solid #c4a09a; border-radius: 0.45rem;
+    padding: 0.4rem 0.8rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 800; color: #87372b;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+
+  .v5-btn-danger:hover { background: #fff0ee; }
+
+  .v5-category { margin-bottom: 2rem; }
+
+  .v5-cat-label {
+    font-size: 0.7rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #315742; padding-left: 0.1rem; margin-bottom: 0.65rem;
+  }
+
+  .v5-product-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    align-items: center; gap: 1rem;
+    padding: 0.8rem 0; border-bottom: 1px solid #ece4d8;
+  }
+
+  .v5-product-row:last-child { border-bottom: none; }
+
+  .v5-product-name { font-size: 0.95rem; font-weight: 800; color: #35261f; line-height: 1.2; }
+  .v5-product-unit { font-size: 0.75rem; font-weight: 600; color: #9a8070; margin-top: 0.1rem; }
+
+  .v5-qty {
+    display: flex; align-items: center;
+    background: #f3ecdf; border: 1px solid #d8ccb9; border-radius: 2rem; padding: 0.1rem;
+  }
+
+  .v5-qty button {
+    width: 26px; height: 26px;
+    background: none; border: none; border-radius: 50%;
+    cursor: pointer; font-size: 1rem; font-weight: 700; color: #315742;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s; flex-shrink: 0;
+  }
+
+  .v5-qty button:hover { background: #dde9de; }
+
+  .v5-qty-num {
+    font-size: 0.82rem; font-weight: 800; color: #35261f;
+    min-width: 18px; text-align: center;
+  }
+
+  .v5-product-price {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 0.95rem; font-weight: 600; color: #35261f;
+    text-align: right; min-width: 70px;
+  }
+
+  .v5-checkout-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: #fffdf9; border-top: 1.5px solid #d8ccb9;
+    padding: 0.85rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    box-shadow: 0 -4px 24px rgba(47,34,21,0.1);
+  }
+
+  .v5-bar-total-wrap { line-height: 1.2; }
+
+  .v5-bar-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #9a8070;
+  }
+
+  .v5-bar-total {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.3rem; font-weight: 600; color: #35261f;
+  }
+
+  .v5-checkout-btn {
+    background: #3f7559; color: #fffdf9; border: none; border-radius: 0.45rem;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 900;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; display: flex; align-items: center; gap: 0.4rem;
+    transition: background 0.15s, transform 0.1s; white-space: nowrap;
+  }
+
+  .v5-checkout-btn:hover { background: #356549; transform: translateY(-1px); }
+  .v5-checkout-btn:active { transform: translateY(0); }
+
+  .v5-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(35,26,20,0.45); z-index: 200;
+    backdrop-filter: blur(2px);
+    opacity: 0; transition: opacity 0.25s;
+  }
+
+  .v5-overlay.open { display: block; opacity: 1; }
+
+  .v5-drawer {
+    position: fixed; right: 0; top: 0; bottom: 0;
+    width: min(420px, 100vw);
+    background: #fffdf9; z-index: 201;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    display: flex; flex-direction: column;
+    box-shadow: -8px 0 32px rgba(47,34,21,0.15);
+  }
+
+  .v5-drawer.open { transform: translateX(0); }
+
+  .v5-drawer-header {
+    padding: 1.25rem 1.25rem 1rem; border-bottom: 1px solid #d8ccb9;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+
+  .v5-drawer-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.1rem; font-weight: 600; color: #35261f;
+  }
+
+  .v5-drawer-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #f3ecdf; border: none; cursor: pointer;
+    font-size: 1.1rem; color: #7a6555;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s; line-height: 1;
+  }
+
+  .v5-drawer-close:hover { background: #e8ddd0; }
+
+  .v5-drawer-body { flex: 1; overflow-y: auto; padding: 1.25rem; }
+
+  .v5-drawer-alert {
+    background: #fff8f5; border: 1px solid #d9b3a8; border-left: 3px solid #87372b;
+    border-radius: 0.4rem; padding: 0.65rem 0.8rem;
+    font-size: 0.78rem; color: #87372b; font-weight: 600; line-height: 1.5;
+    margin-bottom: 1.1rem;
+  }
+
+  .v5-drawer-note-label {
+    font-size: 0.7rem; font-weight: 900; letter-spacing: 0.09em; text-transform: uppercase;
+    color: #315742; display: block; margin-bottom: 0.4rem;
+  }
+
+  .v5-drawer-textarea {
+    width: 100%; min-height: 72px;
+    background: #faf6ee; border: 1px solid #cda98d; border-radius: 0.4rem;
+    padding: 0.55rem 0.65rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 600; color: #6c5044;
+    resize: none; outline: none; margin-bottom: 1.1rem; transition: border-color 0.15s;
+  }
+
+  .v5-drawer-textarea:focus { border-color: #315742; }
+
+  .v5-drawer-summary {
+    border-top: 1px dashed #d8ccb9; padding-top: 1rem; margin-bottom: 1rem;
+  }
+
+  .v5-drawer-line {
+    display: flex; justify-content: space-between;
+    font-size: 0.8rem; font-weight: 700; color: #7a6555; margin-bottom: 0.3rem;
+  }
+
+  .v5-drawer-total {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 2px solid #d8ccb9; padding-top: 0.7rem;
+    margin-top: 0.4rem; margin-bottom: 1.25rem;
+  }
+
+  .v5-drawer-total-label {
+    font-size: 0.78rem; font-weight: 900; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #35261f;
+  }
+
+  .v5-drawer-total-amt {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.3rem; font-weight: 600; color: #35261f;
+  }
+
+  .v5-drawer-place-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; background: #3f7559; color: #fffdf9;
+    border: none; border-radius: 0.45rem; padding: 0.85rem;
+    font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 900;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.15s;
+  }
+
+  .v5-drawer-place-btn:hover { background: #356549; }
+</style>
+
+<div class="v5-page">
+  <div class="v5-page-header">
+    <h1 class="v5-title">Your Cart</h1>
+    <div class="v5-header-actions">
+      <button class="v5-btn-secondary">+ Add Items</button>
+      <button class="v5-btn-danger">Clear</button>
+    </div>
+  </div>
+
+  <div class="v5-category">
+    <div class="v5-cat-label">Vegetables</div>
+    <div class="v5-product-row">
+      <div>
+        <div class="v5-product-name">Banana Flower</div>
+        <div class="v5-product-unit">per piece</div>
+      </div>
+      <div class="v5-qty">
+        <button onclick="v5adj(this,-1)">&#8722;</button>
+        <span class="v5-qty-num">1</span>
+        <button onclick="v5adj(this,1)">+</button>
+      </div>
+      <div class="v5-product-price">Rs. 40.00</div>
+    </div>
+  </div>
+
+  <div class="v5-category">
+    <div class="v5-cat-label">Millets &amp; Products</div>
+    <div class="v5-product-row">
+      <div>
+        <div class="v5-product-name">Samai Flakes</div>
+        <div class="v5-product-unit">150 g</div>
+      </div>
+      <div class="v5-qty">
+        <button onclick="v5adj(this,-1)">&#8722;</button>
+        <span class="v5-qty-num">1</span>
+        <button onclick="v5adj(this,1)">+</button>
+      </div>
+      <div class="v5-product-price">Rs. 60.00</div>
+    </div>
+    <div class="v5-product-row">
+      <div>
+        <div class="v5-product-name">Kambu Aval / Bajra Flakes</div>
+        <div class="v5-product-unit">150 g</div>
+      </div>
+      <div class="v5-qty">
+        <button onclick="v5adj(this,-1)">&#8722;</button>
+        <span class="v5-qty-num">1</span>
+        <button onclick="v5adj(this,1)">+</button>
+      </div>
+      <div class="v5-product-price">Rs. 36.00</div>
+    </div>
+  </div>
+</div>
+
+<div class="v5-checkout-bar">
+  <div class="v5-bar-total-wrap">
+    <div class="v5-bar-label">Total</div>
+    <div class="v5-bar-total">Rs. 136.00</div>
+  </div>
+  <button class="v5-checkout-btn" onclick="v5openDrawer()">Review &amp; Place Order &rarr;</button>
+</div>
+
+<div class="v5-overlay" id="v5-overlay" onclick="v5closeDrawer()"></div>
+
+<div class="v5-drawer" id="v5-drawer">
+  <div class="v5-drawer-header">
+    <span class="v5-drawer-title">Review Order</span>
+    <button class="v5-drawer-close" onclick="v5closeDrawer()">&#215;</button>
+  </div>
+  <div class="v5-drawer-body">
+    <div class="v5-drawer-alert">
+      Delivery charge applies to orders under Rs 1000. Add more items to waive it.
+    </div>
+    <label class="v5-drawer-note-label">Note for packing team</label>
+    <textarea class="v5-drawer-textarea" placeholder="Any special instructions for packing?"></textarea>
+    <div class="v5-drawer-summary">
+      <div class="v5-drawer-line"><span>Banana Flower &times; 1</span><span>Rs. 40.00</span></div>
+      <div class="v5-drawer-line"><span>Samai Flakes &times; 1</span><span>Rs. 60.00</span></div>
+      <div class="v5-drawer-line"><span>Kambu Aval &times; 1</span><span>Rs. 36.00</span></div>
+      <div class="v5-drawer-line"><span>Delivery</span><span style="color:#87372b">TBD</span></div>
+    </div>
+    <div class="v5-drawer-total">
+      <span class="v5-drawer-total-label">Total</span>
+      <span class="v5-drawer-total-amt">Rs. 136.00</span>
+    </div>
+    <button class="v5-drawer-place-btn">Place Order &rarr;</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+  // Tab switcher
+  function showTab(n) {
+    document.querySelectorAll('.variation').forEach((v, i) => {
+      v.classList.toggle('active', i === n);
+    });
+    document.querySelectorAll('.tab-bar button').forEach((b, i) => {
+      b.classList.toggle('active', i === n);
+    });
+    // Hide/show v2 bottom bar based on active tab
+    const bar = document.querySelector('.v2-bottom-bar');
+    if (bar) bar.style.display = n === 1 ? '' : 'none';
+  }
+
+  // Hide v2 bar initially (only show on tab 2)
+  document.addEventListener('DOMContentLoaded', function() {
+    const bar = document.querySelector('.v2-bottom-bar');
+    if (bar) bar.style.display = 'none';
+  });
+
+  // V1: pill quantity
+  function v1adj(btn, delta) {
+    const pill = btn.closest('.v1-qty-pill');
+    const numEl = pill.querySelector('.v1-qty-num');
+    let val = parseInt(numEl.textContent) + delta;
+    if (val < 1) val = 1;
+    numEl.textContent = val;
+  }
+
+  // V2: collapsible categories
+  function v2toggle(btn) {
+    const body = btn.nextElementSibling;
+    const chevron = btn.querySelector('.v2-cat-chevron');
+    const isOpen = body.classList.toggle('open');
+    chevron.classList.toggle('open', isOpen);
+  }
+
+  // V2: quantity
+  function v2adj(btn, delta) {
+    const ctrl = btn.closest('.v2-qty-ctrl');
+    const numEl = ctrl.querySelector('.v2-qty-num');
+    let val = parseInt(numEl.textContent) + delta;
+    if (val < 1) val = 1;
+    numEl.textContent = val;
+  }
+
+  // V2: auto-expand textarea on focus
+  document.querySelectorAll('.v2-note-textarea').forEach(ta => {
+    ta.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 128) + 'px';
+    });
+  });
+
+  // V3: stepper quantity
+  function v3adj(btn, delta) {
+    const stepper = btn.closest('.v3-stepper');
+    const numEl = stepper.querySelector('.v3-step-num');
+    let val = parseInt(numEl.textContent) + delta;
+    if (val < 1) val = 1;
+    numEl.textContent = val;
+  }
+
+  // Show v2 bottom bar when tab 2 is active on initial open check
+  (function() {
+    const bar = document.querySelector('.v2-bottom-bar');
+    if (bar) bar.style.display = 'none';
+  })();
+
+  // V4: quantity
+  function v4adj(btn, delta) {
+    const ctrl = btn.closest('.v4-qty');
+    const numEl = ctrl.querySelector('.v4-qty-num');
+    let val = parseInt(numEl.textContent) + delta;
+    if (val < 1) val = 1;
+    numEl.textContent = val;
+  }
+
+  // V5: quantity
+  function v5adj(btn, delta) {
+    const ctrl = btn.closest('.v5-qty');
+    const numEl = ctrl.querySelector('.v5-qty-num');
+    let val = parseInt(numEl.textContent) + delta;
+    if (val < 1) val = 1;
+    numEl.textContent = val;
+  }
+
+  // V5: drawer open/close
+  function v5openDrawer() {
+    document.getElementById('v5-drawer').classList.add('open');
+    document.getElementById('v5-overlay').classList.add('open');
+  }
+  function v5closeDrawer() {
+    document.getElementById('v5-drawer').classList.remove('open');
+    document.getElementById('v5-overlay').classList.remove('open');
+  }
+</script>
+
+</body>
+</html>

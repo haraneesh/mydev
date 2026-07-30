@@ -306,7 +306,7 @@ const ProductsOrderMain = (props) => {
               {displayProductsByTypeStandardView(productGroups, isMobile)}
             </ListGroup>
           </Col>
-          <Col xs={12} className="productOrderCheckout bg-white">
+          <Col xs={12} className="productOrderCheckout card-footer">
             {displayOrderFooter(isMobile)}
           </Col>
         </Row>

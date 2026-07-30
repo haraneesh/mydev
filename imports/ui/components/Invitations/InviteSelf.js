@@ -131,7 +131,7 @@ export default function InviteSelf({ history }) {
               <h4>
                 <p>Do you have any questions?</p>
                 <p>send us a Whatsapp Message or call us at </p>
-                <a href="tel:+919361032849" className="text-primary">
+                <a href="tel:+919361032849" className="text-secondary">
                   +91 9361032849
                 </a>
               </h4>

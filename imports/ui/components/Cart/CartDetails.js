@@ -1,3 +1,4 @@
+import { formatMoney } from 'accounting-js';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { useSubscribe } from 'meteor/react-meteor-data';
@@ -12,6 +13,7 @@ import { toast } from 'react-toastify';
 import SelectSalesPerson from '/imports/ui/components/SelectSalesPerson/SelectSalesPerson';
 import ProductLists from '../../../api/ProductLists/ProductLists';
 import constants from '../../../modules/constants';
+import { accountSettings } from '../../../modules/settings';
 import {
   isChennaiPinCode,
   isLoggedInUserAdmin,
@@ -25,12 +27,7 @@ import {
 import Icon from '../Icon/Icon';
 import Loading from '../Loading/Loading';
 import OnBehalf from '../OnBehalf/OnBehalf';
-import {
-  ListProducts,
-  OrderComment,
-  OrderFooter,
-  PrevOrderComplaint,
-} from './CartCommon';
+import { ListProducts } from './CartCommon';
 import GetUserPhoneNumber from './GetUserPhoneNumber';
 import CollectOrderPayment from './OrderPayment/CollectOrderPayment';
 import PrePermissionModal from '../PrePermissionModal';
@@ -318,27 +315,6 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     });
   };
 
-  const handleIssuesWithPreviousOrderChange = (e) => {
-    cartDispatch({
-      type: cartActions.setIssuesWithPreviousOrder,
-      payload: { issuesWithPreviousOrder: e.target.value },
-    });
-  };
-
-  const handlePayCashWithThisDeliveryChange = (value) => {
-    cartDispatch({
-      type: cartActions.setPayCashWithThisDelivery,
-      payload: { payCashWithThisDelivery: value },
-    });
-  };
-
-  const handleCollectRecyclablesWithThisDeliveryChange = (value) => {
-    cartDispatch({
-      type: cartActions.setCollectRecyclablesWithThisDelivery,
-      payload: { collectRecyclablesWithThisDelivery: value },
-    });
-  };
-
   const moveToOrderSubmitScreen = (createdUpdatedOrderId) => {
     const orderIdToUse = createdUpdatedOrderId || successfullyPlacedOrderId || orderId;
     
@@ -413,7 +389,7 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     navigate(`/order/success/${pendingOrderId}`);
   };
 
-  const afterPaymentScreen = ({ action }) => {
+  const afterPaymentScreen = () => {
     moveToOrderSubmitScreen();
   };
 
@@ -424,8 +400,15 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
     }
   });
 
-  const { totalBillAmount: availableTotalBillAmount } = getTotalBillAmountAndCount(
-    availableProducts || {},
+  const { totalBillAmount: availableTotalBillAmount } =
+    getTotalBillAmountAndCount(availableProducts || {});
+  const submitButtonName = isOrderBeingUpdated
+    ? 'Checking Wallet Balance ...'
+    : orderId
+      ? 'Update Order'
+      : 'Place Order →';
+  const isBelowMinimumOrder = !isOrderAmountGreaterThanMinimum(
+    availableTotalBillAmount,
   );
 
   switch (true) {
@@ -458,145 +441,137 @@ const CartDetails = ({ orderId, loggedInUser = Meteor.userId(), roles }) => {
             showMobileNumberForm={getUserMobileNumber}
             handleClose={handleGetUserMobileNumberClose}
           />
-          <Col xs={12}>
-            <h2 className="py-4 text-center">
-              {orderId ? 'Update Order' : 'Your Cart'}
-            </h2>
+          <Col xs={12} className="cartDetailsContent">
+            <header className="cartDetailsPageHeader py-sm-4 pt-2 m-0 mt-1 text-center">
+              <h2>Your Cart</h2>
+            </header>
+            <Card className="cartDetailsShell mt-3 mb-5">
+              <div className="cartDetailsHeader">
+                <div className="cartDetailsHeadingGroup">
+                  <h2 className="cartDetailsTitle">Cart Details</h2>
+                </div>
+                <div className="cartDetailsActions">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      handleAddItems();
+                    }}
+                  >
+                    <Icon icon="add" type="mts" />
+                    <span>Add Items</span>
+                  </Button>
+
+                  <Button
+                    variant="info"
+                    className="cartDetailsClearButton"
+                    onClick={() => {
+                      clearCart();
+                    }}
+                  >
+                    Clear Cart
+                  </Button>
+                </div>
+              </div>
+
+              <Row className="cartDetailsTwoColumn">
+                <Col xs={12} lg={9} className="cartDetailsProductsColumn">
+                  <section className="cartDetailsProductsPanel">
+                    <ListProducts
+                      products={availableProducts}
+                      deletedProducts={deletedProducts.cart}
+                      updateProductQuantity={updateProductQuantity}
+                      isMobile
+                      isAdmin={isLoggedInUserAdmin()}
+                      isShopOwner={Roles.userIsInRole(
+                        loggedInUser,
+                        constants.Roles.shopOwner.name,
+                      )}
+                      isDeliveryInChennai={isChennaiPinCode(
+                        cartState.cart.deliveryPincode,
+                      )}
+                      unavailableProducts={unavailableProducts}
+                      cartReview
+                    />
+
+                    {Meteor.settings.public.ShowReturnBottles && (
+                      <div className="row alert alert-info py-3">
+                        <p className="offset-sm-1">
+                          Let's Reduce, Renew and Recycle.
+                          <br />
+                          Please return
+                          <span style={{ color: '#EF0905' }}>
+                            {' all glass '}
+                          </span>
+                          bottles and crates to the delivery person.
+                        </p>
+                      </div>
+                    )}
+
+                    {isOrderBeingUpdated && <Loading />}
+                  </section>
+                </Col>
+
+                <Col xs={12} lg={3} className="cartDetailsSummaryColumn">
+                  <aside className="cartDetailsSummaryCard">
+                    {isBelowMinimumOrder && (
+                      <div className="cartMinimumOrderAlert">
+                        {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
+                      </div>
+                    )}
+
+                    {onBehalfUser.isNecessary && (
+                      <div className="cartSummaryAdminFields">
+                        <OnBehalf
+                          onSelectedChange={onSelectedChange}
+                          showMandatoryFields={onBehalfUserInfoError}
+                        />
+                        <SelectSalesPerson
+                          onSelectSalesPersonChange={onSelectSalesPersonChange}
+                          selectedSalesPerson={selectedSalesPerson.name}
+                          showMandatoryFields={selectedSalespersonError}
+                        />
+                      </div>
+                    )}
+
+                    <label className="cartSummaryComment">
+                      <span>Note for Packing Team</span>
+                      <textarea
+                        name="comments"
+                        placeholder="Is there anything that you would like to tell us about this order?"
+                        defaultValue={cartState.cart.comments || ''}
+                        onBlur={handleCommentChange}
+                        rows={3}
+                        ref={refComment}
+                        className="form-control"
+                      />
+                    </label>
+
+                    <div className="cartSummaryTotal">
+                      <span>Total</span>
+                      <strong>
+                        {formatMoney(availableTotalBillAmount, accountSettings)}
+                      </strong>
+                    </div>
+
+                    <Button
+                      variant="primary"
+                      className="cartSummarySubmitButton"
+                      disabled={
+                        availableTotalBillAmount <= 0 || isOrderBeingUpdated
+                      }
+                      onClick={() => {
+                        handleOrderSubmit();
+                      }}
+                    >
+                      {submitButtonName}
+                    </Button>
+                  </aside>
+                </Col>
+              </Row>
+            </Card>
           </Col>
-          <Card className="cartDetailsCard mt-3">
-            <h3 className="cartDetailsTitle card-header">
-              {' '}
-              Cart Details{' '}
-            </h3>
-            <ListProducts
-              products={availableProducts}
-              deletedProducts={deletedProducts.cart}
-              updateProductQuantity={updateProductQuantity}
-              isMobile
-              isAdmin={isLoggedInUserAdmin()}
-              isShopOwner={Roles.userIsInRole(
-                loggedInUser,
-                constants.Roles.shopOwner.name,
-              )}
-              isDeliveryInChennai={isChennaiPinCode(
-                cartState.cart.deliveryPincode,
-              )}
-              unavailableProducts={unavailableProducts}
-            />
-            <Row>
-              <Col
-                sm={11}
-                xs={12}
-                className="text-right text-center-xs"
-                style={{
-                  marginBottom: '2.5em',
-                }}
-              >
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    handleAddItems();
-                  }}
-                  style={{
-                    marginRight: '.5em',
-                  }}
-                >
-                  <Icon icon="add" type="mts" />
-                  <span>Add Items</span>
-                </Button>
 
-                <Button
-                  variant="info"
-                  onClick={() => {
-                    clearCart();
-                  }}
-                  style={{ marginRight: '.5em' }}
-                >
-                  Clear Cart
-                </Button>
-              </Col>
-            </Row>
-
-            {Meteor.settings.public.ShowReturnBottles && (
-              <div className="row alert alert-info py-3">
-                <p className="offset-sm-1">
-                  Let's Reduce, Renew and Recycle.
-                  <br />
-                  Please return
-                  <span style={{ color: '#EF0905' }}>{' all glass '}</span>
-                  bottles and crates to the delivery person.
-                </p>
-              </div>
-            )}
-
-            {/*
-            <PrevOrderComplaint
-              onPrevOrderComplaintChange={handleIssuesWithPreviousOrderChange}
-              prevOrderComplaint={cartState.cart.issuesWithPreviousOrder}
-            />
-            */}
-            {isOrderBeingUpdated && <Loading />}
-          </Card>
-          <Card className="mb-5">
-            {onBehalfUser.isNecessary && (
-              <div>
-                <OnBehalf
-                  onSelectedChange={onSelectedChange}
-                  showMandatoryFields={onBehalfUserInfoError}
-                />
-                <SelectSalesPerson
-                  onSelectSalesPersonChange={onSelectSalesPersonChange}
-                  selectedSalesPerson={selectedSalesPerson.name}
-                  showMandatoryFields={selectedSalespersonError}
-                />
-              </div>
-            )}
-
-            <OrderComment
-              refComment={refComment}
-              onCommentChange={handleCommentChange}
-            />
-
-            {!isOrderAmountGreaterThanMinimum(
-              availableTotalBillAmount,
-            ) && (
-              <div className="offset-1 col-10 alert alert-info py-3 text-center">
-                {Meteor.settings.public.CART_ORDER.MINIMUMCART_ORDER_MSG}
-              </div>
-            )}
-
-            <OrderFooter
-              totalBillAmount={availableTotalBillAmount}
-              onButtonClick={() => {
-                handleOrderSubmit(cartState);
-              }}
-              submitButtonName={
-                isOrderBeingUpdated
-                  ? 'Checking Wallet Balance ...'
-                  : orderId
-                    ? 'Update Order'
-                    : 'Place Order →'
-              }
-              /*
-              showWaiting={
-                isOrderBeingUpdated ||
-                !isOrderAmountGreaterThanMinimum(cartState.cart.totalBillAmount)
-              }
-              */
-              showWaiting={isOrderBeingUpdated}
-              orderId={orderId}
-              payCash={cartState.cart.payCashWithThisDelivery}
-              collectRecyclables={
-                cartState.cart.collectRecyclablesWithThisDelivery
-              }
-              onPayCash={handlePayCashWithThisDeliveryChange}
-              onCollectRecyclables={
-                handleCollectRecyclablesWithThisDeliveryChange
-              }
-            />
-          </Card>
-          
-          <PrePermissionModal 
+          <PrePermissionModal
             show={showPrePermissionModal}
             onAccept={handleAcceptNotifications}
             onDecline={handleDeclineNotifications}

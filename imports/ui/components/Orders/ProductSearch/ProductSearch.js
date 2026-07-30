@@ -80,7 +80,7 @@ class ProductSearch extends React.Component {
                 ref={(searchBox) => (this.searchBox = searchBox)}
               />
               <button
-                className="btn btn-primary input-group-text productOrderSearchClear"
+                className="btn btn-info input-group-text productOrderSearchClear"
                 type="button"
                 onClick={this.clear}
               >
