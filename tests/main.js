@@ -1,4 +1,5 @@
 import assert from 'assert';
+import './cache-policy.test';
 import './product-curated-categories.test';
 
 describe('meteor-app', function () {

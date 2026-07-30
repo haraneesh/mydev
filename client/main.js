@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { shouldRegisterBrowserServiceWorker } from '/imports/modules/serviceWorkerPlatform';
 import Root from '/imports/ui/apps/Root';
 // import '/imports/infra/one-signal'; // OneSignal disabled
 import '/imports/startup/client';
@@ -17,7 +18,10 @@ Meteor.startup(() => {
 // Conditionally initialize the service worker only when not running in Cordova.
 // We intentionally avoid importing `/imports/infra/serviceWorkerInit` statically
 // because that module registers a service worker immediately on import.
-const isCordova = (typeof Meteor !== 'undefined' && Meteor.isCordova) || (typeof window !== 'undefined' && !!window.cordova);
+const shouldRegisterServiceWorker = shouldRegisterBrowserServiceWorker({
+  meteor: Meteor,
+  browserWindow: window,
+});
 // Test PayTM Plugin Availability
 Meteor.startup(() => {
   if (Meteor.isCordova) {
@@ -52,10 +56,15 @@ Meteor.startup(() => {
   }
 });
 
-if (!isCordova) {
+if (shouldRegisterServiceWorker) {
   import('/imports/infra/serviceWorkerInit')
     .then(() => console.log('serviceWorkerInit loaded'))
     .catch((err) => console.error('Failed to load serviceWorkerInit', err));
 } else {
   console.log('Cordova detected: skipping service worker initialization');
+  import('/imports/infra/cordovaServiceWorkerCleanup')
+    .then(({ cleanupCordovaServiceWorkers }) => cleanupCordovaServiceWorkers())
+    .catch((err) =>
+      console.error('Failed to clean up Cordova service workers', err),
+    );
 }

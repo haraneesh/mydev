@@ -9,7 +9,7 @@
     "dev": "cross-env MONGO_URL=mongodb://127.0.0.1:27017/suvaidb meteor --settings settings-development.json",
     "build:production": "rm -rf .meteor/local/cordova-build && cross-env MOBILE_APP_ID=com.nammasuvai.production ONESIGNAL_APP_ID=d34065c0-9940-47df-b139-734206d04ef6 meteor build ../build --server=https://www.nammasuvai.com --mobile-settings settings-production.json",
     "check": "npx @biomejs/biome check --write ./**/*.{js,jsx}",
-    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test": "node --test tests/node/*.test.mjs && meteor test --once --driver-package meteortesting:mocha",
     "bundleViz": "cross-env MONGO_URL=mongodb://127.0.0.1:27017/suvaidb meteor --settings settings-development.json --extra-packages bundle-visualizer --production",
     "test-app": "cross-env TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha"
   },

@@ -1,3 +1,4 @@
+import './cacheHeaders';
 import './accounts';
 import './api';
 import './fixtures';
@@ -10,4 +11,3 @@ import './sitemap';
 
 import './catchGlobalErrors';
 import './paytm-routes';
-

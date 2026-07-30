@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2f6f45" />
+    <title>You are offline | Namma Suvai</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f4f7f2;
+        color: #203225;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+      }
+
+      main {
+        width: min(100%, 28rem);
+        padding: 2.5rem 2rem;
+        border: 1px solid #d8e4d8;
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 1rem 2.5rem rgb(32 50 37 / 10%);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 0.75rem;
+        font-size: clamp(1.75rem, 6vw, 2.25rem);
+        line-height: 1.15;
+      }
+
+      p {
+        margin: 0 0 1.75rem;
+        color: #526458;
+        line-height: 1.6;
+      }
+
+      a {
+        display: inline-block;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.8rem 1.4rem;
+        background: #2f6f45;
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      a:focus-visible {
+        outline: 3px solid #a6cfaf;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>You are offline</h1>
+      <p>
+        Namma Suvai cannot connect right now. Check your internet connection,
+        then try again.
+      </p>
+      <a href="/">Try again</a>
+    </main>
+  </body>
+</html>
