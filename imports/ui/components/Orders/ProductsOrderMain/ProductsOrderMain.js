@@ -337,8 +337,10 @@ const ProductsOrderMain = (props) => {
     <div className="EditOrderDetails ">
       <Row>
         <Col xs={12}>
-          <div className="py-sm-4 pt-2 m-0 mt-1 text-center">
+          <div className="py-sm-4 pt-0 m-0 mt-0 text-center">
+          
             <h2>{formHeading}</h2>
+            {/* 
             {productListUpdatedAt ? (
               <p>
                 Product list last updated:<br className="d-md-none" /> {new Date(productListUpdatedAt).toLocaleString()}
@@ -347,6 +349,8 @@ const ProductsOrderMain = (props) => {
               <p>Product list update date not available</p>
             )}
             {displayToolBar(orderStatus)}
+          
+            */}
           </div>
           {displayProductsAndSubmit(isMobile, productGroups)}
         </Col>
