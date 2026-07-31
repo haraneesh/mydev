@@ -21,7 +21,11 @@ body {
 }
 
 footer {
+  --border: #D4C4B7;
+
   align-items: center;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 0.18rem 0.6rem rgba(47, 34, 21, 0.08);
   display: flex;
   position: absolute;
   

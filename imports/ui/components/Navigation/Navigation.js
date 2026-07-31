@@ -11,12 +11,13 @@ import {
 import SideMenu from '../AuthenticatedNavigation/SideMenu';
 import Icon from '../Icon/Icon';
 import PublicNavigation from '../PublicNavigation/PublicNavigation';
+import './Navigation.scss';
 
 function Navigation(props) {
   const navigate = useNavigate();
   return (
     <>
-      <Container fluid="true" className="bg-white py-2">
+      <Container fluid="true" className="mainMenuBar bg-white py-2">
         <Row>
           {props.authenticated && (
             <span className="text-left col-1">

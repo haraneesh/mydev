@@ -451,6 +451,16 @@ const ProductForNonAdmin = ({
       className="item-image no-aliasing-image img-responsive"
     />
   );
+  const productPrice = (
+    <p className="product-price">
+      <span className="product-quantity">
+        {displayUnitOfSale(lowestOrdQty, unit)}
+      </span>
+      <span className="product-price-value">
+        {formatMoney(lowestOrdQtyPrice, accountSettings)}
+      </span>
+    </p>
+  );
 
   if (checkout) {
     const calculatedDiscountPrice = calculateBulkDiscount({
@@ -532,12 +542,10 @@ const ProductForNonAdmin = ({
         )}
         <Col className="col text-center">
           <Row>
-            <Col xs={12}>{prodNameDesc}</Col>
-            <Col xs={12}>
-              <p>
-                {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}
-              </p>
+            <Col xs={12} className="product-name-container">
+              {prodNameDesc}
             </Col>
+            <Col xs={12}>{productPrice}</Col>
           </Row>
         </Col>
 
@@ -572,16 +580,9 @@ const ProductForNonAdmin = ({
       </Col>
 
       <Col xs={12}>
-        <div>
-          <Col xs={12} className="product-name-container">
-            {prodNameDesc}
-          </Col>
-          <Col xs={12}>
-            <p className="product-price">
-              {' '}
-              {`${displayUnitOfSale(lowestOrdQty, unit)}, ${formatMoney(lowestOrdQtyPrice, accountSettings)}`}{' '}
-            </p>
-          </Col>
+        <div className="product-details-container">
+          <div className="product-name-container">{prodNameDesc}</div>
+          {productPrice}
         </div>
       </Col>
       <Col className="product-action-container">
