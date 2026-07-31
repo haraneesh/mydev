@@ -54,7 +54,7 @@
 
     .menuLeft .productCatHead p{
         font-size: 0.86rem !important;
-        font-weight: 700;
+        font-weight: 500;
         line-height: 1.16;
         margin: 0;
         overflow-wrap: anywhere;
@@ -72,12 +72,16 @@
 
     .menuLeft .nav-link.active .productCatHead{
         color: #2f2215;
-        font-weight: 800;
+        font-weight: 500;
     }
 
     .menuLeft .nav-link.active .productCatHead p{
         color: #2f2215;
-        font-weight: 800;
+        font-weight: 500;
+    }
+
+    .product-name strong{
+        font-weight: 500;
     }
 
     .productOrderPanels{
@@ -142,7 +146,7 @@
     .subCategoryPriorityItem .nav-link{
         border-radius: 0;
         color: #7b351f;
-        font-weight: 700;
+        font-weight: 500;
         overflow: hidden;
         padding: 0.38rem 0.25rem;
         text-overflow: ellipsis;
@@ -221,7 +225,7 @@
 
         h6{
             font-size: 0.9rem;
-            font-weight: 800;
+            font-weight: 500;
             letter-spacing: 0;
             margin: 0;
         }
